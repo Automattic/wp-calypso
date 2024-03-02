@@ -15,9 +15,11 @@ function isCurrentPathOutOfScope( currentPath: string ): boolean {
 	return paths.some( ( path ) => currentPath.startsWith( path ) );
 }
 
-export function navigate( path: string ): void {
+export function navigate( path: string, openInNewTab = false ): void {
 	if ( isSameOrigin( path ) ) {
-		if ( isCurrentPathOutOfScope( window.location.pathname ) ) {
+		if ( openInNewTab ) {
+			window.open( path, '_blank' );
+		} else if ( isCurrentPathOutOfScope( window.location.pathname ) ) {
 			const state = { path };
 			window.history.pushState( state, '', path );
 			dispatchEvent( new PopStateEvent( 'popstate', { state } ) );
@@ -25,6 +27,6 @@ export function navigate( path: string ): void {
 			page.show( path );
 		}
 	} else {
-		window.location.href = logmeinUrl( path );
+		window.open( logmeinUrl( path ), openInNewTab ? '_blank' : '_self' );
 	}
 }

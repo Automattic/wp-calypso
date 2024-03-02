@@ -71,6 +71,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 			isWpcomEnterpriseGridPlan: false,
 			isStuck: false,
 			showMonthlyPrice: true,
+			visibleGridPlans: [],
 		};
 
 		const pricing = {

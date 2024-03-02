@@ -466,6 +466,42 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'cloud.jetpack.com', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+	} );
+
+	test( 'Jetpack Manage', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
+		);
+	} );
+
 	test( 'WordPress.com URLs', () => {
 		expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', 'en' ) ).toEqual(
 			'https://wordpress.com/wp-login.php?action=lostpassword'

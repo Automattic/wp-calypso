@@ -28,6 +28,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 const assemblerFirstFlow: Flow = {
 	name: ASSEMBLER_FIRST_FLOW,
+	isSignupFlow: true,
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
@@ -141,7 +142,7 @@ const assemblerFirstFlow: Flow = {
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
 					return navigate( 'new-or-existing-site' );
@@ -149,12 +150,12 @@ const assemblerFirstFlow: Flow = {
 
 				case 'new-or-existing-site': {
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( 'site-creation-step' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'site-picker' );
 				}
 
-				case 'site-creation-step': {
+				case 'create-site': {
 					return navigate( 'processing' );
 				}
 
@@ -278,7 +279,7 @@ const assemblerFirstFlow: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( `setup/${ flowName }` ) ||
 			currentPath.endsWith( `setup/${ flowName }/` ) ||
 			currentPath.includes( `setup/${ flowName }/check-sites` );
@@ -301,8 +302,8 @@ const assemblerFirstFlow: Flow = {
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				window.location.assign( logInUrl );
-			} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
-				window.location.assign( `/setup/${ flowName }/site-creation-step` );
+			} else if ( isCreateSite && ! userAlreadyHasSites ) {
+				window.location.assign( `/setup/${ flowName }/create-site` );
 			}
 		}, [] );
 
@@ -313,7 +314,7 @@ const assemblerFirstFlow: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( isSiteCreationStep && ! userAlreadyHasSites ) {
+		} else if ( isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } with no preexisting sites`,

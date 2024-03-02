@@ -150,7 +150,7 @@ describe( 'CouponsList', () => {
 						settings: {
 							1: {
 								couponsAndGiftsEnabled: false,
-								connectedAccountId: 123,
+								isConnected: true,
 								connectedAccountMinimumCurrency: {
 									USD: 0.5,
 								},
@@ -195,7 +195,7 @@ describe( 'CouponsList', () => {
 						settings: {
 							1: {
 								couponsAndGiftsEnabled: true,
-								connectedAccountId: 123,
+								isConnected: true,
 								connectedAccountMinimumCurrency: {
 									USD: 0.5,
 								},
@@ -239,7 +239,7 @@ describe( 'CouponsList', () => {
 						settings: {
 							1: {
 								couponsAndGiftsEnabled: true,
-								connectedAccountId: 123,
+								isConnected: true,
 								connectedAccountMinimumCurrency: {
 									USD: 0.5,
 								},
@@ -288,7 +288,7 @@ describe( 'CouponsList', () => {
 						settings: {
 							1: {
 								couponsAndGiftsEnabled: true,
-								connectedAccountId: 123,
+								isConnected: true,
 								connectedAccountMinimumCurrency: {
 									USD: 0.5,
 								},

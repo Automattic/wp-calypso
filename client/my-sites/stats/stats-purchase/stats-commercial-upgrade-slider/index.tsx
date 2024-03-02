@@ -108,7 +108,7 @@ function StatsCommercialUpgradeSlider( {
 	// Determine this based on last tier in the list.
 	// The translate() call returns a node so we need to set the type correctly.
 	let perUnitFeeMessaging;
-	const lastTier = tiers.at( -1 );
+	const lastTier = tiers[ tiers.length - 1 ];
 	const hasPerUnitFee = !! lastTier?.per_unit_fee;
 	if ( hasPerUnitFee ) {
 		// The price is yearly for yearly plans, so we need to divide by 12.

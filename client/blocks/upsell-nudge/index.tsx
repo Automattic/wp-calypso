@@ -9,6 +9,9 @@ import {
 	GROUP_WPCOM,
 	WPCOM_FEATURES_NO_ADVERTS,
 	isFreePlanProduct,
+	isWpComPlan,
+	getPlan,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import debugFactory from 'debug';
@@ -144,7 +147,7 @@ export const UpsellNudge = ( {
 	isSiteWooExpressOrEcomFreeTrial,
 	isBusy,
 	isEligibleForOneClickCheckout,
-	isOneClickCheckoutEnabled,
+	isOneClickCheckoutEnabled = true,
 }: Props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const shouldNotDisplay =
@@ -208,12 +211,25 @@ export const UpsellNudge = ( {
 		onClick?.();
 	};
 
+	/**
+	 * Users can upgrade only to plans on their current plan term or higher.
+	 * This ensures that users on a 2-year plan, for example, are not shown an
+	 * upsell to 1-year plan.
+	 */
+	let upsellPlan = plan;
+	if ( site?.plan?.product_slug && plan && isWpComPlan( plan ) ) {
+		const upsellPlanType = getPlan( plan )?.type;
+		upsellPlan = findFirstSimilarPlanKey( site.plan.product_slug, {
+			type: upsellPlanType,
+		} );
+	}
+
 	return (
 		<>
 			{ showPurchaseModal && (
 				<AsyncLoad
 					require="./purchase-modal-wrapper"
-					plan={ plan }
+					plan={ upsellPlan }
 					siteSlug={ siteSlug }
 					setShowPurchaseModal={ setShowPurchaseModal }
 				/>

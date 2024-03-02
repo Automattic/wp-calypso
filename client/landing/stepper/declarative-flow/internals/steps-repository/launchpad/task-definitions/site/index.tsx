@@ -15,7 +15,6 @@ import { translate } from 'i18n-calypso';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { isDomainUpsellCompleted } from '../../task-helper';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction, TaskContext } from '../../types';
 
 const getCompletedTasks = ( tasks: Task[] ): Record< string, boolean > =>
@@ -112,7 +111,6 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 		await launchSite( site.ID );
 		// Waits for half a second so that the loading screen doesn't flash away too quickly
 		await new Promise( ( res ) => setTimeout( res, 500 ) );
-		recordTaskClickTracksEvent( task, flow, context );
 
 		return {
 			siteSlug,
@@ -126,7 +124,7 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 	submit?.();
 };
 
-const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+export const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		isLaunchTask: true,
@@ -137,7 +135,7 @@ const getSiteLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	};
 };
 
-const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+export const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		isLaunchTask: true,
@@ -147,12 +145,14 @@ const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 		useCalypsoPath: false,
 	};
 };
-const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Task => {
+
+export const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 	const { site, submit, siteSlug } = context;
 
 	return {
 		...task,
 		isLaunchTask: true,
+		useCalypsoPath: false,
 		actionDispatch: () => {
 			if ( site?.ID ) {
 				const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -170,7 +170,6 @@ const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Task => {
 						} )
 					);
 				} );
-				recordTaskClickTracksEvent( task, flow, context );
 				submit?.();
 			}
 		},

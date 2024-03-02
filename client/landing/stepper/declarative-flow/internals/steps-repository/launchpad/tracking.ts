@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Task } from '@automattic/launchpad';
-import { TaskContext } from './types';
+import { type TaskContext } from './types';
 
 /**
  * Build a function that tracks a task event.
@@ -31,5 +31,3 @@ const buildEventTracker =
 export const recordGlobalStylesGattingPlanSelectedResetStylesEvent = buildEventTracker(
 	'calypso_launchpad_global_styles_gating_plan_selected_reset_styles'
 );
-
-export const recordTaskClickTracksEvent = buildEventTracker( 'calypso_launchpad_task_clicked' );

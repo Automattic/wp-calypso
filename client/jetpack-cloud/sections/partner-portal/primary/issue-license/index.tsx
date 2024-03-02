@@ -43,8 +43,6 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 		?.toString()
 		.split( ',' );
 
-	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
-
 	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
 	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
 
@@ -84,6 +82,21 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
 			.flat();
 	}, [ selectedLicenses ] );
+
+	// If URL params are present, use them to open the review licenses modal directly.
+	useEffect( () => {
+		if ( getQueryArg( window.location.href, 'source' ) === 'manage-pricing-page' ) {
+			getGroupedLicenses();
+			setShowReviewLicenses( true );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_manage_pricing_issue_license_review_licenses_show', {
+					total_licenses: getQueryArg( window.location.href, 'bundle_size' ),
+					product: getQueryArg( window.location.href, 'products' ),
+				} )
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] ); // Intentionally leaving the array empty and disabling the eslint warning, as we want this to run only once.
 
 	const currentStep = showReviewLicenses ? 'reviewLicense' : 'issueLicense';
 
@@ -150,6 +163,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			: translate( 'Select the Jetpack products you would like to issue a new license for:' );
 	}, [ selectedSite?.domain, showBundle, translate ] );
 
+	const { isReady, submitForm } = useSubmitForm( selectedSite, suggestedProductSlugs );
+
 	return (
 		<>
 			<Layout
@@ -160,7 +175,11 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 				sidebarNavigation={ <PartnerPortalSidebarNavigation /> }
 			>
 				<LayoutTop>
-					<AssignLicenseStepProgress currentStep={ currentStep } isBundleLicensing />
+					<AssignLicenseStepProgress
+						currentStep={ currentStep }
+						selectedSite={ selectedSite }
+						isBundleLicensing
+					/>
 
 					<LayoutHeader showStickyContent={ showStickyContent }>
 						<Title>{ translate( 'Issue product licenses' ) } </Title>
@@ -216,6 +235,8 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 					onClose={ onDismissReviewLicensesModal }
 					selectedLicenses={ getGroupedLicenses() }
 					selectedSite={ selectedSite }
+					isFormReady={ isReady }
+					submitForm={ submitForm }
 				/>
 			) }
 		</>

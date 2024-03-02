@@ -84,16 +84,15 @@
 			color: var(--studio-gray-40);
 		}
 	}
+
 }
 
-.import__onboarding-page--redesign {
-	.onboarding-progress-simple {
-		min-width: 100% !important;
+.onboarding-progress {
+	min-width: 100% !important;
 
-		.progress-bar {
-			max-width: 385px;
-			margin-bottom: rem(24px);
-		}
+	.progress-bar {
+		max-width: 520px;
+		margin-bottom: rem(24px);
 	}
 }
 

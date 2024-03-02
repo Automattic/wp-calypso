@@ -3,8 +3,7 @@
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
-		"types": [ "node", "@types/gtag.js" ],
-		"jsxImportSource": "@emotion/react",
+		"types": [ "node", "@types/gtag.js", "@emotion/react/types/css-prop" ],
 		"paths": {
 			"calypso/*": [ "./*" ],
 

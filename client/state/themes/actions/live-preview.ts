@@ -8,6 +8,7 @@ import {
 	getTheme,
 	getThemeType,
 	getThemePreviewThemeOptions,
+	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch } from 'calypso/state/types';
 import { AppState } from 'calypso/types';
@@ -28,6 +29,7 @@ export function livePreview( siteId: number, themeId: string, source?: 'list' | 
 			site_id: siteId,
 			source,
 			theme_type: getThemeType( state, themeId ),
+			theme_tier: getThemeTierForTheme( state, themeId )?.slug,
 			theme: themeId,
 			theme_style:
 				themeId +

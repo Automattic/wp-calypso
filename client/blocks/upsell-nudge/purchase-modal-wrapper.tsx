@@ -1,9 +1,10 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -30,23 +31,25 @@ export default function PurchaseModalWrapper( {
 				fetchStripeConfiguration={ getStripeConfiguration }
 				locale={ translate.localeSlug }
 			>
-				<PurchaseModal
-					productToAdd={ product }
-					onClose={ () => {
-						setShowPurchaseModal( false );
-					} }
-					onPurchaseSuccess={ () => {
-						setShowPurchaseModal( false );
-						dispatch(
-							successNotice( translate( 'Your purchase has been completed!' ), {
-								id: 'plugins-purchase-modal-success',
-							} )
-						);
-					} }
-					disabledThankYouPage={ true }
-					showFeatureList={ true }
-					siteSlug={ siteSlug }
-				/>
+				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+					<PurchaseModal
+						productToAdd={ product }
+						onClose={ () => {
+							setShowPurchaseModal( false );
+						} }
+						onPurchaseSuccess={ () => {
+							setShowPurchaseModal( false );
+							dispatch(
+								successNotice( translate( 'Your purchase has been completed!' ), {
+									id: 'plugins-purchase-modal-success',
+								} )
+							);
+						} }
+						disabledThankYouPage={ true }
+						showFeatureList={ true }
+						siteSlug={ siteSlug }
+					/>
+				</RazorpayHookProvider>
 			</StripeHookProvider>
 		</CalypsoShoppingCartProvider>
 	) : null;

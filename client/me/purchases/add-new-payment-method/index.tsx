@@ -1,3 +1,4 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
@@ -10,7 +11,7 @@ import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
@@ -85,7 +86,9 @@ export default function AccountLevelAddNewPaymentMethodWrapper() {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<AddNewPaymentMethod />
+			<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+				<AddNewPaymentMethod />
+			</RazorpayHookProvider>
 		</StripeHookProvider>
 	);
 }

@@ -122,6 +122,10 @@ a.rewind-flow-notice__title-warning:visited {
 
 .rewind-flow__btn-group {
 	margin-top: 2.5em;
+
+	&--centered {
+		text-align: center;
+	}
 }
 
 .rewind-flow__primary-button {

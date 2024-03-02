@@ -49,6 +49,7 @@ interface Props {
 	currentStep: StepKey;
 	selectedSite?: SiteDetails | null;
 	showDownloadStep?: boolean;
+	showAssignLicenseStep?: boolean;
 	isBundleLicensing?: boolean;
 }
 

@@ -92,6 +92,16 @@
 		margin-left: auto;
 		margin-right: auto;
 	}
+
+	.github-deployments-card {
+		.banner__icons .banner__icon-no-circle {
+			margin-right: 13px;
+		}
+
+		.banner__action {
+			margin-right: 0;
+		}
+	}
 }
 
 .hosting__activating-notice {

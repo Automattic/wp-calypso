@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import useCreateGlueRecordMutation from 'calypso/data/domains/glue-records/use-create-glue-record-mutation';
 import useDeleteGlueRecordMutation from 'calypso/data/domains/glue-records/use-delete-glue-record-mutation';
@@ -165,7 +164,13 @@ export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } 
 		if ( ! nameserver ) {
 			return false;
 		}
-		if ( ! nameserver.match( /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/ ) ) {
+		// The subdomain part of name servers in Key-Systems cannot be longer than 50 characters
+		if (
+			nameserver.length > 50 ||
+			! nameserver.match(
+				/^([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
+			)
+		) {
 			return false;
 		}
 		return true;

@@ -1,5 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from './default-query-params';
 
 const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ): Promise< any > => {
 	return wpcom.req.get(
@@ -57,12 +58,14 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 	const queries = useQueries( {
 		queries: [
 			{
+				...getDefaultQueryParams(),
 				queryKey: [ 'stats', 'totals', 'subscribers', siteId, filterAdmin ],
 				queryFn: () => querySubscribersTotals( siteId, filterAdmin ),
 				select: selectSubscribers,
 				staleTime: 1000 * 60 * 5, // 5 minutes
 			},
 			{
+				...getDefaultQueryParams(),
 				queryKey: [ 'stats', 'totals', 'paid', 'subscribers', siteId ],
 				queryFn: () => queryMore( siteId ),
 				select: selectPaidSubscribers,

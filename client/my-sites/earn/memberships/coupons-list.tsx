@@ -16,8 +16,8 @@ import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
 import { getCouponsForSiteId } from 'calypso/state/memberships/coupon-list/selectors';
 import {
-	getConnectedAccountIdForSiteId,
 	getCouponsAndGiftsEnabledForSiteId,
+	getIsConnectedForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -49,8 +49,8 @@ function CouponsList() {
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, site?.ID )
 	);
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
 	);
 	const hasDonationsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_DONATIONS )
@@ -152,7 +152,7 @@ function CouponsList() {
 			<div className="memberships__products-list">
 				<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 				<QueryMembershipsCoupons siteId={ site?.ID ?? 0 } />
-				{ hasLoadedFeatures && hasStripeFeature && connectedAccountId && (
+				{ hasLoadedFeatures && hasStripeFeature && hasConnectedAccount && (
 					<SectionHeader label={ translate( 'Manage coupons' ) }>
 						<Button primary compact onClick={ () => openAddEditDialog() }>
 							{ translate( 'Add a new coupon' ) }
@@ -229,7 +229,7 @@ function CouponsList() {
 							</CompactCard>
 						);
 					} ) }
-				{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && connectedAccountId && (
+				{ hasLoadedFeatures && showAddEditDialog && hasStripeFeature && hasConnectedAccount && (
 					<RecurringPaymentsCouponAddEditModal
 						closeDialog={ closeDialog }
 						coupon={ Object.assign( coupon ?? {}, {} ) }

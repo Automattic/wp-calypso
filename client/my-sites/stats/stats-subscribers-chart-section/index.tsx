@@ -7,6 +7,7 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
+import { hideFractionNumber } from './chart-utils';
 import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
@@ -154,6 +155,7 @@ export default function SubscribersChartSection( {
 					mainColor={ isOdysseyStats ? '#069e08' : undefined }
 					fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
 					fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+					yAxisFilter={ hideFractionNumber }
 				/>
 			) }
 		</div>

@@ -1,4 +1,4 @@
-import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
+import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -8,14 +8,6 @@ import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
-import QueryPlans from 'calypso/components/data/query-plans';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
@@ -33,6 +25,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
@@ -51,14 +44,17 @@ import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
+import { pixProcessor } from '../lib/pix-processor';
+import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutLoadingPlaceholder } from './checkout-loading-placeholder';
+import CheckoutMainContent from './checkout-main-content';
 import { OnChangeItemVariant } from './item-variation-picker';
 import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
-import WPCheckout from './wp-checkout';
+import PrePurchaseNotices from './prepurchase-notices';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	CheckoutPageErrorCallback,
@@ -90,7 +86,6 @@ export interface CheckoutMainProps {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 	isInModal?: boolean;
-	infoMessage?: JSX.Element;
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
@@ -130,7 +125,6 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	infoMessage,
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
@@ -154,6 +148,7 @@ export default function CheckoutMain( {
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
+	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
@@ -368,6 +363,9 @@ export default function CheckoutMain( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
+		isRazorpayLoading,
+		razorpayLoadingError,
+		razorpayConfiguration,
 		storedCards,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
@@ -441,6 +439,9 @@ export default function CheckoutMain( {
 		[ addProductsToCart ]
 	);
 
+	const isAkismetSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -456,8 +457,11 @@ export default function CheckoutMain( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
+			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		} ),
 		[
 			contactDetails,
@@ -470,9 +474,12 @@ export default function CheckoutMain( {
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
+			isJetpackNotAtomic,
+			isAkismetSitelessCheckout,
 		]
 	);
 
@@ -487,6 +494,8 @@ export default function CheckoutMain( {
 				multiPartnerCardProcessor( transactionData, dataForProcessor, {
 					translate,
 				} ),
+			pix: ( transactionData: unknown ) =>
+				pixProcessor( transactionData, dataForProcessor, translate ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForProcessor ),
 			p24: ( transactionData: unknown ) =>
@@ -510,6 +519,8 @@ export default function CheckoutMain( {
 			'existing-card-ebanx': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
+			razorpay: ( transactionData: unknown ) =>
+				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
 		[ dataForProcessor, translate ]
 	);
@@ -527,6 +538,8 @@ export default function CheckoutMain( {
 		  }
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+
+	const isCheckoutV2ExperimentLoading = useCheckoutV2() === 'loading';
 
 	// This variable determines if we see the loading page or if checkout can
 	// render its steps.
@@ -551,6 +564,7 @@ export default function CheckoutMain( {
 			isLoading: responseCart.products.length < 1,
 		},
 		{ name: translate( 'Loading countries list' ), isLoading: countriesList.length < 1 },
+		{ name: translate( 'Loading Site' ), isLoading: isCheckoutV2ExperimentLoading },
 	];
 	const isCheckoutPageLoading: boolean = checkoutLoadingConditions.some(
 		( condition ) => condition.isLoading
@@ -714,26 +728,8 @@ export default function CheckoutMain( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	const cartHasSearchProduct = useMemo(
-		() =>
-			responseCart.products.some( ( { product_slug } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes(
-					product_slug as ( typeof JETPACK_SEARCH_PRODUCTS )[ number ]
-				)
-			),
-		[ responseCart.products ]
-	);
-
 	return (
 		<Fragment>
-			<QueryJetpackSaleCoupon />
-			<QuerySitePlans siteId={ updatedSiteId } />
-			<QuerySitePurchases siteId={ updatedSiteId } />
-			{ isSiteless && <QueryUserPurchases /> }
-			<QueryPlans />
-			<QueryProducts />
-			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -756,7 +752,7 @@ export default function CheckoutMain( {
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
 			>
-				<WPCheckout
+				<CheckoutMainContent
 					loadingHeader={
 						<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
 					}
@@ -769,7 +765,7 @@ export default function CheckoutMain( {
 					changeSelection={ changeSelection }
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					infoMessage={ infoMessage }
+					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }

@@ -3,6 +3,7 @@ import {
 	useMessagingAvailability,
 	useZendeskMessaging,
 } from '@automattic/help-center/src/hooks';
+import { ZENDESK_SOURCE_URL_TICKET_FIELD_ID } from '@automattic/help-center/src/hooks/use-chat-widget';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,7 +18,9 @@ declare global {
 		zE: (
 			action: string,
 			value: string,
-			handler?: ( callback: ( data: string | number ) => void ) => void
+			handler?:
+				| ( ( callback: ( data: string | number ) => void ) => void )
+				| { id: number; value: string }[]
 		) => void;
 	}
 }
@@ -81,6 +84,9 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 		// presales chat is always shown by default
 		if ( enabled && isPresalesChatAvailable && isMessagingScriptLoaded ) {
 			window.zE( 'messenger', 'show' );
+			window.zE( 'messenger:set', 'conversationFields', [
+				{ id: ZENDESK_SOURCE_URL_TICKET_FIELD_ID, value: window.location.href },
+			] );
 		}
 	}, [ enabled, isMessagingScriptLoaded, isPresalesChatAvailable ] );
 

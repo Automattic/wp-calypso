@@ -4,7 +4,7 @@ import { getContextResults } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -78,7 +78,7 @@ function HelpSearchResults( {
 
 	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
 		searchQuery,
-		'',
+		getLocaleSlug(),
 		{},
 		sectionName
 	);

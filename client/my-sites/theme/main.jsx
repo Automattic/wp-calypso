@@ -45,23 +45,23 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
+import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
-import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -270,6 +270,7 @@ class ThemeSheet extends Component {
 		retired: PropTypes.bool,
 		// Connected props
 		isLoggedIn: PropTypes.bool,
+		siteCount: PropTypes.number,
 		isActive: PropTypes.bool,
 		isThemePurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
@@ -307,6 +308,7 @@ class ThemeSheet extends Component {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
+		isSiteSelectorModalVisible: false,
 	};
 
 	scrollToTop = () => {
@@ -366,7 +368,15 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	onButtonClick = () => {
+	onButtonClick = ( event ) => {
+		const { isLoggedIn, siteCount, siteId } = this.props;
+
+		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
+			event?.preventDefault();
+			this.setState( { isSiteSelectorModalVisible: true } );
+			return;
+		}
+
 		this.onBeforeOptionAction();
 		this.props.defaultOption.action?.( this.props.themeId );
 	};
@@ -719,7 +729,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderThemeBadge = () => {
-		const { siteId, siteSlug, themeId, themeTier, themeType } = this.props;
+		const { themeId, themeTier, themeType } = this.props;
 
 		const isCommunityTheme = themeType === DOT_ORG_THEME;
 		const isPartnerTheme = themeTier.slug === 'partner';
@@ -729,17 +739,10 @@ class ThemeSheet extends Component {
 			return null;
 		}
 
-		return config.isEnabled( 'themes/tiers' ) ? (
+		return (
 			<ThemeTierBadge
 				className="theme__sheet-main-info-type"
 				showUpgradeBadge={ false }
-				themeId={ themeId }
-			/>
-		) : (
-			<ThemeTypeBadge
-				className="theme__sheet-main-info-type"
-				siteId={ siteId }
-				siteSlug={ siteSlug }
 				themeId={ themeId }
 			/>
 		);
@@ -914,7 +917,9 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
+		const { download, isWpcomTheme, siteSlug, taxonomies, themeTier } = this.props;
+
+		const showDownloadCard = download && 'free' === themeTier?.slug;
 
 		return (
 			<div>
@@ -927,7 +932,7 @@ class ThemeSheet extends Component {
 						onClick={ this.trackFeatureClick }
 					/>
 				</div>
-				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
+				{ showDownloadCard && <ThemeDownloadCard href={ download } /> }
 			</div>
 		);
 	};
@@ -1175,6 +1180,7 @@ class ThemeSheet extends Component {
 			tier,
 			selectedStyleVariationSlug: styleVariationSlug,
 			themeType,
+			siteCount,
 			siteId,
 			themeTier,
 		} = this.props;
@@ -1193,14 +1199,17 @@ class ThemeSheet extends Component {
 						  } )
 						: null
 				}
-				onClick={ () => {
+				onClick={ ( event ) => {
+					const action = shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ? 'selectSite' : key;
+
 					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
 						theme: this.props.themeId,
 						theme_type: themeType,
-						...( key && { action: key } ),
+						theme_tier: themeTier?.slug,
+						...( action && { action } ),
 					} );
 
-					this.onButtonClick();
+					this.onButtonClick( event );
 				} }
 				primary
 				disabled={ this.state.disabledButton }
@@ -1338,6 +1347,7 @@ class ThemeSheet extends Component {
 		const section = this.validateSection( this.props.section );
 		const {
 			themeId,
+			siteCount,
 			siteId,
 			siteSlug,
 			retired,
@@ -1354,6 +1364,7 @@ class ThemeSheet extends Component {
 			isThemeActivationSyncStarted,
 			isWpcomTheme,
 			isThemeAllowed,
+			successNotice: showSuccessNotice,
 			themeTier,
 		} = this.props;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1438,7 +1449,10 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme && isLoggedIn && siteId ) {
+		if (
+			shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ||
+			( isExternallyManagedTheme && isLoggedIn && siteId )
+		) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
@@ -1464,6 +1478,7 @@ class ThemeSheet extends Component {
 				upsellNudgePlan =
 					isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			}
+			const upsellNudgeFeature = themeTier?.feature;
 
 			pageUpsellBanner = (
 				<UpsellNudge
@@ -1472,7 +1487,7 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED }
+					feature={ upsellNudgeFeature }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
 					onClick={ null === onClick ? noop : onClick }
@@ -1480,17 +1495,28 @@ class ThemeSheet extends Component {
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 					displayAsLink={ onClick !== null }
+					tracksClickProperties={ { theme_tier: themeTier?.slug } }
 				/>
 			);
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			const themeInstallationURL = `/marketplace/theme/${ themeId }/install/${ siteSlug }`;
+			const onThemeUpsellPlanClick = ( event ) => {
+				if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
+					event?.preventDefault();
+					this.setState( { isSiteSelectorModalVisible: true } );
+					return;
+				}
+
+				this.props.setProductToBeInstalled( themeId, siteSlug );
+			};
+			const disableHref = shouldSelectSite( { isLoggedIn, siteCount, siteId } );
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					onClick={ () => this.props.setProductToBeInstalled( themeId, siteSlug ) }
+					onClick={ onThemeUpsellPlanClick }
 					title={ translate( 'Access this third-party theme with the %(businessPlanName)s plan!', {
 						args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
 					} ) }
@@ -1500,7 +1526,8 @@ class ThemeSheet extends Component {
 							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
 						)
 					) }
-					forceHref
+					forceHref={ ! disableHref }
+					disableHref={ disableHref }
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
 					href={
@@ -1511,7 +1538,11 @@ class ThemeSheet extends Component {
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
-					tracksClickProperties={ { theme_id: themeId, theme_name: themeName } }
+					tracksClickProperties={ {
+						theme_id: themeId,
+						theme_name: themeName,
+						theme_tier: themeTier?.slug,
+					} }
 				/>
 			);
 		}
@@ -1554,6 +1585,30 @@ class ThemeSheet extends Component {
 						<QueryActiveTheme siteId={ siteId } />
 					) /* TODO: Make QueryActiveTheme handle falsey siteId */
 				}
+				<ThemeSiteSelectorModal
+					isOpen={ this.state.isSiteSelectorModalVisible }
+					onClose={ ( args ) => {
+						this.setState( { isSiteSelectorModalVisible: false } );
+
+						if ( args?.siteTitle ) {
+							showSuccessNotice(
+								translate( 'You have selected the site {{strong}}%(siteTitle)s{{/strong}}.', {
+									args: { siteTitle: args.siteTitle },
+									components: { strong: <strong /> },
+									comment:
+										'On the theme details page, notification shown to the user after they choose one of their sites to activate the selected theme',
+								} ),
+								{
+									button: translate( 'Choose a different site', {
+										comment:
+											'On the theme details page, notification shown to the user offering them the option to choose a different site before activating the selected theme',
+									} ),
+									onClick: () => this.setState( { isSiteSelectorModalVisible: true } ),
+								}
+							);
+						}
+					} }
+				/>
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<ActivationModal source="details" />
 				<div className="theme__sheet-action-bar-container">
@@ -1747,6 +1802,7 @@ export default connect(
 			isWpcomStaging,
 			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
+			siteCount: getCurrentUserSiteCount( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
 			isAtomic,
@@ -1789,6 +1845,7 @@ export default connect(
 	},
 	{
 		setThemePreviewOptions,
+		successNotice,
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,

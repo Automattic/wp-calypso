@@ -1,3 +1,4 @@
+import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import {
@@ -14,9 +15,10 @@ import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-ca
 import getContactDetailsType from 'calypso/my-sites/checkout/src/lib/get-contact-details-type';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
@@ -127,6 +129,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	};
 
 	const { stripe, stripeConfiguration } = useStripe();
+	const { razorpayConfiguration } = useRazorpay();
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate } =
@@ -136,6 +139,15 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		type: 'card',
 	} );
 	const countries = useCountryList();
+
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isJetpackNotAtomic = useSelector(
+		( state ) =>
+			!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
+	);
+	const isAkismetSitelessCheckout = responseCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 
 	const cards = paymentMethodsState.paymentMethods.filter( isCreditCard );
 	const contactDetailsType = getContactDetailsType( responseCart );
@@ -148,12 +160,15 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			getThankYouUrl: () => '/plans',
 			includeDomainDetails,
 			includeGSuiteDetails,
+			isAkismetSitelessCheckout,
+			isJetpackNotAtomic,
 			reduxDispatch,
 			responseCart,
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			contactDetails: {
 				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
 				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
@@ -165,9 +180,12 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			includeGSuiteDetails,
 			stripe,
 			stripeConfiguration,
+			razorpayConfiguration,
 			reduxDispatch,
 			selectedSite,
 			responseCart,
+			isAkismetSitelessCheckout,
+			isJetpackNotAtomic,
 		]
 	);
 

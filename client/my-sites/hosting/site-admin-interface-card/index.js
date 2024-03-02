@@ -1,12 +1,12 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -35,14 +35,15 @@ const FormRadioStyled = styled( FormRadio )( {
 
 const SiteAdminInterfaceCard = ( { siteId } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
 	const removeAllNotices = () => {
 		dispatch( removeNotice( successNoticeId ) );
 		dispatch( removeNotice( failureNoticeId ) );
 		dispatch( removeNotice( changeLoadingNoticeId ) );
 	};
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	const adminInterface = useSelector(
+		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso'
 	);
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
@@ -74,9 +75,7 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 	} );
 
 	// Initialize the state with the value passed as a prop
-	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState(
-		adminInterface ?? 'calypso'
-	);
+	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState( adminInterface );
 
 	const handleInputChange = async ( value ) => {
 		dispatch(
@@ -87,12 +86,6 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 		setSiteInterface( value );
 		setSelectedAdminInterface( value );
 	};
-
-	useEffect( () => {
-		if ( adminInterface ) {
-			setSelectedAdminInterface( adminInterface );
-		}
-	}, [ adminInterface ] );
 
 	return (
 		<Card>
@@ -116,20 +109,6 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 			<FormFieldset>
 				<FormLabel>
 					<FormRadioStyled
-						label={ translate( 'Default style' ) }
-						value="calypso"
-						checked={ selectedAdminInterface === 'calypso' }
-						onChange={ ( event ) => handleInputChange( event.target.value ) }
-						disabled={ isUpdating }
-					/>
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate( 'The WordPress.com redesign for a better experience.' ) }
-				</FormSettingExplanation>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>
-					<FormRadioStyled
 						label={ translate( 'Classic style' ) }
 						value="wp-admin"
 						checked={ selectedAdminInterface === 'wp-admin' }
@@ -138,7 +117,25 @@ const SiteAdminInterfaceCard = ( { siteId } ) => {
 					/>
 				</FormLabel>
 				<FormSettingExplanation>
-					{ translate( 'The classic WP-Admin WordPress interface.' ) }
+					{ hasEnTranslation( 'Use WP-Admin to manage your site.' )
+						? translate( 'Use WP-Admin to manage your site.' )
+						: translate( 'The classic WP-Admin WordPress interface.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					<FormRadioStyled
+						label={ translate( 'Default style' ) }
+						value="calypso"
+						checked={ selectedAdminInterface === 'calypso' }
+						onChange={ ( event ) => handleInputChange( event.target.value ) }
+						disabled={ isUpdating }
+					/>
+				</FormLabel>
+				<FormSettingExplanation>
+					{ hasEnTranslation( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						? translate( 'Use WordPress.com’s legacy dashboard to manage your site.' )
+						: translate( 'The WordPress.com redesign for a better experience.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</Card>

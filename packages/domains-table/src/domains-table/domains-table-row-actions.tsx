@@ -113,7 +113,7 @@ export const DomainsTableRowActions = ( {
 			),
 			canConnectDomainToASite && (
 				<MenuItemLink href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }>
-					{ __( 'Connect to an existing site' ) }
+					{ __( 'Attach to an existing site' ) }
 				</MenuItemLink>
 			),
 			canChangeSiteAddress && (

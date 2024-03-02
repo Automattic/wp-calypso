@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -51,11 +50,6 @@ const sanitizeMenuItem = ( menuItem, siteSlug, wpAdminUrl ) => {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
 			sanitizeMenuItem( subMenuItem, siteSlug, wpAdminUrl )
 		);
-	}
-
-	// Enable the import page if the feature option is on.
-	if ( menuItem.slug === 'import-php' && isEnabled( 'importer/unified' ) ) {
-		menuItem.url = `/import/${ siteSlug }`;
 	}
 
 	return {

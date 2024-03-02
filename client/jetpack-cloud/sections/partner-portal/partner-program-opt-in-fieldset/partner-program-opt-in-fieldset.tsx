@@ -1,10 +1,9 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, FormLabel, Popover } from '@automattic/components';
 import { Icon, info, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useRef, useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 
 import './style.scss';
 

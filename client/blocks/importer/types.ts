@@ -14,6 +14,7 @@ export type StepNavigator = {
 	goToIntentPage?: () => void;
 	goToGoalsPage?: () => void;
 	goToImportCapturePage?: () => void;
+	goToImportContentOnlyPage?: () => void;
 	goToSiteViewPage?: () => void;
 	goToDashboardPage?: () => void;
 	goToCheckoutPage?: ( option: WPImportOption, queryArgs?: object ) => void;

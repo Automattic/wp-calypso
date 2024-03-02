@@ -48,16 +48,16 @@ function getPlanFromRecurType( recurType: string ) {
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
-	useSteps() {
-		const recurType = useSelect(
+	isSignupFlow: true,
+	useSignupStartEventProps() {
+		const recur = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
 			[]
 		);
 
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
-		}, [] );
-
+		return { recur };
+	},
+	useSteps() {
 		return [
 			{
 				slug: 'storeProfiler',
@@ -69,8 +69,8 @@ const ecommerceFlow: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -226,9 +226,9 @@ const ecommerceFlow: Flow = {
 						] );
 						resetStorageAddonSlug();
 					}
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':

@@ -14,3 +14,4 @@ export { default as refreshCountryCodeCookieGdpr } from './refresh-country-code-
 export { default as shouldSeeCookieBanner } from './should-see-cookie-banner';
 export { mayWeTrackUserGpcInCcpaRegion, isGpcFlagSetOptOut } from './is-gpc-flag-set';
 export { default as useDoNotSell } from './use-do-not-sell';
+export { default as mayWeSessionTrack } from './may-we-session-track';

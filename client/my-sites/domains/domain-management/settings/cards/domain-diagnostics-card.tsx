@@ -63,55 +63,59 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 		setIsDismissEmailDnsIssuesDialogVisible( false );
 	};
 
-	const renderDiagnosticForRecord = ( record: string ) => {
-		const uppercaseRecord = record.toUpperCase();
-		const records = emailDnsDiagnostics.records;
+	const renderDiagnosticForRecordType = (
+		type: string,
+		status: string,
+		message: string,
+		correct_record: string | null
+	) => {
+		return (
+			<li key={ type }>
+				{ message }
+				{ correct_record ? (
+					<p>
+						<code>{ correct_record }</code>
+					</p>
+				) : null }
+			</li>
+		);
+	};
 
-		if ( records[ record ].status === 'incorrect' ) {
-			return (
-				<li key={ record }>
-					{ sprintf(
-						/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
-						translate(
-							'Your %(dnsRecordType)s record is incorrect. The correct record should be:'
-						),
-						{
-							dnsRecordType: uppercaseRecord,
-						}
-					) }
-					<p>
-						<code>{ records[ record ].correct_record }</code>
-					</p>
-				</li>
+	const renderDiagnosticForRecord = ( recordType: string ) => {
+		const uppercaseRecord = recordType.toUpperCase();
+		const records = emailDnsDiagnostics.records;
+		let message: string | null = null;
+
+		if ( records[ recordType ].error_message ) {
+			message = records[ recordType ].error_message ?? null;
+		} else if ( records[ recordType ].status === 'incorrect' ) {
+			message = sprintf(
+				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				translate( 'Your %(dnsRecordType)s record is incorrect. The correct record should be:' ),
+				{
+					dnsRecordType: uppercaseRecord,
+				}
 			);
-		} else if ( records[ record ].status === 'not_found' ) {
-			return (
-				<li key={ record }>
-					{ sprintf(
-						/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
-						translate( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
-						{
-							dnsRecordType: uppercaseRecord,
-						}
-					) }
-					<p>
-						<code>{ records[ record ].correct_record }</code>
-					</p>
-				</li>
+		} else if ( records[ recordType ].status === 'not_found' ) {
+			message = sprintf(
+				/* translators: dnsRecordType is a DNS record type, e.g. SPF, DKIM or DMARC */
+				translate( 'There is no %(dnsRecordType)s record. The correct record should be:' ),
+				{
+					dnsRecordType: uppercaseRecord,
+				}
+			);
+		}
+
+		if ( message ) {
+			return renderDiagnosticForRecordType(
+				recordType,
+				records[ recordType ].status,
+				message,
+				records[ recordType ].correct_record ?? null
 			);
 		}
 
 		return null;
-	};
-
-	const renderFixInstructions = () => {
-		return (
-			<p>
-				{ translate(
-					"To fix these issues, you should go to your domain's DNS provider and add the records above to your domain's DNS settings."
-				) }
-			</p>
-		);
 	};
 
 	const fixDnsIssues = () => {
@@ -128,7 +132,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			.then( () => {
 				dispatch(
 					successNotice(
-						translate( 'The default email DNS records were successfully fixed!' ),
+						translate( 'The default email DNS records were successfully restored!' ),
 						noticeOptions
 					)
 				);
@@ -149,19 +153,6 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			} );
 	};
 
-	const renderFixButton = () => {
-		return (
-			<Button
-				busy={ isRestoringDefaultRecords }
-				disabled={ isRestoringDefaultRecords }
-				onClick={ fixDnsIssues }
-				primary
-			>
-				{ translate( 'Fix DNS issues automatically' ) }
-			</Button>
-		);
-	};
-
 	const noticeText = translate(
 		'If you use this domain name to send email from your WordPress.com website, the following email records are required. {{a}}Learn more{{/a}}.',
 		{
@@ -170,6 +161,31 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 			},
 		}
 	);
+
+	const renderFixInstructions = () => {
+		if ( ! emailDnsDiagnostics.is_using_wpcom_name_servers ) {
+			return (
+				<p>
+					{ translate(
+						"To fix these issues, you should go to your domain's DNS provider and add the records above to your domain's DNS settings."
+					) }
+				</p>
+			);
+		}
+
+		if ( emailDnsDiagnostics.should_offer_automatic_fixes ) {
+			return (
+				<Button
+					busy={ isRestoringDefaultRecords }
+					disabled={ isRestoringDefaultRecords }
+					onClick={ fixDnsIssues }
+					primary
+				>
+					{ translate( 'Fix DNS issues automatically' ) }
+				</Button>
+			);
+		}
+	};
 
 	return (
 		<>
@@ -194,9 +210,7 @@ export default function DomainDiagnosticsCard( { domain }: { domain: ResponseDom
 						) }
 					</Notice>
 					<ul>{ recordsToCheck.map( renderDiagnosticForRecord ) }</ul>
-					{ emailDnsDiagnostics.is_using_wpcom_name_servers
-						? renderFixButton()
-						: renderFixInstructions() }
+					{ renderFixInstructions() }
 				</div>
 			</Accordion>
 		</>

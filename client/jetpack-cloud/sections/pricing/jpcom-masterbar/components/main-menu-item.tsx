@@ -33,6 +33,16 @@ const MainMenuItem: FC< MainMenuItemProps > = ( { section, bundles } ) => {
 		};
 	}, [] );
 
+	useEffect( () => {
+		// Toggle scrolling based on menu state.
+		document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+
+		return () => {
+			// Ensure that scrolling is enabled when the component unmounts. Example where this can happen without the click action: user hits the escape key.
+			document.body.style.overflow = 'auto';
+		};
+	}, [ isOpen ] );
+
 	if ( ! section ) {
 		return <></>;
 	}

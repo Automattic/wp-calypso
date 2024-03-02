@@ -11,7 +11,6 @@ import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import {
@@ -33,7 +32,7 @@ import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import { WithAtomicTransfer } from './with-atomic-transfer';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteTableRowProps {
 	site: SiteExcerptData;
@@ -44,7 +43,7 @@ const Row = styled.tr`
 	border-block-end: 1px solid #eee;
 `;
 
-const Column = styled.td< { mobileHidden?: boolean } >`
+const Column = styled.td< { tabletHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 24px;
@@ -57,8 +56,8 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	overflow: hidden;
 	text-overflow: ellipsis;
 
-	${ MEDIA_QUERIES.mediumOrSmaller } {
-		${ ( props ) => props.mobileHidden && 'display: none;' };
+	${ MEDIA_QUERIES.hideTableRows } {
+		${ ( props ) => props.tabletHidden && 'display: none;' };
 		padding-inline-end: 0;
 	}
 
@@ -70,13 +69,13 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 const SiteListTile = styled( ListTile )`
 	margin-inline-end: 0;
 
-	${ MEDIA_QUERIES.mediumOrSmaller } {
+	${ MEDIA_QUERIES.hideTableRows } {
 		margin-inline-end: 12px;
 	}
 `;
 
 const ListTileLeading = styled( ThumbnailLink )`
-	${ MEDIA_QUERIES.mediumOrSmaller } {
+	${ MEDIA_QUERIES.hideTableRows } {
 		margin-inline-end: 12px;
 	}
 `;
@@ -152,7 +151,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
-	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site.ID ) );
 
 	const hasStatsLoadingError = useSelector( ( state ) => {
 		const siteId = site.ID;
@@ -160,6 +158,14 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		const statType = 'statsInsights';
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
+
+	const computeDashboardUrl = ( site: SiteExcerptData ) => {
+		if ( siteDefaultInterface( site ) === 'wp-admin' ) {
+			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
+		}
+		return getDashboardUrl( site.slug );
+	};
+	const dashboardUrl = computeDashboardUrl( site );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -174,27 +180,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						min-width: 0;
 					` }
 					leading={
-						<ListTileLeading
-							href={
-								isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
-									? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
-									: getDashboardUrl( site.slug )
-							}
-							title={ __( 'Visit Dashboard' ) }
-						>
+						<ListTileLeading href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
 							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
 						</ListTileLeading>
 					}
 					title={
 						<ListTileTitle>
-							<SiteName
-								href={
-									isAtomicSite && siteDefaultInterface( site ) === 'wp-admin'
-										? getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug )
-										: getDashboardUrl( site.slug )
-								}
-								title={ __( 'Visit Dashboard' ) }
-							>
+							<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
@@ -213,10 +205,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 				/>
 			</Column>
-			<Column mobileHidden>
+			<Column tabletHidden>
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
-			<Column mobileHidden>
+			<Column tabletHidden>
 				<WithAtomicTransfer site={ site }>
 					{ ( result ) =>
 						result.wasTransferring ? (
@@ -230,10 +222,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 				</WithAtomicTransfer>
 			</Column>
-			<Column mobileHidden>
+			<Column tabletHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<StatsColumnStyled mobileHidden>
+			<StatsColumnStyled tabletHidden>
 				{ inView && (
 					<>
 						{ hasStatsLoadingError ? (

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_AD_FREE_EXPERIENCE,
@@ -29,13 +28,12 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
-import { englishLocales } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon as WpIcon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
@@ -376,13 +374,8 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getPersonalPlanFeatureList = () => {
-		const localeSlug = i18n.getLocaleSlug();
-		const shouldShowThemesFeature =
-			config.isEnabled( 'themes/tiers' ) &&
-			( ( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Dozens of premium themes' ) );
 		return getPlanFeaturesObject( [
-			...( shouldShowThemesFeature ? [ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ] : [] ),
+			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
@@ -439,10 +432,7 @@ export const ThemeUpgradeModal = ( {
 		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
 			args: { businessPlanName: businessPlanName },
 		} );
-	} else if (
-		config.isEnabled( 'themes/tiers' ) &&
-		theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED
-	) {
+	} else if ( theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ) {
 		modalData = getPersonalPlanModalData();
 		featureList = getPersonalPlanFeatureList();
 		featureListHeader = translate( 'Included with your %(plan)s plan', {

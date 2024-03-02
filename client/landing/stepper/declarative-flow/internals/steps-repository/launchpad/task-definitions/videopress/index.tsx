@@ -1,10 +1,9 @@
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { isVideoPressFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
-import { recordTaskClickTracksEvent } from '../../tracking';
 import { TaskAction } from '../../types';
 
-const getVideoPressUploadTask: TaskAction = ( task, flow, context ) => {
+export const getVideoPressUploadTask: TaskAction = ( task, flow, context ) => {
 	const { site, siteSlug, tasks, planCartItem } = context;
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
@@ -32,10 +31,7 @@ const getVideoPressUploadTask: TaskAction = ( task, flow, context ) => {
 		...task,
 		actionUrl: launchpadUploadVideoLink,
 		disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
-		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
-		},
-		returnUrl: launchpadUploadVideoLink,
+		calypso_path: launchpadUploadVideoLink,
 		useCalypsoPath: true,
 	};
 };

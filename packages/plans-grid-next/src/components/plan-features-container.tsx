@@ -1,5 +1,5 @@
 import { JetpackLogo } from '@automattic/components';
-import { LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { DataResponse, GridPlan } from '../types';
 import PlanFeatures2023GridFeatures from './features';
@@ -10,7 +10,6 @@ const PlanFeaturesContainer: React.FC< {
 	plansWithFeatures: GridPlan[];
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
-	translate: LocalizeProps[ 'translate' ];
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
@@ -19,13 +18,13 @@ const PlanFeaturesContainer: React.FC< {
 	plansWithFeatures,
 	paidDomainName,
 	generatedWPComSubdomain,
-	translate,
 	hideUnavailableFeatures,
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
 	isTableCell,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+	const translate = useTranslate();
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {

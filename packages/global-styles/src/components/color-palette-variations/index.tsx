@@ -70,7 +70,7 @@ const ColorPaletteVariation = ( {
 						<div className="global-styles-variation__item-preview" ref={ ref }>
 							{ ( isActive || inView ) && (
 								<GlobalStylesContext.Provider value={ context }>
-									<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
+									<ColorPaletteVariationPreview />
 								</GlobalStylesContext.Provider>
 							) }
 						</div>

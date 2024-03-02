@@ -1,4 +1,5 @@
 import { Button, Spinner } from '@automattic/components';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
@@ -11,6 +12,8 @@ import {
 	getCurrentPartner,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
+
+import './style.scss';
 
 export default function PartnerAccess() {
 	const dispatch = useDispatch();
@@ -28,7 +31,24 @@ export default function PartnerAccess() {
 		);
 	};
 
+	const onManageSignUpClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_partner_access_error_manage_sign_up_click' )
+		);
+	};
+
 	useReturnUrl( hasPartner );
+
+	const manageSignUpLink = () => {
+		const returnString = String( getQueryArg( window.location.href, 'return' ) );
+		let signUpLink = '/manage/signup';
+		if ( returnString.includes( 'source=manage-pricing-page' ) ) {
+			const newString = returnString.replace( '/partner-portal/issue-license', '' );
+			signUpLink = `/manage/signup${ newString }`;
+		}
+
+		return signUpLink;
+	};
 
 	return (
 		<Main className="partner-access">
@@ -39,13 +59,28 @@ export default function PartnerAccess() {
 			{ isFetching && <Spinner /> }
 
 			{ showError && (
-				<div className="partner-access__error">
-					<p>{ translate( 'Your account is not registered as a partner account.' ) }</p>
+				<>
+					<div className="partner-access__error">
+						<p>{ translate( 'Your account is not registered as a partner account.' ) }</p>
 
-					<Button href="/" onClick={ onManageSitesClick } primary>
-						{ translate( 'Manage Sites' ) }
-					</Button>
-				</div>
+						<Button href="/" onClick={ onManageSitesClick } primary>
+							{ translate( 'Manage Sites' ) }
+						</Button>
+					</div>
+					<div className="partner-access__signup">
+						<p>
+							{ translate( '{{link}}Learn more{{/link}} about Jetpack Manage.', {
+								components: {
+									link: <a href="https://jetpack.com/manage/" />,
+								},
+							} ) }
+						</p>
+
+						<Button href={ manageSignUpLink() } onClick={ onManageSignUpClick } primary>
+							{ translate( 'Sign up for Jetpack Manage' ) }
+						</Button>
+					</div>
+				</>
 			) }
 		</Main>
 	);

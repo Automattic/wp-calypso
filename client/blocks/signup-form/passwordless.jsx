@@ -1,7 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -29,6 +28,10 @@ class PasswordlessSignupForm extends Component {
 		submitButtonLabel: PropTypes.string,
 		submitButtonLoadingLabel: PropTypes.string,
 		userEmail: PropTypes.string,
+		labelText: PropTypes.string,
+		isInviteLoggedOutForm: PropTypes.bool,
+		onInputBlur: PropTypes.func,
+		onInputChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -62,10 +65,6 @@ class PasswordlessSignupForm extends Component {
 			return;
 		}
 
-		this.setState( {
-			isSubmitting: true,
-		} );
-
 		// Save form state in a format that is compatible with the standard SignupForm used in the user step.
 		const form = {
 			firstName: '',
@@ -74,14 +73,28 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
+		const { flowName, queryArgs = {} } = this.props;
+
+		// If not in a flow, submit the form as a standard signup form.
+		// Since it is a passwordless form, we don't need to submit a password.
+		if ( flowName === '' && this.props.submitForm ) {
+			this.props.submitForm( {
+				email: this.state.email,
+				is_passwordless: true,
+				is_dev_account: queryArgs.ref === 'developer-lp',
+			} );
+			return;
+		}
+		this.setState( {
+			isSubmitting: true,
+		} );
 
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			form,
 		} );
 
-		const { flowName, queryArgs = {} } = this.props;
-		const { oauth2_client_id, oauth2_redirect } = queryArgs;
+		const { oauth2_client_id, oauth2_redirect, ref } = queryArgs;
 
 		try {
 			const response = await wpcom.req.post( '/users/new', {
@@ -97,10 +110,12 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
+				is_dev_account: ref === 'developer-lp',
 			} );
+
 			this.createAccountCallback( response );
-		} catch ( err ) {
-			this.createAccountError( err );
+		} catch ( error ) {
+			this.createAccountError( error );
 		}
 	};
 
@@ -234,12 +249,21 @@ class PasswordlessSignupForm extends Component {
 		}
 	}, 1000 );
 
-	onInputChange = ( { target: { value } } ) => {
+	onInputChange = ( event ) => {
+		const {
+			target: { value },
+		} = event;
+
 		this.debouncedEmailSuggestion( value );
 		this.setState( {
 			email: value,
 			errorMessages: null,
 		} );
+		this.props.onInputChange?.( event );
+	};
+
+	onInputBlur = ( event ) => {
+		this.props.onInputBlur?.( event );
 	};
 
 	renderNotice() {
@@ -289,6 +313,18 @@ class PasswordlessSignupForm extends Component {
 		return this.props.labelText ?? this.props.translate( 'Enter your email address' );
 	}
 
+	getFormButtonAndToS() {
+		return this.props.isInviteLoggedOutForm ? (
+			<>
+				{ this.formFooter() } { this.props.renderTerms?.() }
+			</>
+		) : (
+			<>
+				{ this.props.renderTerms?.() } { this.formFooter() }
+			</>
+		);
+	}
+
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
 
@@ -306,14 +342,15 @@ class PasswordlessSignupForm extends Component {
 							id="signup-email"
 							value={ this.state.email }
 							onChange={ this.onInputChange }
+							onBlur={ this.onInputBlur }
 							disabled={ isSubmitting || !! this.props.disabled }
 							placeholder={ this.props.inputPlaceholder }
 							// eslint-disable-next-line jsx-a11y/no-autofocus -- It's the only field on the page
 							autoFocus
 						/>
+						{ this.props.children }
 					</ValidationFieldset>
-					{ this.props.renderTerms?.() }
-					{ this.formFooter() }
+					{ this.getFormButtonAndToS() }
 				</LoggedOutForm>
 			</div>
 		);

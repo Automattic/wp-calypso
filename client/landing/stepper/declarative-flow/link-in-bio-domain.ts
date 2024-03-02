@@ -28,6 +28,7 @@ const linkInBioDomain: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: true,
 	variantSlug: LINK_IN_BIO_DOMAIN_FLOW,
 	useAssertConditions: () => {
 		const { domain } = useDomainParams();
@@ -54,8 +55,8 @@ const linkInBioDomain: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -111,10 +112,10 @@ const linkInBioDomain: Flow = {
 							product_slug: PLAN_PERSONAL,
 						} );
 					}
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 				}
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {

@@ -25,7 +25,7 @@
 .signup-form__terms-of-service-link {
 	font-size: $font-body-extra-small;
 	margin: 0 0 20px;
-	text-align: center;
+	text-align: left;
 
 	a {
 		@include breakpoint-deprecated(">480px") {

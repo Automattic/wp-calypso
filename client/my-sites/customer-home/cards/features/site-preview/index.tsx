@@ -79,6 +79,7 @@ const SitePreview = ( {
 		  } )
 		: '#';
 
+	// We use an iframe rather than mShot to not cache changes.
 	const iframeSrcKeepHomepage = wpcomDomain
 		? `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`
 		: '#';

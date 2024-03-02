@@ -1,5 +1,5 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import FormLabel from 'calypso/components/forms/form-label';
 import { RelatedPostsSetting as RelatedPostsFormFieldset } from 'calypso/my-sites/site-settings/related-posts';
 
 type RelatedPostsFields = {
@@ -28,7 +28,9 @@ export const RelatedPostsSetting = ( {
 	const translate = useTranslate();
 	return (
 		<>
-			<FormLabel id="related-posts-settings">{ translate( 'Related Posts' ) }</FormLabel>
+			<FormLabel id="related-posts-settings" className="increase-margin-bottom-fix">
+				{ translate( 'Related Posts' ) }
+			</FormLabel>
 			<RelatedPostsFormFieldset
 				fields={ fields }
 				handleToggle={ handleToggle }

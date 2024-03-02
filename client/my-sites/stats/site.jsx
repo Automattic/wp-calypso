@@ -27,7 +27,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import memoizeLast from 'calypso/lib/memoize-last';
-import version_compare from 'calypso/lib/version-compare';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -38,7 +37,9 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -52,12 +53,12 @@ import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
 import StatsModuleEmails from './stats-module-emails';
+import StatsModuleUTM from './stats-module-utm';
 import StatsNotices from './stats-notices';
 import PageViewTracker from './stats-page-view-tracker';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
-import StatsRedirectFlow from './stats-reditect-flow';
 import statsStrings from './stats-strings';
 import StatsUpsellModal from './stats-upsell-modal';
 import { getPathWithUpdatedQueryString } from './utils';
@@ -200,15 +201,19 @@ class StatsSite extends Component {
 			date,
 			siteId,
 			slug,
+			isAtomic,
 			isJetpack,
 			isSitePrivate,
 			isOdysseyStats,
 			context,
 			moduleSettings,
-			statsAdminVersion,
+			supportsPlanUsage,
+			supportsEmailStats,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
+
+		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -295,19 +300,14 @@ class StatsSite extends Component {
 			{
 				'stats__module-list--traffic-no-authors': this.isModuleHidden( 'authors' ),
 				'stats__module-list--traffic-no-videos': this.isModuleHidden( 'videos' ),
+			},
+			{
+				'stats__flexible-grid-container': config.isEnabled( 'stats/flexible-grid' ),
 			}
-		);
-
-		// The Plan Usage API endpoint would not be available for Odyssey Stats before Jetpack version `0.15.0-alpha`.
-		const isPlanUsageEnabled = !! (
-			config.isEnabled( 'stats/plan-usage' ) &&
-			( ! isOdysseyStats ||
-				( statsAdminVersion && version_compare( statsAdminVersion, '0.15.0-alpha', '>=' ) ) )
 		);
 
 		return (
 			<div className="stats">
-				<StatsRedirectFlow />
 				{ ! isOdysseyStats && (
 					<div className="stats-banner-wrapper">
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
@@ -317,7 +317,7 @@ class StatsSite extends Component {
 					className="stats__section-header modernized-header"
 					title={ translate( 'Jetpack Stats' ) }
 					subtitle={ translate(
-						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
@@ -399,6 +399,11 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
+							className={ classNames(
+								'stats__flexible-grid-item--60',
+								'stats__flexible-grid-item--full--large',
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 						<StatsModule
 							path="referrers"
@@ -407,6 +412,11 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
+							className={ classNames(
+								'stats__flexible-grid-item--40--once-space',
+								'stats__flexible-grid-item--full--large',
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 
 						<Countries
@@ -414,7 +424,50 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
+							className={ classNames( 'stats__flexible-grid-item--full' ) }
 						/>
+
+						{ config.isEnabled( 'stats/utm-module' ) && (
+							<>
+								<StatsModuleUTM
+									siteId={ siteId }
+									period={ this.props.period }
+									query={ query }
+									className={ classNames(
+										'stats__flexible-grid-item--60',
+										'stats__flexible-grid-item--full--large',
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+								<StatsModule
+									path="clicks"
+									moduleStrings={ moduleStrings.clicks }
+									period={ this.props.period }
+									query={ query }
+									statType="statsClicks"
+									showSummaryLink
+									className={ classNames(
+										'stats__flexible-grid-item--40--once-space',
+										'stats__flexible-grid-item--full--large',
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+								{ supportsEmailStats && (
+									<StatsModuleEmails
+										period={ this.props.period }
+										query={ query }
+										className={ classNames(
+											{
+												'stats__flexible-grid-item--half': ! this.isModuleHidden( 'authors' ),
+												'stats__flexible-grid-item--full': this.isModuleHidden( 'authors' ),
+											},
+											'stats__flexible-grid-item--full--large',
+											'stats__flexible-grid-item--full--medium'
+										) }
+									/>
+								) }
+							</>
+						) }
 
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
@@ -423,7 +476,21 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsTopAuthors"
-								className="stats__author-views"
+								className={ classNames(
+									{
+										'stats__author-views': ! config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--half--large':
+											! config.isEnabled( 'stats/utm-module' ),
+									},
+									{
+										'stats__flexible-grid-item--half': config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--half--large':
+											config.isEnabled( 'stats/utm-module' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
 								showSummaryLink
 							/>
 						) }
@@ -435,16 +502,43 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
+							className={ classNames(
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										! this.isModuleHidden( 'authors' ) && ! config.isEnabled( 'stats/utm-module' ),
+									'stats__flexible-grid-item--half--large':
+										! this.isModuleHidden( 'authors' ) && ! config.isEnabled( 'stats/utm-module' ),
+									'stats__flexible-grid-item--half':
+										this.isModuleHidden( 'authors' ) && ! config.isEnabled( 'stats/utm-module' ),
+								},
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										config.isEnabled( 'stats/utm-module' ),
+									'stats__flexible-grid-item--half--large': config.isEnabled( 'stats/utm-module' ),
+								},
+								'stats__flexible-grid-item--full--medium'
+							) }
 						/>
 
-						<StatsModule
-							path="clicks"
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							statType="statsClicks"
-							showSummaryLink
-						/>
+						{ ! config.isEnabled( 'stats/utm-module' ) && (
+							<StatsModule
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+								className={ classNames(
+									{
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! this.isModuleHidden( 'authors' ),
+										'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
@@ -453,10 +547,33 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
+								className={ classNames(
+									{
+										'stats__flexible-grid-item--half': ! config.isEnabled( 'stats/utm-module' ),
+									},
+									{
+										'stats__flexible-grid-item--one-third--two-spaces':
+											config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--half--large':
+											config.isEnabled( 'stats/utm-module' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
 							/>
 						) }
-						{ ! isOdysseyStats && (
-							<StatsModuleEmails period={ this.props.period } query={ query } />
+						{ supportsEmailStats && ! config.isEnabled( 'stats/utm-module' ) && (
+							<StatsModuleEmails
+								period={ this.props.period }
+								query={ query }
+								className={ classNames(
+									{
+										'stats__flexible-grid-item--half': ! this.isModuleHidden( 'videos' ),
+										'stats__flexible-grid-item--full': this.isModuleHidden( 'videos' ),
+									},
+									'stats__flexible-grid-item--full--large',
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -471,16 +588,30 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
+									className={ classNames(
+										{
+											'stats__flexible-grid-item--half': ! config.isEnabled( 'stats/utm-module' ),
+											'stats__flexible-grid-item--full--large':
+												! config.isEnabled( 'stats/utm-module' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												config.isEnabled( 'stats/utm-module' ),
+											'stats__flexible-grid-item--half--large':
+												config.isEnabled( 'stats/utm-module' ),
+										},
+										'stats__flexible-grid-item--full--medium'
+									) }
 								/>
 							)
 						}
 					</div>
 				</div>
-				{ isPlanUsageEnabled && (
+				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 				) }
-				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
-				{ ! isOdysseyStats ? null : (
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats excluding Atomic */ }
+				{ ! shouldShowUpsells ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
@@ -559,7 +690,7 @@ class StatsSite extends Component {
 				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 					<QuerySiteFeatures siteIds={ [ siteId ] } />
 				) }
-				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
 						<QueryKeyringConnections />
@@ -615,9 +746,14 @@ export default connect(
 		const slug = getSelectedSiteSlug( state );
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+		const { supportsPlanUsage, supportsEmailStats } = getEnvStatsFeatureSupportChecks(
+			state,
+			siteId
+		);
 
 		return {
 			canUserViewStats,
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
@@ -629,6 +765,8 @@ export default connect(
 			moduleToggles: getModuleToggles( state, siteId, 'traffic' ),
 			upsellModalView,
 			statsAdminVersion,
+			supportsEmailStats,
+			supportsPlanUsage,
 		};
 	},
 	{

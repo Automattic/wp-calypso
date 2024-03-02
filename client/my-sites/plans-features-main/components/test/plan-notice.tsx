@@ -152,7 +152,7 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'We’ve applied the $100.00 upgrade credit from your current plan as a deduction to your new plan, below. This remaining credit will be applied at checkout if you upgrade today!'
+			'You have $100.00 in upgrade credits available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
 		);
 	} );
 

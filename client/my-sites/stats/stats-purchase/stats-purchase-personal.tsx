@@ -53,6 +53,7 @@ const PersonalPurchase = ( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ isPostponeBusy, setPostponeBusy ] = useState( false );
 	const {
 		sliderStepPrice,
 		minSliderPrice,
@@ -134,6 +135,8 @@ const PersonalPurchase = ( {
 	};
 
 	const handleCheckoutPostponed = () => {
+		setPostponeBusy( true );
+
 		mutateNoticeVisbilityAsync()
 			.then( refetchNotices )
 			.finally( () => {
@@ -142,7 +145,10 @@ const PersonalPurchase = ( {
 				recordTracksEvent( `${ event_from }_stats_purchase_flow_skip_button_clicked` );
 
 				// redirect to the Traffic page
-				setTimeout( () => page( `/stats/day/${ siteSlug }` ), 250 );
+				setTimeout( () => {
+					setPostponeBusy( false );
+					page( `/stats/day/${ siteSlug }` );
+				}, 250 );
 			} );
 	};
 
@@ -273,7 +279,12 @@ const PersonalPurchase = ( {
 					</ButtonComponent>
 
 					{ isNewPurchaseFlowEnabled && (
-						<ButtonComponent variant="secondary" onClick={ handleCheckoutPostponed }>
+						<ButtonComponent
+							variant="secondary"
+							isBusy={ isWPCOMSite ? undefined : isPostponeBusy } // for <Button />
+							busy={ isWPCOMSite ? isPostponeBusy : undefined } // for <CalypsoButton />
+							onClick={ handleCheckoutPostponed }
+						>
 							{ translate( 'I will do it later' ) }
 						</ButtonComponent>
 					) }
@@ -308,24 +319,18 @@ function StatsBenefitsListing( {
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
 					{ translate( 'GDPR compliance' ) }
 				</li>
-				{ subscriptionValue > 0 ? (
-					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-						{ translate( 'Access to upcoming advanced features' ) }
-					</li>
-				) : (
-					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-						{ translate( 'No access to upcoming advanced features' ) }
-					</li>
-				) }
 				{ subscriptionValue >= defaultStartingValue ? (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-						{ translate( 'Priority support' ) }
+						{ translate( 'Email support' ) }
 					</li>
 				) : (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-						{ translate( 'No priority support' ) }
+						{ translate( 'No Email support' ) }
 					</li>
 				) }
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No access to upcoming advanced features' ) }
+				</li>
 			</ul>
 		</div>
 	);

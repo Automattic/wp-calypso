@@ -3,6 +3,7 @@ import { useSubscribersQueries } from './use-subscribers-query';
 
 // array of indices to use to calculate the dates to query for
 const DATES_TO_QUERY = [ 0, 30, 60, 90 ];
+const DATES_TO_QUERY_EXCLUDE_TODAY = [ 30, 60, 90 ];
 
 function getLabels( dateToQuery: number ) {
 	switch ( dateToQuery ) {
@@ -27,10 +28,12 @@ function calculateQueryDate( daysToSubtract: number ) {
 	return date.toISOString().split( 'T' )[ 0 ];
 }
 
-export default function useSubscribersOverview( siteId: number | null ) {
+export default function useSubscribersOverview( siteId: number | null, isTodayExcluded?: boolean ) {
 	const period = 'day';
 	const quantity = 1;
-	const dates = DATES_TO_QUERY.map( calculateQueryDate );
+	const datesToQuery = isTodayExcluded ? DATES_TO_QUERY_EXCLUDE_TODAY : DATES_TO_QUERY;
+	const dates = datesToQuery.map( calculateQueryDate );
+
 	const { isLoading, isError, subscribersData } = useSubscribersQueries(
 		siteId,
 		period,
@@ -39,11 +42,12 @@ export default function useSubscribersOverview( siteId: number | null ) {
 	);
 	const overviewData = subscribersData.map( ( data, index ) => {
 		const count = data?.data?.[ 0 ]?.subscribers || null;
-		const label = getLabels( DATES_TO_QUERY[ index ] );
+		const heading = getLabels( datesToQuery[ index ] );
 		return {
 			count,
-			label,
+			heading,
 		};
 	} );
+
 	return { isLoading, isError, overviewData };
 }

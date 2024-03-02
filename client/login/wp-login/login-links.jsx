@@ -12,7 +12,11 @@ import ExternalLink from 'calypso/components/external-link';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isJetpackCloudOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,6 +25,7 @@ import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/acti
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 
 export class LoginLinks extends Component {
 	static propTypes = {
@@ -116,6 +121,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client ) ||
 			this.props.isWhiteLogin ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
@@ -291,7 +297,7 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
-		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
+		wccomFrom: getWccomFrom( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{

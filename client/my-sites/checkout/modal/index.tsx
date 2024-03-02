@@ -1,3 +1,4 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Modal } from '@wordpress/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
@@ -5,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { navigate } from 'calypso/lib/navigate';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -102,17 +103,19 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 					fetchStripeConfiguration={ getStripeConfiguration }
 					locale={ translate.localeSlug }
 				>
-					<CheckoutMain
-						siteId={ selectedSiteId ?? undefined }
-						siteSlug={ siteSlug }
-						productAliasFromUrl={ productAliasFromUrl }
-						// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
-						redirectTo={ redirectTo }
-						customizedPreviousPath={ previousRoute }
-						isInModal
-						disabledThankYouPage
-						onAfterPaymentComplete={ handleAfterPaymentComplete }
-					/>
+					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+						<CheckoutMain
+							siteId={ selectedSiteId ?? undefined }
+							siteSlug={ siteSlug }
+							productAliasFromUrl={ productAliasFromUrl }
+							// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
+							redirectTo={ redirectTo }
+							customizedPreviousPath={ previousRoute }
+							isInModal
+							disabledThankYouPage
+							onAfterPaymentComplete={ handleAfterPaymentComplete }
+						/>
+					</RazorpayHookProvider>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</Modal>

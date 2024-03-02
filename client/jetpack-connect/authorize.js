@@ -6,7 +6,7 @@ import {
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -18,7 +18,6 @@ import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -90,6 +89,7 @@ import {
 	retrieveSource,
 	clearSource,
 } from './persistence-utils';
+import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
@@ -302,7 +302,6 @@ export class JetpackAuthorize extends Component {
 			this.isJetpackUpgradeFlow() ||
 			this.isFromJetpackConnectionManager() ||
 			this.isFromJetpackSocialPlugin() ||
-			this.isFromMyJetpack() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
 			( this.isFromJetpackBackupPlugin() && siteHasBackups )
@@ -724,6 +723,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getButtonText() {
+		// Update getScreenReaderAuthMessage if you change this function.
+		// TODO: extract actual status messages from button labels so getScreenReaderAuthMessage can use them.
 		const { translate } = this.props;
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
@@ -773,6 +774,48 @@ export class JetpackAuthorize extends Component {
 
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
+		}
+	}
+
+	getScreenReaderAuthMessage() {
+		// Copied from getButtonText. Buttons labels have been removed and actual status messages kept.
+		const { translate } = this.props;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { alreadyAuthorized } = this.props.authQuery;
+
+		if ( this.isFromMigrationPlugin() ) {
+			if ( this.props.isFetchingAuthorizationSite ) {
+				return translate( 'Preparing authorization' );
+			}
+
+			return;
+		}
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			return;
+		}
+
+		if ( authorizeError && ! this.retryingAuth ) {
+			return;
+		}
+
+		if ( this.props.isFetchingAuthorizationSite ) {
+			return translate( 'Preparing authorization' );
+		}
+
+		if ( authorizeSuccess && this.redirecting ) {
+			return;
+		}
+
+		if ( authorizeSuccess ) {
+			return translate( 'Finishing up!', {
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
+			} );
+		}
+
+		if ( isAuthorizing || this.retryingAuth ) {
+			return translate( 'Authorizing your connection' );
 		}
 	}
 
@@ -1209,6 +1252,7 @@ export class JetpackAuthorize extends Component {
 						{ this.renderFooterLinks() }
 					</div>
 				</div>
+				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />
 			</MainWrapper>
 		);
 	}

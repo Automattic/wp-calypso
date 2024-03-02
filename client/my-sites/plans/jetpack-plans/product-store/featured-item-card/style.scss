@@ -14,6 +14,38 @@
 	width: 100%;
 	height: 100%;
 
+	.multiple-choice-question {
+		margin-block-start: 10px;
+		margin-block-end: 10px;
+
+		.form-legend {
+			display: none;
+		}
+
+		.multiple-choice-question__answers {
+			display: flex;
+			gap: 24px;
+		}
+
+		.multiple-choice-question__answer-item-content {
+			margin: 0;
+		}
+
+		.form-radio {
+			margin: 0;
+		}
+
+		.form-label {
+			font-size: $font-body-small;
+			line-height: 1.2;
+			margin: 0;
+		}
+
+		.form-radio:checked::before {
+			background: var(--studio-green-50);
+		}
+	}
+
 	@include break-mobile {
 		flex-direction: row-reverse;
 		justify-content: space-between;

@@ -1,9 +1,9 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
-import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Children, Fragment, ReactNode, isValidElement } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -11,7 +11,6 @@ import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useToSFoldableCard } from '../hooks/use-tos-foldable-card';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice, { showBundledDomainNotice } from './bundled-domain-notice';
@@ -60,20 +59,12 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 	// renewal text.
 	const hasDomainTransfer = cart.products.some( ( product ) => isDomainTransfer( product ) );
 
-	const showToSFoldableCard = useToSFoldableCard();
-
 	const shouldShowBundledDomainNotice = showBundledDomainNotice( cart );
 	const shouldShowRefundPolicy = isNotJetpackOrAkismetCheckout;
 	const shouldShowInternationalFeeNotice =
 		showInternationalFeeNotice( contactInfo ) && isNotJetpackOrAkismetCheckout;
 	const shouldShowJetpackSocialAdvancedPricingDisclaimer =
 		showJetpackSocialAdvancedPricingDisclaimer( cart );
-
-	const shouldRenderFoldableCard =
-		shouldShowRefundPolicy ||
-		shouldShowInternationalFeeNotice ||
-		shouldShowBundledDomainNotice ||
-		shouldShowJetpackSocialAdvancedPricingDisclaimer;
 
 	return (
 		<Fragment>
@@ -91,54 +82,51 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }
 			/>
-			{ hasCheckoutVersion( '2' ) || showToSFoldableCard ? (
-				<>
-					{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
-					{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
-					{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
-					<EbanxTermsOfService />
-					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
-					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
-					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
+			<>
+				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
+				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
+				{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+				<EbanxTermsOfService />
+				{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
+				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
+				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
+				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 
-					<TermsCollapsedContent>
-						{ shouldRenderFoldableCard && (
-							<FoldableCard
-								clickableHeader={ true }
-								compact
-								className="checkout__terms-foldable-card"
-								header={ translate( 'Read more' ) }
-								screenReaderText={ translate( 'Read more' ) }
-							>
-								{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
-								{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
-								{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-								{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
-									<JetpackSocialAdvancedPricingDisclaimer />
-								) }
-							</FoldableCard>
-						) }
-					</TermsCollapsedContent>
-				</>
-			) : (
-				<>
-					{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
-					{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
-					{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
+				<CheckoutTermsReadMore>
 					{ shouldShowRefundPolicy && <RefundPolicies cart={ cart } /> }
 					{ shouldShowBundledDomainNotice && <BundledDomainNotice cart={ cart } /> }
-					{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
-					{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
-					{ ! isGiftPurchase && <PlanTerms100Year cart={ cart } /> }
-					<EbanxTermsOfService />
 					{ shouldShowInternationalFeeNotice && <InternationalFeeNotice /> }
-					{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 					{ shouldShowJetpackSocialAdvancedPricingDisclaimer && (
 						<JetpackSocialAdvancedPricingDisclaimer />
 					) }
-				</>
-			) }
+				</CheckoutTermsReadMore>
+			</>
 		</Fragment>
+	);
+}
+
+/**
+ * Render a FoldableCard to contain TOS items or nothing if there are no items.
+ */
+function CheckoutTermsReadMore( { children }: { children: ReactNode } ) {
+	const translate = useTranslate();
+	// Note that this technique for finding children does not work for strings or
+	// empty fragments. Hopefully all children passed to this component are
+	// components themselves or null.
+	if ( ! children || Children.toArray( children ).filter( isValidElement ).length === 0 ) {
+		return null;
+	}
+	return (
+		<TermsCollapsedContent>
+			<FoldableCard
+				clickableHeader={ true }
+				compact
+				className="checkout__terms-foldable-card"
+				header={ translate( 'Read more' ) }
+				screenReaderText={ translate( 'Read more' ) }
+			>
+				{ children }
+			</FoldableCard>
+		</TermsCollapsedContent>
 	);
 }

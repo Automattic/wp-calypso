@@ -28,6 +28,7 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 	solidFill?: boolean;
 	period?: string;
+	yAxisFilter?: uPlot.Axis.Filter | undefined;
 }
 
 export default function UplotChart( {
@@ -35,6 +36,7 @@ export default function UplotChart( {
 	mainColor = '#3057DC',
 	fillColorFrom = 'rgba(48, 87, 220, 0.4)',
 	fillColorTo = 'rgba(48, 87, 220, 0)',
+	yAxisFilter = undefined,
 	legendContainer,
 	options: propOptions,
 	solidFill = false,
@@ -86,6 +88,7 @@ export default function UplotChart( {
 						ticks: {
 							show: false,
 						},
+						filter: yAxisFilter,
 					},
 				],
 				cursor: {
@@ -151,6 +154,7 @@ export default function UplotChart( {
 					},
 				},
 			};
+
 			return {
 				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),

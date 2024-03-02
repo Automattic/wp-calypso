@@ -17,6 +17,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, {
 	Props as PromoSectionProps,
@@ -27,7 +28,7 @@ import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -55,8 +56,8 @@ const Home = () => {
 	const isUserAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
 	);
 	const hasSimplePayments = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_SIMPLE_PAYMENTS )
@@ -64,7 +65,6 @@ const Home = () => {
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
@@ -465,6 +465,7 @@ const Home = () => {
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
+			<QuerySitePlans siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />

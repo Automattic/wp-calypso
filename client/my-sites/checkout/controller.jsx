@@ -1,4 +1,4 @@
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
@@ -243,10 +244,11 @@ export function checkout( context, next ) {
 
 export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getProductSlugFromContext( context );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const upgradeFrom = getQueryArgs()?.upgrade_from;
 
-	if ( isJetpackLegacyItem( product ) ) {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+	if ( isJetpackLegacyItem( product ) && ! isJetpackLegacyTermUpgrade( product, upgradeFrom ) ) {
 		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
 
 		page(

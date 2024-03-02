@@ -29,6 +29,7 @@ import {
 	prependThemeFilterKeys,
 	getIsLivePreviewStarted,
 	getThemeType,
+	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addOptionsToGetUrl, trackClick, interlaceThemes } from './helpers';
@@ -62,6 +63,7 @@ class ThemesSelection extends Component {
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		forceWpOrgSearch: PropTypes.bool,
+		onDesignYourOwnClick: PropTypes.func,
 		themeShowcaseEventRecorder: PropTypes.shape( {
 			recordThemeClick: PropTypes.func,
 			recordThemeStyleVariationClick: PropTypes.func,
@@ -75,6 +77,10 @@ class ThemesSelection extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isRequesting || this.props.isLastPage ) {
+			return;
+		}
+
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query } = this.props;
 		if ( ! query.search && ! query.filter && ! query.tier ) {
@@ -230,6 +236,7 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			onDesignYourOwnClick,
 			tier,
 		} = this.props;
 
@@ -259,6 +266,7 @@ class ThemesSelection extends Component {
 					loading={ isRequesting }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
+					onDesignYourOwnClick={ onDesignYourOwnClick }
 					siteId={ siteId }
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
@@ -302,6 +310,10 @@ function bindGetThemeType( state ) {
 	return ( themeId ) => getThemeType( state, themeId );
 }
 
+function bindGetThemeTierForTheme( state ) {
+	return ( themeId ) => getThemeTierForTheme( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -311,7 +323,7 @@ export const ConnectedThemesSelection = connect(
 	) => {
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const hiddenFilters = getThemeHiddenFilters( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId, tabFilter );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
@@ -373,12 +385,14 @@ export const ConnectedThemesSelection = connect(
 
 		const boundIsThemeActive = bindIsThemeActive( state, siteId );
 		const boundGetThemeType = bindGetThemeType( state );
+		const boundGetThemeTierForTheme = bindGetThemeTierForTheme( state );
 		const filterString = prependThemeFilterKeys( state, query.filter );
 		const themeShowcaseEventRecorder = getThemeShowcaseEventRecorder(
 			query,
 			themes,
 			filterString,
 			boundGetThemeType,
+			boundGetThemeTierForTheme,
 			boundIsThemeActive
 		);
 

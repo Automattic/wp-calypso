@@ -89,7 +89,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				/>
 				<Route path="/post" element={ <HelpCenterEmbedResult /> } />
 				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
-				<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
+				<Route
+					path="/contact-form"
+					element={ <HelpCenterContactForm onSubmit={ () => clearOdieStorage( 'chat_id' ) } /> }
+				/>
 				<Route path="/success" element={ <SuccessScreen /> } />
 				<Route
 					path="/odie"
@@ -106,7 +109,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 								<HelpCenterContactPage
 									hideHeaders
 									trackEventName="calypso_odie_extra_contact_option"
-									onClick={ () => clearOdieStorage( 'chat_id' ) }
 								/>
 							}
 						>

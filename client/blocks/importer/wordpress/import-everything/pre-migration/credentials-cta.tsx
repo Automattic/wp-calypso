@@ -13,9 +13,10 @@ export const CredentialsCta = ( props: Props ) => {
 	return (
 		<div className="pre-migration__content pre-migration__credentials">
 			{ translate(
-				'Want to speed up the migration? {{button}}Provide the server credentials{{/button}} of your site.',
+				'Want to speed up the migration?{{br/}}{{button}}Provide the server credentials{{/button}} of your site.',
 				{
 					components: {
+						br: <br />,
 						button: (
 							<Button
 								borderless={ true }

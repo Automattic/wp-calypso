@@ -1,6 +1,5 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import classnames from 'classnames';
-import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';

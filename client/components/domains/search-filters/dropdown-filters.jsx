@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Count, Popover } from '@automattic/components';
+import { Button, Count, FormLabel, Popover } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';

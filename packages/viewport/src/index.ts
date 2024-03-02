@@ -103,6 +103,7 @@ const mediaQueryOptions: Record< string, QueryOption > = {
 	'<1400px': { max: 1400 },
 	'>480px': { min: 480 },
 	'>660px': { min: 660 },
+	'>=782px': { min: 781 },
 	'>782px': { min: 782 },
 	'>800px': { min: 800 },
 	'>=960px': { min: 959 },

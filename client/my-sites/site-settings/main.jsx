@@ -1,4 +1,5 @@
-import { localize } from 'i18n-calypso';
+import { isEnabled } from '@automattic/calypso-config';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
@@ -9,6 +10,7 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
@@ -17,31 +19,46 @@ import GeneralSettings from './section-general';
 
 import './style.scss';
 
+const getTitle = ( isClassicView ) => {
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
+		return translate( 'Settings' );
+	}
+	return translate( 'General Settings' );
+};
+
+const getSubtitle = ( isClassicView ) => {
+	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
+		return translate( 'Manage your site settings, including site visibility, and more.' );
+	}
+	return translate(
+		'Manage your site settings, including language, time zone, site visibility, and more.'
+	);
+};
+
 const SiteSettingsComponent = ( {
 	isJetpack,
 	isPossibleJetpackConnectionProblem,
 	siteId,
-	translate,
+	isClassicView,
 } ) => {
 	return (
 		<Main className="site-settings">
 			{ isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
-			<DocumentHead title={ translate( 'General Settings' ) } />
+			<DocumentHead title={ getTitle( isClassicView ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
 			<JetpackBackupCredsBanner event="settings-backup-credentials" />
 			<NavigationHeader
-				screenOptionsTab="options-general.php"
+				screenOptionsTab={
+					isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ? false : 'options-general.php'
+				}
 				navigationItems={ [] }
-				title={ translate( 'General Settings' ) }
-				subtitle={ translate(
-					'Manage your site settings, including language, time zone, site visibility, and more.'
-				) }
+				title={ getTitle( isClassicView ) }
+				subtitle={ getSubtitle( isClassicView ) }
 			/>
-
 			<SiteSettingsNavigation section="general" />
 			<GeneralSettings />
 		</Main>
@@ -51,6 +68,7 @@ const SiteSettingsComponent = ( {
 SiteSettingsComponent.propTypes = {
 	// Connected props
 	siteId: PropTypes.number,
+	isClassicView: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -58,5 +76,6 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
+		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
 	};
 } )( localize( withJetpackConnectionProblem( SiteSettingsComponent ) ) );

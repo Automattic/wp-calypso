@@ -5,17 +5,20 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
-import { useAddOnCheckoutLink, useAddOnFeatureSlugs } from '@automattic/data-stores';
+import {
+	useAddOnCheckoutLink,
+	useAddOnFeatureSlugs,
+	ProductsList,
+	Site,
+} from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
 import { useSelector } from 'calypso/state';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -24,7 +27,7 @@ import unlimitedThemesIcon from '../icons/unlimited-themes';
 import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnPrices from './use-add-on-prices';
-import type { AddOnMeta, SiteDetails } from '@automattic/data-stores';
+import type { AddOnMeta } from '@automattic/data-stores';
 
 const useSpaceUpgradesPurchased = ( {
 	isInSignup,
@@ -57,9 +60,11 @@ const useSpaceUpgradesPurchased = ( {
 	}, [ billingTransactions, filter, isInSignup, siteId, isLoading ] );
 };
 
-const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
+const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
+	const selectedSite = Site.useSite( { siteIdOrSlug: selectedSiteId } );
+	const selectedSiteSlug = selectedSite.data?.slug;
 
 	/*
 	 * TODO: `useAddOnFeatureSlugs` be refactored instead to return an index of `{ [ slug ]: featureSlug[] }`
@@ -86,65 +91,71 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 	const addOnPrices1GBSpace100 = useAddOnPrices( PRODUCT_1GB_SPACE, 100 );
 
 	return useMemo(
-		() => [
-			{
-				productSlug: PRODUCT_JETPACK_AI_MONTHLY,
-				featureSlugs: featureSlugsJetpackAIMonthly,
-				icon: jetpackAIIcon,
-				overrides: null,
-				displayCost: displayCostJetpackAIMonthly,
-				featured: true,
-				description: translate(
-					'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
-				),
-			},
-			{
-				productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
-				featureSlugs: featureSlugsUnlimitedThemes,
-				icon: unlimitedThemesIcon,
-				overrides: null,
-				displayCost: displayCostUnlimitedThemes,
-				featured: true,
-			},
-			{
-				productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
-				featureSlugs: featureSlugsCustomDesign,
-				icon: customDesignIcon,
-				overrides: null,
-				displayCost: displayCostCustomDesign,
-				featured: false,
-			},
-			{
-				productSlug: PRODUCT_1GB_SPACE,
-				featureSlugs: featureSlugs1GBSpace50,
-				icon: spaceUpgradeIcon,
-				quantity: 50,
-				name: translate( '50 GB Storage' ),
-				displayCost: displayCost1GBSpace50,
-				prices: addOnPrices1GBSpace50,
-				description: translate(
-					'Make more space for high-quality photos, videos, and other media. '
-				),
-				featured: false,
-				purchased: false,
-				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 50 ),
-			},
-			{
-				productSlug: PRODUCT_1GB_SPACE,
-				featureSlugs: featureSlugs1GBSpace100,
-				icon: spaceUpgradeIcon,
-				quantity: 100,
-				name: translate( '100 GB Storage' ),
-				displayCost: displayCost1GBSpace100,
-				prices: addOnPrices1GBSpace100,
-				description: translate(
-					'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
-				),
-				featured: false,
-				purchased: false,
-				checkoutLink: checkoutLink( selectedSite?.slug ?? null, PRODUCT_1GB_SPACE, 100 ),
-			},
-		],
+		() =>
+			[
+				{
+					productSlug: PRODUCT_JETPACK_AI_MONTHLY,
+					featureSlugs: featureSlugsJetpackAIMonthly,
+					icon: jetpackAIIcon,
+					overrides: null,
+					displayCost: displayCostJetpackAIMonthly,
+					featured: true,
+					description: translate(
+						'Elevate your content with Jetpack AI, your AI assistant in the WordPress Editor. Save time writing with effortless content crafting, tone adjustment, title generation, grammar checks, translation, and more.'
+					),
+					name: undefined,
+				},
+				{
+					productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
+					featureSlugs: featureSlugsUnlimitedThemes,
+					icon: unlimitedThemesIcon,
+					overrides: null,
+					displayCost: displayCostUnlimitedThemes,
+					featured: true,
+					name: undefined,
+					description: undefined,
+				},
+				{
+					productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
+					featureSlugs: featureSlugsCustomDesign,
+					icon: customDesignIcon,
+					overrides: null,
+					displayCost: displayCostCustomDesign,
+					featured: false,
+					name: undefined,
+					description: undefined,
+				},
+				{
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: featureSlugs1GBSpace50,
+					icon: spaceUpgradeIcon,
+					quantity: 50,
+					name: translate( '50 GB Storage' ),
+					displayCost: displayCost1GBSpace50,
+					prices: addOnPrices1GBSpace50,
+					description: translate(
+						'Make more space for high-quality photos, videos, and other media. '
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteSlug ?? null, PRODUCT_1GB_SPACE, 50 ),
+				},
+				{
+					productSlug: PRODUCT_1GB_SPACE,
+					featureSlugs: featureSlugs1GBSpace100,
+					icon: spaceUpgradeIcon,
+					quantity: 100,
+					name: translate( '100 GB Storage' ),
+					displayCost: displayCost1GBSpace100,
+					prices: addOnPrices1GBSpace100,
+					description: translate(
+						'Take your site to the next level. Store all your media in one place without worrying about running out of space.'
+					),
+					featured: false,
+					purchased: false,
+					checkoutLink: checkoutLink( selectedSiteSlug ?? null, PRODUCT_1GB_SPACE, 100 ),
+				},
+			] as const,
 		[
 			addOnPrices1GBSpace100,
 			addOnPrices1GBSpace50,
@@ -159,21 +170,31 @@ const useActiveAddOnsDefs = ( selectedSite: SiteDetails | null ) => {
 			featureSlugsCustomDesign,
 			featureSlugsJetpackAIMonthly,
 			featureSlugsUnlimitedThemes,
-			selectedSite?.slug,
+			selectedSiteSlug,
 			translate,
 		]
 	);
 };
 
-const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[] => {
+interface Props {
+	selectedSiteId?: number | null | undefined;
+	isInSignup?: boolean;
+}
+
+const useAddOns = ( {
+	selectedSiteId,
+	isInSignup = false,
+}: Props = {} ): ( AddOnMeta | null )[] => {
 	// if upgrade is bought - show as manage
 	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
-	const { data: mediaStorage } = useMediaStorageQuery( siteId );
-	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( { isInSignup, siteId } );
-	const selectedSite = useSelector( getSelectedSite ) ?? null;
-	const activeAddOns = useActiveAddOnsDefs( selectedSite );
-	const productsList = useSelector( getProductsList );
-	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, siteId ) );
+	const { data: mediaStorage } = useMediaStorageQuery( selectedSiteId );
+	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( {
+		isInSignup,
+		siteId: selectedSiteId ?? undefined,
+	} );
+	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
+	const productsList = ProductsList.useProducts();
+	const siteFeatures = useSelector( ( state ) => getFeaturesBySiteId( state, selectedSiteId ) );
 
 	return useMemo(
 		() =>
@@ -190,9 +211,9 @@ const useAddOns = ( siteId?: number, isInSignup = false ): ( AddOnMeta | null )[
 					return true;
 				} )
 				.map( ( addOn ) => {
-					const product = productsList[ addOn.productSlug ];
-					const name = addOn.name ? addOn.name : product?.product_name;
-					const description = addOn.description ?? product?.description;
+					const product = productsList.data?.[ addOn.productSlug ];
+					const name = addOn.name ? addOn.name : product?.name || '';
+					const description = addOn.description ?? ( product?.description || '' );
 
 					// if it's a storage add on
 					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {

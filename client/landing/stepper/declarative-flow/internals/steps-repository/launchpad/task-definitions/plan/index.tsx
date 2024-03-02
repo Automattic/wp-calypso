@@ -2,19 +2,19 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	isFreePlanProduct,
+	planHasFeature,
 } from '@automattic/calypso-products';
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Task } from '@automattic/launchpad';
+import { isVideoPressFlow } from '@automattic/onboarding';
 import { QueryClient } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { ADD_TIER_PLAN_HASH } from 'calypso/my-sites/earn/memberships/constants';
-import {
-	recordGlobalStylesGattingPlanSelectedResetStylesEvent,
-	recordTaskClickTracksEvent,
-} from '../../tracking';
+import { getSiteIdOrSlug } from '../../task-helper';
+import { recordGlobalStylesGattingPlanSelectedResetStylesEvent } from '../../tracking';
 import { TaskAction, TaskContext } from '../../types';
 
 const getPlanTaskSubtitle = (
@@ -51,26 +51,27 @@ const getPlanTaskSubtitle = (
 	);
 };
 
-const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
-	const {
-		siteInfoQueryArgs,
-		displayGlobalStylesWarning,
-		shouldDisplayWarning,
-		globalStylesMinimumPlan,
-		isVideoPressFlowWithUnsupportedPlan,
-	} = context;
+export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
+	const { siteSlug, displayGlobalStylesWarning, globalStylesMinimumPlan, planCartItem, site } =
+		context;
+
+	const productSlug = planCartItem?.product_slug ?? site?.plan?.product_slug;
+
+	const isVideoPressFlowWithUnsupportedPlan =
+		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
+
+	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
 	return {
 		...task,
 		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
 			if ( displayGlobalStylesWarning ) {
 				recordGlobalStylesGattingPlanSelectedResetStylesEvent( task, flow, context, {
 					displayGlobalStylesWarning,
 				} );
 			}
 		},
-		calypso_path: addQueryArgs( `/plans/${ siteInfoQueryArgs?.siteSlug }`, {
+		calypso_path: addQueryArgs( `/plans/${ siteSlug }`, {
 			...( shouldDisplayWarning && {
 				plan: globalStylesMinimumPlan,
 				feature: isVideoPressFlowWithUnsupportedPlan
@@ -85,14 +86,15 @@ const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => {
 };
 
 const getPlanCompletedTask: TaskAction = ( task, flow, context ) => {
-	const { translatedPlanName, siteInfoQueryArgs, displayGlobalStylesWarning, site } = context;
+	const { translatedPlanName, displayGlobalStylesWarning, site, siteSlug } = context;
 
 	const isCurrentPlanFree = site?.plan ? isFreePlanProduct( site?.plan ) : true;
 
 	return {
 		...task,
-		actionDispatch: () => recordTaskClickTracksEvent( task, flow, context ),
-		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, siteInfoQueryArgs ),
+		calypso_path: addQueryArgs( `/setup/${ flow }/plans`, {
+			...getSiteIdOrSlug( flow, site, siteSlug ),
+		} ),
 		badge_text: task.completed ? translatedPlanName : task.badge_text,
 		subtitle: getPlanTaskSubtitle( task, flow, context, displayGlobalStylesWarning ),
 		disabled: task.completed && ! isCurrentPlanFree,
@@ -116,7 +118,6 @@ const getNewsLetterPlanCreated: TaskAction = ( task, flow, context ) => {
 	return {
 		...task,
 		actionDispatch: () => {
-			recordTaskClickTracksEvent( task, flow, context );
 			completePaidNewsletterTask( siteSlug, queryClient );
 			site?.ID
 				? setShowPlansModal( true )

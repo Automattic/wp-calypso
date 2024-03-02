@@ -17,6 +17,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -29,6 +30,7 @@ import './style.scss';
 export default function DesignPickerStep( props ) {
 	const {
 		flowName,
+		stepName,
 		isReskinned,
 		showDesignPickerCategories,
 		showLetUsChoose,
@@ -66,7 +68,8 @@ export default function DesignPickerStep( props ) {
 
 	useEffect(
 		() => {
-			dispatch( saveSignupStep( { stepName: props.stepName } ) );
+			dispatch( saveSignupStep( { stepName: stepName } ) );
+			triggerGuidesForStep( flowName, stepName );
 		},
 		// Ignoring dependencies because we only want to save the step on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps

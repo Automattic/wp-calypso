@@ -30,6 +30,7 @@ const connectDomain: Flow = {
 	get title() {
 		return translate( 'Connect your domain' );
 	},
+	isSignupFlow: false,
 	useAssertConditions: () => {
 		const { domain, provider } = useDomainParams();
 		const flowName = CONNECT_DOMAIN_FLOW;
@@ -100,8 +101,8 @@ const connectDomain: Flow = {
 		return [
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -124,9 +125,9 @@ const connectDomain: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'plans':
 					clearSignupDestinationCookie();
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {

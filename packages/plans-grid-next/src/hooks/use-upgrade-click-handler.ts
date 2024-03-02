@@ -5,12 +5,14 @@ import { useCallback } from '@wordpress/element';
 import type { GridPlan } from '../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
+export type UpgradeClickHandler = (
+	cartItems?: MinimalRequestCartProduct[] | null,
+	clickedPlanSlug?: PlanSlug
+) => void;
+
 interface Props {
 	gridPlans: GridPlan[]; // TODO clk: to be removed, grabbed from context
-	onUpgradeClick?: (
-		cartItems?: MinimalRequestCartProduct[] | null,
-		clickedPlanSlug?: PlanSlug
-	) => void;
+	onUpgradeClick?: UpgradeClickHandler;
 }
 
 const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick }: Props ) => {

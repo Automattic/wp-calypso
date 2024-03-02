@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import type { AkismetProQuantityDropDownProps } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -107,7 +108,7 @@ const OptionList = styled.ul`
 	}
 `;
 
-const CurrentOptionContainer = styled.div`
+const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 	align-items: center;
 	display: flex;
 	font-size: ${ ( props ) => props.theme.fontSize.small };
@@ -117,15 +118,20 @@ const CurrentOptionContainer = styled.div`
 	width: 100%;
 	column-gap: 20px;
 	text-align: left;
+
+	${ ( props ) =>
+		props.shouldUseCheckoutV2 ? `flex-direction: column; align-items: flex-start;` : null }
 `;
 
-const Price = styled.span`
+const Price = styled.span< { shouldUseCheckoutV2: boolean } >`
 	flex: 1 0 auto;
 	text-align: right;
 	color: #646970;
 	> span {
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
+
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: right;` ) }
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -137,7 +143,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
 			preventWidows( translate( '1 Site' ) ),
@@ -400,9 +406,11 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 					open={ isOpen }
 					role="button"
 				>
-					<CurrentOptionContainer>
+					<CurrentOptionContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 						<span>{ dropdownOptions[ selectedQuantity - 1 ] }</span>
-						<Price>{ getCurrentOptionPriceDisplay() }</Price>
+						<Price shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+							{ getCurrentOptionPriceDisplay() }
+						</Price>
 					</CurrentOptionContainer>
 					<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 				</CurrentOption>

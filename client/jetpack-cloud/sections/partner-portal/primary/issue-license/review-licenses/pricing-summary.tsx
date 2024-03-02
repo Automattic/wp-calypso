@@ -1,11 +1,12 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import useSubmitForm from '../hooks/use-submit-form';
 import { getTotalInvoiceValue } from '../lib/pricing';
 import PricingBreakdown from './pricing-breakdown';
 import type { SelectedLicenseProp } from '../types';
@@ -14,9 +15,13 @@ import type { SiteDetails } from '@automattic/data-stores';
 export default function PricingSummary( {
 	selectedLicenses,
 	selectedSite,
+	isFormReady,
+	submitForm,
 }: {
 	selectedLicenses: SelectedLicenseProp[];
 	selectedSite?: SiteDetails | null;
+	isFormReady: boolean;
+	submitForm: ( selectedLicenses: SelectedLicenseProp[] ) => void;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -28,7 +33,8 @@ export default function PricingSummary( {
 		.map( ( license ) => license.quantity )
 		.reduce( ( a, b ) => a + b, 0 );
 
-	const { isReady: isFormReady, submitForm } = useSubmitForm( selectedSite );
+	const isA4A = config.isEnabled( 'a8c-for-agencies' );
+
 	const handleCTAClick = useCallback( () => {
 		if ( ! isFormReady ) {
 			return;
@@ -37,25 +43,40 @@ export default function PricingSummary( {
 		submitForm( selectedLicenses );
 
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_submit', {
-				total_licenses: selectedLicenseCount,
-				items: selectedLicenses
-					?.map( ( license ) => `${ license.slug } x ${ license.quantity }` )
-					.join( ',' ),
-			} )
+			recordTracksEvent(
+				isA4A
+					? 'calypso_a4a_issue_license_review_licenses_submit'
+					: 'calypso_jetpack_agency_issue_license_review_licenses_submit',
+				{
+					total_licenses: selectedLicenseCount,
+					items: selectedLicenses
+						?.map( ( license ) => `${ license.slug } x ${ license.quantity }` )
+						.join( ',' ),
+				}
+			)
 		);
-	}, [ dispatch, isFormReady, selectedLicenseCount, selectedLicenses, submitForm ] );
+	}, [ dispatch, isA4A, isFormReady, selectedLicenseCount, selectedLicenses, submitForm ] );
 
-	const learnMoreLink =
-		'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
-
-	const currency = selectedLicenses[ 0 ].currency; // FIXME: Fix if multiple currencies are supported
+	const learnMoreLink = isA4A
+		? '' //FIXME: Add link for A4A
+		: 'https://jetpack.com/support/jetpack-manage-instructions/jetpack-manage-billing-payment-faqs';
 
 	const onClickLearnMore = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_agency_issue_license_review_licenses_learn_more_click' )
+			recordTracksEvent(
+				isA4A
+					? 'calypso_a4a_issue_license_review_licenses_learn_more_click'
+					: 'calypso_jetpack_agency_issue_license_review_licenses_learn_more_click'
+			)
 		);
-	}, [ dispatch ] );
+	}, [ dispatch, isA4A ] );
+
+	// Make sure we have a/any selected licenses available to prevent fatal errors in the console.
+	if ( selectedLicenses.length === 0 ) {
+		return <TextPlaceholder />;
+	}
+
+	const currency = selectedLicenses[ 0 ].currency; // FIXME: Fix if multiple currencies are supported
 
 	return (
 		<>

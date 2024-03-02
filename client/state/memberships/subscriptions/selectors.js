@@ -13,3 +13,7 @@ export function getSubscription( state, subscriptionId ) {
 export function getStoppingStatus( state, subscriptionId ) {
 	return state?.memberships?.subscriptions?.stoppingSubscription[ subscriptionId ] || false;
 }
+
+export function getUpdatingStatus( state, subscriptionId ) {
+	return state?.memberships?.subscriptions?.updatingSubscription[ subscriptionId ] || false;
+}

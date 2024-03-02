@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Dialog, Gridicon } from '@automattic/components';
+import { Button, Dialog, FormLabel, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import localStorageHelper from 'store';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import {

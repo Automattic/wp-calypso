@@ -1,11 +1,10 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
 import { ChangeEvent, useReducer, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import * as SSHKeyCard from 'calypso/components/ssh-key-card';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { SSH_KEY_FORMATS } from './use-ssh-key-query';

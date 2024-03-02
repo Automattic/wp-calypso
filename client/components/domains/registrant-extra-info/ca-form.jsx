@@ -1,4 +1,4 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';

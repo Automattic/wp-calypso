@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_PERSONAL,
@@ -36,7 +35,6 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
-import ThemeTypeBadge from 'calypso/components/theme-type-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -49,11 +47,11 @@ import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purcha
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 	getTheme,
 	isSiteEligibleForManagedExternalThemes,
-	isThemeAllowedOnSite,
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
@@ -382,10 +380,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			: false
 	);
 
-	const canSiteActivateTheme = useSelector( ( state ) =>
-		site && selectedDesignThemeId
-			? isThemeAllowedOnSite( state, site.ID, selectedDesignThemeId )
-			: false
+	const canSiteActivateTheme = useIsThemeAllowedOnSite(
+		site?.ID ?? null,
+		selectedDesignThemeId ?? ''
 	);
 
 	const isMarketplaceThemeSubscribed = useSelector(
@@ -406,9 +403,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
-		( isEnabled( 'themes/tiers' ) &&
-			selectedDesign?.design_tier === PERSONAL_THEME &&
-			! canSiteActivateTheme ) ||
+		! canSiteActivateTheme ||
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
 		( selectedDesign?.is_externally_managed &&
 			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
@@ -423,22 +418,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		! isJetpack &&
 		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
 
-	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) =>
-		isEnabled( 'themes/tiers' ) ? (
-			<ThemeTierBadge
-				canGoToCheckout={ false }
-				isLockedStyleVariation={ isLockedStyleVariation }
-				themeId={ themeId }
-			/>
-		) : (
-			<ThemeTypeBadge
-				canGoToCheckout={ false }
-				isLockedStyleVariation={ isLockedStyleVariation }
-				siteId={ site?.ID ?? null }
-				siteSlug={ siteSlug }
-				themeId={ themeId }
-			/>
-		);
+	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
+		<ThemeTierBadge
+			canGoToCheckout={ false }
+			isLockedStyleVariation={ isLockedStyleVariation }
+			themeId={ themeId }
+		/>
+	);
 
 	function upgradePlan() {
 		if ( selectedDesign ) {
@@ -472,7 +458,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			plan = 'business-bundle';
 		} else if ( selectedDesign?.is_externally_managed ) {
 			plan = ! isExternallyManagedThemeAvailable ? PLAN_BUSINESS_MONTHLY : '';
-		} else if ( isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME ) {
+		} else if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
 			plan = PLAN_PERSONAL;
 		} else {
 			plan = 'premium';
@@ -502,6 +488,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function handleCheckout() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 			theme: selectedDesign?.slug,
+			theme_tier: selectedDesign?.design_tier,
 			is_externally_managed: selectedDesign?.is_externally_managed,
 		} );
 
@@ -591,7 +578,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} )
 			);
 
-			if ( isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME ) {
+			if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
 				closePremiumGlobalStylesModal();
 			} else {
 				pickDesign();
@@ -750,8 +737,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 	function getPrimaryActionButtonAction(): () => void {
-		const isPersonalDesign =
-			isEnabled( 'themes/tiers' ) && selectedDesign?.design_tier === PERSONAL_THEME;
+		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
 		if ( isLockedTheme ) {
 			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
 			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
@@ -787,7 +773,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
 		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
-			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 		} );

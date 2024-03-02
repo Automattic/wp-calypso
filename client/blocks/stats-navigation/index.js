@@ -14,6 +14,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
 	requestModuleToggles,
@@ -59,6 +60,7 @@ class StatsNavigation extends Component {
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
 		isLegacy: PropTypes.bool,
+		adminUrl: PropTypes.string,
 	};
 
 	state = {
@@ -165,6 +167,20 @@ class StatsNavigation extends Component {
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
 								const className = 'stats-navigation__' + item;
+								if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+									return (
+										<NavItem
+											className={ className }
+											key={ item }
+											onClick={ () =>
+												( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+											}
+											selected={ false }
+										>
+											{ navItem.label }
+										</NavItem>
+									);
+								}
 								return (
 									<NavItem
 										className={ className }
@@ -217,6 +233,7 @@ export default connect(
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
+			adminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

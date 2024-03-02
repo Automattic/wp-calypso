@@ -72,7 +72,7 @@ export const useOverrideSaveButton = ( {
 					if ( node.nodeType === Node.ELEMENT_NODE ) {
 						const tooltip = ( node as Element ).querySelector( '.components-tooltip' );
 						if ( tooltip ) {
-							tooltip.textContent = __( 'Upgrade now', 'wpcom-live-preview' );
+							tooltip.remove();
 						}
 					}
 				} );

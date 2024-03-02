@@ -114,6 +114,31 @@ class SocialLoginForm extends Component {
 		);
 	};
 
+	handleGitHubResponse = ( { access_token } ) => {
+		const { onSuccess, socialService } = this.props;
+		const redirectTo = this.props.redirectTo;
+
+		if ( socialService !== 'github' ) {
+			return;
+		}
+
+		const socialInfo = {
+			service: 'github',
+			access_token: access_token,
+		};
+
+		this.props.loginSocialUser( socialInfo, redirectTo ).then(
+			() => {
+				this.recordEvent( 'calypso_login_social_login_success', 'github' );
+
+				onSuccess();
+			},
+			( error ) => {
+				this.reportSocialLoginFailure( { service: 'github', socialInfo, error } );
+			}
+		);
+	};
+
 	recordEvent = ( eventName, service, params ) =>
 		this.props.recordTracksEvent( eventName, {
 			social_account_type: service,
@@ -130,6 +155,9 @@ class SocialLoginForm extends Component {
 
 	getRedirectUri = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
+		if ( typeof window !== 'undefined' && window.location.hostname === 'calypso.localhost' ) {
+			return `http://${ host }${ login( { socialService: service } ) }`;
+		}
 		return `https://${ host }${ login( { socialService: service } ) }`;
 	};
 
@@ -139,6 +167,7 @@ class SocialLoginForm extends Component {
 				compact={ this.props.compact }
 				handleGoogleResponse={ this.handleGoogleResponse }
 				handleAppleResponse={ this.handleAppleResponse }
+				handleGitHubResponse={ this.handleGitHubResponse }
 				getRedirectUri={ this.getRedirectUri }
 				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 				socialService={ this.props.socialService }

@@ -1,4 +1,4 @@
-import { FormInputValidation, Gridicon, Card } from '@automattic/components';
+import { FormInputValidation, FormLabel, Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';

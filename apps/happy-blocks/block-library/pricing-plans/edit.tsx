@@ -21,8 +21,15 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 		setAttributes( {
 			productSlug: attributes.productSlug ?? attributes.defaultProductSlug,
 			domain: attributes.domain,
+			affiliateLink: attributes.affiliateLink,
 		} );
-	}, [ attributes.defaultProductSlug, attributes.domain, attributes.productSlug, setAttributes ] );
+	}, [
+		attributes.defaultProductSlug,
+		attributes.domain,
+		attributes.productSlug,
+		attributes.affiliateLink,
+		setAttributes,
+	] );
 
 	useEffect( () => {
 		if ( ! plans.length ) {

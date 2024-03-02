@@ -94,9 +94,16 @@ function renderWithRedux( ui ) {
 	} );
 }
 
+let windowOpenSpy;
+
 // If feature flag is jetpack/magic-link-signup then false, else true
 beforeEach( () => {
+	windowOpenSpy = jest.spyOn( global.window, 'open' ).mockImplementation( jest.fn() );
 	config.isEnabled.mockImplementation( ( flag ) => flag !== 'jetpack/magic-link-signup' );
+} );
+
+afterEach( () => {
+	windowOpenSpy?.mockRestore();
 } );
 
 describe( 'JetpackAuthorize', () => {
@@ -384,9 +391,10 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe( `/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }` );
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }`,
+				expect.any( String )
+			);
 		} );
 
 		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', async () => {
@@ -405,9 +413,10 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe( `/checkout/${ SITE_SLUG }/${ OFFER_RESET_FLOW_TYPES[ 0 ] }` );
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`/checkout/${ SITE_SLUG }/${ OFFER_RESET_FLOW_TYPES[ 0 ] }`,
+				expect.any( String )
+			);
 		} );
 
 		test( 'should redirect to wp-admin when site has a purchased plan/product', async () => {
@@ -432,9 +441,10 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				DEFAULT_PROPS.authQuery.redirectAfterAuth,
+				expect.any( String )
+			);
 		} );
 
 		test( 'should redirect to /jetpack/connect/plans when user has an unattached "user"(not partner) license key', async () => {
@@ -453,12 +463,11 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe(
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
-				) }`
+				) }`,
+				expect.any( String )
 			);
 		} );
 
@@ -477,12 +486,11 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe(
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
-				) }`
+				) }`,
+				expect.any( String )
 			);
 		} );
 
@@ -505,12 +513,11 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe(
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
-				) }`
+				) }`,
+				expect.any( String )
 			);
 		} );
 
@@ -530,9 +537,10 @@ describe( 'JetpackAuthorize', () => {
 
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
-			const target = global.window.location.href;
-
-			expect( target ).toBe( `${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }` );
+			expect( windowOpenSpy ).toHaveBeenCalledWith(
+				`${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }`,
+				expect.any( String )
+			);
 		} );
 	} );
 

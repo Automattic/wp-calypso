@@ -1,4 +1,5 @@
 import React from 'react';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import {
 	QueryArgs,
 	SelectorProduct,
@@ -67,6 +68,10 @@ export type HeroImageProps = {
 	item: SelectorProduct;
 };
 
+export type HeroImageAPIFamilyProps = {
+	item: APIProductFamilyProduct;
+};
+
 export type FeaturesListProps = HeroImageProps;
 
 export type UseStoreItemInfoProps = ProductStoreBaseProps & {
@@ -101,6 +106,7 @@ export type FeaturedItemCardProps = {
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
+	variant?: React.ReactNode;
 };
 
 export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {

@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -312,6 +312,7 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -526,12 +527,7 @@ export const FEATURES_LIST: FeatureList = {
 			if ( ! planSlug ) {
 				return '';
 			}
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowInPersonalPlan =
-				config.isEnabled( 'themes/tiers' ) &&
-				( ( localeSlug && englishLocales.includes( localeSlug ) ) ||
-					i18n.hasTranslation( 'Dozens of premium themes' ) );
-			if ( shouldShowInPersonalPlan && isPersonalPlan( planSlug ) ) {
+			if ( isPersonalPlan( planSlug ) ) {
 				return i18n.translate( 'Dozens of premium themes' );
 			}
 			if (
@@ -547,18 +543,19 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Switch between all of our premium design themes.' );
-			return shouldShowNewString
-				? i18n.translate( 'Switch between all of our premium design themes.' )
-				: i18n.translate( 'Switch between a collection of premium design themes.' );
+		getTitle: ( { planSlug = undefined } = {} ) => {
+			if ( planSlug && isWooExpressPlan( planSlug ) ) {
+				return i18n.translate( 'Beautiful themes' );
+			}
+			return i18n.translate( 'Unlimited premium themes' );
+		},
+		getDescription: ( { planSlug = undefined } = {} ) => {
+			if ( planSlug && isWooExpressPlan( planSlug ) ) {
+				return i18n.translate( 'Switch between a collection of beautiful themes.' );
+			}
+			return i18n.translate( 'Switch between all of our premium design themes.' );
 		},
 	},
-
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		getTitle: () => i18n.translate( 'Dozens of premium themes' ),
@@ -651,11 +648,11 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_GOOGLE_MY_BUSINESS ]: {
 		getSlug: () => FEATURE_GOOGLE_MY_BUSINESS,
-		getTitle: () => i18n.translate( 'Google My Business' ),
+		getTitle: () => i18n.translate( 'Google Business Profile' ),
 		getDescription: () =>
 			i18n.translate(
 				'See how customers find you on Google -- and whether they visited your site ' +
-					'and looked for more info on your business -- by connecting to a Google My Business location.'
+					'and looked for more info on your business -- by connecting to a Google Business Profile location.'
 			),
 	},
 
@@ -678,7 +675,7 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Free .blog Domain for one year', {
 				context: 'title',
 			} ),
-		getDescription: ( domainName?: string ) => {
+		getDescription: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -693,7 +690,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: ( domainName?: string ) => {
+		getTitle: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( '%(domainName)s is included', {
 					args: { domainName },
@@ -705,7 +702,7 @@ export const FEATURES_LIST: FeatureList = {
 			} );
 		},
 		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
-		getDescription: ( domainName?: string ) => {
+		getDescription: ( { domainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,

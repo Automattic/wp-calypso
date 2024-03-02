@@ -10,7 +10,7 @@ import BusyImportingButton from 'calypso/my-sites/importer/importer-action-butto
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
-import { loadTrackingTool, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import AuthorMappingPane from './author-mapping-pane';
@@ -164,24 +164,6 @@ export class ImportingPane extends PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
-	maybeLoadHotJar = () => {
-		if ( this.hjLoaded || ! this.isImporting() ) {
-			return;
-		}
-
-		this.hjLoaded = true;
-
-		this.props.loadTrackingTool( 'HotJar' );
-	};
-
-	componentDidMount() {
-		this.maybeLoadHotJar();
-	}
-
-	componentDidUpdate() {
-		this.maybeLoadHotJar();
-	}
-
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
@@ -315,7 +297,6 @@ export class ImportingPane extends PureComponent {
 }
 
 export default connect( null, {
-	loadTrackingTool,
 	mapAuthor,
 	recordTracksEvent,
 	resetImport,

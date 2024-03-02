@@ -1,54 +1,68 @@
 import { Button, FormLabel } from '@automattic/components';
+import { parse } from 'csv-parse/browser/esm/sync';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
+import { useEffect, useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import CSVColumnConfirmation from './csv-column-confirmation';
 
-export default function SitesInput( {
-	detectedSites,
-	setDetectedSites,
-	detectedFilename,
-	setDetectedFilename,
-	handleValidate,
-}: {
-	detectedSites: string[];
-	setDetectedSites: Dispatch< SetStateAction< string[] > >;
-	detectedFilename: string;
-	setDetectedFilename: Dispatch< SetStateAction< string > >;
-	handleValidate: () => void;
-} ) {
+export default function SitesInput( { onConfirm }: { onConfirm: ( sites: string[] ) => void } ) {
 	const translate = useTranslate();
+	const [ inputSites, setInputSites ] = useState( [] as string[] );
+	const [ csvSites, setCsvSites ] = useState( [] as string[] );
+	const [ csvFilename, setCsvFilename ] = useState( '' );
+	const [ rows, setRows ] = useState( [] as string[][] );
+	const [ csvColumn, setCsvColumn ] = useState( '' );
+	const csvColumns = rows?.[ 0 ] || [];
+	const columnIndex = csvColumns.indexOf( csvColumn );
+	const sites = [ ...inputSites, ...csvSites ];
 
 	let fileReader: any;
 
 	const handleFileRead = () => {
-		const sites: string[] = [];
-		const content = fileReader.result;
-		const lines = content.split( /\r\n|\n/ );
-		lines.forEach( ( line: string ) => {
-			const fields = line.split( ',' );
-			sites.push( fields[ 0 ] );
+		if ( typeof fileReader.result !== 'string' ) {
+			// @todo error handling.
+			return;
+		}
+
+		// @todo error handling
+		const lines = parse( fileReader.result, {
+			skip_empty_lines: true,
 		} );
 
-		setDetectedSites( sites.filter( ( url ) => url.trim() !== 'url' ) );
+		if ( lines.length < 2 ) {
+			// @todo error handling
+			return;
+		}
+
+		setRows( lines );
 	};
 
 	const onFilePick = ( files: File[] ) => {
 		fileReader = new FileReader();
 		fileReader.onloadend = handleFileRead;
 		fileReader.readAsText( files[ 0 ] );
-		setDetectedFilename( files[ 0 ].name );
+		setCsvFilename( files[ 0 ].name );
 	};
 
 	const onTextareaChange = ( event: any ) =>
-		setDetectedSites(
-			0 === event.target.value.length
+		setInputSites(
+			0 === event.target.value.trim().length
 				? []
 				: event.target.value
-						.split( /,|\n/ )
-						.filter( ( url: string ) => url.trim() !== '' )
+						.split( /[\r\n,]+/ )
 						.map( ( url: string ) => url.trim() )
+						.filter( ( url: string ) => url !== '' )
 		);
+
+	useEffect( () => {
+		setCsvSites(
+			rows
+				.slice( 1 )
+				.map( ( line: string[] ) => line?.[ columnIndex ] || '' )
+				.filter( ( url: string ) => !! url )
+		);
+	}, [ rows, columnIndex ] );
 
 	const filePicker = (
 		<>
@@ -62,9 +76,9 @@ export default function SitesInput( {
 
 	const uploadResults = (
 		<>
-			<FormLabel>{ detectedFilename }</FormLabel>
+			<FormLabel>{ csvFilename }</FormLabel>
 			<div className="connect-url__file-picker-url-count">
-				{ translate( '%(num)d sites detected', { args: { num: detectedSites.length } } ) }
+				{ translate( '%(num)d sites detected', { args: { num: rows.length - 1 } } ) }
 			</div>
 		</>
 	);
@@ -84,14 +98,25 @@ export default function SitesInput( {
 
 			<div className="connect-url__file-picker">
 				<FilePicker accept=".csv,.txt" onPick={ onFilePick }>
-					{ '' === detectedFilename ? filePicker : uploadResults }
+					{ '' === csvFilename ? filePicker : uploadResults }
 				</FilePicker>
+				{ csvFilename && csvColumns.length > 0 && (
+					<CSVColumnConfirmation
+						columns={ csvColumns }
+						onColumnSelect={ setCsvColumn }
+						column={ csvColumn }
+					/>
+				) }
 			</div>
 
-			<Button primary disabled={ 0 === detectedSites.length } onClick={ handleValidate }>
-				{ 0 === detectedSites.length
+			<Button
+				primary
+				disabled={ sites.length < 1 || ( rows.length > 0 && columnIndex < 0 ) }
+				onClick={ () => onConfirm( sites ) }
+			>
+				{ 0 === sites.length
 					? translate( 'Add sites' )
-					: translate( 'Add %(num)d sites', { args: { num: detectedSites.length } } ) }
+					: translate( 'Add %(num)d sites', { args: { num: sites.length } } ) }
 			</Button>
 		</>
 	);
