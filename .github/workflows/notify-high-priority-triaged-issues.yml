@@ -7,10 +7,7 @@ jobs:
   notify-on-label:
     runs-on: ubuntu-latest
     if: >
-      (
-        github.event.label.name == '[Pri] Blocker' ||
-        github.event.label.name == 'Triaged'
-      ) &&
+      github.event.label.name == 'Triaged' &&
       contains(github.event.issue.labels.*.name, 'Triaged') &&
       contains(github.event.issue.labels.*.name, '[Pri] Blocker')
     steps:
