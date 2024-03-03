@@ -59,12 +59,16 @@ const StatsBenefitsCommercial = () => {
 
 	const spikeInfoIconRef = useRef( null );
 	const overageInfoIconRef = useRef( null );
+	const UTMTrackingInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
 	const handleSpikePopoverOpen = () => setSpikeInfoShow( true );
 	const handleSpikePopoverClose = () => setSpikeInfoShow( false );
 	const [ overageInfoShow, setOverageInfoShow ] = useState( false );
 	const handleOveragePopoverOpen = () => setOverageInfoShow( true );
 	const handleOveragePopoverClose = () => setOverageInfoShow( false );
+	const [ UTMTrackingInfoShow, setUTMTrackingInfoShow ] = useState( false );
+	const handleUTMTrackingPopoverOpen = () => setUTMTrackingInfoShow( true );
+	const handleUTMTrackingPopoverClose = () => setUTMTrackingInfoShow( false );
 
 	return (
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
@@ -76,6 +80,15 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
 				<li>{ translate( 'Commercial use' ) }</li>
+				<li>
+					{ translate( 'UTM tracking' ) }
+					<Icon
+						icon={ info }
+						ref={ UTMTrackingInfoIconRef }
+						onMouseEnter={ handleUTMTrackingPopoverOpen }
+						onMouseLeave={ handleUTMTrackingPopoverClose }
+					/>
+				</li>
 				<li>
 					{ translate( 'Traffic spike forgiveness' ) }
 					<Icon
@@ -116,6 +129,18 @@ const StatsBenefitsCommercial = () => {
 				<div className="stats-purchase__info-popover-content">
 					{ translate(
 						'You will only be prompted to upgrade to higher tiers when you exceed the limit for three consecutive months.' // TODO: We need a 'learn more' link here.
+					) }
+				</div>
+			</Popover>
+			<Popover
+				position="right"
+				isVisible={ UTMTrackingInfoShow }
+				context={ UTMTrackingInfoIconRef.current }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">
+					{ translate(
+						'It enables you to measure and track traffic through UTM parameters in your URLs, providing a method to assess the success of your campaigns.'
 					) }
 				</div>
 			</Popover>
