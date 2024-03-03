@@ -110,6 +110,26 @@ describe( 'getCouponLineItemFromCart', function () {
 			type: 'coupon',
 			label: 'Coupon: ABCD',
 			formattedAmount: '- ¥300',
+			hasDeleteButton: true,
+		};
+
+		expect( getCouponLineItemFromCart( cartWithCoupon ) ).toStrictEqual( expected );
+	} );
+
+	it( 'hides delete button for recurring coupons', () => {
+		const cartWithCoupon = {
+			...cart,
+			coupon: 'ABCD',
+			coupon_savings_total_integer: 300,
+			is_coupon_recurring: true,
+		};
+
+		const expected: LineItemType = {
+			id: 'coupon-line-item',
+			type: 'coupon',
+			label: 'Coupon: ABCD',
+			formattedAmount: '- ¥300',
+			hasDeleteButton: false,
 		};
 
 		expect( getCouponLineItemFromCart( cartWithCoupon ) ).toStrictEqual( expected );
