@@ -58,7 +58,7 @@ const StatsBenefitsCommercial = () => {
 	const translate = useTranslate();
 
 	const spikeInfoIconRef = useRef( null );
-	const OverageInfoIconRef = useRef( null );
+	const overageInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
 	const handleSpikePopoverOpen = () => setSpikeInfoShow( true );
 	const handleSpikePopoverClose = () => setSpikeInfoShow( false );
@@ -89,7 +89,7 @@ const StatsBenefitsCommercial = () => {
 					{ translate( 'Overage forgiveness' ) }
 					<Icon
 						icon={ info }
-						ref={ OverageInfoIconRef }
+						ref={ overageInfoIconRef }
 						onMouseEnter={ handleOveragePopoverOpen }
 						onMouseLeave={ handleOveragePopoverClose }
 					/>
@@ -110,7 +110,7 @@ const StatsBenefitsCommercial = () => {
 			<Popover
 				position="right"
 				isVisible={ overageInfoShow }
-				context={ OverageInfoIconRef.current }
+				context={ overageInfoIconRef.current }
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
