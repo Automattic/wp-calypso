@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
+import { useDeleteScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
@@ -26,16 +27,34 @@ export const ScheduleList = ( props: Props ) => {
 	const isMobile = useMobileBreakpoint();
 
 	const { siteSlug, onNavBack, onCreateNewSchedule } = props;
-	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
+	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
+	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
+
+	const { deleteScheduleUpdates } = useDeleteScheduleUpdatesMutation( siteSlug );
 	const { data: schedules = [], isLoading, isFetched } = useScheduleUpdatesQuery( siteSlug );
 
-	const closeConfirm = () => {
-		setIsConfirmOpen( false );
+	const openRemoveDialog = ( id: string ) => {
+		setRemoveDialogOpen( true );
+		setSelectedScheduleId( id );
+	};
+
+	const closeRemoveConfirm = () => {
+		setRemoveDialogOpen( false );
+		setSelectedScheduleId( undefined );
+	};
+
+	const onRemoveDialogConfirm = () => {
+		selectedScheduleId && deleteScheduleUpdates( selectedScheduleId );
+		closeRemoveConfirm();
 	};
 
 	return (
 		<>
-			<ConfirmDialog isOpen={ isConfirmOpen } onConfirm={ closeConfirm } onCancel={ closeConfirm }>
+			<ConfirmDialog
+				isOpen={ removeDialogOpen }
+				onConfirm={ onRemoveDialogConfirm }
+				onCancel={ closeRemoveConfirm }
+			>
 				Are you sure you want to delete this schedule?
 			</ConfirmDialog>
 			<Card className="plugins-update-manager">
@@ -58,9 +77,9 @@ export const ScheduleList = ( props: Props ) => {
 					{ isFetched && schedules.length > 0 && (
 						<>
 							{ isMobile ? (
-								<ScheduleListCards onRemoveClick={ () => setIsConfirmOpen( true ) } />
+								<ScheduleListCards onRemoveClick={ () => setRemoveDialogOpen( true ) } />
 							) : (
-								<ScheduleListTable onRemoveClick={ () => setIsConfirmOpen( true ) } />
+								<ScheduleListTable siteSlug={ siteSlug } onRemoveClick={ openRemoveDialog } />
 							) }
 						</>
 					) }
