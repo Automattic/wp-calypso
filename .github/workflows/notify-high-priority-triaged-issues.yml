@@ -21,7 +21,7 @@ jobs:
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: 'C04TRTZUSP9'
+          channel-id: 'C02FMH4G8'
           payload: |
             {
               "blocks": [
