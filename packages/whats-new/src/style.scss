@@ -18,7 +18,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	}
 
 	&.components-modal__frame {
-		// top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 		overflow: auto;
 		max-height: 80vh;
 		pointer-events: auto;
@@ -37,7 +36,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			width: $wpcom-modal-inner-content-width * 2;
 			min-height: $wpcom-modal-content-min-height;
 			height: fit-content;
-			// top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
 		}
 	}
 
