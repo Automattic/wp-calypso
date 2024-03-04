@@ -370,11 +370,17 @@ class ThemeShowcase extends Component {
 	};
 
 	onDesignYourOwnClick = () => {
-		const { isLoggedIn, siteCount, siteId } = this.props;
+		const { isLoggedIn } = this.props;
 
 		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
 			is_logged_in: isLoggedIn,
 		} );
+
+		this.onDesignYourOwnCallback();
+	};
+
+	onDesignYourOwnCallback = () => {
+		const { isLoggedIn, siteCount, siteId } = this.props;
 
 		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
 			this.setState( { isDesignThemeModalVisible: true } );
@@ -424,7 +430,10 @@ class ThemeShowcase extends Component {
 
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themesSelectionProps }>
+				<ThemesSelection
+					{ ...themesSelectionProps }
+					onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+				>
 					{ this.shouldShowCollections() && (
 						<>
 							<ShowcaseThemeCollection
@@ -538,7 +547,12 @@ class ThemeShowcase extends Component {
 
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
-				return <ThemesSelection { ...themeProps } />;
+				return (
+					<ThemesSelection
+						{ ...themeProps }
+						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+					/>
+				);
 			default:
 				return this.allThemes( { themeProps } );
 		}

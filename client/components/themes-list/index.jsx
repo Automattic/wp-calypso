@@ -119,13 +119,17 @@ export const ThemesList = ( { tabFilter, ...props } ) => {
 			is_logged_in: isLoggedIn,
 		} );
 
-		const destinationUrl = getSiteAssemblerUrl( {
-			isLoggedIn,
-			selectedSite,
-			shouldGoToAssemblerStep,
-			siteEditorUrl,
-		} );
-		window.location.assign( destinationUrl );
+		if ( props.onDesignYourOwnClick ) {
+			props.onDesignYourOwnClick();
+		} else {
+			const destinationUrl = getSiteAssemblerUrl( {
+				isLoggedIn,
+				selectedSite,
+				shouldGoToAssemblerStep,
+				siteEditorUrl,
+			} );
+			window.location.assign( destinationUrl );
+		}
 	};
 
 	const [ openWarningModal, setOpenWarningModal ] = useState( false );

@@ -10,12 +10,12 @@ import { usePatterns } from '../use-patterns';
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
 
 describe( 'usePatterns', () => {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
 		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockReset();
+
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 		wrapper = ( { children }: React.PropsWithChildren< any > ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>

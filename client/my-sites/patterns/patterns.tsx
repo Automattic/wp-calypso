@@ -1,56 +1,42 @@
-import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { useLocale } from '@automattic/i18n-utils';
-import classNames from 'classnames';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import { PatternPreview } from 'calypso/my-sites/patterns/components/pattern-preview';
-import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
+import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
+import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
+import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
-
-const RENDERER_SITE_ID = '226011606'; // assemblerdemo
 
 type Props = {
 	category: string;
 	isGridView?: boolean;
+	patternGallery: PatternGalleryFC;
 };
 
-export default function Patterns( { category, isGridView }: Props ) {
+export function Patterns( { category, isGridView, patternGallery: PatternGallery }: Props ) {
 	const locale = useLocale();
-	const { data: patterns } = usePatterns( locale, category );
 
-	const patternIdsByCategory = {
-		intro: patterns?.map( ( { ID } ) => `${ ID }` ) ?? [],
-	};
+	const { data: categories } = usePatternCategories( locale, RENDERER_SITE_ID );
+	const { data: patterns } = usePatterns( locale, category );
 
 	return (
 		<Main isLoggedOut fullWidthLayout>
 			<DocumentHead title="WordPress Patterns" />
 			<h1>Build your perfect site with patterns</h1>
 
-			<BlockRendererProvider
-				siteId={ RENDERER_SITE_ID }
-				placeholder={
-					<div className="patterns">
-						{ patterns?.map( ( pattern ) => (
-							<PatternPreviewPlaceholder key={ pattern.ID } pattern={ pattern } />
-						) ) }
-					</div>
-				}
-			>
-				<PatternsRendererProvider
-					patternIdsByCategory={ patternIdsByCategory }
-					shouldShufflePosts={ false }
-					siteId={ RENDERER_SITE_ID }
-				>
-					<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
-						{ patterns?.map( ( pattern ) => (
-							<PatternPreview isGridView={ isGridView } key={ pattern.ID } pattern={ pattern } />
-						) ) }
-					</div>
-				</PatternsRendererProvider>
-			</BlockRendererProvider>
+			<ul className="pattern-categories">
+				{ categories?.map( ( category ) => (
+					<li className="pattern-category" key={ category.name }>
+						<LocalizedLink href={ `/patterns/${ category.name }` }>
+							{ category.label }
+						</LocalizedLink>
+					</li>
+				) ) }
+			</ul>
+
+			<PatternGallery patterns={ patterns } isGridView={ isGridView } />
 		</Main>
 	);
 }

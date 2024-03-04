@@ -1,15 +1,23 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import React, { ReactNode } from 'react';
 
 interface Props {
 	className: string;
-	copyText: string;
+	copyText: string | ReactNode;
 	onClick: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 	buttonLabel?: string;
+	buttonComponent?: React.ReactNode;
 }
 
-const StatsCardUpsell: React.FC< Props > = ( { className, onClick, copyText, buttonLabel } ) => {
+const StatsCardUpsell: React.FC< Props > = ( {
+	className,
+	onClick,
+	copyText,
+	buttonLabel,
+	buttonComponent,
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -19,9 +27,13 @@ const StatsCardUpsell: React.FC< Props > = ( { className, onClick, copyText, but
 					<Gridicon icon="lock" />
 				</div>
 				<p className="stats-card-upsell__text">{ copyText }</p>
-				<Button primary className="stats-card-upsell__button" onClick={ onClick }>
-					{ buttonLabel || translate( 'Unlock' ) }
-				</Button>
+				{ buttonComponent ? (
+					buttonComponent
+				) : (
+					<Button primary className="stats-card-upsell__button" onClick={ onClick }>
+						{ buttonLabel || translate( 'Unlock' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);

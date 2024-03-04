@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
@@ -14,7 +15,7 @@ const OPTION_KEYS = {
 	CAMPAIGN: 'campaign',
 };
 
-const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
+const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } ) => {
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
 	const [ displayOption, setDisplayOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
@@ -85,7 +86,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary } ) => {
 		<StatsModuleDataQuery
 			data={ data }
 			path="utm"
-			className="stats-module-utm"
+			className={ classNames( className, 'stats-module-utm' ) }
 			moduleStrings={ moduleStrings.utm }
 			period={ period }
 			query={ query }

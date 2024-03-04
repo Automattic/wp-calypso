@@ -93,11 +93,7 @@ const StatsModuleDataQuery = ( {
 			overlay={
 				siteSlug &&
 				! isAdvancedFeatureEnabled && (
-					<StatsCardUpsellJetpack
-						className="stats-module__upsell"
-						siteSlug={ siteSlug }
-						buttonLabel={ translate( 'Upgrade plan' ) }
-					/>
+					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
 				)
 			}
 		/>
