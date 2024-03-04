@@ -14,6 +14,7 @@ import {
 import BillingDashboard from './billing/billing-dashboard';
 import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';
+import PaymentMethodOverview from './payment-methods/payment-method-overview';
 
 export const purchasesContext: Callback = () => {
 	page.redirect( '/purchases/licenses' );
@@ -53,6 +54,13 @@ export const billingContext: Callback = ( context, next ) => {
 export const invoicesContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = <InvoicesOverview />;
+
+	next();
+};
+
+export const paymentMethodsContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path={ context.path } />;
+	context.primary = <PaymentMethodOverview />;
 
 	next();
 };
