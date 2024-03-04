@@ -49,6 +49,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
+	isGlobalSiteViewEnabled,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
@@ -658,13 +659,13 @@ export class SiteSettingsFormGeneral extends Component {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicView = getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	return {
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
@@ -683,7 +684,6 @@ const connectComponent = connect( ( state ) => {
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
 		isLaunchable:
 			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
-		isClassicView,
 	};
 } );
 

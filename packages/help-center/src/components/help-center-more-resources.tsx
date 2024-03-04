@@ -11,7 +11,7 @@ import { Icon, captureVideo, formatListNumbered, external, institution } from '@
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -30,6 +30,7 @@ export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
 	const purchases = useSelector( getUserPurchases );
+	const siteId = useSelector( getSelectedSiteId );
 	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 	const isBusinessOrEcomPlanUser = !! (
 		purchaseSlugs &&
@@ -151,7 +152,12 @@ export const HelpCenterMoreResources = () => {
 					</div>
 				</li>
 			</ul>
-			{ showGuide && <WhatsNewGuide onClose={ () => setShowGuide( false ) } /> }
+			{ showGuide && (
+				<WhatsNewGuide
+					onClose={ () => setShowGuide( false ) }
+					siteId={ siteId?.toString() || '' }
+				/>
+			) }
 		</>
 	);
 };

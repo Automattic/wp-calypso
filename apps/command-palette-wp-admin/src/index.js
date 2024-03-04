@@ -10,7 +10,12 @@ function CommandPaletteApp() {
 		return null;
 	}
 
-	const { siteId, isAtomic = false, isSimple = false } = window?.commandPaletteConfig || {};
+	const {
+		siteId,
+		isAtomic = false,
+		isSimple = false,
+		siteHostname,
+	} = window?.commandPaletteConfig || {};
 
 	if ( ! isSimple && ! isAtomic ) {
 		return;
@@ -19,15 +24,14 @@ function CommandPaletteApp() {
 	const currentRoute = window.location.pathname;
 
 	const navigate = ( path, openInNewTab ) => {
-		const siteHostname = window.location.hostname;
 		let url = path;
 
 		if ( path.startsWith( '/' ) && ! path.startsWith( '/wp-admin' ) ) {
 			url = `https://wordpress.com${ path }`;
 		}
 
-		url = url.replace( ':site', siteHostname );
-		url = url.replace( ':siteId', siteId );
+		url = url.replace( /:site/g, siteHostname );
+		url = url.replace( /:siteId/g, siteId );
 
 		if ( url.startsWith( siteHostname ) ) {
 			url = url.replace( siteHostname, window.location.origin );

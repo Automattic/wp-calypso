@@ -13,27 +13,29 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 // Core modal style overrides
 .whats-new-guide__main {
 	&.components-guide-overlay {
-		background-color: rgba(0, 0, 0, 0.45);
+		background-color: transparent;
+		pointer-events: none;
 	}
 
 	&.components-modal__frame {
-		top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 		overflow: auto;
 		max-height: 80vh;
+		pointer-events: auto;
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
 			width: 90vw;
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
-			height: 520px;
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: $wpcom-modal-inner-content-width * 2;
 			min-height: $wpcom-modal-content-min-height;
 			height: fit-content;
-			top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
 		}
 	}
 

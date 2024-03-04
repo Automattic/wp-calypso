@@ -1,3 +1,7 @@
+.theme-site-selector-modal {
+	z-index: z-index("root", ".theme-site-selector-modal");
+}
+
 .theme-site-selector-modal__content {
 	.site-icon {
 		margin-right: 12px;

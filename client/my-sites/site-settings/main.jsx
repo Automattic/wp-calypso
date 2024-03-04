@@ -10,7 +10,7 @@ import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connec
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
@@ -73,10 +73,9 @@ SiteSettingsComponent.propTypes = {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicView = getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	return {
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isClassicView,
+		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
 	};
 } )( localize( withJetpackConnectionProblem( SiteSettingsComponent ) ) );

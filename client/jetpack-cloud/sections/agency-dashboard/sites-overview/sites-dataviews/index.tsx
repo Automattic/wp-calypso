@@ -7,11 +7,12 @@ import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-o
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
+import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteSetFavorite from '../site-set-favorite';
 import SiteSort from '../site-sort';
-import { AllowedTypes, Site, SiteData } from '../types';
-import { SitesDataViewsProps } from './interfaces';
+import { AllowedTypes, Site } from '../types';
+import { SitesDataViewsProps, SiteInfo } from './interfaces';
 import './style.scss';
 
 const SitesDataViews = ( {
@@ -23,6 +24,11 @@ const SitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
+	const totalSites =
+		window.location.pathname === '/sites/favorites' ? data?.totalFavorites || 0 : data?.total || 0;
+
+	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
+	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
@@ -37,7 +43,7 @@ const SitesDataViews = ( {
 	);
 
 	const renderField = useCallback(
-		( column: AllowedTypes, item: SiteData ) => {
+		( column: AllowedTypes, item: SiteInfo ) => {
 			if ( isLoading ) {
 				return <TextPlaceholder />;
 			}
@@ -57,23 +63,24 @@ const SitesDataViews = ( {
 		[ isLoading, isLargeScreen ]
 	);
 
+	// todo - refactor: extract fields, along actions, to the upper component
 	const fields = useMemo(
 		() => [
 			{
 				id: 'status',
 				header: translate( 'Status' ),
-				getValue: ( { item }: { item: SiteData } ) =>
+				getValue: ( { item }: { item: SiteInfo } ) =>
 					item.site.error || item.scan.status === 'critical',
 				render: () => {},
 				type: 'enumeration',
 				elements: [
-					{ value: 1, label: 'Needs Attention' },
-					{ value: 2, label: 'Backup Failed' },
-					{ value: 3, label: 'Backup Warning' },
-					{ value: 4, label: 'Threat Found' },
-					{ value: 5, label: 'Site Disconnected' },
-					{ value: 6, label: 'Site Down' },
-					{ value: 7, label: 'Plugins Needing Updates' },
+					{ value: 1, label: translate( 'Needs Attention' ) },
+					{ value: 2, label: translate( 'Backup Failed' ) },
+					{ value: 3, label: translate( 'Backup Warning' ) },
+					{ value: 4, label: translate( 'Threat Found' ) },
+					{ value: 5, label: translate( 'Site Disconnected' ) },
+					{ value: 6, label: translate( 'Site Down' ) },
+					{ value: 7, label: translate( 'Plugins Needing Updates' ) },
 				],
 				filterBy: {
 					operators: [ 'in' ],
@@ -92,8 +99,8 @@ const SitesDataViews = ( {
 						</SiteSort>
 					</>
 				),
-				getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
-				render: ( { item }: { item: SiteData } ) => {
+				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.url,
+				render: ( { item }: { item: SiteInfo } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -112,48 +119,48 @@ const SitesDataViews = ( {
 			{
 				id: 'stats',
 				header: <span className="sites-dataview__stats-header">STATS</span>,
-				getValue: () => 'Stats status',
-				render: ( { item }: { item: SiteData } ) => renderField( 'stats', item ),
+				getValue: () => '-',
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'stats', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'boost',
 				header: <span className="sites-dataview__boost-header">BOOST</span>,
-				getValue: ( { item }: { item: SiteData } ) => item.boost.status,
-				render: ( { item }: { item: SiteData } ) => renderField( 'boost', item ),
+				getValue: ( { item }: { item: SiteInfo } ) => item.boost.status,
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'boost', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'backup',
 				header: <span className="sites-dataview__backup-header">BACKUP</span>,
-				getValue: () => 'Backup status',
-				render: ( { item }: { item: SiteData } ) => renderField( 'backup', item ),
+				getValue: () => '-',
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'backup', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'monitor',
 				header: <span className="sites-dataview__monitor-header">MONITOR</span>,
-				getValue: () => 'Monitor status',
-				render: ( { item }: { item: SiteData } ) => renderField( 'monitor', item ),
+				getValue: () => '-',
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'monitor', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'scan',
 				header: <span className="sites-dataview__scan-header">SCAN</span>,
-				getValue: () => 'Scan status',
-				render: ( { item }: { item: SiteData } ) => renderField( 'scan', item ),
+				getValue: () => '-',
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'scan', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
 				id: 'plugins',
 				header: <span className="sites-dataview__plugins-header">PLUGINS</span>,
-				getValue: () => 'Plugins status',
-				render: ( { item }: { item: SiteData } ) => renderField( 'plugin', item ),
+				getValue: () => '-',
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'plugin', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -166,8 +173,8 @@ const SitesDataViews = ( {
 						icon={ starFilled }
 					/>
 				),
-				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
-				render: ( { item }: { item: SiteData } ) => {
+				getValue: ( { item }: { item: SiteInfo } ) => item.isFavorite,
+				render: ( { item }: { item: SiteInfo } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -186,8 +193,8 @@ const SitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
-				render: ( { item }: { item: SiteData } ) => {
+				getValue: ( { item }: { item: SiteInfo } ) => item.isFavorite,
+				render: ( { item }: { item: SiteInfo } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -215,24 +222,78 @@ const SitesDataViews = ( {
 		[ isLoading, isLargeScreen, openSitePreviewPane, renderField, translate ]
 	);
 
+	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
+	// todo - refactor: extract actions, along fields, to the upper component
+	const actions = useMemo(
+		() => [
+			{
+				id: 'pause-monitor',
+				label: translate( 'Pause Monitor' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'active';
+				},
+				callback() {
+					// todo: pause monitor. Param: sites: SiteInfo[]
+				},
+			},
+			{
+				id: 'resume-monitor',
+				label: translate( 'Resume Monitor' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'inactive';
+				},
+				callback() {
+					// todo: resume monitor. Param: sites: SiteInfo[]
+				},
+			},
+			{
+				id: 'custom-notification',
+				label: translate( 'Custom Notification' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'active';
+				},
+				callback() {
+					// todo: custom notification. Param: sites: SiteInfo[]
+				},
+			},
+			{
+				id: 'reset-notification',
+				label: translate( 'Reset Notification' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'active';
+				},
+				callback() {
+					// todo: reset notification. Param: sites: SiteInfo[]
+				},
+			},
+		],
+		[ translate ]
+	);
+
+	const urlParams = new URLSearchParams( window.location.search );
+	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
+	const useExampleDataForTour = isOnboardingTourActive && ( ! sites || sites.length === 0 );
+
 	return (
 		<>
 			<DataViews
-				data={ sites }
-				paginationInfo={ { totalItems: 0, totalPages: 0 } }
+				data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
+				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ sitesViewState }
 				search={ true }
 				searchLabel={ translate( 'Search sites' ) }
-				getItemId={ ( item: SiteData ) => {
-					if ( isLoading ) {
-						return '';
-					}
-					return item.site.value.blog_id;
+				getItemId={ ( item: SiteInfo ) => {
+					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
+					return item.id;
 				} }
 				onChangeView={ onSitesViewChange }
 				supportedLayouts={ [ 'table' ] }
-				actions={ [] }
+				actions={ actions }
 				isLoading={ isLoading }
 			/>
 		</>

@@ -24,6 +24,8 @@ const StatsModuleDataQuery = ( {
 	metricLabel,
 	hideSummaryLink,
 	isLoading,
+	selectedOption,
+	toggleControl,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -33,13 +35,9 @@ const StatsModuleDataQuery = ( {
 	const [ showLoader, setShowLoader ] = useState( isLoading || isLoadingFeatureCheck );
 
 	// Show error and loading based on the query
-	// const isLoading = false;
 	const hasError = false;
 
 	const displaySummaryLink = data && ! hideSummaryLink;
-	// const footerClass = classNames( 'stats-module__footer-actions', {
-	// 	'stats-module__footer-actions--summary': summary,
-	// } );
 
 	useEffect( () => {
 		setShowLoader( isLoading || isLoadingFeatureCheck );
@@ -89,16 +87,13 @@ const StatsModuleDataQuery = ( {
 			}
 			error={ hasError && <ErrorPanel /> }
 			loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-			// splitHeader={ !! additionalColumns }
-			// mainItemLabel={ mainItemLabel }
+			splitHeader
+			mainItemLabel={ selectedOption?.headerLabel }
+			toggleControl={ toggleControl }
 			overlay={
 				siteSlug &&
 				! isAdvancedFeatureEnabled && (
-					<StatsCardUpsellJetpack
-						className="stats-module__upsell"
-						siteSlug={ siteSlug }
-						buttonLabel={ translate( 'Upgrade plan' ) }
-					/>
+					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
 				)
 			}
 		/>

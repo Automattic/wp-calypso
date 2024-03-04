@@ -3,10 +3,11 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useDispatch } from '@wordpress/data';
+import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
+import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { Component, useCallback, useEffect } from 'react';
+import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -57,7 +58,6 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
-
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -95,6 +95,53 @@ function SidebarScrollSynchronizer() {
 	}, [ active ] );
 
 	return null;
+}
+
+function WhatsNewLoader( { loadWhatsNew, siteId } ) {
+	const { fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
+
+	useEffect( () => {
+		fetchSeenWhatsNewAnnouncements();
+	}, [ fetchSeenWhatsNewAnnouncements ] );
+
+	const { seenWhatsNewAnnouncements } = useSelect( ( select ) => {
+		const helpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			seenWhatsNewAnnouncements: helpCenterSelect.getSeenWhatsNewAnnouncements(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if (
+			data &&
+			data.length > 0 &&
+			! isLoading &&
+			seenWhatsNewAnnouncements &&
+			typeof seenWhatsNewAnnouncements.indexOf === 'function'
+		) {
+			if ( config.isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+				data.forEach( ( item ) => {
+					if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
+						setShowWhatsNew( true );
+						return;
+					}
+				} );
+			}
+		}
+	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
+
+	const handleClose = useCallback( () => {
+		setShowWhatsNew( false );
+	}, [ setShowWhatsNew ] );
+
+	if ( ! loadWhatsNew ) {
+		return null;
+	}
+
+	return showWhatsNew && <WhatsNewGuide onClose={ handleClose } siteId={ siteId } />;
 }
 
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
@@ -298,6 +345,10 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
+				<WhatsNewLoader
+					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden }
+					siteId={ this.props.siteId }
+				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -482,8 +533,8 @@ export default withCurrentRoute(
 				sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 				userAllowedToHelpCenter,
 				currentRoute,
-				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ),
 				userCapabilities: state.currentUser.capabilities,
 			};
