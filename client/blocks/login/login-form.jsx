@@ -60,6 +60,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
@@ -185,7 +186,7 @@ export class LoginForm extends Component {
 		return (
 			socialAccountIsLinking ||
 			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			( this.props.isWoo && ! this.props.isPartnerSignup )
+			( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless )
 		);
 	}
 
@@ -196,7 +197,7 @@ export class LoginForm extends Component {
 			! socialAccountIsLinking &&
 			hasAccountTypeLoaded &&
 			isRegularAccount( accountType ) &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
+			! ( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless )
 		);
 	}
 
@@ -206,7 +207,7 @@ export class LoginForm extends Component {
 			isSendingEmail ||
 			( ! socialAccountIsLinking &&
 				! hasAccountTypeLoaded &&
-				! ( this.props.isWoo && ! this.props.isPartnerSignup ) )
+				! ( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless ) )
 		);
 	}
 
@@ -241,7 +242,8 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const isWooAndNotPartnerSignup = this.props.isWoo && ! this.props.isPartnerSignup;
+		const isWooAndNotPartnerSignup =
+			this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless;
 
 		// Skip this step if we're in the Woo and not the partner signup flow, and hasAccountTypeLoaded.
 		if ( ! isWooAndNotPartnerSignup && ! this.props.hasAccountTypeLoaded ) {
@@ -578,7 +580,9 @@ export class LoginForm extends Component {
 						);
 					} }
 				>
-					{ this.props.translate( 'Forgot password?' ) }
+					{ this.props.isWooPasswordless
+						? this.props.translate( 'Lost your password?' )
+						: this.props.translate( 'Forgot password?' ) }
 				</a>
 			);
 		}
@@ -671,6 +675,7 @@ export class LoginForm extends Component {
 			currentQuery,
 			showSocialLoginFormOnly,
 			isWoo,
+			isWooPasswordless,
 			isPartnerSignup,
 			isWooCoreProfilerFlow,
 			hideSignupLink,
@@ -683,7 +688,8 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isFormFilled =
 			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
-		const isSubmitButtonDisabled = isWoo && ! isPartnerSignup ? isFormFilled : isFormDisabled;
+		const isSubmitButtonDisabled =
+			isWoo && ! isPartnerSignup && ! isWooPasswordless ? isFormFilled : isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
@@ -874,7 +880,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">{ socialToS }</p>
-					{ isWoo && ! isPartnerSignup && this.renderLostPasswordLink() }
+					{ isWoo && ! isPartnerSignup && ! isWooPasswordless && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton
 							primary
@@ -917,6 +923,7 @@ export class LoginForm extends Component {
 						</SocialLoginForm>
 					</Fragment>
 				) }
+				{ isWoo && ! isPartnerSignup && isWooPasswordless && this.renderLostPasswordLink() }
 
 				{ this.showJetpackConnectSiteOnly() && (
 					<JetpackConnectSiteOnly
@@ -960,6 +967,7 @@ export default connect(
 				getCurrentQueryArguments( state )?.email_address,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery: getCurrentQueryArguments( state ),
+			isWooPasswordless: getWooPasswordless( state ),
 		};
 	},
 	{

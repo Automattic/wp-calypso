@@ -429,6 +429,26 @@ class Login extends Component {
 							{ translate( 'First, select the account you’d like to use.' ) }
 						</p>
 					);
+				} else if ( this.props.isWooPasswordless ) {
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
+					const poweredByWpCom = (
+						<>
+							{ translate( 'Log in with your WordPress.com account.' ) }
+							<br />
+						</>
+					);
+
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ poweredByWpCom }
+							{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
+								components: {
+									signupLink: <a href={ this.getSignupUrl() } />,
+									br: <br />,
+								},
+							} ) }
+						</p>
+					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
@@ -846,11 +866,12 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo, isWooPasswordless } = this.props;
 
 		return (
 			<div
 				className={ classNames( 'login', {
+					'is-woo-passwordless': isWooPasswordless,
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),

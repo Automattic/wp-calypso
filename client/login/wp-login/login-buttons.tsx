@@ -20,6 +20,7 @@ interface LoginButtonsProps {
 	};
 	twoFactorAuthType: string;
 	usernameOrEmail: string;
+	isWooPasswordless: boolean;
 }
 
 const LoginButtons = ( {
@@ -27,6 +28,7 @@ const LoginButtons = ( {
 	oauth2Client,
 	twoFactorAuthType,
 	usernameOrEmail,
+	isWooPasswordless,
 }: LoginButtonsProps ) => {
 	const translate = useTranslate();
 	const query = useSelector( getCurrentQueryArguments );
@@ -87,7 +89,8 @@ const LoginButtons = ( {
 			return null;
 		}
 		// Is not supported for any oauth 2 client.
-		if ( oauth2Client ) {
+		// n.b this seems to work for woo.com so it's not clear why the above comment is here
+		if ( oauth2Client && ! isWooPasswordless ) {
 			return null;
 		}
 

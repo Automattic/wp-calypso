@@ -710,6 +710,15 @@
 		margin-top: -14px;
 	}
 
+	.is-woo-passwordless.login .login__form-forgot-password {
+		color: $woo-purple-50;
+		text-align: center;
+		font-weight: 500;
+		line-height: 20px;
+		margin-block-start: 32px;
+		text-decoration: none;
+	}
+
 	.logged-out-form__footer {
 		background: none;
 		border: none;
@@ -1256,6 +1265,7 @@
 		}
 
 		.signup-form,
+		.login form,
 		.login__body--continue-as-user {
 			width: 100%;
 			margin: 48px auto 0;
@@ -1274,6 +1284,34 @@
 				padding: 0;
 				margin-top: 24px;
 			}
+		}
+
+		.card.login__form {
+			padding: 0;
+			border-bottom-width: 0;
+			margin-inline: 0;
+
+			~ .auth-form__separator {
+				margin-block: 32px;
+			}
+
+			.login__form-userdata .form-label {
+				color: var(--color-gray-100);
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 600;
+				line-height: 24px;
+				margin-bottom: 16px;
+			}
+		}
+
+		.login__form-forgot-password {
+			color: $woo-purple-50;
+			text-align: center;
+			font-weight: 500;
+			line-height: 20px;
+			margin-block-start: 32px;
+			text-decoration: none;
 		}
 
 		.auth-form__social {
@@ -1302,6 +1340,7 @@
 					border: 2px solid var(--studio-gray-10);
 					width: 100%;
 					margin: 0;
+					text-decoration: none;
 
 					&:hover {
 						background: var(--studio-gray-0, #f6f7f7);
