@@ -3,7 +3,7 @@ import { STEPS } from '../internals/steps';
 export const shouldRedirectToSiteMigration = (
 	step: string,
 	platform: string,
-	origin: string | null
+	origin?: string | null
 ) => {
 	return (
 		step === STEPS.IMPORT_LIST.slug &&

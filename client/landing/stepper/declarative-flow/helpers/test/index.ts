@@ -26,4 +26,16 @@ describe( 'DeclarativeFlowHelpers', () => {
 			)
 		).toBe( false );
 	} );
+
+	it( 'returns false when the origin is not set', () => {
+		expect( shouldRedirectToSiteMigration( STEPS.IMPORT_LIST.slug, 'other-platform', null ) ).toBe(
+			false
+		);
+	} );
+
+	it( 'returns false when the origin is not the site-migration-identify', () => {
+		expect(
+			shouldRedirectToSiteMigration( STEPS.IMPORT_LIST.slug, 'wordpress', 'other-origin' )
+		).toBe( false );
+	} );
 } );
