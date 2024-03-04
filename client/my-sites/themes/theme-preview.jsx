@@ -36,6 +36,11 @@ class ThemePreview extends Component {
 			this.props.hideThemePreview();
 		}
 	}
+
+	componentWillUnmount() {
+		this.props.hideThemePreview();
+	}
+
 	getStyleVariationOption = () => {
 		return this.props.themeOptions?.styleVariation;
 	};
