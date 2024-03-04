@@ -27,6 +27,7 @@ const HorizontalBarListItem = ( {
 	additionalColumns,
 	usePlainCard,
 	isLinkUnderlined,
+	hasNoBackground,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -112,6 +113,7 @@ const HorizontalBarListItem = ( {
 						[ `${ BASE_CLASS_NAME }-item--link` ]: isLink || hasChildren,
 						[ `${ BASE_CLASS_NAME }-item--link-underlined` ]: isLinkUnderlined,
 						[ `${ BASE_CLASS_NAME }-item--static` ]: isStatic,
+						[ `${ BASE_CLASS_NAME }-item--no-bg` ]: hasNoBackground,
 					},
 					className
 				) }

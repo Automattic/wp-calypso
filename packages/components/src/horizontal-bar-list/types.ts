@@ -20,10 +20,18 @@ export type HorizontalBarListItemProps = {
 	leftGroupToggle?: boolean;
 	isStatic?: boolean;
 	additionalColumns?: React.ReactNode;
-	// for values that are not numeric, add this property to display a string in the values column and avoid showing horizontal bars
+	/**
+	 * @property {boolean} usePlainCard - for values that are not numeric, add this property to display a string in the values column and avoid showing horizontal bars
+	 */
 	usePlainCard?: boolean;
-	// use underlined links for item lables (variants without horizontal bars)
+	/**
+	 * @property {boolean} isLinkUnderlined - use underlined links for item lables (variants without horizontal bars)
+	 */
 	isLinkUnderlined?: boolean;
+	/**
+	 * @property {boolean} hasNoBackground - don't render the background bar and adjust indentation
+	 */
+	hasNoBackground?: boolean;
 };
 
 type StatDataObject = {
