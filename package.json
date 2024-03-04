@@ -302,7 +302,7 @@
 		"tslib": "^2.3.0",
 		"typescript": "^5.3.3",
 		"v8-profiler-next": "^1.10.0",
-		"webpack": "^5.90.2",
+		"webpack": "^5.90.3",
 		"webpack-bundle-analyzer": "^4.10.1",
 		"webpack-cli": "^4.10.0",
 		"webpack-dev-middleware": "^5.3.3",
