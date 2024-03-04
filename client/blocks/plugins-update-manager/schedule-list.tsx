@@ -13,8 +13,6 @@ import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListTable } from './schedule-list-table';
 
-import './styles.scss';
-
 interface Props {
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;

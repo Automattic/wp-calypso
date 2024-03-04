@@ -5,6 +5,8 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleList } from './schedule-list';
 
+import './styles.scss';
+
 interface Props {
 	siteSlug: string;
 	context: 'list' | 'create';
