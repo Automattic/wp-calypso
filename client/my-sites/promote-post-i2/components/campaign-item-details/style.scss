@@ -638,6 +638,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			button:not(:last-child),
 			a:not(:last-child) {
 				margin-right: 8px;
+				background-color: var(-color-surface);
 			}
 
 			.campaign-item-details__support-buttons-icon {
@@ -831,6 +832,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 				.contact-support-button {
 					margin-bottom: 12px;
+					background: var(-color-surface);
 				}
 				.cancel-campaign-button {
 					display: flex;
