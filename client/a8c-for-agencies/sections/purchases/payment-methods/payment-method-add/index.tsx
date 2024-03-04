@@ -31,7 +31,10 @@ export default function PaymentMethodAdd( { withAssignLicense }: Props ) {
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<PageViewTracker title="Purchases > Payment Methods" path="/purchases/payment-methods" />
+			<PageViewTracker
+				title="Purchases > Payment Methods > Add"
+				path="/purchases/payment-methods/add"
+			/>
 
 			{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
 
