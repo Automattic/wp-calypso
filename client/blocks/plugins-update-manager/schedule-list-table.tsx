@@ -9,7 +9,7 @@ import { ellipsis } from './icons';
 interface Props {
 	siteSlug: string;
 	onRemoveClick: ( id: string ) => void;
-	onScheduleClick: ( id: string ) => void;
+	onScheduleClick?: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const moment = useLocalizedMoment();
@@ -40,7 +40,7 @@ export const ScheduleListTable = ( props: Props ) => {
 							<Button
 								className="schedule-name"
 								variant="link"
-								onClick={ () => onScheduleClick( schedule.id ) }
+								onClick={ () => onScheduleClick && onScheduleClick( schedule.id ) }
 							>
 								{ schedule.hook }
 							</Button>

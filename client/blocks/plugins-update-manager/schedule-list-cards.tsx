@@ -9,7 +9,7 @@ import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updat
 interface Props {
 	siteSlug: string;
 	onRemoveClick: ( id: string ) => void;
-	onScheduleClick: ( id: string ) => void;
+	onScheduleClick?: ( id: string ) => void;
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const moment = useLocalizedMoment();
@@ -39,7 +39,7 @@ export const ScheduleListCards = ( props: Props ) => {
 							<Button
 								className="schedule-name"
 								variant="link"
-								onClick={ () => onScheduleClick( schedule.id ) }
+								onClick={ () => onScheduleClick && onScheduleClick( schedule.id ) }
 							>
 								{ schedule.hook }
 							</Button>
