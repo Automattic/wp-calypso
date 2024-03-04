@@ -11,7 +11,7 @@ describe( 'DeclarativeFlowHelpers', () => {
 		).toBe( true );
 	} );
 
-	it( 'returns false when current step is not importLimit', () => {
+	it( 'returns false when current step is not importList', () => {
 		expect(
 			shouldRedirectToSiteMigration( 'other-step', 'wordpress', 'site-migration-identify' )
 		).toBe( false );
