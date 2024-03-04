@@ -166,7 +166,7 @@
 		"moment": "^2.26.0",
 		"moment-timezone": "^0.5.40",
 		"moment-timezone-data-webpack-plugin": "^1.5.1",
-		"nock": "^13.5.1",
+		"nock": "^13.5.3",
 		"path-browserify": "^1.0.1",
 		"percentage-regex": "^3.0.0",
 		"phone": "^3.1.17",
