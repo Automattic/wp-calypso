@@ -6,6 +6,7 @@ import {
 	billingContext,
 	invoicesContext,
 	paymentMethodsContext,
+	paymentMethodsAddContext,
 } from './controller';
 
 export default function () {
@@ -29,6 +30,7 @@ export default function () {
 
 	// Payment Methods
 	page( '/purchases/payment-methods', paymentMethodsContext, makeLayout, clientRender );
+	page( '/purchases/payment-methods/add', paymentMethodsAddContext, makeLayout, clientRender );
 
 	// Invoices
 	page( '/purchases/invoices', invoicesContext, makeLayout, clientRender );

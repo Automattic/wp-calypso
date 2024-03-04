@@ -741,6 +741,7 @@ const sections = [
 			'purchases/licenses',
 			'purchases/billing',
 			'purchases/payment-methods',
+			'purchases/payment-methods/add',
 			'purchases/invoices',
 		],
 		module: 'calypso/a8c-for-agencies/sections/purchases',
