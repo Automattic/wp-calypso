@@ -59,10 +59,11 @@ export const ScheduleForm = ( props: Props ) => {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
 	} ) );
+	const scheduledPlugins = schedules.map( ( schedule ) => schedule.args );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		name: validateName( name ),
-		plugins: validatePlugins( selectedPlugins ),
+		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
 		timestamp: validateTimeSlot( { frequency, timestamp }, existingTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
@@ -127,7 +128,10 @@ export const ScheduleForm = ( props: Props ) => {
 	// Plugin selection validation
 	useEffect(
 		() =>
-			setValidationErrors( { ...validationErrors, plugins: validatePlugins( selectedPlugins ) } ),
+			setValidationErrors( {
+				...validationErrors,
+				plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
+			} ),
 		[ selectedPlugins ]
 	);
 
