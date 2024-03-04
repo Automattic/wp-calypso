@@ -26,9 +26,14 @@ export type CorePluginsResponse = CorePlugin[];
  * @param siteIdOrSlug The site ID or slug
  */
 export const useCorePluginsQuery = (
-	siteIdOrSlug: SiteId | SiteSlug | undefined
+	siteIdOrSlug: SiteId | SiteSlug | undefined,
+	hideManagedPlugins: boolean = false
 ): UseQueryResult< CorePluginsResponse > => {
-	return useQuery( {
+	const select = hideManagedPlugins
+		? ( plugins: CorePluginsResponse ) => plugins.filter( ( plugin ) => ! plugin.is_managed )
+		: undefined;
+
+	return useQuery< CorePluginsResponse >( {
 		queryKey: [ 'core-plugins', siteIdOrSlug ],
 		queryFn: () => {
 			return wpcomRequest( {
@@ -43,5 +48,6 @@ export const useCorePluginsQuery = (
 		enabled: !! siteIdOrSlug,
 		retry: false,
 		refetchOnWindowFocus: false,
+		select,
 	} );
 };

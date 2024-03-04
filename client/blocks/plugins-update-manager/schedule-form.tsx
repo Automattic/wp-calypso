@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { Fragment, useState, useCallback, useEffect, useMemo } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
@@ -40,16 +40,12 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug, onCreateSuccess } = props;
+
 	const {
-		data: dataPlugins,
+		data: plugins = [],
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
-	} = useCorePluginsQuery( siteSlug );
-	const plugins = useMemo( () => {
-		const plugins = dataPlugins ?? [];
-		// don't display managed plugins
-		return plugins.filter( ( plugin ) => ! plugin.is_managed );
-	}, [ dataPlugins ] );
+	} = useCorePluginsQuery( siteSlug, true );
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
 		onSuccess: () => onCreateSuccess && onCreateSuccess(),
