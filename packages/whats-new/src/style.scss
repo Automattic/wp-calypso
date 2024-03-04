@@ -93,14 +93,15 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			}
 
 			.guide__forward-button {
-				background-color: var(--wp-admin-theme-color);
-				border-color: var(--wp-admin-theme-color);
+				background-color: var(--color-accent);
+				border-color: var(--color-accent);
 
 				color: var(--color-text-inverted);
 				font-size: $font-body-small;
 
 				&:focus {
-					border: none;
+					border-color: transparent;
+					box-shadow: 0 0 0 2px var(--color-accent-light);
 				}
 			}
 
@@ -172,7 +173,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	height: 50%;
 	max-height: 230px;
 	padding: 32px 52px 0;
-	background: var(--studio-blue-50);
+	background: #a6b1ee;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
