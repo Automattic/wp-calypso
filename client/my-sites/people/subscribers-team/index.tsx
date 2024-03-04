@@ -18,7 +18,7 @@ import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
 import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
-import type { UsersQuery } from '../team-members/types';
+import type { UsersQuery } from '@automattic/data-stores';
 
 interface Props {
 	filter: string;

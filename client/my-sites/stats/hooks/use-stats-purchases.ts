@@ -83,5 +83,6 @@ export default function useStatsPurchases( siteId: number | null ) {
 		supportCommercialUse,
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
+		isLoading: ! hasLoadedSitePurchases || isRequestingSitePurchases,
 	};
 }

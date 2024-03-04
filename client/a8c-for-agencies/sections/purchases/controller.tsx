@@ -12,6 +12,7 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import BillingDashboard from './billing/billing-dashboard';
+import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';
 
 export const purchasesContext: Callback = () => {
@@ -45,6 +46,13 @@ export const licensesContext: Callback = ( context, next ) => {
 export const billingContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = <BillingDashboard />;
+
+	next();
+};
+
+export const invoicesContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path={ context.path } />;
+	context.primary = <InvoicesOverview />;
 
 	next();
 };

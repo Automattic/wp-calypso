@@ -44,6 +44,7 @@ class StatsModule extends Component {
 		listItemClassName: PropTypes.string,
 		gateStats: PropTypes.bool,
 		gateDownloads: PropTypes.bool,
+		hasNoBackground: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -138,6 +139,7 @@ class StatsModule extends Component {
 			listItemClassName,
 			gateStats,
 			gateDownloads,
+			hasNoBackground,
 		} = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
@@ -188,6 +190,7 @@ class StatsModule extends Component {
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
+					hasNoBackground={ hasNoBackground }
 					overlay={
 						siteId &&
 						statType &&

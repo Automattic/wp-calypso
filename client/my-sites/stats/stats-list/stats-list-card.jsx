@@ -26,18 +26,19 @@ const StatsListCard = ( {
 	useShortLabel,
 	useShortNumber,
 	error,
-	heroElement,
-	metricLabel,
-	splitHeader,
+	heroElement, // a node placed before the list
+	metricLabel, // a label to use for the values on the right side of the bars - `Views` by default
+	splitHeader, // instead of using a simple header containing the name of the card use additional columns and header items
 	mainItemLabel,
-	additionalColumns,
-	toggleControl,
+	additionalColumns, // additional columns to be displayed next to the default `views` column
+	toggleControl, // component to be placed in a split header
 	className,
 	usePlainCard,
 	showLeftIcon,
 	isLinkUnderlined,
 	listItemClassName,
-	overlay,
+	overlay, // an overlay used to hide the module behind a blur overlay
+	hasNoBackground,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -172,6 +173,7 @@ const StatsListCard = ( {
 								usePlainCard={ usePlainCard }
 								isLinkUnderlined={ isLinkUnderlined }
 								leftGroupToggle={ item?.children && moduleType === 'tags-categories' } // tags and categories show toggle on the oposite side
+								hasNoBackground={ hasNoBackground }
 							/>
 						);
 					} ) }

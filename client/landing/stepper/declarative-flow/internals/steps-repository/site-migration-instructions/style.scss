@@ -1,0 +1,27 @@
+.site-migration-instructions {
+	.site-migration-instructions__list {
+		li {
+			margin-bottom: 0.5rem;
+		}
+	}
+
+	.step-container__header p {
+		margin-top: 1.5rem;
+	}
+
+	.site-migration-instructions__migration-key {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 0.5rem;
+		max-width: 100%;
+	}
+
+	.site-migration-instructions__migration-key .site-migration-instructions__key {
+		background: var(--color-neutral-0);
+		display: inline-block;
+		margin-right: 0.75rem;
+		padding: 0.75rem 1rem;
+		width: 400px;
+		overflow-x: scroll;
+	}
+}

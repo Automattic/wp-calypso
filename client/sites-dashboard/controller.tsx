@@ -117,7 +117,9 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 
 			.layout__content {
 				// The page header background extends all the way to the edge of the screen
-				padding-inline: 0;
+				@media only screen and ( min-width: 782px ) {
+					padding-inline: 0;
+				}
 
 				// Prevents the status dropdown from being clipped when the page content
 				// isn't tall enough

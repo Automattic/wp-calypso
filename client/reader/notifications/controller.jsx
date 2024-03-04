@@ -4,12 +4,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
+import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 export function notifications( context, next ) {
 	const basePath = sectionify( context.path );
 	const mcKey = 'notifications';
 	const state = context.store.getState();
+	const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, null, 'reader' );
 
 	trackPageLoad( basePath, 'Reader > Notifications', mcKey );
 	recordTrack(
@@ -41,6 +43,7 @@ export function notifications( context, next ) {
 					checkToggle={ () => {} }
 					setIndicator={ () => {} }
 					placeholder={ null }
+					isGlobalSidebarVisible={ shouldShowGlobalSidebar }
 				/>
 			</div>
 		</>
