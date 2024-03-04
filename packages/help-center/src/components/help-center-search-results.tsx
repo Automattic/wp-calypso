@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import page from '@automattic/calypso-router';
-import { Gridicon, Badge } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import {
 	getContextResults,
 	LinksForSection,
@@ -18,6 +18,7 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
+import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -121,6 +122,8 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
+	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -229,17 +232,9 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
-		const DeveloperBadge = () => {
+		const DeveloperResourceIndicator = () => {
 			return (
-				<div className="help-center-search-results__content">
-					{ isResultFromDeveloperWordpress( result.link ) && (
-						<Badge type="info" className="help-center-search-results__badge">
-							{ /* translators: Dev is an acronym of Developers */ }
-							{ __( 'Dev', __i18n_text_domain__ ) }
-						</Badge>
-					) }
-					<span>{ preventWidows( decodeEntities( title ) ) }</span>
-				</div>
+				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
 			);
 		};
 
@@ -260,8 +255,12 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							<LinkIcon />
-							<DeveloperBadge />
+							{ isResultFromDeveloperWordpress( result.link ) ? (
+								<DeveloperResourceIndicator />
+							) : (
+								<LinkIcon />
+							) }
+							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 							<Icon
 								width={ 20 }
 								height={ 20 }
