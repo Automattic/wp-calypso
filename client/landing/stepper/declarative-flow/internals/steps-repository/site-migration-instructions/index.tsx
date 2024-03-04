@@ -11,13 +11,12 @@ import './style.scss';
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
 	const siteMigrationKey = 'Yjx3xUYYTm89s9xBFe7jitNA94noUg6tzgjnpx9zPVwGdbewfL';
-	const buttonTextCopy = translate( 'Copy key' );
-	const [ buttonText, setButtonText ] = useState( buttonTextCopy );
+	const [ buttonTextCopy, setButtonTextCopy ] = useState( false );
 	const onCopy = () => {
 		recordTracksEvent( 'calypso_migration_instructions_key_copy' );
-		setButtonText( translate( 'Copied!' ) );
+		setButtonTextCopy( true );
 		setTimeout( () => {
-			setButtonText( buttonTextCopy );
+			setButtonTextCopy( false );
 		}, 2000 );
 	};
 
@@ -53,7 +52,7 @@ const SiteMigrationInstructions: Step = function () {
 							className="site-migration-instructions__copy-key-button is-primary"
 							onCopy={ onCopy }
 						>
-							{ buttonText }
+							{ buttonTextCopy ? translate( 'Copied!' ) : translate( 'Copy key' ) }
 						</ClipboardButton>
 					</div>
 				</li>
