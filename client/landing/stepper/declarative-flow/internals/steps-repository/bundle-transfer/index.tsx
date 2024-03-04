@@ -169,8 +169,8 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
 			}
 
-			// Poll for software status
-			let stopPollingSoftware = false;
+			// If we have a valid software-set, poll for software status
+			let stopPollingSoftware = ! softwareSet;
 			let pollingSoftwareRetry = 0;
 
 			while ( ! stopPollingSoftware ) {
