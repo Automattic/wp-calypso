@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import page from '@automattic/calypso-router';
-import { Gridicon, Badge } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import {
 	getContextResults,
 	LinksForSection,
@@ -229,16 +229,11 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
-		const DeveloperBadge = () => {
+		const DeveloperResourceIndicator = () => {
 			return (
-				<div className="help-center-search-results__content">
-					{ isResultFromDeveloperWordpress( result.link ) && (
-						<Badge type="info" className="help-center-search-results__badge">
-							{ /* translators: Dev is an acronym of Developers */ }
-							{ __( 'Dev', __i18n_text_domain__ ) }
-						</Badge>
-					) }
-					<span>{ preventWidows( decodeEntities( title ) ) }</span>
+				<div className="help-center-search-results-dev__resource">
+					{ /* translators: Dev is an acronym of Developers */ }
+					{ __( 'Dev', __i18n_text_domain__ ) }
 				</div>
 			);
 		};
@@ -260,8 +255,12 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							<LinkIcon />
-							<DeveloperBadge />
+							{ isResultFromDeveloperWordpress( result.link ) ? (
+								<DeveloperResourceIndicator />
+							) : (
+								<LinkIcon />
+							) }
+							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 							<Icon
 								width={ 20 }
 								height={ 20 }
