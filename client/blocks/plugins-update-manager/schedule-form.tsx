@@ -14,6 +14,7 @@ import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
@@ -43,6 +44,7 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useSitePluginsQuery( siteSlug );
+	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug );
 	const { plugins = [] } = dataPlugins ?? {};
 
@@ -53,11 +55,15 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ hour, setHour ] = useState< string >( '6' );
 	const [ period, setPeriod ] = useState< string >( '1m' );
 	const timestamp = prepareTimestamp( frequency, day, hour, period );
+	const existingTimeSlots = schedules.map( ( schedule ) => ( {
+		timestamp: schedule.timestamp,
+		frequency: schedule.schedule,
+	} ) );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		name: validateName( name ),
 		plugins: validatePlugins( selectedPlugins ),
-		timestamp: validateTimeSlot( { frequency, timestamp } ),
+		timestamp: validateTimeSlot( { frequency, timestamp }, existingTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
@@ -130,7 +136,7 @@ export const ScheduleForm = ( props: Props ) => {
 		() =>
 			setValidationErrors( {
 				...validationErrors,
-				timestamp: validateTimeSlot( { frequency, timestamp } ),
+				timestamp: validateTimeSlot( { frequency, timestamp }, existingTimeSlots ),
 			} ),
 		[ timestamp ]
 	);
