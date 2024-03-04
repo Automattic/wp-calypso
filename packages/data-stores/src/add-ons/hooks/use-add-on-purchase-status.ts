@@ -1,5 +1,6 @@
-import { Purchases, type AddOnMeta, Site } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { Purchases, Site } from '../..';
+import type { AddOnMeta } from '../types';
 
 interface Props {
 	addOnMeta: AddOnMeta;

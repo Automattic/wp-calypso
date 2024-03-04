@@ -1,5 +1,5 @@
-import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { ProductsList } from '../..';
 import useAddOnPrices from './use-add-on-prices';
 
 const useAddOnDisplayCost = ( productSlug: ProductsList.StoreProductSlug, quantity?: number ) => {
