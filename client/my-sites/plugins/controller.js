@@ -129,6 +129,14 @@ export function updatesManager( context, next ) {
 			} );
 			break;
 
+		case 'edit':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				context: 'edit',
+				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
+
 		case 'list':
 		default:
 			context.primary = createElement( PluginsUpdateManager, {
@@ -136,6 +144,8 @@ export function updatesManager( context, next ) {
 				context: 'list',
 				onCreateNewSchedule: () =>
 					page.redirect( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onEditSchedule: ( id ) =>
+					page.redirect( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
 			} );
 			break;
 	}

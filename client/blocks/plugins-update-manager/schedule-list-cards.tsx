@@ -1,4 +1,4 @@
-import { DropdownMenu, Tooltip } from '@wordpress/components';
+import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { MOMENT_TIME_FORMAT } from 'calypso/blocks/plugins-update-manager/config';
 import { usePreparePluginsTooltipInfo } from 'calypso/blocks/plugins-update-manager/hooks/use-prepare-plugins-tooltip-info';
@@ -9,10 +9,11 @@ import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updat
 interface Props {
 	siteSlug: string;
 	onRemoveClick: ( id: string ) => void;
+	onScheduleClick: ( id: string ) => void;
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, onRemoveClick } = props;
+	const { siteSlug, onRemoveClick, onScheduleClick } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
@@ -34,7 +35,15 @@ export const ScheduleListCards = ( props: Props ) => {
 
 					<div className="schedule-list--card-label">
 						<label htmlFor="name">Name</label>
-						<strong id="name">{ schedule.hook }</strong>
+						<strong id="name">
+							<Button
+								className="schedule-name"
+								variant="link"
+								onClick={ () => onScheduleClick( schedule.id ) }
+							>
+								{ schedule.hook }
+							</Button>
+						</strong>
 					</div>
 
 					<div className="schedule-list--card-label">

@@ -144,6 +144,7 @@ export default function ( router ) {
 			`/${ langParam }/plugins/scheduled-updates`,
 			`/${ langParam }/plugins/scheduled-updates/:site_slug?`,
 			`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?`,
+			`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?/:schedule_id`,
 		],
 		redirectLoggedOut,
 		siteSelection,

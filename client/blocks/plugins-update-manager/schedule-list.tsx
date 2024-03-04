@@ -21,12 +21,13 @@ interface Props {
 	siteSlug: SiteSlug;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
+	onEditSchedule?: ( id: string ) => void;
 }
 export const ScheduleList = ( props: Props ) => {
 	const MAX_SCHEDULES = 2;
 	const isMobile = useMobileBreakpoint();
 
-	const { siteSlug, onNavBack, onCreateNewSchedule } = props;
+	const { siteSlug, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
@@ -84,9 +85,17 @@ export const ScheduleList = ( props: Props ) => {
 					{ isFetched && schedules.length > 0 && (
 						<>
 							{ isMobile ? (
-								<ScheduleListCards siteSlug={ siteSlug } onRemoveClick={ openRemoveDialog } />
+								<ScheduleListCards
+									siteSlug={ siteSlug }
+									onRemoveClick={ openRemoveDialog }
+									onScheduleClick={ onEditSchedule }
+								/>
 							) : (
-								<ScheduleListTable siteSlug={ siteSlug } onRemoveClick={ openRemoveDialog } />
+								<ScheduleListTable
+									siteSlug={ siteSlug }
+									onRemoveClick={ openRemoveDialog }
+									onScheduleClick={ onEditSchedule }
+								/>
 							) }
 						</>
 					) }
