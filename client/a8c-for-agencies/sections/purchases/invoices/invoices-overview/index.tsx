@@ -7,6 +7,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import InvoicesList from '../invoices-list';
 
 export default function InvoicesOverview() {
 	const translate = useTranslate();
@@ -20,10 +21,13 @@ export default function InvoicesOverview() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
+					{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Invoice List</LayoutBody>
+			<LayoutBody>
+				<InvoicesList />
+			</LayoutBody>
 		</Layout>
 	);
 }
