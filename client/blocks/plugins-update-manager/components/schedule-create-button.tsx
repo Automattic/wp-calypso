@@ -7,13 +7,14 @@ interface Props {
 }
 
 export default function ScheduleCreateButton( { canCreateSchedules, onCreateNewSchedule }: Props ) {
+	const disabled = ! canCreateSchedules;
 	return (
 		<Button
 			__next40pxDefaultSize
 			icon={ plus }
-			variant="primary"
+			variant={ disabled ? 'secondary' : 'primary' }
 			onClick={ onCreateNewSchedule }
-			disabled={ ! canCreateSchedules }
+			disabled={ disabled }
 		>
 			Create a new schedule
 		</Button>
