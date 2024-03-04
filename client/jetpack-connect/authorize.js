@@ -889,14 +889,7 @@ export class JetpackAuthorize extends Component {
 		const productSlug = searchParams.get( 'productSlug' );
 		const siteSlug = searchParams.get( 'fromSiteSlug' );
 		const product = getProductFromSlug( productSlug );
-		let productName = '';
-
-		if ( product?.product_name ) {
-			productName = getJetpackProductDisplayName( product );
-		} else {
-			productName = getPlan( productSlug )?.getTitle();
-		}
-
+        const productName = product?.product_name ? getJetpackProductDisplayName( product ) : getPlan( productSlug )?.getTitle();
 		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
 
 		if ( authorizeSuccess || isAlreadyOnSitesList ) {
