@@ -1,9 +1,11 @@
 import { StepContainer } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
@@ -11,6 +13,10 @@ import './style.scss';
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
 	const siteMigrationKey = 'Yjx3xUYYTm89s9xBFe7jitNA94noUg6tzgjnpx9zPVwGdbewfL';
+	const fromUrl = useQuery().get( 'from' ) || '';
+	const sourceSiteUrl = fromUrl
+		? addQueryArgs( fromUrl + '/wp-admin/admin.php', { page: 'migrateguru' } )
+		: '';
 	const [ buttonTextCopy, setButtonTextCopy ] = useState( false );
 	const onCopy = () => {
 		recordTracksEvent( 'calypso_migration_instructions_key_copy' );
@@ -61,13 +67,7 @@ const SiteMigrationInstructions: Step = function () {
 						'Go to the {{a}}Migrate Guru page on the source site{{/a}}, enter your email address, and click {{strong}}Migrate{{/strong}}.',
 						{
 							components: {
-								a: (
-									<a
-										href="https://replacethiswiththerealsiteurl/wp-admin/admin.php?page=migrateguru"
-										target="_blank"
-										rel="noreferrer"
-									/>
-								),
+								a: <a href={ sourceSiteUrl } target="_blank" rel="noreferrer" />,
 								strong: <strong />,
 							},
 						}
