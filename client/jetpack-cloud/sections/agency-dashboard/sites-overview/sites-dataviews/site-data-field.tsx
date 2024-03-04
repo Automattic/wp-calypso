@@ -15,19 +15,13 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 	}
 
 	return (
-		<div className="sites-dataviews__site">
-			<Button onClick={ () => onSiteTitleClick( site ) } borderless>
-				<SiteFavicon site={ site } />
-			</Button>
+		<Button className="sites-dataviews__site" onClick={ () => onSiteTitleClick( site ) } borderless>
+			<SiteFavicon site={ site } />
 			<div className="sites-dataviews__site-name">
-				<Button onClick={ () => onSiteTitleClick( site ) } borderless>
-					{ site.blogname }
-				</Button>
-				<Button href={ site.url_with_scheme } borderless target="_blank">
-					<div className="sites-dataviews__site-url">{ site.url }</div>
-				</Button>
+				{ site.blogname }
+				<div className="sites-dataviews__site-url">{ site.url }</div>
 			</div>
-		</div>
+		</Button>
 	);
 };
 

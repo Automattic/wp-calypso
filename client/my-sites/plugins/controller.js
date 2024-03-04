@@ -120,7 +120,7 @@ export function updatesManager( context, next ) {
 			context.primary = createElement( PluginsUpdateManager, {
 				siteSlug,
 				context: 'create',
-				onNavBack: () => page.redirect( `/plugins/update-manager/${ siteSlug }` ),
+				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
 			} );
 			break;
 
@@ -129,7 +129,8 @@ export function updatesManager( context, next ) {
 			context.primary = createElement( PluginsUpdateManager, {
 				siteSlug,
 				context: 'list',
-				onCreateNewSchedule: () => page.redirect( `/plugins/update-manager/create/${ siteSlug }` ),
+				onCreateNewSchedule: () =>
+					page.redirect( `/plugins/scheduled-updates/create/${ siteSlug }` ),
 			} );
 			break;
 	}

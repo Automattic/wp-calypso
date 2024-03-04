@@ -178,6 +178,16 @@ export const useCommandPalette = ( {
 		currentRoute,
 	} ) as Command[];
 
+	const filterCurrentSiteCommands = ( site: SiteExcerptData, command: Command ) => {
+		const { capabilityFilter = false, filter = () => true } = command?.siteFunctions ?? {};
+		let hasCapability = true;
+		if ( capabilityFilter ) {
+			hasCapability = userCapabilities?.[ site.ID ]?.[ capabilityFilter ] ?? false;
+		}
+
+		return filter?.( site ) && hasCapability;
+	};
+
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -253,7 +263,7 @@ export const useCommandPalette = ( {
 		} );
 
 	// Inject a tracks event on the callback of each command
-	const finalSortedCommands = sortedCommands.map( ( command ) => ( {
+	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
 		...command,
 		callback: ( params: CommandCallBackParams ) => {
 			recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
@@ -273,6 +283,39 @@ export const useCommandPalette = ( {
 		finalSortedCommands.unshift( viewMySitesCommand );
 	}
 
-	// Return the sorted commands
+	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
+
+	// If we have a current site and the route includes the site slug, filter and map the commands for single site use.
+	if ( currentSite && currentRoute?.includes( ':site' ) ) {
+		finalSortedCommands = finalSortedCommands.filter( ( command ) =>
+			filterCurrentSiteCommands( currentSite, command )
+		);
+
+		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
+			const callback = ( params: CommandCallBackParams ) => {
+				const targetFunction = command?.siteFunctions?.onClick || command.callback;
+
+				return targetFunction( {
+					close: params.close,
+					site: currentSite,
+					setSearch: params.setSearch,
+					setPlaceholderOverride: params.setPlaceholderOverride,
+					command,
+				} );
+			};
+
+			return {
+				name: command.name,
+				label: command.label,
+				...( command.subLabel ? { subLabel: command.subLabel } : {} ),
+				...( command.searchLabel ? { searchLabel: command.searchLabel } : {} ),
+				...( command.context ? { context: command.context } : {} ),
+				...( command.icon ? { icon: command.icon } : {} ),
+				...( command.image ? { image: command.image } : {} ),
+				callback,
+			};
+		} );
+	}
+
 	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
 };

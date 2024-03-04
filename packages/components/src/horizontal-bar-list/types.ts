@@ -63,12 +63,33 @@ export type StatsCardProps = {
 	};
 	isEmpty?: boolean;
 	emptyMessage?: string;
+	/**
+	 * @property {string} metricLabel - a label to use for the values on the right side of the bars - `Views` by default
+	 */
 	metricLabel?: string;
+	/**
+	 * @property {React.ReactNode} heroElement - a node placed before the list
+	 */
 	heroElement?: React.ReactNode;
+	/**
+	 * @property {boolean} splitHeader - instead of using a simple header containing the name of the card use additional columns and header items
+	 */
 	splitHeader?: boolean;
+	/**
+	 * @property {React.ReactNode} mainItemLabel - a label to be displayed in the main item column
+	 */
 	mainItemLabel?: React.ReactNode;
+	/**
+	 * @property {React.ReactNode} additionalHeaderColumns - additional columns to be displayed next to the default `views` column
+	 */
 	additionalHeaderColumns?: React.ReactNode;
+	/**
+	 * @property {React.ReactNode} toggleControl - component to be placed in a split header
+	 */
 	toggleControl?: React.ReactNode;
+	/**
+	 * @property {React.ReactNode} overlay - an overlay used to hide the module behind a blur overlay
+	 */
 	overlay?: React.ReactNode;
 };
 
