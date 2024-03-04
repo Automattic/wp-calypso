@@ -18,6 +18,7 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
+import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -121,6 +122,8 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
+	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -231,10 +234,7 @@ function HelpSearchResults( {
 
 		const DeveloperResourceIndicator = () => {
 			return (
-				<div className="help-center-search-results-dev__resource">
-					{ /* translators: Dev is an acronym of Developers */ }
-					{ __( 'Dev', __i18n_text_domain__ ) }
-				</div>
+				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
 			);
 		};
 
