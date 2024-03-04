@@ -121,7 +121,7 @@ describe( 'getCouponLineItemFromCart', function () {
 			...cart,
 			coupon: 'ABCD',
 			coupon_savings_total_integer: 300,
-			is_coupon_recurring: true,
+			has_auto_renew_coupon_been_automatically_applied: true,
 		};
 
 		const expected: LineItemType = {
