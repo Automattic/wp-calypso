@@ -64,6 +64,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 
 						return (
 							<li
+								key={ key }
 								className={ classNames( `${ BASE_CLASS_NAME }__popover-list-item`, {
 									[ 'is-selected' ]: isSelected,
 									[ 'is-grouped' ]: option.isGrouped,
