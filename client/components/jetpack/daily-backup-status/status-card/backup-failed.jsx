@@ -34,8 +34,12 @@ const BackupFailed = ( { backup } ) => {
 
 	const dispatch = useDispatch();
 	const onContactSupportClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_failed_contact_support_click' ) );
-	}, [ dispatch ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_failed_contact_support_click', {
+				reason: mayBeBlockedByHost ? 'blocked_by_host' : 'other',
+			} )
+		);
+	}, [ dispatch, mayBeBlockedByHost ] );
 
 	return (
 		<>
