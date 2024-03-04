@@ -6,6 +6,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
@@ -20,10 +21,13 @@ interface Props {
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
 }
+
 export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
+
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 
 	const { component, title } = {
 		list: {
@@ -32,17 +36,24 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					onNavBack={ onNavBack }
 					onCreateNewSchedule={ onCreateNewSchedule }
 					onEditSchedule={ onEditSchedule }
+					canCreateSchedules={ canCreateSchedules }
 				/>
 			),
 			title: 'List schedules',
 		},
 		create: {
-			component: <ScheduleCreate onNavBack={ onNavBack } />,
+			component: (
+				<ScheduleCreate onNavBack={ onNavBack } canCreateSchedules={ canCreateSchedules } />
+			),
 			title: 'Create a new schedule',
 		},
 		edit: {
 			component: (
-				<ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />
+				<ScheduleEdit
+					scheduleId={ scheduleId }
+					onNavBack={ onNavBack }
+					canCreateSchedules={ canCreateSchedules }
+				/>
 			),
 			title: 'Edit schedule',
 		},
@@ -70,7 +81,6 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					) }
 				</NavigationHeader>
 				{ component }
-
 			</MainComponent>
 		</PluginUpdateManagerContextProvider>
 	);

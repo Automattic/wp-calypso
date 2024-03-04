@@ -1,25 +1,26 @@
-import { __experimentalText as Text, Button } from '@wordpress/components';
-import { plus } from '@wordpress/icons';
+import { __experimentalText as Text } from '@wordpress/components';
+import ScheduleCreateButton from './components/schedule-create-button';
 
 interface Props {
+	canCreateSchedules: boolean;
 	onCreateNewSchedule?: () => void;
+	isFetchingCanCreateSchedules: boolean;
 }
 export const ScheduleListEmpty = ( props: Props ) => {
-	const { onCreateNewSchedule } = props;
+	const { onCreateNewSchedule, canCreateSchedules, isFetchingCanCreateSchedules } = props;
+
 	return (
 		<div className="empty-state">
 			<Text as="p" align="center">
-				Set up plugin update schedules to ensure your site runs smoothly.
+				{ ! isFetchingCanCreateSchedules && ! canCreateSchedules
+					? 'This site cannot auto-update plugins.'
+					: 'Set up plugin update schedules to ensure your site runs smoothly.' }
 			</Text>
 			{ onCreateNewSchedule && (
-				<Button
-					__next40pxDefaultSize
-					icon={ plus }
-					variant="primary"
-					onClick={ onCreateNewSchedule }
-				>
-					Create a new schedule
-				</Button>
+				<ScheduleCreateButton
+					onCreateNewSchedule={ onCreateNewSchedule }
+					canCreateSchedules={ canCreateSchedules }
+				/>
 			) }
 		</div>
 	);

@@ -20,6 +20,7 @@ import { ScheduleListTable } from './schedule-list-table';
 
 interface Props {
 	onNavBack?: () => void;
+	canCreateSchedules: boolean;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
 }
@@ -27,7 +28,7 @@ export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
 
-	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
+	const { onNavBack, onCreateNewSchedule, onEditSchedule, canCreateSchedules } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
@@ -80,7 +81,10 @@ export const ScheduleList = ( props: Props ) => {
 				<CardBody>
 					{ isLoading && <Spinner /> }
 					{ isFetched && schedules.length === 0 && (
-						<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
+						<ScheduleListEmpty
+							onCreateNewSchedule={ onCreateNewSchedule }
+							canCreateSchedules={ canCreateSchedules }
+						/>
 					) }
 					{ isFetched && schedules.length > 0 && (
 						<>
