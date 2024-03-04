@@ -55,7 +55,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ hour, setHour ] = useState< string >( '6' );
 	const [ period, setPeriod ] = useState< string >( '1m' );
 	const timestamp = prepareTimestamp( frequency, day, hour, period );
-	const existingTimeSlots = schedules.map( ( schedule ) => ( {
+	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
 	} ) );
@@ -64,7 +64,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		name: validateName( name ),
 		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
-		timestamp: validateTimeSlot( { frequency, timestamp }, existingTimeSlots ),
+		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
@@ -140,7 +140,7 @@ export const ScheduleForm = ( props: Props ) => {
 		() =>
 			setValidationErrors( {
 				...validationErrors,
-				timestamp: validateTimeSlot( { frequency, timestamp }, existingTimeSlots ),
+				timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 			} ),
 		[ timestamp ]
 	);
