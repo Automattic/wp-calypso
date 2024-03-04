@@ -100,7 +100,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 				font-size: $font-body-small;
 
 				&:focus {
-					border: none;
+					border-color: transparent;
 					box-shadow: 0 0 0 2px var(--color-accent-light);
 				}
 			}
@@ -173,7 +173,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	height: 50%;
 	max-height: 230px;
 	padding: 32px 52px 0;
-	background: #afbcf7;
+	background: #a6b1ee;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
