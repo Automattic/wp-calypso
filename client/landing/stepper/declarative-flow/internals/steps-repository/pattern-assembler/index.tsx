@@ -225,17 +225,17 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				.filter( Boolean )
 				.join( ',' ),
 			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
-			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_names: patterns.map( ( { title } ) => title ).join( ',' ),
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
 			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
 
-		patterns.forEach( ( { ID, name, category } ) => {
+		patterns.forEach( ( { ID, title, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
-				pattern_name: name,
+				pattern_name: title,
 				pattern_category: category?.name,
 			} );
 		} );
@@ -244,7 +244,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			const category_slug = Object.keys( pattern.categories )[ 0 ];
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
 				pattern_id: pattern.ID,
-				pattern_name: pattern.name,
+				pattern_name: pattern.title,
 				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
@@ -347,7 +347,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			trackEventPatternSelect( {
 				patternType: type,
 				patternId: selectedPattern.ID,
-				patternName: selectedPattern.name,
+				patternName: selectedPattern.title,
 				patternCategory: selectedPattern.category?.name,
 			} );
 
