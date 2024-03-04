@@ -18,7 +18,7 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
-	const isDesktop = useBreakpoint( '>782px' );
+	const isDesktop = useBreakpoint( '>=782px' );
 
 	const handleWheel = useCallback( ( event ) => {
 		const bodyEl = bodyRef.current;

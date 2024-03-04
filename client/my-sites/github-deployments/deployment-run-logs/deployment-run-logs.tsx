@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { LogEntry } from './use-code-deployment-run-log-query';
 
@@ -41,7 +42,15 @@ const DeploymentRunLog = ( { entry }: { entry: LogEntry } ) => {
 				onClick={ detail ? openDetail : undefined }
 			>
 				{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
-				{ detail && '…' }
+				{ detail && (
+					<>
+						...
+						<span className="show-more">
+							{ ' ' }
+							{ detailExpanded ? translate( 'show less' ) : translate( 'show more' ) }
+						</span>
+					</>
+				) }
 			</button>
 			{ detailExpanded && detail && (
 				<pre

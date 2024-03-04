@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
 import {
@@ -21,6 +21,12 @@ import {
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
 	MAX_SELECTABLE_PLUGINS,
+} from './schedule-form.const';
+import {
+	prepareTimestamp,
+	validateName,
+	validatePlugins,
+	validateTimeSlot,
 } from './schedule-form.helper';
 
 import './schedule-form.scss';
@@ -30,13 +36,19 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug } = props;
-	const { data } = useSitePluginsQuery( siteSlug );
-	const { plugins = [] } = data ?? {};
+	const { data: dataPlugins } = useSitePluginsQuery( siteSlug );
+	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
-	const [ frequency, setFrequency ] = useState( 'daily' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
+	const [ frequency, setFrequency ] = useState( 'daily' );
+	const [ day, setDay ] = useState< string >( '1' );
+	const [ hour, setHour ] = useState< string >( '6' );
+	const [ period, setPeriod ] = useState< string >( '1m' );
+	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
+	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
+	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
 	const onPluginSelectionChange = useCallback(
 		( plugin: SitePlugin, isChecked: boolean ) => {
@@ -70,8 +82,45 @@ export const ScheduleForm = ( props: Props ) => {
 		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
 	);
 
+	const onFormSubmit = () => {};
+
+	// Name validation
+	useEffect(
+		() => setValidationErrors( { ...validationErrors, name: validateName( name ) } ),
+		[ name ]
+	);
+
+	// Plugin selection validation
+	useEffect(
+		() =>
+			setValidationErrors( { ...validationErrors, plugins: validatePlugins( selectedPlugins ) } ),
+		[ selectedPlugins ]
+	);
+
+	// Time slot/timestamp validation
+	useEffect(
+		() =>
+			setValidationErrors( {
+				...validationErrors,
+				timestamp: validateTimeSlot( { frequency, timestamp } ),
+			} ),
+		[ timestamp ]
+	);
+
+	// Prepare timestamp on frequency, day, hour, period change
+	useEffect(
+		() => setTimestamp( prepareTimestamp( frequency, day, hour, period ) ),
+		[ frequency, day, hour, period ]
+	);
+
 	return (
-		<form>
+		<form
+			id="schedule"
+			onSubmit={ ( e ) => {
+				e.preventDefault();
+				onFormSubmit();
+			} }
+		>
 			<Flex
 				className="schedule-form"
 				direction={ [ 'column', 'row' ] }
@@ -85,24 +134,28 @@ export const ScheduleForm = ( props: Props ) => {
 						<TextControl
 							id="name"
 							value={ name }
+							onBlur={ () => setFieldTouched( { ...fieldTouched, name: true } ) }
 							onChange={ setName }
 							__next40pxDefaultSize
 							placeholder="Example: Security plugins"
 							autoComplete="off"
 						/>
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please provide a name to this plugin update schedule.
-						</Text>
+						{ fieldTouched?.name && validationErrors?.name && (
+							<Text className="validation-msg">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								{ validationErrors.name }
+							</Text>
+						) }
 					</div>
 					<div className="form-field">
 						<label htmlFor="frequency">Update every</label>
 						<div className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
 							<RadioControl
 								name="frequency"
-								onChange={ setFrequency }
 								options={ [ DAILY_OPTION ] }
 								selected={ frequency }
+								onChange={ setFrequency }
+								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'daily' && (
 								<Flex gap={ 6 }>
@@ -110,18 +163,18 @@ export const ScheduleForm = ( props: Props ) => {
 										<div className="form-field">
 											<div className="time-controls">
 												<SelectControl
-													name="time"
 													__next40pxDefaultSize
-													onChange={ function noRefCheck() {} }
+													name="hour"
+													value={ hour }
 													options={ HOUR_OPTIONS }
+													onChange={ setHour }
 												/>
 												<SelectControl
-													name="period"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
-													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
+													name="period"
+													value={ period }
 													options={ PERIOD_OPTIONS }
+													onChange={ setPeriod }
 												/>
 											</div>
 										</div>
@@ -132,21 +185,21 @@ export const ScheduleForm = ( props: Props ) => {
 						<div className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
 							<RadioControl
 								name="frequency"
-								onChange={ setFrequency }
 								options={ [ WEEKLY_OPTION ] }
 								selected={ frequency }
+								onChange={ setFrequency }
+								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'weekly' && (
 								<Flex gap={ 6 }>
 									<FlexItem>
 										<div className="form-field">
 											<SelectControl
-												name="day"
 												__next40pxDefaultSize
-												onBlur={ function noRefCheck() {} }
-												onChange={ function noRefCheck() {} }
-												onFocus={ function noRefCheck() {} }
+												name="day"
+												value={ day }
 												options={ DAY_OPTIONS }
+												onChange={ setDay }
 											/>
 										</div>
 									</FlexItem>
@@ -154,20 +207,18 @@ export const ScheduleForm = ( props: Props ) => {
 										<div className="form-field">
 											<div className="time-controls">
 												<SelectControl
-													name="time"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
-													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
+													name="hour"
+													value={ hour }
 													options={ HOUR_OPTIONS }
+													onChange={ setHour }
 												/>
 												<SelectControl
-													name="period"
 													__next40pxDefaultSize
-													onBlur={ function noRefCheck() {} }
-													onChange={ function noRefCheck() {} }
-													onFocus={ function noRefCheck() {} }
+													name="period"
+													value={ period }
 													options={ PERIOD_OPTIONS }
+													onChange={ setPeriod }
 												/>
 											</div>
 										</div>
@@ -175,10 +226,12 @@ export const ScheduleForm = ( props: Props ) => {
 								</Flex>
 							) }
 						</div>
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please pick another time for optimal performance, as this slot is already taken.
-						</Text>
+						{ fieldTouched?.timestamp && validationErrors?.timestamp && (
+							<Text className="validation-msg">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								{ validationErrors?.timestamp }
+							</Text>
+						) }
 					</div>
 				</FlexItem>
 				<FlexItem>
@@ -187,13 +240,16 @@ export const ScheduleForm = ( props: Props ) => {
 						<span className="plugin-select-stats">
 							{ selectedPlugins.length }/{ MAX_SELECTABLE_PLUGINS }
 						</span>
-						<Text className="info-msg">
-							Plugins not listed below are managed by WordPress.com and update automatically.
-						</Text>
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							Please select a different set of plugins, as this one has already been chosen.
-						</Text>
+						{ fieldTouched?.plugins && validationErrors?.plugins ? (
+							<Text className="validation-msg">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								{ validationErrors?.plugins }
+							</Text>
+						) : (
+							<Text className="info-msg">
+								Plugins not listed below are managed by WordPress.com and update automatically.
+							</Text>
+						) }
 						<div className="checkbox-options">
 							<SearchControl
 								id="plugins"
@@ -224,7 +280,10 @@ export const ScheduleForm = ( props: Props ) => {
 												className={ classnames( {
 													disabled: isPluginSelectionDisabled( plugin ),
 												} ) }
-												onChange={ ( isChecked ) => onPluginSelectionChange( plugin, isChecked ) }
+												onChange={ ( isChecked ) => {
+													setFieldTouched( { ...fieldTouched, plugins: true } );
+													onPluginSelectionChange( plugin, isChecked );
+												} }
 											/>
 										) }
 									</Fragment>

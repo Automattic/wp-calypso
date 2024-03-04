@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
+import themeReducer from 'calypso/state/themes/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import type { Flow } from '../../internals/types';
 
@@ -38,11 +39,21 @@ export const renderFlow = ( flow: Flow ) => {
 	};
 
 	// The Flow>useStepNavigation>submit function needs to be called from inside a component
-	const runUseStepNavigationSubmit = ( { currentStep, dependencies } ) => {
+	const runUseStepNavigationSubmit = ( {
+		currentStep,
+		dependencies,
+		currentURL = '/some-path?siteSlug=example.wordpress.com',
+	} ) => {
 		renderWithProvider(
-			<MemoryRouter initialEntries={ [ '/some-path?siteSlug=example.wordpress.com' ] }>
+			<MemoryRouter initialEntries={ [ currentURL ] }>
 				<FakeStepRender currentStep={ currentStep } dependencies={ dependencies } />
-			</MemoryRouter>
+			</MemoryRouter>,
+			{
+				initialState: { themes: { queries: [] } },
+				reducers: {
+					themes: themeReducer,
+				},
+			}
 		);
 	};
 

@@ -7,16 +7,9 @@ jobs:
   notify-on-label:
     runs-on: ubuntu-latest
     if: >
-      (
-        github.event.label.name == '[Pri] High' ||
-        github.event.label.name == '[Pri] Blocker' ||
-        github.event.label.name == 'Triaged'
-      ) &&
+      github.event.label.name == 'Triaged' &&
       contains(github.event.issue.labels.*.name, 'Triaged') &&
-      (
-        contains(github.event.issue.labels.*.name, '[Pri] High') ||
-        contains(github.event.issue.labels.*.name, '[Pri] Blocker')
-      )
+      contains(github.event.issue.labels.*.name, '[Pri] Blocker')
     steps:
       - name: Set variables based on event type
         id: set-vars
@@ -28,7 +21,7 @@ jobs:
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: 'C04TRTZUSP9'
+          channel-id: 'C02FMH4G8'
           payload: |
             {
               "blocks": [

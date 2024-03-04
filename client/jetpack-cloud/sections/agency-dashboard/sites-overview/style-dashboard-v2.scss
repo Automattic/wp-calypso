@@ -160,13 +160,16 @@
 				display: none;
 			}
 		}
+	}
 
+	@media ( max-width: $break-wide ) {
 		.sites-dashboard__layout:not(.preview-hidden) {
 			flex-direction: column;
 			gap: 0;
 
 			.sites-overview__container {
 				min-height: 0;
+				overflow: hidden;
 			}
 
 			.sites-overview__content {
@@ -179,7 +182,7 @@
 		}
 	}
 
-	@media ( min-width: $break-large ) {
+	@media ( min-width: $break-wide ) {
 		.sites-dashboard__layout:not(.preview-hidden) {
 
 			.sites-overview {
@@ -298,6 +301,7 @@
 	display: flex;
 	flex-wrap: nowrap;
 	gap: 16px;
+	max-height: calc(100vh - 32px);
 
 	.dataviews-wrapper {
 		.components-button:focus:not(:disabled) {

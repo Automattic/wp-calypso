@@ -161,6 +161,13 @@ export function getItemIntroductoryOfferDisplay(
 	translate: typeof i18n.translate,
 	product: ResponseCartProduct
 ) {
+	// Introductory offer manual renewals often have prorated prices that are
+	// difficult to display as a simple discount so we keep their display
+	// simple.
+	if ( product.is_renewal ) {
+		return null;
+	}
+
 	if ( product.introductory_offer_terms?.reason ) {
 		const text = translate( 'Order not eligible for introductory discount' );
 		return { enabled: false, text };
