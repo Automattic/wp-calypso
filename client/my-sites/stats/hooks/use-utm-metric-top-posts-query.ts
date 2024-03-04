@@ -20,7 +20,9 @@ export default function useUTMMetricTopPostsQuery(
 				}
 			} );
 		}
-	}, [ dispatch, siteId, UTMParam, metricsKey ] );
+		// No passed `UTMParam` to prevent triggering a new request before fetching the new metrics.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ dispatch, siteId, metricsKey ] );
 
 	const topPosts = useSelector( ( state ) => getTopPosts( state, siteId ) );
 

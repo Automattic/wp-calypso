@@ -8,26 +8,22 @@ import statsStrings from '../stats-strings';
 import UTMDropdown from './stats-module-utm-dropdown';
 
 const OPTION_KEYS = {
-	SOURCE_MEDIUM: 'source_medium',
-	CAMPAIGN_SOURCE_MEDIUM: 'campaign_source_medium',
-	SOURCE: 'source',
-	MEDIUM: 'medium',
-	CAMPAIGN: 'campaign',
+	SOURCE_MEDIUM: 'utm_source,utm_medium',
+	CAMPAIGN_SOURCE_MEDIUM: 'utm_campaign,utm_source,utm_medium',
+	SOURCE: 'utm_source',
+	MEDIUM: 'utm_medium',
+	CAMPAIGN: 'utm_campaign',
 };
 
 const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } ) => {
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
-	const [ displayOption, setDisplayOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
 	// Fetch UTM metrics with switched UTM parameters.
-	const { isFetching: isFetching, metrics } = useUTMMetricsQuery(
-		siteId,
-		'utm_source,utm_medium',
-		postId
-	);
+	const { isFetching, metrics } = useUTMMetricsQuery( siteId, selectedOption, postId );
 	// Fetch top posts for all UTM metric items.
-	const { topPosts } = useUTMMetricTopPostsQuery( siteId, 'utm_source,utm_medium', metrics );
+	const { topPosts } = useUTMMetricTopPostsQuery( siteId, selectedOption, metrics );
 
 	// Combine metrics with top posts.
 	const data = metrics.map( ( metric ) => {
@@ -78,10 +74,6 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		},
 	};
 
-	const onDisplaySelect = ( optionKey ) => {
-		setDisplayOption( optionKey );
-	};
-
 	return (
 		<StatsModuleDataQuery
 			data={ data }
@@ -92,13 +84,13 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 			query={ query }
 			isLoading={ isFetching ?? true }
 			hideSummaryLink={ hideSummaryLink }
-			selectedOption={ optionLabels[ displayOption ] }
+			selectedOption={ optionLabels[ selectedOption ] }
 			toggleControl={
 				<UTMDropdown
-					buttonLabel={ optionLabels[ displayOption ].selectLabel }
-					onSelect={ onDisplaySelect }
+					buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+					onSelect={ setSelectedOption }
 					selectOptions={ optionLabels }
-					selected={ displayOption }
+					selected={ selectedOption }
 				/>
 			}
 		/>
