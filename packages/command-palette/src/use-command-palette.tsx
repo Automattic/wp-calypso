@@ -90,16 +90,6 @@ interface SiteToActionParameters {
 	};
 }
 
-const isExcludedRoute = ( route: string | null ): boolean => {
-	switch ( route ) {
-		case '/sites':
-		case '/reader':
-			return true;
-		default:
-			return false;
-	}
-};
-
 const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) => {
 	const siteToAction = useCallback(
 		(
@@ -190,7 +180,7 @@ export const useCommandPalette = ( {
 
 	const filterCurrentSiteCommands = ( site: SiteExcerptData, command: Command ) => {
 		const { capabilityFilter = false, filter = () => true } = command?.siteFunctions ?? {};
-		let hasCapability = false;
+		let hasCapability = true;
 		if ( capabilityFilter ) {
 			hasCapability = userCapabilities?.[ site.ID ]?.[ capabilityFilter ] ?? false;
 		}
@@ -293,41 +283,39 @@ export const useCommandPalette = ( {
 		finalSortedCommands.unshift( viewMySitesCommand );
 	}
 
-	if ( currentSiteId && ! isExcludedRoute( currentRoute ) ) {
-		const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
+	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
 
-		if ( currentSite ) {
-			finalSortedCommands = finalSortedCommands.filter( ( command ) =>
-				filterCurrentSiteCommands( currentSite, command )
-			);
+	// If we have a current site and the route includes the site slug, filter and map the commands for single site use.
+	if ( currentSite && currentRoute?.includes( ':site' ) ) {
+		finalSortedCommands = finalSortedCommands.filter( ( command ) =>
+			filterCurrentSiteCommands( currentSite, command )
+		);
 
-			finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
-				const callback = ( params: CommandCallBackParams ) => {
-					if ( command?.siteFunctions?.onClick ) {
-						return command?.siteFunctions?.onClick( {
-							close: params.close,
-							site: currentSite,
-							command,
-						} );
-					}
+		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
+			const callback = ( params: CommandCallBackParams ) => {
+				const targetFunction = command?.siteFunctions?.onClick || command.callback;
 
-					return command.callback( params );
-				};
+				return targetFunction( {
+					close: params.close,
+					site: currentSite,
+					setSearch: params.setSearch,
+					setPlaceholderOverride: params.setPlaceholderOverride,
+					command,
+				} );
+			};
 
-				return {
-					name: command.name,
-					label: command.label,
-					...( command.subLabel ? { subLabel: command.subLabel } : {} ),
-					...( command.searchLabel ? { searchLabel: command.searchLabel } : {} ),
-					...( command.context ? { context: command.context } : {} ),
-					...( command.icon ? { icon: command.icon } : {} ),
-					...( command.image ? { image: command.image } : {} ),
-					callback,
-				};
-			} );
-		}
+			return {
+				name: command.name,
+				label: command.label,
+				...( command.subLabel ? { subLabel: command.subLabel } : {} ),
+				...( command.searchLabel ? { searchLabel: command.searchLabel } : {} ),
+				...( command.context ? { context: command.context } : {} ),
+				...( command.icon ? { icon: command.icon } : {} ),
+				...( command.image ? { image: command.image } : {} ),
+				callback,
+			};
+		} );
 	}
 
-	// Return the sorted commands
 	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
 };
