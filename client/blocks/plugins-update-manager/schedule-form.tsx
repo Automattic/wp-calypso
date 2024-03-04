@@ -36,16 +36,19 @@ import './schedule-form.scss';
 
 interface Props {
 	siteSlug: SiteSlug;
+	onCreateSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
-	const { siteSlug } = props;
+	const { siteSlug, onCreateSuccess } = props;
 	const {
 		data: dataPlugins,
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useSitePluginsQuery( siteSlug );
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
-	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug );
+	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
+		onSuccess: () => onCreateSuccess && onCreateSuccess(),
+	} );
 	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
