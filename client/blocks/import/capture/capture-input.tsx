@@ -52,9 +52,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
-		setUrlValue( e.target.value );
-		validateUrl( e.target.value );
-		onInputChange?.( e.target.value );
+		setUrlValue( e.target.value.trim() );
+		validateUrl( e.target.value.trim() );
+		onInputChange?.( e.target.value.trim() );
 	}
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
