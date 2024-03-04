@@ -30,8 +30,15 @@ export const ScheduleList = ( props: Props ) => {
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
-	const { deleteScheduleUpdates } = useDeleteScheduleUpdatesMutation( siteSlug );
-	const { data: schedules = [], isLoading, isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const {
+		data: schedules = [],
+		isLoading,
+		isFetched,
+		refetch,
+	} = useScheduleUpdatesQuery( siteSlug );
+	const { deleteScheduleUpdates } = useDeleteScheduleUpdatesMutation( siteSlug, {
+		onSuccess: () => refetch(),
+	} );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
