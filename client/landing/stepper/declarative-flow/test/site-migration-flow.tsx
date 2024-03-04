@@ -46,7 +46,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com'
+				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify'
 			);
 		} );
 
