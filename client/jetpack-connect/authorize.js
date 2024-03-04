@@ -3,8 +3,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
 	getProductFromSlug,
-	getJetpackProductDisplayName,
-	getPlan,
+	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
@@ -889,7 +888,7 @@ export class JetpackAuthorize extends Component {
 		const productSlug = searchParams.get( 'productSlug' );
 		const siteSlug = searchParams.get( 'fromSiteSlug' );
 		const product = getProductFromSlug( productSlug );
-        const productName = product?.product_name ? getJetpackProductDisplayName( product ) : getPlan( productSlug )?.getTitle();
+		const productName = getJetpackProductOrPlanDisplayName( product );
 		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
 
 		if ( authorizeSuccess || isAlreadyOnSitesList ) {
