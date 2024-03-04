@@ -730,7 +730,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-purchases',
-		paths: [ '/purchases', 'purchases/licenses', 'purchases/billing' ],
+		paths: [ '/purchases', 'purchases/licenses', 'purchases/billing', 'purchases/invoices' ],
 		module: 'calypso/a8c-for-agencies/sections/purchases',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
