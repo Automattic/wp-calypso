@@ -25,7 +25,6 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {
 	useEffect( () => {
 		// check for whether the announcement has been seen already.
 		if ( data && data.length ) {
-			// get highest announcement id and set it as the latest seen announcement
 			const announcementIds = data.map( ( item ) => item.announcementId );
 			setSeenWhatsNewAnnouncements( announcementIds );
 		}

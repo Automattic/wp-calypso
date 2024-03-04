@@ -62,7 +62,6 @@ class Whats_New {
 			plugins_url( 'dist/', __FILE__ )
 		);
 
-		// Adds feature flags for development.
 		wp_add_inline_script(
 			'whats-new-script',
 			'window.whatsNewData = ' . wp_json_encode(
