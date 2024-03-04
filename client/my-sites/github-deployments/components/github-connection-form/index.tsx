@@ -1,11 +1,12 @@
 import { Button, FormLabel, Spinner } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { AutomaticActivationToggle } from 'calypso/my-sites/github-deployments/components/automatic-activation-toggle/index';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
@@ -23,6 +24,7 @@ interface CodeDeploymentData {
 	installationId: number;
 	isAutomated: boolean;
 	workflowPath?: string;
+	isAutomaticallyActivated?: boolean;
 }
 
 interface InitialValues {
@@ -30,6 +32,7 @@ interface InitialValues {
 	destPath: string;
 	isAutomated: boolean;
 	workflowPath?: string;
+	isAutomaticallyActivated?: boolean;
 }
 
 interface GitHubConnectionFormProps {
@@ -50,6 +53,7 @@ export const GitHubConnectionForm = ( {
 		destPath: '/',
 		isAutomated: false,
 		workflowPath: undefined,
+		isAutomaticallyActivated: false,
 	},
 	changeRepository,
 	onSubmit,
@@ -57,9 +61,13 @@ export const GitHubConnectionForm = ( {
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
+	const [ isAutomaticallyActivated, setIsAutomaticallyActivated ] = useState(
+		!! initialValues.isAutomaticallyActivated
+	);
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
 		initialValues.workflowPath
 	);
+	const suggestionsApplied = useRef( false );
 	const { __ } = useI18n();
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
@@ -93,15 +101,25 @@ export const GitHubConnectionForm = ( {
 		}
 	);
 
-	//TODO use the response here to pre-populated fields, show warnings, and make suggestions
-	useGithubRepositoryChecksQuery(
+	const { data: repoChecks } = useGithubRepositoryChecksQuery(
 		installation.external_id,
 		repository.owner,
 		repository.name,
 		branch
 	);
 
+	if ( repoChecks && ! suggestionsApplied.current ) {
+		setDestPath( repoChecks.suggested_directory );
+		suggestionsApplied.current = true;
+	}
+
 	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
+	const isPluginOrTheme =
+		repoChecks?.inferred_type === 'classic-theme' ||
+		repoChecks?.inferred_type === 'block-theme' ||
+		repoChecks?.inferred_type === 'plugin';
+
+	const useComposerWorkflow = repoChecks?.has_composer && ! repoChecks.has_vendor;
 
 	return (
 		<form
@@ -119,6 +137,7 @@ export const GitHubConnectionForm = ( {
 						installationId: installation.external_id,
 						isAutomated: isAutoDeploy,
 						workflowPath: workflowPath ?? undefined,
+						isAutomaticallyActivated,
 					} );
 				} finally {
 					setIsPending( false );
@@ -175,6 +194,13 @@ export const GitHubConnectionForm = ( {
 						{ __( 'This path is relative to the server root' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
+				{ isPluginOrTheme && (
+					<AutomaticActivationToggle
+						onChange={ setIsAutomaticallyActivated }
+						value={ isAutomaticallyActivated }
+						type={ repoChecks.inferred_type }
+					/>
+				) }
 				<AutomatedDeploymentsToggle
 					onChange={ setIsAutoDeploy }
 					value={ isAutoDeploy }
@@ -193,6 +219,7 @@ export const GitHubConnectionForm = ( {
 				workflowCheckResult={ workflowCheckResult }
 				isCheckingWorkflow={ isCheckingWorkflow }
 				onWorkflowVerify={ checkWorkflow }
+				useComposerWorkflow={ !! useComposerWorkflow }
 			/>
 		</form>
 	);

@@ -82,6 +82,7 @@ export const GitHubDeploymentCreationForm = ( {
 				installationId,
 				isAutomated,
 				workflowPath,
+				isAutomaticallyActivated,
 			} ) =>
 				createDeployment( {
 					externalRepositoryId,
@@ -90,6 +91,7 @@ export const GitHubDeploymentCreationForm = ( {
 					installationId,
 					isAutomated,
 					workflowPath,
+					isAutomaticallyActivated,
 				} )
 			}
 		/>

@@ -11,6 +11,7 @@ export interface MutationVariables {
 	installationId: number;
 	isAutomated: boolean;
 	workflowPath?: string;
+	isAutomaticallyActivated?: boolean;
 }
 
 interface MutationResponse {
@@ -35,6 +36,7 @@ export const useCreateCodeDeployment = (
 			installationId,
 			isAutomated,
 			workflowPath,
+			isAutomaticallyActivated,
 		}: MutationVariables ) =>
 			wp.req.post(
 				{
@@ -48,6 +50,7 @@ export const useCreateCodeDeployment = (
 					installation_id: installationId,
 					is_automated: isAutomated,
 					workflow_path: workflowPath,
+					is_automatically_activated: isAutomaticallyActivated,
 				}
 			),
 		...options,

@@ -17,9 +17,8 @@ type DeploymentStyleProps = {
 	branchName: string;
 	workflowPath?: string;
 	onChooseWorkflow( workflowFilename: string | undefined ): void;
+	useComposerWorkflow: boolean;
 } & DeploymentStyleContextProps;
-
-type DeploymentStyle = 'simple' | 'advanced';
 
 export const DeploymentStyle = ( {
 	isDisabled,
@@ -30,6 +29,7 @@ export const DeploymentStyle = ( {
 	isCheckingWorkflow,
 	onWorkflowVerify,
 	workflowCheckResult,
+	useComposerWorkflow,
 }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -52,10 +52,10 @@ export const DeploymentStyle = ( {
 				disabled={ isDisabled }
 				items={ [
 					{
-						label: __( 'Simple' ),
+						label: __( 'Simple (copy repository contents to your site) ' ),
 						value: 'simple',
 					},
-					{ label: __( 'Advanced' ), value: 'advanced' },
+					{ label: __( 'Advanced (run a GitHub Workflow script)' ), value: 'advanced' },
 				] }
 				checked={ workflowPath ? 'advanced' : 'simple' }
 				onChange={ ( event ) => {
@@ -107,6 +107,7 @@ export const DeploymentStyle = ( {
 						workflows={ workflows }
 						isLoading={ isLoading }
 						isFetching={ isFetching }
+						useComposerWorkflow={ useComposerWorkflow }
 					/>
 				</DeploymentStyleContext.Provider>
 			) }

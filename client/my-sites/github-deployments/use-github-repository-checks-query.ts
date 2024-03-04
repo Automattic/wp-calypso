@@ -5,13 +5,21 @@ import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 
 const GITHUB_BRANCHES_QUERY_KEY = 'github-repository-checks';
 
+export type RepositoryChecks = {
+	inferred_type: string;
+	has_composer: boolean;
+	has_vendor: boolean;
+	suggested_directory: string;
+	protected_paths: string[];
+};
+
 export const useGithubRepositoryChecksQuery = (
 	installationId: number,
 	repositoryOwner: string,
 	repositoryName: string,
 	repositoryBranch: string
 ) => {
-	return useQuery< string[] >( {
+	return useQuery< RepositoryChecks >( {
 		queryKey: [
 			GITHUB_DEPLOYMENTS_QUERY_KEY,
 			GITHUB_BRANCHES_QUERY_KEY,
@@ -20,7 +28,7 @@ export const useGithubRepositoryChecksQuery = (
 			repositoryName,
 			repositoryBranch,
 		],
-		queryFn: (): string[] =>
+		queryFn: (): RepositoryChecks =>
 			wp.req.get( {
 				path: addQueryArgs( '/hosting/github/repository/pre-connect-checks', {
 					installation_id: installationId,
