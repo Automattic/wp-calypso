@@ -1,10 +1,9 @@
 import { DropdownMenu, Tooltip } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
-import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { MOMENT_TIME_FORMAT } from './config';
+import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { ellipsis } from './icons';
 
 interface Props {
@@ -14,23 +13,8 @@ interface Props {
 export const ScheduleListTable = ( props: Props ) => {
 	const moment = useLocalizedMoment();
 	const { siteSlug, onRemoveClick } = props;
-	const { data: pluginsData } = useSitePluginsQuery( siteSlug );
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
-	const plugins = pluginsData?.plugins ?? [];
-
-	const preparePluginsTooltipInfo = ( pluginsArgs: string[] ) => {
-		const pluginsList = pluginsArgs
-			.map(
-				( plugin: string ) =>
-					plugins.find( ( { name }: SitePlugin ) => name === plugin )?.display_name
-			)
-			.join( '<br />' );
-
-		return createInterpolateElement( `<div>${ pluginsList }</div>`, {
-			div: <div className="tooltip--selected-plugins" />,
-			br: <br />,
-		} );
-	};
+	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
 	/**
 	 * NOTE: If you update the table structure,

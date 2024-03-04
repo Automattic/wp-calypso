@@ -84,7 +84,7 @@ export const ScheduleList = ( props: Props ) => {
 					{ isFetched && schedules.length > 0 && (
 						<>
 							{ isMobile ? (
-								<ScheduleListCards onRemoveClick={ () => setRemoveDialogOpen( true ) } />
+								<ScheduleListCards siteSlug={ siteSlug } onRemoveClick={ openRemoveDialog } />
 							) : (
 								<ScheduleListTable siteSlug={ siteSlug } onRemoveClick={ openRemoveDialog } />
 							) }
