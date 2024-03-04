@@ -27,7 +27,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
+	const canCreateSchedules = useCanCreateSchedules( siteSlug );
 
 	const { component, title } = {
 		list: {
@@ -42,19 +42,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			title: 'List schedules',
 		},
 		create: {
-			component: (
-				<ScheduleCreate onNavBack={ onNavBack } canCreateSchedules={ canCreateSchedules } />
-			),
+			component: <ScheduleCreate onNavBack={ onNavBack } />,
 			title: 'Create a new schedule',
 		},
 		edit: {
-			component: (
-				<ScheduleEdit
-					scheduleId={ scheduleId }
-					onNavBack={ onNavBack }
-					canCreateSchedules={ canCreateSchedules }
-				/>
-			),
+			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
 			title: 'Edit schedule',
 		},
 	}[ context ];

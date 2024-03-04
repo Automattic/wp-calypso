@@ -6,5 +6,7 @@ export function useCanCreateSchedules( siteSlug: string ) {
 	const { data: pluginsData, isFetching } = useSitePluginsQuery( siteSlug );
 	const { modify_files: modifyFiles, autoupdate_files: autoUpdateFiles } =
 		( pluginsData && pluginsData.file_mod_capabilities ) || DEFAULT_FILE_MOD_PERMISSIONS;
-	return { canCreateSchedules: modifyFiles && autoUpdateFiles, isFetching };
+
+	// we assume we can create schedules until the API reports back.
+	return isFetching ? true : modifyFiles && autoUpdateFiles;
 }

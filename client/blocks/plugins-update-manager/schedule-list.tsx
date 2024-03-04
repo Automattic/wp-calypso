@@ -8,7 +8,7 @@ import {
 	CardHeader,
 	Spinner,
 } from '@wordpress/components';
-import { Icon, arrowLeft, info } from '@wordpress/icons';
+import { Icon, arrowLeft, info, warning } from '@wordpress/icons';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
@@ -80,13 +80,13 @@ export const ScheduleList = ( props: Props ) => {
 				</CardHeader>
 				<CardBody>
 					{ isLoading && <Spinner /> }
-					{ isFetched && schedules.length === 0 && (
+					{ isFetched && ( schedules.length === 0 || ! canCreateSchedules ) && (
 						<ScheduleListEmpty
 							onCreateNewSchedule={ onCreateNewSchedule }
 							canCreateSchedules={ canCreateSchedules }
 						/>
 					) }
-					{ isFetched && schedules.length > 0 && (
+					{ isFetched && schedules.length > 0 && canCreateSchedules && (
 						<>
 							{ isMobile ? (
 								<ScheduleListCards
@@ -101,7 +101,7 @@ export const ScheduleList = ( props: Props ) => {
 							) }
 						</>
 					) }
-					{ isFetched && schedules.length >= MAX_SCHEDULES && (
+					{ isFetched && schedules.length >= MAX_SCHEDULES && canCreateSchedules && (
 						<Text as="p">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
 							The current feature implementation only allows to set up two schedules.
