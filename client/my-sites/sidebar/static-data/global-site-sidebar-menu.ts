@@ -19,9 +19,8 @@ export default function globalSiteSidebarMenu( {
 } ) {
 	return [
 		{
-			icon: 'dashicons-arrow-left-alt2',
 			slug: 'wp-admin',
-			title: translate( 'WP Admin' ),
+			title: translate( 'Open WP Admin' ),
 			url: `https://${ selectedSiteSlug }/wp-admin`,
 			className: 'sidebar__menu-item-wp-admin',
 		},
