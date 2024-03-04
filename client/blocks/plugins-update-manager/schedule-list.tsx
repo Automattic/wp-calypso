@@ -12,6 +12,7 @@ import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { useDeleteScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { MAX_SCHEDULES } from './config';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListTable } from './schedule-list-table';
@@ -24,7 +25,6 @@ interface Props {
 	onEditSchedule?: ( id: string ) => void;
 }
 export const ScheduleList = ( props: Props ) => {
-	const MAX_SCHEDULES = 2;
 	const isMobile = useMobileBreakpoint();
 
 	const { siteSlug, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
