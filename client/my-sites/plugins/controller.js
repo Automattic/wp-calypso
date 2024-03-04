@@ -114,6 +114,7 @@ export function plugins( context, next ) {
 
 export function updatesManager( context, next ) {
 	const siteSlug = context?.params?.site_slug;
+	const scheduleId = context?.params?.schedule_id;
 
 	if ( ! siteSlug ) {
 		sites( context, next );
@@ -132,6 +133,7 @@ export function updatesManager( context, next ) {
 		case 'edit':
 			context.primary = createElement( PluginsUpdateManager, {
 				siteSlug,
+				scheduleId,
 				context: 'edit',
 				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
 			} );

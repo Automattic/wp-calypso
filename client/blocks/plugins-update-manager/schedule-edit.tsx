@@ -7,15 +7,25 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
 	siteSlug: SiteSlug;
+	scheduleId: string;
 	onNavBack?: () => void;
 }
 export const ScheduleEdit = ( props: Props ) => {
-	const { siteSlug, onNavBack } = props;
+	const { siteSlug, scheduleId, onNavBack } = props;
+	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+
+	// If the schedule is not found, navigate back to the list
+	if ( isFetched && ! schedule ) {
+		onNavBack && onNavBack();
+		return null;
+	}
 
 	return (
 		<Card className="plugins-update-manager">

@@ -12,13 +12,14 @@ import './styles.scss';
 
 interface Props {
 	siteSlug: string;
-	context: 'list' | 'create';
+	context: 'list' | 'create' | 'edit';
+	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule?: ( id: string ) => void;
 }
 export const PluginsUpdateManager = ( props: Props ) => {
-	const { siteSlug, context, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
+	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
@@ -52,7 +53,9 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						/>
 					),
 					create: <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } />,
-					edit: <ScheduleEdit siteSlug={ siteSlug } onNavBack={ onNavBack } />,
+					edit: (
+						<ScheduleEdit siteSlug={ siteSlug } scheduleId={ scheduleId } onNavBack={ onNavBack } />
+					),
 				}[ context ]
 			}
 		</MainComponent>
