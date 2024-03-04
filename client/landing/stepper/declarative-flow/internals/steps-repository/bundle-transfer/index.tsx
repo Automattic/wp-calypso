@@ -113,8 +113,14 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			const maxFinishTime = startTime + totalTimeout;
 			const maxRetry = 3;
 
-			// Initiate transfer
-			await initiateAtomicTransfer( siteId, softwareSet );
+			await requestLatestAtomicTransfer( siteId );
+			const preTransferCheck = getSiteLatestAtomicTransfer( siteId );
+
+			// Ensure we don't have an existing transfer in progress before starting a new one.
+			if ( preTransferCheck?.status !== transferStates.ACTIVE ) {
+				// Initiate transfer
+				await initiateAtomicTransfer( siteId, softwareSet );
+			}
 
 			// Poll for transfer status
 			let stopPollingTransfer = false;
