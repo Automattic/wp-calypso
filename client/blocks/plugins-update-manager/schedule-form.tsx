@@ -8,19 +8,22 @@ import {
 	Flex,
 	FlexItem,
 	FlexBlock,
+	Spinner,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { Fragment, useState, useCallback, useEffect } from 'react';
+import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
+import { MAX_SELECTABLE_PLUGINS } from './config';
 import {
 	DAILY_OPTION,
 	DAY_OPTIONS,
 	HOUR_OPTIONS,
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
-	MAX_SELECTABLE_PLUGINS,
 } from './schedule-form.const';
 import {
 	prepareTimestamp,
@@ -33,10 +36,19 @@ import './schedule-form.scss';
 
 interface Props {
 	siteSlug: SiteSlug;
+	onCreateSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
-	const { siteSlug } = props;
-	const { data: dataPlugins } = useSitePluginsQuery( siteSlug );
+	const { siteSlug, onCreateSuccess } = props;
+	const {
+		data: dataPlugins,
+		isLoading: isPluginsFetching,
+		isFetched: isPluginsFetched,
+	} = useSitePluginsQuery( siteSlug );
+	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
+		onSuccess: () => onCreateSuccess && onCreateSuccess(),
+	} );
 	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
@@ -45,9 +57,18 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ day, setDay ] = useState< string >( '1' );
 	const [ hour, setHour ] = useState< string >( '6' );
 	const [ period, setPeriod ] = useState< string >( '1m' );
-	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
+	const timestamp = prepareTimestamp( frequency, day, hour, period );
+	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
+		timestamp: schedule.timestamp,
+		frequency: schedule.schedule,
+	} ) );
+	const scheduledPlugins = schedules.map( ( schedule ) => schedule.args );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
-	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
+	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
+		name: validateName( name ),
+		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
+		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
+	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
 	const onPluginSelectionChange = useCallback(
@@ -82,7 +103,24 @@ export const ScheduleForm = ( props: Props ) => {
 		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
 	);
 
-	const onFormSubmit = () => {};
+	const onFormSubmit = () => {
+		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
+		setFieldTouched( {
+			name: true,
+			plugins: true,
+			timestamp: true,
+		} );
+
+		formValid &&
+			createScheduleUpdates( {
+				hook: name,
+				plugins: selectedPlugins,
+				schedule: {
+					timestamp,
+					interval: frequency,
+				},
+			} );
+	};
 
 	// Name validation
 	useEffect(
@@ -93,7 +131,10 @@ export const ScheduleForm = ( props: Props ) => {
 	// Plugin selection validation
 	useEffect(
 		() =>
-			setValidationErrors( { ...validationErrors, plugins: validatePlugins( selectedPlugins ) } ),
+			setValidationErrors( {
+				...validationErrors,
+				plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
+			} ),
 		[ selectedPlugins ]
 	);
 
@@ -102,15 +143,9 @@ export const ScheduleForm = ( props: Props ) => {
 		() =>
 			setValidationErrors( {
 				...validationErrors,
-				timestamp: validateTimeSlot( { frequency, timestamp } ),
+				timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 			} ),
 		[ timestamp ]
-	);
-
-	// Prepare timestamp on frequency, day, hour, period change
-	useEffect(
-		() => setTimestamp( prepareTimestamp( frequency, day, hour, period ) ),
-		[ frequency, day, hour, period ]
 	);
 
 	return (
@@ -238,7 +273,8 @@ export const ScheduleForm = ( props: Props ) => {
 					<div className="form-field">
 						<label htmlFor="plugins">Select plugins</label>
 						<span className="plugin-select-stats">
-							{ selectedPlugins.length }/{ MAX_SELECTABLE_PLUGINS }
+							{ selectedPlugins.length }/
+							{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
 						</span>
 						{ fieldTouched?.plugins && validationErrors?.plugins ? (
 							<Text className="validation-msg">
@@ -257,7 +293,8 @@ export const ScheduleForm = ( props: Props ) => {
 								value={ pluginSearchTerm }
 							/>
 							<div className="checkbox-options-container">
-								{ plugins.length <= MAX_SELECTABLE_PLUGINS && (
+								{ isPluginsFetching && <Spinner /> }
+								{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
 										label="Select all"
 										indeterminate={
@@ -267,27 +304,28 @@ export const ScheduleForm = ( props: Props ) => {
 										onChange={ onPluginSelectAllChange }
 									/>
 								) }
-								{ plugins.map( ( plugin ) => (
-									<Fragment key={ plugin.name }>
-										{ plugin.display_name
-											.toLowerCase()
-											.includes( pluginSearchTerm.toLowerCase() ) && (
-											<CheckboxControl
-												key={ plugin.name }
-												label={ plugin.display_name }
-												checked={ selectedPlugins.includes( plugin.name ) }
-												disabled={ isPluginSelectionDisabled( plugin ) }
-												className={ classnames( {
-													disabled: isPluginSelectionDisabled( plugin ),
-												} ) }
-												onChange={ ( isChecked ) => {
-													setFieldTouched( { ...fieldTouched, plugins: true } );
-													onPluginSelectionChange( plugin, isChecked );
-												} }
-											/>
-										) }
-									</Fragment>
-								) ) }
+								{ isPluginsFetched &&
+									plugins.map( ( plugin ) => (
+										<Fragment key={ plugin.name }>
+											{ plugin.display_name
+												.toLowerCase()
+												.includes( pluginSearchTerm.toLowerCase() ) && (
+												<CheckboxControl
+													key={ plugin.name }
+													label={ plugin.display_name }
+													checked={ selectedPlugins.includes( plugin.name ) }
+													disabled={ isPluginSelectionDisabled( plugin ) }
+													className={ classnames( {
+														disabled: isPluginSelectionDisabled( plugin ),
+													} ) }
+													onChange={ ( isChecked ) => {
+														setFieldTouched( { ...fieldTouched, plugins: true } );
+														onPluginSelectionChange( plugin, isChecked );
+													} }
+												/>
+											) }
+										</Fragment>
+									) ) }
 							</div>
 						</div>
 					</div>

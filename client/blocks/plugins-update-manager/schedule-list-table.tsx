@@ -1,21 +1,20 @@
 import { DropdownMenu, Tooltip } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
-import { Badge } from './badge';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { MOMENT_TIME_FORMAT } from './config';
+import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { ellipsis } from './icons';
 
 interface Props {
-	onRemoveClick: () => void;
+	siteSlug: string;
+	onRemoveClick: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
-	const { onRemoveClick } = props;
-	const toolbarPluginsText = createInterpolateElement(
-		'<div>Move to WordPress.com<br />Akismet<br />Gravity Forms</div>',
-		{
-			div: <div className="tooltip--selected-plugins" />,
-			br: <br />,
-		}
-	);
+	const moment = useLocalizedMoment();
+	const { siteSlug, onRemoveClick } = props;
+	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -34,72 +33,47 @@ export const ScheduleListTable = ( props: Props ) => {
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td className="name">Move to WordPress.com plugin</td>
-					<td>
-						<Badge type="success" />
-						Feb 27 7:00 PM UTC
-					</td>
-					<td>Feb 28 7:00 PM UTC</td>
-					<td>Daily</td>
-					<td>
-						1
-						<Tooltip
-							text="Move to WordPress.com plugin"
-							position="middle right"
-							delay={ 0 }
-							hideOnClick={ false }
-						>
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-						</Tooltip>
-					</td>
-					<td style={ { textAlign: 'end' } }>
-						<DropdownMenu
-							popoverProps={ { position: 'bottom left' } }
-							controls={ [
+				{ schedules.map( ( schedule ) => (
+					<tr key={ schedule.id }>
+						<td className="name">{ schedule.hook }</td>
+						<td></td>
+						<td>{ moment( schedule.timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }</td>
+						<td>
+							{
 								{
-									title: 'Remove',
-									onClick: onRemoveClick,
-								},
-							] }
-							icon={ ellipsis }
-							label="More"
-						/>
-					</td>
-				</tr>
-				<tr>
-					<td className="name">Security plugins</td>
-					<td>
-						<Badge type="failed" />
-						Feb 21 7:00 PM UTC
-					</td>
-					<td>Feb 28 7:00 PM UTC</td>
-					<td>Weekly</td>
-					<td>
-						3
-						<Tooltip
-							text={ toolbarPluginsText as unknown as string }
-							position="middle right"
-							delay={ 0 }
-							hideOnClick={ false }
-						>
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-						</Tooltip>
-					</td>
-					<td style={ { textAlign: 'end' } }>
-						<DropdownMenu
-							popoverProps={ { position: 'bottom left' } }
-							controls={ [
-								{
-									title: 'Remove',
-									onClick: onRemoveClick,
-								},
-							] }
-							icon={ ellipsis }
-							label="More"
-						/>
-					</td>
-				</tr>
+									daily: 'Daily',
+									weekly: 'Weekly',
+								}[ schedule.schedule ]
+							}
+						</td>
+						<td>
+							{ schedule?.args?.length }
+							{ schedule?.args && (
+								<Tooltip
+									text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
+									position="middle right"
+									delay={ 0 }
+									hideOnClick={ false }
+								>
+									<Icon className="icon-info" icon={ info } size={ 16 } />
+								</Tooltip>
+							) }
+						</td>
+						<td style={ { textAlign: 'end' } }>
+							<DropdownMenu
+								popoverProps={ { position: 'bottom left' } }
+								controls={ [
+									{
+										title: 'Remove',
+										onClick: () => onRemoveClick( schedule.id ),
+									},
+								] }
+								icon={ ellipsis }
+								label="More"
+							/>
+						</td>
+					</tr>
+				) ) }
 			</tbody>
 		</table>
 	);
