@@ -345,7 +345,10 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<WhatsNewLoader loadWhatsNew={ loadHelpCenter } siteId={ this.props.siteId } />
+				<WhatsNewLoader
+					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden }
+					siteId={ this.props.siteId }
+				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
