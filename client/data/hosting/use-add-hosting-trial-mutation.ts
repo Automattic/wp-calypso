@@ -2,7 +2,9 @@ import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
-type HostingIntent = 'migrate';
+export const HOSTING_INTENT_MIGRATE = 'migrate';
+
+type HostingIntent = typeof HOSTING_INTENT_MIGRATE;
 
 interface Variables {
 	siteId: number;
