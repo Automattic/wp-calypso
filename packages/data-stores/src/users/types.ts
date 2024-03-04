@@ -15,6 +15,12 @@ export type Member = {
 	roles?: string[];
 	site_ID: number;
 	site_visible: boolean;
+	linked_user_ID?: boolean | number;
+	linked_user_info?: {
+		avatar_URL: string;
+		name: string;
+	};
+	date_subscribed?: string;
 };
 
 export type UseQuery = {
@@ -24,3 +30,12 @@ export type UseQuery = {
 	isLoading: boolean;
 	isFetchingNextPage: boolean;
 };
+
+type UsersQueryData = {
+	users: Member[];
+	total: number;
+};
+
+export type UsersQuery = {
+	data?: UsersQueryData;
+} & UseQuery;
