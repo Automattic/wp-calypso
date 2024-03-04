@@ -6,7 +6,7 @@ describe( 'DeclarativeFlowHelpers', () => {
 			shouldRedirectToSiteMigration(
 				STEPS.IMPORT_LIST.slug,
 				'wordpress',
-				'site-migration-identify'
+				STEPS.SITE_MIGRATION_IDENTIFY.slug
 			)
 		).toBe( true );
 	} );
@@ -22,15 +22,19 @@ describe( 'DeclarativeFlowHelpers', () => {
 			shouldRedirectToSiteMigration(
 				STEPS.IMPORT_LIST.slug,
 				'other-platform',
-				'site-migration-identify'
+				STEPS.SITE_MIGRATION_IDENTIFY.slug
 			)
 		).toBe( false );
 	} );
 
 	it( 'returns false when the origin is not set', () => {
-		expect( shouldRedirectToSiteMigration( STEPS.IMPORT_LIST.slug, 'other-platform', null ) ).toBe(
-			false
-		);
+		expect(
+			shouldRedirectToSiteMigration(
+				STEPS.IMPORT_LIST.slug,
+				STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				null
+			)
+		).toBe( false );
 	} );
 
 	it( 'returns false when the origin is not the site-migration-identify', () => {
