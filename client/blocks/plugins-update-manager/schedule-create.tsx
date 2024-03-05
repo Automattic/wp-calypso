@@ -1,3 +1,4 @@
+import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	Button,
@@ -14,6 +15,10 @@ interface Props {
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const { onNavBack } = props;
+
+	const mutationState = useMutationState( {
+		filters: { mutationKey: [ 'create-schedule-updates', siteSlug ] },
+	} );
 
 	return (
 		<Card className="plugins-update-manager">
@@ -32,7 +37,7 @@ export const ScheduleCreate = ( props: Props ) => {
 				<ScheduleForm onSyncSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary">
+				<Button form="schedule" type="submit" variant="primary" isBusy={ !! mutationState.length }>
 					Create
 				</Button>
 			</CardFooter>

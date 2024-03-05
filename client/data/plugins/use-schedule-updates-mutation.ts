@@ -6,6 +6,7 @@ import type { SiteSlug } from 'calypso/types';
 
 export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const mutation = useMutation( {
+		mutationKey: [ 'create-schedule-updates', siteSlug ],
 		mutationFn: ( params: object ) =>
 			wpcomRequest( {
 				path: `/sites/${ siteSlug }/update-schedules`,
