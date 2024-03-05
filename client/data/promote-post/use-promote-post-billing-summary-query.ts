@@ -10,11 +10,14 @@ const useBillingSummaryQuery = ( queryOptions = {} ) => {
 		queryKey: [ 'promote-post-billing-summary-siteid', selectedSiteId ],
 		queryFn: async () => {
 			if ( selectedSiteId ) {
-				const { debt } = await requestDSP< { debt: string } >(
-					selectedSiteId,
-					`/user/billing-summary`
-				);
-				return debt ? parseFloat( debt ).toFixed( 2 ) : undefined;
+				const { debt, paymentsBlocked } = await requestDSP< {
+					debt: string;
+					paymentsBlocked: boolean;
+				} >( selectedSiteId, `/user/billing-summary` );
+				return {
+					debt: debt ? parseFloat( debt ).toFixed( 2 ) : undefined,
+					paymentsBlocked: paymentsBlocked ? paymentsBlocked : false,
+				};
 			}
 			throw new Error( 'wpcomUserId is undefined' );
 		},

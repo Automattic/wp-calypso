@@ -6,7 +6,8 @@ import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-b
 function DebtNotifier() {
 	const translate = useTranslate();
 
-	const { data: debt = '0.00' } = useBillingSummaryQuery();
+	const { data } = useBillingSummaryQuery();
+	const debt = data?.debt ?? '0.00';
 
 	if ( debt !== '0.00' ) {
 		return (
