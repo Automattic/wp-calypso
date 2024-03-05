@@ -8,7 +8,7 @@ const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 function getWebpackConfig( env, argv ) {
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
 
 	return {
 		...webpackConfig,
