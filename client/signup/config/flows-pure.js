@@ -141,11 +141,25 @@ export function generateFlows( {
 		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'new-user-survey', 'domains', 'emails', 'plans' ]
-				: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+				? [ userSocialStep, 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
+		},
+		{
+			name: 'with-new-user-survey',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ userSocialStep, 'new-user-survey', 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'The main onboarding flow with addition of the new user survey step',
+			lastModified: '2024-03-05',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
