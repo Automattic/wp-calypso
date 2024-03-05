@@ -95,6 +95,7 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 
 		case STATS_UTM_TOP_POSTS_RECEIVE: {
 			const data = action.data.top_posts;
+			const siteSlug = action.siteSlug;
 
 			const { topPosts } = state as {
 				topPosts: { [ key: string ]: Array< UTMMetricItemTopPost > };
@@ -110,6 +111,13 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 							label: topPost.title,
 							value: topPost.views,
 							href: topPost.href,
+							page: siteSlug ? `stats/post/${ topPost.id }/${ action.siteSlug }` : null,
+							actions: [
+								{
+									data: topPost.href,
+									type: 'link',
+								},
+							],
 						};
 					} ),
 				},
