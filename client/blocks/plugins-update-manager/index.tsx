@@ -1,16 +1,21 @@
+import { WPCOM_FEATURES_SCHEDULED_UPDATES } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import DocumentHead from 'calypso/components/data/document-head';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled-updates-gate';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useSelector } from 'calypso/state';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
-
 import './styles.scss';
 
 interface Props {
@@ -25,7 +30,14 @@ interface Props {
 export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
-	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
+	const siteId = useSelector( getSelectedSiteId );
+	const hasScheduledUpdate = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_SCHEDULED_UPDATES )
+	);
+	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
+	const isEligibleForFeature = hasScheduledUpdate && isAtomic;
+	const hideCreateButton =
+		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 
@@ -72,7 +84,9 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						</Button>
 					) }
 				</NavigationHeader>
-				{ component }
+				<ScheduledUpdatesGate needsUpgrade={ ! isEligibleForFeature }>
+					{ component }
+				</ScheduledUpdatesGate>
 			</MainComponent>
 		</PluginUpdateManagerContextProvider>
 	);
