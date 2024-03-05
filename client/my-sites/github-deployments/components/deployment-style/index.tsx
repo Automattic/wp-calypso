@@ -1,6 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
+import SupportInfo from 'calypso/components/support-info/index';
 import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -17,9 +18,8 @@ type DeploymentStyleProps = {
 	branchName: string;
 	workflowPath?: string;
 	onChooseWorkflow( workflowFilename: string | undefined ): void;
+	useComposerWorkflow: boolean;
 } & DeploymentStyleContextProps;
-
-type DeploymentStyle = 'simple' | 'advanced';
 
 export const DeploymentStyle = ( {
 	isDisabled,
@@ -30,6 +30,7 @@ export const DeploymentStyle = ( {
 	isCheckingWorkflow,
 	onWorkflowVerify,
 	workflowCheckResult,
+	useComposerWorkflow,
 }: DeploymentStyleProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -45,9 +46,17 @@ export const DeploymentStyle = ( {
 
 	return (
 		<div className="github-deployments-deployment-style">
-			<h3 className="github-deployments-deployment-style__header">
-				{ __( 'Pick your deployment mode' ) }
-			</h3>
+			<div className="github-deployments-deployment-style__header">
+				<h3>{ __( 'Pick your deployment mode' ) }</h3>
+				<SupportInfo
+					text={ __(
+						'Simple deployments copy all of your repository files to the specified destination directory. ' +
+							'Advanced deployments use a Workflow script that allows you to run custom build steps, such as, install Composer dependencies, test your code before deploying, and control the files that are deployed to your site.'
+					) }
+					link="https://docs.github.com/en/actions/using-workflows"
+					privacyLink={ false }
+				/>
+			</div>
 			<FormRadiosBar
 				disabled={ isDisabled }
 				items={ [
@@ -107,6 +116,7 @@ export const DeploymentStyle = ( {
 						workflows={ workflows }
 						isLoading={ isLoading }
 						isFetching={ isFetching }
+						useComposerWorkflow={ useComposerWorkflow }
 					/>
 				</DeploymentStyleContext.Provider>
 			) }

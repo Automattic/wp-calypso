@@ -11,6 +11,8 @@ export interface Workflow {
 	workflow_path: string;
 }
 
+const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
+
 export const useDeploymentWorkflowsQuery = (
 	repository: GitHubRepositoryData,
 	branchName: string,
@@ -29,6 +31,8 @@ export const useDeploymentWorkflowsQuery = (
 				path,
 				apiNamespace: 'wpcom/v2',
 			} ),
+		select: ( workflows: Workflow[] ) =>
+			workflows.filter( ( workflow ) => ! childWorkflows.includes( workflow.file_name ) ),
 		meta: {
 			persist: false,
 		},
