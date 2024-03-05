@@ -596,7 +596,10 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) : (
-					// We need to allow users to set the Site Icon even if the Global Site View is enabled.
+					/**
+					 * We need to allow users to set the Site Icon even if the Global Site View is enabled.
+					 * @see https://github.com/Automattic/wp-calypso/pull/88168
+					 */
 					<>
 						<SettingsSectionHeader showButton={ false } title={ translate( 'Site icon' ) }>
 							<InfoPopover position="bottom right">
