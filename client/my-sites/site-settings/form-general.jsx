@@ -49,7 +49,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
-	isGlobalSiteViewEnabled,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
@@ -59,6 +59,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import InfoPopover from '../../components/info-popover';
 import { BuiltByUpsell } from './built-by-upsell-banner';
 import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
@@ -564,7 +565,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
 			isUnlaunchedSite: propsisUnlaunchedSite,
-			isClassicView,
+			isGlobalSiteViewEnabled,
 		} = this.props;
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
@@ -574,7 +575,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
+				{ ! isGlobalSiteViewEnabled ? (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
@@ -591,6 +592,26 @@ export class SiteSettingsFormGeneral extends Component {
 								{ this.languageOptions() }
 								{ this.Timezone() }
 								{ siteIsJetpack && this.WordPressVersion() }
+							</form>
+						</Card>
+					</>
+				) : (
+					// We need to allow users to set the Site Icon even if the Global Site View is enabled.
+					<>
+						<SettingsSectionHeader showButton={ false } title={ translate( 'Site icon' ) }>
+							<InfoPopover position="bottom right">
+								{ translate(
+									'The Site Icon is used as a browser and app icon for your site.' +
+										' Icons must be square, and at least %s pixels wide and tall.',
+									{ args: [ 512 ] }
+								) }
+							</InfoPopover>
+						</SettingsSectionHeader>
+						<Card>
+							<form>
+								<div className="site-settings__site-icon">
+									<SiteIconSetting showLabel={ false } />
+								</div>
 							</form>
 						</Card>
 					</>
@@ -665,7 +686,7 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
+		isGlobalSiteViewEnabled: getIsGlobalSiteViewEnabled( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),

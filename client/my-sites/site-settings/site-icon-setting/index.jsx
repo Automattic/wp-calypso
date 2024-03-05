@@ -48,6 +48,7 @@ class SiteIconSetting extends Component {
 		setEditorMediaModalView: PropTypes.func,
 		resetAllImageEditorState: PropTypes.func,
 		crop: PropTypes.object,
+		showLabel: PropTypes.bool,
 	};
 
 	state = {
@@ -166,6 +167,7 @@ class SiteIconSetting extends Component {
 			customizerUrl,
 			generalOptionsUrl,
 			siteSupportsImageEditor,
+			showLabel = true,
 		} = this.props;
 		const { isModalVisible, hasToggledModal, isEditingSiteIcon } = this.state;
 
@@ -200,16 +202,18 @@ class SiteIconSetting extends Component {
 
 		return (
 			<FormFieldset className="site-icon-setting">
-				<FormLabel className="site-icon-setting__heading">
-					{ translate( 'Site icon' ) }
-					<InfoPopover position="bottom right">
-						{ translate(
-							'The Site Icon is used as a browser and app icon for your site.' +
-								' Icons must be square, and at least %s pixels wide and tall.',
-							{ args: [ 512 ] }
-						) }
-					</InfoPopover>
-				</FormLabel>
+				{ showLabel && (
+					<FormLabel className="site-icon-setting__heading">
+						{ translate( 'Site icon' ) }
+						<InfoPopover position="bottom right">
+							{ translate(
+								'The Site Icon is used as a browser and app icon for your site.' +
+									' Icons must be square, and at least %s pixels wide and tall.',
+								{ args: [ 512 ] }
+							) }
+						</InfoPopover>
+					</FormLabel>
+				) }
 				{ createElement(
 					buttonProps.href ? 'a' : 'button',
 					{

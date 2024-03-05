@@ -12,6 +12,10 @@ import {
 } from 'calypso/layout/guided-tours/config-elements';
 import meta from './meta';
 
+/**
+ * This tour might be deprecated, as we aim to let users set the Site Title and Tagline on the wp-admin interface.
+ * @see pfsHM7-cr-p2
+ */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const ChecklistSiteTitleTour = makeTour(
 	<Tour { ...meta }>

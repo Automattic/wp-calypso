@@ -44,6 +44,7 @@
 }
 
 .section-header__actions {
+	display: flex;
 	align-self: center;
 	flex-grow: 0;
 	margin-left: 8px;

@@ -313,6 +313,15 @@
 	}
 }
 
+.site-settings__site-icon {
+	@include breakpoint-deprecated( ">660px" ) {
+		display: flex;
+	}
+	fieldset.form-fieldset.site-icon-setting {
+		padding: 0;
+	}
+}
+
 .site-settings__fiverr-logo-maker-cta {
 	margin-top: 10px;
 	margin-bottom: 20px;
