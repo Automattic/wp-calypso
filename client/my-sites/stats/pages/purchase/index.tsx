@@ -66,6 +66,7 @@ const StatsPurchasePage = ( {
 		isCommercialOwned,
 		supportCommercialUse,
 		isLegacyCommercialLicense,
+		hasLoadedSitePurchases,
 	} = useStatsPurchases( siteId );
 
 	useEffect( () => {
@@ -118,7 +119,11 @@ const StatsPurchasePage = ( {
 	) as ProductsList.RawAPIProduct | null;
 
 	const isLoading =
-		! commercialProduct || ! commercialMonthlyProduct || ! pwywProduct || isRequestingSitePurchases;
+		! commercialProduct ||
+		! commercialMonthlyProduct ||
+		! pwywProduct ||
+		isRequestingSitePurchases ||
+		! hasLoadedSitePurchases;
 
 	const [ initialStep, initialSiteType ] = useMemo( () => {
 		// if the site is detected as commercial
@@ -156,25 +161,39 @@ const StatsPurchasePage = ( {
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
 	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
+	const variant = useMemo( () => {
+		let pageVariant = 'personal';
+		if ( ! showPurchasePage ) {
+			pageVariant = 'notice';
+		} else if (
+			( ! isForceProductRedirect &&
+				( isCommercial || isCommercial === null || isCommercialOwned ) ) ||
+			redirectToCommercial
+		) {
+			pageVariant = 'commercial';
+		}
+		return pageVariant;
+	}, [
+		showPurchasePage,
+		isCommercial,
+		isCommercialOwned,
+		redirectToCommercial,
+		isForceProductRedirect,
+	] );
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-			<PageViewTracker
-				path="/stats/purchase/:site"
-				title="Stats > Purchase"
-				from={ query.from ?? '' }
-				// properties={
-				// 	isTierUpgradeSliderEnabled
-				// 		? {
-				// 				variant:
-				// 					( ! isForceProductRedirect && isCommercial ) || redirectToCommercial
-				// 						? 'commercial'
-				// 						: 'personal',
-				// 				is_upgrade: isCommercialOwned,
-				// 		  }
-				// 		: null
-				// }
-			/>
+			{ ! isLoading && (
+				<PageViewTracker
+					path="/stats/purchase/:site"
+					title="Stats > Purchase"
+					from={ query.from ?? '' }
+					variant={ variant }
+					is_upgrade={ +supportCommercialUse }
+					is_site_commercial={ isCommercial === null ? '' : +isCommercial }
+				/>
+			) }
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,

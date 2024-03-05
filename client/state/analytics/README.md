@@ -116,6 +116,13 @@ const recorder = withEnhancer( recordPageView, [ enhancer1, enhancer2, enhancer3
 - `user_is_dev_account` is captured by default when tracking calls are handled by [`<PageViewTracker>`]
 - To include the `user_is_dev_account` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithUserIsDevAccount`
 
+#### enhanceWithGlobalSiteViewEnabled
+
+- Enhances any analytics Redux action
+- Adds the property `global_site_view_enabled` (`1` or `0`) to specify whether the site has the nav redesign global site view enabled.
+- `global_site_view_enabled` is captured by default when tracking calls are handled by [`<PageViewTracker>`]
+- To include the `global_site_view_enabled` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithGlobalSiteViewEnabled`
+
 ### Internal Helpers
 
 These can be used in client code but are intended to be used internally within the middleware library to create service-specific handlers for tracking analytics.

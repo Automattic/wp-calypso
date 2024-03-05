@@ -10,6 +10,8 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import BillingDetails from './billing-details';
+import BillingSummary from './billing-summary';
 
 export default function BillingDashboard() {
 	const translate = useTranslate();
@@ -47,7 +49,10 @@ export default function BillingDashboard() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>test</LayoutBody>
+			<LayoutBody>
+				<BillingSummary />
+				<BillingDetails />
+			</LayoutBody>
 		</Layout>
 	);
 }

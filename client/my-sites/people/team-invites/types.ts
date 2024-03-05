@@ -1,4 +1,4 @@
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 
 export type Invite = {
 	key: string;

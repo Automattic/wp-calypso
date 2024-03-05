@@ -8,7 +8,7 @@ import { CodeHighlighter } from '../code-highlighter';
 import { useDeploymentStyleContext } from './context';
 import { useCreateWorkflow } from './use-create-workflow';
 import { Workflow } from './use-deployment-workflows-query';
-import { newWorkflowExample } from './workflow-yaml-examples';
+import { newComposerWorkflowExample, newWorkflowExample } from './workflow-yaml-examples';
 
 import './style.scss';
 
@@ -17,6 +17,7 @@ interface NewWorkflowWizardProps {
 	repositoryBranch: string;
 	isLoadingWorkflows: boolean;
 	workflows?: Workflow[];
+	useComposerWorkflow: boolean;
 	onWorkflowVerification( path: string ): void;
 	onWorkflowCreated( path: string ): void;
 }
@@ -31,12 +32,13 @@ export const NewWorkflowWizard = ( {
 	repositoryBranch,
 	onWorkflowVerification,
 	onWorkflowCreated,
+	useComposerWorkflow,
 }: NewWorkflowWizardProps ) => {
 	const { __ } = useI18n();
 
 	const { isCheckingWorkflow } = useDeploymentStyleContext();
 	const [ workflowPath, setWorkflowPath ] = useState( () => {
-		const existingWorkflow = !! workflows?.find(
+		const existingWorkflow = workflows?.find(
 			( workflow ) => workflow.workflow_path === RECOMMENDED_WORKFLOW_PATH
 		);
 
@@ -44,7 +46,7 @@ export const NewWorkflowWizard = ( {
 			return RECOMMENDED_WORKFLOW_PATH;
 		}
 
-		return WORKFLOWS_DIRECTORY;
+		return existingWorkflow.workflow_path;
 	} );
 
 	const { createWorkflow, isPending } = useCreateWorkflow( {
@@ -82,7 +84,9 @@ export const NewWorkflowWizard = ( {
 		setError( undefined );
 	}, [ workflows, workflowPath, __ ] );
 
-	const workflowContent = newWorkflowExample( repositoryBranch );
+	const workflowContent = useComposerWorkflow
+		? newComposerWorkflowExample( repositoryBranch )
+		: newWorkflowExample( repositoryBranch );
 
 	return (
 		<div className="github-deployments-new-workflow-wizard">

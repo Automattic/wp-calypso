@@ -166,7 +166,7 @@ __metadata:
     react-redux: "npm:^8.1.3"
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -234,7 +234,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.0"
     npm-run-all: "npm:^4.1.5"
     tree-kill: "npm:^1.2.2"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     yargs: "npm:^17.0.1"
   bin:
     calypso-apps-builder: ./index.js
@@ -299,7 +299,7 @@ __metadata:
     webpack-cli: "npm:^4.10.0"
   peerDependencies:
     postcss: ^8.4.5
-    webpack: ^5.90.2
+    webpack: ^5.90.3
   bin:
     calypso-build: ./bin/calypso-build.js
     copy-assets: ./bin/copy-assets.js
@@ -364,7 +364,7 @@ __metadata:
     form-data: "npm:^4.0.0"
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
-    nock: "npm:^13.5.1"
+    nock: "npm:^13.5.3"
     node-fetch: "npm:^2.6.7"
     playwright: "npm:^1.37"
     totp-generator: "npm:^0.0.12"
@@ -484,19 +484,19 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@storybook/addon-actions": "npm:^7.6.16"
-    "@storybook/addon-controls": "npm:^7.6.16"
-    "@storybook/addon-viewport": "npm:^7.6.16"
+    "@storybook/addon-actions": "npm:^7.6.17"
+    "@storybook/addon-controls": "npm:^7.6.17"
+    "@storybook/addon-viewport": "npm:^7.6.17"
     "@storybook/preset-scss": "npm:^1.0.3"
-    "@storybook/react-webpack5": "npm:^7.6.16"
+    "@storybook/react-webpack5": "npm:^7.6.17"
     css-loader: "npm:^6.10.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     sass-loader: "npm:^12.1.0"
     style-loader: "npm:^1.3.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
-    "@storybook/react": ^7.6.16
+    "@storybook/react": ^7.6.17
   languageName: unknown
   linkType: soft
 
@@ -563,7 +563,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
   languageName: unknown
   linkType: soft
@@ -612,8 +612,8 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
-    "@storybook/addon-actions": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/addon-actions": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@testing-library/dom": "npm:^9.3.4"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
@@ -639,7 +639,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
     uuid: "npm:^9.0.1"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     "@wordpress/data": ^9.22.0
     react: ^18.2.0
@@ -656,8 +656,8 @@ __metadata:
     "@automattic/color-studio": "npm:2.5.0"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@testing-library/dom": "npm:^9.3.4"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
@@ -707,7 +707,7 @@ __metadata:
     fast-json-stable-stringify: "npm:^2.1.0"
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
-    nock: "npm:^13.5.1"
+    nock: "npm:^13.5.3"
     node-fetch: "npm:^2.6.6"
     qs: "npm:^6.9.1"
     redux: "npm:^4.2.1"
@@ -744,7 +744,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^9.22.0
@@ -786,7 +786,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     "@wordpress/data": ^9.22.0
     "@wordpress/element": ^5.29.0
@@ -891,7 +891,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
     "@wordpress/data": ^9.22.0
@@ -1025,9 +1025,9 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
-    "@storybook/addon-backgrounds": "npm:^7.6.16"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/addon-backgrounds": "npm:^7.6.17"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^4.43.0"
     "@wordpress/components": "npm:^27.0.0"
@@ -1113,7 +1113,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     "@babel/runtime": ^7.23.9
     "@wordpress/data": ^9.22.0
@@ -1169,7 +1169,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   languageName: unknown
   linkType: soft
 
@@ -1202,7 +1202,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^9.22.0
@@ -1225,9 +1225,9 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@storybook/addon-a11y": "npm:^7.6.12"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/addon-a11y": "npm:^7.6.17"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@wordpress/components": "npm:^27.0.0"
     classnames: "npm:^2.3.2"
     msw: "npm:^2.1.7"
@@ -1239,7 +1239,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     utility-types: "npm:^3.10.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^9.22.0
@@ -1338,7 +1338,7 @@ __metadata:
     react-redux: "npm:^8.1.3"
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
     webpack-dev-server: "npm:^4.15.1"
     wpcom: "workspace:^"
@@ -1376,7 +1376,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   languageName: unknown
   linkType: soft
 
@@ -1446,7 +1446,7 @@ __metadata:
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
     size-limit: "npm:^8.2.6"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
     wpcom: "workspace:^"
   languageName: unknown
@@ -1477,7 +1477,7 @@ __metadata:
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.5.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/i18n": ^4.52.0
@@ -1531,8 +1531,8 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@emotion/react": "npm:11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@storybook/addon-actions": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/addon-actions": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@testing-library/dom": "npm:^9.3.4"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
@@ -1547,7 +1547,7 @@ __metadata:
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     "@wordpress/i18n": ^4.52.0
     postcss: ^8.4.5
@@ -1601,9 +1601,9 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@storybook/addon-actions": "npm:^7.6.16"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/addon-actions": "npm:^7.6.17"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
     "@types/classnames": "npm:^2.3.1"
@@ -1611,7 +1611,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     require-from-string: "npm:^2.0.2"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1650,9 +1650,9 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": "npm:^7.23.9"
-    "@storybook/addon-actions": "npm:^7.6.16"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/addon-actions": "npm:^7.6.17"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@testing-library/dom": "npm:^9.3.4"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
@@ -1672,7 +1672,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -1751,7 +1751,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
     "@babel/runtime": ^7.23.9
     react: ^18.2.0
@@ -1819,8 +1819,8 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@popperjs/core": "npm:^2.11.8"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@wordpress/base-styles": "npm:^4.43.0"
     "@wordpress/components": "npm:^27.0.0"
     "@wordpress/dom": "npm:^3.52.0"
@@ -1935,7 +1935,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
   peerDependencies:
-    webpack: ^5.90.2
+    webpack: ^5.90.3
   languageName: unknown
   linkType: soft
 
@@ -1946,7 +1946,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     semver: "npm:^7.0.0"
   peerDependencies:
-    webpack: ^5.90.2
+    webpack: ^5.90.3
   languageName: unknown
   linkType: soft
 
@@ -1957,9 +1957,9 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     rimraf: "npm:^3.0.2"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
-    webpack: ^5.90.2
+    webpack: ^5.90.3
   languageName: unknown
   linkType: soft
 
@@ -1971,9 +1971,9 @@ __metadata:
     css-loader: "npm:^6.10.0"
     mini-css-extract-plugin: "npm:^1.6.2"
     rtlcss: "npm:^3.1.2"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   peerDependencies:
-    webpack: ^5.90.2
+    webpack: ^5.90.3
   languageName: unknown
   linkType: soft
 
@@ -2071,7 +2071,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     tinymce: "npm:^5.0.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
   languageName: unknown
   linkType: soft
@@ -2202,7 +2202,7 @@ __metadata:
     swiper: "npm:^8.4.5"
     utility-types: "npm:^3.10.0"
     wait-for-expect: "npm:^3.0.2"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   languageName: unknown
   linkType: soft
 
@@ -6259,17 +6259,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-a11y@npm:^7.6.12":
-  version: 7.6.15
-  resolution: "@storybook/addon-a11y@npm:7.6.15"
+"@storybook/addon-a11y@npm:^7.6.17":
+  version: 7.6.17
+  resolution: "@storybook/addon-a11y@npm:7.6.17"
   dependencies:
-    "@storybook/addon-highlight": "npm:7.6.15"
+    "@storybook/addon-highlight": "npm:7.6.17"
     axe-core: "npm:^4.2.0"
-  checksum: 767b5712ece24a32313189e761f423ec96dd61145def50fb35c92d2b26e860044c27bc290d54b0a532f682032f25ec245e893382fbbea02ba2b84664003ceaeb
+  checksum: 2784a9caea452eff3101605bf1fa5a7b992340ecc13d6edc7965fcfbf4d3b4249ede6d111e9d4a6cff1434064c9d3c3d65481ef68c9312dc8b46419217bf7725
   languageName: node
   linkType: hard
 
-"@storybook/addon-actions@npm:^7.6.16":
+"@storybook/addon-actions@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/addon-actions@npm:7.6.17"
   dependencies:
@@ -6283,7 +6283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-backgrounds@npm:^7.6.16":
+"@storybook/addon-backgrounds@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/addon-backgrounds@npm:7.6.17"
   dependencies:
@@ -6294,7 +6294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-controls@npm:^7.6.16":
+"@storybook/addon-controls@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/addon-controls@npm:7.6.17"
   dependencies:
@@ -6305,16 +6305,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-highlight@npm:7.6.15":
-  version: 7.6.15
-  resolution: "@storybook/addon-highlight@npm:7.6.15"
+"@storybook/addon-highlight@npm:7.6.17":
+  version: 7.6.17
+  resolution: "@storybook/addon-highlight@npm:7.6.17"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
-  checksum: 8949b427c97268235bc9358940c430b6a6099843582a7f5dae196d400e85d5d63d834c56782587dd179ea8725d557275e7a0e15fce5ede66b12d59b894832f70
+  checksum: 5f16a648a38257bdd66f592b519cc6b4ecf36c50d0cb01696f1c42c6c9fa2b44b7056b64d611579f2ec4764787b6bd34ea6b9ebddb01b0e562b3eb8100b1cf96
   languageName: node
   linkType: hard
 
-"@storybook/addon-viewport@npm:^7.6.16":
+"@storybook/addon-viewport@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/addon-viewport@npm:7.6.17"
   dependencies:
@@ -6444,7 +6444,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/cli@npm:^7.6.16":
+"@storybook/cli@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/cli@npm:7.6.17"
   dependencies:
@@ -6852,7 +6852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react-webpack5@npm:^7.6.16":
+"@storybook/react-webpack5@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/react-webpack5@npm:7.6.17"
   dependencies:
@@ -6874,7 +6874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react@npm:7.6.17, @storybook/react@npm:^7.6.16":
+"@storybook/react@npm:7.6.17, @storybook/react@npm:^7.6.17":
   version: 7.6.17
   resolution: "@storybook/react@npm:7.6.17"
   dependencies:
@@ -7707,10 +7707,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gtag.js@npm:^0.0.18":
-  version: 0.0.18
-  resolution: "@types/gtag.js@npm:0.0.18"
-  checksum: af7a0a5769c5cfbe75e47f2b0346a65db8234b3c89775b897681548dfb6898edb3145153e2bc5dd1751a5ace221e03e6a68b7650ecacc6aa16a099aa9d925c99
+"@types/gtag.js@npm:^0.0.19":
+  version: 0.0.19
+  resolution: "@types/gtag.js@npm:0.0.19"
+  checksum: 68385c22289efcca6a7359c576412283186e29cb4a965dd7423543dfbf461ae3d5465b810d589cd7f648df9cc5d97c0dadd6903fd39115f2556075c971ffc593
   languageName: node
   linkType: hard
 
@@ -10323,7 +10323,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     semver: "npm:^7.3.2"
     superagent: "npm:^3.8.3"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-cli: "npm:^4.10.0"
     winston: "npm:^3.3.3"
     wpcom-xhr-request: "workspace:^"
@@ -12237,7 +12237,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@github/webauthn-json": "npm:^0.4.1"
     "@sentry/webpack-plugin": "npm:^1.21.0"
-    "@storybook/addon-actions": "npm:^7.6.16"
+    "@storybook/addon-actions": "npm:^7.6.17"
     "@stripe/react-stripe-js": "npm:^2.1.0"
     "@stripe/stripe-js": "npm:^1.53.0"
     "@tanstack/query-sync-storage-persister": "npm:^5.15.5"
@@ -12337,7 +12337,7 @@ __metadata:
     moment: "npm:^2.26.0"
     moment-timezone: "npm:^0.5.40"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
-    nock: "npm:^13.5.1"
+    nock: "npm:^13.5.3"
     path-browserify: "npm:^1.0.1"
     percentage-regex: "npm:^3.0.0"
     phone: "npm:^3.1.17"
@@ -12368,7 +12368,7 @@ __metadata:
     redux-mock-store: "npm:^1.5.4"
     redux-thunk: "npm:^2.4.2"
     regenerator-runtime: "npm:^0.13.9"
-    social-logos: "npm:^2.5.5"
+    social-logos: "npm:^2.5.9"
     source-map-support: "npm:^0.5.19"
     store: "npm:^2.0.12"
     stream-browserify: "npm:^3.0.0"
@@ -12387,7 +12387,7 @@ __metadata:
     utility-types: "npm:^3.10.0"
     uuid: "npm:^9.0.1"
     valid-url: "npm:^1.0.9"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
     webpack-dev-middleware: "npm:^5.3.3"
     webpack-hot-middleware: "npm:^2.26.1"
@@ -18423,7 +18423,7 @@ __metadata:
     postcss: "npm:^8.4.5"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
   languageName: unknown
   linkType: soft
 
@@ -23454,14 +23454,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.5.1":
-  version: 13.5.1
-  resolution: "nock@npm:13.5.1"
+"nock@npm:^13.5.3":
+  version: 13.5.4
+  resolution: "nock@npm:13.5.4"
   dependencies:
     debug: "npm:^4.1.0"
     json-stringify-safe: "npm:^5.0.1"
     propagate: "npm:^2.0.0"
-  checksum: 92d42145c184d51a1a44f88711d4286e5a887f8cf3aedf11402e02009b97b590713c8dcbd368be3522d454e6c06b5dd8df1be441d20136c00df69b4db424bbfa
+  checksum: 9ca47d9d7e4b1f4adf871d7ca12722f8ef1dc7d2b9610b2568f5d9264eae9f424baa24fd9d91da9920b360d641b4243e89de198bd22c061813254a99cc6252af
   languageName: node
   linkType: hard
 
@@ -28870,14 +28870,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^2.5.2, social-logos@npm:^2.5.5":
-  version: 2.5.5
-  resolution: "social-logos@npm:2.5.5"
+"social-logos@npm:^2.5.2, social-logos@npm:^2.5.9":
+  version: 2.5.9
+  resolution: "social-logos@npm:2.5.9"
   dependencies:
     prop-types: "npm:^15.5.7"
   peerDependencies:
     react: 15 - 18
-  checksum: 1fa9c9767bc5e393bceb15a4f9a6fb5bd20199fbf4d2f0be99b60655beea675481d9a3debc3850d13c35963d1a2e267c150785d4404262f275fbc5b83647f222
+  checksum: 1f730f147b31ad9902b47bb03f32647ec5e3d131049e735758509be43870c8b2e17e9a93dfb20230e656314673f57fc10fcc62b220a13e65c83af6841b38f02f
   languageName: node
   linkType: hard
 
@@ -32095,7 +32095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.90.2":
+"webpack@npm:5, webpack@npm:^5.63.0, webpack@npm:^5.90.3":
   version: 5.90.3
   resolution: "webpack@npm:5.90.3"
   dependencies:
@@ -32428,14 +32428,14 @@ __metadata:
     "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.11"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
-    "@storybook/cli": "npm:^7.6.16"
-    "@storybook/react": "npm:^7.6.16"
+    "@storybook/cli": "npm:^7.6.17"
+    "@storybook/react": "npm:^7.6.17"
     "@tanstack/eslint-plugin-query": "npm:^5.14.6"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@types/cookie": "npm:^0.4.1"
     "@types/debug": "npm:^4.1.7"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
-    "@types/gtag.js": "npm:^0.0.18"
+    "@types/gtag.js": "npm:^0.0.19"
     "@types/jest": "npm:^29.5.12"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.8.6"
@@ -32522,7 +32522,7 @@ __metadata:
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
     ncp: "npm:^2.0.0"
-    nock: "npm:^13.5.1"
+    nock: "npm:^13.5.3"
     node-fetch: "npm:^2.6.6"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
@@ -32550,7 +32550,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.3.3"
     v8-profiler-next: "npm:^1.10.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-bundle-analyzer: "npm:^4.10.1"
     webpack-cli: "npm:^4.10.0"
     webpack-dev-middleware: "npm:^5.3.3"
@@ -32631,7 +32631,7 @@ __metadata:
     debug: "npm:^4.3.3"
     postcss: "npm:^8.4.5"
     uuid: "npm:^9.0.1"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     wp-error: "npm:^1.3.0"
   languageName: unknown
   linkType: soft
@@ -32660,7 +32660,7 @@ __metadata:
     npm-run-all: "npm:^4.1.5"
     qs: "npm:^6.5.2"
     tus-js-client: "npm:2.3.0"
-    webpack: "npm:^5.90.2"
+    webpack: "npm:^5.90.3"
     webpack-cli: "npm:^4.10.0"
     wpcom-oauth-cors: "npm:^1.0.2-beta"
     wpcom-proxy-request: "workspace:^"

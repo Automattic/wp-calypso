@@ -141,8 +141,9 @@ export default function ( router ) {
 
 	router(
 		[
-			`/${ langParam }/plugins/update-manager/:site_slug?`,
-			`/${ langParam }/plugins/update-manager/:action/:site_slug?`,
+			`/${ langParam }/plugins/scheduled-updates`,
+			`/${ langParam }/plugins/scheduled-updates/:site_slug?`,
+			`/${ langParam }/plugins/scheduled-updates/:action/:site_slug?`,
 		],
 		redirectLoggedOut,
 		siteSelection,
