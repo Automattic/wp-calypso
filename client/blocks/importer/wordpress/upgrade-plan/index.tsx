@@ -51,7 +51,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
-			onFreeTrialSelectionSuccess();
+			onFreeTrialSelectionSuccess?.();
 			// After the trial is added, we need to request the site again to get the updated plan
 			site && dispatch( requestSite( site.ID ) );
 		},
