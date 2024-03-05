@@ -234,31 +234,6 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		/**
-		 * The experiment is only loaded on the onboarding flow
-		 * If user is logged out we load the experiment
-		 * If user is logged in we load the experiment only if the user has no sites
-		 * More info: pbxNRc-3xO-p2
-		 */
-		const isNewUser = ! getCurrentUserSiteCount( context.store.getState() );
-		initialContext.isSignupSurveyActive = false;
-		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
-			const experiment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_site_goals_survey'
-			);
-			initialContext.isSignupSurveyActive =
-				experiment.variationName === 'treatment' ||
-				experiment.variationName === 'treatment_scrambled';
-		}
-
-		if (
-			config.isEnabled( 'onboarding/new-user-survey' ) ||
-			config.isEnabled( 'onboarding/new-user-survey-scrambled' )
-		) {
-			// Force display of the new user survey for the onboarding flow
-			initialContext.isSignupSurveyActive = true;
-		}
 		next();
 	},
 
@@ -353,12 +328,34 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
+		/**
+		 * The experiment is only loaded on the onboarding flow
+		 * If user is logged out we load the experiment
+		 * If user is logged in we load the experiment only if the user has no sites
+		 * More info: pbxNRc-3xO-p2
+		 */
+		const isNewUser = ! getCurrentUserSiteCount( context.store.getState() );
+		let actualFlowName = flowName;
+		if ( 'onboarding' === flowName && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
+			const experiment = await loadExperimentAssignment(
+				'calypso_signup_onboarding_site_goals_survey'
+			);
+			if (
+				experiment.variationName === 'treatment' ||
+				experiment.variationName === 'treatment_scrambled' ||
+				config.isEnabled( 'onboarding/new-user-survey' ) ||
+				config.isEnabled( 'onboarding/new-user-survey-scrambled' )
+			) {
+				actualFlowName = 'with-new-user-survey';
+			}
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName,
+			flowName: actualFlowName,
 			queryObject: query,
 			refParameter,
 			stepName,
