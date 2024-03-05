@@ -34,6 +34,10 @@ const FilterBar = styled.div( {
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingBlock: '16px',
+
+		'.layout.focus-sidebar &': {
+			flexWrap: 'wrap',
+		},
 	},
 } );
 

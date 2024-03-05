@@ -139,6 +139,14 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 					}
 				}
 			}
+
+			@media only screen and ( max-width: 781px ) {
+				div.layout.is-global-sidebar-visible {
+					.layout__primary {
+						overflow-x: auto;
+					}
+				}
+			}
 		`;
 	}
 	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {

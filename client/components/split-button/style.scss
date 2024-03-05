@@ -1,6 +1,7 @@
 .split-button {
 	// So both buttons drop together
 	display: inline-block;
+	white-space: nowrap;
 	--white-separator-color: rgba(255, 255, 255, 0.3);
 }
 .button.split-button__main {
