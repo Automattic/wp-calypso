@@ -21,6 +21,30 @@ export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptio
 	return { createScheduleUpdates, ...mutation };
 }
 
+export function useEditScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+	const mutation = useMutation( {
+		mutationFn: ( obj: { id: string; params: object } ) => {
+			const { id, params } = obj;
+
+			return wpcomRequest( {
+				path: `/sites/${ siteSlug }/update-schedules/${ id }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'PUT',
+				body: params,
+			} );
+		},
+		...queryOptions,
+	} );
+
+	const { mutate } = mutation;
+	const editScheduleUpdates = useCallback(
+		( id: string, params: object ) => mutate( { id, params } ),
+		[ mutate ]
+	);
+
+	return { editScheduleUpdates, ...mutation };
+}
+
 export function useDeleteScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const mutation = useMutation( {
 		mutationFn: ( id: string ) =>
