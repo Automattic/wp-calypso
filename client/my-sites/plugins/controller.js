@@ -5,7 +5,7 @@ import { PluginsUpdateManager } from 'calypso/blocks/plugins-update-manager';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import { navigation } from 'calypso/my-sites/controller';
+import { navigation, sites } from 'calypso/my-sites/controller';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -114,6 +114,11 @@ export function plugins( context, next ) {
 
 export function updatesManager( context, next ) {
 	const siteSlug = context?.params?.site_slug;
+
+	if ( ! siteSlug ) {
+		sites( context, next );
+		return;
+	}
 
 	switch ( context.params.action ) {
 		case 'create':
