@@ -1,48 +1,36 @@
-import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
-import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode, FocusEvent } from 'react';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import UpsellNudgeNotice from './upsell-nudge';
+
 import './style.scss';
 
 interface ScheduledUpdatesGateProps {
-	needsUpgrade: boolean;
+	hasScheduledUpdate: boolean;
+	isAtomic: boolean;
 	children: ReactNode;
 }
 
-const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( { needsUpgrade, children } ) => {
-	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
+const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
+	hasScheduledUpdate,
+	isAtomic,
+	children,
+} ) => {
+	const isEligibleForFeature = ! hasScheduledUpdate && isAtomic;
 
 	const handleFocus = ( e: FocusEvent< HTMLDivElement > ) => {
 		e.target.blur();
 	};
 
-	const titleText = translate(
-		'Upgrade to the %(businessPlanName)s plan to access scheduled updates feature',
-		{
-			args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+	const getNoticeBanner = () => {
+		if ( hasScheduledUpdate ) {
+			return <UpsellNudgeNotice />;
 		}
-	);
+		return null;
+	};
 
-	const href = addQueryArgs( `/checkout/${ siteSlug }/business`, {
-		redirect_to: `/plugins/scheduled-updates/${ siteSlug }`,
-	} );
-
-	if ( needsUpgrade ) {
+	if ( ! isEligibleForFeature ) {
 		return (
 			<div tabIndex={ -1 } className="scheduled-updates-gate" onFocus={ handleFocus }>
-				<UpsellNudge
-					className="scheduled-updates-upsell-nudge"
-					title={ titleText }
-					event="calypso_scheduled_updates_upgrade_click"
-					href={ href }
-					callToAction={ translate( 'Upgrade' ) }
-					plan={ PLAN_BUSINESS }
-					showIcon={ true }
-				/>
+				{ getNoticeBanner() }
 				<div className="scheduled-updates-gate__content">{ children }</div>
 			</div>
 		);
