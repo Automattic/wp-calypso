@@ -8,7 +8,7 @@ import {
 	CardHeader,
 	Spinner,
 } from '@wordpress/components';
-import { Icon, arrowLeft, info, warning } from '@wordpress/icons';
+import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
@@ -105,12 +105,6 @@ export const ScheduleList = ( props: Props ) => {
 						<Text as="p">
 							<Icon className="icon-info" icon={ info } size={ 16 } />
 							The current feature implementation only allows to set up two schedules.
-						</Text>
-					) }
-					{ isFetched && ! canCreateSchedules && (
-						<Text as="p">
-							<Icon className="icon-warning" icon={ warning } size={ 16 } />
-							This site is unable to schedule auto-updates for plugins.
 						</Text>
 					) }
 				</CardBody>
