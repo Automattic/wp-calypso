@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added a new color for X.
+- Added a new color for Bluesky.
 
 ## 3.1.1
 
