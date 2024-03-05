@@ -10,7 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getSiteOptions } from 'calypso/state/sites/selectors';
+import { getSiteOptions, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
@@ -84,15 +84,16 @@ export default function PlanOnlyThankYou( {
 	};
 
 	let subtitle;
+	// At this point in the flow, having purchased a plan for a specific site,
+	// we can be confident that `siteId` is a number and not `null`
+	const siteAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId as number ) );
+
 	let headerButtons;
 	if ( primaryPurchase.productSlug === 'ecommerce-bundle' ) {
 		if ( isEmailVerified ) {
 			subtitle = translate( "With the plan sorted, it's time to start setting up your store." );
-			headerButtons = (
-				<Button
-					variant="primary"
-					href={ `http://${ siteSlug }/wp-admin/admin.php?page=wc-admin&from-calypso` }
-				>
+			headerButtons = typeof siteAdminUrl === 'string' && (
+				<Button variant="primary" href={ siteAdminUrl }>
 					Create your store
 				</Button>
 			);
