@@ -43,7 +43,6 @@ export function generateSteps( {
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
-	excludeSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
 		// `themes` does not update the theme for an existing site as we normally
@@ -247,7 +246,6 @@ export function generateSteps( {
 		},
 		'new-user-survey': {
 			stepName: 'new-user-survey',
-			fulfilledStepCallback: excludeSurveyStepIfInactive,
 		},
 		plans: {
 			stepName: 'plans',

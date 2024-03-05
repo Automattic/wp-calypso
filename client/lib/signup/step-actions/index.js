@@ -1213,13 +1213,6 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	flows.excludeStep( stepName );
 }
 
-export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
-	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
-		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-		flows.excludeStep( stepName );
-	}
-}
-
 export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
