@@ -68,7 +68,6 @@ export class PlansStep extends Component {
 				isPurchasingItem: false,
 				stepSectionName: undefined,
 			},
-			// TODO: Check to see if specs need to be updated
 			{ domainItem, signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.FREE }
 		);
 	};
