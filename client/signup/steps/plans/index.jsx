@@ -68,8 +68,10 @@ export class PlansStep extends Component {
 				isPurchasingItem: false,
 				stepSectionName: undefined,
 			},
-			// Since we're removing the paid domain, it means that the user will be using
-			// a free domain. Because of this, we set signupDomainOrigin to "free".
+			// Since we're removing the paid domain, it means that the user chose to continue
+			// with a free domain. Because signupDomainOrigin should reflect the last domain
+			// selection status before they land on the checkout page, we switch the value
+			// to "free".
 			{ domainItem, signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.FREE }
 		);
 	};
