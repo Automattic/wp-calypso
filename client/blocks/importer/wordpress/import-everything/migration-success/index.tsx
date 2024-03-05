@@ -107,7 +107,7 @@ export default function MigrationSuccess( {
 					justify="space-between"
 				>
 					<strong className="screen-confirmation__list-item-title">
-						{ __( 'Migration questions? find answers' ) }
+						{ __( 'Migration questions? Find answers' ) }
 					</strong>
 					<p className="screen-confirmation__list-item-description">
 						{ __(
