@@ -40,7 +40,6 @@ export default function PlanOnlyThankYou( {
 }: PlanOnlyThankYouProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const emailAddress = useSelector( getCurrentUserEmail );
 	const siteCreatedTimeStamp = useSelector(
 		( state ) => getSiteOptions( state, siteId ?? 0 )?.created_at
 	);
@@ -83,10 +82,11 @@ export default function PlanOnlyThankYou( {
 		}
 	};
 
-	let subtitle;
 	// At this point in the flow, having purchased a plan for a specific site,
 	// we can be confident that `siteId` is a number and not `null`
 	const siteAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId as number ) );
+	const emailAddress = useSelector( getCurrentUserEmail );
+	let subtitle;
 
 	let headerButtons;
 	if ( primaryPurchase.productSlug === 'ecommerce-bundle' ) {
