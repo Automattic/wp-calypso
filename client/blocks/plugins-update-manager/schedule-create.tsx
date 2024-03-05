@@ -10,8 +10,6 @@ import { arrowLeft } from '@wordpress/icons';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleForm } from './schedule-form';
 
-import './styles.scss';
-
 interface Props {
 	siteSlug: SiteSlug;
 	onNavBack?: () => void;
@@ -33,10 +31,12 @@ export const ScheduleCreate = ( props: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm siteSlug={ siteSlug } />
+				<ScheduleForm siteSlug={ siteSlug } onCreateSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
-				<Button variant="primary">Create</Button>
+				<Button form="schedule" type="submit" variant="primary">
+					Create
+				</Button>
 			</CardFooter>
 		</Card>
 	);

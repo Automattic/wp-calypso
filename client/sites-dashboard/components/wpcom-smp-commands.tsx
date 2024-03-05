@@ -49,6 +49,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
 import type {
@@ -286,6 +287,10 @@ export const useCommandsArrayWpcom = ( {
 		'disable-gpt': 'true',
 		'source-command-palette': 'true',
 	} ).toString() }`;
+
+	const isAtomic = useSelector( ( state ) => {
+		return ( siteId: number ) => isSiteWpcomAtomic( state, siteId );
+	} );
 
 	const commands: Command[] = [
 		{
@@ -717,7 +722,12 @@ export const useCommandsArrayWpcom = ( {
 			callback: setStateCallback( 'openJetpackBackup', __( 'Select site to open Jetpack Backup' ) ),
 			siteFunctions: {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-				onClick: ( param ) => commandNavigation( `/backup/${ param.site.slug }` )( param ),
+				onClick: ( param ) =>
+					commandNavigation(
+						`${ isAtomic( param.site.ID ) ? 'https://cloud.jetpack.com' : '' }/backup/${
+							param.site.slug
+						}`
+					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
 			},

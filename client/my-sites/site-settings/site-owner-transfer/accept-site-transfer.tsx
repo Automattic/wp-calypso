@@ -30,6 +30,7 @@ const ActionPanelStyled = styled( ActionPanel )( {
 } );
 
 export function AcceptSiteTransfer( props: any ) {
+	const { siteId, inviteKey } = props;
 	const translate = useTranslate();
 	const dispatch = props.dispatch;
 	const progress = 0.15;
@@ -45,28 +46,29 @@ export function AcceptSiteTransfer( props: any ) {
 
 	const isSiteOwner = site && site.site_owner === userId;
 
-	const fetchAndAcceptInvite = useCallback(
-		async ( props: any ) => {
-			try {
-				const { siteId, inviteKey } = props;
-				const pendingInvite = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
-				const invite = normalizeInvite( pendingInvite );
+	const fetchAndAcceptInvite = useCallback( async () => {
+		try {
+			const pendingInvite = await wpcom.req
+				.get( `/sites/${ siteId }/invites/${ inviteKey }` )
+				.catch( ( error: any ) => {
+					throw error;
+				} );
+			const invite = normalizeInvite( pendingInvite );
 
-				invite.inviteKey = inviteKey;
+			invite.inviteKey = inviteKey;
 
-				await dispatch( acceptInvite( invite, null ) );
+			await dispatch( acceptInvite( invite, null ) );
 
-				setInviteAccepted( true );
-			} catch {
-				setError(
+			setInviteAccepted( true );
+		} catch ( error: any ) {
+			setError(
+				error?.message ??
 					translate(
 						'Failed to add you as an administrator in the site. Please contact the original site owner to invite you as administrator first.'
 					)
-				);
-			}
-		},
-		[ dispatch, translate ]
-	);
+			);
+		}
+	}, [ dispatch, translate, siteId, inviteKey ] );
 
 	// set the selected site id if it's not set. This is needed to display masterbar correctly.
 	// This is happening because this route does not use `siteSelection` middleware.
@@ -79,9 +81,9 @@ export function AcceptSiteTransfer( props: any ) {
 	// attempt to accept the invite
 	useEffect( () => {
 		if ( ! inviteAccepted ) {
-			fetchAndAcceptInvite( props );
+			fetchAndAcceptInvite();
 		}
-	}, [ inviteAccepted, fetchAndAcceptInvite, props ] );
+	}, [ inviteAccepted, fetchAndAcceptInvite, siteId, inviteKey ] );
 
 	// redirect to the site confirmation page if the invite was accepted and the user is the site owner
 	useEffect( () => {

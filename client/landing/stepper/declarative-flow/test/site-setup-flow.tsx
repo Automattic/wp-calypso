@@ -1,0 +1,78 @@
+/**
+ * @jest-environment jsdom
+ */
+import { STEPS } from '../internals/steps';
+import siteSetupFlow from '../site-setup-flow';
+import { renderFlow } from './helpers';
+// we need to save the original object for later to not affect tests from other files
+const originalLocation = window.location;
+
+describe( 'Site Setup Flow', () => {
+	beforeAll( () => {
+		Object.defineProperty( window, 'location', {
+			value: { assign: jest.fn() },
+		} );
+	} );
+
+	afterAll( () => {
+		Object.defineProperty( window, 'location', originalLocation );
+	} );
+
+	beforeEach( () => {
+		jest.resetAllMocks();
+	} );
+
+	describe( 'when the current step is importListing', () => {
+		it( 'redirects the user to the site-migration-import-or-content step when the origin param is set as site-migration-identify', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL:
+					'/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com&siteId=123',
+				currentStep: STEPS.IMPORT_LIST.slug,
+				dependencies: {
+					platform: 'wordpress',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-migration/site-migration-import-or-migrate?siteSlug=example.wordpress.com&siteId=123'
+			);
+		} );
+
+		it( 'continues the regular flow when the origin param is not available', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.IMPORT_LIST.slug,
+				dependencies: {
+					platform: 'wordpress',
+				},
+			} );
+
+			expect( window.location.assign ).not.toHaveBeenCalledWith(
+				expect.stringContaining( '/setup/site-migration/' )
+			);
+		} );
+	} );
+
+	//It is important because importReady and importListing are sharing the same logic
+	describe( 'when the current step is not importReady', () => {
+		it( 'ignores origin param', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL:
+					'/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com&siteId=123',
+				currentStep: STEPS.IMPORT_READY.slug,
+				dependencies: {
+					platform: 'wordpress',
+				},
+			} );
+
+			expect( window.location.assign ).not.toHaveBeenCalledWith(
+				expect.stringContaining( '/setup/site-migration/' )
+			);
+		} );
+	} );
+} );

@@ -1,48 +1,34 @@
 /* eslint-disable no-restricted-imports */
-import { useLocale } from '@automattic/i18n-utils';
-import { useQuery } from '@tanstack/react-query';
-import apiFetch from '@wordpress/api-fetch';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { HelpCenter } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import Guide from './components/guide';
+import { useWhatsNewAnnouncementsQuery } from './hooks/use-whats-new-announcements-query';
 import WhatsNewPage from './whats-new-page';
 import './style.scss';
 
+export const HELP_CENTER_STORE = HelpCenter.register();
+export {
+	useWhatsNewAnnouncementsQuery,
+	type WhatsNewAnnouncement,
+} from './hooks/use-whats-new-announcements-query';
+
 interface Props {
 	onClose: () => void;
+	siteId: string;
 }
 
-interface WhatsNewAnnouncement {
-	announcementId: string;
-	description: string;
-	heading: string;
-	imageSrc: string;
-	isLocalized: boolean;
-	link: string;
-	responseLocale: string;
-}
+const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {
+	const { setSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
 
-interface APIFetchOptions {
-	global: boolean;
-	path: string;
-}
-
-const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
-	const locale = useLocale();
-
-	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >( {
-		queryKey: [ 'WhatsNewAnnouncements' ],
-		queryFn: async () =>
-			canAccessWpcomApis()
-				? await wpcomRequest( {
-						path: `/whats-new/list?_locale=${ locale }`,
-						apiNamespace: 'wpcom/v2',
-				  } )
-				: await apiFetch( {
-						global: true,
-						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }`,
-				  } as APIFetchOptions ),
-		refetchOnWindowFocus: false,
-	} );
+	useEffect( () => {
+		// check for whether the announcement has been seen already.
+		if ( data && data.length ) {
+			const announcementIds = data.map( ( item ) => item.announcementId );
+			setSeenWhatsNewAnnouncements( announcementIds );
+		}
+	}, [ data, setSeenWhatsNewAnnouncements ] );
 
 	if ( ! data || isLoading ) {
 		return null;

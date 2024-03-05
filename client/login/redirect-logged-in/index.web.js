@@ -5,7 +5,8 @@ export default function redirectLoggedIn( context, next ) {
 
 	if ( userLoggedIn ) {
 		// force full page reload to avoid SSR hydration issues.
-		window.location = '/';
+		// Redirect parameters should have higher priority.
+		window.location = context?.query?.redirect_to ?? '/';
 		return;
 	}
 

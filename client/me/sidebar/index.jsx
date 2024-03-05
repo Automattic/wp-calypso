@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
-import i18n, { localize } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -81,7 +81,7 @@ class MeSidebar extends Component {
 	}
 
 	renderMenu( options = {} ) {
-		const { context, locale, translate } = this.props;
+		const { context, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
 
 		const { isGlobal } = options;
@@ -161,16 +161,6 @@ class MeSidebar extends Component {
 						label={ translate( 'Manage Blogs' ) }
 						materialIcon="apps"
 					/>
-
-					{ ( englishLocales.includes( locale ) ||
-						i18n.hasTranslation( 'Manage All Domains' ) ) && (
-						<SidebarItem
-							link="/domains/manage"
-							label={ translate( 'Manage All Domains' ) }
-							materialIcon="language"
-							forceExternalLink
-						/>
-					) }
 
 					<SidebarItem
 						selected={ itemLinkMatches( '/notifications', path ) }

@@ -102,6 +102,7 @@ class StatModuleFollowers extends Component {
 						value: this.calculateOffset( dataPoint.value?.value ), // case 'relative-date': value = this.props.moment( valueData.value ).fromNow( true );
 					} ) ) }
 					usePlainCard
+					hasNoBackground
 					title={ translate( 'Subscribers' ) }
 					emptyMessage={ translate(
 						'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',

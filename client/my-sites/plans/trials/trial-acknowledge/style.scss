@@ -90,15 +90,16 @@
 			}
 		}
 
-		li + li {
-			margin-top: 0.25rem;
+		li:not(:last-child) {
+			margin-bottom: 0.25rem;
 		}
 
 		li {
 			font-size: 0.875rem;
 			letter-spacing: -0.1px;
 
-			display: flex;
+			display: inline-flex;
+			width: 100%;
 			flex-direction: row;
 			align-items: baseline;
 			gap: 4px;

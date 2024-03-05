@@ -159,7 +159,10 @@ const siteMigration: Flow = {
 					}
 
 					return exitFlow(
-						addQueryArgs( { siteId, siteSlug, from }, '/setup/site-setup/importList' )
+						addQueryArgs(
+							{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
+							'/setup/site-setup/importList'
+						)
 					);
 				}
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {

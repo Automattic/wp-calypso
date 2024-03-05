@@ -9,7 +9,7 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
-import type { UsersQuery } from 'calypso/my-sites/people/team-members/types';
+import type { UsersQuery } from '@automattic/data-stores';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,

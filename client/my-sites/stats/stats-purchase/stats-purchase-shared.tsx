@@ -58,13 +58,17 @@ const StatsBenefitsCommercial = () => {
 	const translate = useTranslate();
 
 	const spikeInfoIconRef = useRef( null );
-	const OverageInfoIconRef = useRef( null );
+	const overageInfoIconRef = useRef( null );
+	const trackingInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
 	const handleSpikePopoverOpen = () => setSpikeInfoShow( true );
 	const handleSpikePopoverClose = () => setSpikeInfoShow( false );
 	const [ overageInfoShow, setOverageInfoShow ] = useState( false );
 	const handleOveragePopoverOpen = () => setOverageInfoShow( true );
 	const handleOveragePopoverClose = () => setOverageInfoShow( false );
+	const [ trackingInfoShow, setTrackingInfoShow ] = useState( false );
+	const handleUTMTrackingPopoverOpen = () => setTrackingInfoShow( true );
+	const handleUTMTrackingPopoverClose = () => setTrackingInfoShow( false );
 
 	return (
 		<div className={ `${ COMPONENT_CLASS_NAME }__benefits` }>
@@ -76,6 +80,17 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
 				<li>{ translate( 'Commercial use' ) }</li>
+				{ config.isEnabled( 'stats/utm-module' ) && (
+					<li>
+						{ translate( 'UTM tracking' ) }
+						<Icon
+							icon={ info }
+							ref={ trackingInfoIconRef }
+							onMouseEnter={ handleUTMTrackingPopoverOpen }
+							onMouseLeave={ handleUTMTrackingPopoverClose }
+						/>
+					</li>
+				) }
 				<li>
 					{ translate( 'Traffic spike forgiveness' ) }
 					<Icon
@@ -89,7 +104,7 @@ const StatsBenefitsCommercial = () => {
 					{ translate( 'Overage forgiveness' ) }
 					<Icon
 						icon={ info }
-						ref={ OverageInfoIconRef }
+						ref={ overageInfoIconRef }
 						onMouseEnter={ handleOveragePopoverOpen }
 						onMouseLeave={ handleOveragePopoverClose }
 					/>
@@ -110,12 +125,24 @@ const StatsBenefitsCommercial = () => {
 			<Popover
 				position="right"
 				isVisible={ overageInfoShow }
-				context={ OverageInfoIconRef.current }
+				context={ overageInfoIconRef.current }
 				className="stats-purchase__info-popover"
 			>
 				<div className="stats-purchase__info-popover-content">
 					{ translate(
 						'You will only be prompted to upgrade to higher tiers when you exceed the limit for three consecutive months.' // TODO: We need a 'learn more' link here.
+					) }
+				</div>
+			</Popover>
+			<Popover
+				position="right"
+				isVisible={ trackingInfoShow }
+				context={ trackingInfoIconRef.current }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">
+					{ translate(
+						'It enables you to measure and track traffic through UTM parameters in your URLs, providing a method to assess the success of your campaigns.'
 					) }
 				</div>
 			</Popover>

@@ -15,7 +15,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
 import type { FollowersQuery } from './types';
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
