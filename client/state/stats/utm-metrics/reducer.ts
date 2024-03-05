@@ -111,7 +111,7 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 							label: topPost.title,
 							value: topPost.views,
 							href: topPost.href,
-							page: siteSlug ? `stats/post/${ topPost.id }/${ action.siteSlug }` : null,
+							page: siteSlug ? `/stats/post/${ topPost.id }/${ action.siteSlug }` : null,
 							actions: [
 								{
 									data: topPost.href,
