@@ -2,13 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useEffect, useState } from 'react';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
+// FIXME: Need to hook this up to the real API.
 export default function useStoredCards() {
 	const showDummyData = isEnabled( 'a4a/mock-api-data' );
 
-	// FIXME: Remove this once we have actual data source.
 	const [ isFetching, setIsFetching ] = useState( showDummyData );
 
 	useEffect( () => {
+		// Simulate a fake loading delay.
 		setTimeout( () => {
 			setIsFetching( false );
 		}, 1000 );
