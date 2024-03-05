@@ -4,6 +4,7 @@
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -20,12 +21,26 @@ function getWebpackConfig( env, argv ) {
 			filename: '[name].min.js',
 		},
 		plugins: [
-			...webpackConfig.plugins,
+			...webpackConfig.plugins.filter(
+				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+			),
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( __dirname, 'dist/chunks-map.json' ),
 			} ),
 			new webpack.DefinePlugin( {
 				__i18n_text_domain__: JSON.stringify( 'command-palette' ),
+			} ),
+			new DependencyExtractionWebpackPlugin( {
+				injectPolyfill: true,
+				outputFilename: '[name].asset.php',
+				requestToExternal( request ) {
+					// The extraction logic will only extract a dependency if requestToExternal
+					// explicitly returns undefined for the given request. Null shortcuts the
+					// logic such that @wordpress/commands styles are bundled.
+					if ( request === '@wordpress/commands/build-style/style.css' ) {
+						return null;
+					}
+				},
 			} ),
 		],
 	};
