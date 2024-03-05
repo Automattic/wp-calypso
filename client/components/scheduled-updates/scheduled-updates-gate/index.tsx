@@ -53,7 +53,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 	};
 
 	const getNoticeBanner = () => {
-		if ( hasScheduledUpdate ) {
+		if ( ! hasScheduledUpdate ) {
 			return <UpsellNudgeNotice />;
 		}
 
