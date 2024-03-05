@@ -1,5 +1,5 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import { makeLayout, ssrSetupLocale, notFound } from 'calypso/controller';
+import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternsHomePage } from 'calypso/my-sites/patterns/home';
@@ -40,18 +40,22 @@ function fetchPatterns( context: RouterContext, next: RouterNext ) {
 		)
 		.then( ( categories ) => {
 			// Fetch patterns only if the user is requesting a category page
-			if ( params.category ) {
-				const categoryNames = categories.map( ( category ) => category.name );
-
-				if ( ! categoryNames.includes( params.category ) ) {
-					notFound( context, next );
-					return;
-				}
-
-				return queryClient.fetchQuery< Pattern[] >(
-					getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
-				);
+			if ( ! params.category ) {
+				return;
 			}
+
+			const categoryNames = categories.map( ( category ) => category.name );
+
+			if ( ! categoryNames.includes( params.category ) ) {
+				throw {
+					status: 404,
+					message: 'Category Not Found',
+				};
+			}
+
+			return queryClient.fetchQuery< Pattern[] >(
+				getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
+			);
 		} )
 		.then( () => {
 			next();
