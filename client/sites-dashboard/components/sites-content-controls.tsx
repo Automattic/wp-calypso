@@ -24,6 +24,7 @@ const FilterBar = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '16px',
+	marginBottom: '32px',
 	paddingInline: 0,
 
 	flexDirection: 'column',
