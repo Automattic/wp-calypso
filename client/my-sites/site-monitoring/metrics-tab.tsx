@@ -598,11 +598,11 @@ export const MetricsTab = () => {
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
 						php: {
-							name: 'Dynamic',
+							name: __( 'Dynamic' ),
 							className: 'dynamic',
 						},
 						static: {
-							name: 'Static',
+							name: __( 'Static' ),
 							className: 'static',
 						},
 					} ) }
