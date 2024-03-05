@@ -13,7 +13,7 @@ export type { Pattern };
 
 export type Category = {
 	name: string;
-	label: string;
+	title: string;
 	description: string;
 	pattern_count: number;
 	page_pattern_count: number;

@@ -8,7 +8,7 @@ type PatternsGridGalleryProps = {
 	columnCount?: number;
 	list?: {
 		name?: string;
-		label?: string;
+		title: string;
 		number: number;
 		image: string;
 		link: string;
@@ -31,12 +31,12 @@ export const PatternsGridGallery = ( {
 				className="patterns-grid-gallery"
 				style={ { '--column-count': columnCount } as React.CSSProperties }
 			>
-				{ list.map( ( { name, label, number, image, link } ) => (
+				{ list.map( ( { name, title, number, image, link } ) => (
 					<a className="patterns-grid-gallery__item" href={ link } key={ name }>
 						<div className="patterns-grid-gallery__item-image">
-							<img src={ image } alt={ label } />
+							<img src={ image } alt={ title } />
 						</div>
-						<div className="patterns-grid-gallery__item-name">{ label }</div>
+						<div className="patterns-grid-gallery__item-name">{ title }</div>
 						<div className="patterns-grid-gallery__item-number">{ number } patterns</div>
 					</a>
 				) ) }
