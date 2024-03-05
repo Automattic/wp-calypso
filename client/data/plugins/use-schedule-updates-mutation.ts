@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import type { ScheduleUpdates } from './use-schedule-updates-query';
 import type { SiteSlug } from 'calypso/types';
 
 export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
@@ -46,6 +47,8 @@ export function useEditScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions
 }
 
 export function useDeleteScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+	const queryClient = useQueryClient();
+
 	const mutation = useMutation( {
 		mutationFn: ( id: string ) =>
 			wpcomRequest( {
@@ -53,6 +56,13 @@ export function useDeleteScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptio
 				apiNamespace: 'wpcom/v2',
 				method: 'DELETE',
 			} ),
+		onMutate: ( id ) => {
+			// Optimistically update the cache
+			const prevSchedules: ScheduleUpdates[] =
+				queryClient.getQueryData( [ 'schedule-updates', siteSlug ] ) || [];
+			const schedules = prevSchedules.filter( ( x ) => x.id !== id );
+			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], schedules );
+		},
 		...queryOptions,
 	} );
 
