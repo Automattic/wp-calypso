@@ -16,11 +16,21 @@ import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import {
+	useCreateScheduleUpdatesMutation,
+	useEditScheduleUpdatesMutation,
+} from 'calypso/data/plugins/use-schedule-updates-mutation';
+import {
+	ScheduleUpdates,
+	useScheduleUpdatesQuery,
+} from 'calypso/data/plugins/use-schedule-updates-query';
 import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import {
 	DAILY_OPTION,
 	DAY_OPTIONS,
+	DEFAULT_HOUR,
 	HOUR_OPTIONS,
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
@@ -36,27 +46,39 @@ import './schedule-form.scss';
 
 interface Props {
 	siteSlug: SiteSlug;
+	scheduleForEdit?: ScheduleUpdates;
 	onCreateSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
-	const { siteSlug, onCreateSuccess } = props;
-
+	const moment = useLocalizedMoment();
+	const { siteSlug, scheduleForEdit, onCreateSuccess } = props;
+	const initDate = scheduleForEdit
+		? moment( scheduleForEdit?.timestamp * 1000 )
+		: moment( new Date() ).hour( DEFAULT_HOUR );
 	const {
 		data: plugins = [],
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true );
-	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedulesData = [] } = useScheduleUpdatesQuery( siteSlug );
+	const schedules = schedulesData.filter( ( x ) => x.id !== scheduleForEdit?.id ) ?? [];
 	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
 		onSuccess: () => onCreateSuccess && onCreateSuccess(),
 	} );
+	const { editScheduleUpdates } = useEditScheduleUpdatesMutation( siteSlug, {
+		onSuccess: () => onCreateSuccess && onCreateSuccess(),
+	} );
 
-	const [ name, setName ] = useState( '' );
-	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
-	const [ frequency, setFrequency ] = useState( 'daily' );
-	const [ day, setDay ] = useState< string >( '1' );
-	const [ hour, setHour ] = useState< string >( '6' );
-	const [ period, setPeriod ] = useState< string >( '1m' );
+	const [ name, setName ] = useState( scheduleForEdit?.hook || '' );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
+		scheduleForEdit?.args || []
+	);
+	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >(
+		scheduleForEdit?.schedule || 'daily'
+	);
+	const [ day, setDay ] = useState< string >( initDate.weekday().toString() );
+	const [ hour, setHour ] = useState< string >( ( initDate.hour() % 12 ).toString() );
+	const [ period, setPeriod ] = useState< string >( initDate.hours() < 12 ? 'am' : 'pm' );
 	const timestamp = prepareTimestamp( frequency, day, hour, period );
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
@@ -111,15 +133,20 @@ export const ScheduleForm = ( props: Props ) => {
 			timestamp: true,
 		} );
 
-		formValid &&
-			createScheduleUpdates( {
-				hook: name,
-				plugins: selectedPlugins,
-				schedule: {
-					timestamp,
-					interval: frequency,
-				},
-			} );
+		const params = {
+			hook: name,
+			plugins: selectedPlugins,
+			schedule: {
+				timestamp,
+				interval: frequency,
+			},
+		};
+
+		if ( formValid ) {
+			scheduleForEdit
+				? editScheduleUpdates( scheduleForEdit.id, params )
+				: createScheduleUpdates( params );
+		}
 	};
 
 	// Name validation
@@ -189,7 +216,7 @@ export const ScheduleForm = ( props: Props ) => {
 								name="frequency"
 								options={ [ DAILY_OPTION ] }
 								selected={ frequency }
-								onChange={ setFrequency }
+								onChange={ ( f ) => setFrequency( f as 'daily' ) }
 								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'daily' && (
@@ -222,7 +249,7 @@ export const ScheduleForm = ( props: Props ) => {
 								name="frequency"
 								options={ [ WEEKLY_OPTION ] }
 								selected={ frequency }
-								onChange={ setFrequency }
+								onChange={ ( f ) => setFrequency( f as 'weekly' ) }
 								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'weekly' && (

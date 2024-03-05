@@ -13,7 +13,7 @@ import { ScheduleForm } from './schedule-form';
 
 interface Props {
 	siteSlug: SiteSlug;
-	scheduleId: string;
+	scheduleId?: string;
 	onNavBack?: () => void;
 }
 export const ScheduleEdit = ( props: Props ) => {
@@ -41,7 +41,13 @@ export const ScheduleEdit = ( props: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm siteSlug={ siteSlug } onCreateSuccess={ () => onNavBack && onNavBack() } />
+				{ schedule && (
+					<ScheduleForm
+						siteSlug={ siteSlug }
+						scheduleForEdit={ schedule }
+						onCreateSuccess={ () => onNavBack && onNavBack() }
+					/>
+				) }
 			</CardBody>
 			<CardFooter>
 				<Button form="schedule" type="submit" variant="primary">
