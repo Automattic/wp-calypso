@@ -92,6 +92,13 @@ function SurveyForm( props: Props ) {
 	const isMobileViewport = useMobileBreakpoint();
 	const isDesktopViewport = useDesktopBreakpoint();
 
+	useEffect( () => {
+		if ( isExperimentLoading ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_signup_new_user_survey_view' );
+	}, [ isExperimentLoading ] );
+
 	if ( isExperimentLoading ) {
 		return null;
 	}
