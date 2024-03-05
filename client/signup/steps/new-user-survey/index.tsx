@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -313,6 +314,7 @@ export default function NewUserSurvey( props: Props ) {
 
 	const handleSkip = () => {
 		const { stepName, goToNextStep, submitSignupStep } = props;
+		recordTracksEvent( 'calypso_signup_new_user_survey_skip_button_click' );
 		submitSignupStep( { stepName, wasSkipped: true } );
 		goToNextStep();
 	};
