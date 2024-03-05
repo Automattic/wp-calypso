@@ -1,5 +1,5 @@
 import { isP2Plus } from '@automattic/calypso-products';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
@@ -93,7 +93,7 @@ export default function PlanOnlyThankYou( {
 		if ( isEmailVerified ) {
 			subtitle = translate( "With the plan sorted, it's time to start setting up your store." );
 			headerButtons = typeof siteAdminUrl === 'string' && (
-				<Button variant="primary" href={ siteAdminUrl }>
+				<Button href={ siteAdminUrl } primary>
 					Create your store
 				</Button>
 			);
@@ -113,7 +113,7 @@ export default function PlanOnlyThankYou( {
 			);
 			const isSendingEmail = resendStatus === RESEND_PENDING;
 			headerButtons = (
-				<Button variant="secondary" onClick={ resendEmail } busy={ isSendingEmail } disabled={ isSendingEmail }>
+				<Button onClick={ resendEmail } busy={ isSendingEmail } disabled={ isSendingEmail }>
 					{ resendButtonText() }
 				</Button>
 			);
