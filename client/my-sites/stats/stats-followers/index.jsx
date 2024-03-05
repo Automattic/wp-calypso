@@ -82,10 +82,14 @@ class StatModuleFollowers extends Component {
 			? summaryPageLink
 			: 'https://wordpress.com' + summaryPageLink;
 
-		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ].slice(
-			0,
-			MAX_FOLLOWERS_TO_SHOW
-		);
+		// Combine data sets, sort by recency, and limit to 10.
+		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
+			.sort( ( a, b ) => {
+				// If value is undefined, send zero to ensure they sort to the bottom.
+				// Otherwise they stick to the top of the list which is not helpful.
+				return new Date( b.value?.value || 0 ) - new Date( a.value?.value || 0 );
+			} )
+			.slice( 0, MAX_FOLLOWERS_TO_SHOW );
 
 		return (
 			<>
