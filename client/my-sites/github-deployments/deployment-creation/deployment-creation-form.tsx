@@ -58,7 +58,7 @@ export const GitHubDeploymentCreationForm = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
 					connected: ! error,
-					deployment_type: getDeploymentTypeFromPath( data.target_dir ),
+					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
 				} )
 			);
 		},
