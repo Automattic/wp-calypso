@@ -99,14 +99,21 @@ export default function PlanOnlyThankYou( {
 			);
 		} else {
 			subtitle = translate(
-				"{{paragraph}}With the plan sorted, verify your email address to create your store.{{br/}}Please click the link in the email we sent to %(emailAddress)s.{{/paragraph}}{{paragraph}}If you haven't received the verification email, please click here.{{/paragraph}}",
+				"{{paragraph}}With the plan sorted, verify your email address to create your store.{{br/}}Please click the link in the email we sent to {{strong}}%(emailAddress)s{{/strong}}.{{/paragraph}}{{paragraph}}If you haven't received the verification email, please {{a}}click here{{/a}}.{{/paragraph}}",
 				{
 					args: { emailAddress: emailAddress },
-					components: { paragraph: <p />, br: <br /> },
+					components: {
+						paragraph: <p />,
+						br: <br />,
+						strong: <strong />,
+						// eslint-disable-next-line jsx-a11y/anchor-is-valid
+						a: <a href="" onClick={ resendEmail } />,
+					},
 				}
 			);
+			const isSendingEmail = resendStatus === RESEND_PENDING;
 			headerButtons = (
-				<Button variant="secondary" onClick={ resendEmail }>
+				<Button variant="secondary" onClick={ resendEmail } busy={ isSendingEmail } disabled={ isSendingEmail }>
 					{ resendButtonText() }
 				</Button>
 			);
