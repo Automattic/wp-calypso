@@ -107,6 +107,12 @@ export const ScheduleList = ( props: Props ) => {
 							The current feature implementation only allows to set up two schedules.
 						</Text>
 					) }
+					{ isFetched && ! canCreateSchedules && (
+						<Text as="p">
+							<Icon className="icon-warning" icon={ warning } size={ 16 } />
+							This site is unable to schedule auto-updates for plugins.
+						</Text>
+					) }
 				</CardBody>
 			</Card>
 		</>

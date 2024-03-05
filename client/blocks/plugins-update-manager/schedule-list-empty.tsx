@@ -12,7 +12,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 		<div className="empty-state">
 			<Text as="p" align="center">
 				{ ! canCreateSchedules
-					? 'This site cannot auto-update plugins.'
+					? 'This site is unable to schedule auto-updates for plugins.'
 					: 'Set up plugin update schedules to ensure your site runs smoothly.' }
 			</Text>
 			{ onCreateNewSchedule && (
