@@ -60,7 +60,7 @@ export function requestTopPosts(
 	siteId: number,
 	utmParam: string,
 	paramValues: string,
-	siteSlug?: string
+	siteSlug: string
 ) {
 	return {
 		type: STATS_UTM_TOP_POSTS_REQUEST,
@@ -75,7 +75,7 @@ export function receiveTopPosts(
 	siteId: number,
 	paramValues: string,
 	data: object,
-	siteSlug?: string
+	siteSlug: string
 ) {
 	return {
 		type: STATS_UTM_TOP_POSTS_RECEIVE,
