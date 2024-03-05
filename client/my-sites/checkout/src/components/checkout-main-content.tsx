@@ -256,14 +256,6 @@ function CheckoutSidebarNudge( {
 		return null;
 	}
 
-	if ( isDIFMInCart ) {
-		return (
-			<CheckoutSidebarNudgeWrapper>
-				<CheckoutNextSteps responseCart={ responseCart } />
-			</CheckoutSidebarNudgeWrapper>
-		);
-	}
-
 	/**
 	 * TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
 	 * V2 checkout handles monthly products in the CheckoutSidebarPlanUpsell so this condition is not needed
@@ -271,8 +263,14 @@ function CheckoutSidebarNudge( {
 	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
 		return (
 			<CheckoutSidebarNudgeWrapper>
-				<CheckoutSidebarPlanUpsell />
-				<JetpackAkismetCheckoutSidebarPlanUpsell />
+				{ isDIFMInCart ? (
+					<CheckoutNextSteps responseCart={ responseCart } />
+				) : (
+					<>
+						<CheckoutSidebarPlanUpsell />
+						<JetpackAkismetCheckoutSidebarPlanUpsell />
+					</>
+				) }
 				{ shouldUseCheckoutV2 && (
 					<CheckoutSummaryFeaturedList
 						responseCart={ responseCart }
