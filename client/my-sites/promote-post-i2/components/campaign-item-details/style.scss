@@ -809,7 +809,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				flex-direction: column;
 				justify-content: center;
 				@media (max-width: ($break-medium + 425)) {
-					margin: 16px;
+					margin: 15px;
 				}
 
 				button:first-child {
@@ -832,8 +832,11 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 				.contact-support-button {
 					margin-bottom: 12px;
-					background: var(-color-surface);
+					background: var(--color-surface);
+					border: 1.5px solid var(--color-accent);
+					height: 40px;
 				}
+
 				.cancel-campaign-button {
 					display: flex;
 				}
@@ -906,7 +909,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__preview-disclosure {
-		margin: 14px;
+		margin: 15px;
 		text-align: left;
 		display: flex;
 		justify-content: center;
