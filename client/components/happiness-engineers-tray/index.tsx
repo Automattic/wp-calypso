@@ -8,22 +8,22 @@ import './style.scss';
 export const HappinessEngineersTray = ( { count = 5, shuffled = true } ) => {
 	const { data } = useHappinessEngineersQuery();
 
-	const gravatars = useMemo( () => {
+	const filteredHappinessEngineers = useMemo( () => {
 		if ( ! data ) {
 			return null;
 		}
 
-		const filteredHappinessEngineers = ( shuffled ? shuffle( data ) : data ).slice( 0, count );
-
-		return filteredHappinessEngineers.map( ( user ) => (
-			<Gravatar
-				key={ user.avatar_URL }
-				user={ user }
-				size={ 42 }
-				className="happiness-engineers-tray__gravatar"
-			/>
-		) );
+		return ( shuffled ? shuffle( data ) : data ).slice( 0, count );
 	}, [ data, count, shuffled ] );
+
+	const gravatars = filteredHappinessEngineers?.map( ( user ) => (
+		<Gravatar
+			key={ user.avatar_URL }
+			user={ user }
+			size={ 42 }
+			className="happiness-engineers-tray__gravatar"
+		/>
+	) );
 
 	return <div className="happiness-engineers-tray">{ gravatars }</div>;
 };
