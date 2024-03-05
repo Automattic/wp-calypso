@@ -24,6 +24,7 @@ export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptio
 
 export function useEditScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const mutation = useMutation( {
+		mutationKey: [ 'edit-schedule-updates', siteSlug ],
 		mutationFn: ( obj: { id: string; params: object } ) => {
 			const { id, params } = obj;
 

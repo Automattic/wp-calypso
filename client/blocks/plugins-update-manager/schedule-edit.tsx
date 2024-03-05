@@ -1,3 +1,4 @@
+import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	Button,
@@ -21,6 +22,10 @@ export const ScheduleEdit = ( props: Props ) => {
 	const { scheduleId, onNavBack } = props;
 	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+
+	const mutationState = useMutationState( {
+		filters: { mutationKey: [ 'edit-schedule-updates', siteSlug ] },
+	} );
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
@@ -50,7 +55,7 @@ export const ScheduleEdit = ( props: Props ) => {
 				) }
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary">
+				<Button form="schedule" type="submit" variant="primary" isBusy={ !! mutationState.length }>
 					Save
 				</Button>
 			</CardFooter>
