@@ -135,7 +135,7 @@ function sitesDashboard( context: PageJSContext, next: () => void ) {
 			@media only screen and ( min-width: 782px ) {
 				div.layout.is-global-sidebar-visible {
 					.layout__primary {
-						margin-left: var( --sidebar-width-max );
+						margin-inline-start: var( --sidebar-width-max );
 					}
 				}
 			}

@@ -21,7 +21,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
 	// Fetch UTM metrics with switched UTM parameters.
-	const { isFetching, metrics } = useUTMMetricsQuery( siteId, selectedOption, postId );
+	const { isFetching: isFetching, metrics } = useUTMMetricsQuery( siteId, selectedOption, postId );
 	// Fetch top posts for all UTM metric items.
 	const { topPosts } = useUTMMetricTopPostsQuery( siteId, selectedOption, metrics );
 

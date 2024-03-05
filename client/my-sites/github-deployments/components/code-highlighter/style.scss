@@ -1,8 +1,9 @@
-.code-highlighter {
+.github-workflow-code-highlighter {
 	font-size: $font-body-small;
 	max-height: 20lh; /* stylelint-disable-line unit-allowed-list */
 	border-radius: 4px;
 	background: transparent !important;
+	position: relative;
 
 	.language-yaml {
 		color: var(--studio-wordpress-blue-60) !important;

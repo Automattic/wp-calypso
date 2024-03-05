@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { requestTopPosts } from 'calypso/state/stats/utm-metrics/actions';
 import { getTopPosts } from 'calypso/state/stats/utm-metrics/selectors';
 import { UTMMetricItem } from 'calypso/state/stats/utm-metrics/types';
@@ -10,13 +11,14 @@ export default function useUTMMetricTopPostsQuery(
 	metrics: Array< UTMMetricItem >
 ) {
 	const dispatch = useDispatch();
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const metricsKey = JSON.stringify( metrics );
 	useEffect( () => {
 		if ( JSON.parse( metricsKey ).length > 0 ) {
 			JSON.parse( metricsKey ).forEach( ( metric: UTMMetricItem ) => {
 				if ( metric.paramValues ) {
-					dispatch( requestTopPosts( siteId, UTMParam, metric.paramValues ) );
+					dispatch( requestTopPosts( siteId, UTMParam, metric.paramValues, siteSlug ) );
 				}
 			} );
 		}
