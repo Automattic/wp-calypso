@@ -112,8 +112,6 @@
 
 			&:hover {
 				text-decoration: underline;
-				color: var(--color-accent);
-				background-color: var(--color-surface);
 			}
 		}
 
@@ -206,6 +204,7 @@ $break-medium-expanded-menu: $break-medium + 272px;
 					line-height: 22px;
 					min-width: auto;
 					padding: 6px 12px;
+					background-color: var(--color-surface);
 				}
 
 				button {
@@ -218,6 +217,10 @@ $break-medium-expanded-menu: $break-medium + 272px;
 					padding: 6px 12px;
 				}
 			}
+		}
+
+		.promote-post-i2 .post-item__post-promote-button :hover {
+			color: var(--color-accent) !important;
 		}
 
 		// Campaigns details

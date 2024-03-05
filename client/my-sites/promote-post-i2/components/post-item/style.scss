@@ -133,8 +133,7 @@ body.is-section-promote-post-i2 {
 
 		&__post-promote-button:hover {
 			text-decoration: underline;
-			color: var(--color-accent);
-			background-color: var(--color-surface);
+			color: var(--color-accent) !important;
 		}
 
 		&__view-button {

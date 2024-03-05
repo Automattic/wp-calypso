@@ -647,6 +647,26 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				height: 16px;
 				vertical-align: text-top;
 			}
+
+			.contact-support-button {
+				background: var(--color-surface);
+				border: 1.5px solid $studio-gray-10;
+				height: 40px;
+			}
+
+			.cancel-campaign-button {
+				background: var(--color-surface);
+				border: 1.5px solid $studio-gray-10;
+				height: 40px;
+
+				&:hover {
+					color: var(--color-error);
+				}
+			}
+
+			.promote-again-button {
+				height: 40px;
+			}
 		}
 
 		.campaign-item-details__support-articles-wrapper {
@@ -833,12 +853,14 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				.contact-support-button {
 					margin-bottom: 12px;
 					background: var(--color-surface);
-					border: 1.5px solid var(--color-accent);
+					border: 1.5px solid $studio-gray-10;
 					height: 40px;
 				}
 
 				.cancel-campaign-button {
 					display: flex;
+					background: var(--color-surface);
+					border: 1.5px solid $studio-gray-10;
 				}
 			}
 
