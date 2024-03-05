@@ -249,7 +249,6 @@ export function generateSteps( {
 			stepName: 'new-user-survey',
 			fulfilledStepCallback: excludeSurveyStepIfInactive,
 		},
-		// TODO: Do we need to add the signupDomainOrigin dependency to other steps that share the plans component?
 		plans: {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
