@@ -54,10 +54,11 @@ export const GitHubDeploymentCreationForm = ( {
 				)
 			);
 		},
-		onSettled: ( _, error ) => {
+		onSettled: ( data, error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
 					connected: ! error,
+					deployment_type: getDeploymentTypeFromPath( data.target_dir ),
 				} )
 			);
 		},
@@ -95,3 +96,14 @@ export const GitHubDeploymentCreationForm = ( {
 		/>
 	);
 };
+
+function getDeploymentTypeFromPath( path: string ) {
+	if ( path === '/' ) {
+		return 'root';
+	} else if ( path === '/wp-content' ) {
+		return 'wp-content';
+	} else if ( path.includes( 'wp-content/plugins' ) ) {
+		return 'plugin';
+	}
+	return 'theme';
+}
