@@ -4,6 +4,7 @@ import {
 	isMonthlyProduct,
 	isBiennially,
 	isTriennially,
+	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -30,7 +31,7 @@ import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -224,23 +225,72 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 };
 
 /* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
-function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } ) {
+function CheckoutSidebarNudge( {
+	responseCart,
+	siteId,
+	formStatus,
+	changeSelection,
+	addItemToCart,
+	isCartPendingUpdate,
+	areThereDomainProductsInCart,
+}: {
+	responseCart: ResponseCart;
+	siteId: number | undefined;
+	formStatus: FormStatus;
+	changeSelection: OnChangeItemVariant;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
+	isCartPendingUpdate: boolean;
+	areThereDomainProductsInCart: boolean;
+} ) {
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const isPurchaseRenewal = useMemo(
+		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
+		[ responseCart ]
+	);
+	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 
-	if (
-		( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) ||
-		( shouldUseCheckoutV2 && ! isWcMobile && ! isDIFMInCart )
-	) {
+	if ( isWcMobile ) {
+		return null;
+	}
+
+	if ( isDIFMInCart ) {
+		return (
+			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+				<CheckoutNextSteps responseCart={ responseCart } />
+			</CheckoutSidebarNudgeWrapper>
+		);
+	}
+
+	// TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
+	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
 		return (
 			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				<CheckoutSidebarPlanUpsell />
 				<JetpackAkismetCheckoutSidebarPlanUpsell />
+				{ shouldUseCheckoutV2 && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ siteId }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						onChangeSelection={ changeSelection }
+					/>
+				) }
+				{ isPurchaseRenewal ||
+					( ! plan && areThereDomainProductsInCart && (
+						<SecondaryCartPromotions
+							responseCart={ responseCart }
+							addItemToCart={ addItemToCart }
+							isCartPendingUpdate={ isCartPendingUpdate }
+							isPurchaseRenewal={ isPurchaseRenewal }
+						/>
+					) ) }
 			</CheckoutSidebarNudgeWrapper>
 		);
 	}
+
 	return null;
 }
 
@@ -487,21 +537,15 @@ export default function CheckoutMainContent( {
 								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								<CheckoutSidebarNudge responseCart={ responseCart } />
-								{ shouldUseCheckoutV2 && (
-									<CheckoutSummaryFeaturedList
-										responseCart={ responseCart }
-										siteId={ siteId }
-										isCartUpdating={ FormStatus.VALIDATING === formStatus }
-										onChangeSelection={ changeSelection }
-									/>
-								) }
-								<SecondaryCartPromotions
+								<CheckoutSidebarNudge
 									responseCart={ responseCart }
+									siteId={ siteId }
+									formStatus={ formStatus }
+									changeSelection={ changeSelection }
 									addItemToCart={ addItemToCart }
 									isCartPendingUpdate={ isCartPendingUpdate }
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
-								<CheckoutNextSteps responseCart={ responseCart } />
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
 					</CheckoutSummaryArea>
@@ -857,12 +901,15 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 `;
 
 const CheckoutSidebarNudgeWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
-	display: flex;
+${ ( props ) =>
+	props.shouldUseCheckoutV2 &&
+	`display: flex;
 	flex-direction: column;
-	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: nudge` };
-
+	grid-area: nudge;
+	row-gap: 36px;
+	
 	& > * {
-		max-width: 288px;
+	max-width: 288px;` }
 	}
 `;
 

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
-import { FunctionComponent, useMemo } from 'react';
+import { FunctionComponent } from 'react';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { useSelector } from 'calypso/state';
@@ -13,6 +13,7 @@ interface Props {
 	responseCart: PartialCart;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	isCartPendingUpdate?: boolean;
+	isPurchaseRenewal?: boolean;
 }
 
 type DivProps = {
@@ -72,13 +73,10 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	responseCart,
 	addItemToCart,
 	isCartPendingUpdate,
+	isPurchaseRenewal,
 } ) => {
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
-	const isPurchaseRenewal = useMemo(
-		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
-		[ responseCart ]
-	);
 
 	if (
 		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
