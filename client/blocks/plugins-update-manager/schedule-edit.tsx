@@ -45,7 +45,7 @@ export const ScheduleEdit = ( props: Props ) => {
 					<ScheduleForm
 						siteSlug={ siteSlug }
 						scheduleForEdit={ schedule }
-						onCreateSuccess={ () => onNavBack && onNavBack() }
+						onSyncSuccess={ () => onNavBack && onNavBack() }
 					/>
 				) }
 			</CardBody>

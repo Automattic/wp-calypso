@@ -31,7 +31,7 @@ export const ScheduleCreate = ( props: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm siteSlug={ siteSlug } onCreateSuccess={ () => onNavBack && onNavBack() } />
+				<ScheduleForm siteSlug={ siteSlug } onSyncSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
 				<Button form="schedule" type="submit" variant="primary">

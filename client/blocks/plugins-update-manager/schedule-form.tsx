@@ -47,11 +47,11 @@ import './schedule-form.scss';
 interface Props {
 	siteSlug: SiteSlug;
 	scheduleForEdit?: ScheduleUpdates;
-	onCreateSuccess?: () => void;
+	onSyncSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, scheduleForEdit, onCreateSuccess } = props;
+	const { siteSlug, scheduleForEdit, onSyncSuccess } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
@@ -63,10 +63,10 @@ export const ScheduleForm = ( props: Props ) => {
 	const { data: schedulesData = [] } = useScheduleUpdatesQuery( siteSlug );
 	const schedules = schedulesData.filter( ( x ) => x.id !== scheduleForEdit?.id ) ?? [];
 	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
-		onSuccess: () => onCreateSuccess && onCreateSuccess(),
+		onSuccess: () => onSyncSuccess && onSyncSuccess(),
 	} );
 	const { editScheduleUpdates } = useEditScheduleUpdatesMutation( siteSlug, {
-		onSuccess: () => onCreateSuccess && onCreateSuccess(),
+		onSuccess: () => onSyncSuccess && onSyncSuccess(),
 	} );
 
 	const [ name, setName ] = useState( scheduleForEdit?.hook || '' );
