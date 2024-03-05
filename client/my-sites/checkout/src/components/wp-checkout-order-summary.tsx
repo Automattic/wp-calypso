@@ -854,7 +854,7 @@ const CheckoutSummaryFeatures = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 24px 0;
+		padding: 0;
 	}
 `;
 

@@ -258,16 +258,19 @@ function CheckoutSidebarNudge( {
 
 	if ( isDIFMInCart ) {
 		return (
-			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<CheckoutSidebarNudgeWrapper>
 				<CheckoutNextSteps responseCart={ responseCart } />
 			</CheckoutSidebarNudgeWrapper>
 		);
 	}
 
-	// TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
+	/**
+	 * TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
+	 * V2 checkout handles monthly products in the CheckoutSidebarPlanUpsell so this condition is not needed
+	 */
 	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
 		return (
-			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<CheckoutSidebarNudgeWrapper>
 				<CheckoutSidebarPlanUpsell />
 				<JetpackAkismetCheckoutSidebarPlanUpsell />
 				{ shouldUseCheckoutV2 && (
@@ -900,16 +903,18 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
-${ ( props ) =>
-	props.shouldUseCheckoutV2 &&
-	`display: flex;
+const CheckoutSidebarNudgeWrapper = styled.div`
+	display: flex;
 	flex-direction: column;
 	grid-area: nudge;
-	row-gap: 36px;
-	
+	row-gap: 16px;
+
 	& > * {
-	max-width: 288px;` }
+		max-width: 288px;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		row-gap: 36px;
 	}
 `;
 
