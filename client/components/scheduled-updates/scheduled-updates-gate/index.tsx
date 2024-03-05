@@ -34,7 +34,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 		)
 	);
 
-	const isEligibleForFeature = ! hasScheduledUpdate && isAtomic;
+	const isEligibleForFeature = hasScheduledUpdate && isAtomic;
 	const showHostingActivationBanner = ! isAtomic && ! hasTransfer;
 
 	const handleFocus = ( e: FocusEvent< HTMLDivElement > ) => {
