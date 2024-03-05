@@ -6,7 +6,6 @@ import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-sta
 import { PatternsGridGallery } from 'calypso/my-sites/patterns/components/grid-gallery';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { useSelector } from 'calypso/state';
@@ -35,7 +34,7 @@ export const PatternsHomePage = ( {
 	const locale = useLocale();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const { data: categories } = usePatternCategories( locale, RENDERER_SITE_ID );
+	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns } = usePatterns( locale, category );
 
 	return (
@@ -56,7 +55,7 @@ export const PatternsHomePage = ( {
 					list={ categories?.map( ( category ) => ( {
 						name: category.name,
 						label: category.label,
-						number: 15,
+						number: category.pattern_count,
 						image: ImgPattern,
 						link: `/patterns/${ category.name }`,
 					} ) ) }
@@ -116,12 +115,15 @@ export const PatternsHomePage = ( {
 					title="Beautifully curated page layouts"
 					description="Entire pages built of patterns, ready to be added to your site."
 					columnCount={ 3 }
-					list={ Array.from( Array( 5 ) ).map( () => ( {
-						name: 'About',
-						number: 7,
-						image: ImgLayout,
-						link: '#',
-					} ) ) }
+					list={ categories
+						?.filter( ( { page_pattern_count } ) => page_pattern_count )
+						.map( ( category ) => ( {
+							name: category.name,
+							label: category.label,
+							number: category.page_pattern_count,
+							image: ImgLayout,
+							link: `/patterns/${ category.name }`,
+						} ) ) }
 				/>
 
 				<PatternsGetStarted />
