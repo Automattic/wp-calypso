@@ -22,6 +22,7 @@ export const ScheduleCreate = ( props: Props ) => {
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'create-schedule-updates', siteSlug ] },
 	} );
+	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
@@ -46,7 +47,7 @@ export const ScheduleCreate = ( props: Props ) => {
 				<ScheduleForm onSyncSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary" isBusy={ !! mutationState.length }>
+				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
 					Create
 				</Button>
 			</CardFooter>

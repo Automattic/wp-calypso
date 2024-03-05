@@ -26,6 +26,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'edit-schedule-updates', siteSlug ] },
 	} );
+	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
@@ -55,7 +56,7 @@ export const ScheduleEdit = ( props: Props ) => {
 				) }
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary" isBusy={ !! mutationState.length }>
+				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
 					Save
 				</Button>
 			</CardFooter>
