@@ -28,7 +28,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( { needsUpgrade, 
 	);
 
 	const href = addQueryArgs( `/checkout/${ siteSlug }/business`, {
-		redirect_to: `/scheduled-updates/${ siteSlug }`,
+		redirect_to: `/plugins/scheduled-updates/${ siteSlug }`,
 	} );
 
 	if ( needsUpgrade ) {
