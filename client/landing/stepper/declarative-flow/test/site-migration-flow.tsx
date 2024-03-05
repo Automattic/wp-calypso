@@ -18,8 +18,8 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
-	describe( 'submit', () => {
-		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
+	describe( 'navigation', () => {
+		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
@@ -50,7 +50,7 @@ describe( 'Site Migration Flow', () => {
 			);
 		} );
 
-		it( 'migrate redirects from the import-from page to bundleTransfer step', async () => {
+		it( 'migrate redirects from the import-from page to bundleTransfer step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -68,7 +68,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'upgrade redirects from the import-from page to site-migration-upgrade-plan page', async () => {
+		it( 'upgrade redirects from the import-from page to site-migration-upgrade-plan page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -84,7 +84,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from upgrade-plan to bundleTransfer step after selecting a free trial', async () => {
+		it( 'redirects from upgrade-plan to bundleTransfer step after selecting a free trial', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
