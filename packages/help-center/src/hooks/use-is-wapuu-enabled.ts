@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import config from '@automattic/calypso-config';
 import useChatStatus from './use-chat-status';
 
 /**
@@ -13,7 +12,5 @@ import useChatStatus from './use-chat-status';
  */
 export const useIsWapuuEnabled = () => {
 	const { wapuuAssistantEnabled } = useChatStatus();
-	// A way to enable it via flag
-	const isWapuuConfigEnabled = config.isEnabled( 'wapuu' );
-	return wapuuAssistantEnabled || isWapuuConfigEnabled;
+	return wapuuAssistantEnabled;
 };
