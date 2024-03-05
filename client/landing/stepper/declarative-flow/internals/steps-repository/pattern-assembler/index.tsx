@@ -201,17 +201,20 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		patternType,
 		patternId,
 		patternName,
+		patternTitle,
 		patternCategory,
 	}: {
 		patternType: string;
 		patternId: number;
 		patternName: string;
+		patternTitle: string;
 		patternCategory: string | undefined;
 	} ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_CLICK, {
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
+			pattern_title: patternTitle,
 			pattern_category: patternCategory,
 		} );
 	};
@@ -225,17 +228,18 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				.filter( Boolean )
 				.join( ',' ),
 			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
-			pattern_names: patterns.map( ( { title } ) => title ).join( ',' ),
+			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
 			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
 
-		patterns.forEach( ( { ID, title, category } ) => {
+		patterns.forEach( ( { ID, name, title, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
-				pattern_name: title,
+				pattern_name: name,
+				pattern_title: title,
 				pattern_category: category?.name,
 			} );
 		} );
@@ -244,7 +248,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			const category_slug = Object.keys( pattern.categories )[ 0 ];
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
 				pattern_id: pattern.ID,
-				pattern_name: pattern.title,
+				pattern_name: pattern.name,
+				pattern_title: pattern.title,
 				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
@@ -347,7 +352,8 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			trackEventPatternSelect( {
 				patternType: type,
 				patternId: selectedPattern.ID,
-				patternName: selectedPattern.title,
+				patternName: selectedPattern.name,
+				patternTitle: selectedPattern.title,
 				patternCategory: selectedPattern.category?.name,
 			} );
 
