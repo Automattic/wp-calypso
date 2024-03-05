@@ -287,6 +287,7 @@ export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
 export const WPCOM_FEATURES_MANAGE_PLUGINS = 'manage-plugins';
 export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
 export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
+export const WPCOM_FEATURES_SCHEDULED_UPDATES = 'scheduled-updates';
 /*
  * TODO: This constant value should be renamed (here and in `class-wpcom-features.php` in
  * WPCOM) to `premium-themes-unlimited` so it's not confused with `FEATURE_PREMIUM_THEMES`.
