@@ -19,12 +19,6 @@ export default function globalSiteSidebarMenu( {
 } ) {
 	return [
 		{
-			slug: 'wp-admin',
-			title: translate( 'Open WP Admin' ),
-			url: `https://${ selectedSiteSlug }/wp-admin`,
-			className: 'sidebar__menu-item-wp-admin',
-		},
-		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
 			shouldHide: ! isDesktop,
@@ -35,6 +29,12 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 			shouldHide: isDesktop,
+		},
+		{
+			slug: 'wp-admin',
+			title: translate( 'Open WP Admin' ),
+			url: `https://${ selectedSiteSlug }/wp-admin`,
+			className: 'sidebar__menu-item-wp-admin',
 		},
 		{
 			slug: 'upgrades',
