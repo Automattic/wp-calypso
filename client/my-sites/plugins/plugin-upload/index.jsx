@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
@@ -94,16 +94,8 @@ class PluginUpload extends Component {
 			? this.props.uploadPlugin
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
-		const WrapperComponent = Fragment;
-
 		return (
-			<WrapperComponent>
-				<Card>
-					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ false } />
-					) }
-				</Card>
-			</WrapperComponent>
+			<Card>{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }</Card>
 		);
 	}
 
