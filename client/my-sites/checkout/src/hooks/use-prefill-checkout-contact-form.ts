@@ -1,45 +1,26 @@
 import config from '@automattic/calypso-config';
 import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import { convertErrorToString } from '../lib/analytics';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { useCachedContactDetails } from './use-cached-contact-details';
 import useCountryList from './use-country-list';
 import type {
-	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
+	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:use-cached-domain-contact-details' );
-
-export function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
-	const reduxDispatch = useReduxDispatch();
-	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	useEffect( () => {
-		if ( haveRequestedCachedDetails.current === 'not-started' ) {
-			debug( 'requesting cached domain contact details' );
-			reduxDispatch( requestContactDetailsCache() );
-			haveRequestedCachedDetails.current = 'pending';
-		}
-	}, [ reduxDispatch ] );
-	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
-		debug( 'cached domain contact details retrieved', cachedContactDetails );
-		haveRequestedCachedDetails.current = 'done';
-	}
-	return cachedContactDetails;
-}
+const debug = debugFactory( 'calypso:use-prefill-checkout-contact-form' );
 
 function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
-	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void,
+	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void,
 	overrideCountryList?: CountryListItem[]
 ): boolean {
 	const countriesList = useCountryList( overrideCountryList );
@@ -53,7 +34,7 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions = useDispatch( CHECKOUT_STORE );
+	const checkoutStoreActions = useWordPressDataDispatch( CHECKOUT_STORE );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
@@ -89,14 +70,14 @@ function useCachedContactDetailsForCheckoutForm(
 		didFillForm.current = true;
 		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
-			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
+			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? null : '',
 		} )
 			.then( () => {
 				if ( ! isMounted.current ) {
 					return false;
 				}
 				if ( cachedContactDetails.countryCode ) {
-					setShouldShowContactDetailsValidationErrors( false );
+					setShouldShowContactDetailsValidationErrors?.( false );
 					debug( 'Contact details are populated; attempting to auto-complete all steps' );
 					return setStepCompleteStatus( 'payment-method-step' );
 				}
@@ -109,11 +90,11 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( didSkip ) {
 					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 				}
-				setShouldShowContactDetailsValidationErrors( true );
+				setShouldShowContactDetailsValidationErrors?.( true );
 				setComplete( true );
 			} )
 			.catch( ( error: Error ) => {
-				setShouldShowContactDetailsValidationErrors( true );
+				setShouldShowContactDetailsValidationErrors?.( true );
 				isMounted.current && setComplete( true );
 				// eslint-disable-next-line no-console
 				console.error( 'Error while autocompleting contact details:', error );
@@ -145,11 +126,16 @@ function useCachedContactDetailsForCheckoutForm(
  * Load cached contact details from the server and use them to populate the
  * checkout contact form and the shopping cart tax location.
  */
-export default function useCachedDomainContactDetails(
-	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void,
-	overrideCountryList?: CountryListItem[]
-): void {
-	const cachedContactDetails = useCachedContactDetails();
+export function usePrefillCheckoutContactForm( {
+	setShouldShowContactDetailsValidationErrors,
+	isLoggedOut,
+	overrideCountryList,
+}: {
+	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void;
+	isLoggedOut?: boolean;
+	overrideCountryList?: CountryListItem[];
+} ): void {
+	const cachedContactDetails = useCachedContactDetails( { isLoggedOut } );
 	useCachedContactDetailsForCheckoutForm(
 		cachedContactDetails,
 		setShouldShowContactDetailsValidationErrors,

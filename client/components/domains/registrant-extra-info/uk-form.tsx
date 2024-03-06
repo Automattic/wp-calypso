@@ -1,31 +1,32 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { DomainContactDetails } from '@automattic/shopping-cart';
+import { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
+import { LocalizeProps, localize } from 'i18n-calypso';
 import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
-import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { PureComponent, ReactNode } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+
+import './style.scss';
 
 const defaultValues = {
 	registrantType: 'IND',
 };
 
-export class RegistrantExtraInfoUkForm extends PureComponent {
-	static propTypes = {
-		contactDetails: PropTypes.object.isRequired,
-		ccTldDetails: PropTypes.object.isRequired,
-		onContactDetailsChange: PropTypes.func,
-		contactDetailsValidationErrors: PropTypes.object,
-		translate: PropTypes.func.isRequired,
-		updateContactDetailsCache: PropTypes.func.isRequired,
-		isManaged: PropTypes.bool,
-	};
+export interface FormProps {
+	contactDetails: Record< string, unknown >;
+	ccTldDetails: Record< string, unknown >;
+	onContactDetailsChange?: ( payload: DomainContactDetails ) => void;
+	contactDetailsValidationErrors: DomainContactDetailsErrors;
+	isVisible?: boolean;
+	onSubmit?: () => void;
+}
 
-	constructor( props ) {
+export class RegistrantExtraInfoUkForm extends PureComponent< FormProps & LocalizeProps > {
+	registrantTypeOptions: ReactNode[];
+
+	constructor( props: FormProps & LocalizeProps ) {
 		super( props );
 		const { translate } = props;
 		const registrantTypes = {
@@ -73,33 +74,26 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 			},
 		};
 
-		this.props.updateContactDetailsCache( payload );
-
-		if ( this.props.isManaged ) {
-			this.props.onContactDetailsChange?.( payload );
-		}
+		this.props.onContactDetailsChange?.( payload );
 	}
 
-	handleChangeEvent = ( event ) => {
+	handleChangeEvent = ( event: { target: { id: string; value: string } } ) => {
 		const payload = {
 			extra: {
 				uk: { [ camelCase( event.target.id ) ]: event.target.value },
 			},
 		};
-		this.props.updateContactDetailsCache( payload );
 
-		if ( this.props.isManaged ) {
-			this.props.onContactDetailsChange?.( payload );
-		}
+		this.props.onContactDetailsChange?.( payload );
 	};
 
-	isTradingNameRequired( registrantType ) {
+	isTradingNameRequired( registrantType: string ) {
 		return [ 'LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA' ].includes(
 			registrantType
 		);
 	}
 
-	isRegistrationNumberRequired( registrantType ) {
+	isRegistrationNumberRequired( registrantType: string ) {
 		return [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ].includes( registrantType );
 	}
 
@@ -171,7 +165,13 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 		);
 	}
 
-	renderValidationError = ( { errorCode, errorMessage } ) => {
+	renderValidationError = ( {
+		errorCode,
+		errorMessage,
+	}: {
+		errorCode: string;
+		errorMessage: string;
+	} ) => {
 		const { translate } = this.props;
 		return (
 			<FormInputValidation
@@ -206,7 +206,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 						id="registrant-type"
 						value={ registrantType }
 						className="registrant-extra-info__form-registrant-type"
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeEvent as any }
 					>
 						{ this.registrantTypeOptions }
 					</FormSelect>
@@ -221,22 +221,4 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		if ( ownProps.isManaged ) {
-			return {
-				// Treat this like a managed component.
-				contactDetails: ownProps.contactDetails ?? {},
-				ccTldDetails: ownProps.ccTldDetails ?? {},
-				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
-			};
-		}
-
-		const contactDetails = getContactDetailsCache( state );
-		return {
-			contactDetails,
-			ccTldDetails: get( contactDetails, 'extra.uk', {} ),
-		};
-	},
-	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoUkForm ) );
+export default localize( RegistrantExtraInfoUkForm );

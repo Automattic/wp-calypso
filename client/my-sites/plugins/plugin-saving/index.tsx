@@ -6,8 +6,26 @@ import {
 	isProductsListFetching,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
+import type { ReactNode } from 'react';
 
-export const PluginAnnualSaving = ( { plugin, children } ) => {
+export const PluginAnnualSaving = ( {
+	plugin,
+	renderContent,
+}: {
+	plugin?: {
+		variations?: {
+			yearly?: { product_slug?: string | undefined; product_id?: number | undefined };
+			monthly?: { product_slug?: string | undefined; product_id?: number | undefined };
+		};
+	};
+	renderContent: ( {
+		isFetching,
+		saving,
+	}: {
+		isFetching: boolean;
+		saving: string | false | 0 | null;
+	} ) => ReactNode;
+} ) => {
 	const productList = useSelector( getProductsList );
 
 	const variationYearly = plugin?.variations?.yearly;
@@ -24,10 +42,15 @@ export const PluginAnnualSaving = ( { plugin, children } ) => {
 			productMonthly && productYearly
 				? Math.round( productMonthly.cost * 12 - productYearly.cost )
 				: null;
-		return totalDiscount > 0 && formatCurrency( totalDiscount, productYearly.currency_code );
+		return (
+			totalDiscount &&
+			productYearly &&
+			totalDiscount > 0 &&
+			formatCurrency( totalDiscount, productYearly.currency_code )
+		);
 	};
 
-	return children( {
+	return renderContent( {
 		isFetching,
 		saving: getAnnualPriceSavingText(),
 	} );
