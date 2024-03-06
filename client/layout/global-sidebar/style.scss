@@ -141,7 +141,16 @@ $brand-text: "SF Pro Text", $sans;
 			.sidebar__expandable-content .sidebar__menu-link {
 				font-size: $default-font-size;
 				line-height: 15px;
-				margin: 0;
+			}
+
+			.sidebar__expandable-content {
+				.sidebar__menu-link {
+					margin: 0;
+				}
+
+				.reader-sidebar-tags__text-input {
+					padding-right: 0;
+				}
 			}
 		}
 
