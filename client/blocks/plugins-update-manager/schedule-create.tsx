@@ -20,7 +20,7 @@ export const ScheduleCreate = ( props: Props ) => {
 	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
 
 	const mutationState = useMutationState( {
-		filters: { mutationKey: [ 'create-schedule-updates', siteSlug ] },
+		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 

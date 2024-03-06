@@ -4,9 +4,9 @@ import wpcomRequest from 'wpcom-proxy-request';
 import type { ScheduleUpdates } from './use-update-schedules-query';
 import type { SiteSlug } from 'calypso/types';
 
-export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const mutation = useMutation( {
-		mutationKey: [ 'create-schedule-updates', siteSlug ],
+		mutationKey: [ 'create-update-schedule', siteSlug ],
 		mutationFn: ( params: object ) =>
 			wpcomRequest( {
 				path: `/sites/${ siteSlug }/update-schedules`,
@@ -18,9 +18,9 @@ export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptio
 	} );
 
 	const { mutate } = mutation;
-	const createScheduleUpdates = useCallback( ( params: object ) => mutate( params ), [ mutate ] );
+	const createUpdateSchedule = useCallback( ( params: object ) => mutate( params ), [ mutate ] );
 
-	return { createScheduleUpdates, ...mutation };
+	return { createUpdateSchedule, ...mutation };
 }
 
 export function useEditScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
