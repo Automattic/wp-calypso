@@ -23,9 +23,9 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 	return { createUpdateSchedule, ...mutation };
 }
 
-export function useEditScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+export function useEditUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const mutation = useMutation( {
-		mutationKey: [ 'edit-schedule-updates', siteSlug ],
+		mutationKey: [ 'edit-update-schedule', siteSlug ],
 		mutationFn: ( obj: { id: string; params: object } ) => {
 			const { id, params } = obj;
 
@@ -40,12 +40,12 @@ export function useEditScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions
 	} );
 
 	const { mutate } = mutation;
-	const editScheduleUpdates = useCallback(
+	const editUpdateSchedule = useCallback(
 		( id: string, params: object ) => mutate( { id, params } ),
 		[ mutate ]
 	);
 
-	return { editScheduleUpdates, ...mutation };
+	return { editUpdateSchedule, ...mutation };
 }
 
 export function useDeleteScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {

@@ -17,7 +17,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
-	useEditScheduleUpdatesMutation,
+	useEditUpdateScheduleMutation,
 } from 'calypso/data/plugins/use-update-schedules-mutation';
 import {
 	useScheduleUpdatesQuery,
@@ -64,7 +64,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
 	} );
-	const { editScheduleUpdates } = useEditScheduleUpdatesMutation( siteSlug, {
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
 	} );
 
@@ -143,7 +143,7 @@ export const ScheduleForm = ( props: Props ) => {
 
 		if ( formValid ) {
 			scheduleForEdit
-				? editScheduleUpdates( scheduleForEdit.id, params )
+				? editUpdateSchedule( scheduleForEdit.id, params )
 				: createUpdateSchedule( params );
 		}
 	};
