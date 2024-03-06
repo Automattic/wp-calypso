@@ -16,7 +16,10 @@ export const HappinessEngineersTray = ( { count = 5, shuffled = true } ) => {
 		return ( shuffled ? shuffle( data ) : data ).slice( 0, count );
 	}, [ data, count, shuffled ] );
 
-	const gravatars = filteredHappinessEngineers?.map( ( user ) => (
+	if ( ! filteredHappinessEngineers ) {
+		return null;
+	}
+	const gravatars = filteredHappinessEngineers.map( ( user ) => (
 		<Gravatar
 			key={ user.avatar_URL }
 			user={ user }
