@@ -1,7 +1,7 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MOMENT_TIME_FORMAT } from './config';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { useSiteSlug } from './hooks/use-site-slug';

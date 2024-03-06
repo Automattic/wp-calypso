@@ -10,8 +10,8 @@ import {
 } from '@wordpress/components';
 import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { useDeleteScheduleUpdatesMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';

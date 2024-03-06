@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { ScheduleUpdates } from './use-schedule-updates-query';
+import type { ScheduleUpdates } from './use-update-schedules-query';
 import type { SiteSlug } from 'calypso/types';
 
 export function useCreateScheduleUpdatesMutation( siteSlug: SiteSlug, queryOptions = {} ) {
