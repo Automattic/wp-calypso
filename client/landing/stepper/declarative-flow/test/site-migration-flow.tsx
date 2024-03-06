@@ -18,7 +18,7 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
-	describe( 'navigation', () => {
+	describe( 'submit', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
@@ -46,7 +46,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com'
+				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify'
 			);
 		} );
 
@@ -62,7 +62,9 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: '/processing',
-				state: null,
+				state: {
+					bundleProcessing: true,
+				},
 			} );
 		} );
 
@@ -80,6 +82,33 @@ describe( 'Site Migration Flow', () => {
 				path: '/site-migration-upgrade-plan',
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
+		} );
+	} );
+
+	describe( 'goBack', () => {
+		it( 'backs to the indentify step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the goal step when going back from the identify step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/goals?siteSlug=example.wordpress.com'
+			);
 		} );
 	} );
 } );

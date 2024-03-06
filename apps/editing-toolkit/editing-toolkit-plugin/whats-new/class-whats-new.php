@@ -62,6 +62,16 @@ class Whats_New {
 			plugins_url( 'dist/', __FILE__ )
 		);
 
+		wp_add_inline_script(
+			'whats-new-script',
+			'window.whatsNewData = ' . wp_json_encode(
+				array(
+					'currentSiteId' => get_current_blog_id(),
+				)
+			),
+			'before'
+		);
+
 		wp_set_script_translations( 'whats-new-script', 'full-site-editing' );
 
 		$style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';

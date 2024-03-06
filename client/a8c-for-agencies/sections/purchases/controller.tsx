@@ -12,7 +12,10 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import BillingDashboard from './billing/billing-dashboard';
+import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';
+import PaymentMethodAdd from './payment-methods/payment-method-add';
+import PaymentMethodOverview from './payment-methods/payment-method-overview';
 
 export const purchasesContext: Callback = () => {
 	page.redirect( '/purchases/licenses' );
@@ -45,6 +48,27 @@ export const licensesContext: Callback = ( context, next ) => {
 export const billingContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = <BillingDashboard />;
+
+	next();
+};
+
+export const invoicesContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path={ context.path } />;
+	context.primary = <InvoicesOverview />;
+
+	next();
+};
+
+export const paymentMethodsContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path={ context.path } />;
+	context.primary = <PaymentMethodOverview />;
+
+	next();
+};
+
+export const paymentMethodsAddContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path={ context.path } />;
+	context.primary = <PaymentMethodAdd />;
 
 	next();
 };

@@ -136,6 +136,7 @@
 	gap: 4px;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 12px;
+	cursor: pointer;
 
 	&__pending,
 	&__queued {
@@ -172,6 +173,11 @@
 		font-weight: 400;
 		line-height: 20px; /* 153.846% */
 		text-transform: capitalize;
+	}
+
+	&:visited,
+	&:hover {
+		color: inherit;
 	}
 }
 

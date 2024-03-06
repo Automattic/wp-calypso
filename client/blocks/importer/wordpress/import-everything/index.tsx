@@ -8,6 +8,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import ImportUsers from 'calypso/blocks/importer/wordpress/import-everything/import-users';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import AsyncLoad from 'calypso/components/async-load';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -135,6 +136,13 @@ export class ImportEverything extends SectionMigrate {
 			this.state.migrationStatus === MigrationStatus.ERROR
 		) {
 			this.props.recordTracksEvent( 'calypso_site_importer_import_failure', trackEventProps );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.DONE_USER &&
+			this.state.migrationStatus === MigrationStatus.DONE_USER
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_users', trackEventProps );
 		}
 
 		if (
@@ -286,6 +294,20 @@ export class ImportEverything extends SectionMigrate {
 		);
 	}
 
+	renderMigratingUsers() {
+		const { targetSite } = this.props;
+		return (
+			<ImportUsers
+				site={ targetSite }
+				onSubmit={ () =>
+					this.setState( {
+						migrationStatus: 'done-user',
+					} )
+				}
+			/>
+		);
+	}
+
 	render() {
 		if ( this.props.forceError ) {
 			return this.renderMigrationError( this.props.forceError );
@@ -305,6 +327,9 @@ export class ImportEverything extends SectionMigrate {
 				return this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
+				return this.renderMigratingUsers();
+
+			case MigrationStatus.DONE_USER:
 				return this.renderMigrationComplete();
 
 			case MigrationStatus.ERROR:

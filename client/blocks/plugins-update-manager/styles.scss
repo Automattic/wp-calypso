@@ -23,6 +23,11 @@
 		margin-bottom: 0.5rem;
 	}
 
+	.components-spinner {
+		display: block;
+		margin: 3rem auto;
+	}
+
 	svg.icon-info {
 		fill: var(--studio-gray-60);
 		vertical-align: middle;
@@ -45,6 +50,13 @@
 		}
 	}
 
+	button.schedule-name {
+		font-size: 0.875rem;
+		font-weight: 500;
+		text-decoration: none;
+		color: var(--studio-gray-100);
+	}
+
 	table {
 		th,
 		td {
@@ -61,11 +73,6 @@
 		td {
 			padding: 0.5rem 0;
 			vertical-align: middle;
-
-			&.name {
-				font-weight: 500;
-				color: var(--studio-gray-100);
-			}
 		}
 	}
 

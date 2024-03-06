@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { type SiteDetails } from '@automattic/data-stores';
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { SubTitle, Title } from '@automattic/onboarding';
 import {
 	CardBody,
@@ -28,8 +28,7 @@ export default function MigrationSuccess( {
 	targetSite,
 	recordTracksEvent,
 }: MigrationSuccessProps ) {
-	const { __, hasTranslation } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
+	const { __ } = useI18n();
 	const navigateToSite =
 		( url: string, isWpAdmin = false ) =>
 		( e: React.MouseEvent< HTMLButtonElement > ): void => {
@@ -40,25 +39,10 @@ export default function MigrationSuccess( {
 			redirect( url, isWpAdmin );
 		};
 
-	const linkText =
-		isEnglishLocale || hasTranslation( 'Migration support resources' )
-			? __( 'Migration support resources' )
-			: 'Explore support resources'; //Temporary fallback
-
-	const titleText =
-		isEnglishLocale || hasTranslation( 'Say hello to your new home' )
-			? __( 'Say hello to your new home' )
-			: __( 'Hooray' ); //Temporary fallback
-
-	const subtitleText =
-		isEnglishLocale || hasTranslation( 'All set! Your content was successfully imported.' )
-			? __( 'All set! Your content was successfully imported.' )
-			: __( 'Congratulations. Your content was successfully imported.' ); //Temporary fallback
-
 	return (
 		<>
-			<Title> { titleText } </Title>
-			<SubTitle>{ subtitleText }</SubTitle>
+			<Title> { __( 'Say hello to your new home' ) } </Title>
+			<SubTitle>{ __( 'All set! Your content was successfully imported.' ) }</SubTitle>
 
 			<Card size="small">
 				<CardBody>
@@ -123,7 +107,7 @@ export default function MigrationSuccess( {
 					justify="space-between"
 				>
 					<strong className="screen-confirmation__list-item-title">
-						{ __( 'Migration questions? find answers' ) }
+						{ __( 'Migration questions? Find answers' ) }
 					</strong>
 					<p className="screen-confirmation__list-item-description">
 						{ __(
@@ -137,9 +121,9 @@ export default function MigrationSuccess( {
 						) }
 						target="_blank"
 						rel="noopener noreferrer"
-						title={ linkText }
+						title={ __( 'Migration support resources' ) }
 					>
-						{ linkText }
+						{ __( 'Migration support resources' ) }
 					</Link>
 				</VStack>
 			</Flex>

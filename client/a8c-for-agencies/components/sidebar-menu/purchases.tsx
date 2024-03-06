@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { chevronLeft, key, store } from '@wordpress/icons';
+import { chevronLeft, key, store, receipt, payment } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
@@ -8,6 +8,8 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_LICENSES_LINK,
 	A4A_BILLING_LINK,
+	A4A_INVOICES_LINK,
+	A4A_PAYMENT_METHODS_LINK,
 } from './lib/constants';
 import { createItem } from './lib/utils';
 
@@ -40,6 +42,30 @@ export default function ( { path }: Props ) {
 					title: translate( 'Billing' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Purchases / Billing',
+					},
+				},
+				path
+			),
+			createItem(
+				{
+					icon: payment,
+					path: A4A_PURCHASES_LINK,
+					link: A4A_PAYMENT_METHODS_LINK,
+					title: translate( 'Payment Methods' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Purchases / Payment Methods',
+					},
+				},
+				path
+			),
+			createItem(
+				{
+					icon: receipt,
+					path: A4A_PURCHASES_LINK,
+					link: A4A_INVOICES_LINK,
+					title: translate( 'Invoices' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Purchases / Invoices',
 					},
 				},
 				path

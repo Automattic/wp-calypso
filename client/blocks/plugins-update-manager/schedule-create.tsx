@@ -1,3 +1,4 @@
+import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	Button,
@@ -7,17 +8,30 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
-import { SiteSlug } from 'calypso/types';
+import { useEffect } from 'react';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { MAX_SCHEDULES } from './config';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
-import './styles.scss';
-
 interface Props {
-	siteSlug: SiteSlug;
 	onNavBack?: () => void;
 }
 export const ScheduleCreate = ( props: Props ) => {
-	const { siteSlug, onNavBack } = props;
+	const siteSlug = useSiteSlug();
+	const { onNavBack } = props;
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
+
+	const mutationState = useMutationState( {
+		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },
+	} );
+	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
+
+	useEffect( () => {
+		if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
+			onNavBack && onNavBack();
+		}
+	}, [ isFetched ] );
 
 	return (
 		<Card className="plugins-update-manager">
@@ -33,10 +47,12 @@ export const ScheduleCreate = ( props: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm siteSlug={ siteSlug } />
+				<ScheduleForm onSyncSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
-				<Button variant="primary">Create</Button>
+				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
+					Create
+				</Button>
 			</CardFooter>
 		</Card>
 	);

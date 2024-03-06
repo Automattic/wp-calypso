@@ -87,6 +87,7 @@ const DashboardHeading = styled.h1( {
 	lineHeight: '26px',
 	color: 'var( --studio-gray-100 )',
 	flex: 1,
+	marginInlineEnd: '1rem',
 } );
 
 const sitesMarginTable = css( {
@@ -154,6 +155,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 
 const ManageAllDomainsButton = styled( Button )`
 	margin-inline-end: 1rem;
+	white-space: nowrap;
 `;
 
 const DownloadIcon = styled( Icon )`

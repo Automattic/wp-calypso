@@ -251,7 +251,7 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Open WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
+			{ __( 'WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
 		</MenuItemLink>
 	);
 };

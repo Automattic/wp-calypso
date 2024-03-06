@@ -72,8 +72,8 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/utm-metrics/index.js', {
 	[ STATS_UTM_TOP_POSTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: fetchTopPosts,
-			onSuccess: ( { siteId, paramValues }: AnyAction, data: object ) =>
-				receiveTopPosts( siteId, paramValues, data ),
+			onSuccess: ( { siteId, paramValues, siteSlug }: AnyAction, data: object ) =>
+				receiveTopPosts( siteId, paramValues, data, siteSlug ),
 			onError: () => null,
 		} ),
 	],

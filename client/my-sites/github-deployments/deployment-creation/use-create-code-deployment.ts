@@ -15,6 +15,7 @@ export interface MutationVariables {
 
 interface MutationResponse {
 	message: string;
+	target_dir: string;
 }
 
 interface MutationError {
@@ -55,6 +56,7 @@ export const useCreateCodeDeployment = (
 			await queryClient.invalidateQueries( {
 				queryKey: [ GITHUB_DEPLOYMENTS_QUERY_KEY, CODE_DEPLOYMENTS_QUERY_KEY, siteId ],
 			} );
+
 			options.onSuccess?.( ...args );
 		},
 	} );

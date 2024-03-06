@@ -16,19 +16,37 @@ import {
 import { schema } from './schema';
 import type { Reducer, AnyAction } from 'redux';
 
+const isValidJSON = ( string: string ) => {
+	try {
+		JSON.parse( string );
+
+		return true;
+	} catch ( e ) {
+		return false;
+	}
+};
+
 const metricsParser = ( UTMValues: { [ key: string ]: number }, stopFurtherRequest?: boolean ) => {
 	const combinedKeys = Object.keys( UTMValues );
 
 	return combinedKeys.map( ( combinedKey: string ) => {
-		const parsedKey = JSON.parse( combinedKey );
+		const parsedKeys = isValidJSON( combinedKey ) ? JSON.parse( combinedKey ) : [ combinedKey ];
 		const value = UTMValues[ combinedKey ];
 
 		const data = {
-			source: parsedKey[ 0 ],
-			medium: parsedKey[ 1 ],
-			label: `${ parsedKey[ 0 ] } / ${ parsedKey[ 1 ] }`,
+			label: parsedKeys[ 0 ],
 			value,
 		} as UTMMetricItem;
+
+		// Show the label for two UTM parameters: `utm_source,utm_medium`.
+		if ( parsedKeys[ 1 ] ) {
+			data.label += ` / ${ parsedKeys[ 1 ] }`;
+		}
+
+		// Show the label for three UTM parameters: `utm_campaign,utm_source,utm_medium`.
+		if ( parsedKeys[ 2 ] ) {
+			data.label += ` / ${ parsedKeys[ 2 ] }`;
+		}
 
 		// Set no `paramValues` to prevent top post requests.
 		if ( stopFurtherRequest ) {
@@ -77,6 +95,7 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 
 		case STATS_UTM_TOP_POSTS_RECEIVE: {
 			const data = action.data.top_posts;
+			const siteSlug = action.siteSlug;
 
 			const { topPosts } = state as {
 				topPosts: { [ key: string ]: Array< UTMMetricItemTopPost > };
@@ -92,6 +111,13 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 							label: topPost.title,
 							value: topPost.views,
 							href: topPost.href,
+							page: siteSlug ? `/stats/post/${ topPost.id }/${ action.siteSlug }` : null,
+							actions: [
+								{
+									data: topPost.href,
+									type: 'link',
+								},
+							],
 						};
 					} ),
 				},

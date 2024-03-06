@@ -6,7 +6,6 @@ import {
 	deploymentsList,
 	deploymentCreation,
 	deploymentManagement,
-	createNewRepository,
 	deploymentRunLogs,
 } from './controller';
 
@@ -32,22 +31,13 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/github-deployments/:site/manage/:deploymentId',
 		siteSelection,
 		redirectHomeIfIneligible,
 		navigation,
 		deploymentManagement,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/github-deployments/:site/create-new-repository',
-		siteSelection,
-		redirectHomeIfIneligible,
-		navigation,
-		createNewRepository,
 		makeLayout,
 		clientRender
 	);

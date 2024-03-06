@@ -43,6 +43,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	MIGRATION_ERROR: {
+		slug: 'error',
+		asyncComponent: () => import( './steps-repository/migration-error' ),
+	},
+
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
@@ -224,5 +229,10 @@ export const STEPS = {
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
+	},
+
+	SITE_MIGRATION_PLUGIN_INSTALL: {
+		slug: 'site-migration-plugin-install',
+		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 };

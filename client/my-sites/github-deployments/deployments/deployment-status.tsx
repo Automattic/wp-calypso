@@ -15,6 +15,7 @@ export type DeploymentStatusValue = ValueOf< typeof DeployStatus >;
 
 interface DeploymentStatusProps {
 	status: DeploymentStatusValue;
+	href?: string;
 }
 
 function getText( status: DeploymentStatusValue ) {
@@ -36,10 +37,13 @@ function getText( status: DeploymentStatusValue ) {
 	}
 }
 
-export const DeploymentStatus = ( { status }: DeploymentStatusProps ) => {
+export const DeploymentStatus = ( { status, href }: DeploymentStatusProps ) => {
 	return (
-		<div className={ `github-deployments-status github-deployments-status__${ status }` }>
+		<a
+			href={ href }
+			className={ `github-deployments-status github-deployments-status__${ status }` }
+		>
 			<span>{ getText( status ) }</span>
-		</div>
+		</a>
 	);
 };

@@ -1,5 +1,6 @@
 import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import { SiteCapabilities } from '@automattic/data-stores';
+import { __, _x } from '@wordpress/i18n';
 import {
 	alignJustify as acitvityLogIcon,
 	backup as backupIcon,
@@ -28,7 +29,6 @@ import {
 	wordpress as wordpressIcon,
 	comment as feedbackIcon,
 } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import { Command, CommandCallBackParams } from '../use-command-palette';
 import { isCustomDomain } from '../utils';
 import { useCommandsParams } from './types';
@@ -79,7 +79,6 @@ const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
 };
 
 const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ): Command[] => {
-	const { __, _x } = useI18n();
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 	const customWindow = window as CustomWindow | undefined;
 	const {
@@ -534,7 +533,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
-			callback: commandNavigation( '/backup/:site' ),
+			callback: commandNavigation(
+				`${ siteType === SiteType.ATOMIC ? 'https://cloud.jetpack.com' : '' }/backup/:site`
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
 			icon: backupIcon,

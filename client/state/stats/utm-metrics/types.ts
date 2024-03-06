@@ -1,9 +1,7 @@
 export interface UTMMetricItem {
-	source?: string;
-	medium?: string;
-	paramValues?: string;
 	label: string;
 	value: number;
+	paramValues?: string;
 }
 
 export interface UTMMetricItemTopPost {

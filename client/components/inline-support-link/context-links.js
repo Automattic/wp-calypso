@@ -110,9 +110,8 @@ const contextLinks = {
 		post_id: 164969,
 	},
 	'hosting-connect-to-ssh': {
-		link: 'https://developer.wordpress.com/docs/developer-tools/sftp-ssh/',
-		post_id: 99380,
-		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+		link: 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/',
+		post_id: 213309,
 	},
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',

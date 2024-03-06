@@ -47,6 +47,16 @@ td.github-deployments-logs-content {
 	.github-deployments-loading-placeholder {
 		margin-bottom: 0;
 	}
+
+	.show-more {
+		text-decoration: underline;
+	}
+
+	pre {
+		background-color: transparent;
+		border-left: 1px solid;
+		margin: 5px 0;
+	}
 }
 
 
