@@ -241,6 +241,10 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }` );
+				}
 			}
 		};
 

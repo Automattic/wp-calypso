@@ -90,11 +90,11 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-identify',
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
