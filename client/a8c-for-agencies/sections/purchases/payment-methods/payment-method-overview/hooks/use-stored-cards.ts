@@ -8,6 +8,7 @@ export default function useStoredCards() {
 
 	const [ isFetching, setIsFetching ] = useState( showDummyData );
 
+	// FIXME: Don't forget to remove this fake loading delay for dummy data
 	useEffect( () => {
 		// Simulate a fake loading delay.
 		setTimeout( () => {

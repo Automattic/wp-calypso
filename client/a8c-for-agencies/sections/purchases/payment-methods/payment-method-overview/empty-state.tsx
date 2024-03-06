@@ -18,7 +18,7 @@ export default function EmptyState() {
 	return (
 		<div className="payment-method-overview-empty-state">
 			<div className="payment-method-overview-empty-state__top-content">
-				<img src={ CreditCardImg } alt="Credit Cards" />
+				<img src={ CreditCardImg } alt={ translate( 'Credit Cards' ) } />
 				<Button primary href={ A4A_PAYMENT_METHODS_ADD_LINK } onClick={ navigateToCreateMethod }>
 					{ translate( 'Add a card' ) }
 				</Button>
