@@ -4,6 +4,11 @@ if ( window.configData?.intial_state ) {
 	delete window.configData.intial_state;
 }
 
+// Forces the blog_id to be a number (the component BlazePageViewTracker breaks on atomic if its gets a string).
+if ( window.configData?.blog_id ) {
+	window.configData.blog_id = +window.configData.blog_id;
+}
+
 const isWooStore = window.configData?.is_woo_store || false;
 const needSetup = window.configData?.need_setup || false;
 
