@@ -8,6 +8,7 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
+import { useEffect } from 'react';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { ScheduleForm } from './schedule-form';
@@ -24,11 +25,11 @@ export const ScheduleCreate = ( props: Props ) => {
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
-	// If the schedule is not found, navigate back to the list
-	if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
-		onNavBack && onNavBack();
-		return null;
-	}
+	useEffect( () => {
+		if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
+			onNavBack && onNavBack();
+		}
+	}, [ isFetched ] );
 
 	return (
 		<Card className="plugins-update-manager">
