@@ -117,13 +117,12 @@ export default function PlanOnlyThankYou( {
 			);
 
 			const isSendingEmail = resendStatus === RESEND_PENDING;
-			const isSent = resendStatus === RESEND_SUCCESS;
 
 			headerButtons = (
 				<Button
 					onClick={ resendEmail }
 					busy={ isSendingEmail }
-					disabled={ isSendingEmail || isSent }
+					disabled={ isSendingEmail || resendStatus === RESEND_SUCCESS }
 				>
 					{ resendButtonText() }
 				</Button>
