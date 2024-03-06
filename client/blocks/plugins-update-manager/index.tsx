@@ -16,7 +16,7 @@ interface Props {
 	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
-	onEditSchedule?: ( id: string ) => void;
+	onEditSchedule: ( id: string ) => void;
 }
 export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
