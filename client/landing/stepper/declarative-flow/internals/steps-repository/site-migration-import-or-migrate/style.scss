@@ -1,15 +1,18 @@
-/* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
-@import "calypso/assets/stylesheets/shared/_loading";
-@import "@automattic/onboarding/styles/mixins";
+.import-or-migrate {
+	width: 602px;
 
-.site-migration-import-or-migrate {
-	.migration-info {
+	.import-or-migrate__title {
+		font-size: 2.75rem;
+	}
+
+	.import-or-migrate__content {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
+		gap: 80px;
+		align-items: center;
+	}
 
-		.migration-info-column {
-			width: 45%;
-			margin-right: 1rem;
-		}
+	.import-or-migrate__list {
+		width: 100%;
 	}
 }
