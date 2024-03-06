@@ -65,7 +65,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 					className="scheduled-updates__activating-notice"
 					status="is-info"
 					showDismiss={ false }
-					text={ translate( 'Please activate hosting access to begin using this feature.' ) }
+					text={ translate( 'Please activate hosting access to schedule plugin updates.' ) }
 					icon="globe"
 				>
 					<NoticeAction onClick={ clickActivate }>{ translate( 'Activate' ) }</NoticeAction>
