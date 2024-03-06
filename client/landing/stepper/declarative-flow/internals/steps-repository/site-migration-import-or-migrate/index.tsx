@@ -75,7 +75,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Where will you import from?' ) } />
+			<DocumentHead title={ translate( 'What do you want to migrate?' ) } />
 			<StepContainer
 				stepName="site-migration-import-or-migrate"
 				className="import-or-migrate"
