@@ -18,10 +18,15 @@ export const GitHubBrowseRepositories = ( {
 	onSelectRepository,
 }: GitHubBrowseRepositoriesProps ) => {
 	const { __ } = useI18n();
-	const { installation, setInstallation, installations, onNewInstallationRequest } =
-		useLiveInstallations( {
-			initialInstallationId: initialInstallationId,
-		} );
+	const {
+		installation,
+		setInstallation,
+		installations,
+		onNewInstallationRequest,
+		isLoadingInstallations,
+	} = useLiveInstallations( {
+		initialInstallationId: initialInstallationId,
+	} );
 
 	const [ query, setQuery ] = useState( '' );
 
@@ -30,7 +35,17 @@ export const GitHubBrowseRepositories = ( {
 	}
 
 	const renderContent = () => {
-		if ( ! installations ) {
+		if ( installation ) {
+			return (
+				<GitHubBrowseRepositoriesList
+					onSelectRepository={ onSelectRepository }
+					installation={ installation }
+					query={ query }
+				/>
+			);
+		}
+
+		if ( isLoadingInstallations ) {
 			return <GitHubLoadingPlaceholder />;
 		}
 
@@ -41,14 +56,6 @@ export const GitHubBrowseRepositories = ( {
 				</Card>
 			);
 		}
-
-		return (
-			<GitHubBrowseRepositoriesList
-				onSelectRepository={ onSelectRepository }
-				installation={ installation }
-				query={ query }
-			/>
-		);
 	};
 
 	return (

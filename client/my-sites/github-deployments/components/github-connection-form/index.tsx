@@ -4,8 +4,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
-import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -33,9 +33,9 @@ interface InitialValues {
 }
 
 interface GitHubConnectionFormProps {
-	repository: GitHubRepositoryData;
+	repository?: GitHubRepositoryData;
 	deploymentId?: number;
-	installation: GitHubInstallationData;
+	installationId?: number;
 	initialValues?: InitialValues;
 	changeRepository?(): void;
 	onSubmit( deploymentData: CodeDeploymentData ): Promise< unknown >;
@@ -44,9 +44,9 @@ interface GitHubConnectionFormProps {
 export const GitHubConnectionForm = ( {
 	repository,
 	deploymentId,
-	installation,
+	installationId,
 	initialValues = {
-		branch: repository.default_branch,
+		branch: repository?.default_branch ?? 'main',
 		destPath: '/',
 		isAutomated: false,
 		workflowPath: undefined,
@@ -65,9 +65,9 @@ export const GitHubConnectionForm = ( {
 	const { __ } = useI18n();
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
-		installation.external_id,
-		repository.owner,
-		repository.name
+		installationId,
+		repository?.owner,
+		repository?.name
 	);
 
 	const branchOptions = useMemo( () => {
@@ -90,15 +90,15 @@ export const GitHubConnectionForm = ( {
 			workflowFilename: workflowPath,
 		},
 		{
-			enabled: !! workflowPath,
+			enabled: !! repository && !! workflowPath,
 			refetchOnWindowFocus: false,
 		}
 	);
 
 	const { data: repoChecks } = useGithubRepositoryChecksQuery(
-		installation.external_id,
-		repository.owner,
-		repository.name,
+		installationId,
+		repository?.owner,
+		repository?.name,
 		branch
 	);
 
@@ -117,6 +117,10 @@ export const GitHubConnectionForm = ( {
 			onSubmit={ async ( e ) => {
 				e.preventDefault();
 
+				if ( ! repository || ! installationId ) {
+					return;
+				}
+
 				setIsPending( true );
 
 				try {
@@ -124,7 +128,7 @@ export const GitHubConnectionForm = ( {
 						externalRepositoryId: repository.id,
 						branchName: branch,
 						targetDir: destPath,
-						installationId: installation.external_id,
+						installationId: installationId,
 						isAutomated: isAutoDeploy,
 						workflowPath: workflowPath ?? undefined,
 					} );
@@ -146,9 +150,17 @@ export const GitHubConnectionForm = ( {
 				<FormFieldset>
 					<FormLabel>{ __( 'Repository' ) }</FormLabel>
 					<div className="github-deployments-connect-repository__repository">
-						<ExternalLink href={ `https://github.com/${ repository.owner }/${ repository.name }` }>
-							{ repository.owner }/{ repository.name }
-						</ExternalLink>
+						{ repository ? (
+							<ExternalLink
+								href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+							>
+								{ repository.owner }/{ repository.name }
+							</ExternalLink>
+						) : (
+							<FormSettingExplanation css={ { margin: 0 } }>
+								{ __( 'No repository selected' ) }
+							</FormSettingExplanation>
+						) }
 						{ changeRepository && (
 							<Button compact onClick={ changeRepository }>
 								{ __( 'Change' ) }
