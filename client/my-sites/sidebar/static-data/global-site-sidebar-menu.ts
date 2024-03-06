@@ -32,7 +32,7 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			slug: 'wp-admin',
-			title: translate( 'Open WP Admin' ),
+			title: translate( 'WP Admin' ),
 			url: `https://${ selectedSiteSlug }/wp-admin`,
 			className: 'sidebar__menu-item-wp-admin',
 		},
