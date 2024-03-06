@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
+import Notice from 'calypso/components/notice';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
@@ -33,8 +34,8 @@ interface InitialValues {
 
 interface GitHubConnectionFormProps {
 	repository: GitHubRepositoryData;
+	deploymentId?: number;
 	installation: GitHubInstallationData;
-	ctaLabel: string;
 	initialValues?: InitialValues;
 	changeRepository?(): void;
 	onSubmit( deploymentData: CodeDeploymentData ): Promise< unknown >;
@@ -42,8 +43,8 @@ interface GitHubConnectionFormProps {
 
 export const GitHubConnectionForm = ( {
 	repository,
+	deploymentId,
 	installation,
-	ctaLabel,
 	initialValues = {
 		branch: repository.default_branch,
 		destPath: '/',
@@ -133,6 +134,15 @@ export const GitHubConnectionForm = ( {
 			} }
 		>
 			<div className="github-deployments-connect-repository__configs">
+				{ deploymentId && (
+					<div css={ { marginBottom: '16px' } }>
+						<Notice isCompact>
+							{ __(
+								'Changes to an existing connection will be applied in the next deployment run.'
+							) }
+						</Notice>
+					</div>
+				) }
 				<FormFieldset>
 					<FormLabel>{ __( 'Repository' ) }</FormLabel>
 					<div className="github-deployments-connect-repository__repository">
@@ -173,7 +183,7 @@ export const GitHubConnectionForm = ( {
 					hasWorkflowPath={ !! workflowPath }
 				/>
 				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
-					{ ctaLabel }
+					{ deploymentId ? __( 'Update connection' ) : __( 'Connect repository' ) }
 				</Button>
 			</div>
 			<DeploymentStyle
