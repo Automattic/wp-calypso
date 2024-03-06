@@ -78,7 +78,7 @@ window.AppBoot = async () => {
 	setupWpDataDebug();
 
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
-	flowNameFromPathName === IMPORT_HOSTED_SITE_FLOW && addHotJarScript(); // Disabled temporarily.
+	flowNameFromPathName === IMPORT_HOSTED_SITE_FLOW && addHotJarScript();
 
 	// Add accessible-focus listener.
 	accessibleFocus();
