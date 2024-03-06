@@ -8,12 +8,12 @@ import { ellipsis } from './icons';
 
 interface Props {
 	siteSlug: string;
+	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
-	onScheduleClick?: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, onRemoveClick, onScheduleClick } = props;
+	const { siteSlug, onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
@@ -40,7 +40,7 @@ export const ScheduleListTable = ( props: Props ) => {
 							<Button
 								className="schedule-name"
 								variant="link"
-								onClick={ () => onScheduleClick && onScheduleClick( schedule.id ) }
+								onClick={ () => onEditClick && onEditClick( schedule.id ) }
 							>
 								{ schedule.hook }
 							</Button>
@@ -72,6 +72,10 @@ export const ScheduleListTable = ( props: Props ) => {
 							<DropdownMenu
 								popoverProps={ { position: 'bottom left' } }
 								controls={ [
+									{
+										title: 'Edit',
+										onClick: () => onEditClick( schedule.id ),
+									},
 									{
 										title: 'Remove',
 										onClick: () => onRemoveClick( schedule.id ),

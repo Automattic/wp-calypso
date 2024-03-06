@@ -88,13 +88,13 @@ export const ScheduleList = ( props: Props ) => {
 								<ScheduleListCards
 									siteSlug={ siteSlug }
 									onRemoveClick={ openRemoveDialog }
-									onScheduleClick={ onEditSchedule }
+									onEditClick={ onEditSchedule }
 								/>
 							) : (
 								<ScheduleListTable
 									siteSlug={ siteSlug }
 									onRemoveClick={ openRemoveDialog }
-									onScheduleClick={ onEditSchedule }
+									onEditClick={ onEditSchedule }
 								/>
 							) }
 						</>

@@ -8,12 +8,12 @@ import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updat
 
 interface Props {
 	siteSlug: string;
+	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
-	onScheduleClick?: ( id: string ) => void;
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, onRemoveClick, onScheduleClick } = props;
+	const { siteSlug, onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
@@ -24,6 +24,10 @@ export const ScheduleListCards = ( props: Props ) => {
 					<DropdownMenu
 						className="schedule-list--card-actions"
 						controls={ [
+							{
+								title: 'Edit',
+								onClick: () => onEditClick( schedule.id ),
+							},
 							{
 								title: 'Remove',
 								onClick: () => onRemoveClick( schedule.id ),
@@ -39,7 +43,7 @@ export const ScheduleListCards = ( props: Props ) => {
 							<Button
 								className="schedule-name"
 								variant="link"
-								onClick={ () => onScheduleClick && onScheduleClick( schedule.id ) }
+								onClick={ () => onEditClick && onEditClick( schedule.id ) }
 							>
 								{ schedule.hook }
 							</Button>
