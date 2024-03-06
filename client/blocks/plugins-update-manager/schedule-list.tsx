@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
-import { useDeleteScheduleUpdatesMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
+import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -38,7 +38,7 @@ export const ScheduleList = ( props: Props ) => {
 		isFetched,
 		refetch,
 	} = useScheduleUpdatesQuery( siteSlug );
-	const { deleteScheduleUpdates } = useDeleteScheduleUpdatesMutation( siteSlug, {
+	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );
 
@@ -53,7 +53,7 @@ export const ScheduleList = ( props: Props ) => {
 	};
 
 	const onRemoveDialogConfirm = () => {
-		selectedScheduleId && deleteScheduleUpdates( selectedScheduleId );
+		selectedScheduleId && deleteUpdateSchedule( selectedScheduleId );
 		closeRemoveConfirm();
 	};
 
