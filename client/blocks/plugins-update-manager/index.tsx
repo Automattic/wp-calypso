@@ -31,11 +31,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const hasScheduledUpdate = useSelector( ( state ) =>
+	const hasScheduledUpdatesFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCHEDULED_UPDATES )
 	);
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
-	const isEligibleForFeature = hasScheduledUpdate && isAtomic;
+	const isEligibleForFeature = hasScheduledUpdatesFeature && isAtomic;
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
@@ -84,7 +84,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						</Button>
 					) }
 				</NavigationHeader>
-				<ScheduledUpdatesGate hasScheduledUpdate={ hasScheduledUpdate } isAtomic={ isAtomic }>
+				<ScheduledUpdatesGate
+					isEligibleForFeature={ isEligibleForFeature }
+					hasScheduledUpdatesFeature={ hasScheduledUpdatesFeature }
+					isAtomic={ isAtomic }
+				>
 					{ component }
 				</ScheduledUpdatesGate>
 			</MainComponent>

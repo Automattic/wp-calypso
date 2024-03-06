@@ -13,14 +13,16 @@ import UpsellNudgeNotice from './upsell-nudge';
 import './style.scss';
 
 interface ScheduledUpdatesGateProps {
-	hasScheduledUpdate: boolean;
+	hasScheduledUpdatesFeature: boolean;
 	isAtomic: boolean;
+	isEligibleForFeature: boolean;
 	children: ReactNode;
 }
 
 const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
-	hasScheduledUpdate,
+	hasScheduledUpdatesFeature,
 	isAtomic,
+	isEligibleForFeature,
 	children,
 } ) => {
 	const translate = useTranslate();
@@ -34,7 +36,6 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 		)
 	);
 
-	const isEligibleForFeature = hasScheduledUpdate && isAtomic;
 	const showHostingActivationBanner = ! isAtomic && ! hasTransfer;
 
 	const handleFocus = ( e: FocusEvent< HTMLDivElement > ) => {
@@ -53,7 +54,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 	};
 
 	const getNoticeBanner = () => {
-		if ( ! hasScheduledUpdate ) {
+		if ( ! hasScheduledUpdatesFeature ) {
 			return <UpsellNudgeNotice />;
 		}
 
