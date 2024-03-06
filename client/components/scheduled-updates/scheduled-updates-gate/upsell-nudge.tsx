@@ -1,4 +1,8 @@
-import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	getPlan,
+	WPCOM_FEATURES_SCHEDULED_UPDATES,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -29,6 +33,7 @@ const UpsellNudgeNotice = () => {
 			callToAction={ translate( 'Upgrade' ) }
 			plan={ PLAN_BUSINESS }
 			showIcon={ true }
+			feature={ WPCOM_FEATURES_SCHEDULED_UPDATES }
 		/>
 	);
 };
