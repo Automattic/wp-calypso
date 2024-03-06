@@ -70,7 +70,6 @@ export const GitHubDeploymentCreationForm = ( {
 
 	return (
 		<GitHubConnectionForm
-			ctaLabel={ __( 'Connect repository' ) }
 			installation={ installation }
 			repository={ repository }
 			changeRepository={ () => {
