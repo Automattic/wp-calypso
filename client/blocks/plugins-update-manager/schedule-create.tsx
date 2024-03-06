@@ -7,15 +7,13 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
-import { SiteSlug } from 'calypso/types';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
-	siteSlug: SiteSlug;
 	onNavBack?: () => void;
 }
 export const ScheduleCreate = ( props: Props ) => {
-	const { siteSlug, onNavBack } = props;
+	const { onNavBack } = props;
 
 	return (
 		<Card className="plugins-update-manager">
@@ -31,7 +29,7 @@ export const ScheduleCreate = ( props: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm siteSlug={ siteSlug } onSyncSuccess={ () => onNavBack && onNavBack() } />
+				<ScheduleForm onSyncSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
 				<Button form="schedule" type="submit" variant="primary">

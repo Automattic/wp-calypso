@@ -8,16 +8,17 @@ import {
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
-import { SiteSlug } from 'calypso/types';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
-	siteSlug: SiteSlug;
 	scheduleId?: string;
 	onNavBack?: () => void;
 }
 export const ScheduleEdit = ( props: Props ) => {
-	const { siteSlug, scheduleId, onNavBack } = props;
+	const siteSlug = useSiteSlug();
+
+	const { scheduleId, onNavBack } = props;
 	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
@@ -43,7 +44,6 @@ export const ScheduleEdit = ( props: Props ) => {
 			<CardBody>
 				{ schedule && (
 					<ScheduleForm
-						siteSlug={ siteSlug }
 						scheduleForEdit={ schedule }
 						onSyncSuccess={ () => onNavBack && onNavBack() }
 					/>

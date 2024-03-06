@@ -5,15 +5,16 @@ import { usePreparePluginsTooltipInfo } from 'calypso/blocks/plugins-update-mana
 import { ellipsis } from 'calypso/blocks/plugins-update-manager/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
-	siteSlug: string;
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
 }
 export const ScheduleListCards = ( props: Props ) => {
+	const siteSlug = useSiteSlug();
 	const moment = useLocalizedMoment();
-	const { siteSlug, onEditClick, onRemoveClick } = props;
+	const { onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 

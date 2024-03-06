@@ -23,8 +23,8 @@ import {
 	useScheduleUpdatesQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-schedule-updates-query';
-import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
+import { useSiteSlug } from './hooks/use-site-slug';
 import {
 	DAILY_OPTION,
 	DAY_OPTIONS,
@@ -43,13 +43,13 @@ import {
 import './schedule-form.scss';
 
 interface Props {
-	siteSlug: SiteSlug;
 	scheduleForEdit?: ScheduleUpdates;
 	onSyncSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, scheduleForEdit, onSyncSuccess } = props;
+	const siteSlug = useSiteSlug();
+	const { scheduleForEdit, onSyncSuccess } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
