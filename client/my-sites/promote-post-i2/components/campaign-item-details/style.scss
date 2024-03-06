@@ -616,6 +616,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 					margin-bottom: 12px;
 					background: var(--color-surface);
 					border: 1.5px solid $studio-gray-10;
+					height: 40px;
 				}
 				.cancel-campaign-button {
 					display: flex;
@@ -648,12 +649,22 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				margin-right: 9px;
 				height: 16px;
 				vertical-align: text-top;
+				margin-left: 8px;
 			}
 
 			.contact-support-button {
 				background: var(--color-surface);
 				border: 1.5px solid $studio-gray-10;
 				height: 40px;
+				font-weight: 400;
+				font-size: 0.875rem;
+			}
+
+			.contact-support-button-text {
+				font-weight: 400;
+				font-size: 0.875rem;
+				line-height: 14px;
+				margin-right: 8px;
 			}
 
 			.cancel-campaign-button {
