@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useDeleteCard } from '../hooks/use-delete-card';
+import { useSetAsPrimaryCard } from '../hooks/use-set-as-primary-card';
 import StoredCreditCardDeleteDialog from '../stored-credit-card-delete-dialog';
 import CreditCardActions from './credit-card-actions';
-import { useDeleteCard } from './hooks/use-delete-card';
-import { useSetAsPrimaryCard } from './hooks/use-set-as-primary-card';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
@@ -35,13 +35,8 @@ export default function StoredCreditCard( {
 		: translate( 'Secondary Card' );
 
 	const { isSetAsPrimaryCardPending, setAsPrimaryCard } = useSetAsPrimaryCard();
-	const {
-		isDeleteDialogVisible,
-		setIsDeleteDialogVisible,
-		closeDialog,
-		handleDelete,
-		isDeleteInProgress,
-	} = useDeleteCard( creditCard );
+	const { isDeleteDialogVisible, setIsDeleteDialogVisible, handleDelete, isDeleteInProgress } =
+		useDeleteCard( creditCard );
 
 	const dispatch = useDispatch();
 	const cardActions = [
@@ -119,11 +114,12 @@ export default function StoredCreditCard( {
 					<PaymentLogo brand={ cardBrand } isSummary={ true } />
 				</div>
 			</div>
+
 			{ isDeleteDialogVisible && (
 				<StoredCreditCardDeleteDialog
 					paymentMethod={ creditCard }
 					isVisible={ true }
-					onClose={ closeDialog }
+					onClose={ () => setIsDeleteDialogVisible( false ) }
 					onConfirm={ handleDelete }
 				/>
 			) }

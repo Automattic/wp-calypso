@@ -1,7 +1,7 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import useStoredCards from '../hooks/use-stored-cards';
 import DeletePrimaryCardConfirmation from './delete-primary-confirmation';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { FunctionComponent } from 'react';
@@ -23,10 +23,7 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const { data: recentCards, isFetching: isFetchingRecentPaymentMethods } =
-		useRecentPaymentMethodsQuery( {
-			enabled: paymentMethod.is_default,
-		} );
+	const { allStoredCards, isFetching } = useStoredCards();
 
 	return (
 		<Dialog
@@ -38,7 +35,7 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 					{ translate( 'Go back' ) }
 				</Button>,
 
-				<Button disabled={ isFetchingRecentPaymentMethods } onClick={ onConfirm } primary scary>
+				<Button disabled={ isFetching } onClick={ onConfirm } primary scary>
 					{ translate( 'Delete payment method' ) }
 				</Button>,
 			] }
@@ -68,10 +65,11 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 			{ paymentMethod.is_default && (
 				<DeletePrimaryCardConfirmation
 					card={ paymentMethod.card }
-					altCard={ ( recentCards?.items || [] ).find(
-						( card: PaymentMethod ) => card.id !== paymentMethod.id
-					) }
-					isFetching={ isFetchingRecentPaymentMethods }
+					altCard={
+						( allStoredCards || [] ).find( ( card: PaymentMethod ) => card.id !== paymentMethod.id )
+							?.card
+					}
+					isFetching={ isFetching }
 				/>
 			) }
 		</Dialog>

@@ -1,9 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
-import useSetAsPrimaryCardMutation from 'calypso/state/partner-portal/stored-cards/hooks/use-set-as-primary-card-mutation';
 import type { SetAsPrimaryCardProps } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 const NOTIFICATION_DURATION = 3000;
@@ -15,18 +13,29 @@ export function useSetAsPrimaryCard(): {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const { mutate, isPending, isSuccess, isError } = useSetAsPrimaryCardMutation( {
-		retry: false,
-	} );
+	// FIXME: Need to remove this with actual API call.
+	const [ isSuccess, setIsSuccess ] = useState( false );
+	const [ isPending, setIsPending ] = useState( false );
+	const [ isError, setIsError ] = useState( false );
+	const setAsPrimaryCard = ( { paymentMethodId }: SetAsPrimaryCardProps ) => {
+		setIsPending( true );
+		setIsError( false );
+		setIsSuccess( false );
+		setTimeout( () => {
+			setIsPending( false );
+
+			if ( paymentMethodId === '2' ) {
+				setIsSuccess( true );
+			} else {
+				setIsError( true );
+			}
+		}, 1000 );
+	};
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			dispatch(
-				fetchStoredCards( {
-					startingAfter: '',
-					endingBefore: '',
-				} )
-			);
+			// FIXME: Need to refetch cards
+
 			dispatch(
 				successNotice( translate( 'Card set as primary.' ), {
 					duration: NOTIFICATION_DURATION,
@@ -48,7 +57,7 @@ export function useSetAsPrimaryCard(): {
 	}, [ dispatch, isError, translate ] );
 
 	return {
-		setAsPrimaryCard: mutate,
+		setAsPrimaryCard,
 		isSetAsPrimaryCardPending: isPending,
 	};
 }
