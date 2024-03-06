@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import debugFactory from 'debug';
 import wpcom from 'calypso/lib/wp';
 import type {
 	RawCachedDomainContactDetails,
@@ -7,14 +8,18 @@ import type {
 	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
 
+const debug = debugFactory( 'calypso:user-cached-contact-details' );
+
 async function fetchCachedContactDetails(): Promise< PossiblyCompleteDomainContactDetails > {
 	const rawData: RawCachedDomainContactDetails = await wpcom.req.get(
 		'/me/domain-contact-information'
 	);
+	debug( 'fetched cached contact details', rawData );
 	return convertSnakeCaseContactDetailsToCamelCase( rawData );
 }
 
 async function setCachedContactDetails( rawData: DomainContactValidationRequest ): Promise< void > {
+	debug( 'updating cached contact details to', rawData );
 	wpcom.req.post( '/me/domain-contact-information', rawData );
 }
 
@@ -76,6 +81,10 @@ export function useCachedContactDetails( {
 		queryKey: cachedContactDetailsQueryKey,
 		queryFn: fetchCachedContactDetails,
 		enabled: ! isLoggedOut,
+		meta: {
+			persist: false,
+		},
+		refetchOnWindowFocus: false,
 	} );
 	return result.data ?? null;
 }
