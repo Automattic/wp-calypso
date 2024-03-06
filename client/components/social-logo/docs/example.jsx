@@ -40,6 +40,7 @@ const logos = [
 	'squarespace',
 	'stumbleupon',
 	'telegram',
+	'threads',
 	'tumblr',
 	'tumblr-alt',
 	'twitch',
