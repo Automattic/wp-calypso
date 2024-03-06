@@ -11,7 +11,7 @@ import {
 import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
@@ -37,7 +37,7 @@ export const ScheduleList = ( props: Props ) => {
 		isLoading,
 		isFetched,
 		refetch,
-	} = useScheduleUpdatesQuery( siteSlug );
+	} = useUpdateScheduleQuery( siteSlug );
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );

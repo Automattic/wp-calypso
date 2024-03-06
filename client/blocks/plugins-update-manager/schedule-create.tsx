@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { ScheduleForm } from './schedule-form';
 
@@ -18,7 +18,7 @@ interface Props {
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const { onNavBack } = props;
-	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
 
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },

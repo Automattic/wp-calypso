@@ -20,7 +20,7 @@ import {
 	useEditUpdateScheduleMutation,
 } from 'calypso/data/plugins/use-update-schedules-mutation';
 import {
-	useScheduleUpdatesQuery,
+	useUpdateScheduleQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { SiteSlug } from 'calypso/types';
@@ -59,7 +59,7 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true );
-	const { data: schedulesData = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),

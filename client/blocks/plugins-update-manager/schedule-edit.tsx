@@ -8,7 +8,7 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -20,7 +20,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 
 	const { scheduleId, onNavBack } = props;
-	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
 	const mutationState = useMutationState( {
