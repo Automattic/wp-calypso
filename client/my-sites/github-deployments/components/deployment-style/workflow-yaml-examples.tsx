@@ -91,7 +91,7 @@ jobs:
 `.trim();
 };
 
-export const CodePushExample = ( branch: string ) => {
+export const codePushExample = ( branch: string ) => {
 	return `
 on:
   push:
@@ -101,7 +101,7 @@ on:
 `.trim();
 };
 
-export const UploadArtifactExample = () => {
+export const uploadArtifactExample = () => {
 	// It's important to keep the indentation the same way we expect to see it in the final file
 	return `
 - name: Upload the artifact
