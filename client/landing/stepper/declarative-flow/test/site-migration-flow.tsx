@@ -98,5 +98,17 @@ describe( 'Site Migration Flow', () => {
 				state: null,
 			} );
 		} );
+
+		it( 'redirects the user to the goal step when going back from the identify step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/goals?siteSlug=example.wordpress.com'
+			);
+		} );
 	} );
 } );
