@@ -80,9 +80,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 				{ run && (
 					<DeploymentStatus
 						status={ run.status as DeploymentStatusValue }
-						onStatusClick={ () => {
-							page( viewDeploymentLogs( siteSlug!, deployment.id ) );
-						} }
+						href={ viewDeploymentLogs( siteSlug!, deployment.id ) }
 					/>
 				) }
 			</td>
