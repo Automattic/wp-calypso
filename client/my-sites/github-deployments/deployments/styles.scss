@@ -136,6 +136,7 @@
 	gap: 4px;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 12px;
+	cursor: pointer;
 
 	&__pending,
 	&__queued {

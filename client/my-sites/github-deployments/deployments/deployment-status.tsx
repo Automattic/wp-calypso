@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 
 export const DeployStatus = {
@@ -15,6 +16,7 @@ export type DeploymentStatusValue = ValueOf< typeof DeployStatus >;
 
 interface DeploymentStatusProps {
 	status: DeploymentStatusValue;
+	onStatusClick?: () => void;
 }
 
 function getText( status: DeploymentStatusValue ) {
@@ -36,10 +38,15 @@ function getText( status: DeploymentStatusValue ) {
 	}
 }
 
-export const DeploymentStatus = ( { status }: DeploymentStatusProps ) => {
+export const DeploymentStatus = ( { status, onStatusClick }: DeploymentStatusProps ) => {
 	return (
-		<div className={ `github-deployments-status github-deployments-status__${ status }` }>
+		<Button
+			plain
+			compact
+			className={ `github-deployments-status github-deployments-status__${ status }` }
+			onClick={ onStatusClick }
+		>
 			<span>{ getText( status ) }</span>
-		</div>
+		</Button>
 	);
 };
