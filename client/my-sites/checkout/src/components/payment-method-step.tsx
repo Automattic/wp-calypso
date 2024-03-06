@@ -30,14 +30,6 @@ const CheckoutTermsWrapper = styled.div`
 		padding-left: 0;
 	}
 
-	& > div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 0;
-	}
-
 	a {
 		text-decoration: underline;
 	}
