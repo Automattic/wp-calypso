@@ -24,7 +24,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
 	const mutationState = useMutationState( {
-		filters: { mutationKey: [ 'edit-schedule-updates', siteSlug ] },
+		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ] },
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
