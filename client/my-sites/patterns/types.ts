@@ -11,12 +11,20 @@ export type RouterContext = Context & {
 
 export type { Pattern };
 
-export type Category = {
+type CategoryBase = {
 	name: string;
 	title: string;
 	description: string;
-	pattern_count: number;
+};
+
+export type CategorySnakeCase = CategoryBase & {
 	page_pattern_count: number;
+	regular_cattern_count: number;
+};
+
+export type Category = CategoryBase & {
+	pagePatternCount: number;
+	regularPatternCount: number;
 };
 
 export type PatternGalleryProps = {

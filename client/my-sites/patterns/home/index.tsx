@@ -55,11 +55,12 @@ export const PatternsHomePage = ( {
 					list={ categories?.map( ( category ) => ( {
 						name: category.name,
 						title: category.title,
-						number: category.pattern_count,
+						number: category.regularPatternCount,
 						image: ImgPattern,
 						link: `/patterns/${ category.name }`,
 					} ) ) }
 				/>
+
 				<PatternGallery patterns={ patterns } isGridView={ isGridView } />
 
 				<PatternsSection
@@ -116,11 +117,11 @@ export const PatternsHomePage = ( {
 					description="Entire pages built of patterns, ready to be added to your site."
 					columnCount={ 3 }
 					list={ categories
-						?.filter( ( { page_pattern_count } ) => page_pattern_count )
+						?.filter( ( { pagePatternCount } ) => pagePatternCount )
 						.map( ( category ) => ( {
 							name: category.name,
-							label: category.title,
-							number: category.page_pattern_count,
+							title: category.title,
+							number: category.pagePatternCount,
 							image: ImgLayout,
 							link: `/patterns/${ category.name }`,
 						} ) ) }

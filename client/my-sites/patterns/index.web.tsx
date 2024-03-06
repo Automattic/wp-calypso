@@ -10,7 +10,7 @@ import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/patte
 import { PatternsHomePage } from 'calypso/my-sites/patterns/home';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
-import type { RouterContext, RouterNext, Category } from 'calypso/my-sites/patterns/types';
+import type { RouterContext, RouterNext } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
@@ -30,16 +30,15 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 	const { queryClient, lang, params, store } = context;
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
-	// Always fetch list of categories
 	queryClient
-		.fetchQuery< Category[] >( getPatternCategoriesQueryOptions( locale ) )
+		.fetchQuery( getPatternCategoriesQueryOptions( locale ) )
 		.then( ( categories ) => {
-			// Fetch patterns only if the user is requesting a category page
 			if ( params.category ) {
 				const categoryNames = categories.map( ( category ) => category.name );
 
 				if ( ! categoryNames.includes( params.category ) ) {
-					return notFound( context, next );
+					notFound( context, next );
+					return;
 				}
 			}
 

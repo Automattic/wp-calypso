@@ -7,7 +7,7 @@ import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hook
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { RouterContext, RouterNext, Category, Pattern } from 'calypso/my-sites/patterns/types';
+import type { RouterContext, RouterNext, Pattern } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
@@ -21,7 +21,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	next();
 }
 
-function fetchPatterns( context: RouterContext, next: RouterNext ) {
+function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) {
 	const { cachedMarkup, queryClient, lang, params, store } = context;
 
 	if ( cachedMarkup ) {
@@ -31,15 +31,14 @@ function fetchPatterns( context: RouterContext, next: RouterNext ) {
 
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
-	// Always fetch list of categories
+	// Fetches the list of categories first, then fetches patterns if a specific category was requested
 	queryClient
-		.fetchQuery< Category[] >(
+		.fetchQuery(
 			getPatternCategoriesQueryOptions( locale, {
 				staleTime: 10 * 60 * 1000,
 			} )
 		)
 		.then( ( categories ) => {
-			// Fetch patterns only if the user is requesting a category page
 			if ( ! params.category ) {
 				return;
 			}
@@ -73,7 +72,7 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 		ssrSetupLocale,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
-		fetchPatterns,
+		fetchCategoriesAndPatterns,
 		renderPatterns,
 		makeLayout
 	);
