@@ -18,7 +18,7 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
-	describe( 'navigation', () => {
+	describe( 'submit', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
@@ -81,6 +81,21 @@ describe( 'Site Migration Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: '/site-migration-upgrade-plan',
 				state: { siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+	} );
+
+	describe( 'goBack', () => {
+		it( 'backs to the indentify step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: '/site-migration-identify',
+				state: null,
 			} );
 		} );
 	} );

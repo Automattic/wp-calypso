@@ -234,7 +234,12 @@ const siteMigration: Flow = {
 			}
 		}
 
-		return { submit, exitFlow };
+		const goBack = () => {
+			navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+			// NA
+		};
+
+		return { goBack, submit, exitFlow };
 	},
 };
 
