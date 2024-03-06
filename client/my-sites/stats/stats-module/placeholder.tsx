@@ -3,7 +3,15 @@ import classNames from 'classnames';
 
 import './placeholder.scss';
 
-const StatsModulePlaceholder = ( { className, isLoading } ) => {
+interface StatsModulePlaceholderProps {
+	className?: string;
+	isLoading: boolean;
+}
+
+const StatsModulePlaceholder: React.FC< StatsModulePlaceholderProps > = ( {
+	className,
+	isLoading,
+} ) => {
 	if ( ! isLoading ) {
 		return null;
 	}
