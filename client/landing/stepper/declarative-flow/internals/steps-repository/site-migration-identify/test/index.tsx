@@ -100,4 +100,28 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.getByText( /Please enter a valid website / ) ).toBeVisible()
 		);
 	} );
+
+	it( 'sets the input value to the site url when the "from"param is set', () => {
+		render( {}, { initialEntry: '/some-path?from=existent-site.com' } );
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'existent-site.com' );
+	} );
+
+	it( 'sends again the same value set on the url', async () => {
+		const submit = jest.fn();
+		render(
+			{ navigation: { submit } },
+			{ initialEntry: '/some-path?from=https://existent-site.com' }
+		);
+
+		mockApi()
+			.get( '/wpcom/v2/imports/analyze-url' )
+			.query( { site_url: 'https://existent-site.com' } )
+			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await waitFor( () =>
+			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { platform: 'unknown' } ) )
+		);
+	} );
 } );

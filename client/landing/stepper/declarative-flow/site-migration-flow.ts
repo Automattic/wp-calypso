@@ -235,8 +235,11 @@ const siteMigration: Flow = {
 		}
 
 		const goBack = () => {
-			navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
-			// NA
+			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug:
+					navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+					break;
+			}
 		};
 
 		return { goBack, submit, exitFlow };
