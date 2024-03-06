@@ -4,7 +4,6 @@ import {
 	isMonthlyProduct,
 	isBiennially,
 	isTriennially,
-	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -41,6 +40,7 @@ import {
 	hasDIFMProduct,
 	has100YearPlan as cartHas100YearPlan,
 	ObjectWithProducts,
+	hasPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -55,11 +55,13 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout'
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
@@ -250,10 +252,30 @@ function CheckoutSidebarNudge( {
 		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
 		[ responseCart ]
 	);
-	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+
+	const domainWithoutPlanInCartOrSite =
+		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
 
 	if ( isWcMobile ) {
 		return null;
+	}
+
+	if ( isDIFMInCart ) {
+		return (
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutNextSteps responseCart={ responseCart } />
+
+				{ shouldUseCheckoutV2 && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ siteId }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						onChangeSelection={ changeSelection }
+					/>
+				) }
+			</CheckoutSidebarNudgeWrapper>
+		);
 	}
 
 	/**
@@ -263,13 +285,15 @@ function CheckoutSidebarNudge( {
 	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
 		return (
 			<CheckoutSidebarNudgeWrapper>
-				{ isDIFMInCart ? (
-					<CheckoutNextSteps responseCart={ responseCart } />
-				) : (
-					<>
-						<CheckoutSidebarPlanUpsell />
-						<JetpackAkismetCheckoutSidebarPlanUpsell />
-					</>
+				<CheckoutSidebarPlanUpsell />
+				<JetpackAkismetCheckoutSidebarPlanUpsell />
+				{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
+					<SecondaryCartPromotions
+						responseCart={ responseCart }
+						addItemToCart={ addItemToCart }
+						isCartPendingUpdate={ isCartPendingUpdate }
+						isPurchaseRenewal={ isPurchaseRenewal }
+					/>
 				) }
 				{ shouldUseCheckoutV2 && (
 					<CheckoutSummaryFeaturedList
@@ -279,15 +303,6 @@ function CheckoutSidebarNudge( {
 						onChangeSelection={ changeSelection }
 					/>
 				) }
-				{ isPurchaseRenewal ||
-					( ! plan && areThereDomainProductsInCart && (
-						<SecondaryCartPromotions
-							responseCart={ responseCart }
-							addItemToCart={ addItemToCart }
-							isCartPendingUpdate={ isCartPendingUpdate }
-							isPurchaseRenewal={ isPurchaseRenewal }
-						/>
-					) ) }
 			</CheckoutSidebarNudgeWrapper>
 		);
 	}
