@@ -1,8 +1,34 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints.scss";
 
-.is-section-patterns .layout__content {
-	padding: 0;
+.is-section-patterns {
+	.layout__content {
+		padding: 0;
+	}
+
+	.is-logged-in {
+		.lpc-header-nav-wrapper {
+			padding-top: 32px;
+		}
+	}
+
+	.has-no-sidebar {
+		.masterbar-menu {
+			.masterbar {
+				background: #1d2327;
+				border-bottom: 1px solid #1d2327;
+			}
+		}
+	}
+
+	.x-nav-link__logo svg path {
+		fill: var(--studio-white);
+	}
+
+	.x-nav-item,
+	.x-nav-link-chevron::before {
+		color: var(--studio-white);
+	}
 }
 
 .section-patterns-info {

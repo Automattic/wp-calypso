@@ -9,12 +9,12 @@ import './pattern-preview.scss';
 
 const DESKTOP_VIEWPORT_WIDTH = 1200;
 
-type Props = {
+type PatternPreviewProps = {
 	isGridView?: boolean;
 	pattern: Pattern;
 };
 
-export function PatternPreview( { isGridView, pattern }: Props ) {
+export function PatternPreview( { isGridView, pattern }: PatternPreviewProps ) {
 	const { renderedPatterns } = usePatternsRendererContext();
 	const patternId = encodePatternId( pattern.ID );
 	const renderedPattern = renderedPatterns[ patternId ];
