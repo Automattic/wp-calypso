@@ -614,6 +614,8 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 				.contact-support-button {
 					margin-bottom: 12px;
+					background: var(--color-surface);
+					border: 1.5px solid $studio-gray-10;
 				}
 				.cancel-campaign-button {
 					display: flex;
