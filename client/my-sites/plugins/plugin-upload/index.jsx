@@ -8,7 +8,6 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import EmptyContent from 'calypso/components/empty-content';
-import FeatureExample from 'calypso/components/feature-example';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -89,19 +88,19 @@ class PluginUpload extends Component {
 	};
 
 	renderUploadCard() {
-		const { inProgress, complete, isJetpack, isAtomic } = this.props;
+		const { inProgress, complete, isJetpack } = this.props;
 
 		const uploadAction = isJetpack
 			? this.props.uploadPlugin
 			: this.props.initiateAutomatedTransferWithPluginZip;
 
-		const WrapperComponent = ! isAtomic ? FeatureExample : Fragment;
+		const WrapperComponent = Fragment;
 
 		return (
 			<WrapperComponent>
 				<Card>
 					{ ! inProgress && ! complete && (
-						<UploadDropZone doUpload={ uploadAction } disabled={ ! isAtomic } />
+						<UploadDropZone doUpload={ uploadAction } disabled={ false } />
 					) }
 				</Card>
 			</WrapperComponent>
