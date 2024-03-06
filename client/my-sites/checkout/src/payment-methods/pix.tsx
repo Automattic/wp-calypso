@@ -1,5 +1,4 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -9,8 +8,7 @@ import {
 	STATE_SELECT_TEXT,
 } from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
-import useCartKey from '../../use-cart-key';
-import { useCachedContactDetails } from '../hooks/use-cached-contact-details';
+import { useCachedContactDetails } from '../hooks/use-cached-domain-contact-details';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 // We currently only show Pix for Brazil so we hard-code the country to avoid
@@ -94,10 +92,7 @@ function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 }
 
 function usePrefillState( state: PixPaymentMethodState ): void {
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	const isLoggedOut = responseCart.cart_key === 'no-user';
-	const contactDetails = useCachedContactDetails( { isLoggedOut } );
+	const contactDetails = useCachedContactDetails();
 	// Don't try to pre-fill if the form has been edited. (Also prevents
 	// infinite loops.)
 	if ( state.isTouched ) {

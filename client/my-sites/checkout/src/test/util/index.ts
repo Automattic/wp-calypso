@@ -1930,17 +1930,6 @@ export function mockCachedContactDetailsEndpoint( responseData ): void {
 		.reply( mockDomainContactResponse );
 }
 
-export function mockSetCachedContactDetailsEndpoint() {
-	const endpoint = jest.fn();
-	endpoint.mockReturnValue( true );
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/domain-contact-information', ( body ) => {
-			return endpoint( body );
-		} )
-		.reply( 200 );
-	return endpoint;
-}
-
 export function mockContactDetailsValidationEndpoint(
 	type: Exclude< ContactDetailsType, 'none' >,
 	responseData,

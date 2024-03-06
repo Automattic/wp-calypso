@@ -1,16 +1,15 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
-import { PureComponent, ReactNode } from 'react';
+import { localize } from 'i18n-calypso';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { DomainContactDetails } from '@automattic/shopping-cart';
-import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
-
-import './style.scss';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 
 const ciraAgreementUrl = 'https://www.cira.ca/en/resources/documents/about/registrant-agreement/';
 const defaultValues = {
@@ -19,29 +18,23 @@ const defaultValues = {
 	ciraAgreementAccepted: false,
 };
 
-export interface FormProps {
-	contactDetails: Record< string, unknown >;
-	ccTldDetails: Record< string, unknown >;
-	onContactDetailsChange?: ( payload: DomainContactDetails ) => void;
-	contactDetailsValidationErrors: DomainContactDetailsErrors;
-	isVisible?: boolean;
-	onSubmit?: () => void;
-}
+export class RegistrantExtraInfoCaForm extends PureComponent {
+	static propTypes = {
+		contactDetails: PropTypes.object.isRequired,
+		ccTldDetails: PropTypes.object.isRequired,
+		onContactDetailsChange: PropTypes.func,
+		contactDetailsValidationErrors: PropTypes.object,
+		userWpcomLang: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
+	};
 
-export interface FormReduxProps {
-	userWpcomLang: string;
-}
-
-export class RegistrantExtraInfoCaForm extends PureComponent<
-	FormProps & FormReduxProps & LocalizeProps
-> {
 	static defaultProps = {
 		userWpcomLang: 'EN',
 	};
 
-	legalTypeOptions: ReactNode[];
-
-	constructor( props: FormProps & FormReduxProps & LocalizeProps ) {
+	constructor( props ) {
 		super( props );
 		const { translate } = props;
 		const legalTypes = {
@@ -111,27 +104,34 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 			},
 		};
 
+		this.props.updateContactDetailsCache( payload );
 		this.props.onContactDetailsChange?.( payload );
 	}
 
-	handleChangeEvent = ( event: {
-		target: { id: string; value: string; checked: boolean; type: string };
-	} ) => {
+	handleChangeEvent = ( event ) => {
 		const { value, checked, type, id } = event.target;
-		const newContactDetails: DomainContactDetails = {};
+		const newContactDetails = {};
 
 		newContactDetails.extra = {
 			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
 		};
 
-		this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		this.props.updateContactDetailsCache( { ...newContactDetails } );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		}
 	};
 
 	getCiraAgreementAcceptedErrorMessage() {
-		return (
-			this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ??
-			this.props.translate( 'Required' )
-		);
+		if ( this.props.isManaged ) {
+			return (
+				this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ??
+				this.props.translate( 'Required' )
+			);
+		}
+
+		return this.props.translate( 'Required' );
 	}
 
 	render() {
@@ -156,7 +156,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 						id="legal-type"
 						value={ legalType }
 						className="registrant-extra-info__form-legal-type"
-						onChange={ this.handleChangeEvent as any }
+						onChange={ this.handleChangeEvent }
 					>
 						{ this.legalTypeOptions }
 					</FormSelect>
@@ -189,8 +189,24 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 	}
 }
 
-export default connect( ( state ) => {
-	return {
-		userWpcomLang: getCurrentUserLocale( state ),
-	};
-} )( localize( RegistrantExtraInfoCaForm ) );
+export default connect(
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component, except for userWpcomLang.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				userWpcomLang: getCurrentUserLocale( state ),
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			ccTldDetails: get( contactDetails, 'extra.ca', {} ),
+			userWpcomLang: getCurrentUserLocale( state ),
+		};
+	},
+	{ updateContactDetailsCache }
+)( localize( RegistrantExtraInfoCaForm ) );

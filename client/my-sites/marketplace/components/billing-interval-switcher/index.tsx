@@ -90,16 +90,15 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 					label={
 						<>
 							{ annualLabel }
-							<PluginAnnualSaving
-								plugin={ plugin }
-								renderContent={ ( annualSaving ) =>
+							<PluginAnnualSaving plugin={ plugin }>
+								{ ( annualSaving: { saving: string | null } ) =>
 									annualSaving.saving && (
 										<PluginAnnualSavingLabelMobile isSelected={ false }>
 											&nbsp;({ saveLabel } { annualSaving.saving })
 										</PluginAnnualSavingLabelMobile>
 									)
 								}
-							/>
+							</PluginAnnualSaving>
 						</>
 					}
 				/>
