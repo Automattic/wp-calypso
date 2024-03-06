@@ -9,6 +9,12 @@
 		margin-right: 8px;
 	}
 
+	&.bluesky {
+		.sharing-service__logo {
+			color: var(--color-bluesky);
+		}
+	}
+
 	&.facebook {
 		.sharing-service__logo {
 			color: var(--color-facebook);
@@ -307,6 +313,7 @@
 	}
 }
 
+@include sharing-service( "bluesky", var( --color-bluesky ) );
 @include sharing-service( "facebook", var( --color-facebook ) );
 @include sharing-service( "twitter", var( --color-twitter ) );
 @include sharing-service( "google_plus", var( --color-google-plus ) );
@@ -971,6 +978,7 @@
 	}
 }
 
+@include sharing-button-service( "bluesky", var( --color-bluesky ) );
 @include sharing-button-service( "facebook", var( --color-facebook ) );
 @include sharing-button-service( "twitter", var( --color-twitter ) );
 @include sharing-button-service( "press-this", var( --color-wordpress-com ) );

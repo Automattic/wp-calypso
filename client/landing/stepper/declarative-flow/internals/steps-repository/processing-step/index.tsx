@@ -2,6 +2,7 @@ import {
 	StepContainer,
 	isNewsletterOrLinkInBioFlow,
 	isFreeFlow,
+	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
@@ -34,7 +35,7 @@ interface ProcessingStepProps extends StepProps {
 
 const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const { submit } = props.navigation;
-	const { flow } = props;
+	const { flow, data } = props;
 
 	const { __ } = useI18n();
 	const loadingMessages = useProcessingLoadingMessages( flow );
@@ -108,6 +109,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				} );
 			}
 
+			if ( isNewSiteMigrationFlow( flow ) ) {
+				submit?.( { ...props.data }, ProcessingResult.SUCCESS );
+				return;
+			}
+
+			// Default processing handler.
 			submit?.( destinationState, ProcessingResult.SUCCESS );
 		}
 		// A change in submit() doesn't cause this effect to rerun.

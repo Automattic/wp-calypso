@@ -44,9 +44,8 @@ const DeploymentRunLog = ( { entry }: { entry: LogEntry } ) => {
 				{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
 				{ detail && (
 					<>
-						...
+						…{ ' ' }
 						<span className="show-more">
-							{ ' ' }
 							{ detailExpanded ? translate( 'show less' ) : translate( 'show more' ) }
 						</span>
 					</>

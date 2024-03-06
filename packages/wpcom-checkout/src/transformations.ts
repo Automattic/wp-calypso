@@ -36,6 +36,7 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	}
 	return {
 		id: 'coupon-line-item',
+		hasDeleteButton: ! responseCart.has_auto_renew_coupon_been_automatically_applied,
 		// translators: The label of the coupon line item in checkout, including the coupon code
 		label: String(
 			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )

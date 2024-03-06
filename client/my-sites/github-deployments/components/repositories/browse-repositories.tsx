@@ -47,7 +47,7 @@ export const GitHubBrowseRepositories = ( {
 		if ( ! installation ) {
 			return (
 				<Card css={ { display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 } }>
-					<span>{ __( 'Add a GitHub installation to import an existing repository.' ) }</span>
+					<span>{ __( 'Get started by adding a GitHub account.' ) }</span>
 				</Card>
 			);
 		}

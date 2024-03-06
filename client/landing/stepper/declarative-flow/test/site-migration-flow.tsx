@@ -62,7 +62,9 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: '/processing',
-				state: null,
+				state: {
+					bundleProcessing: true,
+				},
 			} );
 		} );
 

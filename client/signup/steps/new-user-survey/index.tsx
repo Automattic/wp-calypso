@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -23,7 +24,12 @@ import Shuffle, { getCheckBoxKey } from './components/Shuffle';
 const defaultFormState = {
 	survey_goals_blogging: null,
 	survey_goals_website_building: null,
+	/**
+	 * This option is not in use currently
+	 */
 	survey_goals_wordpress_hosting: null,
+	survey_goals_website_hosting: null,
+	survey_goals_migration: null,
 	survey_goals_custom_check: null,
 	survey_goals_custom_text: '',
 	survey_describe_yourself_creator: null,
@@ -74,8 +80,9 @@ function SurveyForm( props: Props ) {
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
 		'calypso_signup_onboarding_site_goals_survey'
 	);
+	const variantName = experimentAssignment?.variationName;
 	const isScrambled =
-		experimentAssignment?.variationName === 'treatment_scrambled' ||
+		variantName === 'treatment_scrambled' ||
 		config.isEnabled( 'onboarding/new-user-survey-scrambled' );
 
 	const [ formState, setFormState ] = useState< FormState >( defaultFormState );
@@ -84,6 +91,13 @@ function SurveyForm( props: Props ) {
 	const translate = useTranslate();
 	const isMobileViewport = useMobileBreakpoint();
 	const isDesktopViewport = useDesktopBreakpoint();
+
+	useEffect( () => {
+		if ( isExperimentLoading ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_signup_new_user_survey_view' );
+	}, [ isExperimentLoading ] );
 
 	if ( isExperimentLoading ) {
 		return null;
@@ -139,6 +153,7 @@ function SurveyForm( props: Props ) {
 				...formState,
 				survey_field_order_goals: orderGoals?.join( ', ' ),
 				survey_field_order_describe_yourself: orderDescribeYourself?.join( ', ' ),
+				survey_experiment_variant_name: variantName,
 			}
 		);
 		goToNextStep();
@@ -193,6 +208,11 @@ function SurveyForm( props: Props ) {
 										onChange={ handleChange }
 									/>
 									<span>{ translate( 'WordPress hosting' ) }</span>
+								</StyledLabel>
+
+								<StyledLabel>
+									<FormInputCheckbox name="survey_goals_migration" onChange={ handleChange } />
+									<span>{ translate( 'Migrating an existing WordPress site' ) }</span>
 								</StyledLabel>
 							</Shuffle>
 							<StyledLabel>
@@ -301,6 +321,7 @@ export default function NewUserSurvey( props: Props ) {
 
 	const handleSkip = () => {
 		const { stepName, goToNextStep, submitSignupStep } = props;
+		recordTracksEvent( 'calypso_signup_new_user_survey_skip_button_click' );
 		submitSignupStep( { stepName, wasSkipped: true } );
 		goToNextStep();
 	};

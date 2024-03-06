@@ -1,4 +1,4 @@
-import { DropdownMenu, Tooltip } from '@wordpress/components';
+import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
@@ -8,11 +8,12 @@ import { ellipsis } from './icons';
 
 interface Props {
 	siteSlug: string;
+	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, onRemoveClick } = props;
+	const { siteSlug, onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
@@ -35,7 +36,15 @@ export const ScheduleListTable = ( props: Props ) => {
 			<tbody>
 				{ schedules.map( ( schedule ) => (
 					<tr key={ schedule.id }>
-						<td className="name">{ schedule.hook }</td>
+						<td className="name">
+							<Button
+								className="schedule-name"
+								variant="link"
+								onClick={ () => onEditClick && onEditClick( schedule.id ) }
+							>
+								{ schedule.hook }
+							</Button>
+						</td>
 						<td></td>
 						<td>{ moment( schedule.timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }</td>
 						<td>
@@ -63,6 +72,10 @@ export const ScheduleListTable = ( props: Props ) => {
 							<DropdownMenu
 								popoverProps={ { position: 'bottom left' } }
 								controls={ [
+									{
+										title: 'Edit',
+										onClick: () => onEditClick( schedule.id ),
+									},
 									{
 										title: 'Remove',
 										onClick: () => onRemoveClick( schedule.id ),

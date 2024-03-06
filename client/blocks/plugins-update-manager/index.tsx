@@ -5,18 +5,21 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { MAX_SCHEDULES } from './config';
 import { ScheduleCreate } from './schedule-create';
+import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
 
 import './styles.scss';
 
 interface Props {
 	siteSlug: string;
-	context: 'list' | 'create';
+	context: 'list' | 'create' | 'edit';
+	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
+	onEditSchedule: ( id: string ) => void;
 }
 export const PluginsUpdateManager = ( props: Props ) => {
-	const { siteSlug, context, onNavBack, onCreateNewSchedule } = props;
+	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
@@ -39,14 +42,22 @@ export const PluginsUpdateManager = ( props: Props ) => {
 				) }
 			</NavigationHeader>
 
-			{ context === 'list' && (
-				<ScheduleList
-					siteSlug={ siteSlug }
-					onNavBack={ onNavBack }
-					onCreateNewSchedule={ onCreateNewSchedule }
-				/>
-			) }
-			{ context === 'create' && <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } /> }
+			{
+				{
+					list: (
+						<ScheduleList
+							siteSlug={ siteSlug }
+							onNavBack={ onNavBack }
+							onCreateNewSchedule={ onCreateNewSchedule }
+							onEditSchedule={ onEditSchedule }
+						/>
+					),
+					create: <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } />,
+					edit: (
+						<ScheduleEdit siteSlug={ siteSlug } scheduleId={ scheduleId } onNavBack={ onNavBack } />
+					),
+				}[ context ]
+			}
 		</MainComponent>
 	);
 };

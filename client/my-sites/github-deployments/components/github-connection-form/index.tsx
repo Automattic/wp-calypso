@@ -4,8 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, useMemo, useRef, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import Notice from 'calypso/components/notice';
 import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
@@ -13,6 +12,7 @@ import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { AutomatedDeploymentsToggle } from '../automated-deployments-toggle';
 import { DeploymentStyle } from '../deployment-style';
 import { useCheckWorkflowQuery } from '../deployment-style/use-check-workflow-query';
+import { TargetDirInput } from '../target-dir-input';
 
 import './style.scss';
 
@@ -34,8 +34,8 @@ interface InitialValues {
 
 interface GitHubConnectionFormProps {
 	repository: GitHubRepositoryData;
+	deploymentId?: number;
 	installation: GitHubInstallationData;
-	ctaLabel: string;
 	initialValues?: InitialValues;
 	changeRepository?(): void;
 	onSubmit( deploymentData: CodeDeploymentData ): Promise< unknown >;
@@ -43,8 +43,8 @@ interface GitHubConnectionFormProps {
 
 export const GitHubConnectionForm = ( {
 	repository,
+	deploymentId,
 	installation,
-	ctaLabel,
 	initialValues = {
 		branch: repository.default_branch,
 		destPath: '/',
@@ -134,6 +134,15 @@ export const GitHubConnectionForm = ( {
 			} }
 		>
 			<div className="github-deployments-connect-repository__configs">
+				{ deploymentId && (
+					<div css={ { marginBottom: '16px' } }>
+						<Notice isCompact>
+							{ __(
+								'Changes to an existing connection will be applied in the next deployment run.'
+							) }
+						</Notice>
+					</div>
+				) }
 				<FormFieldset>
 					<FormLabel>{ __( 'Repository' ) }</FormLabel>
 					<div className="github-deployments-connect-repository__repository">
@@ -167,29 +176,14 @@ export const GitHubConnectionForm = ( {
 						{ isFetchingBranches && <Spinner /> }
 					</div>
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="target">{ __( 'Destination directory' ) }</FormLabel>
-					<FormTextInput
-						id="target"
-						value={ destPath }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							let targetDir = event.currentTarget.value.trim();
-							targetDir = targetDir.startsWith( '/' ) ? targetDir : `/${ targetDir }`;
-
-							setDestPath( targetDir );
-						} }
-					/>
-					<FormSettingExplanation>
-						{ __( 'This path is relative to the server root' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				<TargetDirInput onChange={ setDestPath } value={ destPath } />
 				<AutomatedDeploymentsToggle
 					onChange={ setIsAutoDeploy }
 					value={ isAutoDeploy }
 					hasWorkflowPath={ !! workflowPath }
 				/>
 				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
-					{ ctaLabel }
+					{ deploymentId ? __( 'Update connection' ) : __( 'Connect repository' ) }
 				</Button>
 			</div>
 			<DeploymentStyle

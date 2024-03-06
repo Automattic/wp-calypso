@@ -1,6 +1,13 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { purchasesContext, licensesContext, billingContext, invoicesContext } from './controller';
+import {
+	purchasesContext,
+	licensesContext,
+	billingContext,
+	invoicesContext,
+	paymentMethodsContext,
+	paymentMethodsAddContext,
+} from './controller';
 
 export default function () {
 	// FIXME: check access, TOS consent, and partner key selection
@@ -20,6 +27,10 @@ export default function () {
 
 	// Billing
 	page( '/purchases/billing', billingContext, makeLayout, clientRender );
+
+	// Payment Methods
+	page( '/purchases/payment-methods', paymentMethodsContext, makeLayout, clientRender );
+	page( '/purchases/payment-methods/add', paymentMethodsAddContext, makeLayout, clientRender );
 
 	// Invoices
 	page( '/purchases/invoices', invoicesContext, makeLayout, clientRender );

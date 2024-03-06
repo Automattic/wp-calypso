@@ -1,3 +1,5 @@
+export const DEFAULT_HOUR = 9;
+
 export const DAILY_OPTION = {
 	label: 'Daily',
 	value: 'daily',
