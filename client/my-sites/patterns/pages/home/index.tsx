@@ -1,31 +1,69 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsGridGallery } from 'calypso/my-sites/patterns/components/grid-gallery';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
 import ImgLayout from './images/layout.svg';
 import ImgPattern from './images/pattern.svg';
 import ImgResponsive from './images/responsive.svg';
 import ImgStyle from './images/style.svg';
+import type { Pattern, PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-export const PatternsHomePage = () => {
+function filterPatternsByQuery( patterns: Pattern[], searchTerm: string ) {
+	if ( ! searchTerm ) {
+		return [];
+	}
+
+	return patterns.filter( ( pattern ) => {
+		const lowercaseSearch = searchTerm.toLowerCase();
+		const patternCategories = Object.values( pattern.categories ).map(
+			( category ) => category?.title
+		);
+		const fields = [ pattern.title, pattern.description, ...patternCategories ].filter(
+			( x ): x is NonNullable< typeof x > => Boolean( x )
+		);
+
+		return fields.some( ( field ) => field.toLowerCase().includes( lowercaseSearch ) );
+	} );
+}
+
+type PatternsHomePageProps = {
+	isGridView?: boolean;
+	patternGallery: PatternGalleryFC;
+};
+
+export const PatternsHomePage = ( {
+	isGridView,
+	patternGallery: PatternGallery,
+}: PatternsHomePageProps ) => {
 	const locale = useLocale();
+	const [ searchTerm, setSearchTerm ] = useState( '' );
 
 	const { data: categories } = usePatternCategories( locale );
+	const { data: patterns = [] } = usePatterns( locale, '', {
+		enabled: Boolean( searchTerm ),
+	} );
+
+	const patternSearchResults = filterPatternsByQuery( patterns, searchTerm );
 
 	return (
 		<>
 			<DocumentHead title="WordPress Patterns- Home" />
 
 			<PatternsHeader
-				title="Build your perfect site with patterns"
 				description="Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes."
+				onSearch={ ( query ) => {
+					setSearchTerm( query );
+				} }
+				title="Build your perfect site with patterns"
 			/>
 
 			<PatternsGridGallery
@@ -39,6 +77,10 @@ export const PatternsHomePage = () => {
 					link: `/patterns/${ category.name }`,
 				} ) ) }
 			/>
+
+			{ searchTerm && (
+				<PatternGallery patterns={ patternSearchResults } isGridView={ isGridView } />
+			) }
 
 			<PatternsSection
 				title="Copy. Paste. Customize."

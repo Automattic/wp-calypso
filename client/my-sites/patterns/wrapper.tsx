@@ -27,7 +27,7 @@ export const PatternsWrapper = ( {
 
 			<Main isLoggedOut fullWidthLayout>
 				{ ! category ? (
-					<PatternsHomePage />
+					<PatternsHomePage isGridView={ isGridView } patternGallery={ PatternGallery } />
 				) : (
 					<PatternsCategoryPage
 						category={ category }
