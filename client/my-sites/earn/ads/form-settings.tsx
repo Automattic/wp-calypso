@@ -169,6 +169,7 @@ const AdsFormSettings = () => {
 			<FormFieldset>
 				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="yes"
@@ -180,6 +181,7 @@ const AdsFormSettings = () => {
 				</FormLabel>
 
 				<FormLabel>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="no"
@@ -191,6 +193,7 @@ const AdsFormSettings = () => {
 				</FormLabel>
 
 				<FormLabel>
+					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="pause"

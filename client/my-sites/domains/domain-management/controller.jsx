@@ -63,6 +63,7 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
+				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -79,6 +80,7 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
+				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -95,6 +97,7 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
+				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -111,6 +114,7 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
+				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList

@@ -27,7 +27,6 @@ import {
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockUserSignupValidationEndpoint,
-	mockSetCachedContactDetailsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -78,7 +77,6 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockMatchMediaOnWindow();
 		mockGetVatInfoEndpoint( {} );
-		mockSetCachedContactDetailsEndpoint();
 	} );
 
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
@@ -543,7 +541,6 @@ describe( 'Checkout contact step VAT form', () => {
 		expect( await screen.findByLabelText( 'Address for VAT' ) ).toHaveValue( vatAddress );
 
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		mockSetCachedContactDetailsEndpoint();
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 
 		// Submit the form.
