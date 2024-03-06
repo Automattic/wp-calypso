@@ -4,7 +4,18 @@ import wpcomRequest from 'wpcom-proxy-request';
 import type { ScheduleUpdates } from './use-update-schedules-query';
 import type { SiteSlug } from 'calypso/types';
 
+export type CreateRequestParams = {
+	hook: string;
+	plugins: string[];
+	schedule: {
+		interval: 'daily' | 'weekly';
+		timestamp: number;
+	};
+};
+
 export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+	const queryClient = useQueryClient();
+
 	const mutation = useMutation( {
 		mutationKey: [ 'create-update-schedule', siteSlug ],
 		mutationFn: ( params: object ) =>
@@ -14,11 +25,40 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 				method: 'POST',
 				body: params,
 			} ),
+		onMutate: ( params: CreateRequestParams ) => {
+			// Optimistically update the cache
+			const prevSchedules: ScheduleUpdates[] =
+				queryClient.getQueryData( [ 'schedule-updates', siteSlug ] ) || [];
+
+			const newSchedules = [
+				...prevSchedules,
+				{
+					id: 'temp-id',
+					hook: params.hook,
+					args: params.plugins,
+					timestamp: params.schedule.timestamp,
+					schedule: params.schedule.interval,
+					interval: params.schedule.timestamp,
+				},
+			];
+
+			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], newSchedules );
+			return { prevSchedules };
+		},
+		onError: ( err, params, context ) =>
+			// Set previous value on error
+			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], context?.prevSchedules ),
+		onSettled: () =>
+			// Re-fetch after error or success
+			queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } ),
 		...queryOptions,
 	} );
 
 	const { mutate } = mutation;
-	const createUpdateSchedule = useCallback( ( params: object ) => mutate( params ), [ mutate ] );
+	const createUpdateSchedule = useCallback(
+		( params: CreateRequestParams ) => mutate( params ),
+		[ mutate ]
+	);
 
 	return { createUpdateSchedule, ...mutation };
 }
