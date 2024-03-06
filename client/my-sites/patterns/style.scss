@@ -10,6 +10,12 @@
 		}
 	}
 
+	.layout__primary {
+		.main {
+			padding-bottom: 0;
+		}
+	}
+
 	.is-logged-in {
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;
