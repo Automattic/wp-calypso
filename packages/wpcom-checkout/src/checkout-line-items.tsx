@@ -17,7 +17,6 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 	isAkismetProduct,
-	isGoogleWorkspace,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
 import {
@@ -1024,14 +1023,6 @@ function LineItemMetaInfo( { product }: { product: ResponseCartProduct } ) {
 		return translate( '%(quantity)s GB extra space', {
 			args: { quantity: spaceQuantity },
 		} );
-	}
-
-	if ( isGoogleWorkspace( product ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
-		return translate( 'Mailboxes and Productivity Tools' );
-	}
-
-	if ( isTitanMail( product ) ) {
-		return translate( 'Mailboxes' );
 	}
 }
 

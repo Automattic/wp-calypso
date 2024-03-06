@@ -1113,7 +1113,7 @@ const WPCheckoutSidebarContent = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
-		padding: 144px 24px 0 64px;
+		padding: 144px 24px 144px 64px;
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
