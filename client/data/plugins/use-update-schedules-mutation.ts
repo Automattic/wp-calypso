@@ -64,6 +64,8 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 }
 
 export function useEditUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+	const queryClient = useQueryClient();
+
 	const mutation = useMutation( {
 		mutationKey: [ 'edit-update-schedule', siteSlug ],
 		mutationFn: ( obj: { id: string; params: object } ) => {
@@ -76,6 +78,37 @@ export function useEditUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions 
 				body: params,
 			} );
 		},
+		onMutate: ( props ) => {
+			const id = props.id;
+			const params = props.params as CreateRequestParams;
+
+			const prevSchedules: ScheduleUpdates[] =
+				queryClient.getQueryData( [ 'schedule-updates', siteSlug ] ) || [];
+			const scheduleIndex = prevSchedules.findIndex( ( x ) => x.id === id );
+
+			// Replace schedule with new data without mutating the original array
+			const newSchedules = [
+				...prevSchedules.slice( 0, scheduleIndex ),
+				{
+					...prevSchedules[ scheduleIndex ],
+					hook: params.hook,
+					args: params.plugins,
+					timestamp: params.schedule.timestamp,
+					schedule: params.schedule.interval,
+					interval: params.schedule.timestamp,
+				},
+				...prevSchedules.slice( scheduleIndex + 1 ),
+			];
+
+			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], newSchedules );
+			return { prevSchedules };
+		},
+		onError: ( err, params, context ) =>
+			// Set previous value on error
+			queryClient.setQueryData( [ 'schedule-updates', siteSlug ], context?.prevSchedules ),
+		onSettled: () =>
+			// Re-fetch after error or success
+			queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } ),
 		...queryOptions,
 	} );
 
