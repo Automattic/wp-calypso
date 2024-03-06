@@ -3,7 +3,6 @@ import SupportArticleHeader from 'calypso/blocks/support-article-dialog/header';
 import EmbedContainer from 'calypso/components/embed-container';
 import Placeholders from './placeholder-lines';
 
-// import './style.scss';
 import './help-center-article-content.scss';
 
 interface ArticleContentProps {
