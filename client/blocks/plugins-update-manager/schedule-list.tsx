@@ -22,7 +22,7 @@ interface Props {
 	siteSlug: SiteSlug;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
-	onEditSchedule?: ( id: string ) => void;
+	onEditSchedule: ( id: string ) => void;
 }
 export const ScheduleList = ( props: Props ) => {
 	const isMobile = useMobileBreakpoint();
