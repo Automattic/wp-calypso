@@ -13,13 +13,12 @@ import { useState } from 'react';
 import { useDeleteScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { MAX_SCHEDULES } from './config';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListTable } from './schedule-list-table';
-import type { SiteSlug } from 'calypso/types';
 
 interface Props {
-	siteSlug: SiteSlug;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
@@ -27,7 +26,9 @@ interface Props {
 export const ScheduleList = ( props: Props ) => {
 	const isMobile = useMobileBreakpoint();
 
-	const { siteSlug, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
+	const siteSlug = useSiteSlug();
+
+	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
@@ -86,13 +87,11 @@ export const ScheduleList = ( props: Props ) => {
 						<>
 							{ isMobile ? (
 								<ScheduleListCards
-									siteSlug={ siteSlug }
 									onRemoveClick={ openRemoveDialog }
 									onEditClick={ onEditSchedule }
 								/>
 							) : (
 								<ScheduleListTable
-									siteSlug={ siteSlug }
 									onRemoveClick={ openRemoveDialog }
 									onEditClick={ onEditSchedule }
 								/>

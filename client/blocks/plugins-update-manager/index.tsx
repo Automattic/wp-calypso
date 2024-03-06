@@ -5,6 +5,7 @@ import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { MAX_SCHEDULES } from './config';
+import { PluginUpdateManagerContextProvider } from './context';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
@@ -28,7 +29,6 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		list: {
 			component: (
 				<ScheduleList
-					siteSlug={ siteSlug }
 					onNavBack={ onNavBack }
 					onCreateNewSchedule={ onCreateNewSchedule }
 					onEditSchedule={ onEditSchedule }
@@ -37,39 +37,41 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			title: 'List schedules',
 		},
 		create: {
-			component: <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } />,
+			component: <ScheduleCreate onNavBack={ onNavBack } />,
 			title: 'Create a new schedule',
 		},
 		edit: {
 			component: (
-				<ScheduleEdit siteSlug={ siteSlug } scheduleId={ scheduleId } onNavBack={ onNavBack } />
+				<ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />
 			),
 			title: 'Edit schedule',
 		},
 	}[ context ];
 
 	return (
-		<MainComponent wideLayout>
+		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
 			<DocumentHead title={ title } />
 
-			<NavigationHeader
-				navigationItems={ [] }
-				title="Plugin updates manager"
-				subtitle="Effortlessly schedule plugin auto-updates with built-in rollback logic."
-			>
-				{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (
-					<Button
-						__next40pxDefaultSize
-						icon={ plus }
-						variant="primary"
-						onClick={ onCreateNewSchedule }
-					>
-						Create a new schedule
-					</Button>
-				) }
-			</NavigationHeader>
+			<MainComponent wideLayout>
+				<NavigationHeader
+					navigationItems={ [] }
+					title="Plugin updates manager"
+					subtitle="Effortlessly schedule plugin auto-updates with built-in rollback logic."
+				>
+					{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (
+						<Button
+							__next40pxDefaultSize
+							icon={ plus }
+							variant="primary"
+							onClick={ onCreateNewSchedule }
+						>
+							Create a new schedule
+						</Button>
+					) }
+				</NavigationHeader>
+				{ component }
 
-			{ component }
-		</MainComponent>
+			</MainComponent>
+		</PluginUpdateManagerContextProvider>
 	);
 };
