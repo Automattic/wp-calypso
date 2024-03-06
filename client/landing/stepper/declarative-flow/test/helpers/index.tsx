@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
 import themeReducer from 'calypso/state/themes/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
-import type { Flow } from '../../internals/types';
+import type { Flow, ProvidedDependencies } from '../../internals/types';
 
 export const getFlowLocation = () => {
 	return {
@@ -15,17 +15,28 @@ export const getFlowLocation = () => {
 	};
 };
 
+interface RenderFlowParams {
+	currentStep: string;
+	dependencies: ProvidedDependencies;
+	currentURL: string;
+	method: 'submit' | 'goBack';
+}
 /** Utility to render a flow for testing purposes */
 export const renderFlow = ( flow: Flow ) => {
-	const FakeStepRender = ( { currentStep, dependencies } ) => {
+	const FakeStepRender = ( { currentStep, dependencies, method } ) => {
 		const navigate = useNavigate();
 		const location = useLocation();
 		const fakeNavigate = ( pathname, state ) => navigate( pathname, { state } );
-		const { submit } = flow.useStepNavigation( currentStep, fakeNavigate );
+		const { submit, goBack } = flow.useStepNavigation( currentStep, fakeNavigate );
 
 		useEffect( () => {
-			if ( submit ) {
-				submit( dependencies );
+			switch ( method ) {
+				case 'submit':
+					submit?.( dependencies );
+					break;
+				case 'goBack':
+					goBack?.();
+					break;
 			}
 		}, [] );
 
@@ -39,14 +50,19 @@ export const renderFlow = ( flow: Flow ) => {
 	};
 
 	// The Flow>useStepNavigation>submit function needs to be called from inside a component
-	const runUseStepNavigationSubmit = ( {
+	const runUseStepNavigation = ( {
+		currentURL = '/some-path?siteSlug=example.wordpress.com',
 		currentStep,
 		dependencies,
-		currentURL = '/some-path?siteSlug=example.wordpress.com',
-	} ) => {
+		method,
+	}: RenderFlowParams ) => {
 		renderWithProvider(
 			<MemoryRouter initialEntries={ [ currentURL ] }>
-				<FakeStepRender currentStep={ currentStep } dependencies={ dependencies } />
+				<FakeStepRender
+					currentStep={ currentStep }
+					dependencies={ dependencies }
+					method={ method }
+				/>
 			</MemoryRouter>,
 			{
 				initialState: { themes: { queries: [] } },
@@ -57,7 +73,14 @@ export const renderFlow = ( flow: Flow ) => {
 		);
 	};
 
+	const runUseStepNavigationSubmit = ( params: Omit< RenderFlowParams, 'method' > ) =>
+		runUseStepNavigation( { ...params, method: 'submit' } );
+
+	const runUseStepNavigationGoBack = ( params: Omit< RenderFlowParams, 'method' > ) =>
+		runUseStepNavigation( { ...params, method: 'goBack' } );
+
 	return {
 		runUseStepNavigationSubmit,
+		runUseStepNavigationGoBack,
 	};
 };
