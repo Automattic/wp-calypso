@@ -13,9 +13,9 @@ import {
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { Fragment, useState, useCallback, useEffect } from 'react';
+import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
-import { useSitePluginsQuery, type SitePlugin } from 'calypso/data/plugins/use-site-plugins-query';
 import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import {
@@ -40,16 +40,16 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const { siteSlug, onCreateSuccess } = props;
+
 	const {
-		data: dataPlugins,
+		data: plugins = [],
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
-	} = useSitePluginsQuery( siteSlug );
+	} = useCorePluginsQuery( siteSlug, true );
 	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
 	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
 		onSuccess: () => onCreateSuccess && onCreateSuccess(),
 	} );
-	const { plugins = [] } = dataPlugins ?? {};
 
 	const [ name, setName ] = useState( '' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
@@ -72,13 +72,13 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
 	const onPluginSelectionChange = useCallback(
-		( plugin: SitePlugin, isChecked: boolean ) => {
+		( plugin: CorePlugin, isChecked: boolean ) => {
 			if ( isChecked ) {
 				const _plugins: string[] = [ ...selectedPlugins ];
-				_plugins.push( plugin.name );
+				_plugins.push( plugin.plugin );
 				setSelectedPlugins( _plugins );
 			} else {
-				setSelectedPlugins( selectedPlugins.filter( ( name ) => name !== plugin.name ) );
+				setSelectedPlugins( selectedPlugins.filter( ( name ) => name !== plugin.plugin ) );
 			}
 		},
 		[ selectedPlugins ]
@@ -87,20 +87,20 @@ export const ScheduleForm = ( props: Props ) => {
 	const onPluginSelectAllChange = useCallback(
 		( isChecked: boolean ) => {
 			isChecked
-				? setSelectedPlugins( plugins.map( ( plugin ) => plugin.name ) ?? [] )
+				? setSelectedPlugins( plugins.map( ( plugin ) => plugin.plugin ) ?? [] )
 				: setSelectedPlugins( [] );
 		},
 		[ plugins ]
 	);
 
 	const isPluginSelectionDisabled = useCallback(
-		( plugin: SitePlugin ) => {
+		( plugin: CorePlugin ) => {
 			return (
 				selectedPlugins.length >= MAX_SELECTABLE_PLUGINS &&
-				! selectedPlugins.includes( plugin.name )
+				! selectedPlugins.includes( plugin.plugin )
 			);
 		},
-		[ selectedPlugins, MAX_SELECTABLE_PLUGINS ]
+		[ selectedPlugins ]
 	);
 
 	const onFormSubmit = () => {
@@ -306,14 +306,12 @@ export const ScheduleForm = ( props: Props ) => {
 								) }
 								{ isPluginsFetched &&
 									plugins.map( ( plugin ) => (
-										<Fragment key={ plugin.name }>
-											{ plugin.display_name
-												.toLowerCase()
-												.includes( pluginSearchTerm.toLowerCase() ) && (
+										<Fragment key={ plugin.plugin }>
+											{ plugin.name.toLowerCase().includes( pluginSearchTerm.toLowerCase() ) && (
 												<CheckboxControl
-													key={ plugin.name }
-													label={ plugin.display_name }
-													checked={ selectedPlugins.includes( plugin.name ) }
+													key={ plugin.plugin }
+													label={ plugin.name }
+													checked={ selectedPlugins.includes( plugin.plugin ) }
 													disabled={ isPluginSelectionDisabled( plugin ) }
 													className={ classnames( {
 														disabled: isPluginSelectionDisabled( plugin ),
