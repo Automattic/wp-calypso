@@ -34,7 +34,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					onEditSchedule={ onEditSchedule }
 				/>
 			),
-			title: 'Plugin updates manager',
+			title: 'List schedules',
 		},
 		create: {
 			component: <ScheduleCreate siteSlug={ siteSlug } onNavBack={ onNavBack } />,
