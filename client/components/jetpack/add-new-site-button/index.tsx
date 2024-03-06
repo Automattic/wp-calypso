@@ -34,7 +34,8 @@ const AddNewSiteButton = ( {
 
 	const jetpackConnectUrl = 'https://wordpress.com/jetpack/connect?source=jetpack-manage';
 
-	const bluehostCreateSiteUrl = ''; // TODO: Add Bluehost create site URL
+	const bluehostCreateSiteUrl =
+		'https://www.bluehost.com/hosting/cloud?utm_campaign=wordpresscloud_jetpack&utm_source=wordpresscom&utm_medium=referral&channelid=P61C46097236S625N0B2A151D0E0000V105';
 
 	return (
 		<SplitButton
