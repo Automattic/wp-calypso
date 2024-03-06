@@ -234,7 +234,14 @@ const siteMigration: Flow = {
 			}
 		}
 
-		return { submit, exitFlow };
+		const goBack = () => {
+			switch ( currentStep ) {
+				default:
+				// NA
+			}
+		};
+
+		return { goBack, submit, exitFlow };
 	},
 };
 
