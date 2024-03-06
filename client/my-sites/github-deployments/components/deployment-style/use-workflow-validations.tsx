@@ -34,7 +34,7 @@ export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsPa
 				content: CodePushExample( branchName ),
 			},
 			upload_artifact_with_required_name: {
-				label: __( 'The upload artifact has the required name' ),
+				label: __( 'The uploaded artifact has the required name' ),
 				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
 				content: UploadArtifactExample(),
 			},
