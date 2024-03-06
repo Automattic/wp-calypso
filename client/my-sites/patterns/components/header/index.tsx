@@ -5,10 +5,11 @@ import './style.scss';
 type Props = {
 	description: string;
 	onSearch?( searchTerm: string ): void;
+	searchTerm?: string;
 	title: string;
 };
 
-export const PatternsHeader = ( { description, onSearch, title }: Props ) => {
+export const PatternsHeader = ( { description, onSearch, searchTerm = '', title }: Props ) => {
 	return (
 		<header className="patterns-header">
 			<div className="patterns-header__inner">
@@ -19,6 +20,7 @@ export const PatternsHeader = ( { description, onSearch, title }: Props ) => {
 					delaySearch
 					placeholder="Search patterns..."
 					onSearch={ onSearch }
+					value={ searchTerm }
 				/>
 			</div>
 		</header>

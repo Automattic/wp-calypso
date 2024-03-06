@@ -1,5 +1,6 @@
+import page from '@automattic/calypso-router';
 import { useLocale } from '@automattic/i18n-utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsGridGallery } from 'calypso/my-sites/patterns/components/grid-gallery';
@@ -45,7 +46,15 @@ export const PatternsHomePage = ( {
 	patternGallery: PatternGallery,
 }: PatternsHomePageProps ) => {
 	const locale = useLocale();
-	const [ searchTerm, setSearchTerm ] = useState( '' );
+
+	const [ searchTerm, setSearchTerm ] = useState( () => {
+		if ( typeof window !== 'undefined' ) {
+			const params = new URLSearchParams( window.location.search );
+			return params.get( 's' ) ?? '';
+		}
+
+		return '';
+	} );
 
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, '', {
@@ -53,6 +62,32 @@ export const PatternsHomePage = ( {
 	} );
 
 	const patternSearchResults = filterPatternsByQuery( patterns, searchTerm );
+
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+
+		if ( searchTerm ) {
+			params.set( 's', searchTerm );
+		} else {
+			params.delete( 's' );
+		}
+
+		const paramsString = params.toString().length ? `?${ params.toString() }` : '';
+		page( `${ window.location.pathname }${ paramsString }` );
+	}, [ searchTerm ] );
+
+	useEffect( () => {
+		function onPopstate() {
+			const params = new URLSearchParams( window.location.search );
+			setSearchTerm( params.get( 's' ) ?? '' );
+		}
+
+		window.addEventListener( 'popstate', onPopstate );
+
+		return () => {
+			window.removeEventListener( 'popstate', onPopstate );
+		};
+	}, [] );
 
 	return (
 		<>
@@ -63,6 +98,7 @@ export const PatternsHomePage = ( {
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
+				searchTerm={ searchTerm }
 				title="Build your perfect site with patterns"
 			/>
 
