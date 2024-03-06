@@ -33,10 +33,7 @@ export const deploymentCreation: Callback = ( context, next ) => {
 				title="Create GitHub Deployments"
 				delay={ 500 }
 			/>
-			<GitHubDeploymentCreation
-				installationId={ parseInt( context.query.installation_id, 10 ) || undefined }
-				repositoryId={ parseInt( context.query.repository_id, 10 ) || undefined }
-			/>
+			<GitHubDeploymentCreation />
 		</>
 	);
 	next();
