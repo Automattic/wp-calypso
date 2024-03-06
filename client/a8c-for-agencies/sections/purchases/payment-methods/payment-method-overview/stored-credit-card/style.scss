@@ -12,7 +12,7 @@
 		padding-inline: 24px;
 		height: 220px;
 		border-radius: 18px; /* stylelint-disable-line scales/radii */
-		color: var(--studio-white);
+		color: var(--color-text-inverted);
 		background: url(calypso/assets/images/jetpack/credit-card-1.svg) no-repeat;
 	}
 
@@ -63,8 +63,8 @@
 
 .stored-credit-card__payment-logo {
 	position: absolute;
-	top: -20px;
-	right: 0;
+	inset-block-start: -20px;
+	inset-inline-end: 0;
 
 	svg {
 		width: 100px;
@@ -75,16 +75,16 @@
 	// because the SVGs are not all the same size
 	// Ideal solution would be to create a  new component with all the SVGs the same size.
 	&.stored-credit-card__payment-logo-visa {
-		right: 17px;
+		inset-inline-end: 17px;
 	}
 
 	&.stored-credit-card__payment-logo-discover,
 	&.stored-credit-card__payment-logo-amex {
-		right: 23px;
+		inset-inline-end: 23px;
 	}
 
 	&.stored-credit-card__payment-logo-diners {
-		right: -4px;
+		inset-inline-end: -4px;
 	}
 }
 
@@ -92,7 +92,7 @@
 .stored-credit-card__payment-logo-discover,
 .stored-credit-card__payment-logo-amex {
 	svg path:first-child {
-		fill: var(--studio-white);
+		fill: var(--color-text-inverted);
 	}
 }
 
@@ -123,7 +123,7 @@ button.button.stored-credit-card__card-footer-actions {
 
 		&:hover,
 		&:focus {
-			background: var(--color-sidebar-menu-hover-background);
+			background: var(--color-sidebar-text-alternative);
 			color: var(--color-text);
 			fill: var(--color-text);
 
@@ -138,7 +138,7 @@ button.button.stored-credit-card__card-footer-actions {
 		&,
 		&:hover,
 		&:focus {
-			color: var(--studio-red-50);
+			color: var(--color-error);
 		}
 	}
 }
