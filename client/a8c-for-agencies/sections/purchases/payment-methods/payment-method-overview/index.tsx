@@ -1,5 +1,7 @@
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -10,26 +12,95 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import Pagination from 'calypso/components/pagination';
+import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
+import StoredCreditCardV2 from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import EmptyState from './empty-state';
+import useStoredCards from './hooks/use-stored-cards';
+import useStoredCardsPagination from './hooks/use-stored-cards-pagination';
+import LoadingState from './loading-state';
+
+import './style.scss';
 
 export default function PaymentMethodOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'Payment Methods' );
+	const {
+		allStoredCards,
+		primaryStoredCard,
+		secondaryStoredCards,
+		isFetching,
+		pageSize,
+		hasStoredCards,
+		hasMoreStoredCards,
+	} = useStoredCards();
 
-	const onAddNewCardClick = () => {
+	const { page, showPagination, onPageClick } = useStoredCardsPagination( {
+		storedCards: allStoredCards,
+		enabled: ! isFetching,
+		hasMoreStoredCards,
+	} );
+
+	const onAddNewCardClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_payments_add_new_card_button_click' ) );
-	};
+	}, [ dispatch ] );
 
-	const allowAddNewCard = true; // FIXME: Need to determine based on current fetching state and number of available cards.
+	const content = useMemo( () => {
+		if ( isFetching ) {
+			return <LoadingState />;
+		}
+
+		if ( hasStoredCards ) {
+			return (
+				<>
+					<div className="payment-method-overview__stored-cards">
+						{ primaryStoredCard && <StoredCreditCardV2 creditCard={ primaryStoredCard } /> }
+						{ secondaryStoredCards.map( ( card: PaymentMethod, index: number ) => (
+							<StoredCreditCardV2
+								key={ card.id }
+								creditCard={ card }
+								showSecondaryCardCount={ secondaryStoredCards.length > 1 }
+								secondaryCardCount={ index + 1 }
+							/>
+						) ) }
+					</div>
+
+					{ showPagination && (
+						<Pagination
+							className={ classNames( 'payment-method-overview__pagination', {
+								'payment-method-overview__pagination--has-prev': page > 1,
+								'payment-method-overview__pagination--has-next': isFetching || hasMoreStoredCards,
+							} ) }
+							pageClick={ onPageClick }
+							page={ page }
+							perPage={ pageSize }
+						/>
+					) }
+				</>
+			);
+		}
+
+		return <EmptyState />;
+	}, [
+		hasMoreStoredCards,
+		hasStoredCards,
+		isFetching,
+		onPageClick,
+		page,
+		pageSize,
+		primaryStoredCard,
+		secondaryStoredCards,
+		showPagination,
+	] );
 
 	return (
 		<Layout
 			className="payment-method-overview"
-			title={ title }
+			title={ translate( 'Payment Methods' ) }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
@@ -37,12 +108,12 @@ export default function PaymentMethodOverview() {
 
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title } </Title>
+					<Title>{ translate( 'Payment Methods' ) } </Title>
 					<Subtitle>
 						{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
 					</Subtitle>
 					<Actions>
-						{ allowAddNewCard && (
+						{ hasStoredCards && (
 							<Button href={ A4A_PAYMENT_METHODS_ADD_LINK } onClick={ onAddNewCardClick } primary>
 								{ translate( 'Add new card' ) }
 							</Button>
@@ -51,7 +122,7 @@ export default function PaymentMethodOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Payment Method List</LayoutBody>
+			<LayoutBody>{ content }</LayoutBody>
 		</Layout>
 	);
 }
