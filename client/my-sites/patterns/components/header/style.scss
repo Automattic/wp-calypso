@@ -8,7 +8,10 @@
 
 	.patterns-header__inner {
 		padding: 105px 0 64px 84px;
-		background: url(./images/background.svg) no-repeat right bottom;
+		background-image: url(./images/background@3x.png);
+		background-repeat: no-repeat;
+		background-position: bottom right 84px;
+		background-size: auto 100%;
 		color: var(--studio-white);
 
 		h1 {

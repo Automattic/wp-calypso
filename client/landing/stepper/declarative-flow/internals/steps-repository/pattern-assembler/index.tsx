@@ -201,17 +201,20 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 		patternType,
 		patternId,
 		patternName,
+		patternTitle,
 		patternCategory,
 	}: {
 		patternType: string;
 		patternId: number;
 		patternName: string;
+		patternTitle: string;
 		patternCategory: string | undefined;
 	} ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_CLICK, {
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
+			pattern_title: patternTitle,
 			pattern_category: patternCategory,
 		} );
 	};
@@ -232,10 +235,11 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			page_slugs: ( pageSlugs || [] ).join( ',' ),
 		} );
 
-		patterns.forEach( ( { ID, name, category } ) => {
+		patterns.forEach( ( { ID, name, title, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
+				pattern_title: title,
 				pattern_category: category?.name,
 			} );
 		} );
@@ -245,6 +249,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PAGE_FINAL_SELECT, {
 				pattern_id: pattern.ID,
 				pattern_name: pattern.name,
+				pattern_title: pattern.title,
 				...( category_slug && { pattern_category: category_slug } ),
 			} );
 		} );
@@ -348,6 +353,7 @@ const PatternAssembler = ( props: StepProps & NoticesProps ) => {
 				patternType: type,
 				patternId: selectedPattern.ID,
 				patternName: selectedPattern.name,
+				patternTitle: selectedPattern.title,
 				patternCategory: selectedPattern.category?.name,
 			} );
 

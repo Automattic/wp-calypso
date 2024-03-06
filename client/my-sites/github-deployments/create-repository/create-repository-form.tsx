@@ -3,7 +3,6 @@ import { FormToggle, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent, FormEventHandler, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { GitHubInstallationsDropdown } from 'calypso/my-sites/github-deployments/components/installations-dropdown';
 import { useLiveInstallations } from 'calypso/my-sites/github-deployments/components/installations-dropdown/use-live-installations';
@@ -16,6 +15,7 @@ import {
 	RepositoryTemplate,
 	repositoryTemplates,
 } from '../components/form-radio-with-template-select/templates';
+import { TargetDirInput } from '../components/target-dir-input';
 import { MutationVariables as CreateDeploymentMutationVariables } from '../deployment-creation/use-create-code-deployment';
 import { DeploymentStyleDescription } from './deployment-style-description';
 import { MutationVariables as CreateRepositoryMutationVariables } from './use-create-repository';
@@ -180,20 +180,7 @@ export const CreateRepositoryForm = ( {
 						/>
 					</div>
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="targetDir">{ __( 'Destination directory' ) }</FormLabel>
-					<FormTextInput
-						id="targetDir"
-						placehlder="/"
-						value={ targetDir }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setTargetDir( event.currentTarget.value )
-						}
-					/>
-					<FormSettingExplanation css={ { marginBottom: '0 !important' } }>
-						{ __( 'This path is relative to the server root' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				<TargetDirInput onChange={ setTargetDir } value={ targetDir } />
 				<AutomatedDeploymentsToggle
 					onChange={ setIsAutomated }
 					value={ isAutomated }

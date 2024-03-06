@@ -46,16 +46,9 @@ const StatsModuleDataQuery = ( {
 	const getHref = () => {
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return (
-				'/stats/' +
-				period.period +
-				'/' +
-				path +
-				'/' +
-				siteSlug +
-				'?startDate=' +
-				period.startOf.format( 'YYYY-MM-DD' )
-			);
+			return `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.startOf.format(
+				'YYYY-MM-DD'
+			) }`;
 		}
 	};
 

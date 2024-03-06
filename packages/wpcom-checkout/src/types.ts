@@ -272,6 +272,7 @@ export interface LineItemType {
 	type: string;
 	label: string;
 	formattedAmount: string;
+	hasDeleteButton?: boolean;
 }
 
 export interface WPCOMCart {

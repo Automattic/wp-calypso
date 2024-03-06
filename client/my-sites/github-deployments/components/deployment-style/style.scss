@@ -8,10 +8,18 @@
 	height: fit-content;
 
 	&__header {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
 		font-weight: 500;
 		font-size: 1rem;
 		margin-bottom: 16px;
 		line-height: 24px;
+
+		.support-info {
+			margin-left: 0 !important;
+			margin-top: 4px;
+		}
 	}
 
 	&__repository {

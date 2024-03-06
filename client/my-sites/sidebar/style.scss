@@ -529,8 +529,12 @@ $font-size: rem(14px);
 
 	&.is-sidebar-collapsed {
 		.layout:not(.focus-sites) {
-			--sidebar-width-max: 36px;
-			--sidebar-width-min: 36px;
+			&:not(.is-global-sidebar-visible) {
+				&:not(.is-global-site-sidebar-visible) {
+					--sidebar-width-max: 36px;
+					--sidebar-width-min: 36px;
+				}
+			}
 		}
 
 		.sidebar__actions {

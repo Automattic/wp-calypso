@@ -11,6 +11,7 @@ type AdvancedWorkflowStyleProps = {
 	workflows?: Workflow[];
 	isLoading: boolean;
 	isFetching: boolean;
+	useComposerWorkflow: boolean;
 	onWorkflowCreation( path: string ): void;
 	onNewWorkflowVerification( path: string ): void;
 	onChooseWorkflow( path: string ): void;
@@ -26,6 +27,7 @@ export const AdvancedWorkflowStyle = ( {
 	onWorkflowCreation,
 	onNewWorkflowVerification,
 	onChooseWorkflow,
+	useComposerWorkflow,
 }: AdvancedWorkflowStyleProps ) => {
 	const getContent = () => {
 		const workflow = workflows?.find( ( workflow ) => workflow.workflow_path === workflowPath );
@@ -39,6 +41,7 @@ export const AdvancedWorkflowStyle = ( {
 					repositoryBranch={ branchName }
 					onWorkflowVerification={ onNewWorkflowVerification }
 					onWorkflowCreated={ onWorkflowCreation }
+					useComposerWorkflow={ useComposerWorkflow }
 				/>
 			);
 		}
