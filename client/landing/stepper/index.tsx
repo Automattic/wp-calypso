@@ -4,6 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
+import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -15,6 +16,7 @@ import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
@@ -74,7 +76,9 @@ window.AppBoot = async () => {
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-	// addHotJarScript(); // Disabled temporarily.
+
+	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
+	flowNameFromPathName === IMPORT_HOSTED_SITE_FLOW && addHotJarScript(); // Disabled temporarily.
 
 	// Add accessible-focus listener.
 	accessibleFocus();
