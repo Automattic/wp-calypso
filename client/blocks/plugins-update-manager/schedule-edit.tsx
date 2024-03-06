@@ -51,7 +51,7 @@ export const ScheduleEdit = ( props: Props ) => {
 			</CardBody>
 			<CardFooter>
 				<Button form="schedule" type="submit" variant="primary">
-					Edit
+					Save
 				</Button>
 			</CardFooter>
 		</Card>
