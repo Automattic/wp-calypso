@@ -44,7 +44,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 	};
 
 	const clickActivate = () => {
-		dispatch( initiateThemeTransfer( siteId ?? 0, null, '', '', 'scheduled_updates' ) );
+		dispatch( initiateThemeTransfer( siteId, null, '', '', 'scheduled_updates' ) );
 		setHasTransferring( true );
 	};
 
