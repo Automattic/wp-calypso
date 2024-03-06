@@ -16,13 +16,14 @@ import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import {
-	useCreateScheduleUpdatesMutation,
-	useEditScheduleUpdatesMutation,
-} from 'calypso/data/plugins/use-schedule-updates-mutation';
-import {
 	useScheduleUpdatesQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-schedule-updates-query';
+import {
+	useCreateScheduleUpdatesMutation,
+	useEditScheduleUpdatesMutation,
+} from 'calypso/data/plugins/use-update-schedules-mutation';
+import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
