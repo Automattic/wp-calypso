@@ -45,7 +45,7 @@ export const GlobalSidebarFooter: FC< {
 				title={ translate( 'Profile' ) }
 				data-tooltip={ translate( 'Profile' ) }
 			>
-				<Gravatar user={ user } size={ 20 } imgSize={ 20 } />
+				<Gravatar user={ user } size={ 20 } />
 			</a>
 			<AsyncLoad
 				require="./menu-items/help-center/help-center"
