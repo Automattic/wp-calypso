@@ -7,26 +7,27 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { transferInProgress } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellNudgeNotice from './upsell-nudge';
+import type { SiteId } from 'calypso/types';
 
 import './style.scss';
 
 interface ScheduledUpdatesGateProps {
+	children: ReactNode;
 	hasScheduledUpdatesFeature: boolean;
 	isAtomic: boolean;
 	isEligibleForFeature: boolean;
-	children: ReactNode;
+	siteId: SiteId;
 }
 
 const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
+	children,
 	hasScheduledUpdatesFeature,
 	isAtomic,
 	isEligibleForFeature,
-	children,
+	siteId,
 } ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 	const transferState = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const [ hasTransfer, setHasTransferring ] = useState(

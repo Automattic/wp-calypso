@@ -88,6 +88,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					isEligibleForFeature={ isEligibleForFeature }
 					hasScheduledUpdatesFeature={ hasScheduledUpdatesFeature }
 					isAtomic={ isAtomic }
+					siteId={ siteId as number }
 				>
 					{ component }
 				</ScheduledUpdatesGate>
