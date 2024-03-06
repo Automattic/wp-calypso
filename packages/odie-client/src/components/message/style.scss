@@ -27,6 +27,12 @@
 			margin-bottom: 0 !important;
 		}
 	}
+
+	.disclaimer {
+		color: var(--studio-gray-50);
+		font-size: $font-body-extra-small;
+		text-align: right;
+	}
 }
 
 .odie-sources-foldable-card {
