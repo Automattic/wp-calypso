@@ -3,7 +3,7 @@ import { plus } from '@wordpress/icons';
 import DocumentHead from 'calypso/components/data/document-head';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
 import { ScheduleCreate } from './schedule-create';
@@ -22,7 +22,7 @@ interface Props {
 }
 export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
-	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { component, title } = {

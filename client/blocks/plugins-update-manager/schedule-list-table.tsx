@@ -1,7 +1,7 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MOMENT_TIME_FORMAT } from './config';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -15,7 +15,7 @@ export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const moment = useLocalizedMoment();
 	const { onEditClick, onRemoveClick } = props;
-	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
 	/**

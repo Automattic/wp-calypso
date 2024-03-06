@@ -16,13 +16,13 @@ import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import {
-	useCreateScheduleUpdatesMutation,
-	useEditScheduleUpdatesMutation,
-} from 'calypso/data/plugins/use-schedule-updates-mutation';
+	useCreateUpdateScheduleMutation,
+	useEditUpdateScheduleMutation,
+} from 'calypso/data/plugins/use-update-schedules-mutation';
 import {
-	useScheduleUpdatesQuery,
+	useUpdateScheduleQuery,
 	ScheduleUpdates,
-} from 'calypso/data/plugins/use-schedule-updates-query';
+} from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
@@ -58,12 +58,12 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true );
-	const { data: schedulesData = [] } = useScheduleUpdatesQuery( siteSlug );
-	const schedules = schedulesData.filter( ( x ) => x.id !== scheduleForEdit?.id ) ?? [];
-	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
+	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug );
+	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
+	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
 	} );
-	const { editScheduleUpdates } = useEditScheduleUpdatesMutation( siteSlug, {
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
 	} );
 
@@ -142,8 +142,8 @@ export const ScheduleForm = ( props: Props ) => {
 
 		if ( formValid ) {
 			scheduleForEdit
-				? editScheduleUpdates( scheduleForEdit.id, params )
-				: createScheduleUpdates( params );
+				? editUpdateSchedule( scheduleForEdit.id, params )
+				: createUpdateSchedule( params );
 		}
 	};
 

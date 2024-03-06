@@ -1,3 +1,4 @@
+import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	Button,
@@ -7,7 +8,7 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -19,8 +20,13 @@ export const ScheduleEdit = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 
 	const { scheduleId, onNavBack } = props;
-	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+
+	const mutationState = useMutationState( {
+		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ] },
+	} );
+	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
@@ -50,7 +56,7 @@ export const ScheduleEdit = ( props: Props ) => {
 				) }
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary">
+				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
 					Save
 				</Button>
 			</CardFooter>

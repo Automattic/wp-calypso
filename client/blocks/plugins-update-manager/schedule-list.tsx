@@ -10,8 +10,8 @@ import {
 } from '@wordpress/components';
 import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
-import { useDeleteScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
@@ -24,9 +24,8 @@ interface Props {
 	onEditSchedule: ( id: string ) => void;
 }
 export const ScheduleList = ( props: Props ) => {
-	const isMobile = useMobileBreakpoint();
-
 	const siteSlug = useSiteSlug();
+	const isMobile = useMobileBreakpoint();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
@@ -37,8 +36,8 @@ export const ScheduleList = ( props: Props ) => {
 		isLoading,
 		isFetched,
 		refetch,
-	} = useScheduleUpdatesQuery( siteSlug );
-	const { deleteScheduleUpdates } = useDeleteScheduleUpdatesMutation( siteSlug, {
+	} = useUpdateScheduleQuery( siteSlug );
+	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );
 
@@ -53,7 +52,7 @@ export const ScheduleList = ( props: Props ) => {
 	};
 
 	const onRemoveDialogConfirm = () => {
-		selectedScheduleId && deleteScheduleUpdates( selectedScheduleId );
+		selectedScheduleId && deleteUpdateSchedule( selectedScheduleId );
 		closeRemoveConfirm();
 	};
 

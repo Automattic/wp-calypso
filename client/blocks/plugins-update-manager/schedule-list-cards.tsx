@@ -4,7 +4,7 @@ import { MOMENT_TIME_FORMAT } from 'calypso/blocks/plugins-update-manager/config
 import { usePreparePluginsTooltipInfo } from 'calypso/blocks/plugins-update-manager/hooks/use-prepare-plugins-tooltip-info';
 import { ellipsis } from 'calypso/blocks/plugins-update-manager/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
@@ -15,7 +15,7 @@ export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const moment = useLocalizedMoment();
 	const { onEditClick, onRemoveClick } = props;
-	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 
 	return (

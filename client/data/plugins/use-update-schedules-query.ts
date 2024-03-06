@@ -11,7 +11,7 @@ export type ScheduleUpdates = {
 	args: string[];
 };
 
-export const useScheduleUpdatesQuery = (
+export const useUpdateScheduleQuery = (
 	siteSlug: SiteSlug
 ): UseQueryResult< ScheduleUpdates[] > => {
 	return useQuery( {
