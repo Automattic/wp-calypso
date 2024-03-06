@@ -7,15 +7,25 @@ import {
 	CardFooter,
 } from '@wordpress/components';
 import { arrowLeft } from '@wordpress/icons';
+import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { SiteSlug } from 'calypso/types';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
 	siteSlug: SiteSlug;
+	scheduleId?: string;
 	onNavBack?: () => void;
 }
-export const ScheduleCreate = ( props: Props ) => {
-	const { siteSlug, onNavBack } = props;
+export const ScheduleEdit = ( props: Props ) => {
+	const { siteSlug, scheduleId, onNavBack } = props;
+	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+
+	// If the schedule is not found, navigate back to the list
+	if ( isFetched && ! schedule ) {
+		onNavBack && onNavBack();
+		return null;
+	}
 
 	return (
 		<Card className="plugins-update-manager">
@@ -27,15 +37,21 @@ export const ScheduleCreate = ( props: Props ) => {
 						</Button>
 					) }
 				</div>
-				<Text>New Schedule</Text>
+				<Text>Edit Schedule</Text>
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm siteSlug={ siteSlug } onSyncSuccess={ () => onNavBack && onNavBack() } />
+				{ schedule && (
+					<ScheduleForm
+						siteSlug={ siteSlug }
+						scheduleForEdit={ schedule }
+						onSyncSuccess={ () => onNavBack && onNavBack() }
+					/>
+				) }
 			</CardBody>
 			<CardFooter>
 				<Button form="schedule" type="submit" variant="primary">
-					Create
+					Save
 				</Button>
 			</CardFooter>
 		</Card>

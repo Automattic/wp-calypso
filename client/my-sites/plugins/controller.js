@@ -114,6 +114,7 @@ export function plugins( context, next ) {
 
 export function updatesManager( context, next ) {
 	const siteSlug = context?.params?.site_slug;
+	const scheduleId = context?.params?.schedule_id;
 
 	if ( ! siteSlug ) {
 		sites( context, next );
@@ -129,6 +130,15 @@ export function updatesManager( context, next ) {
 			} );
 			break;
 
+		case 'edit':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				scheduleId,
+				context: 'edit',
+				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
+
 		case 'list':
 		default:
 			context.primary = createElement( PluginsUpdateManager, {
@@ -136,6 +146,8 @@ export function updatesManager( context, next ) {
 				context: 'list',
 				onCreateNewSchedule: () =>
 					page.redirect( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onEditSchedule: ( id ) =>
+					page.redirect( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
 			} );
 			break;
 	}
