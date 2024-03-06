@@ -19,6 +19,15 @@ export default function globalSiteSidebarMenu( {
 } ) {
 	return [
 		{
+			icon: 'dashicons-arrow-left-alt2',
+			slug: 'all-sites',
+			title: translate( 'All sites' ),
+			type: 'menu-item',
+			url: `/sites`,
+			className: 'sidebar__menu-item-all-sites',
+			shouldHide: isDesktop,
+		},
+		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
 			shouldHide: ! isDesktop,
