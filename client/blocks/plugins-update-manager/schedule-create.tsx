@@ -11,12 +11,14 @@ import { arrowLeft } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
 	onNavBack?: () => void;
 }
 export const ScheduleCreate = ( props: Props ) => {
+	const siteSlug = useSiteSlug();
 	const { onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
 

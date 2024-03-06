@@ -24,9 +24,8 @@ interface Props {
 	onEditSchedule: ( id: string ) => void;
 }
 export const ScheduleList = ( props: Props ) => {
-	const isMobile = useMobileBreakpoint();
-
 	const siteSlug = useSiteSlug();
+	const isMobile = useMobileBreakpoint();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );

@@ -23,7 +23,6 @@ import {
 	useUpdateScheduleQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
-import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
