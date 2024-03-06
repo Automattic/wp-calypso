@@ -36,6 +36,11 @@
 	text-align: left;
 	letter-spacing: -0.1px;
 
+	.button-plain {
+		color: var(--studio-blue-50);
+		cursor: pointer;
+	}
+
 	@include break-mobile {
 		text-align: center;
 	}

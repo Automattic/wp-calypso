@@ -9,20 +9,22 @@ import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSiteOptions, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 const RESEND_ERROR = 'RESEND_ERROR';
 const RESEND_NOT_SENT = 'RESEND_NOT_SENT';
 const RESEND_PENDING = 'RESEND_PENDING';
 const RESEND_SUCCESS = 'RESEND_SUCCESS';
+
 interface PlanOnlyThankYouProps {
 	primaryPurchase: ReceiptPurchase;
 	isEmailVerified: boolean;
+	errorNotice: () => void;
+	removeNotice: () => void;
+	successNotice: () => void;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -37,6 +39,9 @@ const isMonthsOld = ( months: number, rawDate?: string ) => {
 export default function PlanOnlyThankYou( {
 	primaryPurchase,
 	isEmailVerified,
+	errorNotice,
+	removeNotice,
+	successNotice,
 }: PlanOnlyThankYouProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -46,8 +51,9 @@ export default function PlanOnlyThankYou( {
 
 	const [ resendStatus, setResendStatus ] = useState( RESEND_NOT_SENT );
 
+	const verifyEmailNoticeId = 'ecommerce-verify-email-notice';
 	const resendEmail = () => {
-		removeNotice( VERIFY_EMAIL_ERROR_NOTICE );
+		removeNotice( verifyEmailNoticeId );
 
 		if ( RESEND_PENDING === resendStatus ) {
 			return;
@@ -58,37 +64,36 @@ export default function PlanOnlyThankYou( {
 		wpcom.req.post( '/me/send-verification-email', ( error: Error ) => {
 			if ( error ) {
 				errorNotice( translate( "Couldn't resend verification email. Please try again." ), {
-					id: VERIFY_EMAIL_ERROR_NOTICE,
+					id: verifyEmailNoticeId,
+					duration: 5000,
 				} );
 
 				setResendStatus( RESEND_ERROR );
 				return;
 			}
 
+			successNotice( translate( 'Email sent' ), { id: verifyEmailNoticeId, duration: 5000 } );
+
 			setResendStatus( RESEND_SUCCESS );
 		} );
 	};
 
 	const resendButtonText = () => {
-		switch ( resendStatus ) {
-			case RESEND_PENDING:
-				return translate( 'Sending…' );
-			case RESEND_SUCCESS:
-				return translate( 'Email sent' );
-			case RESEND_NOT_SENT:
-			case RESEND_ERROR:
-			default:
-				return translate( 'Resend email' );
+		if ( resendStatus === RESEND_PENDING ) {
+			return translate( 'Sending…' );
 		}
+
+		return translate( 'Resend email' );
 	};
 
 	// At this point in the flow, having purchased a plan for a specific site,
 	// we can be confident that `siteId` is a number and not `null`
 	const siteAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId as number ) );
 	const emailAddress = useSelector( getCurrentUserEmail );
-	let subtitle;
 
+	let subtitle;
 	let headerButtons;
+
 	if ( primaryPurchase.productSlug === 'ecommerce-bundle' ) {
 		if ( isEmailVerified ) {
 			subtitle = translate( "With the plan sorted, it's time to start setting up your store." );
@@ -106,14 +111,20 @@ export default function PlanOnlyThankYou( {
 						paragraph: <p />,
 						br: <br />,
 						strong: <strong />,
-						// eslint-disable-next-line jsx-a11y/anchor-is-valid
-						a: <a href="" onClick={ resendEmail } />,
+						a: <Button plain onClick={ resendEmail } />,
 					},
 				}
 			);
+
 			const isSendingEmail = resendStatus === RESEND_PENDING;
+			const isSent = resendStatus === RESEND_SUCCESS;
+
 			headerButtons = (
-				<Button onClick={ resendEmail } busy={ isSendingEmail } disabled={ isSendingEmail }>
+				<Button
+					onClick={ resendEmail }
+					busy={ isSendingEmail }
+					disabled={ isSendingEmail || isSent }
+				>
 					{ resendButtonText() }
 				</Button>
 			);
