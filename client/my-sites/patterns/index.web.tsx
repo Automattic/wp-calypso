@@ -5,7 +5,7 @@ import {
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 	notFound,
-} from 'calypso/controller';
+} from 'calypso/controller/index.web';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternsHomePage } from 'calypso/my-sites/patterns/home';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
