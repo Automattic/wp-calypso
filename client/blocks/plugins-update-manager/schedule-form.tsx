@@ -13,17 +13,15 @@ import {
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { Fragment, useState, useCallback, useEffect } from 'react';
-import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
-import { useCreateScheduleUpdatesMutation } from 'calypso/data/plugins/use-schedule-updates-mutation';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateScheduleUpdatesMutation,
 	useEditScheduleUpdatesMutation,
 } from 'calypso/data/plugins/use-schedule-updates-mutation';
 import {
-	ScheduleUpdates,
 	useScheduleUpdatesQuery,
+	ScheduleUpdates,
 } from 'calypso/data/plugins/use-schedule-updates-query';
 import { SiteSlug } from 'calypso/types';
 import { MAX_SELECTABLE_PLUGINS } from './config';
