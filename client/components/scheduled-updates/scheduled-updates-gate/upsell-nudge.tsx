@@ -10,7 +10,7 @@ const UpsellNudgeNotice = () => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const titleText = translate(
-		'Upgrade to the %(businessPlanName)s plan to access scheduled updates feature',
+		'Upgrade to the %(businessPlanName)s plan to install plugins and manage scheduled updates.',
 		{
 			args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 		}
