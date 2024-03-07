@@ -1,5 +1,6 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { MOMENT_TIME_FORMAT } from 'calypso/blocks/plugins-update-manager/config';
 import { usePreparePluginsTooltipInfo } from 'calypso/blocks/plugins-update-manager/hooks/use-prepare-plugins-tooltip-info';
 import { ellipsis } from 'calypso/blocks/plugins-update-manager/icons';
@@ -18,6 +19,7 @@ export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const isEligibleForFeature = useIsEligibleForFeature();
 	const moment = useLocalizedMoment();
+	const translate = useTranslate();
 	const { onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
@@ -31,20 +33,20 @@ export const ScheduleListCards = ( props: Props ) => {
 						className="schedule-list--card-actions"
 						controls={ [
 							{
-								title: 'Edit',
+								title: translate( 'Edit' ),
 								onClick: () => onEditClick( schedule.id ),
 							},
 							{
-								title: 'Remove',
+								title: translate( 'Remove' ),
 								onClick: () => onRemoveClick( schedule.id ),
 							},
 						] }
 						icon={ ellipsis }
-						label="More"
+						label={ translate( 'More' ) }
 					/>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="name">Name</label>
+						<label htmlFor="name">{ translate( 'Name' ) }</label>
 						<strong id="name">
 							<Button
 								className="schedule-name"
@@ -57,7 +59,7 @@ export const ScheduleListCards = ( props: Props ) => {
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="last-update">Last Update</label>
+						<label htmlFor="last-update">{ translate( 'Last update' ) }</label>
 						<span id="last-update">
 							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
@@ -68,26 +70,26 @@ export const ScheduleListCards = ( props: Props ) => {
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="next-update">Next update</label>
+						<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
 						<span id="next-update">
 							{ moment( schedule.timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }
 						</span>
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="frequency">Frequency</label>
+						<label htmlFor="frequency">{ translate( 'Frequency' ) }</label>
 						<span id="frequency">
 							{
 								{
-									daily: 'Daily',
-									weekly: 'Weekly',
+									daily: translate( 'Daily' ),
+									weekly: translate( 'Weekly' ),
 								}[ schedule.schedule ]
 							}
 						</span>
 					</div>
 
 					<div className="schedule-list--card-label">
-						<label htmlFor="plugins">Plugins</label>
+						<label htmlFor="plugins">{ translate( 'Plugins' ) }</label>
 						<span id="plugins">
 							{ schedule?.args?.length }
 							<Tooltip
