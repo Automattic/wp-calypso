@@ -11,6 +11,7 @@ import {
 import { arrowLeft, warning } from '@wordpress/icons';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -20,9 +21,12 @@ interface Props {
 }
 export const ScheduleEdit = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const { scheduleId, onNavBack } = props;
-	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
+		siteSlug,
+		isEligibleForFeature
+	);
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
 	const mutationState = useMutationState( {
@@ -30,7 +34,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {

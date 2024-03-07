@@ -300,6 +300,7 @@ export const WPCOM_FEATURES_PREMIUM_THEMES_LIMITED = 'personal-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
+export const WPCOM_FEATURES_SCHEDULED_UPDATES = 'scheduled-updates';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
 export const WPCOM_FEATURES_LOCKED_MODE = 'locked-mode';

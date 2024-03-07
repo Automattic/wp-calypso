@@ -9,7 +9,8 @@ export type ScheduleUpdatesCapabilities = {
 };
 
 export const useUpdateScheduleCapabilitiesQuery = (
-	siteSlug: SiteSlug
+	siteSlug: SiteSlug,
+	isEligibleForFeature: boolean
 ): UseQueryResult< ScheduleUpdatesCapabilities > => {
 	return useQuery( {
 		queryKey: [ 'schedule-updates-capabilities', siteSlug ],
@@ -22,7 +23,7 @@ export const useUpdateScheduleCapabilitiesQuery = (
 		meta: {
 			persist: false,
 		},
-		enabled: !! siteSlug,
+		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );

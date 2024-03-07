@@ -14,6 +14,7 @@ import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
@@ -26,6 +27,7 @@ interface Props {
 }
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const isMobile = useMobileBreakpoint();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
@@ -37,12 +39,22 @@ export const ScheduleList = ( props: Props ) => {
 		isLoading,
 		isFetched,
 		refetch,
-	} = useUpdateScheduleQuery( siteSlug );
+	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
+
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );
-	const { canCreateSchedules, isLoading: isLoadingCanCreateSchedules } =
-		useCanCreateSchedules( siteSlug );
+
+	const { canCreateSchedules, isLoading: isLoadingCanCreateSchedules } = useCanCreateSchedules(
+		siteSlug,
+		isEligibleForFeature
+	);
+
+	const showScheduleListEmpty =
+		! isEligibleForFeature ||
+		( isFetched &&
+			! isLoadingCanCreateSchedules &&
+			( schedules.length === 0 || ! canCreateSchedules ) );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
@@ -82,14 +94,12 @@ export const ScheduleList = ( props: Props ) => {
 				</CardHeader>
 				<CardBody>
 					{ ( isLoading || isLoadingCanCreateSchedules ) && <Spinner /> }
-					{ isFetched &&
-						! isLoadingCanCreateSchedules &&
-						( schedules.length === 0 || ! canCreateSchedules ) && (
-							<ScheduleListEmpty
-								onCreateNewSchedule={ onCreateNewSchedule }
-								canCreateSchedules={ canCreateSchedules }
-							/>
-						) }
+					{ showScheduleListEmpty && (
+						<ScheduleListEmpty
+							onCreateNewSchedule={ onCreateNewSchedule }
+							canCreateSchedules={ canCreateSchedules }
+						/>
+					) }
 					{ isFetched &&
 						! isLoadingCanCreateSchedules &&
 						schedules.length > 0 &&
