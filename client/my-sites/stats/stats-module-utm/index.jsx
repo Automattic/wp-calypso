@@ -134,7 +134,7 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 		console.log( 'data', d2 );
 		console.log( 'isError & error', isError, error );
 	}
-	const dataLength = d2.length;
+	const dataLength = d2?.length || 0;
 
 	// Use mock data for now.
 	const data = sampleData;
