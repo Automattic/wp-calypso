@@ -1,12 +1,14 @@
 import { WPCOM_FEATURES_SCHEDULED_UPDATES } from '@automattic/calypso-products';
 import { Button, Spinner } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled-updates-gate';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -51,6 +53,12 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
+	useEffect( () => {
+		recordTracksEvent( 'calypso_scheduled_updates_page_view', {
+			site_slug: siteSlug,
+			context: context,
+		} );
+	}, [ context, siteSlug ] );
 
 	const { component, title } = {
 		list: {
