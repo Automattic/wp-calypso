@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -73,6 +73,15 @@ export const GitHubDeploymentCreationForm = ( {
 		INITIAL_VALUES
 	);
 
+	const initialValues = useMemo( () => {
+		return {
+			branch: repository?.default_branch ?? 'main',
+			destPath: '/',
+			isAutomated: false,
+			workflowPath: undefined,
+		};
+	}, [ repository ] );
+
 	const siteId = useSelector( getSelectedSiteId );
 	const reduxDispatch = useDispatch();
 	const { createDeployment } = useCreateCodeDeployment( siteId, {
@@ -106,6 +115,7 @@ export const GitHubDeploymentCreationForm = ( {
 			<GitHubConnectionForm
 				installationId={ installation?.external_id }
 				repository={ repository }
+				initialValues={ initialValues }
 				changeRepository={ () => dispatch( { type: 'open-repository-picker' } ) }
 				onSubmit={ ( {
 					externalRepositoryId,

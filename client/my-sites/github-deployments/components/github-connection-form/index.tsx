@@ -2,7 +2,7 @@ import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/com
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { ChangeEvent, useLayoutEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -64,6 +64,13 @@ export const GitHubConnectionForm = ( {
 		initialValues.workflowPath
 	);
 	const { __ } = useI18n();
+
+	useEffect( () => {
+		setBranch( initialValues.branch );
+		setDestPath( initialValues.destPath );
+		setIsAutoDeploy( initialValues.isAutomated );
+		setWorkflowPath( initialValues.workflowPath );
+	}, [ initialValues ] );
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
 		installationId,
