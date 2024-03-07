@@ -538,6 +538,11 @@ const PlansFeaturesMain = ( {
 				jetpackAppPlans: isJetpackAppFlow,
 			} );
 
+			recordTracksEvent( 'calypso_plans_plan_type_selector_option_change', {
+				interval_type: interval,
+				plans_intent: intent,
+			} );
+
 			if ( onPlanIntervalUpdate ) {
 				return onPlanIntervalUpdate( pathOrQueryParam );
 			}
