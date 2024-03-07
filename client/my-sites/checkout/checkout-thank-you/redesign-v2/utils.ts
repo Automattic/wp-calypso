@@ -59,7 +59,6 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 		if ( isTitanMail( purchase ) ) {
 			return true;
 		}
-
 		if ( isJetpackSearchSlug( purchase.productSlug ) ) {
 			return true;
 		}
