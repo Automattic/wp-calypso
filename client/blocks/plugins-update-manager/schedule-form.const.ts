@@ -102,3 +102,5 @@ export const PERIOD_OPTIONS = [
 		value: 'pm',
 	},
 ];
+
+export const CRON_CHECK_INTERVAL = 5;
