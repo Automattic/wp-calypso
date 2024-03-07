@@ -133,10 +133,8 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 	if ( ! isPending ) {
 		console.log( 'data', d2 );
 		console.log( 'isError & error', isError, error );
-		console.log( 'transformed data: ', transformData( d2 ) );
 	}
-	const values = d2?.top_utm_values || {};
-	const dataLength = Object.keys( values ).length;
+	const dataLength = d2.length;
 
 	// Use mock data for now.
 	const data = sampleData;
@@ -210,13 +208,13 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 function useUTMQuery( siteId, selectedOption, query ) {
 	// Fetch UTM summary data. Does not include top posts.
 	// Ideally we'd have the API updated to include that data instead of requiring extra API requests.
-	const { data, isPending, isError, error } = useQuery( {
+	const result = useQuery( {
 		queryKey: [ 'useUTMQuery', siteId, selectedOption, query ],
 		queryFn: () => fetchUTMMetrics( siteId, selectedOption, query ),
+		select: transformData,
 	} );
-	console.log( 'results', data, isPending, isError, error );
 
-	return { data, isPending, isError, error };
+	return result;
 }
 
 async function fetchUTMMetrics( siteId, selectedOption, query ) {
