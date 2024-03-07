@@ -52,6 +52,9 @@ const StatsModuleDataQuery = ( {
 		}
 	};
 
+	// Temporarily disable overlay.
+	const showUpgradeOverlay = false;
+
 	return (
 		<StatsListCard
 			className={ classNames( className, 'stats-module__card', path ) }
@@ -82,6 +85,7 @@ const StatsModuleDataQuery = ( {
 			mainItemLabel={ selectedOption?.headerLabel }
 			toggleControl={ toggleControl }
 			overlay={
+				showUpgradeOverlay &&
 				siteSlug &&
 				! isAdvancedFeatureEnabled && (
 					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
