@@ -44,7 +44,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	}
 
 	const onSyncSuccess = () => {
-		recordTracksEvent( 'calypso_update_manager_schedule_edit', {
+		recordTracksEvent( 'calypso_scheduled_updates_edit_schedule', {
 			site_slug: siteSlug,
 		} );
 

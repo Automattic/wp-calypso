@@ -70,7 +70,7 @@ export const ScheduleList = ( props: Props ) => {
 	const onRemoveDialogConfirm = () => {
 		if ( selectedScheduleId ) {
 			deleteUpdateSchedule( selectedScheduleId );
-			recordTracksEvent( 'calypso_update_manager_schedule_delete', {
+			recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
 				site_slug: siteSlug,
 			} );
 		}
