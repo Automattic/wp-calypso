@@ -24,9 +24,9 @@ const RESEND_SUCCESS = 'RESEND_SUCCESS';
 interface PlanOnlyThankYouProps {
 	primaryPurchase: ReceiptPurchase;
 	isEmailVerified: boolean;
-	errorNotice: () => void;
-	removeNotice: () => void;
-	successNotice: () => void;
+	errorNotice: ( text: string, noticeOptions: object ) => void;
+	removeNotice: ( text: string, noticeOptions: object ) => void;
+	successNotice: ( text: string, noticeOptions: object ) => void;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
