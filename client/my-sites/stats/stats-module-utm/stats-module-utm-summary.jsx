@@ -134,8 +134,12 @@ function useUTMQuery( siteId, selectedOption, query ) {
 }
 
 async function fetchUTMMetrics( siteId, selectedOption, query ) {
-	// Should be the following:
-	// https://public-api.wordpress.com/rest/v1.1/sites/147402695/stats/utm/utm_source,utm_medium?http_envelope=1&max=10&date=2024-03-03&days=7&post_id=
+	// API requests look like this:
+	//
+	// https://public-api.wordpress.com/rest/v1.1/sites/SITE_ID/
+	//	stats/utm/UTM_PARAMS?http_envelope=1 -- ie: "utm_source,utm_medium"
+	//	&period=day&date=2024-03-07&max=0&days=1 -- from query object
+	//	&kdl=kdl%20utm%20metrics -- for filtering in the network tab
 
 	const response = await wpcom.req.get(
 		{
@@ -143,14 +147,8 @@ async function fetchUTMMetrics( siteId, selectedOption, query ) {
 		},
 		{
 			...query,
-			// max: 5,
-			// Today's date in yyyy-mm-dd format.
-			// date: new Date().toISOString().split( 'T' )[ 0 ],
-			// date: '2024-03-05',
-			// days: 7,
 			days: query?.num || 1,
-			// post_id: postId || '',
-			kdl: 'kdl utm metrics',
+			kdl: 'kdl-utm-metrics',
 		}
 	);
 
