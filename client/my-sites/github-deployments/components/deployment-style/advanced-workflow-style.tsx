@@ -5,7 +5,7 @@ import { WorkflowPicker } from './workflow-picker';
 import { WorkflowValidationWizard } from './workflow-validation-wizard';
 
 type AdvancedWorkflowStyleProps = {
-	repository: GitHubRepositoryData;
+	repository: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
 	workflows?: Workflow[];

@@ -2,9 +2,9 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info/index';
-import { GitHubRepositoryData } from 'calypso/my-sites/github-deployments/use-github-repositories-query';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { DeploymentStyleContext, DeploymentStyleContextProps } from './context';
 import { useDeploymentWorkflowsQuery } from './use-deployment-workflows-query';
@@ -14,7 +14,7 @@ import './style.scss';
 
 type DeploymentStyleProps = {
 	isDisabled: boolean;
-	repository?: GitHubRepositoryData;
+	repository?: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
 	onChooseWorkflow( workflowFilename: string | undefined ): void;

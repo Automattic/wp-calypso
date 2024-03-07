@@ -33,10 +33,10 @@ interface InitialValues {
 }
 
 interface GitHubConnectionFormProps {
-	repository?: GitHubRepositoryData;
+	repository?: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' > & { default_branch?: string };
 	deploymentId?: number;
 	installationId?: number;
-	initialValues?: InitialValues;
+	initialValues: InitialValues;
 	changeRepository?(): void;
 	onSubmit( deploymentData: CodeDeploymentData ): Promise< unknown >;
 }
@@ -45,12 +45,7 @@ export const GitHubConnectionForm = ( {
 	repository,
 	deploymentId,
 	installationId,
-	initialValues = {
-		branch: repository?.default_branch ?? 'main',
-		destPath: '/',
-		isAutomated: false,
-		workflowPath: undefined,
-	},
+	initialValues,
 	changeRepository,
 	onSubmit,
 }: GitHubConnectionFormProps ) => {
