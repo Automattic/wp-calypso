@@ -65,5 +65,5 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 		}
 	}
 
-	return false;
+	return true;
 };

@@ -95,6 +95,7 @@ import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
+import GenericThankYou from './redesign-v2/pages/generic';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
@@ -636,6 +637,8 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
+			} else {
+				pageContent = <GenericThankYou purchases={ purchases } />;
 			}
 
 			if ( pageContent ) {
