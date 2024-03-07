@@ -9,7 +9,7 @@ const useAssemblerPatterns = (
 	queryOptions: Omit< UseQueryOptions< any, unknown, Pattern[] >, 'queryKey' > = {}
 ): Pattern[] => {
 	const { data } = useQuery< any, unknown, Pattern[] >( {
-		queryKey: [ 'patterns', 'assembler', lang ],
+		queryKey: [ 'pattern-assembler', lang ],
 		queryFn: () => {
 			return wpcomRequest( {
 				path: `/ptk/patterns/${ lang }`,
