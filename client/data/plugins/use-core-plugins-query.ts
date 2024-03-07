@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { decodeEntitiesFromPlugins } from './helpers';
 import type { SiteId, SiteSlug } from 'calypso/types';
 
 export type CorePlugin = {
@@ -30,7 +31,8 @@ export const useCorePluginsQuery = (
 	hideManagedPlugins: boolean = false
 ): UseQueryResult< CorePluginsResponse > => {
 	const select = hideManagedPlugins
-		? ( plugins: CorePluginsResponse ) => plugins.filter( ( plugin ) => ! plugin.is_managed )
+		? ( plugins: CorePluginsResponse ) =>
+				decodeEntitiesFromPlugins( plugins ).filter( ( plugin ) => ! plugin.is_managed )
 		: undefined;
 
 	return useQuery< CorePluginsResponse >( {
