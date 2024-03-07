@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -17,7 +18,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';

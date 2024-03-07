@@ -67,6 +67,7 @@
 		"@automattic/state-utils": "workspace:^",
 		"@automattic/subscriber": "workspace:^",
 		"@automattic/tree-select": "workspace:^",
+		"@automattic/urls": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
