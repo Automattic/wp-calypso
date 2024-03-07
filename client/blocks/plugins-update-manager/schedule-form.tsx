@@ -34,6 +34,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
+	CRON_CHECK_INTERVAL,
 	DAILY_OPTION,
 	DAY_OPTIONS,
 	DEFAULT_HOUR,
@@ -51,7 +52,6 @@ interface Props {
 	onCreateMonitorSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
-	const CRON_CHECK_INTERVAL = 5;
 	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
