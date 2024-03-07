@@ -188,6 +188,32 @@ export const useCommandPalette = ( {
 		return filter?.( site ) && hasCapability;
 	};
 
+	const trackCompletedCommand = ( command: Command ) => {
+		recordTracksEvent( 'calypso_hosting_command_palette_command_complete', {
+			command: command.name,
+			list_count: commands.length,
+			list_visible_count: listVisibleCount,
+			current_route: currentRoute,
+			search_text: search,
+		} );
+	};
+
+	const trackSelectedCommand = ( command: Command ) => {
+		const hasNestedCommands = !! command.siteFunctions;
+		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
+			command: command.name,
+			has_nested_commands: hasNestedCommands,
+			list_count: commands.length,
+			list_visible_count: listVisibleCount,
+			current_route: currentRoute,
+			search_text: search,
+		} );
+
+		if ( ! hasNestedCommands ) {
+			trackCompletedCommand( command );
+		}
+	};
+
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -196,6 +222,12 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
+
+			const onClickSite: OnClickSiteFunction = ( { close, command, site } ) => {
+				onClick( { close, command, site } );
+				trackCompletedCommand( command );
+			};
+
 			let filteredSites = filter ? sites.filter( filter ) : sites;
 			if ( capabilityFilter ) {
 				filteredSites = filteredSites.filter( ( site ) => {
@@ -227,7 +259,7 @@ export const useCommandPalette = ( {
 
 			// Map filtered sites to actions using the onClick function
 			sitesToPick = filteredSites.map(
-				siteToAction( onClick, {
+				siteToAction( onClickSite, {
 					selectedCommand,
 					filteredSitesLength: filteredSites.length,
 					listVisibleCount,
@@ -261,17 +293,6 @@ export const useCommandPalette = ( {
 
 			return 0; // no change in order
 		} );
-
-	const trackSelectedCommand = ( command: Command ) => {
-		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-			command: command.name,
-			has_nested_commands: !! command.siteFunctions,
-			list_count: commands.length,
-			list_visible_count: listVisibleCount,
-			current_route: currentRoute,
-			search_text: search,
-		} );
-	};
 
 	// Inject a tracks event on the callback of each command
 	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
