@@ -240,6 +240,7 @@ const siteMigration: Flow = {
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+					break;
 				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
