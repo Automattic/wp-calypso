@@ -11,36 +11,44 @@ export function usePrepareScheduleName() {
 		const translateArgs = { time: tm.format( 'LT' ) };
 
 		if ( schedule.schedule === 'daily' ) {
+			/* translators: Daily at 10 am. */
 			return translate( 'Daily at %(time)s', {
 				args: translateArgs,
 			} );
 		} else if ( schedule.schedule === 'weekly' ) {
 			switch ( tm.day() ) {
 				case 0:
+					/* translators: Sundays at 10 am. */
 					return translate( 'Sundays at %(time)s', {
 						args: translateArgs,
 					} );
 				case 1:
+					/* translators: Mondays at 10 am. */
 					return translate( 'Mondays at %(time)s', {
 						args: translateArgs,
 					} );
 				case 2:
+					/* translators: Tuesdays at 10 am. */
 					return translate( 'Tuesdays at %(time)s', {
 						args: translateArgs,
 					} );
 				case 3:
+					/* translators: Wednesdays at 10 am. */
 					return translate( 'Wednesdays at %(time)s', {
 						args: translateArgs,
 					} );
 				case 4:
+					/* translators: Thursdays at 10 am. */
 					return translate( 'Thursdays at %(time)s', {
 						args: translateArgs,
 					} );
 				case 5:
+					/* translators: Fridays at 10 am. */
 					return translate( 'Fridays at %(time)s', {
 						args: translateArgs,
 					} );
 				case 6:
+					/* translators: Saturdays at 10 am. */
 					return translate( 'Saturdays at %(time)s', {
 						args: translateArgs,
 					} );
