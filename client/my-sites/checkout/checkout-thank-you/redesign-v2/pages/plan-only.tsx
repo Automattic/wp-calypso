@@ -3,12 +3,14 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
+import { connect } from 'react-redux';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOptions, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
@@ -36,13 +38,13 @@ const isMonthsOld = ( months: number, rawDate?: string ) => {
 	return moment().diff( parsedDate, 'months' ) > months;
 };
 
-export default function PlanOnlyThankYou( {
+const PlanOnlyThankYou = ( {
 	primaryPurchase,
 	isEmailVerified,
 	errorNotice,
 	removeNotice,
 	successNotice,
-}: PlanOnlyThankYouProps ) {
+}: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteCreatedTimeStamp = useSelector(
@@ -200,4 +202,10 @@ export default function PlanOnlyThankYou( {
 			footerDetails={ footerDetails }
 		/>
 	);
-}
+};
+
+export default connect( null, {
+	errorNotice,
+	removeNotice,
+	successNotice,
+} )( PlanOnlyThankYou );
