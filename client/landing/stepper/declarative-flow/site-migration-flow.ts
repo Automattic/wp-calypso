@@ -224,6 +224,12 @@ const siteMigration: Flow = {
 						} );
 						return;
 					}
+					if ( providedDependencies?.freeTrialSelected ) {
+						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
 					if ( providedDependencies?.verifyEmail ) {
 						// not yet implemented
 						return;
