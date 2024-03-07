@@ -54,7 +54,7 @@ export const PatternsHomePage = ( {
 					description="Choose from a huge library of patterns to build any page you need."
 					list={ categories?.map( ( category ) => ( {
 						name: category.name,
-						title: category.label,
+						label: category.label,
 						number: category.regularPatternCount,
 						image: ImgPattern,
 						link: `/patterns/${ category.name }`,
@@ -120,7 +120,7 @@ export const PatternsHomePage = ( {
 						?.filter( ( { pagePatternCount } ) => pagePatternCount )
 						.map( ( category ) => ( {
 							name: category.name,
-							title: category.label,
+							label: category.label,
 							number: category.pagePatternCount,
 							image: ImgLayout,
 							link: `/patterns/${ category.name }`,
