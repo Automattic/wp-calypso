@@ -386,7 +386,9 @@ export default function CampaignItemDetails( props: Props ) {
 										target="_blank"
 									>
 										{ icon }
-										{ translate( 'Contact Support' ) }
+										<span className="contact-support-button-text">
+											{ translate( 'Contact Support' ) }
+										</span>
 									</Button>
 
 									{ ! canCancelCampaign( status ) && (

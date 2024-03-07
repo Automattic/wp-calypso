@@ -35,6 +35,12 @@
 		background-color: var(--color-surface);
 		box-shadow: none;
 	}
+
+	.campaign-item__post-details-button:hover {
+		text-decoration: underline;
+		color: var(--color-accent);
+		background-color: var(--color-surface);
+	}
 }
 
 @mixin blazepress-campaign-item-mobile {
@@ -57,6 +63,10 @@
 				height: 28px;
 				background-color: var(--studio-gray-0);
 				color: #50575e;
+			}
+
+			.campaign-item__view-link:hover {
+				text-decoration: underline;
 			}
 		}
 

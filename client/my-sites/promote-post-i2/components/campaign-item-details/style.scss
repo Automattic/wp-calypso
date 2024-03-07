@@ -10,6 +10,10 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 }
 
+#screen-meta-links {
+	display: none;
+}
+
 @mixin campaign-data-row-font-mobile {
 	font-size: 1.5rem;
 	font-weight: 400;
@@ -344,7 +348,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				margin-right: 6px;
 
 				path {
-					fill: var(--color-link);
+					fill: var(--color-primary);
 				}
 			}
 
@@ -353,7 +357,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				display: flex;
 				text-decoration: none;
 				cursor: pointer;
-				color: var(--color-link);
+				color: var(--color-primary);
 			}
 		}
 
@@ -610,9 +614,21 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 				.contact-support-button {
 					margin-bottom: 12px;
+					background: var(--color-surface);
+					border: 1.5px solid $studio-gray-10;
+					height: 40px;
+					font-weight: 400;
+					font-size: 0.875rem;
+					line-height: 14px;
 				}
 				.cancel-campaign-button {
 					display: flex;
+					background: var(--color-surface);
+					border: 1.5px solid $studio-gray-10;
+					height: 40px;
+					font-weight: 400;
+					font-size: 0.875rem;
+					line-height: 14px;
 				}
 			}
 		}
@@ -634,6 +650,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			button:not(:last-child),
 			a:not(:last-child) {
 				margin-right: 8px;
+				background-color: var(-color-surface);
 			}
 
 			.campaign-item-details__support-buttons-icon {
@@ -641,6 +658,39 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				margin-right: 9px;
 				height: 16px;
 				vertical-align: text-top;
+				margin-left: 8px;
+			}
+
+			.contact-support-button {
+				background: var(--color-surface);
+				border: 1px solid $studio-gray-10;
+				height: 40px;
+				font-weight: 400;
+				font-size: 0.875rem;
+			}
+
+			.contact-support-button-text {
+				font-weight: 400;
+				font-size: 0.875rem;
+				line-height: 14px;
+				margin-right: 8px;
+			}
+
+			.cancel-campaign-button {
+				background: var(--color-surface);
+				border: 1px solid var(--studio-gray-10);
+				height: 40px;
+				font-weight: 400;
+				font-size: 0.875rem;
+				line-height: 14px;
+
+				&:hover {
+					color: var(--color-error);
+				}
+			}
+
+			.promote-again-button {
+				height: 40px;
 			}
 		}
 
@@ -804,7 +854,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				flex-direction: column;
 				justify-content: center;
 				@media (max-width: ($break-medium + 425)) {
-					margin: 16px;
+					margin: 15px;
 				}
 
 				button:first-child {
@@ -827,9 +877,15 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				}
 				.contact-support-button {
 					margin-bottom: 12px;
+					background: var(--color-surface);
+					border: 1.5px solid $studio-gray-10;
+					height: 40px;
 				}
+
 				.cancel-campaign-button {
 					display: flex;
+					background: var(--color-surface);
+					border: 1.5px solid $studio-gray-10;
 				}
 			}
 
@@ -900,7 +956,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__preview-disclosure {
-		margin: 14px;
+		margin: 15px;
 		text-align: left;
 		display: flex;
 		justify-content: center;
