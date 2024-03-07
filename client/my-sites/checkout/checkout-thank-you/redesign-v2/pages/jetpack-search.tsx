@@ -1,42 +1,12 @@
-import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
-import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
-import {
-	getJetpackSearchCustomizeUrl,
-	getJetpackSearchDashboardUrl,
-} from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ThankYouJetpackSearchProduct from '../products/jetpack-search-product';
 
 export default function JetpackSearchThankYou() {
 	const siteId = useSelector( getSelectedSiteId );
-	const jetpackSearchCustomizeUrl = useSelector( ( state ) =>
-		getJetpackSearchCustomizeUrl( state, siteId )
-	);
-	const jetpackSearchDashboardUrl = useSelector( ( state ) =>
-		getJetpackSearchDashboardUrl( state, siteId )
-	);
-	const selectedSite = useSelector( getSelectedSite );
-
-	const productButtonLabel = selectedSite.jetpack
-		? translate( 'Go to Search Dashboard' )
-		: translate( 'Customize Search' );
-	const productButtonHref = selectedSite.jetpack
-		? jetpackSearchDashboardUrl
-		: jetpackSearchCustomizeUrl;
-	const product = (
-		<ThankYouProduct
-			name="Jetpack Search"
-			actions={
-				<Button primary href={ productButtonHref }>
-					{ productButtonLabel }
-				</Button>
-			}
-		/>
-	);
-
 	const footerDetails = [
 		{
 			key: 'footer-generic-support',
@@ -66,7 +36,7 @@ export default function JetpackSearchThankYou() {
 					</>
 				</>
 			}
-			products={ product }
+			products={ <ThankYouJetpackSearchProduct siteId={ siteId } /> }
 			footerDetails={ footerDetails }
 		/>
 	);
