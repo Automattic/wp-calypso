@@ -247,7 +247,7 @@ export const useCommandPalette = ( {
 	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
 
 	// Sort commands with contextual commands ranking higher than general in a given context
-	let sortedCommands = commands
+	const sortedCommands = commands
 		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
 		.sort( ( a, b ) => {
 			const hasContextCommand = commandHasContext( a.context );
@@ -262,31 +262,54 @@ export const useCommandPalette = ( {
 			return 0; // no change in order
 		} );
 
+	const trackSelectedCommand = ( command: Command ) => {
+		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
+			command: command.name,
+			has_nested_commands: !! command.siteFunctions,
+			list_count: commands.length,
+			list_visible_count: listVisibleCount,
+			current_route: currentRoute,
+			search_text: search,
+		} );
+	};
+
+	// Inject a tracks event on the callback of each command
+	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
+		...command,
+		callback: ( params: CommandCallBackParams ) => {
+			trackSelectedCommand( command );
+			command.callback( params );
+		},
+	} ) );
+
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
 	if ( viewMySitesCommand && currentRoute !== '/sites' ) {
-		sortedCommands.unshift( viewMySitesCommand );
+		finalSortedCommands.unshift( viewMySitesCommand );
 	}
 
 	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
 
 	// If we have a current site and the route includes the site slug, filter and map the commands for single site use.
 	if ( currentSite && currentRoute?.includes( ':site' ) ) {
-		sortedCommands = sortedCommands.filter( ( command ) =>
+		finalSortedCommands = finalSortedCommands.filter( ( command ) =>
 			filterCurrentSiteCommands( currentSite, command )
 		);
 
-		sortedCommands = sortedCommands.map( ( command: Command ) => {
+		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
 			const callback = ( params: CommandCallBackParams ) => {
-				recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-					command: command.name,
-					has_nested_commands: !! command.siteFunctions,
-					list_count: commands.length,
-					list_visible_count: listVisibleCount,
-					current_route: currentRoute,
-					search_text: search,
-				} );
+				let targetFunction;
+				const isMultiSiteCommand = command?.siteFunctions !== undefined;
+				if ( isMultiSiteCommand ) {
+					targetFunction = command.siteFunctions.onClick;
+					// We need to track the selected command event here because `command.siteFunctions.onClick`
+					// does not track anything (and it's not meant to).
+					trackSelectedCommand( command );
+				} else {
+					// We don't need to track the selected command event here because `command.callback`
+					// already does it (see how `finalSortedCommands` is created a few lines above).
+					targetFunction = command.callback;
+				}
 
-				const targetFunction = command?.siteFunctions?.onClick || command.callback;
 				return targetFunction( {
 					close: params.close,
 					site: currentSite,
@@ -309,5 +332,5 @@ export const useCommandPalette = ( {
 		} );
 	}
 
-	return { commands: sortedCommands, filterNotice: undefined, emptyListNotice: undefined };
+	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
 };
