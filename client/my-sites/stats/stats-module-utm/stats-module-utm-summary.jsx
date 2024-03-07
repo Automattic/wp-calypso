@@ -27,12 +27,12 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 	// Tanstack query without Redux plumbing.
 	// That means this specific module does not follow the convention
 	// used for the other modules in the stats section.
-	const { data, isPending, isError, error } = useUTMQuery( siteId, selectedOption, query );
-	console.log( 'isPending', isPending );
-	if ( ! isPending ) {
-		console.log( 'isError & error', isError, error );
-	}
+	const { data, isPending, isError } = useUTMQuery( siteId, selectedOption, query );
 	const dataLength = data?.length || 0;
+
+	// Handle network error.
+	// We should destinguish between network errors and api errors.
+	const isNetworkError = isError && ! isPending;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
@@ -76,6 +76,7 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 		<>
 			<p>Query: { queryString } </p>
 			<p>Data length: { dataLength } </p>
+			{ isNetworkError && <p>Network error detected</p> }
 			<StatsModuleDataQuery
 				data={ data }
 				path="utm"
