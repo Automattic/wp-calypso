@@ -101,8 +101,9 @@
 			}
 		}
 
-		// Post table
-		.post-item__post-promote-button {
+		// Post and Campaign buttons
+		.post-item__post-promote-button,
+		.campaign-item__post-details-button {
 			color: var(--color-accent) !important;
 			border: 1.5px solid var(--color-accent);
 			border-radius: 4px;
@@ -144,7 +145,7 @@
 					padding: 10px;
 					background: none;
 					color: var(--color-accent);
-					border: 1.5px solid var(--color-accent);
+					border: 1px solid var(--studio-gray-10);
 					font-weight: 600;
 					font-size: 0.75rem;
 					// display: inline-flex;
