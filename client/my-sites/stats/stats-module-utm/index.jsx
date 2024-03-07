@@ -1,6 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import wpcom from 'calypso/lib/wp';
 import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
 import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
@@ -125,9 +127,19 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
+	// Testing a custom hook.
+	const { data: d2, isPending, isError, error } = useUTMQuery( siteId, selectedOption, query );
+	console.log( 'isPending', isPending );
+	if ( ! isPending ) {
+		console.log( 'data', d2 );
+		console.log( 'isError & error', isError, error );
+		// console.log( 'transformed', transformData( d2 ) );
+	}
+	const values = d2?.top_utm_values || {};
+	const dataLength = Object.keys( values ).length;
+
 	// Use mock data for now.
 	const data = sampleData;
-	const isFetching = false;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
@@ -170,7 +182,7 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 	return (
 		<>
 			<p>Query: { queryString } </p>
-			<p>Data length: { data.length } </p>
+			<p>Data length: { dataLength } </p>
 			<StatsModuleDataQuery
 				data={ data }
 				path="utm"
@@ -178,7 +190,7 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 				moduleStrings={ moduleStrings.utm }
 				period={ period }
 				query={ query }
-				isLoading={ isFetching ?? true }
+				isLoading={ isPending ?? true }
 				hideSummaryLink={ hideSummaryLink }
 				selectedOption={ optionLabels[ selectedOption ] }
 				toggleControl={
@@ -192,6 +204,46 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 			/>
 		</>
 	);
+}
+
+// Testing a Tanstack version of the API query.
+function useUTMQuery( siteId, selectedOption, query ) {
+	// Fetch UTM summary data. Does not include top posts.
+	// Ideally we'd have the API updated to include that data instead of requiring extra API requests.
+	const { data, isPending, isError, error } = useQuery( {
+		queryKey: [ 'useUTMQuery', siteId, selectedOption, query ],
+		queryFn: () => fetchUTMMetrics( siteId, selectedOption, query ),
+	} );
+	console.log( 'results', data, isPending, isError, error );
+
+	return { data, isPending, isError, error };
+}
+
+async function fetchUTMMetrics( siteId, selectedOption, query ) {
+	console.log( 'fetchUTMMetrics', siteId, selectedOption, query );
+
+	// Should be the following:
+	// https://public-api.wordpress.com/rest/v1.1/sites/147402695/stats/utm/utm_source,utm_medium?http_envelope=1&max=10&date=2024-03-03&days=7&post_id=
+
+	const response = await wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/stats/utm/${ selectedOption }`,
+		},
+		{
+			...query,
+			// max: 5,
+			// Today's date in yyyy-mm-dd format.
+			// date: new Date().toISOString().split( 'T' )[ 0 ],
+			// date: '2024-03-05',
+			// days: 7,
+			days: query?.num || 1,
+			// post_id: postId || '',
+			kdl: 'kdl utm metrics',
+		}
+	);
+	console.log( 'response', response );
+
+	return response;
 }
 
 export { StatsModuleUTM as default, StatsModuleUTM, OPTION_KEYS };
