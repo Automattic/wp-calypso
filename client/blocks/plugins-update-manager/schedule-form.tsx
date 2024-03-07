@@ -22,7 +22,6 @@ import {
 	useUpdateScheduleQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -57,6 +56,12 @@ export const ScheduleForm = ( props: Props ) => {
 	} = useCorePluginsQuery( siteSlug, true );
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
+	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
+		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+	} );
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
+		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+	} );
 
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
 		scheduleForEdit?.args || []
@@ -79,27 +84,6 @@ export const ScheduleForm = ( props: Props ) => {
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
-	const trackEventProps = {
-		site_slug: siteSlug,
-		frequency,
-		hour,
-		period,
-		day,
-	};
-	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_update_manager_schedule_create', trackEventProps );
-
-			return onSyncSuccess && onSyncSuccess();
-		},
-	} );
-	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_update_manager_schedule_edit', trackEventProps );
-
-			return onSyncSuccess && onSyncSuccess();
-		},
-	} );
 
 	const onPluginSelectionChange = useCallback(
 		( plugin: CorePlugin, isChecked: boolean ) => {
