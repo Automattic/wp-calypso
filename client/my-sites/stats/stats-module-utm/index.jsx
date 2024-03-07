@@ -167,26 +167,34 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 		},
 	};
 
+	const queryString = Object.keys( query )
+		.map( ( key ) => `${ key }: ${ query[ key ] }` )
+		.join( ', ' );
+
 	return (
-		<StatsModuleDataQuery
-			data={ data }
-			path="utm"
-			className={ classNames( className, 'stats-module-utm' ) }
-			moduleStrings={ moduleStrings.utm }
-			period={ period }
-			query={ query }
-			isLoading={ isFetching ?? true }
-			hideSummaryLink={ hideSummaryLink }
-			selectedOption={ optionLabels[ selectedOption ] }
-			toggleControl={
-				<UTMDropdown
-					buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-					onSelect={ setSelectedOption }
-					selectOptions={ optionLabels }
-					selected={ selectedOption }
-				/>
-			}
-		/>
+		<>
+			<p>Query: { queryString } </p>
+			<p>Data length: { data.length } </p>
+			<StatsModuleDataQuery
+				data={ data }
+				path="utm"
+				className={ classNames( className, 'stats-module-utm' ) }
+				moduleStrings={ moduleStrings.utm }
+				period={ period }
+				query={ query }
+				isLoading={ isFetching ?? true }
+				hideSummaryLink={ hideSummaryLink }
+				selectedOption={ optionLabels[ selectedOption ] }
+				toggleControl={
+					<UTMDropdown
+						buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+						onSelect={ setSelectedOption }
+						selectOptions={ optionLabels }
+						selected={ selectedOption }
+					/>
+				}
+			/>
+		</>
 	);
 }
 
