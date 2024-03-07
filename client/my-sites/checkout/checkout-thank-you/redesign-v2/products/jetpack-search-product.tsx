@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import {
 	getJetpackSearchCustomizeUrl,
@@ -30,11 +31,19 @@ export default function ThankYouJetpackSearchProduct( {
 		? jetpackSearchDashboardUrl
 		: jetpackSearchCustomizeUrl;
 
+	const recordThankYouClick = () => {
+		recordTracksEvent( 'calypso_jetpack_product_thankyou', {
+			product_name: 'search',
+			value: 'Customizer',
+			site: 'wpcom',
+		} );
+	};
+
 	return (
 		<ThankYouProduct
 			name="Jetpack Search"
 			actions={
-				<Button primary href={ productButtonHref }>
+				<Button primary href={ productButtonHref } onClick={ recordThankYouClick }>
 					{ productButtonLabel }
 				</Button>
 			}
