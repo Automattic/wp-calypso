@@ -45,18 +45,29 @@ export const DeploymentStyle = ( {
 		enabled: ! isDisabled,
 	} );
 
+	const supportMessage = (
+		<>
+			<p>
+				{ __( 'Simple deployments copy all of your repository files to a specified directory.' ) }
+			</p>
+			<p>
+				{ __(
+					' Advanced deployments allow you to use a workflow script, enabling custom build steps such as installing Composer dependencies, conducting pre-deployment code testing, and controlling file deployment. '
+				) }
+			</p>
+		</>
+	);
+
 	return (
 		<div className="github-deployments-deployment-style">
 			<div className="github-deployments-deployment-style__header">
 				<h3>{ __( 'Pick your deployment mode' ) }</h3>
 				<SupportInfo
-					text={ __(
-						'Simple deployments copy all of your repository files to the specified destination directory. ' +
-							'Advanced deployments use a Workflow script that allows you to run custom build steps, such as, install Composer dependencies, test your code before deploying, and control the files that are deployed to your site.'
-					) }
 					link="https://docs.github.com/en/actions/using-workflows"
 					privacyLink={ false }
-				/>
+				>
+					{ supportMessage }
+				</SupportInfo>
 			</div>
 			<FormRadiosBar
 				disabled={ isDisabled }

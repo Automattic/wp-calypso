@@ -17,7 +17,7 @@ function makePrivacyLink( privacyLink, link ) {
 	return null;
 }
 
-function SupportInfo( { text, link, position, privacyLink } ) {
+function SupportInfo( { children, text, link, position, privacyLink } ) {
 	const translate = useTranslate();
 	const filteredPrivacyLink = makePrivacyLink( privacyLink, link );
 
@@ -25,6 +25,7 @@ function SupportInfo( { text, link, position, privacyLink } ) {
 		<div className="support-info">
 			<InfoPopover position={ position || 'left' } screenReaderText={ translate( 'Learn more' ) }>
 				{ text + ' ' }
+				{ children }
 				{ link && (
 					<span className="support-info__learn-more">
 						<ExternalLink href={ link } target="_blank" rel="noopener noreferrer">

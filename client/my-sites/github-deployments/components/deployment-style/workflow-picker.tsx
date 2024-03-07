@@ -2,7 +2,6 @@ import { FormLabel, SelectDropdown } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import SupportInfo from 'calypso/components/support-info';
 import { Workflow } from './use-deployment-workflows-query';
 
 interface WorkflowPickerProps {
@@ -38,17 +37,7 @@ export const WorkflowPicker = ( {
 			className="github-deployments-deployment-style__workflow-selection"
 			style={ { marginBottom: '0px' } }
 		>
-			<FormLabel htmlFor="workflow-dropdown">
-				{ __( 'Deployment workflow' ) }
-
-				<SupportInfo
-					text={ __(
-						'A workflow is a configurable automated process that will run one or more jobs. Workflows are defined by a YAML file checked into your repository and will run when triggered by an event in your repository, or they can be triggered manually or at a defined schedule.'
-					) }
-					link="https://docs.github.com/en/actions/using-workflows"
-					privacyLink={ false }
-				/>
-			</FormLabel>
+			<FormLabel htmlFor="workflow-dropdown">{ __( 'Deployment workflow' ) }</FormLabel>
 			<SelectDropdown
 				selectedText={ realValue.file_name }
 				id="workflow-dropdown"
