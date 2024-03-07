@@ -29,6 +29,10 @@ export default function SidebarItem( props ) {
 		}
 	};
 
+	const handleNavigate = ( event ) => {
+		props.onNavigate?.( event, props.link );
+	};
+
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
@@ -45,7 +49,7 @@ export default function SidebarItem( props ) {
 		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
 			<a
 				className="sidebar__menu-link"
-				onClick={ props.onNavigate }
+				onClick={ handleNavigate }
 				href={ props.link }
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }

@@ -90,13 +90,25 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-identify',
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
+		} );
+
+		it( 'redirects the user to the goal step when going back from the identify step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/goals?siteSlug=example.wordpress.com'
+			);
 		} );
 	} );
 } );

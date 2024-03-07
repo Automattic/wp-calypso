@@ -43,8 +43,8 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 				stepName="site-migration-upgrade-plan"
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-upgrade-plan"
+				goBack={ navigation.goBack }
 				hideSkip={ true }
-				hideBack={ true }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

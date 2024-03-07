@@ -5,6 +5,7 @@
 .github-deployments-repositories {
 	display: flex;
 	flex-direction: column;
+	flex: 1;
 
 	&__search-bar {
 		display: flex;
@@ -19,7 +20,7 @@
 			top: 8px !important;
 		}
 		input {
-			max-width: 400px;
+			width: 100%;
 		}
 	}
 	.components-spinner {
@@ -48,9 +49,22 @@
 }
 
 .github-repositories-list {
-	.pagination {
-		margin-top: 32px;
+	&-permissions-notice {
+		margin-top: auto;
 	}
+
+	.pagination {
+		margin-top: auto;
+		margin-bottom: 16px;
+
+		+ .github-repositories-list-permissions-notice {
+			margin-top: initial;
+		}
+	}
+
+	display: flex;
+	flex-direction: column;
+	flex: 1;
 }
 
 .github-deployments-repository-list-table {

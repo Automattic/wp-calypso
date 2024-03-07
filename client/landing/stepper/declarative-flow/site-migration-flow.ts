@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -125,6 +126,7 @@ const siteMigration: Flow = {
 			[]
 		);
 		const siteSlugParam = useSiteSlugParam();
+		const urlQueryParams = useQuery();
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
@@ -236,9 +238,16 @@ const siteMigration: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
-				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug:
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
-					break;
+				}
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }` );
+				}
 			}
 		};
 

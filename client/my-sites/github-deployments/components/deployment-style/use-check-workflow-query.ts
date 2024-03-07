@@ -19,7 +19,7 @@ export interface WorkflowsValidation {
 }
 
 interface CheckWorkflowQueryParams {
-	repository: GitHubRepositoryData;
+	repository: GitHubRepositoryData | undefined;
 	branchName: string;
 	workflowFilename?: string;
 }
@@ -32,15 +32,15 @@ export const useCheckWorkflowQuery = (
 		queryKey: [
 			GITHUB_DEPLOYMENTS_QUERY_KEY,
 			CODE_DEPLOYMENTS_QUERY_KEY,
-			repository.name,
-			repository.owner,
+			repository?.name,
+			repository?.owner,
 			branchName,
 			workflowFilename,
 		],
 		queryFn: (): WorkflowsValidation => {
 			const path = addQueryArgs( '/hosting/github/workflows/checks', {
-				repository_name: repository.name,
-				repository_owner: repository.owner,
+				repository_name: repository?.name,
+				repository_owner: repository?.owner,
 				branch_name: branchName,
 				workflow_filename: workflowFilename,
 			} );
