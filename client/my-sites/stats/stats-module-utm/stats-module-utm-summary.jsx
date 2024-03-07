@@ -209,15 +209,6 @@ function transformData( data ) {
 	const keys = Object.keys( utmData );
 	const values = Object.values( utmData );
 
-	/*
-	keys.map( ( key, index ) => {
-		console.log( key, index );
-	} );
-	values.map( ( value, index ) => {
-		console.log( value, index );
-	} );
-	*/
-
 	const transformedData = keys.map( ( key, index ) => {
 		// console.log( 'key: ', key, 'typeof: ', typeof key );
 		const parsedKey = parseKey( key );
