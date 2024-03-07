@@ -7,7 +7,8 @@ import {
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { RENDERER_SITE_ID, getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
+import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternTypeFilter, type CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';

@@ -4,11 +4,11 @@ import {
 	makeLayout,
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
-	notFound,
 } from 'calypso/controller/index.web';
 import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
+import { CATEGORY_NOT_FOUND } from 'calypso/my-sites/patterns/constants';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import {
 	PatternTypeFilter,
@@ -22,7 +22,7 @@ import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
+			<PatternsWrapper category={ context.params.category }>
 				<PatternLibrary
 					category={ context.params.category }
 					categoryGallery={ CategoryGalleryClient }
@@ -51,8 +51,7 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 				const categoryNames = categories.map( ( category ) => category.name );
 
 				if ( ! categoryNames.includes( params.category ) ) {
-					notFound( context, next );
-					return;
+					params.category = CATEGORY_NOT_FOUND;
 				}
 			}
 
@@ -72,6 +71,7 @@ export default function ( router: typeof clientRouter ) {
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		...middleware
 	);
+
 	router(
 		`/${ langParam }/patterns/:type(layouts)/:category?`,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,

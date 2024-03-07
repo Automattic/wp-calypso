@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternTypeFilter, type CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
