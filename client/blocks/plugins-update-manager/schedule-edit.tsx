@@ -6,9 +6,11 @@ import {
 	CardHeader,
 	CardBody,
 	CardFooter,
+	Icon,
 } from '@wordpress/components';
-import { arrowLeft } from '@wordpress/icons';
+import { arrowLeft, warning } from '@wordpress/icons';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -27,6 +29,8 @@ export const ScheduleEdit = ( props: Props ) => {
 		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ] },
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
+
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
@@ -56,9 +60,21 @@ export const ScheduleEdit = ( props: Props ) => {
 				) }
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
+				<Button
+					form="schedule"
+					type="submit"
+					variant={ canCreateSchedules ? 'primary' : 'secondary' }
+					isBusy={ isBusy }
+					disabled={ ! canCreateSchedules }
+				>
 					Save
 				</Button>
+				{ ! canCreateSchedules && (
+					<Text as="p">
+						<Icon className="icon-info" icon={ warning } size={ 16 } />
+						This site is unable to schedule auto-updates for plugins.
+					</Text>
+				) }
 			</CardFooter>
 		</Card>
 	);

@@ -6,11 +6,13 @@ import {
 	CardHeader,
 	CardBody,
 	CardFooter,
+	Icon,
 } from '@wordpress/components';
-import { arrowLeft } from '@wordpress/icons';
+import { arrowLeft, warning } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -20,7 +22,9 @@ interface Props {
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const { onNavBack } = props;
+
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },
@@ -50,9 +54,21 @@ export const ScheduleCreate = ( props: Props ) => {
 				<ScheduleForm onSyncSuccess={ () => onNavBack && onNavBack() } />
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
+				<Button
+					form="schedule"
+					type="submit"
+					variant={ canCreateSchedules ? 'primary' : 'secondary' }
+					disabled={ ! canCreateSchedules }
+					isBusy={ isBusy }
+				>
 					Create
 				</Button>
+				{ ! canCreateSchedules && (
+					<Text as="p">
+						<Icon className="icon-info" icon={ warning } size={ 16 } />
+						This site is unable to schedule auto-updates for plugins.
+					</Text>
+				) }
 			</CardFooter>
 		</Card>
 	);
