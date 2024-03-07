@@ -1,9 +1,11 @@
 import { Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
@@ -28,6 +30,12 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	const hideCreateButton = schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
+	useEffect( () => {
+		recordTracksEvent( 'calypso_update_manager_page_view', {
+			site_slug: siteSlug,
+			context: context,
+		} );
+	}, [ context, siteSlug ] );
 
 	const { component, title } = {
 		list: {
