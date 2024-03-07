@@ -405,9 +405,9 @@ Thanks\n\n`;
 							commercialReasons
 								?.map(
 									( reason: string ) =>
-										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ]
+										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? 'Unknown'
 								)
-								.join( ' and/or ' ) ?? '',
+								.join( ' and/or ' ) ?? 'Unknown',
 					},
 				}
 		  )
