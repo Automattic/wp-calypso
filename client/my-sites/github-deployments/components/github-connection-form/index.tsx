@@ -6,7 +6,6 @@ import { ChangeEvent, useEffect, useLayoutEffect, useMemo, useState } from 'reac
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import Notice from 'calypso/components/notice';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -150,15 +149,6 @@ export const GitHubConnectionForm = ( {
 			} }
 		>
 			<div className="github-deployments-connect-repository__configs">
-				{ deploymentId && (
-					<div css={ { marginBottom: '16px' } }>
-						<Notice isCompact>
-							{ __(
-								'Changes to an existing connection will be applied in the next deployment run.'
-							) }
-						</Notice>
-					</div>
-				) }
 				<FormFieldset className="github-deployments-connect-repository__repository">
 					<FormLabel>{ __( 'Repository' ) }</FormLabel>
 					<div
@@ -214,9 +204,17 @@ export const GitHubConnectionForm = ( {
 					value={ isAutoDeploy }
 					hasWorkflowPath={ !! workflowPath }
 				/>
-				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
-					{ deploymentId ? __( 'Update connection' ) : __( 'Connect repository' ) }
-				</Button>
+				<div className="github-deployments-connect-repository__submit">
+					<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
+						{ deploymentId ? __( 'Update connection' ) : __( 'Connect repository' ) }
+					</Button>
+
+					{ deploymentId && (
+						<FormSettingExplanation>
+							{ __( 'Changes will be applied in the next deployment run.' ) }
+						</FormSettingExplanation>
+					) }
+				</div>
 			</div>
 			<DeploymentStyle
 				isDisabled={ isFetchingBranches }

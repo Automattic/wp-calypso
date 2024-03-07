@@ -59,4 +59,10 @@
 			flex: 1;
 		}
 	}
+
+	&__submit {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
 }
