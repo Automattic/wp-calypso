@@ -12,7 +12,8 @@ export type ScheduleUpdates = {
 };
 
 export const useUpdateScheduleQuery = (
-	siteSlug: SiteSlug
+	siteSlug: SiteSlug,
+	isEligibleForFeature: boolean
 ): UseQueryResult< ScheduleUpdates[] > => {
 	return useQuery( {
 		queryKey: [ 'schedule-updates', siteSlug ],
@@ -30,7 +31,7 @@ export const useUpdateScheduleQuery = (
 		meta: {
 			persist: false,
 		},
-		enabled: !! siteSlug,
+		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
 		refetchOnWindowFocus: false,
 	} );

@@ -31,27 +31,23 @@ interface Props {
 
 export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
-	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
+	const hasScheduledUpdatesFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_SCHEDULED_UPDATES )
+	);
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
+	const isEligibleForFeature = hasScheduledUpdatesFeature && isAtomic;
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const isFeaturesLoaded: boolean = useSelector( ( state ) =>
 		getHasLoadedSiteFeatures( state, siteId )
 	);
 	const isSitePlansLoaded: boolean = useSelector( ( state ) =>
 		hasLoadedSitePlansFromServer( state, siteId )
 	);
-
-	const hasScheduledUpdatesFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_SCHEDULED_UPDATES )
-	);
-	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
-	const isEligibleForFeature = hasScheduledUpdatesFeature && isAtomic;
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
-<<<<<<< HEAD
 
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
-=======
->>>>>>> 96794ec8990 (Rebase)
 
 	const { component, title } = {
 		list: {
@@ -75,7 +71,10 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	}[ context ];
 
 	return (
-		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
+		<PluginUpdateManagerContextProvider
+			siteSlug={ siteSlug }
+			isEligibleForFeature={ isEligibleForFeature }
+		>
 			<DocumentHead title={ title } />
 
 			<MainComponent wideLayout>
@@ -102,7 +101,6 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					<ScheduledUpdatesGate
 						hasScheduledUpdatesFeature={ hasScheduledUpdatesFeature }
 						isAtomic={ isAtomic }
-						isEligibleForFeature={ isEligibleForFeature }
 						siteId={ siteId as number }
 					>
 						{ component }

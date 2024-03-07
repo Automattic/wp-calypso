@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -21,9 +22,12 @@ interface Props {
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const { onNavBack } = props;
-
-	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
+		siteSlug,
+		isEligibleForFeature
+	);
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 
 	const mutationState = useMutationState( {

@@ -23,6 +23,7 @@ import {
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SELECTABLE_PLUGINS } from './config';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
 	DAILY_OPTION,
@@ -43,6 +44,7 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
@@ -52,7 +54,7 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true );
-	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug );
+	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
