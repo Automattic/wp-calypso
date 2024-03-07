@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
@@ -39,8 +40,13 @@ export const ScheduleEdit = ( props: Props ) => {
 	}
 
 	const onSyncSuccess = () => {
-		onNavBack && onNavBack();
-		return null;
+		recordTracksEvent( 'calypso_update_manager_schedule_edit', {
+			site_slug: siteSlug,
+			schedule: schedule?.schedule,
+			Interval: schedule?.interval,
+		} );
+
+		return onNavBack && onNavBack();
 	};
 
 	return (
