@@ -3,9 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
-import GlobalSidebar from 'calypso/layout/global-sidebar';
+import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
@@ -18,6 +19,13 @@ class MySitesNavigation extends Component {
 	preventPickerDefault = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
+	};
+
+	handleGlobalSidebarMenuItemClick = ( path ) => {
+		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
+			section: this.props.isGlobalSiteSidebarVisible ? 'site' : 'sites',
+			path,
+		} );
 	};
 
 	renderSidebar() {
@@ -78,16 +86,21 @@ class MySitesNavigation extends Component {
 		};
 		return (
 			<GlobalSidebar { ...asyncProps }>
-				<MySitesSidebarUnifiedBody path={ this.props.path } />
+				<MySitesSidebarUnifiedBody
+					path={ this.props.path }
+					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
+				/>
 			</GlobalSidebar>
 		);
 	}
 
-	// TODO: Add styles
 	renderGlobalSiteSidebar() {
 		return (
 			<GlobalSidebar path={ this.props.path }>
-				<MySitesSidebarUnifiedBody path={ this.props.path } />
+				<MySitesSidebarUnifiedBody
+					path={ this.props.path }
+					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
+				/>
 			</GlobalSidebar>
 		);
 	}
@@ -104,18 +117,23 @@ class MySitesNavigation extends Component {
 }
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const siteId = getSelectedSiteId( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
-			state,
-			siteId,
-			sectionGroup
-		);
-		return {
-			isGlobalSidebarVisible: shouldShowGlobalSidebar,
-			isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
-		};
-	}, null )( MySitesNavigation )
+	connect(
+		( state, { currentSection } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const siteId = getSelectedSiteId( state );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+				state,
+				siteId,
+				sectionGroup
+			);
+			return {
+				isGlobalSidebarVisible: shouldShowGlobalSidebar,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+			};
+		},
+		{
+			recordTracksEvent,
+		}
+	)( MySitesNavigation )
 );

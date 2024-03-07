@@ -34,7 +34,7 @@ export const MySitesSidebarUnifiedItem = ( {
 
 	const onNavigate = () => {
 		if ( typeof trackClickEvent === 'function' ) {
-			trackClickEvent( url );
+			trackClickEvent( url, slug );
 		}
 
 		reduxDispatch( collapseAllMySitesSidebarSections() );

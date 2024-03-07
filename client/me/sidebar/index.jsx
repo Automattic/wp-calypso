@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withCurrentRoute } from 'calypso/components/route';
-import GlobalSidebar from 'calypso/layout/global-sidebar';
+import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -16,7 +16,7 @@ import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getShouldShowGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
@@ -28,7 +28,14 @@ import './style.scss';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 
 class MeSidebar extends Component {
-	onNavigate = () => {
+	onNavigate = ( event, path ) => {
+		if ( this.shouldShowGlobalSidebar ) {
+			this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
+				section: 'me',
+				path,
+			} );
+		}
+
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	};
@@ -222,6 +229,7 @@ export default withCurrentRoute(
 		{
 			logoutUser,
 			recordGoogleEvent,
+			recordTracksEvent,
 			redirectToLogout,
 			setNextLayoutFocus,
 		}
