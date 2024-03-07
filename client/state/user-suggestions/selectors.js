@@ -13,6 +13,10 @@ export function isRequestingUserSuggestions( state, siteId ) {
 	return get( state.userSuggestions.requesting, [ siteId ], false );
 }
 
+// Use a consistent reference for the default user suggestions. If we don't and supply a new array
+// as the default, we cause unnecessary rerenders.
+const defaultSuggestions = [];
+
 /**
  * Returns the user suggestions for a site.
  * @param  {Object}  state   Global state tree
@@ -20,5 +24,5 @@ export function isRequestingUserSuggestions( state, siteId ) {
  * @returns {Array}           Site user suggestions
  */
 export function getUserSuggestions( state, siteId ) {
-	return get( state.userSuggestions.items, [ siteId ], [] );
+	return get( state.userSuggestions.items, [ siteId ], defaultSuggestions );
 }
