@@ -1,5 +1,3 @@
-import { Popover } from '@automattic/components';
-import { useState } from 'react';
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
@@ -31,7 +29,6 @@ export function getCommitDetails( deployment: CodeDeploymentData, run?: Deployme
 export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDetailsProps ) => {
 	const [ account, repo ] = deployment.repository_name.split( '/' );
 	const { message, sha, shaShort, path } = getCommitDetails( deployment, run );
-	const [ popoverRef, setPopoverRef ] = useState< HTMLElement >();
 
 	return (
 		<div className="github-deployments-list__commit-details">
@@ -90,18 +87,10 @@ export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDe
 									fill="#50575E"
 								/>
 							</svg>
-							<span css={ { paddingLeft: '2px' } }>{ path }</span>
+							<span css={ { paddingLeft: '2px' } } title={ deployment.target_dir }>
+								{ path }
+							</span>
 						</span>
-						{ popoverRef && (
-							<Popover
-								className="github-deployments-commit-details-popover"
-								isVisible
-								context={ popoverRef }
-								position="top"
-							>
-								<code>{ deployment.target_dir }</code>
-							</Popover>
-						) }
 					</>
 				) }
 			</div>
