@@ -97,6 +97,18 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	);
 };
 
+// TODO: Remove this data once the real data is available.
+// This is the shape expected by the StatsModuleUTMDebug component.
+// Not the shape of the real data from the API.
+const sampleData = [
+	{
+		children: null, // an array of posts using the UTM parameters
+		label: 'label', // used for display, ie: "source / medium" (with the spaces)
+		paramValues: 'source/medium', // string like "["adwords","ppc"]"
+		value: 411, // count of views
+	},
+];
+
 export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, className } ) {
 	// Note: The module is loaded multiple times on initial page render.
 	// Not sure why this is happening as the props are consistent across initial renders.
@@ -113,25 +125,9 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
-	// Fetch UTM metrics with switched UTM parameters.
-	const { isFetching: isFetching, metrics } = useUTMMetricsQuery( siteId, selectedOption, postId );
-	// Fetch top posts for all UTM metric items.
-	const { topPosts } = useUTMMetricTopPostsQuery( siteId, selectedOption, metrics );
-
-	// Combine metrics with top posts.
-	const data = metrics.map( ( metric ) => {
-		const paramValues = metric.paramValues;
-		const children = topPosts[ paramValues ] || [];
-
-		if ( ! children.length ) {
-			return metric;
-		}
-
-		return {
-			...metric,
-			children,
-		};
-	} );
+	// Use mock data for now.
+	const data = sampleData;
+	const isFetching = false;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
