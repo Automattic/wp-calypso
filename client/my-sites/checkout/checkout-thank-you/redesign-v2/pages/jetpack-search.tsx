@@ -16,7 +16,7 @@ export default function JetpackSearchThankYou() {
 			buttonHref: '/support',
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-					context: context,
+					context: 'jetpack-search',
 					type: 'generic-support',
 				} );
 			},
