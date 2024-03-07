@@ -12,6 +12,7 @@ import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -55,7 +56,12 @@ export const ScheduleList = ( props: Props ) => {
 	};
 
 	const onRemoveDialogConfirm = () => {
-		selectedScheduleId && deleteUpdateSchedule( selectedScheduleId );
+		if ( selectedScheduleId ) {
+			deleteUpdateSchedule( selectedScheduleId );
+			recordTracksEvent( 'calypso_update_manager_schedule_delete', {
+				site_slug: siteSlug,
+			} );
+		}
 		closeRemoveConfirm();
 	};
 
