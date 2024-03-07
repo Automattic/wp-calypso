@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -14,7 +13,6 @@ import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -25,7 +23,7 @@ import {
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 } from 'calypso/state/site-settings/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ButtonsAppearance from './appearance';
 import ButtonsBlockAppearance from './components/buttons-block-appearance';
@@ -125,17 +123,10 @@ class SharingButtons extends Component {
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
 	}
 
-	showSharingButtonsBlockAppearance() {
-		const { isBlockTheme, queryArgs } = this.props;
-
-		const skipShow = !! queryArgs[ 'no-block-appearance' ];
-
-		return ! skipShow && isBlockTheme && isEnabled( 'jetpack/sharing-buttons-block-enabled' );
-	}
-
 	render() {
 		const {
 			buttons,
+			isBlockTheme,
 			isJetpack,
 			isSavingSettings,
 			isSavingButtons,
@@ -145,6 +136,7 @@ class SharingButtons extends Component {
 			isFetchingModules,
 			isPrivate,
 			siteSlug,
+			supportsSharingBlock,
 			translate,
 		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
@@ -152,7 +144,7 @@ class SharingButtons extends Component {
 		const isSaving = isSavingSettings || isSavingButtons;
 		const shouldShowNotice = isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive;
 
-		if ( this.showSharingButtonsBlockAppearance() ) {
+		if ( isBlockTheme && supportsSharingBlock ) {
 			return <ButtonsBlockAppearance siteId={ siteId } />;
 		}
 
@@ -249,7 +241,7 @@ const connectComponent = connect(
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isPrivate = isPrivateSite( state, siteId );
 		const path = getCurrentRouteParameterized( state, siteId );
-		const queryArgs = getCurrentQueryArguments( state );
+		const supportsSharingBlock = ! isJetpack || isJetpackMinimumVersion( state, siteId, '13.1' );
 
 		return {
 			isJetpack,
@@ -263,7 +255,7 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			path,
-			queryArgs,
+			supportsSharingBlock,
 		};
 	},
 	{
