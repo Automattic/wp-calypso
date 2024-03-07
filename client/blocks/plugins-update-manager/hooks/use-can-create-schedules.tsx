@@ -1,12 +1,27 @@
-import { useSitePluginsQuery } from 'calypso/data/plugins/use-site-plugins-query';
+import { useUpdateScheduleCapabilitiesQuery } from 'calypso/data/plugins/use-update-schedules-capabilities-query';
 
-const DEFAULT_FILE_MOD_PERMISSIONS = { modify_files: false, autoupdate_files: false };
+const DEFAULT_FILE_MOD_PERMISSIONS = {
+	modify_files: false,
+	autoupdate_files: false,
+	errors: undefined,
+};
 
-export function useCanCreateSchedules( siteSlug: string ) {
-	const { data: pluginsData, isFetching } = useSitePluginsQuery( siteSlug );
-	const { modify_files: modifyFiles, autoupdate_files: autoUpdateFiles } =
-		( pluginsData && pluginsData.file_mod_capabilities ) || DEFAULT_FILE_MOD_PERMISSIONS;
+interface UseCanCreateSchedulesReturn {
+	canCreateSchedules: boolean;
+	errors?: { code: string; message: string }[];
+	isLoading: boolean;
+}
+
+export function useCanCreateSchedules( siteSlug: string ): UseCanCreateSchedulesReturn {
+	const { data, isLoading } = useUpdateScheduleCapabilitiesQuery( siteSlug );
+	const {
+		modify_files: modifyFiles,
+		autoupdate_files: autoUpdateFiles,
+		errors,
+	} = data || DEFAULT_FILE_MOD_PERMISSIONS;
 
 	// we assume we can create schedules until the API reports back.
-	return isFetching ? true : modifyFiles && autoUpdateFiles;
+	const canCreateSchedules = isLoading ? true : modifyFiles && autoUpdateFiles;
+
+	return { canCreateSchedules, errors, isLoading };
 }

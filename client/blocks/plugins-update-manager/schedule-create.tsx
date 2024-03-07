@@ -12,17 +12,19 @@ import { arrowLeft, warning } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
-	canCreateSchedules: boolean;
 	onNavBack?: () => void;
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const { onNavBack, canCreateSchedules } = props;
+	const { onNavBack } = props;
+
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },

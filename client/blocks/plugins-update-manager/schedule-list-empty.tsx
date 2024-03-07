@@ -1,5 +1,5 @@
-import { __experimentalText as Text } from '@wordpress/components';
-import ScheduleCreateButton from './components/schedule-create-button';
+import { __experimentalText as Text, Button } from '@wordpress/components';
+import { plus } from '@wordpress/icons';
 
 interface Props {
 	canCreateSchedules: boolean;
@@ -16,10 +16,15 @@ export const ScheduleListEmpty = ( props: Props ) => {
 					: 'Set up plugin update schedules to ensure your site runs smoothly.' }
 			</Text>
 			{ onCreateNewSchedule && (
-				<ScheduleCreateButton
-					onCreateNewSchedule={ onCreateNewSchedule }
-					canCreateSchedules={ canCreateSchedules }
-				/>
+				<Button
+					__next40pxDefaultSize
+					icon={ plus }
+					variant={ canCreateSchedules ? 'primary' : 'secondary' }
+					onClick={ onCreateNewSchedule }
+					disabled={ ! canCreateSchedules }
+				>
+					Create a new schedule
+				</Button>
 			) }
 		</div>
 	);

@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
@@ -20,7 +21,6 @@ import { ScheduleListTable } from './schedule-list-table';
 
 interface Props {
 	onNavBack?: () => void;
-	canCreateSchedules: boolean;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
 }
@@ -28,7 +28,7 @@ export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const isMobile = useMobileBreakpoint();
 
-	const { onNavBack, onCreateNewSchedule, onEditSchedule, canCreateSchedules } = props;
+	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
@@ -41,6 +41,8 @@ export const ScheduleList = ( props: Props ) => {
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );
+	const { canCreateSchedules, isLoading: isLoadingCanCreateSchedules } =
+		useCanCreateSchedules( siteSlug );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
@@ -79,34 +81,42 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ isLoading && <Spinner /> }
-					{ isFetched && ( schedules.length === 0 || ! canCreateSchedules ) && (
-						<ScheduleListEmpty
-							onCreateNewSchedule={ onCreateNewSchedule }
-							canCreateSchedules={ canCreateSchedules }
-						/>
-					) }
-					{ isFetched && schedules.length > 0 && canCreateSchedules && (
-						<>
-							{ isMobile ? (
-								<ScheduleListCards
-									onRemoveClick={ openRemoveDialog }
-									onEditClick={ onEditSchedule }
-								/>
-							) : (
-								<ScheduleListTable
-									onRemoveClick={ openRemoveDialog }
-									onEditClick={ onEditSchedule }
-								/>
-							) }
-						</>
-					) }
-					{ isFetched && schedules.length >= MAX_SCHEDULES && canCreateSchedules && (
-						<Text as="p">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							The current feature implementation only allows to set up two schedules.
-						</Text>
-					) }
+					{ ( isLoading || isLoadingCanCreateSchedules ) && <Spinner /> }
+					{ isFetched &&
+						! isLoadingCanCreateSchedules &&
+						( schedules.length === 0 || ! canCreateSchedules ) && (
+							<ScheduleListEmpty
+								onCreateNewSchedule={ onCreateNewSchedule }
+								canCreateSchedules={ canCreateSchedules }
+							/>
+						) }
+					{ isFetched &&
+						! isLoadingCanCreateSchedules &&
+						schedules.length > 0 &&
+						canCreateSchedules && (
+							<>
+								{ isMobile ? (
+									<ScheduleListCards
+										onRemoveClick={ openRemoveDialog }
+										onEditClick={ onEditSchedule }
+									/>
+								) : (
+									<ScheduleListTable
+										onRemoveClick={ openRemoveDialog }
+										onEditClick={ onEditSchedule }
+									/>
+								) }
+							</>
+						) }
+					{ isFetched &&
+						! isLoadingCanCreateSchedules &&
+						schedules.length >= MAX_SCHEDULES &&
+						canCreateSchedules && (
+							<Text as="p">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								The current feature implementation only allows to set up two schedules.
+							</Text>
+						) }
 				</CardBody>
 			</Card>
 		</>
