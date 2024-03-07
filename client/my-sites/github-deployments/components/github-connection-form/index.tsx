@@ -2,7 +2,7 @@ import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/com
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { ChangeEvent, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -59,13 +59,6 @@ export const GitHubConnectionForm = ( {
 	);
 	const { __ } = useI18n();
 
-	useEffect( () => {
-		setBranch( initialValues.branch );
-		setDestPath( initialValues.destPath );
-		setIsAutoDeploy( initialValues.isAutomated );
-		setWorkflowPath( initialValues.workflowPath );
-	}, [ initialValues ] );
-
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
 		installationId,
 		repository?.owner,
@@ -104,11 +97,16 @@ export const GitHubConnectionForm = ( {
 		branch
 	);
 
-	useLayoutEffect( () => {
+	useEffect( () => {
 		if ( repoChecks?.suggested_directory ) {
 			setDestPath( repoChecks.suggested_directory );
+		} else {
+			setDestPath( initialValues.destPath );
 		}
-	}, [ repoChecks ] );
+		setBranch( initialValues.branch );
+		setIsAutoDeploy( initialValues.isAutomated );
+		setWorkflowPath( initialValues.workflowPath );
+	}, [ initialValues, repoChecks ] );
 
 	const displayMissingRepositoryError = submitted && ! repository;
 	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
