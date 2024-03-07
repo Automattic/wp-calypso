@@ -11,7 +11,7 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -123,6 +123,11 @@ class SharingButtons extends Component {
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
 	}
 
+	disableLegacySharing = ( siteId ) => {
+		this.props.recordTracksEvent( 'calypso_sharing_buttons_disable_legacy_click', {} );
+		this.props.deactivateModule( siteId, 'sharedaddy' );
+	};
+
 	render() {
 		const {
 			buttons,
@@ -142,10 +147,11 @@ class SharingButtons extends Component {
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 		const isSaving = isSavingSettings || isSavingButtons;
-		const shouldShowNotice = isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive;
+		const isSharingModuleInactive =
+			isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive;
 
-		if ( isBlockTheme && supportsSharingBlock ) {
-			return <ButtonsBlockAppearance siteId={ siteId } />;
+		if ( isBlockTheme && supportsSharingBlock && isSharingModuleInactive ) {
+			return <ButtonsBlockAppearance isJetpack={ isJetpack } siteId={ siteId } />;
 		}
 
 		return (
@@ -162,7 +168,7 @@ class SharingButtons extends Component {
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ /* Rendering notice in a separate function */ }
-				{ shouldShowNotice && (
+				{ isSharingModuleInactive && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -180,6 +186,21 @@ class SharingButtons extends Component {
 						>
 							{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
 						</NoticeAction>
+					</Notice>
+				) }
+				{ ! isFetchingModules && ! isSharingModuleInactive && (
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate(
+							'You are using a block-based theme. We recommend you disable the legacy sharing feature below and add a sharing button block to your themes’s template instead.'
+						) }
+					>
+						{ isJetpack && (
+							<NoticeAction onClick={ this.disableLegacySharing }>
+								{ translate( 'Disable' ) }
+							</NoticeAction>
+						) }
 					</Notice>
 				) }
 
@@ -260,6 +281,7 @@ const connectComponent = connect(
 	},
 	{
 		activateModule,
+		deactivateModule,
 		errorNotice,
 		recordGoogleEvent,
 		recordTracksEvent,
