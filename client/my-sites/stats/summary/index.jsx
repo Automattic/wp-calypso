@@ -18,7 +18,8 @@ import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
-import StatsModuleUTM, { StatsModuleUTMDebug } from '../stats-module-utm';
+import StatsModuleUTM from '../stats-module-utm';
+import StatsModuleUTMSummary from '../stats-module-utm/stats-module-utm-summary';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import StatsUpsellModal from '../stats-upsell-modal';
@@ -335,7 +336,7 @@ class StatsSummary extends Component {
 				summaryView = isEnabled( 'stats/utm-module' ) ? (
 					<>
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-						<StatsModuleUTMDebug
+						<StatsModuleUTMSummary
 							siteId={ siteId }
 							period={ this.props.period }
 							query={ moduleQuery }
