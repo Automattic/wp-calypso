@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
@@ -10,7 +10,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors';
 import { isDelistedTaxonomyTermSlug } from 'calypso/state/themes/utils';
 
-const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onClick } ) => {
+const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onClick, locale } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	if ( isEmpty( features ) ) {
 		return null;
@@ -23,9 +23,9 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 			<Card>
 				<ul className="theme__sheet-features-list">
 					{ features.map( ( { name, slug, term } ) => {
-						const themePath = localizeThemesPath(
+						const filterPath = localizeThemesPath(
 							`/themes/filter/${ term }/${ siteSlug || '' }`,
-							getLocaleSlug(),
+							locale,
 							! isLoggedIn
 						);
 						return (
@@ -34,7 +34,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 								role="presentation"
 								onClick={ () => onClick?.( slug ) }
 							>
-								{ ! isWpcomTheme ? <span>{ name }</span> : <a href={ themePath }>{ name }</a> }
+								{ ! isWpcomTheme ? <span>{ name }</span> : <a href={ filterPath }>{ name }</a> }
 							</li>
 						);
 					} ) }
