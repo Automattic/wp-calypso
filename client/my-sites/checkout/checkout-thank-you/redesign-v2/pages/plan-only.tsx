@@ -1,4 +1,4 @@
-import { isP2Plus } from '@automattic/calypso-products';
+import { isP2Plus, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
