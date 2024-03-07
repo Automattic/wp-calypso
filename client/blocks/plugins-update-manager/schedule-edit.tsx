@@ -47,7 +47,7 @@ export const ScheduleEdit = ( props: Props ) => {
 		recordTracksEvent( 'calypso_update_manager_schedule_edit', {
 			site_slug: siteSlug,
 			schedule: schedule?.schedule,
-			Interval: schedule?.interval,
+			interval: schedule?.interval,
 		} );
 
 		return onNavBack && onNavBack();
