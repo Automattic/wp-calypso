@@ -4,6 +4,7 @@ import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import SupportInfo from 'calypso/components/support-info/index';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { DeploymentStyleContext, DeploymentStyleContextProps } from './context';
 import { useDeploymentWorkflowsQuery } from './use-deployment-workflows-query';
@@ -13,7 +14,7 @@ import './style.scss';
 
 type DeploymentStyleProps = {
 	isDisabled: boolean;
-	repository?: Parameters< typeof useDeploymentWorkflowsQuery >[ 0 ];
+	repository?: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
 	onChooseWorkflow( workflowFilename: string | undefined ): void;
