@@ -134,8 +134,6 @@ function useUTMQuery( siteId, selectedOption, query ) {
 }
 
 async function fetchUTMMetrics( siteId, selectedOption, query ) {
-	console.log( 'fetchUTMMetrics', siteId, selectedOption, query );
-
 	// Should be the following:
 	// https://public-api.wordpress.com/rest/v1.1/sites/147402695/stats/utm/utm_source,utm_medium?http_envelope=1&max=10&date=2024-03-03&days=7&post_id=
 
@@ -155,7 +153,6 @@ async function fetchUTMMetrics( siteId, selectedOption, query ) {
 			kdl: 'kdl utm metrics',
 		}
 	);
-	// console.log( 'response', response );
 
 	return response;
 }
@@ -210,9 +207,7 @@ function transformData( data ) {
 	const values = Object.values( utmData );
 
 	const transformedData = keys.map( ( key, index ) => {
-		// console.log( 'key: ', key, 'typeof: ', typeof key );
 		const parsedKey = parseKey( key );
-		// console.log( 'parsed key: ', parsedKey );
 		return {
 			label: parsedKey,
 			value: values[ index ],
