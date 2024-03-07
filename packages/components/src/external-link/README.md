@@ -62,8 +62,8 @@ function MyComponent() {
 In addition to the props that the unconnected `<ExternalLink />` component accepts, you
 can pass the following Tracks-related props to the `<ExternalLinkWithTracking />` component:
 
-| property            | type   | required | comment                                                                 |
-| ------------------- | ------ | -------- | ----------------------------------------------------------------------- |
-| `tracksEventName`   | string | yes      | Tracks event name                                                       |
-| `tracksEventProps`  | object | no       | Additional parameters that can be tracked along with the event          |
-| `recordTracksEvent` | object | yes      | The callback that will record the event, accepting the above properties |
+| property            | type   | required | comment                                                                   |
+| ------------------- | ------ | -------- | ------------------------------------------------------------------------- |
+| `tracksEventName`   | string | yes      | Tracks event name                                                         |
+| `tracksEventProps`  | object | no       | Additional parameters that can be tracked along with the event            |
+| `recordTracksEvent` | object | no       | Optional callback for recording the event, accepting the above properties |
