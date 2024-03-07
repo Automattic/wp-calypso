@@ -133,7 +133,7 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 	if ( ! isPending ) {
 		console.log( 'data', d2 );
 		console.log( 'isError & error', isError, error );
-		// console.log( 'transformed', transformData( d2 ) );
+		console.log( 'transformed data: ', transformData( d2 ) );
 	}
 	const values = d2?.top_utm_values || {};
 	const dataLength = Object.keys( values ).length;
@@ -241,9 +241,67 @@ async function fetchUTMMetrics( siteId, selectedOption, query ) {
 			kdl: 'kdl utm metrics',
 		}
 	);
-	console.log( 'response', response );
+	// console.log( 'response', response );
 
 	return response;
+}
+
+// Utility functions for use with the returned API data.
+// Should live with the custom hook once it's moved to its own file.
+
+function isValidJSON( string ) {
+	try {
+		JSON.parse( string );
+		return true;
+	} catch ( e ) {
+		return false;
+	}
+}
+
+function parseKey( key ) {
+	if ( key.length === 0 ) {
+		return key;
+	}
+	if ( isValidJSON( key ) ) {
+		const parsedKey = JSON.parse( key );
+		if ( Array.isArray( parsedKey ) ) {
+			return parsedKey.join( ' / ' );
+		}
+		return parsedKey;
+	}
+	return key;
+}
+
+function transformData( data ) {
+	const utmData = data?.top_utm_values;
+	if ( ! utmData ) {
+		return [];
+	}
+
+	const keys = Object.keys( utmData );
+	const values = Object.values( utmData );
+
+	/*
+	keys.map( ( key, index ) => {
+		console.log( key, index );
+	} );
+	values.map( ( value, index ) => {
+		console.log( value, index );
+	} );
+	*/
+
+	const transformedData = keys.map( ( key, index ) => {
+		// console.log( 'key: ', key, 'typeof: ', typeof key );
+		const parsedKey = parseKey( key );
+		// console.log( 'parsed key: ', parsedKey );
+		return {
+			label: parsedKey,
+			value: values[ index ],
+			paramValues: key,
+		};
+	} );
+
+	return transformedData;
 }
 
 export { StatsModuleUTM as default, StatsModuleUTM, OPTION_KEYS };
