@@ -158,9 +158,10 @@ export interface CurrencyObjectOptions {
 
 export interface CurrencyObject {
 	/**
-	 * The negative sign for the price, if it is negative.
+	 * The negative sign for the price, if it is negative, or the positive sign
+	 * if `signForPositive` is set.
 	 */
-	sign: '-' | '';
+	sign: '-' | '+' | '';
 
 	/**
 	 * The currency symbol for the formatted price.
