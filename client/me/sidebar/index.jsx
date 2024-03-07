@@ -29,15 +29,17 @@ import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites s
 
 class MeSidebar extends Component {
 	onNavigate = ( event, path ) => {
-		if ( this.shouldShowGlobalSidebar ) {
-			this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
-				section: 'me',
-				path,
-			} );
-		}
-
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
+
+		if ( ! this.shouldShowGlobalSidebar ) {
+			return;
+		}
+
+		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
+			section: 'me',
+			path,
+		} );
 	};
 
 	onSignOut = async () => {

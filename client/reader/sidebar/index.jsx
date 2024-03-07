@@ -102,6 +102,10 @@ export class ReaderSidebar extends Component {
 	};
 
 	handleGlobalSidebarMenuItemClick = ( path ) => {
+		if ( ! this.props.shouldShowGlobalSidebar ) {
+			return;
+		}
+
 		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
 			section: 'read',
 			path,
