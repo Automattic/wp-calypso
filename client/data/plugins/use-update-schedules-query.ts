@@ -4,7 +4,6 @@ import type { SiteSlug } from 'calypso/types';
 
 export type ScheduleUpdates = {
 	id: string;
-	hook: string;
 	interval: number;
 	timestamp: number;
 	schedule: 'weekly' | 'daily';
