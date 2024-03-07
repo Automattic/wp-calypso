@@ -42,6 +42,11 @@ export const ScheduleEdit = ( props: Props ) => {
 		return null;
 	}
 
+	const onSyncSuccess = () => {
+		onNavBack && onNavBack();
+		return null;
+	};
+
 	return (
 		<Card className="plugins-update-manager">
 			<CardHeader size="extraSmall">
@@ -57,10 +62,7 @@ export const ScheduleEdit = ( props: Props ) => {
 			</CardHeader>
 			<CardBody>
 				{ schedule && (
-					<ScheduleForm
-						scheduleForEdit={ schedule }
-						onSyncSuccess={ () => onNavBack && onNavBack() }
-					/>
+					<ScheduleForm scheduleForEdit={ schedule } onSyncSuccess={ onSyncSuccess } />
 				) }
 			</CardBody>
 			<CardFooter>
