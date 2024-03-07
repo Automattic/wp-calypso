@@ -50,9 +50,9 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-source"
 				hideSkip={ true }
-				hideBack={ true }
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
+				goBack={ navigation.goBack }
 			/>
 		</>
 	);

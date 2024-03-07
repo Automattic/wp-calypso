@@ -10,7 +10,7 @@ import type { Reducer } from 'redux';
 
 export interface RenderStepOptions {
 	initialEntry?: string;
-	reducers: Record< string, Reducer >;
+	reducers?: Record< string, Reducer >;
 }
 
 /** Utility to render a step for testing purposes */

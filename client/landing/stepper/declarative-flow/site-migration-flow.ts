@@ -244,6 +244,9 @@ const siteMigration: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
