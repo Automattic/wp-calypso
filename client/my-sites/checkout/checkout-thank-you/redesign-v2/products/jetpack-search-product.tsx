@@ -21,13 +21,15 @@ export default function ThankYouJetpackSearchProduct( {
 		getJetpackSearchCustomizeUrl( state, siteId )
 	);
 	const jetpackSearchDashboardUrl = useSelector( ( state ) =>
-		getJetpackSearchDashboardUrl( state, siteId )
+		// At this point in the flow, having purchased a product for a specific
+		// site, we can assume that `siteId` is a umber and not `null`.
+		getJetpackSearchDashboardUrl( state, siteId as number )
 	);
 
-	const productButtonLabel = selectedSite.jetpack
+	const productButtonLabel = selectedSite?.jetpack
 		? translate( 'Go to Search Dashboard' )
 		: translate( 'Customize Search' );
-	const productButtonHref = selectedSite.jetpack
+	const productButtonHref = selectedSite?.jetpack
 		? jetpackSearchDashboardUrl
 		: jetpackSearchCustomizeUrl;
 
@@ -43,7 +45,7 @@ export default function ThankYouJetpackSearchProduct( {
 		<ThankYouProduct
 			name="Jetpack Search"
 			actions={
-				<Button primary href={ productButtonHref } onClick={ recordThankYouClick }>
+				<Button primary href={ productButtonHref as string } onClick={ recordThankYouClick }>
 					{ productButtonLabel }
 				</Button>
 			}
