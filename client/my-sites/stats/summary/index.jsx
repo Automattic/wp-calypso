@@ -341,6 +341,7 @@ class StatsSummary extends Component {
 							query={ moduleQuery }
 							summary
 						/>
+						<p>&nbsp;</p>
 						<StatsModuleUTM
 							siteId={ siteId }
 							period={ this.props.period }
