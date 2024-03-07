@@ -54,11 +54,11 @@ export function getIntroductoryOfferIntervalDisplay( {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
 				text = isPriceIncrease
-					? translate( 'First month', { textOnly: true } )
+					? translate( 'Price for first month', { textOnly: true } )
 					: String( translate( 'Discount for first month' ) );
 			} else {
 				text = isPriceIncrease
-					? translate( 'First %(numberOfMonths)d months', {
+					? translate( 'Price for first %(numberOfMonths)d months', {
 							textOnly: true,
 							args: {
 								numberOfMonths: intervalCount,
@@ -76,11 +76,11 @@ export function getIntroductoryOfferIntervalDisplay( {
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
 				text = isPriceIncrease
-					? translate( 'First year', { textOnly: true } )
+					? translate( 'Price for first year', { textOnly: true } )
 					: String( translate( 'Discount for first year' ) );
 			} else {
 				text = isPriceIncrease
-					? translate( 'First %(numberOfYears)d years', {
+					? translate( 'Price for first %(numberOfYears)d years', {
 							textOnly: true,
 							args: { numberOfYears: intervalCount },
 					  } )
