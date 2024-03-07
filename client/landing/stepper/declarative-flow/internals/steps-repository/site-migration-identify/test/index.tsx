@@ -101,7 +101,7 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 	} );
 
-	it( 'sets the input value to the site url when the "from"param is set', () => {
+	it( 'sets the input value to the site url when the "from" param is set', () => {
 		render( {}, { initialEntry: '/some-path?from=existent-site.com' } );
 
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'existent-site.com' );
