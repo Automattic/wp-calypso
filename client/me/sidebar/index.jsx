@@ -28,11 +28,8 @@ import './style.scss';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 
 class MeSidebar extends Component {
-	onNavigate = ( event, path ) => {
-		this.props.setNextLayoutFocus( 'content' );
-		window.scrollTo( 0, 0 );
-
-		if ( ! this.shouldShowGlobalSidebar ) {
+	handleGlobalSidebarMenuItemClick = ( path ) => {
+		if ( ! this.props.shouldShowGlobalSidebar ) {
 			return;
 		}
 
@@ -40,6 +37,13 @@ class MeSidebar extends Component {
 			section: 'me',
 			path,
 		} );
+	};
+
+	onNavigate = ( event, path ) => {
+		this.props.setNextLayoutFocus( 'content' );
+		window.scrollTo( 0, 0 );
+
+		this.handleGlobalSidebarMenuItemClick( path );
 	};
 
 	onSignOut = async () => {
@@ -169,6 +173,9 @@ class MeSidebar extends Component {
 						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 						label={ translate( 'Manage Blogs' ) }
 						materialIcon="apps"
+						onNavigate={ ( event, urlPath ) => {
+							this.handleGlobalSidebarMenuItemClick( urlPath );
+						} }
 					/>
 
 					<SidebarItem
