@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
@@ -17,31 +17,22 @@ const OPTION_KEYS = {
 
 function StatsModuleUTMSummary( { siteId, period, postId, query, summary, className } ) {
 	// Note: The module is loaded multiple times on initial page render.
-	// Not sure why this is happening as the props are consistent across initial renders.
-	// Maybe worth investigating the routing.
-	// console.log( 'StatsModuleUTMDebug', siteId, period, postId, query, summary, className );
+	// Not sure why this is happening as the props are consistent across
+	// initial renders. Maybe worth investigating the routing.
 
-	// Log real prop updates.
-	useEffect( () => {
-		console.log( 'StatsModuleUTMDebug updated', siteId, period, postId, query, summary, className );
-	}, [ siteId, period, postId, query, summary, className ] );
-
-	// Continue...
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
-	// Testing a custom hook.
-	const { data: d2, isPending, isError, error } = useUTMQuery( siteId, selectedOption, query );
+	// Tanstack query without Redux plumbing.
+	// That means this specific module does not follow the convention
+	// used for the other modules in the stats section.
+	const { data, isPending, isError, error } = useUTMQuery( siteId, selectedOption, query );
 	console.log( 'isPending', isPending );
 	if ( ! isPending ) {
-		console.log( 'data', d2 );
 		console.log( 'isError & error', isError, error );
 	}
-	const dataLength = d2?.length || 0;
-
-	// Use mock data for now.
-	const data = d2;
+	const dataLength = data?.length || 0;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
