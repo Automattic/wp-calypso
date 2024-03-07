@@ -336,10 +336,10 @@ function StatsCommercialFlowOptOutForm( {
 	) as string[];
 	const COMMERCIAL_REASONS = {
 		ads: translate( 'Ads' ),
-		adsense: translate( 'Adsense' ),
-		taboola: translate( 'Taboola' ),
-		infolink: translate( 'InfoLink' ),
-		exoclick: translate( 'ExoClick' ),
+		adsense: 'Adsense',
+		taboola: 'Taboola',
+		infolink: 'InfoLink',
+		exoclick: 'ExoClick',
 		'live-chat': translate( 'Live Chat' ),
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
 		'manual-override': translate( 'Manual Override' ),
