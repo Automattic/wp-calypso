@@ -109,7 +109,7 @@ export default function ThankYouPlanProduct( {
 			details={ expirationDate }
 			actions={
 				<>
-					{ purchase.productSlug !== 'ecommerce-bundle' && (
+					{ ! isWpComEcommercePlan( purchase.productSlug ) && (
 						<Button
 							isBusy={ letsWorkButtonBusy }
 							variant="primary"
