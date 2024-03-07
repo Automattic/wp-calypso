@@ -27,8 +27,7 @@ const DeletePrimaryCardConfirmation = ( { card, altCard, isFetching }: Props ) =
 				<div className="delete-primary-card-confirmation__card">
 					<p className="delete-primary-card-confirmation__notice">
 						{ translate(
-							'Issuing new licenses will be paused until you add a new primary payment method. ' +
-								'Additionally, the existing licenses will be revoked at the end of their respective terms.'
+							'Issuing new licenses will be paused until you add a new primary payment method. Additionally, the existing licenses will be revoked at the end of their respective terms.'
 						) }
 					</p>
 				</div>
