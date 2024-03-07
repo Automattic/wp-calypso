@@ -39,7 +39,7 @@ export const ScheduleCreate = ( props: Props ) => {
 	}, [ isFetched ] );
 
 	const onSyncSuccess = () => {
-		recordTracksEvent( 'calypso_update_manager_schedule_create', {
+		recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
 			site_slug: siteSlug,
 		} );
 

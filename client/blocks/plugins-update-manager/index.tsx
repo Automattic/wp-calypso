@@ -31,7 +31,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
 	useEffect( () => {
-		recordTracksEvent( 'calypso_update_manager_page_view', {
+		recordTracksEvent( 'calypso_scheduled_updates_page_view', {
 			site_slug: siteSlug,
 			context: context,
 		} );
