@@ -183,7 +183,7 @@ class SharingButtons extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ ! isFetchingModules && ! isSharingModuleInactive && (
+				{ ! isFetchingModules && ! isSharingModuleInactive && isBlockTheme && (
 					<Notice
 						status="is-info"
 						showDismiss={ false }
