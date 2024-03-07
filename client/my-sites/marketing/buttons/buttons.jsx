@@ -123,11 +123,6 @@ class SharingButtons extends Component {
 		return Object.assign( {}, settings, disabledSettings, this.state.values );
 	}
 
-	disableLegacySharing = ( siteId ) => {
-		this.props.recordTracksEvent( 'calypso_sharing_buttons_disable_legacy_click', {} );
-		this.props.deactivateModule( siteId, 'sharedaddy' );
-	};
-
 	render() {
 		const {
 			buttons,
@@ -197,7 +192,7 @@ class SharingButtons extends Component {
 						) }
 					>
 						{ isJetpack && (
-							<NoticeAction onClick={ this.disableLegacySharing }>
+							<NoticeAction onClick={ () => this.props.deactivateModule( siteId, 'sharedaddy' ) }>
 								{ translate( 'Disable' ) }
 							</NoticeAction>
 						) }
