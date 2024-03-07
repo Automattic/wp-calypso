@@ -163,6 +163,12 @@ class CancelPurchase extends Component {
 		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
 
 		if ( isDomainRegistration( purchase ) ) {
+			// Domain in AGP bought with domain credits
+			if ( isRefundable( purchase ) ) {
+				return this.props.translate(
+					'After you confirm this change, the domain will be removed immediately'
+				);
+			}
 			return this.props.translate(
 				'After you confirm this change, the domain will be removed on %(expirationDate)s',
 				{
