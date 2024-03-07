@@ -14,7 +14,7 @@ import './style.scss';
 
 type DeploymentStyleProps = {
 	isDisabled: boolean;
-	repository: GitHubRepositoryData;
+	repository?: GitHubRepositoryData;
 	branchName: string;
 	workflowPath?: string;
 	onChooseWorkflow( workflowFilename: string | undefined ): void;
@@ -42,6 +42,7 @@ export const DeploymentStyle = ( {
 		refetch,
 	} = useDeploymentWorkflowsQuery( repository, branchName, {
 		refetchOnWindowFocus: false,
+		enabled: ! isDisabled,
 	} );
 
 	return (
@@ -76,7 +77,7 @@ export const DeploymentStyle = ( {
 				} }
 			/>
 
-			{ workflowPath && (
+			{ repository && workflowPath && (
 				<DeploymentStyleContext.Provider
 					value={ {
 						isCheckingWorkflow,

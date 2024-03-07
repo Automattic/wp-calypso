@@ -75,7 +75,7 @@ export const GitHubDeploymentManagementForm = ( {
 
 	return (
 		<GitHubConnectionForm
-			installation={ installation }
+			installationId={ installation.external_id }
 			deploymentId={ codeDeployment.id }
 			repository={ repository }
 			initialValues={ initialValues }

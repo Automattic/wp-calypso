@@ -14,13 +14,13 @@ export interface Workflow {
 const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
 
 export const useDeploymentWorkflowsQuery = (
-	repository: GitHubRepositoryData,
+	repository: GitHubRepositoryData | undefined,
 	branchName: string,
 	options?: Partial< UseQueryOptions< Workflow[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
-		repository_name: repository.name,
-		repository_owner: repository.owner,
+		repository_name: repository?.name,
+		repository_owner: repository?.owner,
 		branch_name: branchName,
 	} );
 
@@ -36,6 +36,7 @@ export const useDeploymentWorkflowsQuery = (
 		meta: {
 			persist: false,
 		},
+		enabled: !! repository,
 		...options,
 	} );
 };

@@ -14,10 +14,10 @@ export type RepositoryChecks = {
 };
 
 export const useGithubRepositoryChecksQuery = (
-	installationId: number,
-	repositoryOwner: string,
-	repositoryName: string,
-	repositoryBranch: string
+	installationId?: number,
+	repositoryOwner?: string,
+	repositoryName?: string,
+	repositoryBranch?: string
 ) => {
 	return useQuery< RepositoryChecks >( {
 		queryKey: [
