@@ -67,12 +67,7 @@ export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDe
 				</span>
 				{ path && (
 					<>
-						<span
-							onFocus={ ( e ) => setPopoverRef( e.currentTarget ) }
-							onBlur={ () => setPopoverRef( undefined ) }
-							onMouseEnter={ ( e ) => setPopoverRef( e.currentTarget ) }
-							onMouseLeave={ () => setPopoverRef( undefined ) }
-						>
+						<span>
 							<svg
 								width="16"
 								height="16"

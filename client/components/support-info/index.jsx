@@ -17,7 +17,14 @@ function makePrivacyLink( privacyLink, link ) {
 	return null;
 }
 
-function SupportInfo( { children, text, link, position, privacyLink, popoverClassName } ) {
+function SupportInfo( {
+	children = <></>,
+	text = '',
+	link,
+	position,
+	privacyLink,
+	popoverClassName = '',
+} ) {
 	const translate = useTranslate();
 	const filteredPrivacyLink = makePrivacyLink( privacyLink, link );
 
