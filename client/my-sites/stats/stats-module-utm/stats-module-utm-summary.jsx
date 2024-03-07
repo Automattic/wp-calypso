@@ -186,6 +186,20 @@ function parseKey( key ) {
 	return key;
 }
 
+// Example data from API.
+// Either a string: number or
+// a JSON encoded array: number.
+//
+// "top_utm_values": {
+// 	"adwords": 89,
+// 	"bing": 27,
+// }
+//
+// "top_utm_values": {
+// 	"[\"adwords\",\"ppc\"]": 89,
+// 	"[\"bing\",\"cpc\"]": 27,
+// }
+
 function transformData( data ) {
 	const utmData = data?.top_utm_values;
 	if ( ! utmData ) {
