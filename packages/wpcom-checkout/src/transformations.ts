@@ -218,6 +218,10 @@ function makeSaleCostOverrideUnique(
 	return costOverride;
 }
 
+/**
+ * Replace introductory offer cost override text with wording specific to that
+ * offer, like "Discount for first 3 months" instead of "Introductory offer".
+ */
 function makeIntroductoryOfferCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
@@ -228,16 +232,25 @@ function makeIntroductoryOfferCostOverrideUnique(
 		return costOverride;
 	}
 
-	// Replace introductory offer cost override text with wording specific to
-	// that offer, but not for renewals because an introductory offer manual
-	// renewal can be hard to explain simply and saying "Discount for first 3
-	// months" may not be accurate.
+	// If the introductory offer actually increases the price, we want to be
+	// sure not to display it with wording that mentions "discount".
+	if ( costOverride.old_subtotal_integer < costOverride.new_subtotal_integer ) {
+		return {
+			...costOverride,
+			human_readable_reason: translate( 'Initial price' ),
+		};
+	}
+
+	// Renewals get generic text because an introductory offer manual renewal
+	// can be hard to explain simply and saying "Discount for first 3 months"
+	// may not be accurate.
 	if ( product.is_renewal ) {
 		return {
 			...costOverride,
 			human_readable_reason: translate( 'Prorated renewal discount' ),
 		};
 	}
+
 	return {
 		...costOverride,
 		human_readable_reason: getDiscountReasonForIntroductoryOffer(
