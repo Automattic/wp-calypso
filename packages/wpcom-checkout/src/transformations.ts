@@ -143,16 +143,18 @@ function getDiscountReasonForIntroductoryOffer(
 	product: ResponseCartProduct,
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >,
-	allowFreeText: boolean
+	allowFreeText: boolean,
+	isPriceIncrease: boolean
 ): string {
-	return getIntroductoryOfferIntervalDisplay(
+	return getIntroductoryOfferIntervalDisplay( {
 		translate,
-		terms.interval_unit,
-		terms.interval_count,
-		product.item_subtotal_integer === 0 && allowFreeText,
-		'checkout',
-		terms.transition_after_renewal_count
-	);
+		intervalUnit: terms.interval_unit,
+		intervalCount: terms.interval_count,
+		isFreeTrial: product.item_subtotal_integer === 0 && allowFreeText,
+		isPriceIncrease,
+		context: 'checkout',
+		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+	} );
 }
 
 export interface CostOverrideForDisplay {
@@ -231,15 +233,7 @@ function makeIntroductoryOfferCostOverrideUnique(
 	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
 		return costOverride;
 	}
-
-	// If the introductory offer actually increases the price, we want to be
-	// sure not to display it with wording that mentions "discount".
-	if ( costOverride.old_subtotal_integer < costOverride.new_subtotal_integer ) {
-		return {
-			...costOverride,
-			human_readable_reason: translate( 'Initial price' ),
-		};
-	}
+	const isPriceIncrease = costOverride.old_subtotal_integer < costOverride.new_subtotal_integer;
 
 	// Renewals get generic text because an introductory offer manual renewal
 	// can be hard to explain simply and saying "Discount for first 3 months"
@@ -247,7 +241,9 @@ function makeIntroductoryOfferCostOverrideUnique(
 	if ( product.is_renewal ) {
 		return {
 			...costOverride,
-			human_readable_reason: translate( 'Prorated renewal discount' ),
+			human_readable_reason: isPriceIncrease
+				? translate( 'Prorated renewal' )
+				: translate( 'Prorated renewal discount' ),
 		};
 	}
 
@@ -257,7 +253,8 @@ function makeIntroductoryOfferCostOverrideUnique(
 			product,
 			product.introductory_offer_terms,
 			translate,
-			allowFreeText
+			allowFreeText,
+			isPriceIncrease
 		),
 	};
 }
