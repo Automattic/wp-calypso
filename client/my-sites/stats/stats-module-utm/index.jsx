@@ -137,7 +137,7 @@ export function StatsModuleUTMDebug( { siteId, period, postId, query, summary, c
 	const dataLength = d2?.length || 0;
 
 	// Use mock data for now.
-	const data = sampleData;
+	const data = d2;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
