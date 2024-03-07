@@ -34,7 +34,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {

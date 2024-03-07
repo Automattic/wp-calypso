@@ -40,11 +40,21 @@ export const ScheduleList = ( props: Props ) => {
 		isFetched,
 		refetch,
 	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
+
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );
-	const { canCreateSchedules, isLoading: isLoadingCanCreateSchedules } =
-		useCanCreateSchedules( siteSlug );
+
+	const { canCreateSchedules, isLoading: isLoadingCanCreateSchedules } = useCanCreateSchedules(
+		siteSlug,
+		isEligibleForFeature
+	);
+
+	const showScheduleListEmpty =
+		! isEligibleForFeature ||
+		( isFetched &&
+			! isLoadingCanCreateSchedules &&
+			( schedules.length === 0 || ! canCreateSchedules ) );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
@@ -84,15 +94,12 @@ export const ScheduleList = ( props: Props ) => {
 				</CardHeader>
 				<CardBody>
 					{ ( isLoading || isLoadingCanCreateSchedules ) && <Spinner /> }
-					{ ! isEligibleForFeature ||
-						( isFetched &&
-							! isLoadingCanCreateSchedules &&
-							( schedules.length === 0 || ! canCreateSchedules ) && (
-								<ScheduleListEmpty
-									onCreateNewSchedule={ onCreateNewSchedule }
-									canCreateSchedules={ canCreateSchedules }
-								/>
-							) ) }
+					{ showScheduleListEmpty && (
+						<ScheduleListEmpty
+							onCreateNewSchedule={ onCreateNewSchedule }
+							canCreateSchedules={ canCreateSchedules }
+						/>
+					) }
 					{ isFetched &&
 						! isLoadingCanCreateSchedules &&
 						schedules.length > 0 &&

@@ -12,8 +12,11 @@ interface UseCanCreateSchedulesReturn {
 	isLoading: boolean;
 }
 
-export function useCanCreateSchedules( siteSlug: string ): UseCanCreateSchedulesReturn {
-	const { data, isLoading } = useUpdateScheduleCapabilitiesQuery( siteSlug );
+export function useCanCreateSchedules(
+	siteSlug: string,
+	isEligibleForFeature: boolean
+): UseCanCreateSchedulesReturn {
+	const { data, isLoading } = useUpdateScheduleCapabilitiesQuery( siteSlug, isEligibleForFeature );
 	const {
 		modify_files: modifyFiles,
 		autoupdate_files: autoUpdateFiles,

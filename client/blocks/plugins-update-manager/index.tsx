@@ -47,7 +47,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 
 	const { component, title } = {
 		list: {

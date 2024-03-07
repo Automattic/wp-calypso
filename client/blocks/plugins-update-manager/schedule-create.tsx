@@ -28,7 +28,8 @@ export const ScheduleCreate = ( props: Props ) => {
 		siteSlug,
 		isEligibleForFeature
 	);
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug );
+
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },
