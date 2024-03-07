@@ -15,10 +15,10 @@ import './styles.scss';
 
 function useTranslatedStrings() {
 	const translate = useTranslate();
-	const limits = translate( 'Monthly site views limit', {
+	const limits = translate( 'Monthly views limit', {
 		comment: 'Heading for Stats Upgrade slider. The monthly views limit.',
 	} ) as string;
-	const price = translate( 'You will pay', {
+	const price = translate( 'You pay', {
 		comment: 'Heading for Stats Upgrade slider. The monthly price.',
 	} ) as string;
 	const strategy = translate( 'Price per month, billed yearly', {
