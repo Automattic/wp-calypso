@@ -26,7 +26,6 @@ import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
-	CRON_CHECK_INTERVAL,
 	DAILY_OPTION,
 	DAY_OPTIONS,
 	DEFAULT_HOUR,
