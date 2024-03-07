@@ -17,13 +17,17 @@ function makePrivacyLink( privacyLink, link ) {
 	return null;
 }
 
-function SupportInfo( { children, text, link, position, privacyLink } ) {
+function SupportInfo( { children, text, link, position, privacyLink, popoverClassName } ) {
 	const translate = useTranslate();
 	const filteredPrivacyLink = makePrivacyLink( privacyLink, link );
 
 	return (
 		<div className="support-info">
-			<InfoPopover position={ position || 'left' } screenReaderText={ translate( 'Learn more' ) }>
+			<InfoPopover
+				className={ popoverClassName }
+				position={ position || 'left' }
+				screenReaderText={ translate( 'Learn more' ) }
+			>
 				{ text + ' ' }
 				{ children }
 				{ link && (

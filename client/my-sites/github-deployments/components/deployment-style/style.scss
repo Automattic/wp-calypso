@@ -204,3 +204,9 @@
 		border: 1px solid var(--gray-gray-5, #dcdcde);
 	}
 }
+
+.github-deployments-deployments-style-popover {
+	.popover__inner {
+		max-width: 300px !important;
+	}
+}

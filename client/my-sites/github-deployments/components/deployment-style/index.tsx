@@ -63,6 +63,7 @@ export const DeploymentStyle = ( {
 			<div className="github-deployments-deployment-style__header">
 				<h3>{ __( 'Pick your deployment mode' ) }</h3>
 				<SupportInfo
+					popoverClassName="github-deployments-deployments-style-popover"
 					link="https://docs.github.com/en/actions/using-workflows"
 					privacyLink={ false }
 				>
