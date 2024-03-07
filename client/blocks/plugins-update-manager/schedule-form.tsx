@@ -15,10 +15,6 @@ import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import {
-	UpdateMonitorSettings,
-	useCreateMonitorSettingsMutation,
-} from 'calypso/data/plugins/use-monitor-settings-mutation';
-import {
 	useCreateUpdateScheduleMutation,
 	useEditUpdateScheduleMutation,
 } from 'calypso/data/plugins/use-update-schedules-mutation';
@@ -26,15 +22,10 @@ import {
 	useUpdateScheduleQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
-import { useSelector } from 'calypso/state';
-import { JETPACK_MODULE_ACTIVATE_SUCCESS } from 'calypso/state/action-types';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import { getSiteId } from 'calypso/state/sites/selectors';
 import { MAX_SELECTABLE_PLUGINS } from './config';
+import { useCreateMonitor } from './hooks/use-create-monitor';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
-	CRON_CHECK_INTERVAL,
 	DAILY_OPTION,
 	DAY_OPTIONS,
 	DEFAULT_HOUR,
@@ -49,16 +40,12 @@ import './schedule-form.scss';
 interface Props {
 	scheduleForEdit?: ScheduleUpdates;
 	onSyncSuccess?: () => void;
-	onCreateMonitorSuccess?: () => void;
 }
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
-	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
-	const siteUrl = useSelector( ( state ) =>
-		getSiteUrl( state, getSiteId( state, siteSlug ) as number )
-	);
-	const { scheduleForEdit, onSyncSuccess, onCreateMonitorSuccess } = props;
+	const { createMonitor } = useCreateMonitor( siteSlug );
+	const { scheduleForEdit, onSyncSuccess } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
@@ -74,9 +61,6 @@ export const ScheduleForm = ( props: Props ) => {
 	} );
 	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
-	} );
-	const { createMonitorSettings } = useCreateMonitorSettingsMutation( siteSlug, {
-		onSuccess: () => onCreateMonitorSuccess && onCreateMonitorSuccess(),
 	} );
 
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
@@ -133,31 +117,6 @@ export const ScheduleForm = ( props: Props ) => {
 		[ selectedPlugins ]
 	);
 
-	const onCreateMonitor = useCallback( () => {
-		activateModule(
-			siteId,
-			'monitor',
-			true
-		)( ( args: { type: string } ) => {
-			// The home URL needs to be one of the URLs monitored.
-			// Monitoring the wp-cron.php file to ensure that the cron jobs are running.
-			if ( args.type === JETPACK_MODULE_ACTIVATE_SUCCESS ) {
-				createMonitorSettings( {
-					urls: [
-						{
-							check_interval: CRON_CHECK_INTERVAL,
-							monitor_url: siteUrl,
-						},
-						{
-							check_interval: CRON_CHECK_INTERVAL,
-							monitor_url: siteUrl + '/wp-cron.php',
-						},
-					],
-				} as UpdateMonitorSettings );
-			}
-		} );
-	}, [ siteId ] );
-
 	const onFormSubmit = () => {
 		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
 		setFieldTouched( {
@@ -178,7 +137,7 @@ export const ScheduleForm = ( props: Props ) => {
 				editUpdateSchedule( scheduleForEdit.id, params );
 			} else {
 				createUpdateSchedule( params );
-				onCreateMonitor();
+				createMonitor( siteSlug );
 			}
 		}
 	};
