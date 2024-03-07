@@ -2,6 +2,7 @@ import { WPCOM_FEATURES_SCHEDULED_UPDATES } from '@automattic/calypso-products';
 import { Button, Spinner } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled-updates-gate';
@@ -10,7 +11,7 @@ import { useSelector } from 'calypso/state';
 import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
@@ -42,8 +43,8 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		getHasLoadedSiteFeatures( state, siteId )
 	);
 
-	const currentPlan = useSelector( ( state ) =>
-		siteId ? getCurrentPlan( state, siteId ) : undefined
+	const isSitePlansLoaded: boolean = useSelector( ( state ) =>
+		hasLoadedSitePlansFromServer( state, siteId )
 	);
 
 	const hideCreateButton =
@@ -78,7 +79,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			isEligibleForFeature={ isEligibleForFeature }
 		>
 			<DocumentHead title={ title } />
-
+			{ ! isSitePlansLoaded && <QuerySitePlans siteId={ siteId } /> }
 			<MainComponent wideLayout>
 				<NavigationHeader
 					navigationItems={ [] }
@@ -97,7 +98,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						</Button>
 					) }
 				</NavigationHeader>
-				{ ! isFeaturesLoaded || ! currentPlan ? (
+				{ ! isFeaturesLoaded || ! isSitePlansLoaded ? (
 					<Spinner className="plugins-update-manager-spinner" />
 				) : (
 					<ScheduledUpdatesGate
