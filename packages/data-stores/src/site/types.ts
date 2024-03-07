@@ -274,6 +274,7 @@ export interface SiteDetailsOptions {
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
 	is_commercial?: boolean | null;
+	is_commercial_reasons?: string[];
 	wpcom_admin_interface?: string;
 }
 
