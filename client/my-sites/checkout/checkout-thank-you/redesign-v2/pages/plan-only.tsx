@@ -96,7 +96,7 @@ const PlanOnlyThankYou = ( {
 	let subtitle;
 	let headerButtons;
 
-	if ( primaryPurchase.productSlug === 'ecommerce-bundle' ) {
+	if ( isWpComEcommercePlan( primaryPurchase.productSlug ) ) {
 		if ( isEmailVerified ) {
 			subtitle = translate( "With the plan sorted, it's time to start setting up your store." );
 			headerButtons = typeof siteAdminUrl === 'string' && (
