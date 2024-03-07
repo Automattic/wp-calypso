@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
@@ -41,9 +41,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	const isFeaturesLoaded: boolean = useSelector( ( state ) =>
 		getHasLoadedSiteFeatures( state, siteId )
 	);
-	const isSitePlansLoaded: boolean = useSelector( ( state ) =>
-		hasLoadedSitePlansFromServer( state, siteId )
+
+	const currentPlan = useSelector( ( state ) =>
+		siteId ? getCurrentPlan( state, siteId ) : undefined
 	);
+
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
@@ -95,7 +97,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						</Button>
 					) }
 				</NavigationHeader>
-				{ ! isFeaturesLoaded || ! isSitePlansLoaded ? (
+				{ ! isFeaturesLoaded || ! currentPlan ? (
 					<Spinner className="plugins-update-manager-spinner" />
 				) : (
 					<ScheduledUpdatesGate
