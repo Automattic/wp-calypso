@@ -11,6 +11,7 @@ import {
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
@@ -24,7 +25,7 @@ class MySitesNavigation extends Component {
 	handleGlobalSidebarMenuItemClick = ( path ) => {
 		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
 			section: this.props.isGlobalSiteSidebarVisible ? 'site' : 'sites',
-			path,
+			path: path.replace( this.props.siteDomain, ':site' ),
 		} );
 	};
 
@@ -121,6 +122,7 @@ export default withCurrentRoute(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
+			const siteDomain = getSiteDomain( state, siteId );
 			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 				state,
@@ -128,6 +130,7 @@ export default withCurrentRoute(
 				sectionGroup
 			);
 			return {
+				siteDomain,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
 			};
