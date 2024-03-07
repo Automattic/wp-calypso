@@ -15,18 +15,6 @@ const OPTION_KEYS = {
 	CAMPAIGN: 'utm_campaign',
 };
 
-// TODO: Remove this data once the real data is available.
-// This is the shape expected by the StatsModuleUTMDebug component.
-// Not the shape of the real data from the API.
-const sampleData = [
-	{
-		children: null, // an array of posts using the UTM parameters
-		label: 'label', // used for display, ie: "source / medium" (with the spaces)
-		paramValues: 'source/medium', // string like "["adwords","ppc"]"
-		value: 411, // count of views
-	},
-];
-
 function StatsModuleUTMSummary( { siteId, period, postId, query, summary, className } ) {
 	// Note: The module is loaded multiple times on initial page render.
 	// Not sure why this is happening as the props are consistent across initial renders.
@@ -211,9 +199,10 @@ function transformData( data ) {
 	const transformedData = keys.map( ( key, index ) => {
 		const parsedKey = parseKey( key );
 		return {
+			// children: [], -- include to enable disclosure toggle
 			label: parsedKey,
-			value: values[ index ],
 			paramValues: key,
+			value: values[ index ],
 		};
 	} );
 
