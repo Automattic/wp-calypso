@@ -120,10 +120,14 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 	);
 }
 
-// Testing a Tanstack version of the API query.
 function useUTMQuery( siteId, selectedOption, query ) {
-	// Fetch UTM summary data. Does not include top posts.
-	// Ideally we'd have the API updated to include that data instead of requiring extra API requests.
+	// Fetch UTM summary data. Does not include top posts as that might get
+	// out of hand on the summary page. For example, you easily get over
+	// 100 API requests when looking at 30 days or more as the period.
+	//
+	// Ideally we'd have the API updated to include the related posts
+	// data instead of requiring extra API requests.
+
 	const result = useQuery( {
 		queryKey: [ 'useUTMQuery', siteId, selectedOption, query ],
 		queryFn: () => fetchUTMMetrics( siteId, selectedOption, query ),
