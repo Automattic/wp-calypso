@@ -30,10 +30,12 @@ export const useCorePluginsQuery = (
 	siteIdOrSlug: SiteId | SiteSlug | undefined,
 	hideManagedPlugins: boolean = false
 ): UseQueryResult< CorePluginsResponse > => {
-	const select = hideManagedPlugins
-		? ( plugins: CorePluginsResponse ) =>
-				decodeEntitiesFromPlugins( plugins ).filter( ( plugin ) => ! plugin.is_managed )
-		: undefined;
+	const select = ( plugins: CorePluginsResponse ) => {
+		const decodedPlugins = decodeEntitiesFromPlugins( plugins );
+		return hideManagedPlugins
+			? decodedPlugins.filter( ( plugin ) => ! plugin.is_managed )
+			: decodedPlugins;
+	};
 
 	return useQuery< CorePluginsResponse >( {
 		queryKey: [ 'core-plugins', siteIdOrSlug ],
