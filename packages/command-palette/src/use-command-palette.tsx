@@ -247,7 +247,7 @@ export const useCommandPalette = ( {
 	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
 
 	// Sort commands with contextual commands ranking higher than general in a given context
-	const sortedCommands = commands
+	let sortedCommands = commands
 		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
 		.sort( ( a, b ) => {
 			const hasContextCommand = commandHasContext( a.context );
@@ -262,39 +262,31 @@ export const useCommandPalette = ( {
 			return 0; // no change in order
 		} );
 
-	// Inject a tracks event on the callback of each command
-	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
-		...command,
-		callback: ( params: CommandCallBackParams ) => {
-			recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-				command: command.name,
-				has_nested_commands: !! command.siteFunctions,
-				list_count: commands.length,
-				list_visible_count: listVisibleCount,
-				current_route: currentRoute,
-				search_text: search,
-			} );
-			command.callback( params );
-		},
-	} ) );
-
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
 	if ( viewMySitesCommand && currentRoute !== '/sites' ) {
-		finalSortedCommands.unshift( viewMySitesCommand );
+		sortedCommands.unshift( viewMySitesCommand );
 	}
 
 	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
 
 	// If we have a current site and the route includes the site slug, filter and map the commands for single site use.
 	if ( currentSite && currentRoute?.includes( ':site' ) ) {
-		finalSortedCommands = finalSortedCommands.filter( ( command ) =>
+		sortedCommands = sortedCommands.filter( ( command ) =>
 			filterCurrentSiteCommands( currentSite, command )
 		);
 
-		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
+		sortedCommands = sortedCommands.map( ( command: Command ) => {
 			const callback = ( params: CommandCallBackParams ) => {
-				const targetFunction = command?.siteFunctions?.onClick || command.callback;
+				recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
+					command: command.name,
+					has_nested_commands: !! command.siteFunctions,
+					list_count: commands.length,
+					list_visible_count: listVisibleCount,
+					current_route: currentRoute,
+					search_text: search,
+				} );
 
+				const targetFunction = command?.siteFunctions?.onClick || command.callback;
 				return targetFunction( {
 					close: params.close,
 					site: currentSite,
@@ -317,5 +309,5 @@ export const useCommandPalette = ( {
 		} );
 	}
 
-	return { commands: finalSortedCommands, filterNotice: undefined, emptyListNotice: undefined };
+	return { commands: sortedCommands, filterNotice: undefined, emptyListNotice: undefined };
 };
