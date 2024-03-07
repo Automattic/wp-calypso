@@ -59,7 +59,6 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import {
 	getPlugins as getInstalledPlugins,
@@ -594,9 +593,6 @@ export class CheckoutThankYou extends Component<
 					<PlanOnlyThankYou
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
-						errorNotice={ this.props.errorNotice }
-						removeNotice={ this.props.removeNotice }
-						successNotice={ this.props.successNotice }
 					/>
 				);
 			} else if ( wasTitanEmailOnlyProduct ) {
@@ -994,9 +990,6 @@ export default connect(
 		recordStartTransferClickInThankYou,
 		requestThenActivate,
 		requestSite,
-		errorNotice,
-		removeNotice,
-		successNotice,
 	}
 )( localize( CheckoutThankYou ) );
 
