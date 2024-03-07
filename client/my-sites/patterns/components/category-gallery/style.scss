@@ -1,14 +1,14 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
-.patterns-grid-gallery {
+.patterns-category-gallery {
 	display: grid;
 	grid-template-columns: repeat(var(--column-count), 1fr);
 	gap: 32px 24px;
 }
 
-.patterns-grid-gallery__item {
-	.patterns-grid-gallery__item-image {
+.patterns-category-gallery__item {
+	.patterns-category-gallery__item-image {
 		margin-bottom: 14px;
 		border-radius: 4px;
 		background: #f6f7f7;
@@ -24,14 +24,14 @@
 		}
 	}
 
-	.patterns-grid-gallery__item-name {
+	.patterns-category-gallery__item-name {
 		font-family: $font-sf-pro-display;
 		font-size: rem(18px);
 		color: #101517;
 		line-height: 1.4;
 	}
 
-	.patterns-grid-gallery__item-number {
+	.patterns-category-gallery__item-number {
 		font-family: $font-sf-pro-text;
 		font-size: rem(12px);
 		color: #50575e;
@@ -39,7 +39,7 @@
 	}
 
 	&:hover {
-		.patterns-grid-gallery__item-image {
+		.patterns-category-gallery__item-image {
 			img {
 				top: 20px;
 			}
@@ -48,13 +48,13 @@
 }
 
 @media ( max-width: $break-huge ) {
-	.patterns-grid-gallery {
+	.patterns-category-gallery {
 		grid-template-columns: repeat(calc(var(--column-count) - 1), 1fr);
 	}
 }
 
 @media ( max-width: $break-medium ) {
-	.patterns-grid-gallery {
+	.patterns-category-gallery {
 		grid-template-columns: 1fr;
 	}
 }

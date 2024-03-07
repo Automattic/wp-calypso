@@ -21,11 +21,13 @@ type CategoryBase = {
 
 export type CategorySnakeCase = CategoryBase & {
 	page_pattern_count: number;
+	pattern_preview: Pattern | null;
 	regular_cattern_count: number;
 };
 
 export type Category = CategoryBase & {
 	pagePatternCount: number;
+	patternPreview: Pattern | null;
 	regularPatternCount: number;
 };
 
