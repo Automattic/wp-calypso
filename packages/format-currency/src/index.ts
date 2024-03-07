@@ -51,6 +51,7 @@ export function createFormatter(): CurrencyFormatter {
 			locale: getLocaleToUse( options ),
 			currency: code,
 			noDecimals: isNoDecimals( number, options ),
+			signForPositive: options.signForPositive ?? false,
 		} );
 	}
 
@@ -203,6 +204,9 @@ export function createFormatter(): CurrencyFormatter {
 				case 'minusSign':
 					sign = '-' as CurrencyObject[ 'sign' ];
 					return;
+				case 'plusSign':
+					sign = '+' as CurrencyObject[ 'sign' ];
+					return;
 			}
 		} );
 
@@ -293,12 +297,14 @@ function getFormatterCacheKey( {
 	locale,
 	currency,
 	noDecimals,
+	signForPositive,
 }: {
 	locale: string;
 	currency: string;
 	noDecimals: boolean;
+	signForPositive: boolean;
 } ): string {
-	return `currency:${ currency },locale:${ locale },noDecimals:${ noDecimals }`;
+	return `currency:${ currency },locale:${ locale },noDecimals:${ noDecimals },signForPositive:${ signForPositive }`;
 }
 
 function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
@@ -315,12 +321,14 @@ function getCachedFormatter( {
 	locale,
 	currency,
 	noDecimals,
+	signForPositive,
 }: {
 	locale: string;
 	currency: string;
 	noDecimals: boolean;
+	signForPositive: boolean;
 } ): Intl.NumberFormat {
-	const cacheKey = getFormatterCacheKey( { locale, currency, noDecimals } );
+	const cacheKey = getFormatterCacheKey( { locale, currency, noDecimals, signForPositive } );
 	if ( formatterCache.has( cacheKey ) ) {
 		const formatter = formatterCache.get( cacheKey );
 		if ( formatter ) {
@@ -332,6 +340,7 @@ function getCachedFormatter( {
 		const formatter = new Intl.NumberFormat( addNumberingSystemToLocale( locale ), {
 			style: 'currency',
 			currency,
+			...( signForPositive ? { signDisplay: 'exceptZero' } : {} ),
 			// There's an option called `trailingZeroDisplay` but it does not yet work
 			// in FF so we have to strip zeros manually.
 			...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
@@ -346,7 +355,7 @@ function getCachedFormatter( {
 		console.warn(
 			`formatCurrency was called with a non-existent locale "${ locale }"; falling back to ${ fallbackLocale }`
 		);
-		return getCachedFormatter( { locale: fallbackLocale, currency, noDecimals } );
+		return getCachedFormatter( { locale: fallbackLocale, currency, noDecimals, signForPositive } );
 	}
 }
 
@@ -380,6 +389,7 @@ function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): n
 		locale,
 		currency,
 		noDecimals: false,
+		signForPositive: false,
 	} );
 	return defaultFormatter.resolvedOptions().maximumFractionDigits;
 }

@@ -148,6 +148,12 @@ export interface CurrencyObjectOptions {
 	 * set, this will be retrieved from the user's browser.
 	 */
 	locale?: string;
+
+	/**
+	 * If the number is greater than 0, setting this to true will include its
+	 * sign (eg: `+$35.00`). Has no effect on negative numbers or 0.
+	 */
+	signForPositive?: boolean;
 }
 
 export interface CurrencyObject {
