@@ -300,7 +300,7 @@ export const useCommandPalette = ( {
 				let targetFunction;
 				const isMultiSiteCommand = command?.siteFunctions !== undefined;
 				if ( isMultiSiteCommand ) {
-					targetFunction = command.siteFunctions.onClick;
+					targetFunction = command?.siteFunctions?.onClick;
 					// We need to track the selected command event here because `command.siteFunctions.onClick`
 					// does not track anything (and it's not meant to).
 					trackSelectedCommand( command );
