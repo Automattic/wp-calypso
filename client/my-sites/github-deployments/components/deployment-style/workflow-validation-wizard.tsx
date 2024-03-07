@@ -10,7 +10,7 @@ import { useWorkflowValidations } from './use-workflow-validations';
 import { WorkflowValidation } from './workflow-validation';
 
 interface WorkflowValidationWizardProps {
-	repository: GitHubRepositoryData;
+	repository: Pick< GitHubRepositoryData, 'owner' | 'name' >;
 	branchName: string;
 	workflow: Workflow;
 }

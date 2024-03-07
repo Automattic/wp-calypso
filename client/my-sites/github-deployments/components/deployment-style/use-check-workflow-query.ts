@@ -19,7 +19,7 @@ export interface WorkflowsValidation {
 }
 
 interface CheckWorkflowQueryParams {
-	repository: GitHubRepositoryData | undefined;
+	repository: Pick< GitHubRepositoryData, 'owner' | 'name' > | undefined;
 	branchName: string;
 	workflowFilename?: string;
 }
