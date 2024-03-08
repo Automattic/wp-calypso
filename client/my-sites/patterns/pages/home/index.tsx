@@ -18,13 +18,13 @@ import type { Pattern, PatternGalleryFC } from 'calypso/my-sites/patterns/types'
 
 import './style.scss';
 
-function filterPatternsByQuery( patterns: Pattern[], searchTerm: string ) {
+function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) {
 	if ( ! searchTerm ) {
 		return [];
 	}
 
 	return patterns.filter( ( pattern ) => {
-		const lowercaseSearch = searchTerm.toLowerCase();
+		const lowerCaseSearchTerm = searchTerm.toLowerCase();
 		const patternCategories = Object.values( pattern.categories ).map(
 			( category ) => category?.title
 		);
@@ -32,7 +32,7 @@ function filterPatternsByQuery( patterns: Pattern[], searchTerm: string ) {
 			( x ): x is NonNullable< typeof x > => Boolean( x )
 		);
 
-		return fields.some( ( field ) => field.toLowerCase().includes( lowercaseSearch ) );
+		return fields.some( ( field ) => field.toLowerCase().includes( lowerCaseSearchTerm ) );
 	} );
 }
 
@@ -66,7 +66,7 @@ export const PatternsHomePage = ( {
 		enabled: Boolean( searchTerm ),
 	} );
 
-	const patternSearchResults = filterPatternsByQuery( patterns, searchTerm );
+	const patternSearchResults = filterPatternsByTerm( patterns, searchTerm );
 
 	// Updates the URL of the page whenever the search term changes
 	useEffect( () => {
