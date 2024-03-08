@@ -57,7 +57,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		return '';
 	}
 
-	const productName = args.product_name + args.product_meta ? `(${ args.product_meta })` : '';
+	const productName = args.product_name + ( args.product_meta ? ` (${ args.product_meta })` : '' );
 	const regularPrice = formatCurrency( args.regular_renewal_price_integer, currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
