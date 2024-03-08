@@ -2,16 +2,23 @@ import { Card, FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
+const propForwardFilter = ( prop: string ) => prop !== 'currentViewport';
 export type Viewport = 'desktop' | 'mobile' | 'tablet';
+
 type PropsWithViewport = { currentViewport: Viewport };
-export const SurveyFormContainer = styled.div`
+
+export const SurveyFormContainer = styled( 'div', {
+	shouldForwardProp: propForwardFilter,
+} )`
 	margin: 0
 		${ ( { currentViewport }: PropsWithViewport ) =>
 			currentViewport === 'desktop' ? 'auto' : '10px' };
 	margin-bottom: 15px;
 `;
 
-export const StyledCard = styled( Card )`
+export const StyledCard = styled( Card, {
+	shouldForwardProp: propForwardFilter,
+} )`
 	margin: 0 auto;
 	padding: 25px 30px;
 	display: flex;
@@ -30,7 +37,7 @@ export const StyledLabel = styled( FormLabel )`
 	}
 `;
 
-export const StyledFormTextInput = styled< any >( FormTextInput )`
+export const StyledFormTextInput = styled( FormTextInput )`
 	&.form-text-input.form-text-input {
 		margin-left: 24px;
 		max-width: 385px;
