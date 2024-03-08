@@ -35,13 +35,12 @@ export default function ThankYouJetpackSearchProduct( {
 	const productButtonHref = selectedSite?.jetpack
 		? jetpackSearchDashboardUrl
 		: jetpackSearchCustomizeUrl;
+	const thankYouEventProps = selectedSite?.jetpack
+		? { product_name: 'search', value: 'Search Dashboard', site: 'jetpack' }
+		: { product_name: 'search', value: 'Customizer', site: 'wpcom' };
 
 	const recordThankYouClick = () => {
-		recordTracksEvent( 'calypso_jetpack_product_thankyou', {
-			product_name: 'search',
-			value: 'Customizer',
-			site: 'wpcom',
-		} );
+		recordTracksEvent( 'calypso_jetpack_product_thankyou', thankYouEventProps );
 	};
 
 	return (
