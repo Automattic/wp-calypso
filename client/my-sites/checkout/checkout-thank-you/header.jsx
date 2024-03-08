@@ -60,32 +60,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		currency: PropTypes.string,
 	};
 
-	isSearch() {
-		const { purchases } = this.props;
-		return purchases?.length > 0 && purchases[ 0 ].productType === 'search';
-	}
-
 	getText() {
 		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
 			this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
-		}
-
-		if ( this.isSearch() ) {
-			return (
-				<div>
-					<p>{ translate( 'We are currently indexing your site.' ) }</p>
-					<p>
-						{ translate(
-							'In the meantime, we have configured Jetpack Search on your site' +
-								' ' +
-								'— try customizing it!'
-						) }
-					</p>
-				</div>
-			);
 		}
 
 		if ( ! isDataLoaded || ! primaryPurchase ) {
@@ -488,10 +468,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some items failed.' );
-		}
-
-		if ( this.isSearch() ) {
-			return translate( 'Welcome to Jetpack Search!' );
 		}
 
 		if (
