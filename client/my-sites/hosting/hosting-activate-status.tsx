@@ -5,7 +5,7 @@ import Notice from 'calypso/components/notice';
 import { useDispatch } from 'calypso/state';
 import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferInProgress, transferStates } from 'calypso/state/automated-transfer/constants';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -32,7 +32,9 @@ const HostingActivateStatus = ( {
 		refetchInterval: 5000,
 	} );
 	const dispatch = useDispatch();
-	const isTransferCompleted = transferStatus === transferStates.COMPLETED;
+	const isTransferCompleted = ! transferInProgress.includes(
+		transferStatus as ( typeof transferInProgress )[ number ]
+	);
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 
 	useEffect( () => {
