@@ -23,7 +23,6 @@ import {
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SELECTABLE_PLUGINS } from './config';
-import { useCreateMonitor } from './hooks/use-create-monitor';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
@@ -45,7 +44,6 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
-	const { createMonitor } = useCreateMonitor( siteSlug );
 	const isEligibleForFeature = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess } = props;
 	const initDate = scheduleForEdit
@@ -135,12 +133,9 @@ export const ScheduleForm = ( props: Props ) => {
 		};
 
 		if ( formValid ) {
-			if ( scheduleForEdit ) {
-				editUpdateSchedule( scheduleForEdit.id, params );
-			} else {
-				createUpdateSchedule( params );
-				createMonitor( siteSlug );
-			}
+			scheduleForEdit
+				? editUpdateSchedule( scheduleForEdit.id, params )
+				: createUpdateSchedule( params );
 		}
 	};
 
