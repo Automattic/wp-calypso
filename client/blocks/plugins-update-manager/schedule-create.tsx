@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useCreateMonitor } from './hooks/use-create-monitor';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
@@ -23,6 +24,7 @@ interface Props {
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const { createMonitor } = useCreateMonitor( siteSlug );
 	const isEligibleForFeature = useIsEligibleForFeature();
 	const { onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
@@ -47,6 +49,8 @@ export const ScheduleCreate = ( props: Props ) => {
 		recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
 			site_slug: siteSlug,
 		} );
+
+		createMonitor();
 
 		return onNavBack && onNavBack();
 	};
