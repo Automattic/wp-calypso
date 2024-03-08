@@ -83,7 +83,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
 
 		return translate(
-			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s. On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You will receive email notices %(numberOfDays)d days before renewals, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
+			'The promotional period for your %(productName)s lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s. On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You will receive email notices %(numberOfDays)d days before renewals, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
 			{
 				args: {
 					productName,
@@ -112,7 +112,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 	}
 
 	return translate(
-		'At the end of the promotional period your %(productName)s subscription will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
+		'At the end of the promotional period your %(productName)s will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
 		{
 			args: {
 				productName,
