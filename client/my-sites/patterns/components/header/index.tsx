@@ -12,7 +12,7 @@ type PatternsHeaderProps = {
 export const PatternsHeader = ( {
 	description,
 	initialSearchTerm = '',
-	onSearch,
+	onSearch = ( s ) => s,
 	title,
 }: PatternsHeaderProps ) => {
 	return (

@@ -8,6 +8,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import {
+	usePatternSearchTerm,
+	filterPatternsByTerm,
+} from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import ImgGrid from './images/grid.svg';
 import ImgStar from './images/star.svg';
@@ -28,8 +32,11 @@ export const PatternsCategoryPage = ( {
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
 
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
 	const { data: categories } = usePatternCategories( locale );
-	const { data: patterns } = usePatterns( locale, category );
+	const { data: patterns = [] } = usePatterns( locale, category, {
+		select: ( patterns ) => filterPatternsByTerm( patterns, searchTerm ),
+	} );
 
 	const categoryNavList = categories?.map( ( category ) => ( {
 		name: category.name || '',
@@ -42,8 +49,12 @@ export const PatternsCategoryPage = ( {
 			<DocumentHead title="WordPress Patterns- Category" />
 
 			<PatternsHeader
-				title={ category + ' patterns' }
 				description="Introduce yourself or your brand to visitors."
+				initialSearchTerm={ searchTerm }
+				onSearch={ ( query ) => {
+					setSearchTerm( query );
+				} }
+				title={ category + ' patterns' }
 			/>
 
 			{ categoryNavList && (

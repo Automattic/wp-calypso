@@ -1,12 +1,14 @@
-import page from '@automattic/calypso-router';
 import { useLocale } from '@automattic/i18n-utils';
-import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsGridGallery } from 'calypso/my-sites/patterns/components/grid-gallery';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import {
+	usePatternSearchTerm,
+	filterPatternsByTerm,
+} from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
@@ -14,39 +16,9 @@ import ImgLayout from './images/layout.svg';
 import ImgPattern from './images/pattern.svg';
 import ImgResponsive from './images/responsive.svg';
 import ImgStyle from './images/style.svg';
-import type { Pattern, PatternGalleryFC } from 'calypso/my-sites/patterns/types';
+import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
-
-function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) {
-	if ( ! searchTerm ) {
-		return [];
-	}
-
-	return patterns.filter( ( pattern ) => {
-		const lowerCaseSearchTerm = searchTerm.toLowerCase();
-		const patternCategories = Object.values( pattern.categories ).map(
-			( category ) => category?.title
-		);
-		const fields = [ pattern.title, pattern.description, ...patternCategories ].filter(
-			( x ): x is NonNullable< typeof x > => Boolean( x )
-		);
-
-		return fields.some( ( field ) => field.toLowerCase().includes( lowerCaseSearchTerm ) );
-	} );
-}
-
-/**
- * Retrieve a query parameter value from the URL
- */
-function getQueryParam( key: string ) {
-	if ( typeof window !== 'undefined' ) {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( key ) ?? '';
-	}
-
-	return '';
-}
 
 type PatternsHomePageProps = {
 	isGridView?: boolean;
@@ -59,41 +31,12 @@ export const PatternsHomePage = ( {
 }: PatternsHomePageProps ) => {
 	const locale = useLocale();
 
-	const [ searchTerm, setSearchTerm ] = useState( getQueryParam( 's' ) );
-
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, '', {
 		enabled: Boolean( searchTerm ),
+		select: ( patterns ) => filterPatternsByTerm( patterns, searchTerm ),
 	} );
-
-	const patternSearchResults = filterPatternsByTerm( patterns, searchTerm );
-
-	// Updates the URL of the page whenever the search term changes
-	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
-
-		if ( searchTerm ) {
-			params.set( 's', searchTerm );
-		} else {
-			params.delete( 's' );
-		}
-
-		const paramsString = params.toString().length ? `?${ params.toString() }` : '';
-		page( `${ window.location.pathname }${ paramsString }` );
-	}, [ searchTerm ] );
-
-	// Updates the search term whenever the URL of the page changes
-	useEffect( () => {
-		function onPopstate() {
-			setSearchTerm( getQueryParam( 's' ) );
-		}
-
-		window.addEventListener( 'popstate', onPopstate );
-
-		return () => {
-			window.removeEventListener( 'popstate', onPopstate );
-		};
-	}, [] );
 
 	return (
 		<>
@@ -120,9 +63,7 @@ export const PatternsHomePage = ( {
 				} ) ) }
 			/>
 
-			{ searchTerm && (
-				<PatternGallery patterns={ patternSearchResults } isGridView={ isGridView } />
-			) }
+			{ searchTerm && <PatternGallery patterns={ patterns } isGridView={ isGridView } /> }
 
 			<PatternsSection
 				title="Copy. Paste. Customize."
