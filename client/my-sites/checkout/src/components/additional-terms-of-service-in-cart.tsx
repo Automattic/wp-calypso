@@ -67,19 +67,19 @@ function getMessageForTermsOfServiceRecordUnknown(
 		stripZeros: true,
 	} );
 	const startDate = moment( args.subscription_start_date ).format( 'll' );
+	const maybeProratedRegularPrice = formatCurrency(
+		args.maybe_prorated_regular_renewal_price_integer,
+		currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
 	const manageSubscriptionLink = `/purchases/subscriptions/${ siteSlug }`;
 
 	if ( doesTermsOfServiceRecordHaveDates( args ) ) {
 		const endDate = moment( args.subscription_end_of_promotion_date ).format( 'll' );
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
-		const maybeProratedRegularPrice = formatCurrency(
-			args.maybe_prorated_regular_renewal_price_integer,
-			currency,
-			{
-				isSmallestUnit: true,
-				stripZeros: true,
-			}
-		);
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
 
 		return translate(
@@ -112,11 +112,12 @@ function getMessageForTermsOfServiceRecordUnknown(
 	}
 
 	return translate(
-		'At the end of the promotional period your %(productName)s will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
+		'At the end of the promotional period your %(productName)s will renew at the normal price of %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
 		{
 			args: {
 				productName,
-				renewalPrice,
+				maybeProratedRegularPrice,
+				regularPrice,
 			},
 			components: {
 				link: <a href={ manageSubscriptionLink } target="_blank" rel="noopener noreferrer" />,
