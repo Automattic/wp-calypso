@@ -95,7 +95,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 			}
 		);
 
-		const proratedNoticeText = translate(
+		// This is necessary to add if the next renewal is not the end of the offer.
+		const endOfPromotionChargeText = translate(
 			'On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s.',
 			{
 				args: {
@@ -132,9 +133,13 @@ function getMessageForTermsOfServiceRecordUnknown(
 			}
 		);
 
+		const shouldShowEndOfPromotionText =
+			args.subscription_auto_renew_date !== args.subscription_end_of_promotion_date ||
+			args.maybe_prorated_regular_renewal_price_integer !== args.renewal_price_integer;
+
 		return (
 			<>
-				{ nextRenewalText } { args.is_renewal_price_prorated && proratedNoticeText }{ ' ' }
+				{ nextRenewalText } { shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
 				{ regularPriceNoticeText } { emailNoticesText }{ ' ' }
 			</>
 		);
