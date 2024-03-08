@@ -8,6 +8,7 @@ import {
 	getJetpackSearchDashboardUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 export type ThankYouJetpackSearchProductProps = {
 	purchase: ReceiptPurchase;
