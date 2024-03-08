@@ -8,17 +8,17 @@ import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-type PatternsIndexProps = {
+type PatternsWrapperProps = {
 	category: string;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 };
 
-export const PatternsIndex = ( {
+export const PatternsWrapper = ( {
 	category,
 	isGridView,
 	patternGallery: PatternGallery,
-}: PatternsIndexProps ) => {
+}: PatternsWrapperProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	return (
