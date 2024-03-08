@@ -294,14 +294,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
-	recordThankYouClick = () => {
-		this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
-			product_name: 'search',
-			value: 'Customizer',
-			site: 'wpcom',
-		} );
-	};
-
 	getButtonText = () => {
 		const {
 			displayMode,
