@@ -12,7 +12,7 @@ export default class FormTextInput extends PureComponent {
 		className: PropTypes.string,
 		name: PropTypes.string,
 		value: PropTypes.any,
-		placeholder: PropTypes.string,
+		placeholder: PropTypes.any,
 		onChange: PropTypes.func,
 	};
 
