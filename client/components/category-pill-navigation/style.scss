@@ -2,11 +2,11 @@
 @import "@automattic/components/src/styles/typography";
 @import "@automattic/typography/styles/variables";
 
-.category-navigation {
+.category-pill-navigation {
 	background: var(--studio-white);
 }
 
-.category-navigation__button-divider {
+.category-pill-navigation__button-divider {
 	flex-shrink: 0;
 	width: 1px;
 	height: 14px;
@@ -15,11 +15,11 @@
 	background: #2c3338;
 }
 
-.category-navigation__list {
+.category-pill-navigation__list {
 	overflow: hidden;
 	position: relative;
 
-	.category-navigation__list-inner {
+	.category-pill-navigation__list-inner {
 		overflow: auto;
 		display: flex;
 		gap: 16px;
@@ -30,7 +30,7 @@
 		}
 	}
 
-	.category-navigation__arrow {
+	.category-pill-navigation__arrow {
 		width: 44px;
 		height: 44px;
 		position: absolute;
@@ -69,7 +69,7 @@
 	}
 }
 
-.category-navigation__button {
+.category-pill-navigation__button {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
@@ -94,7 +94,7 @@
 	}
 }
 
-.category-navigation__children {
+.category-pill-navigation__children {
 	padding-left: 32px;
 	flex: none;
 	margin-left: auto;

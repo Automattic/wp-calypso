@@ -1,13 +1,13 @@
 @import "@wordpress/base-styles/breakpoints.scss";
 @import "@automattic/components/src/styles/typography";
 
-.category-navigation {
+.is-section-patterns .category-pill-navigation {
 	padding: 32px 110px;
 
 	@media ( max-width: $break-wide ) {
 		padding: 24px 0;
 
-		.category-navigation__list .category-navigation__list-inner {
+		.category-pill-navigation__list .category-pill-navigation__list-inner {
 			padding: 0 24px;
 		}
 	}

@@ -1,13 +1,12 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { CategoryNavigation } from 'calypso/components/category-navigation';
+import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
-import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import ImgGrid from './images/grid.svg';
@@ -29,7 +28,7 @@ export const PatternsCategoryPage = ( {
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
 
-	const { data: categories } = usePatternCategories( locale, RENDERER_SITE_ID );
+	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns } = usePatterns( locale, category );
 
 	const categoryNavList = categories?.map( ( category ) => ( {
@@ -48,13 +47,13 @@ export const PatternsCategoryPage = ( {
 			/>
 
 			{ categoryNavList && (
-				<CategoryNavigation
+				<CategoryPillNavigation
 					selectedCategory={ category }
 					buttons={ [
 						{
 							icon: ImgStar,
 							label: 'Discover',
-							link: '/111',
+							link: addLocaleToPathLocaleInFront( '/patterns' ),
 						},
 						{
 							icon: ImgGrid,

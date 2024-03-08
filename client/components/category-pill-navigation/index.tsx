@@ -1,10 +1,11 @@
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import classnames from 'classnames';
+import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
 import './style.scss';
 
-type CategoryNavProps = {
+type CategoryPillNavigationProps = {
 	buttons?: {
 		icon: string;
 		label: string;
@@ -18,18 +19,21 @@ type CategoryNavProps = {
 	selectedCategory: string;
 };
 
-export const CategoryNavigation = ( { buttons, list, selectedCategory }: CategoryNavProps ) => {
+export const CategoryPillNavigation = ( {
+	buttons,
+	list,
+	selectedCategory,
+}: CategoryPillNavigationProps ) => {
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 	const listRef = useRef< HTMLDivElement | null >( null );
 
 	const checkScrollArrows = () => {
-		const list = listRef.current;
-		if ( ! list ) {
+		if ( ! listRef.current ) {
 			return;
 		}
 
-		const { scrollLeft, scrollWidth, clientWidth } = list;
+		const { scrollLeft, scrollWidth, clientWidth } = listRef.current;
 		setShowLeftArrow( scrollLeft > 0 );
 		setShowRightArrow( Math.ceil( scrollLeft ) < scrollWidth - clientWidth );
 	};
@@ -53,47 +57,50 @@ export const CategoryNavigation = ( { buttons, list, selectedCategory }: Categor
 	}, [] );
 
 	return (
-		<div className="category-navigation">
-			<div className="category-navigation__list">
+		<div className="category-pill-navigation">
+			<div className="category-pill-navigation__list">
 				{ showLeftArrow && (
-					<Button className="category-navigation__arrow" onClick={ () => scrollTo( 'left' ) } />
+					<Button
+						className="category-pill-navigation__arrow"
+						onClick={ () => scrollTo( 'left' ) }
+					/>
 				) }
 				{ showRightArrow && (
 					<Button
-						className="category-navigation__arrow right"
+						className="category-pill-navigation__arrow right"
 						onClick={ () => scrollTo( 'right' ) }
 					/>
 				) }
 				<div
-					className="category-navigation__list-inner"
+					className="category-pill-navigation__list-inner"
 					ref={ listRef }
 					onScroll={ checkScrollArrows }
 				>
 					{ buttons && (
 						<>
 							{ buttons.map( ( button ) => (
-								<a
+								<LocalizedLink
 									key={ button.label }
 									href={ button.link }
-									className="category-navigation__button"
+									className="category-pill-navigation__button"
 								>
 									{ button.icon && <img src={ button.icon } alt={ button.label } /> }
 									{ button.label }
-								</a>
+								</LocalizedLink>
 							) ) }
-							<div className="category-navigation__button-divider" />
+							<div className="category-pill-navigation__button-divider" />
 						</>
 					) }
 					{ list.map( ( category ) => (
-						<a
+						<LocalizedLink
 							key={ category.name }
 							href={ category.link }
-							className={ classnames( 'category-navigation__button', {
+							className={ classnames( 'category-pill-navigation__button', {
 								'is-active': category.name === selectedCategory,
 							} ) }
 						>
 							{ category.label }
-						</a>
+						</LocalizedLink>
 					) ) }
 				</div>
 			</div>
