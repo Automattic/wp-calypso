@@ -15,6 +15,9 @@ function getQueryParam( key: string ) {
 	return '';
 }
 
+/**
+ * Set up search form state and URL-related `useEffect` callbacks
+ */
 export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< string > > ] {
 	const [ searchTerm, setSearchTerm ] = useState( getQueryParam( 's' ) );
 
@@ -48,6 +51,9 @@ export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< stri
 	return [ searchTerm, setSearchTerm ];
 }
 
+/**
+ * Filter patterns by looking at their titles, description and category names
+ */
 export function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) {
 	return patterns.filter( ( pattern ) => {
 		const lowerCaseSearchTerm = searchTerm.toLowerCase();

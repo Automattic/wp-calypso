@@ -3,6 +3,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
@@ -31,12 +32,26 @@ export const PatternsCategoryPage = ( {
 	patternGallery: PatternGallery,
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
+	// Helps prevent resetting the search input if a search term was provided through the URL
+	const isInitialLoad = useRef( true );
+	// Helps reset the search input when navigating between categories
+	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select: ( patterns ) => filterPatternsByTerm( patterns, searchTerm ),
 	} );
+
+	// Resets the search term whenever the category changes
+	useEffect( () => {
+		if ( isInitialLoad.current ) {
+			isInitialLoad.current = false;
+		} else {
+			setSearchTerm( '' );
+			setSearchFormKey( category );
+		}
+	}, [ category ] );
 
 	const categoryNavList = categories?.map( ( category ) => ( {
 		name: category.name || '',
@@ -50,6 +65,7 @@ export const PatternsCategoryPage = ( {
 
 			<PatternsHeader
 				description="Introduce yourself or your brand to visitors."
+				key={ searchFormKey }
 				initialSearchTerm={ searchTerm }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
