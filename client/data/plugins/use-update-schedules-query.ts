@@ -9,6 +9,8 @@ export type ScheduleUpdates = {
 	timestamp: number;
 	schedule: 'weekly' | 'daily';
 	args: string[];
+	last_run_status: 'success' | 'failure-and-rollback' | 'failure-and-rollback-fail' | null;
+	last_run_timestamp: number | null;
 };
 
 export const useUpdateScheduleQuery = (
