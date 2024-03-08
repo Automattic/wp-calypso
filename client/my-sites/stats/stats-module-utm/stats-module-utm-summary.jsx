@@ -1,8 +1,15 @@
+import { StatsCard } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
+import useStatsPurchases from '../hooks/use-stats-purchases';
+import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 import UTMDropdown from './stats-module-utm-dropdown';
@@ -23,6 +30,11 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
+	// Check if blog is internal.
+	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
+	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 
 	// Tanstack query without Redux plumbing.
 	// That means this specific module does not follow the convention
@@ -33,6 +45,10 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 	// Handle network error.
 	// We should destinguish between network errors and api errors.
 	const isNetworkError = isError && ! isPending;
+
+	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
+	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isPending;
+	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
@@ -77,25 +93,44 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 			<p>Query: { queryString } </p>
 			<p>Data length: { dataLength } </p>
 			{ isNetworkError && <p>Network error detected</p> }
-			<StatsModuleDataQuery
-				data={ data }
-				path="utm"
-				className={ classNames( className, 'stats-module-utm' ) }
-				moduleStrings={ moduleStrings.utm }
-				period={ period }
-				query={ query }
-				isLoading={ isPending ?? true }
-				hideSummaryLink={ hideSummaryLink }
-				selectedOption={ optionLabels[ selectedOption ] }
-				toggleControl={
-					<UTMDropdown
-						buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-						onSelect={ setSelectedOption }
-						selectOptions={ optionLabels }
-						selected={ selectedOption }
-					/>
-				}
-			/>
+			{ isFetching && (
+				<StatsCard
+					title="UTM"
+					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+				>
+					<StatsModulePlaceholder isLoading />
+				</StatsCard>
+			) }
+			{ ! isFetching && ! isAdvancedFeatureEnabled && (
+				// TODO: update the ghost card to only show the module name
+				<StatsCard
+					title="UTM"
+					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+				>
+					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
+				</StatsCard>
+			) }
+			{ ! isFetching && isAdvancedFeatureEnabled && (
+				<StatsModuleDataQuery
+					data={ data }
+					path="utm"
+					className={ classNames( className, 'stats-module-utm' ) }
+					moduleStrings={ moduleStrings.utm }
+					period={ period }
+					query={ query }
+					isLoading={ isFetching ?? true }
+					hideSummaryLink={ hideSummaryLink }
+					selectedOption={ optionLabels[ selectedOption ] }
+					toggleControl={
+						<UTMDropdown
+							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+							onSelect={ setSelectedOption }
+							selectOptions={ optionLabels }
+							selected={ selectedOption }
+						/>
+					}
+				/>
+			) }
 		</>
 	);
 }
