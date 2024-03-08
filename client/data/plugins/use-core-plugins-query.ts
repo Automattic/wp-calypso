@@ -31,6 +31,7 @@ export const useCorePluginsQuery = (
 	addPluginExtension = false
 ): UseQueryResult< CorePluginsResponse > => {
 	const select = ( plugins: CorePluginsResponse ) => {
+		const ext = '.php';
 		let _plugins = decodeEntitiesFromPlugins( plugins );
 
 		if ( hideManagedPlugins ) {
@@ -40,7 +41,7 @@ export const useCorePluginsQuery = (
 		if ( addPluginExtension ) {
 			_plugins = _plugins.map( ( plugin ) => ( {
 				...plugin,
-				plugin: `${ plugin.plugin }.php`,
+				plugin: plugin.plugin.endsWith( ext ) ? plugin.plugin : `${ plugin.plugin }${ ext }`,
 			} ) );
 		}
 
