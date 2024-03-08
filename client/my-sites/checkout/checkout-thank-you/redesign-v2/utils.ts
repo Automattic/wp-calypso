@@ -1,5 +1,4 @@
 import {
-	isJetpackSearchSlug,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isP2Plus,
 	isTitanMail,
@@ -10,6 +9,7 @@ import {
 	getDomainPurchase,
 	isBulkDomainTransfer,
 	isDomainOnly,
+	isSearch,
 	isTitanWithoutMailboxes,
 } from '../utils';
 
@@ -60,7 +60,7 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 			return true;
 		}
 
-		if ( isJetpackSearchSlug( purchase.productSlug ) ) {
+		if ( isSearch( purchase ) ) {
 			return true;
 		}
 	}
