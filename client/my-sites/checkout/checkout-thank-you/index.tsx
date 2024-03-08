@@ -10,7 +10,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isEcommerce,
-	isJetpackSearchSlug,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
@@ -109,6 +108,7 @@ import {
 	getDomainPurchaseTypeAndPredicate,
 	isBulkDomainTransfer,
 	isDomainOnly,
+	isSearch,
 	isTitanWithoutMailboxes,
 } from './utils';
 import type { FindPredicate } from './utils';
@@ -597,6 +597,8 @@ export class CheckoutThankYou extends Component<
 						isEmailVerified={ this.props.isEmailVerified }
 					/>
 				);
+			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
+				pageContent = <JetpackSearchThankYou purchase={ purchases[ 0 ] } />;
 			} else if ( wasTitanEmailOnlyProduct ) {
 				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
 
@@ -621,8 +623,6 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
-			} else if ( isJetpackSearchSlug( purchases[ 0 ]?.productSlug ) ) {
-				pageContent = <JetpackSearchThankYou />;
 			}
 
 			if ( pageContent ) {

@@ -10,10 +10,12 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export type ThankYouJetpackSearchProductProps = {
+	purchase: ReceiptPurchase;
 	siteId: number | null;
 };
 
 export default function ThankYouJetpackSearchProduct( {
+	purchase,
 	siteId,
 }: ThankYouJetpackSearchProductProps ) {
 	const selectedSite = useSelector( getSelectedSite );
@@ -43,7 +45,7 @@ export default function ThankYouJetpackSearchProduct( {
 
 	return (
 		<ThankYouProduct
-			name="Jetpack Search"
+			name={ purchase.productName }
 			actions={
 				<Button primary href={ productButtonHref as string } onClick={ recordThankYouClick }>
 					{ productButtonLabel }

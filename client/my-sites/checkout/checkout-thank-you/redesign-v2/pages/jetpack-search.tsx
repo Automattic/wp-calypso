@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -5,7 +6,11 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThankYouJetpackSearchProduct from '../products/jetpack-search-product';
 
-export default function JetpackSearchThankYou() {
+export type JetpackSearchThankYouProps = {
+	purchase: ReceiptPurchase;
+};
+
+export default function JetpackSearchThankYou( { purchase }: ThankYouJetpackSearchProductProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const footerDetails = [
 		{
@@ -13,10 +18,25 @@ export default function JetpackSearchThankYou() {
 			title: translate( 'Everything you need to know' ),
 			description: translate( 'Explore our support guides and find an answer to every question.' ),
 			buttonText: translate( 'Explore support resources' ),
-			buttonHref: '/support',
+			buttonHref: localizeUrl( 'https://wordpress.com/support/' ),
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context: 'jetpack-search',
+					type: 'generic-support',
+				} );
+			},
+		},
+		{
+			key: 'footer-plugins-support',
+			title: translate( 'All-in-one plugin documentation' ),
+			description: translate(
+				"Unlock your plugin's potential with our comprehensive support documentation."
+			),
+			buttonText: translate( 'Plugin documentation' ),
+			buttonHref: localizeUrl( 'https://wordpress.com/support/category/plugins-and-integrations/' ),
+			buttonOnClick: () => {
+				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
+					context: 'plugins-support',
 					type: 'generic-support',
 				} );
 			},
@@ -36,7 +56,7 @@ export default function JetpackSearchThankYou() {
 					</>
 				</>
 			}
-			products={ <ThankYouJetpackSearchProduct siteId={ siteId } /> }
+			products={ <ThankYouJetpackSearchProduct siteId={ siteId } purchase={ purchase } /> }
 			footerDetails={ footerDetails }
 		/>
 	);
