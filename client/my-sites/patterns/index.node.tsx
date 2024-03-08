@@ -2,16 +2,16 @@ import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
-import { PatternsHomePage } from 'calypso/my-sites/patterns/home';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { PatternsIndex } from 'calypso/my-sites/patterns/index';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import type { RouterContext, RouterNext, Pattern } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
-		<PatternsHomePage
+		<PatternsIndex
 			category={ context.params.category }
 			isGridView={ !! context.query.grid }
 			patternGallery={ PatternGalleryServer }
