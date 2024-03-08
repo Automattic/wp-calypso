@@ -12,7 +12,10 @@ import { Icon, arrowLeft, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MAX_SCHEDULES } from './config';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
@@ -25,6 +28,7 @@ interface Props {
 }
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const isMobile = useMobileBreakpoint();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
@@ -36,10 +40,22 @@ export const ScheduleList = ( props: Props ) => {
 		isLoading,
 		isFetched,
 		refetch,
-	} = useUpdateScheduleQuery( siteSlug );
+	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
+
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
 	} );
+
+	const { canCreateSchedules, isLoading: isLoadingCanCreateSchedules } = useCanCreateSchedules(
+		siteSlug,
+		isEligibleForFeature
+	);
+
+	const showScheduleListEmpty =
+		! isEligibleForFeature ||
+		( isFetched &&
+			! isLoadingCanCreateSchedules &&
+			( schedules.length === 0 || ! canCreateSchedules ) );
 
 	const openRemoveDialog = ( id: string ) => {
 		setRemoveDialogOpen( true );
@@ -52,7 +68,12 @@ export const ScheduleList = ( props: Props ) => {
 	};
 
 	const onRemoveDialogConfirm = () => {
-		selectedScheduleId && deleteUpdateSchedule( selectedScheduleId );
+		if ( selectedScheduleId ) {
+			deleteUpdateSchedule( selectedScheduleId );
+			recordTracksEvent( 'calypso_scheduled_updates_delete_schedule', {
+				site_slug: siteSlug,
+			} );
+		}
 		closeRemoveConfirm();
 	};
 
@@ -78,31 +99,40 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ isLoading && <Spinner /> }
-					{ isFetched && schedules.length === 0 && (
-						<ScheduleListEmpty onCreateNewSchedule={ onCreateNewSchedule } />
+					{ ( isLoading || isLoadingCanCreateSchedules ) && <Spinner /> }
+					{ showScheduleListEmpty && (
+						<ScheduleListEmpty
+							onCreateNewSchedule={ onCreateNewSchedule }
+							canCreateSchedules={ canCreateSchedules }
+						/>
 					) }
-					{ isFetched && schedules.length > 0 && (
-						<>
-							{ isMobile ? (
-								<ScheduleListCards
-									onRemoveClick={ openRemoveDialog }
-									onEditClick={ onEditSchedule }
-								/>
-							) : (
-								<ScheduleListTable
-									onRemoveClick={ openRemoveDialog }
-									onEditClick={ onEditSchedule }
-								/>
-							) }
-						</>
-					) }
-					{ isFetched && schedules.length >= MAX_SCHEDULES && (
-						<Text as="p">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							The current feature implementation only allows to set up two schedules.
-						</Text>
-					) }
+					{ isFetched &&
+						! isLoadingCanCreateSchedules &&
+						schedules.length > 0 &&
+						canCreateSchedules && (
+							<>
+								{ isMobile ? (
+									<ScheduleListCards
+										onRemoveClick={ openRemoveDialog }
+										onEditClick={ onEditSchedule }
+									/>
+								) : (
+									<ScheduleListTable
+										onRemoveClick={ openRemoveDialog }
+										onEditClick={ onEditSchedule }
+									/>
+								) }
+							</>
+						) }
+					{ isFetched &&
+						! isLoadingCanCreateSchedules &&
+						schedules.length >= MAX_SCHEDULES &&
+						canCreateSchedules && (
+							<Text as="p">
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+								The current feature implementation only allows to set up two schedules.
+							</Text>
+						) }
 				</CardBody>
 			</Card>
 		</>

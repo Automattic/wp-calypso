@@ -5,6 +5,8 @@ import { usePreparePluginsTooltipInfo } from 'calypso/blocks/plugins-update-mana
 import { ellipsis } from 'calypso/blocks/plugins-update-manager/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
@@ -13,10 +15,12 @@ interface Props {
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const moment = useLocalizedMoment();
 	const { onEditClick, onRemoveClick } = props;
-	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { prepareScheduleName } = usePrepareScheduleName();
 
 	return (
 		<div className="schedule-list--cards">
@@ -46,7 +50,7 @@ export const ScheduleListCards = ( props: Props ) => {
 								variant="link"
 								onClick={ () => onEditClick && onEditClick( schedule.id ) }
 							>
-								{ schedule.hook }
+								{ prepareScheduleName( schedule ) }
 							</Button>
 						</strong>
 					</div>

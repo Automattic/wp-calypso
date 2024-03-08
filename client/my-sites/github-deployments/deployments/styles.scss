@@ -98,7 +98,7 @@
 		}
 
 		span {
-			color: var(--Gray-Gray-40, #787c82);
+			color: var(--studio-gray-60);
 			font-size: $font-body-extra-small;
 			font-weight: 400;
 		}
@@ -117,6 +117,11 @@
 				display: inline-flex;
 				align-items: center;
 			}
+		}
+
+		a {
+			text-decoration: underline;
+			color: var(--studio-gray-60);
 		}
 	}
 

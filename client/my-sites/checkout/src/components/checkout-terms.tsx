@@ -41,6 +41,17 @@ const TermsCollapsedContent = styled.div`
 		top: -3px;
 		width: 20px;
 	}
+
+	& .foldable-card__secondary {
+		display: none;
+	}
+
+	.rtl & .foldable-card__main {
+		right: 20px;
+	}
+	.rtl & .foldable-card__expand {
+		right: -24px;
+	}
 `;
 
 export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {

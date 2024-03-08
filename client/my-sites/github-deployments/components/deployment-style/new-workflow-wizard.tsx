@@ -13,7 +13,7 @@ import { newComposerWorkflowExample, newWorkflowExample } from './workflow-yaml-
 import './style.scss';
 
 interface NewWorkflowWizardProps {
-	repository: GitHubRepositoryData;
+	repository: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	repositoryBranch: string;
 	isLoadingWorkflows: boolean;
 	workflows?: Workflow[];
@@ -131,7 +131,8 @@ export const NewWorkflowWizard = ( {
 					onClick={ () =>
 						createWorkflow( {
 							repositoryId: repository.id,
-							repository,
+							repositoryOwner: repository.owner,
+							repositoryName: repository.name,
 							branchName: repositoryBranch,
 							fileName: workflowPath,
 							fileContent: workflowContent,

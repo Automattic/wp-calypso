@@ -197,7 +197,6 @@ export default function CampaignItem( props: Props ) {
 
 			<td className="campaign-item__action">
 				<Button
-					variant="secondary"
 					isBusy={ false }
 					disabled={ false }
 					onClick={ navigateToDetailsPage }

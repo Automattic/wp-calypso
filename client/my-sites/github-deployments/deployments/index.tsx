@@ -23,11 +23,15 @@ export function GitHubDeployments() {
 	const { __ } = useI18n();
 
 	const { data: installations, isLoading: isLoadingInstallations } = useGithubInstallationsQuery();
-	const { data: deployments, refetch } = useCodeDeploymentsQuery( siteId );
+	const {
+		data: deployments,
+		isLoading: isLoadingDeployments,
+		refetch,
+	} = useCodeDeploymentsQuery( siteId );
 
 	const hasConnectedAnInstallation = installations && installations.length > 0;
 	const hasDeployments = deployments && deployments.length > 0;
-
+	const isLoading = isLoadingInstallations || isLoadingDeployments;
 	const renderTopRightButton = () => {
 		if ( hasConnectedAnInstallation && hasDeployments ) {
 			return (
@@ -47,6 +51,10 @@ export function GitHubDeployments() {
 	};
 
 	const renderContent = () => {
+		if ( isLoading ) {
+			return <GitHubLoadingPlaceholder />;
+		}
+
 		if ( deployments?.length ) {
 			return <GitHubDeploymentsList deployments={ deployments } />;
 		}
@@ -67,8 +75,6 @@ export function GitHubDeployments() {
 		if ( ! installations && ! isLoadingInstallations ) {
 			return <GitHubAuthorizeCard />;
 		}
-
-		return <GitHubLoadingPlaceholder />;
 	};
 
 	return (

@@ -3,7 +3,9 @@ import { Icon, info } from '@wordpress/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MOMENT_TIME_FORMAT } from './config';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
+import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ellipsis } from './icons';
 
@@ -13,10 +15,12 @@ interface Props {
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const moment = useLocalizedMoment();
 	const { onEditClick, onRemoveClick } = props;
-	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug );
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { prepareScheduleName } = usePrepareScheduleName();
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -43,7 +47,7 @@ export const ScheduleListTable = ( props: Props ) => {
 								variant="link"
 								onClick={ () => onEditClick && onEditClick( schedule.id ) }
 							>
-								{ schedule.hook }
+								{ prepareScheduleName( schedule ) }
 							</Button>
 						</td>
 						<td></td>

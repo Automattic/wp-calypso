@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
@@ -6,9 +7,12 @@ import {
 	CardHeader,
 	CardBody,
 	CardFooter,
+	Icon,
 } from '@wordpress/components';
-import { arrowLeft } from '@wordpress/icons';
+import { arrowLeft, warning } from '@wordpress/icons';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
@@ -18,9 +22,12 @@ interface Props {
 }
 export const ScheduleEdit = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const { scheduleId, onNavBack } = props;
-	const { data: schedules = [], isFetched } = useUpdateScheduleQuery( siteSlug );
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
+		siteSlug,
+		isEligibleForFeature
+	);
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
 	const mutationState = useMutationState( {
@@ -28,11 +35,21 @@ export const ScheduleEdit = ( props: Props ) => {
 	} );
 	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
 
+	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
+
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
 		onNavBack && onNavBack();
 		return null;
 	}
+
+	const onSyncSuccess = () => {
+		recordTracksEvent( 'calypso_scheduled_updates_edit_schedule', {
+			site_slug: siteSlug,
+		} );
+
+		return onNavBack && onNavBack();
+	};
 
 	return (
 		<Card className="plugins-update-manager">
@@ -49,16 +66,25 @@ export const ScheduleEdit = ( props: Props ) => {
 			</CardHeader>
 			<CardBody>
 				{ schedule && (
-					<ScheduleForm
-						scheduleForEdit={ schedule }
-						onSyncSuccess={ () => onNavBack && onNavBack() }
-					/>
+					<ScheduleForm scheduleForEdit={ schedule } onSyncSuccess={ onSyncSuccess } />
 				) }
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary" isBusy={ isBusy }>
+				<Button
+					form="schedule"
+					type="submit"
+					variant={ canCreateSchedules ? 'primary' : 'secondary' }
+					isBusy={ isBusy }
+					disabled={ ! canCreateSchedules }
+				>
 					Save
 				</Button>
+				{ ! canCreateSchedules && (
+					<Text as="p">
+						<Icon className="icon-info" icon={ warning } size={ 16 } />
+						This site is unable to schedule auto-updates for plugins.
+					</Text>
+				) }
 			</CardFooter>
 		</Card>
 	);

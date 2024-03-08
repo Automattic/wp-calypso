@@ -36,10 +36,10 @@
 				.inline-support-link {
 					font-weight: 600;
 					font-size: 1rem;
-
 					padding: 8px 24px;
 					line-height: 22px;
 					min-width: 110px;
+					background-color: var(--color-surface);
 				}
 
 				button {
@@ -101,8 +101,9 @@
 			}
 		}
 
-		// Post table
-		.post-item__post-promote-button {
+		// Post and Campaign buttons
+		.post-item__post-promote-button,
+		.campaign-item__post-details-button {
 			color: var(--color-accent) !important;
 			border: 1.5px solid var(--color-accent);
 			border-radius: 4px;
@@ -112,8 +113,6 @@
 
 			&:hover {
 				text-decoration: underline;
-				color: var(--color-accent);
-				background-color: var(--color-surface);
 			}
 		}
 
@@ -146,7 +145,7 @@
 					padding: 10px;
 					background: none;
 					color: var(--color-accent);
-					border: 1.5px solid var(--color-accent);
+					border: 1px solid var(--studio-gray-10);
 					font-weight: 600;
 					font-size: 0.75rem;
 					// display: inline-flex;
@@ -206,6 +205,7 @@ $break-medium-expanded-menu: $break-medium + 272px;
 					line-height: 22px;
 					min-width: auto;
 					padding: 6px 12px;
+					background-color: var(--color-surface);
 				}
 
 				button {
@@ -218,6 +218,10 @@ $break-medium-expanded-menu: $break-medium + 272px;
 					padding: 6px 12px;
 				}
 			}
+		}
+
+		.promote-post-i2 .post-item__post-promote-button :hover {
+			color: var(--color-accent) !important;
 		}
 
 		// Campaigns details

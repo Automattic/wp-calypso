@@ -8,7 +8,7 @@ export function getPatternsQueryOptions(
 	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' > = {}
 ) {
 	return {
-		queryKey: [ 'patterns', 'library', locale, category ],
+		queryKey: [ 'pattern-library', 'patterns', locale, category ],
 		queryFn: () => {
 			return wpcom.req.get( `/ptk/patterns/${ locale }`, {
 				categories: category,

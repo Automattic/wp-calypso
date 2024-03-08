@@ -14,7 +14,7 @@ export interface Workflow {
 const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
 
 export const useDeploymentWorkflowsQuery = (
-	repository: GitHubRepositoryData | undefined,
+	repository: Pick< GitHubRepositoryData, 'owner' | 'name' > | undefined,
 	branchName: string,
 	options?: Partial< UseQueryOptions< Workflow[] > >
 ) => {

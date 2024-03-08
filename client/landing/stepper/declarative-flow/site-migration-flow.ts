@@ -224,6 +224,12 @@ const siteMigration: Flow = {
 						} );
 						return;
 					}
+					if ( providedDependencies?.freeTrialSelected ) {
+						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
 					if ( providedDependencies?.verifyEmail ) {
 						// not yet implemented
 						return;
@@ -238,6 +244,9 @@ const siteMigration: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}

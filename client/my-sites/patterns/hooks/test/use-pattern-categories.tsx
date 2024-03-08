@@ -30,14 +30,11 @@ describe( 'usePatternCategories', () => {
 	test( 'calls the API endpoint with the right parameters', async () => {
 		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( [] );
 
-		const { result } = renderHook( () => usePatternCategories( 'fr', 12345 ), { wrapper } );
+		const { result } = renderHook( () => usePatternCategories( 'fr' ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-		expect( wpcom.req.get ).toHaveBeenCalledWith( '/sites/12345/block-patterns/categories', {
-			apiNamespace: 'wp/v2',
-			_locale: 'fr',
-		} );
+		expect( wpcom.req.get ).toHaveBeenCalledWith( '/ptk/categories/fr' );
 		expect( result.current.data ).toEqual( [] );
 	} );
 
@@ -54,7 +51,7 @@ describe( 'usePatternCategories', () => {
 			categories
 		);
 
-		const { result } = renderHook( () => usePatternCategories( 'fr', 12345 ), { wrapper } );
+		const { result } = renderHook( () => usePatternCategories( 'fr' ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 

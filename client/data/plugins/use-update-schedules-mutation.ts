@@ -5,7 +5,6 @@ import type { ScheduleUpdates } from './use-update-schedules-query';
 import type { SiteSlug } from 'calypso/types';
 
 export type CreateRequestParams = {
-	hook: string;
 	plugins: string[];
 	schedule: {
 		interval: 'daily' | 'weekly';
@@ -34,7 +33,6 @@ export function useCreateUpdateScheduleMutation( siteSlug: SiteSlug, queryOption
 				...prevSchedules,
 				{
 					id: 'temp-id',
-					hook: params.hook,
 					args: params.plugins,
 					timestamp: params.schedule.timestamp,
 					schedule: params.schedule.interval,
@@ -91,7 +89,6 @@ export function useEditUpdateScheduleMutation( siteSlug: SiteSlug, queryOptions 
 				...prevSchedules.slice( 0, scheduleIndex ),
 				{
 					...prevSchedules[ scheduleIndex ],
-					hook: params.hook,
 					args: params.plugins,
 					timestamp: params.schedule.timestamp,
 					schedule: params.schedule.interval,

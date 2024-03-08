@@ -2,7 +2,7 @@ import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/com
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { ChangeEvent, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -33,10 +33,10 @@ interface InitialValues {
 }
 
 interface GitHubConnectionFormProps {
-	repository?: GitHubRepositoryData;
+	repository?: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' > & { default_branch?: string };
 	deploymentId?: number;
 	installationId?: number;
-	initialValues?: InitialValues;
+	initialValues: InitialValues;
 	changeRepository?(): void;
 	onSubmit( deploymentData: CodeDeploymentData ): Promise< unknown >;
 }
@@ -45,31 +45,20 @@ export const GitHubConnectionForm = ( {
 	repository,
 	deploymentId,
 	installationId,
-	initialValues = {
-		branch: repository?.default_branch ?? 'main',
-		destPath: '/',
-		isAutomated: false,
-		workflowPath: undefined,
-	},
+	initialValues,
 	changeRepository,
 	onSubmit,
 }: GitHubConnectionFormProps ) => {
 	const [ submitted, setSubmitted ] = useState( false );
+
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
-
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
 		initialValues.workflowPath
 	);
-	const { __ } = useI18n();
 
-	useEffect( () => {
-		setBranch( initialValues.branch );
-		setDestPath( initialValues.destPath );
-		setIsAutoDeploy( initialValues.isAutomated );
-		setWorkflowPath( initialValues.workflowPath );
-	}, [ initialValues ] );
+	const { __ } = useI18n();
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
 		installationId,
@@ -109,11 +98,12 @@ export const GitHubConnectionForm = ( {
 		branch
 	);
 
-	useLayoutEffect( () => {
-		if ( repoChecks?.suggested_directory ) {
+	useEffect( () => {
+		// Only apply path suggestions if creating a new deployment
+		if ( ! deploymentId && repoChecks?.suggested_directory ) {
 			setDestPath( repoChecks.suggested_directory );
 		}
-	}, [ repoChecks ] );
+	}, [ deploymentId, repoChecks ] );
 
 	const displayMissingRepositoryError = submitted && ! repository;
 	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
