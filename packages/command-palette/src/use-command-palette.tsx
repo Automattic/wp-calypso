@@ -188,6 +188,17 @@ export const useCommandPalette = ( {
 		return filter?.( site ) && hasCapability;
 	};
 
+	const trackSelectedCommand = ( command: Command ) => {
+		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
+			command: command.name,
+			has_nested_commands: !! command.siteFunctions,
+			list_count: commands.length,
+			list_visible_count: listVisibleCount,
+			current_route: currentRoute,
+			search_text: search,
+		} );
+	};
+
 	const trackCompletedCommand = ( command: Command ) => {
 		recordTracksEvent( 'calypso_hosting_command_palette_command_complete', {
 			command: command.name,
@@ -196,22 +207,6 @@ export const useCommandPalette = ( {
 			current_route: currentRoute,
 			search_text: search,
 		} );
-	};
-
-	const trackSelectedCommand = ( command: Command ) => {
-		const hasNestedCommands = !! command.siteFunctions;
-		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-			command: command.name,
-			has_nested_commands: hasNestedCommands,
-			list_count: commands.length,
-			list_visible_count: listVisibleCount,
-			current_route: currentRoute,
-			search_text: search,
-		} );
-
-		if ( ! hasNestedCommands ) {
-			trackCompletedCommand( command );
-		}
 	};
 
 	// Logic for selected command (sites)
@@ -299,6 +294,9 @@ export const useCommandPalette = ( {
 		...command,
 		callback: ( params: CommandCallBackParams ) => {
 			trackSelectedCommand( command );
+			if ( ! command.siteFunctions ) {
+				trackCompletedCommand( command );
+			}
 			command.callback( params );
 		},
 	} ) );
@@ -318,17 +316,12 @@ export const useCommandPalette = ( {
 
 		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
 			const callback = ( params: CommandCallBackParams ) => {
-				let targetFunction;
-				const isMultiSiteCommand = command?.siteFunctions !== undefined;
-				if ( isMultiSiteCommand ) {
-					targetFunction = command?.siteFunctions?.onClick;
-					// We need to track the selected command event here because `command.siteFunctions.onClick`
+				const targetFunction = command?.siteFunctions?.onClick || command.callback;
+				if ( command?.siteFunctions ) {
+					// We need to track the events here because `command.siteFunctions.onClick`
 					// does not track anything (and it's not meant to).
 					trackSelectedCommand( command );
-				} else {
-					// We don't need to track the selected command event here because `command.callback`
-					// already does it (see how `finalSortedCommands` is created a few lines above).
-					targetFunction = command.callback;
+					trackCompletedCommand( command );
 				}
 
 				return targetFunction( {
