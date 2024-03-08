@@ -24,7 +24,7 @@ export default function ThankYouJetpackSearchProduct( {
 	);
 	const jetpackSearchDashboardUrl = useSelector( ( state ) =>
 		// At this point in the flow, having purchased a product for a specific
-		// site, we can assume that `siteId` is a umber and not `null`.
+		// site, we can assume that `siteId` is a number and not `null`.
 		getJetpackSearchDashboardUrl( state, siteId as number )
 	);
 
