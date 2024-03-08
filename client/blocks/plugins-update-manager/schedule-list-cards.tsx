@@ -5,6 +5,7 @@ import { usePreparePluginsTooltipInfo } from 'calypso/blocks/plugins-update-mana
 import { ellipsis } from 'calypso/blocks/plugins-update-manager/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { Badge } from './badge';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -57,7 +58,13 @@ export const ScheduleListCards = ( props: Props ) => {
 
 					<div className="schedule-list--card-label">
 						<label htmlFor="last-update">Last Update</label>
-						<span id="last-update"></span>
+						<span id="last-update">
+							{ schedule.last_run_status !== null && (
+								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
+							) }
+							{ schedule.last_run_timestamp !== null &&
+								moment( schedule.last_run_timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }
+						</span>
 					</div>
 
 					<div className="schedule-list--card-label">
