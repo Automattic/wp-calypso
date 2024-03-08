@@ -28,10 +28,10 @@ export default function ThankYouJetpackSearchProduct( {
 		getJetpackSearchDashboardUrl( state, siteId as number )
 	);
 
-	const productButtonLabel = selectedSite?.jetpack
+	const productButtonLabel = selectedSite.jetpack
 		? translate( 'Go to Search Dashboard' )
 		: translate( 'Customize Search' );
-	const productButtonHref = selectedSite?.jetpack
+	const productButtonHref = selectedSite.jetpack
 		? jetpackSearchDashboardUrl
 		: jetpackSearchCustomizeUrl;
 
