@@ -35,7 +35,7 @@
 }
 
 .payment-method-form__notice {
-	color: var(--studio-gray-50);
+	color: var(--color-neutral-50);
 	font-weight: 400;
 	margin-block-start: 24px;
 	display: flex;
@@ -43,6 +43,6 @@
 }
 
 .payment-method-form__notice-icon {
-	fill: var(--studio-gray-30);
+	fill: var(--color-neutral-30);
 	flex-shrink: 0;
 }
