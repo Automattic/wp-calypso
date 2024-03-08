@@ -8,6 +8,7 @@ export const SurveyFormContainer = styled.div`
 	margin: 0
 		${ ( { currentViewport }: PropsWithViewport ) =>
 			currentViewport === 'desktop' ? 'auto' : '10px' };
+	margin-bottom: 15px;
 `;
 
 export const StyledCard = styled( Card )`
@@ -19,9 +20,6 @@ export const StyledCard = styled( Card )`
 		props.currentViewport === 'mobile' ? '100%' : 'fit-content' };
 	min-width: ${ ( props: PropsWithViewport ) =>
 		props.currentViewport === 'mobile' ? 'unset' : '459px' };
-	&&&&& {
-		margin-bottom: 15px;
-	}
 `;
 
 export const StyledLabel = styled( FormLabel )`

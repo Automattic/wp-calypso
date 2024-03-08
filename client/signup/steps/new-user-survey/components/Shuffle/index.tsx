@@ -39,7 +39,7 @@ type ShuffleProps = {
 	getChildKey: ( child: ReactNode ) => string;
 
 	/**
-	 * A boolean indicating whether the Shuffling of elements is active is active.
+	 * A boolean indicating whether the Shuffling of elements is active.
 	 */
 	isShuffleActive?: boolean;
 };
