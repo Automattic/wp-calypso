@@ -4,15 +4,15 @@ import './style.scss';
 
 type PatternsHeaderProps = {
 	description: string;
+	initialSearchTerm?: string;
 	onSearch?( searchTerm: string ): void;
-	searchTerm?: string;
 	title: string;
 };
 
 export const PatternsHeader = ( {
 	description,
+	initialSearchTerm = '',
 	onSearch,
-	searchTerm = '',
 	title,
 }: PatternsHeaderProps ) => {
 	return (
@@ -23,9 +23,9 @@ export const PatternsHeader = ( {
 				<Search
 					additionalClasses="patterns-header__search-input"
 					delaySearch
-					placeholder="Search patterns..."
+					initialValue={ initialSearchTerm }
 					onSearch={ onSearch }
-					value={ searchTerm }
+					placeholder="Search patterns..."
 				/>
 			</div>
 		</header>

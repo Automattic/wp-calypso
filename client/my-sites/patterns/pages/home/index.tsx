@@ -36,6 +36,18 @@ function filterPatternsByQuery( patterns: Pattern[], searchTerm: string ) {
 	} );
 }
 
+/**
+ * Retrieve a query parameter value from the URL
+ */
+function getQueryParam( key: string ) {
+	if ( typeof window !== 'undefined' ) {
+		const params = new URLSearchParams( window.location.search );
+		return params.get( key ) ?? '';
+	}
+
+	return '';
+}
+
 type PatternsHomePageProps = {
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
@@ -47,14 +59,7 @@ export const PatternsHomePage = ( {
 }: PatternsHomePageProps ) => {
 	const locale = useLocale();
 
-	const [ searchTerm, setSearchTerm ] = useState( () => {
-		if ( typeof window !== 'undefined' ) {
-			const params = new URLSearchParams( window.location.search );
-			return params.get( 's' ) ?? '';
-		}
-
-		return '';
-	} );
+	const [ searchTerm, setSearchTerm ] = useState( getQueryParam( 's' ) );
 
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, '', {
@@ -63,6 +68,7 @@ export const PatternsHomePage = ( {
 
 	const patternSearchResults = filterPatternsByQuery( patterns, searchTerm );
 
+	// Updates the URL of the page whenever the search term changes
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
 
@@ -76,10 +82,10 @@ export const PatternsHomePage = ( {
 		page( `${ window.location.pathname }${ paramsString }` );
 	}, [ searchTerm ] );
 
+	// Updates the search term whenever the URL of the page changes
 	useEffect( () => {
 		function onPopstate() {
-			const params = new URLSearchParams( window.location.search );
-			setSearchTerm( params.get( 's' ) ?? '' );
+			setSearchTerm( getQueryParam( 's' ) );
 		}
 
 		window.addEventListener( 'popstate', onPopstate );
@@ -95,10 +101,10 @@ export const PatternsHomePage = ( {
 
 			<PatternsHeader
 				description="Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes."
+				initialSearchTerm={ searchTerm }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				searchTerm={ searchTerm }
 				title="Build your perfect site with patterns"
 			/>
 
