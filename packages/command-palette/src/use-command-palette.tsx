@@ -188,6 +188,27 @@ export const useCommandPalette = ( {
 		return filter?.( site ) && hasCapability;
 	};
 
+	const trackSelectedCommand = ( command: Command ) => {
+		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
+			command: command.name,
+			has_nested_commands: !! command.siteFunctions,
+			list_count: commands.length,
+			list_visible_count: listVisibleCount,
+			current_route: currentRoute,
+			search_text: search,
+		} );
+	};
+
+	const trackCompletedCommand = ( command: Command ) => {
+		recordTracksEvent( 'calypso_hosting_command_palette_command_complete', {
+			command: command.name,
+			list_count: commands.length,
+			list_visible_count: listVisibleCount,
+			current_route: currentRoute,
+			search_text: search,
+		} );
+	};
+
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -196,6 +217,12 @@ export const useCommandPalette = ( {
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
 			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
+
+			const onClickSite: OnClickSiteFunction = ( { close, command, site } ) => {
+				onClick( { close, command, site } );
+				trackCompletedCommand( command );
+			};
+
 			let filteredSites = filter ? sites.filter( filter ) : sites;
 			if ( capabilityFilter ) {
 				filteredSites = filteredSites.filter( ( site ) => {
@@ -227,7 +254,7 @@ export const useCommandPalette = ( {
 
 			// Map filtered sites to actions using the onClick function
 			sitesToPick = filteredSites.map(
-				siteToAction( onClick, {
+				siteToAction( onClickSite, {
 					selectedCommand,
 					filteredSitesLength: filteredSites.length,
 					listVisibleCount,
@@ -266,14 +293,10 @@ export const useCommandPalette = ( {
 	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
 		...command,
 		callback: ( params: CommandCallBackParams ) => {
-			recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
-				command: command.name,
-				has_nested_commands: !! command.siteFunctions,
-				list_count: commands.length,
-				list_visible_count: listVisibleCount,
-				current_route: currentRoute,
-				search_text: search,
-			} );
+			trackSelectedCommand( command );
+			if ( ! command.siteFunctions ) {
+				trackCompletedCommand( command );
+			}
 			command.callback( params );
 		},
 	} ) );
@@ -294,6 +317,12 @@ export const useCommandPalette = ( {
 		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
 			const callback = ( params: CommandCallBackParams ) => {
 				const targetFunction = command?.siteFunctions?.onClick || command.callback;
+				if ( command?.siteFunctions ) {
+					// We need to track the events here because `command.siteFunctions.onClick`
+					// does not track anything (and it's not meant to).
+					trackSelectedCommand( command );
+					trackCompletedCommand( command );
+				}
 
 				return targetFunction( {
 					close: params.close,
