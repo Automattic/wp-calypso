@@ -82,8 +82,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
 
-		return translate(
-			'The promotional period for your %(productName)s lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s. On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You will receive email notices %(numberOfDays)d days before renewals, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
+		const nextRenewalText = translate(
+			'The promotional period for your %(productName)s lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s.',
 			{
 				args: {
 					productName,
@@ -91,8 +91,30 @@ function getMessageForTermsOfServiceRecordUnknown(
 					endDate,
 					renewalPrice,
 					renewalDate,
+				},
+			}
+		);
+
+		const proratedNoticeText = translate(
+			'On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s.',
+			{
+				args: {
+					endDate,
 					maybeProratedRegularPrice,
-					regularPrice,
+				},
+			}
+		);
+
+		const regularPriceNoticeText = translate( 'Subsequent renewals will be %(regularPrice)s.', {
+			args: {
+				regularPrice,
+			},
+		} );
+
+		const emailNoticesText = translate(
+			'You will receive email notices %(numberOfDays)d days before renewals, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
+			{
+				args: {
 					numberOfDays,
 				},
 				components: {
@@ -108,6 +130,13 @@ function getMessageForTermsOfServiceRecordUnknown(
 					),
 				},
 			}
+		);
+
+		return (
+			<>
+				{ nextRenewalText } { args.is_renewal_price_prorated && proratedNoticeText }{ ' ' }
+				{ regularPriceNoticeText } { emailNoticesText }{ ' ' }
+			</>
 		);
 	}
 
