@@ -48,7 +48,9 @@ function StatsModuleUTMSummary( { siteId, period, postId, query, summary, classN
 
 	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isPending;
-	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
+	let isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
+	isAdvancedFeatureEnabled = true;
+	// TODO: Remove above before merging.
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {
