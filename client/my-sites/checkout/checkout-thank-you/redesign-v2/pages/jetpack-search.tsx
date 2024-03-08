@@ -5,16 +5,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThankYouJetpackSearchProduct from '../products/jetpack-search-product';
-import type { ThankYouJetpackSearchProductProps } from '../products/jetpack-search-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 export type JetpackSearchThankYouProps = {
 	purchase: ReceiptPurchase;
 };
 
-export default function JetpackSearchThankYou( {
-	purchase,
-}: Omit< ThankYouJetpackSearchProductProps, 'siteId' > ) {
+export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankYouProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const footerDetails = [
 		{
