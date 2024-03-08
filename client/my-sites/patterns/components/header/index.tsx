@@ -2,14 +2,19 @@ import Search from 'calypso/components/search';
 
 import './style.scss';
 
-type Props = {
+type PatternsHeaderProps = {
 	description: string;
 	onSearch?( searchTerm: string ): void;
 	searchTerm?: string;
 	title: string;
 };
 
-export const PatternsHeader = ( { description, onSearch, searchTerm = '', title }: Props ) => {
+export const PatternsHeader = ( {
+	description,
+	onSearch,
+	searchTerm = '',
+	title,
+}: PatternsHeaderProps ) => {
 	return (
 		<header className="patterns-header">
 			<div className="patterns-header__inner">
