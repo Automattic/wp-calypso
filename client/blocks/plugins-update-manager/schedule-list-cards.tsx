@@ -59,10 +59,10 @@ export const ScheduleListCards = ( props: Props ) => {
 					<div className="schedule-list--card-label">
 						<label htmlFor="last-update">Last Update</label>
 						<span id="last-update">
-							{ schedule.last_run_status !== null && (
+							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
 							) }
-							{ schedule.last_run_timestamp !== null &&
+							{ schedule.last_run_timestamp &&
 								moment( schedule.last_run_timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }
 						</span>
 					</div>

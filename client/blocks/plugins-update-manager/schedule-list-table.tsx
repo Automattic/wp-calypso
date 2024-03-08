@@ -52,10 +52,10 @@ export const ScheduleListTable = ( props: Props ) => {
 							</Button>
 						</td>
 						<td>
-							{ schedule.last_run_status !== null && (
+							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
 							) }
-							{ schedule.last_run_timestamp !== null &&
+							{ schedule.last_run_timestamp &&
 								moment( schedule.last_run_timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }
 						</td>
 						<td>{ moment( schedule.timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }</td>
