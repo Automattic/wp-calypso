@@ -93,7 +93,7 @@ describe( 'isRefactoredForThankYouV2', () => {
 		const props = {
 			receipt: {
 				data: {
-					purchases: [ { productSlug: 'jetpack_search' } ],
+					purchases: [ { productType: 'search' } ],
 					failedPurchases: [],
 				},
 			},
