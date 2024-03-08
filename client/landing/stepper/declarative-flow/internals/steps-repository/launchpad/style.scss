@@ -6,16 +6,21 @@
 // This is styling common parts of stepper page
 .launchpad {
 	.flow-progress,
+	.signup-header,
 	.step-container .step-container__header {
 		display: none;
 	}
 
 	.step-container {
 		background: #fdfdfd;
-		padding: 0;
+		padding: 0 0 60px;
 		margin: 0;
 		max-width: none;
 		min-height: 100vh;
+
+		@include break-large {
+			padding: 0;
+		}
 	}
 
 	.step-container__buttons {
@@ -129,6 +134,11 @@
 		margin: 0 20px 24px 24px;
 		gap: 80px;
 	}
+
+	.launchpad__checklist-wrapper .checklist__tasks .checklist-item__task-content.is-placeholder .checklist-item__content {
+		/* Override default placeholder colours to align with other elements on the page. */
+		background-color: var(--color-neutral-5);
+	}
 }
 
 .launchpad__sidebar-content-container {
@@ -150,7 +160,8 @@
 .link-in-bio-tld:not(.domains),
 .free,
 .build,
-.write {
+.write,
+.assembler-first {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
@@ -355,7 +366,6 @@
 
 // Free flow
 .free.launchpad {
-	padding: 0;
 	.signup-header {
 		display: none;
 	}
@@ -365,9 +375,17 @@
 	}
 }
 
-// Write and Build flow
+// Link in Bio flow
+.link-in-bio-tld.launchpad {
+	.signup-header {
+		display: none;
+	}
+}
+
+// Write, Build, and Assembler First flow
 .write.launchpad,
-.build.launchpad {
+.build.launchpad,
+.assembler-first.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

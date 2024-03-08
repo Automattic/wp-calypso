@@ -3,6 +3,7 @@
 
 .components-form-toggle.is-checked .components-form-toggle__track {
 	background-color: var(--studio-jetpack-green-50);
+	border-color: var(--studio-jetpack-green-50);
 }
 
 .inline-flex-align-centre {
@@ -26,10 +27,9 @@
 		}
 	}
 
-	&.sites-overview__disabled {
-		.components-form-toggle__input {
-			cursor: not-allowed;
-		}
+	&.sites-overview__disabled .components-form-toggle__input,
+	.components-form-toggle__input:disabled {
+		cursor: not-allowed;
 	}
 }
 

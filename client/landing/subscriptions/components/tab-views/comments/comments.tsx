@@ -1,8 +1,8 @@
+import { SelectDropdown } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';

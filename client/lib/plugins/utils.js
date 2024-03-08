@@ -409,7 +409,7 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
 
 /**
  * Returns the product slug of periodVariation passed filtering the productsList passed only if required
- * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
+ * @param {{ product_slug?: string; product_id?: number } | undefined} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
  * @param {Record<string, Object>} productsList The list of products
  * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
  * it will find the product slug in the productsList filtering by the variation.product_id.

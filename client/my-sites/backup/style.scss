@@ -3,6 +3,10 @@
 		display: flex;
 	}
 }
+.theme-jetpack-cloud .backup__page .components-button {
+	--color-accent: var(--color-jetpack);
+	--color-accent-60: var(--studio-jetpack-green-70);
+}
 
 .backup__last-backup-status {
 	background: var(--studio-white);
@@ -83,6 +87,11 @@
 .backup__header-right {
 	text-align: right;
 	margin-top: 8px;
+
+	.backup__clone-button {
+		white-space: nowrap;
+
+	}
 }
 
 .backup__header-title {

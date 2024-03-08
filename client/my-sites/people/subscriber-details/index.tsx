@@ -1,12 +1,12 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import useFollowerQuery from 'calypso/data/followers/use-follower-query';
 import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-follower-mutation';
 import accept from 'calypso/lib/accept';
@@ -15,7 +15,7 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Member } from '../types';
+import type { Member } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -29,7 +29,7 @@ export default function SubscriberDetails( props: Props ) {
 	const dispatch = useDispatch();
 	const { removeFollower, isSuccess: isRemoveFollowerSuccess } = useRemoveFollowerMutation();
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const { subscriberId, subscriberType } = props;
 	const [ templateState, setTemplateState ] = useState( 'loading' );
 	const { data: subscriber, isLoading } = useFollowerQuery(
@@ -120,13 +120,10 @@ export default function SubscriberDetails( props: Props ) {
 		<Main className="people-member-details">
 			<PageViewTracker path="/people/subscribers/:site/:id" title="People > User Details" />
 
-			<FormattedHeader
-				brandFont
-				className="people__page-heading"
-				headerText={ translate( 'Users' ) }
-				subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
-				align="left"
-				hasScreenOptions
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Users' ) }
+				subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
 			/>
 
 			<HeaderCake isCompact onClick={ onBackClick }>

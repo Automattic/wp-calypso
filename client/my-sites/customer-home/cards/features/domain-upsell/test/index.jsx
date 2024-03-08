@@ -74,7 +74,7 @@ jest.mock( '@automattic/domain-picker/src', () => {
 } );
 
 let pageLink = '';
-jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
+jest.mock( '@automattic/calypso-router', () => ( link ) => ( pageLink = link ) );
 
 const domainUpsellHeadingFreePlan = 'Own a domain. Build a site.';
 const domainUpsellHeadingPaidPlan = 'That perfect domain is waiting';

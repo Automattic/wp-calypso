@@ -1,7 +1,8 @@
 import { TranslateResult } from 'i18n-calypso';
+import type { StoreProductSlug } from '../products-list';
 
 export interface AddOnMeta {
-	productSlug: string;
+	productSlug: StoreProductSlug;
 	featureSlugs?: string[] | null;
 	icon: JSX.Element;
 	featured?: boolean; // used to display the popular badge in the add-ons grid
@@ -17,4 +18,6 @@ export interface AddOnMeta {
 		formattedMonthlyPrice: string;
 		formattedYearlyPrice: string;
 	} | null;
+	checkoutLink?: string;
+	exceedsSiteStorageLimits?: boolean;
 }

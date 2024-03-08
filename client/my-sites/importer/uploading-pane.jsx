@@ -1,4 +1,4 @@
-import { ProgressBar, FormInputValidation, Gridicon } from '@automattic/components';
+import { ProgressBar, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
@@ -7,13 +7,17 @@ import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
 import DropZone from 'calypso/components/drop-zone';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TextInput from 'calypso/components/forms/form-text-input';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import { startMappingAuthors, startUpload, failPreUpload } from 'calypso/state/imports/actions';
+import {
+	startMappingAuthors,
+	startUpload,
+	failPreUpload,
+	startImporting,
+} from 'calypso/state/imports/actions';
 import { appStates, MAX_FILE_SIZE } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
@@ -65,12 +69,20 @@ export class UploadingPane extends PureComponent {
 				prevImporterStatus.importerState === appStates.UPLOAD_SUCCESS ) &&
 			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
-			this.props.startMappingAuthors( importerStatus.importerId );
+			switch ( importerStatus.importerFileType ) {
+				case 'content':
+					this.props.startMappingAuthors( importerStatus.importerId );
+					break;
+				case 'playground':
+				case 'jetpack_backup':
+					// The startImporting action is dispatched from the onboarding flow
+					break;
+			}
 		}
 	}
 
 	getMessage = () => {
-		const { importerState } = this.props.importerStatus;
+		const { importerState, importerFileType } = this.props.importerStatus;
 		const { filename, percentComplete = 0 } = this.props;
 
 		switch ( importerState ) {
@@ -79,7 +91,16 @@ export class UploadingPane extends PureComponent {
 				if ( this.state.fileToBeUploaded ) {
 					return <p>{ this.state?.fileToBeUploaded?.name?.substring?.( 0, 100 ) }</p>;
 				}
-				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
+				return (
+					<p>
+						{ this.props.translate(
+							'Drag a file here, or {{span}}click to upload a file{{/span}}',
+							{
+								components: { span: <span /> },
+							}
+						) }
+					</p>
+				);
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
@@ -106,6 +127,28 @@ export class UploadingPane extends PureComponent {
 				);
 			}
 			case appStates.UPLOAD_SUCCESS:
+				if ( importerFileType === 'playground' ) {
+					return (
+						<div className="importer-upload-warning">
+							<p>
+								{ this.props.translate(
+									'Playground imports are not yet available through this form.{{br/}}' +
+										'Please head over to {{a}}this page{{/a}} to resume the import process.',
+									{
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href={ `/setup/import-focused/importerWordpress?siteSlug=${ this.props.site.slug }&option=content` }
+												/>
+											),
+										},
+									}
+								) }{ ' ' }
+							</p>
+						</div>
+					);
+				}
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
@@ -285,5 +328,5 @@ export default connect(
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
 	} ),
-	{ startMappingAuthors, startUpload, failPreUpload }
+	{ startMappingAuthors, startUpload, startImporting, failPreUpload }
 )( localize( UploadingPane ) );

@@ -6,7 +6,7 @@ import type { ValidateVerificationCodeParams } from '../../sites-overview/types'
 
 export default function useValidateVerificationCode(): {
 	mutate: ( params: ValidateVerificationCodeParams ) => void;
-	isLoading: boolean;
+	isPending: boolean;
 	isSuccess: boolean;
 	isError: boolean;
 	errorMessage?: string;
@@ -30,7 +30,9 @@ export default function useValidateVerificationCode(): {
 		const queryKey = [ 'monitor_notification_contacts' ];
 
 		// Cancel any current refetches, so they don't overwrite our optimistic update
-		await queryClient.cancelQueries( queryKey );
+		await queryClient.cancelQueries( {
+			queryKey,
+		} );
 
 		// Optimistically update the contacts
 		queryClient.setQueryData( queryKey, ( oldContacts: any ) => {

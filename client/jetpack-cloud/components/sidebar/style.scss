@@ -1,25 +1,46 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 
 .jetpack-cloud-sidebar {
-	// Make the sidebar full-height, minus top and bottom padding
-	padding: 16px;
-	height: calc(100% - 16px * 2);
-
-	display: flex;
-	flex-direction: column;
-
-	border-radius: 4px;
-
-	// TODO: Existing variables, overridden with values directly from designs;
-	// confirm these colors are correct and refactor as necessary
-	--color-sidebar-menu-hover-background: var(--studio-gray-0);
-	--color-sidebar-background: #fcfcfc;
-
-	background-color: var(--color-sidebar-background);
-
 	.jetpack-cloud-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
+	}
+
+
+	.split-button {
+		display: flex;
+
+		a {
+			flex-grow: 1;
+		}
+
+		button.split-button__toggle {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+
+	.sidebar-v2__menu-item {
+		svg {
+			color: #6f6f6f;
+		}
+		&.is-active {
+			background: var(--studio-green-0);
+			color: var(--studio-green-50);
+
+			svg {
+				color: var(--studio-green-50);
+			}
+		}
+	}
+
+	.sidebar__menu-icon {
+		margin: 0;
 	}
 }
 
@@ -40,9 +61,7 @@
 
 		cursor: pointer;
 
-		// Slightly hacky rule to get around rigid element-based rules
-		// specified in <IconContainer />, for the All Sites icon
-		> div[class*="IconContainer"],
+		.all-sites__icon-container,
 		.site-icon {
 			border-radius: 2px;
 			margin-inline-end: 12px;
@@ -60,7 +79,15 @@
 	}
 }
 
-.jetpack-cloud-sidebar__main {
-	padding: 16px 0;
-	flex-grow: 1;
+.jetpack-cloud-sidebar__guided-tour {
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.jetpack-cloud-sidebar__footer ul {
+	list-style: none;
+	margin: 0;
 }

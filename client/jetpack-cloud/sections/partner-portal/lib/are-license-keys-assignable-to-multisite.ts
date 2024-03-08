@@ -1,7 +1,6 @@
 /**
  * Whether the licenses are assignable to WP multisite. This function uses key prefix to determine
  * if the license is compatible with multisite.
- *
  * @param {Array<string>} licenseKeys
  * @returns {boolean} indicating if the license keys are assignable to multisite
  */

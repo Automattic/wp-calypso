@@ -1,7 +1,6 @@
 /**
  * Convert a value to a the enum member with that value or a fallback.
  * This is a hack around TypeScript's poor support of enums as types.
- *
  * @example const enumMember = valueToEnum< SomeEnumType >( SomeEnumType, 'foo', SomeEnumType.SomeMember );
  * @template T
  * @param {Record< string, * >} enumType Enum type to search in.

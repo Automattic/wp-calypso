@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { isNotAtomicJetpack, isTrialSite } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SitePlanContainer = styled.div`
 	display: inline;

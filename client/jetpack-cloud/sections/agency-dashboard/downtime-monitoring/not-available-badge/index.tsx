@@ -1,7 +1,6 @@
-import { Badge } from '@automattic/components';
+import { Badge, Tooltip } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 import './style.scss';
 

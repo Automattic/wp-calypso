@@ -50,7 +50,6 @@ export class EditorMediaModalDetailItem extends Component {
 
 	/**
 	 * This function returns true if the video editor can be enabled/shown.
-	 *
 	 * @param  {Object}  item Media item
 	 * @returns {boolean} Whether the video editor can be enabled
 	 */
@@ -78,7 +77,6 @@ export class EditorMediaModalDetailItem extends Component {
 	/**
 	 * This function returns true if the image editor can be
 	 * enabled/shown
-	 *
 	 * @param  {Object} item - media item
 	 * @returns {boolean} `true` if the image-editor can be enabled.
 	 */
@@ -112,7 +110,7 @@ export class EditorMediaModalDetailItem extends Component {
 		}
 
 		const isVideoMime = 'video' === mimePrefix;
-		const editText = isVideoMime ? translate( 'Edit Thumbnail' ) : translate( 'Edit Image' );
+		const editText = isVideoMime ? translate( 'Edit Poster' ) : translate( 'Edit Image' );
 
 		return (
 			<Button

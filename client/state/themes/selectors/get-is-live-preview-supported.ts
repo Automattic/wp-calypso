@@ -10,12 +10,13 @@ import {
 	isExternallyManagedTheme,
 	canUseTheme,
 	isSiteEligibleForManagedExternalThemes,
+	isThemeWooCommerce,
+	isThemePremium,
 } from '.';
 
 /**
  * Hardcoded list of themes that are NOT compatible with Block Theme Previews.
  * This list should be removed once they are retired.
- *
  * @see pekYwv-284-p2
  */
 const NOT_COMPATIBLE_THEMES = [
@@ -81,17 +82,16 @@ const isNotCompatibleThemes = ( themeId: string ) => {
  * - On Simple sites;
  *   - If the theme is externally managed.
  *   - If the theme is a wporg theme.
- *   - If the theme is NOT included in a plan.
- *
- * @see pbxlJb-3Uv-p2
+ *   - If the theme is NOT a Premium and WooCommerce theme, and is NOT included in a plan.
  */
 export const getIsLivePreviewSupported = ( state: AppState, themeId: string, siteId: number ) => {
-	if ( ! config.isEnabled( 'themes/block-theme-previews' ) ) {
+	// The "Live" Preview does NOT make sense for logged out users.
+	if ( ! isUserLoggedIn( state ) ) {
 		return false;
 	}
 
-	// The "Live" Preview does NOT make sense for logged out users.
-	if ( ! isUserLoggedIn( state ) ) {
+	// The "Live" Preview does NOT make sense for no selected site.
+	if ( ! siteId ) {
 		return false;
 	}
 
@@ -108,7 +108,6 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 	/**
 	 * Block Theme Previews do NOT support themes with a static page as a homepage
 	 * as the Site Editor cannot control Reading Settings.
-	 *
 	 * @see pekYwv-284-p2#background
 	 */
 	if ( isNotCompatibleThemes( themeId ) ) {
@@ -149,12 +148,23 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 
 		/**
 		 * Disable Live Preview for themes that are NOT included in a plan.
-		 * This should be updated as we implement the flow for them.
-		 * Note that BTP works on Atomic sites if a theme is installed.
-		 *
-		 * @see https://github.com/Automattic/wp-calypso/issues/79223
 		 */
 		if ( ! canUseTheme( state, siteId, themeId ) ) {
+			/**
+			 * Enable Live Preview for Premium and WooCommerce themes.
+			 * @see https://github.com/Automattic/wp-calypso/issues/79223
+			 */
+			if (
+				config.isEnabled( 'themes/block-theme-previews-premium-and-woo' ) &&
+				( isThemePremium( state, themeId ) || isThemeWooCommerce( state, themeId ) )
+			) {
+				return true;
+			}
+
+			/**
+			 * Handling Bundle themes except for WooCommerce themes here.
+			 * We can enable Live Preview for Bundle themes by supporting them on the Live Preview notices.
+			 */
 			return false;
 		}
 	}

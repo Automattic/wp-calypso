@@ -28,7 +28,7 @@ const SiteLaunchStep: React.FC< SiteLaunchStepProps > = function ( props ) {
 			setPendingAction( async () => {
 				await launchSite( site.ID );
 				await new Promise( ( res ) => setTimeout( res, 1000 ) );
-				return { blogLaunched: true, siteSlug: urlToSlug( site.URL ) };
+				return { isLaunched: true, siteSlug: urlToSlug( site.URL ) };
 			} );
 			submit?.();
 		}

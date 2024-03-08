@@ -1,11 +1,11 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { flowRight, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -166,48 +166,55 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				/>
-				<SupportInfo
-					text={ translate( 'Allow readers to use markdown in comments.' ) }
-					link={
-						isJetpack && ! isAtomic
-							? 'https://jetpack.com/support/markdown/'
-							: 'https://wordpress.com/support/markdown-quick-reference/'
-					}
-				/>
-				<ToggleControl
-					checked={ !! fields.wpcom_publish_comments_with_markdown }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
-					label={ translate( 'Use Markdown for comments.' ) }
-				/>
-
-				{ this.props.isJetpack && (
-					<SupportInfo
-						text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
-						link="https://jetpack.com/support/gravatar-hovercards/"
+				<div className="site-settings__tooltip-container">
+					<ToggleControl
+						checked={ !! fields.wpcom_publish_comments_with_markdown }
+						disabled={ isRequestingSettings || isSavingSettings }
+						onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
+						label={ translate( 'Use Markdown for comments.' ) }
 					/>
-				) }
-				<JetpackModuleToggle
-					disabled={ isRequestingSettings || isSavingSettings }
-					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
-					moduleSlug="gravatar-hovercards"
-					siteId={ siteId }
-				/>
-
-				{ this.props.isJetpack && (
 					<SupportInfo
-						text={ translate(
-							'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
-						) }
-						link="https://jetpack.com/support/comment-likes/"
+						text={ translate( 'Allow readers to use markdown in comments' ) }
+						link={
+							isJetpack && ! isAtomic
+								? 'https://jetpack.com/support/markdown/'
+								: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
+						}
 					/>
-				) }
-				<JetpackModuleToggle
-					disabled={ isRequestingSettings || isSavingSettings }
-					label={ translate( 'Enable comment likes' ) }
-					moduleSlug="comment-likes"
-					siteId={ siteId }
-				/>
+				</div>
+
+				<div className="site-settings__tooltip-container">
+					<JetpackModuleToggle
+						disabled={ isRequestingSettings || isSavingSettings }
+						label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
+						moduleSlug="gravatar-hovercards"
+						siteId={ siteId }
+					/>
+
+					{ this.props.isJetpack && (
+						<SupportInfo
+							text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
+							link="https://jetpack.com/support/gravatar-hovercards/"
+						/>
+					) }
+				</div>
+
+				<div className="site-settings__tooltip-container">
+					<JetpackModuleToggle
+						disabled={ isRequestingSettings || isSavingSettings }
+						label={ translate( 'Enable comment likes' ) }
+						moduleSlug="comment-likes"
+						siteId={ siteId }
+					/>
+					{ this.props.isJetpack && (
+						<SupportInfo
+							text={ translate(
+								'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
+							) }
+							link="https://jetpack.com/support/comment-likes/"
+						/>
+					) }
+				</div>
 			</FormFieldset>
 		);
 	}

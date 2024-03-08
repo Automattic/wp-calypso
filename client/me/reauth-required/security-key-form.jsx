@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
-		loginUserWithSecurityKey: PropTypes.func.isRequired,
+		twoStepAuthorization: PropTypes.object.isRequired,
 		onComplete: PropTypes.func,
 
 		translate: PropTypes.func.isRequired,
@@ -20,14 +21,27 @@ class SecurityKeyForm extends Component {
 		showError: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event ) => {
+	initiateSecurityKeyAuthentication = ( event, retryRequest = true ) => {
 		event.preventDefault();
-
 		this.setState( { isAuthenticating: true, showError: false } );
-		this.props
-			.loginUserWithSecurityKey()
+
+		this.props.twoStepAuthorization
+			.loginUserWithSecurityKey( { user_id: this.props.currentUserId } )
 			.then( ( response ) => this.onComplete( null, response ) )
 			.catch( ( error ) => {
+				const errors = error?.data?.errors ?? [];
+				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
+					this.props.twoStepAuthorization.fetch( () => {
+						if ( retryRequest ) {
+							this.initiateSecurityKeyAuthentication( event, false );
+						} else {
+							// We only retry once, so let's show the original error.
+							this.setState( { isAuthenticating: false, showError: true } );
+							this.onComplete( error, null );
+						}
+					} );
+					return;
+				}
 				this.setState( { isAuthenticating: false, showError: true } );
 				this.onComplete( error, null );
 			} );
@@ -57,7 +71,7 @@ class SecurityKeyForm extends Component {
 							</p>
 							<p>
 								{ translate(
-									'Insert your security key into your USB port. Then tap the button or gold disc.'
+									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
 						</div>
@@ -67,7 +81,11 @@ class SecurityKeyForm extends Component {
 							<p className="security-key-form__add-wait-for-key-heading">
 								{ translate( 'Waiting for security key' ) }
 							</p>
-							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+							<p>
+								{ translate(
+									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
+								) }
+							</p>
 						</div>
 					) }
 					{ this.state.showError && (
@@ -91,4 +109,6 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, null )( localize( SecurityKeyForm ) );
+export default connect( ( state ) => ( {
+	currentUserId: getCurrentUserId( state ),
+} ) )( localize( SecurityKeyForm ) );

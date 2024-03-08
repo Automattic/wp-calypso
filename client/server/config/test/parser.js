@@ -1,5 +1,15 @@
+import fs from 'fs';
 import parser from '@automattic/calypso-config/parser';
-import mockFs from 'mock-fs';
+
+jest.mock( 'fs', () => ( {
+	existsSync: jest.fn(),
+	readFileSync: jest.fn(),
+} ) );
+
+function mockFs( files ) {
+	fs.existsSync.mockImplementation( ( path ) => !! files[ path ] );
+	fs.readFileSync.mockImplementation( ( path ) => files[ path ] );
+}
 
 const withEnv = ( env = {} ) => {
 	for ( const [ k, v ] of Object.entries( env ) ) {
@@ -64,7 +74,8 @@ describe( 'parser', () => {
 	} );
 
 	afterEach( () => {
-		mockFs.restore();
+		fs.readFileSync.mockReset();
+		fs.readFileSync.mockReset();
 		process.env = { ...realProcessEnv };
 	} );
 
@@ -78,7 +89,6 @@ describe( 'parser', () => {
 		setValidSecrets();
 
 		const data = parser( '/valid-path' );
-
 		expect( data.clientData ).not.toHaveProperty( 'secret' );
 		expect( data.serverData ).toHaveProperty( 'secret' );
 	} );

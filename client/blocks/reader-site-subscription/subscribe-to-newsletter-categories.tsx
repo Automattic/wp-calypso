@@ -16,12 +16,12 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 	const { data: subscribedNewsletterCategoriesData, isLoading } = useSubscribedNewsletterCategories(
 		{ siteId }
 	);
-	const { mutate, isLoading: isSaving } = useNewsletterCategorySubscriptionMutation( siteId );
+	const { mutate, isPending: isSaving } = useNewsletterCategorySubscriptionMutation( siteId );
 
 	const subscribedCategoryIds = useMemo(
 		() =>
 			subscribedNewsletterCategoriesData?.newsletterCategories
-				.filter( ( category ) => !! category.subscribed )
+				?.filter( ( category ) => !! category.subscribed )
 				.map( ( category ) => category.id ) || [],
 		[ subscribedNewsletterCategoriesData ]
 	);

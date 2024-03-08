@@ -5,7 +5,6 @@ const inFlightReporters: Map< string, Promise< Report > > = new Map();
 
 /**
  * Starts a new report
- *
  * @param id id of the report, must be passed to `stop()` to stop it
  * @param obj Options
  * @param obj.fullPageLoad `true` if the report should start measuring from the load of the page, `false` to start measuring from now.
@@ -31,7 +30,6 @@ export const start = async (
 
 /**
  * Stops a report and sends it to the transporter.
- *
  * @param id id of the report to send, comes from `start()`
  * @param obj options
  * @param obj.collectors list of collectors to run

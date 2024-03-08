@@ -1,7 +1,18 @@
 import config from '@automattic/calypso-config';
-import { Component } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { withCurrentRoute } from 'calypso/components/route';
+import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import SitePicker from 'calypso/my-sites/picker';
+import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
+} from 'calypso/state/global-sidebar/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
@@ -11,7 +22,14 @@ class MySitesNavigation extends Component {
 		event.stopPropagation();
 	};
 
-	render() {
+	handleGlobalSidebarMenuItemClick = ( path ) => {
+		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
+			section: this.props.isGlobalSiteSidebarVisible ? 'site' : 'sites',
+			path: path.replace( this.props.siteDomain, ':site' ),
+		} );
+	};
+
+	renderSidebar() {
 		const asyncProps = {
 			placeholder: null,
 			path: this.props.path,
@@ -19,19 +37,19 @@ class MySitesNavigation extends Component {
 		};
 
 		let asyncSidebar = null;
+		let renderSitePicker = true;
 		let sitePickerProps = {};
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
-			if ( config.isEnabled( 'jetpack/new-navigation' ) ) {
-				asyncSidebar = (
-					<AsyncLoad
-						require="calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site"
-						{ ...asyncProps }
-					/>
-				);
-			} else {
-				asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
-			}
+			asyncSidebar = (
+				<AsyncLoad
+					require="calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site"
+					{ ...asyncProps }
+				/>
+			);
+
+			// For the new Jetpack cloud sidebar, it has its own site picker.
+			renderSitePicker = false;
 
 			sitePickerProps = {
 				showManageSitesButton: false,
@@ -49,16 +67,76 @@ class MySitesNavigation extends Component {
 
 		return (
 			<div className="my-sites__navigation">
-				<SitePicker
-					allSitesPath={ this.props.allSitesPath }
-					siteBasePath={ this.props.siteBasePath }
-					onClose={ this.preventPickerDefault }
-					{ ...sitePickerProps }
-				/>
+				{ renderSitePicker && (
+					<SitePicker
+						allSitesPath={ this.props.allSitesPath }
+						siteBasePath={ this.props.siteBasePath }
+						onClose={ this.preventPickerDefault }
+						{ ...sitePickerProps }
+					/>
+				) }
 				{ asyncSidebar }
 			</div>
 		);
 	}
+
+	renderGlobalSidebar() {
+		const asyncProps = {
+			placeholder: null,
+			path: this.props.path,
+		};
+		return (
+			<GlobalSidebar { ...asyncProps }>
+				<MySitesSidebarUnifiedBody
+					path={ this.props.path }
+					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
+				/>
+			</GlobalSidebar>
+		);
+	}
+
+	renderGlobalSiteSidebar() {
+		return (
+			<GlobalSidebar path={ this.props.path }>
+				<MySitesSidebarUnifiedBody
+					path={ this.props.path }
+					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
+				/>
+			</GlobalSidebar>
+		);
+	}
+
+	render() {
+		if ( this.props.isGlobalSidebarVisible ) {
+			return this.renderGlobalSidebar();
+		}
+		if ( this.props.isGlobalSiteSidebarVisible ) {
+			return this.renderGlobalSiteSidebar();
+		}
+		return this.renderSidebar();
+	}
 }
 
-export default MySitesNavigation;
+export default withCurrentRoute(
+	connect(
+		( state, { currentSection } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const siteId = getSelectedSiteId( state );
+			const siteDomain = getSiteDomain( state, siteId );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+				state,
+				siteId,
+				sectionGroup
+			);
+			return {
+				siteDomain,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+			};
+		},
+		{
+			recordTracksEvent,
+		}
+	)( MySitesNavigation )
+);

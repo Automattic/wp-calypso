@@ -1,10 +1,10 @@
+import { FormLabel } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

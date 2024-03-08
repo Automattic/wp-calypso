@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
+import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,7 +17,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
 import { isBlockDismissed } from './selectors';
-
 import './style.scss';
 
 const EVENT_TRAFFIC_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
@@ -37,7 +36,7 @@ const EVENT_GOOGLE_ANALYTICS_BANNER_CLICK = 'calypso_stats_google_analytics_bann
 const EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS = 'calypso_stats_google_analytics_banner_dismiss';
 
 const MiniCarousel = ( { slug, isSitePrivate } ) => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
 		useHasNeverPublishedPost( selectedSiteId ?? null, true, {
@@ -80,6 +79,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 
 	const showGoogleAnalyticsPromo =
 		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
+		! jetpackNonAtomic &&
 		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) );
 
 	const viewEvents = useMemo( () => {
@@ -183,6 +183,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	}
 
 	if ( showGoogleAnalyticsPromo ) {
+		const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() ?? '';
 		blocks.push(
 			<MiniCarouselBlock
 				clickEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_CLICK }
@@ -190,9 +191,15 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 				image={ <img src={ GoogleAnalyticsLogo } alt="" width={ 45 } height={ 45 } /> }
 				headerText={ translate( 'Connect your site to Google Analytics' ) }
 				contentText={ translate(
-					'Linking Google Analytics to your account is effortless with our Premium plan – no coding required. Gain valuable insights in seconds.'
+					'Linking Google Analytics to your account is effortless with our %(premiumPlanName)s plan – no coding required. Gain valuable insights in seconds.',
+					{
+						args: { premiumPlanName },
+					}
 				) }
-				ctaText={ translate( 'Get Premium' ) }
+				ctaText={
+					// Translators: %(plan) is the name of a plan, e.g. "Explorer" or "Premium"
+					translate( 'Get %(plan)s', { args: { plan: premiumPlanName } } )
+				}
 				href={ `/checkout/premium/${ slug || '' }` }
 				key="google-analytics"
 			/>

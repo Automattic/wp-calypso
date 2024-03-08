@@ -1,9 +1,9 @@
+import { Tooltip } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import Notice from 'calypso/components/notice';
-import Tooltip from 'calypso/components/tooltip';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
 import BarContainer from './bar-container';
@@ -15,7 +15,6 @@ const isTouch = hasTouch();
 
 /**
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
- *
  * @param {Array} values An array of numeric values.
  * @returns {number} The maximum value for the Y axis.
  */

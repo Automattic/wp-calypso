@@ -24,6 +24,7 @@ class MasterbarLoggedOut extends Component {
 		title: PropTypes.string,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
+		isCheckoutFailed: PropTypes.bool,
 
 		// Connected props
 		currentQuery: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
@@ -197,15 +198,16 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	render() {
-		const { title, isCheckout, isCheckoutPending } = this.props;
+		const { title, isCheckout, isCheckoutPending, isCheckoutFailed } = this.props;
 
-		if ( isCheckout || isCheckoutPending ) {
+		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
 					placeholder={ null }
 					title={ title }
 					isLeavingAllowed={ ! isCheckoutPending }
+					shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				/>
 			);
 		}

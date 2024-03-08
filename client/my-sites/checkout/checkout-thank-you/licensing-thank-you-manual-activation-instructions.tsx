@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FC, useCallback, useMemo } from 'react';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -62,12 +62,15 @@ class GoogleMyBusinessNewAccount extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-new-account" wideLayout>
-				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
+				<PageViewTracker
+					path="/google-my-business/new/:site"
+					title="Google Business Profile > New"
+				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+					{ translate( 'Google Business Profile' ) }
 				</HeaderCake>
 
 				<Card>
@@ -79,12 +82,12 @@ class GoogleMyBusinessNewAccount extends Component {
 						/>
 
 						<h1 className="gmb-new-account__heading">
-							{ translate( 'It looks like you might be new to Google My Business' ) }
+							{ translate( 'It looks like you might be new to Google Business Profile' ) }
 						</h1>
 
 						<p>
 							{ translate(
-								'Google My Business lists your local business on Google Search and Google Maps. ' +
+								'Google Business Profile lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location, or serve a local area.'
 							) }
 						</p>

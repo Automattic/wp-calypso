@@ -86,7 +86,7 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		} );
 
 		it( 'Click on Promote for the first post', async function () {
-			await advertisingPage.clickButtonByNameOnRow( 'Promote', { row: 1 } );
+			await advertisingPage.clickButtonByNameOnRow( 'Promote', { row: 0 } );
 		} );
 
 		it( 'Land in Blaze campaign landing page', async function () {

@@ -6,18 +6,16 @@
  *  - keyboard hotkeys
  *  - window/pane scrolling
  *  - service worker
- *
- *
  * @module notifications
  */
 
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -34,7 +32,6 @@ import './style.scss';
 /**
  * Returns whether or not the browser session
  * is currently visible to the user
- *
  * @returns {boolean} is the browser session visible
  */
 const getIsVisible = () => {
@@ -249,6 +246,11 @@ export class Notifications extends Component {
 					window.open( href, '_blank' );
 				},
 			],
+			CLOSE_PANEL: [
+				() => {
+					this.props.checkToggle();
+				},
+			],
 		};
 
 		return (
@@ -257,6 +259,7 @@ export class Notifications extends Component {
 				className={ classNames( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
+					'global-sidebar-visible': this.props.isGlobalSidebarVisible ?? false,
 				} ) }
 			>
 				<NotificationsPanel

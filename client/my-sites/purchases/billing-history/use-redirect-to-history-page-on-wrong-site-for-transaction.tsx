@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -10,7 +10,7 @@ export default function useRedirectToHistoryPageOnWrongSiteForTransaction(
 	receiptId: number,
 	transaction: BillingTransaction | undefined | null
 ): boolean {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const reduxDispatch = useDispatch();
 	const didRedirect = useRef( false );
 	const doesTransactionExist = !! transaction;

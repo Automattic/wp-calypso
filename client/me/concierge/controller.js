@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import BookCalendarStep from './book/calendar-step';
 import BookConfirmationStep from './book/confirmation-step';

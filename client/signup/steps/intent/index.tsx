@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -31,14 +31,7 @@ export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'store-options', 'store-features' ],
 	build: [ 'site-options', 'starting-point', 'courses', 'store-options', 'store-features' ],
 	sell: [ 'site-options', 'starting-point', 'courses' ],
-	wpadmin: [
-		'store-options',
-		'store-features',
-		'site-options',
-		'starting-point',
-		'courses',
-		'design-setup-site',
-	],
+	wpadmin: [ 'store-options', 'store-features', 'site-options', 'starting-point', 'courses' ],
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {

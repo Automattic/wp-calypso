@@ -3,7 +3,6 @@
  * Looks only for the absolute basics:
  *  - does it have a .suffix?
  *  - does it have at least two parts separated by a dot?
- *
  * @param  query The string to check
  * @returns       Does it appear to be a URL?
  */

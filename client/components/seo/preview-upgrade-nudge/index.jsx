@@ -4,6 +4,8 @@ import {
 	TYPE_BUSINESS,
 	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
+	PLAN_BUSINESS,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -27,6 +29,7 @@ export const SeoPreviewNudge = ( {
 	site,
 	isJetpack = false,
 } ) => {
+	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
@@ -43,9 +46,12 @@ export const SeoPreviewNudge = ( {
 				}
 				title={
 					canCurrentUserUpgrade
-						? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' )
+						? translate( 'Upgrade to a %(planName)s plan to unlock the power of our SEO tools!', {
+								args: { planName },
+						  } )
 						: translate(
-								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
+								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a %(planName)s plan.",
+								{ args: { planName } }
 						  )
 				}
 				forceDisplay

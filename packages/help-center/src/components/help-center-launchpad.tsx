@@ -31,9 +31,13 @@ const getEnvironmentHostname = () => {
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
+		( select ) => {
+			if ( siteId ) {
+				return ( select( SITE_STORE ) as SiteSelect ).getSite( siteId );
+			}
+		},
 		[ siteId ]
 	);
 	let siteIntent = site && site?.options?.site_intent;
@@ -50,7 +54,7 @@ export const HelpCenterLaunchpad = () => {
 		data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
 
 	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
-	const sectionName = useSelector( ( state ) => getSectionName( state ) );
+	const sectionName = useSelector( getSectionName );
 	const handleLaunchpadHelpLinkClick = () => {
 		recordTracksEvent( 'calypso_help_launchpad_click', {
 			link: launchpadURL,
@@ -60,9 +64,6 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! siteIntent || ! siteSlug ) {
-		return null;
-	}
 	return (
 		<div className="inline-help__launchpad-container">
 			<a

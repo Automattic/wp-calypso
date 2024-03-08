@@ -6,6 +6,7 @@ import type { SiteSubscriptionDetailsResponse } from '../types';
 const useSiteSubscriptionDetailsQuery = ( blogId = '', subscriptionId = '' ) => {
 	const { id, isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
+
 	return useQuery( {
 		queryKey: buildQueryKey(
 			[ 'read', 'site-subscription-details', blogId, subscriptionId ],

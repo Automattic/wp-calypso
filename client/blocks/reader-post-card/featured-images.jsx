@@ -7,7 +7,7 @@ import {
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
 
-const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost } ) => {
+const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost, hasExcerpt } ) => {
 	const numImages = isCompactPost ? 1 : 4;
 	const imagesToDisplay = getImagesFromPostToDisplay( post, numImages );
 	if ( imagesToDisplay.length === 0 ) {
@@ -17,6 +17,7 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost } 
 				href={ postUrl }
 				fetched={ canonicalMedia.fetched }
 				isCompactPost={ isCompactPost }
+				hasExcerpt={ hasExcerpt }
 			/>
 		);
 	}
@@ -24,9 +25,10 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost } 
 	let classNames = 'reader-post-card__featured-images';
 	const listItems = imagesToDisplay.map( ( image, index, [ imageWidth, imageHeight ] ) => {
 		imageWidth = null;
-		imageHeight = isCompactPost
-			? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
-			: READER_FEATURED_MAX_IMAGE_HEIGHT;
+		imageHeight =
+			isCompactPost && hasExcerpt
+				? READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT
+				: READER_FEATURED_MAX_IMAGE_HEIGHT;
 
 		let width = '50%';
 
@@ -55,6 +57,8 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isCompactPost } 
 				imageWidth={ imageWidth }
 				imageHeight={ imageHeight }
 				children={ <div style={ { width: width } } /> }
+				isCompactPost={ isCompactPost }
+				hasExcerpt={ hasExcerpt }
 			/>
 		);
 

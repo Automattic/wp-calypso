@@ -57,6 +57,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		aftermarketAuction: Boolean( domain.aftermarket_auction ),
 		aftermarketAuctionEnd: String( domain.aftermarket_auction_end ?? '' ),
 		aftermarketAuctionStart: String( domain.aftermarket_auction_start ?? '' ),
+		authCodeRequired: Boolean( domain.auth_code_required ),
 		autoRenewing: Boolean( domain.auto_renewing ),
 		beginTransferUntilDate: String( domain.begin_transfer_until_date ),
 		blogId: Number( domain.blog_id ),
@@ -112,6 +113,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 			typeof domain.is_icann_verification_suspended === 'boolean'
 				? Boolean( domain.is_icann_verification_suspended )
 				: null,
+		isMappedToAtomicSite: Boolean( domain.is_mapped_to_atomic_site ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
 		isPendingRenewal: Boolean( domain.pending_renewal ),
 		isPremium: Boolean( domain.is_premium ),

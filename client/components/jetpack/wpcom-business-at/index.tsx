@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useState, useCallback, useEffect } from 'react';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {

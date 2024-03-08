@@ -29,10 +29,6 @@ export const getSimpleSortFunctionBy =
 		return comparison * sortOrder;
 	};
 
-export const getReverseSimpleSortFunctionBy =
-	( column: keyof DomainData ) => ( first: DomainData, second: DomainData, sortOrder: number ) =>
-		getSimpleSortFunctionBy( column )( first, second, sortOrder ) * -1;
-
 export const getStatusSortFunctions = (
 	translate: I18N[ 'translate' ],
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions

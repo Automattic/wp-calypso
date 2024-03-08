@@ -1,6 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
@@ -21,24 +21,28 @@ class ImporterError extends PureComponent {
 		retryImport: PropTypes.func,
 		siteSlug: PropTypes.string,
 		code: PropTypes.string,
+		importerEngine: PropTypes.string,
 	};
 
 	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/help' );
+		window.location.href = '/help';
 	};
 
 	installPlugin = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( '/plugins/all-in-one-wp-migration' );
+		window.location.href = '/plugins/all-in-one-wp-migration';
 	};
 
 	everythingImport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( addQueryArgs( { siteSlug: this.props.siteSlug }, '/setup/site-setup/import' ) );
+		window.location.href = addQueryArgs(
+			{ siteSlug: this.props.siteSlug },
+			'/setup/site-setup/import'
+		);
 	};
 
 	getImportError = () => {
@@ -62,6 +66,17 @@ class ImporterError extends PureComponent {
 			'Oops! We ran into an unexpected error while uploading your file.'
 		);
 		const { description = '' } = this.props;
+
+		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
+			return this.props.translate(
+				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
+				{
+					components: {
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
 
 		return this.props.translate(
 			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',

@@ -1,13 +1,9 @@
 .is-section-marketplace.has-no-sidebar {
 	.layout__content {
 		background-color: var(--studio-white);
-		height: 100vh;
-		padding: 0;
 		overflow: inherit;
 		@media ( max-width: 782px ) {
-			padding: 0;
 			background-color: var(--studio-white);
-			height: 200vh;
 			.layout__primary {
 				height: 100vh;
 				.marketplace-domain-upsell__root {
@@ -15,12 +11,6 @@
 				}
 			}
 		}
-	}
-}
-
-.has-no-sidebar .layout__content {
-	@media ( max-width: 782px ) {
-		padding: 0;
 	}
 }
 

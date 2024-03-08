@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.martechTosUser );
 
 		await restAPIClient.setMySettings( { language: 'en' } );
-		await page.reload( { waitUntil: 'networkidle', timeout: EXTENDED_TIMEOUT } );
+		await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				cartCheckoutPage = new CartCheckoutPage( page );
 
 				await restAPIClient.setMySettings( { language: locale } );
-				await page.reload( { waitUntil: 'networkidle', timeout: EXTENDED_TIMEOUT } );
+				await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 			} );
 
 			it( `Screenshot checkout page for ${ locale }`, async function () {

@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 
 const CheckboxTermsWrapper = styled.div`
 	column-gap: 8px;
@@ -14,10 +14,10 @@ const CheckboxTermsWrapper = styled.div`
 	row-gap: 4px;
 	align-items: center;
 	padding: 0;
-	margin: 0;
+	margin: 1em 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px 0;
+		padding: 0;
 	}
 `;
 

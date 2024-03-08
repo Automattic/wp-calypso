@@ -38,6 +38,15 @@
 			flex-direction: row;
 			align-items: center;
 		}
+
+		.button:not(:first-child) {
+			margin-top: 15px;
+
+			@include break-mobile {
+				margin-left: 12px;
+				margin-top: 0;
+			}
+		}
 	}
 
 	ul {

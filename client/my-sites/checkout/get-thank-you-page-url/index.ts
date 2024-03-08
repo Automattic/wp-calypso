@@ -18,7 +18,6 @@ import {
 	isPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
-	isDomainRegistration,
 	is100Year,
 } from '@automattic/calypso-products';
 import {
@@ -54,6 +53,7 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	clearSignupCompleteFlowName,
 	getSignupCompleteFlowName,
@@ -258,6 +258,7 @@ export default function getThankYouPageUrl( {
 					receiptId: receiptIdOrPlaceholder,
 					siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 					fromSiteSlug,
+					productSlug,
 				},
 				`${ calypsoHost }/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`
 			);
@@ -355,12 +356,10 @@ export default function getThankYouPageUrl( {
 	// signup flow that is not only for domain registrations and the cookie
 	// post-checkout URL is not the signup "intent" flow.
 	const signupFlowName = getSignupCompleteFlowName();
-	const isDomainOnly =
-		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+
 	if (
 		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
 			signupFlowName === 'domain' ) &&
-		! isDomainOnly &&
 		urlFromCookie &&
 		receiptIdOrPlaceholder &&
 		! urlFromCookie.includes( '/start/setup-site' )
@@ -382,7 +381,6 @@ export default function getThankYouPageUrl( {
 					siteSlug,
 					hideUpsell: Boolean( hideNudge ),
 					domains,
-					isDomainOnly,
 			  } )
 			: undefined;
 
@@ -624,7 +622,6 @@ function getFallbackDestination( {
 /**
  * This function returns the product slug of the next higher plan of the plan item in the cart.
  * Currently, it only supports premium plans.
- *
  * @param {ResponseCart} cart the cart object
  * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
  */
@@ -670,14 +667,12 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug,
 	hideUpsell,
 	domains,
-	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
-	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -687,7 +682,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		cart,
 		siteSlug,
 		domains,
-		isDomainOnly,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -722,13 +716,11 @@ function getProfessionalEmailUpsellUrl( {
 	cart,
 	siteSlug,
 	domains,
-	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	domains: ResponseDomain[] | undefined;
-	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( ! cart ) {
 		return;
@@ -743,7 +735,6 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if (
-		! isDomainOnly &&
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
@@ -773,7 +764,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
+	return getProfessionalEmailCheckoutUpsellPath( siteSlug ?? domainName, domainName, receiptId );
 }
 
 function getNoticeType(

@@ -6,8 +6,11 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
+import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { isSubdomain } from 'calypso/lib/domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
@@ -18,6 +21,7 @@ import withDomainNameservers from 'calypso/my-sites/domains/domain-management/na
 import {
 	domainManagementEdit,
 	domainManagementList,
+	domainMappingSetup,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
@@ -30,6 +34,7 @@ import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
 import DnsImportBindFileButton from './dns-import-bind-file-button';
 import DnsMenuOptionsButton from './dns-menu-options-button';
+
 import './style.scss';
 
 class DnsRecords extends Component {
@@ -55,6 +60,38 @@ class DnsRecords extends Component {
 	hasDefaultARecords = () => {
 		const { dns } = this.props;
 		return dns?.records?.some( ( record ) => record?.type === 'A' && record?.protected_field );
+	};
+
+	hasDefaultEmailRecords = () => {
+		const { dns, selectedDomainName } = this.props;
+
+		const hasDefaultDkim1Record = dns?.records?.some(
+			( record ) =>
+				record.type === 'CNAME' &&
+				record.name === `wpcloud1._domainkey` &&
+				record.data === 'wpcloud1._domainkey.wpcloud.com.'
+		);
+		const hasDefaultDkim2Record = dns?.records?.some(
+			( record ) =>
+				record?.type === 'CNAME' &&
+				record.name === `wpcloud2._domainkey` &&
+				record.data === 'wpcloud2._domainkey.wpcloud.com.'
+		);
+		const hasDefaultDmarcRecord = dns?.records?.some(
+			( record ) =>
+				record.type === 'TXT' && record.name === `_dmarc` && record.data?.startsWith( 'v=DMARC1' )
+		);
+		const hasDefaultSpfRecord = dns?.records?.some(
+			( record ) =>
+				record.type === 'TXT' &&
+				record.name === `${ selectedDomainName }.` &&
+				record.data?.startsWith( 'v=spf1' ) &&
+				record.data?.match( /\binclude:_spf.wpcloud.com\b/ )
+		);
+
+		return (
+			hasDefaultDkim1Record && hasDefaultDkim2Record && hasDefaultDmarcRecord && hasDefaultSpfRecord
+		);
 	};
 
 	renderHeader = () => {
@@ -93,6 +130,7 @@ class DnsRecords extends Component {
 				dns={ dns }
 				hasDefaultARecords={ this.hasDefaultARecords() }
 				hasDefaultCnameRecord={ this.hasDefaultCnameRecord() }
+				hasDefaultEmailRecords={ this.hasDefaultEmailRecords() }
 			/>
 		);
 
@@ -149,7 +187,8 @@ class DnsRecords extends Component {
 	};
 
 	renderNotice = () => {
-		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers } = this.props;
+		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers, domains } =
+			this.props;
 
 		if (
 			( ! englishLocales.includes( getLocaleSlug() ) &&
@@ -161,6 +200,19 @@ class DnsRecords extends Component {
 			! nameservers.length
 		) {
 			return null;
+		}
+
+		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
+
+		let mappingSetupStep =
+			selectedDomain.connectionMode === modeType.ADVANCED
+				? stepSlug.ADVANCED_UPDATE
+				: stepSlug.SUGGESTED_UPDATE;
+		if ( isSubdomain( selectedDomainName ) ) {
+			mappingSetupStep =
+				selectedDomain.connectionMode === modeType.ADVANCED
+					? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+					: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
 		}
 
 		return (
@@ -178,12 +230,20 @@ class DnsRecords extends Component {
 							components: {
 								a: (
 									<a
-										href={ domainManagementEdit(
-											selectedSite.slug,
-											selectedDomainName,
-											currentRoute,
-											{ nameservers: true }
-										) }
+										href={
+											selectedDomain.type === domainTypes.MAPPED
+												? domainMappingSetup(
+														selectedSite.slug,
+														selectedDomainName,
+														mappingSetupStep
+												  )
+												: domainManagementEdit(
+														selectedSite.slug,
+														selectedDomainName,
+														currentRoute,
+														{ nameservers: true }
+												  )
+										}
 									></a>
 								),
 							},

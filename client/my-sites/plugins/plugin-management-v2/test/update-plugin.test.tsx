@@ -45,7 +45,7 @@ describe( '<UpdatePlugin>', () => {
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 
-	test( 'should render correctly and show current and new version', async () => {
+	test( 'should show current and new versions', async () => {
 		const { container } = render(
 			<Provider store={ store }>
 				<UpdatePlugin { ...props } />
@@ -58,8 +58,21 @@ describe( '<UpdatePlugin>', () => {
 
 		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
 		expect( updateButton.textContent ).toEqual( `Update to ${ plugin.update.new_version }` );
+	} );
 
+	test( 'should show confirmation dialog and update correctly', async () => {
+		const { container } = render(
+			<Provider store={ store }>
+				<UpdatePlugin { ...props } />
+			</Provider>
+		);
+
+		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
 		await userEvent.click( updateButton );
+
+		const [ confirmButton ] = document.querySelectorAll( '.confirm-modal__buttons .is-primary' );
+		await userEvent.click( confirmButton );
+
 		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 

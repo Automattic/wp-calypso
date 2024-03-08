@@ -12,12 +12,6 @@ jest.mock( '../locale-context', () => {
 	} );
 } );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	// Useful because the getAvailableDesigns function uses feature flags for
-	// arguments default values
-	isEnabled: () => false,
-} ) );
-
 const { useLocale } = jest.requireMock( '../locale-context' );
 
 describe( '#localizeUrl', () => {
@@ -469,6 +463,42 @@ describe( '#localizeUrl', () => {
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pl' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
+		);
+	} );
+
+	test( 'cloud.jetpack.com', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+	} );
+
+	test( 'Jetpack Manage', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
 		);
 	} );
 

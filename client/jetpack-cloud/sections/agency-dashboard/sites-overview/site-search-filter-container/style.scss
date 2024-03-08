@@ -5,6 +5,7 @@
 	margin: 0 0 8px;
 	background: #fff;
 	position: relative;
+
 	@include break-large() {
 		position: static;
 		display: flex;
@@ -18,13 +19,16 @@
 .site-search-filter-container__search {
 	height: 52px;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
+
 	@include break-large() {
 		width: 40%;
 		height: auto;
 		box-shadow: none;
 	}
+
 	.search.is-open {
 		box-shadow: none;
+
 		.search__open-icon {
 			width: 40px;
 		}
@@ -33,6 +37,7 @@
 
 .site-search-filter-container__filter-bar {
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
+
 	@include break-large() {
 		z-index: 99;
 		width: 60%;
@@ -40,19 +45,28 @@
 		display: flex;
 		box-shadow: none;
 	}
+
 	.filterbar {
 		max-width: 100%;
 	}
+
 	.filterbar__wrap.card {
 		overflow-x: auto;
 		box-shadow: none;
-		.filterbar__label {
-			margin-left: 12px;
-		}
+
 		.filterbar__control-list {
 			li {
 				display: inline-flex;
 			}
+		}
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-block-start: 1px;
+
+		.filterbar__wrap.card {
+			display: flex;
+			height: 50px;
 		}
 	}
 }

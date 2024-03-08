@@ -9,13 +9,13 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
 import type { FollowersQuery } from './types';
-import type { Member } from '../types';
-
+import type { Member } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
@@ -27,7 +27,7 @@ function Subscribers( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 
 	const listKey = [ 'subscribers', site?.ID, 'all', search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } =
@@ -80,6 +80,10 @@ function Subscribers( props: Props ) {
 	} else {
 		templateState = 'default';
 	}
+
+	const isFreeSite = site?.plan?.is_free ?? false;
+	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
+	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
 
 	switch ( templateState ) {
 		case 'default':
@@ -141,6 +145,7 @@ function Subscribers( props: Props ) {
 									siteId={ site?.ID }
 									submitBtnAlwaysEnable={ true }
 									onImportFinished={ refetch }
+									hasSubscriberLimit={ hasSubscriberLimit }
 								/>
 							</EmailVerificationGate>
 						</>

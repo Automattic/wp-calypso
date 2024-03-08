@@ -7,12 +7,13 @@
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [ "src" ],
+	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
 		{ "path": "../site-picker" },
 		{ "path": "../state-utils" },
 		{ "path": "../viewport" },
+		{ "path": "../odie-client" },
 		{ "path": "../whats-new" },
 		{ "path": "../wpcom-checkout" }
 	]

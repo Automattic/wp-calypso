@@ -1,5 +1,5 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CurrentPlan from './';
 

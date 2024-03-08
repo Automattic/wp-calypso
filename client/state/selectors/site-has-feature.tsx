@@ -3,7 +3,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Whether a given feature is available to the specified site.
- *
  * @see 2c4dd-pb/#plain
  * @param  {Object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying

@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -16,7 +17,7 @@ import './style.scss';
 const noop = () => {};
 
 const getRandomPromo = () => {
-	const desktopAppLink = <span className="app-promo__wp-app-link" />;
+	const desktopAppLink = <span className="app-promo-sidebar__wp-app-link" />;
 
 	const promoOptions = [
 		{
@@ -82,7 +83,9 @@ const getRandomPromo = () => {
 export const getPromoLink = ( location, promoDetails ) => {
 	const { type, promoCode } = promoDetails;
 
-	return `https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`;
+	return localizeUrl(
+		`https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`
+	);
 };
 
 export class AppPromoSidebar extends Component {
@@ -127,7 +130,7 @@ export class AppPromoSidebar extends Component {
 
 	dismissButton = () => (
 		<Button
-			className="app-promo__dismiss"
+			className="app-promo-sidebar__dismiss"
 			onClick={ this.dismiss }
 			aria-label={ this.props.translate( 'Dismiss' ) }
 		>
@@ -141,14 +144,20 @@ export class AppPromoSidebar extends Component {
 		return (
 			<Button
 				onClick={ this.recordClickEvent }
-				className="app-promo__link"
+				className="app-promo-sidebar__link"
 				title="Try the desktop app!"
 				href={ this.props.getPromoLink( location, promoItem ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<img className="app-promo__icon" src={ wordpressLogoImage } width="32" height="32" alt="" />
-				<p className="app-promo__paragraph">{ promoItem.message }</p>
+				<img
+					className="app-promo-sidebar__icon"
+					src={ wordpressLogoImage }
+					width="32"
+					height="32"
+					alt=""
+				/>
+				<p className="app-promo-sidebar__paragraph">{ promoItem.message }</p>
 			</Button>
 		);
 	};
@@ -160,7 +169,7 @@ export class AppPromoSidebar extends Component {
 			'{{span}}Get the Jetpack app{{/span}} to use Reader anywhere, any time.',
 			{
 				components: {
-					span: <span className="app-promo__jetpack-app-link" />,
+					span: <span className="app-promo-sidebar__jetpack-app-link" />,
 				},
 			}
 		);
@@ -168,20 +177,20 @@ export class AppPromoSidebar extends Component {
 		return (
 			<Button
 				onClick={ this.recordClickEvent }
-				className="app-promo__link"
+				className="app-promo-sidebar__link"
 				title="Try the mobile app!"
 				href={ this.props.getPromoLink( location, promoItem ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
 				<img
-					className="app-promo__icon"
+					className="app-promo-sidebar__icon"
 					src={ jetpackLogoImage }
 					width={ 25 }
 					height={ 43 }
 					alt=""
 				/>
-				<p className="app-promo__paragraph">{ message }</p>
+				<p className="app-promo-sidebar__paragraph">{ message }</p>
 			</Button>
 		);
 	};
@@ -192,7 +201,7 @@ export class AppPromoSidebar extends Component {
 		}
 		const { promoItem } = this.state;
 		return (
-			<div className="app-promo">
+			<div className="app-promo-sidebar">
 				{ promoItem.type === 'mobile'
 					? this.mobilePromo( promoItem )
 					: this.desktopPromo( promoItem ) }

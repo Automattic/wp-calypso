@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
@@ -7,9 +8,9 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -78,10 +79,9 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const [ sshKeyNameToUpdate, setSSHKeyNameToUpdate ] = useState( '' );
 	const [ oldSSHFingerprint, setOldSSHFingerprint ] = useState( '' );
 	const [ showDialog, setShowDialog ] = useState( false );
-
 	const { __ } = useI18n();
 
-	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
+	const { addSSHKey, isPending: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeySaveFailureNoticeId ) );
 		},
@@ -129,7 +129,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 		},
 	} );
 
-	const { updateSSHKey, isLoading: keyBeingUpdated } = useUpdateSSHKeyMutation( {
+	const { updateSSHKey, isPending: keyBeingUpdated } = useUpdateSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeyUpdateFailureNoticeId ) );
 		},
@@ -170,7 +170,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 			<PageViewTracker path="/me/security/ssh-key" title="Me > SSH Key" />
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-			<FormattedHeader brandFont headerText={ __( 'Security' ) } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ __( 'Security' ) } />
 
 			<HeaderCake
 				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
@@ -191,8 +191,13 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 						) }
 					</p>
 					<p>
-						{ __(
-							'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site.'
+						{ sprintf(
+							// translators: %1$s is the short-form name of the Business plan, %2$s is the short-form name of the eCommerce plan.
+							__(
+								'Once added, attach the SSH key to a site with a %1$s or %2$s plan to enable SSH key authentication for that site.'
+							),
+							getPlan( PLAN_BUSINESS )?.getTitle() || '',
+							getPlan( PLAN_ECOMMERCE )?.getTitle() || ''
 						) }
 					</p>
 					<p style={ isLoading || hasKeys ? { marginBlockEnd: 0 } : undefined }>

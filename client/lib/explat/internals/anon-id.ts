@@ -11,7 +11,6 @@ declare const window: undefined | ( Window & typeof globalThis );
 
 /**
  * setInterval, but it runs first callback immediately instead of after interval.
- *
  * @param f The callback function
  * @param intervalMs The interval in milliseconds
  */

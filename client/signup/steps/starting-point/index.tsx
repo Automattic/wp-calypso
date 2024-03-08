@@ -19,10 +19,10 @@ interface Props {
 }
 
 const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
-	write: [ 'courses', 'design-setup-site' ],
-	courses: [ 'design-setup-site' ],
+	write: [ 'courses' ],
+	courses: [],
 	design: [ 'courses' ],
-	'skip-to-my-home': [ 'courses', 'design-setup-site' ],
+	'skip-to-my-home': [ 'courses' ],
 };
 
 const getExcludedSteps = ( providedDependencies?: Dependencies ) =>

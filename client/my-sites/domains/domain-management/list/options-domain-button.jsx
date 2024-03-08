@@ -1,11 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { Icon, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -124,7 +125,7 @@ class AddDomainButton extends Component {
 		return (
 			<>
 				<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
-				<span className="options-domain-button__desktop">{ label }</span>
+				{ ! isMobile() && <span className="options-domain-button__desktop">{ label }</span> }
 			</>
 		);
 	}

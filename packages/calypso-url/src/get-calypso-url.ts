@@ -11,7 +11,6 @@ const ALLOWED_ORIGINS = [
 
 /**
  * Checks if the origin is allowed by checking against ALLOWED_ORIGINS and Calypso Live sites.
- *
  * @param origin string to check
  * @returns true if the origin is allowed
  */
@@ -21,7 +20,6 @@ function isAllowedOrigin( origin: string ) {
 
 /**
  * Checks if the origin is a Calypso Live site (e.g. https://busy-badger.calypso.live)
- *
  * @param origin string to check
  * @returns true if the origin is a Calypso Live site
  */
@@ -33,7 +31,6 @@ function isCalypsoLive( origin: string ) {
  * From wp-admin contexts: gets the Calypso origin from the `wpcom_origin` query arg
  * and compares it against a list of allowed wpcom origins. Helps to maintain consistent
  * interlinking in Calypso dev/testing contexts.
- *
  * @param path Optional path to append to the origin
  * @returns The origin if it's allowed, otherwise the default origin (wordpress.com)
  */

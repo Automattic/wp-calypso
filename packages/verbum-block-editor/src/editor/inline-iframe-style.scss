@@ -1,0 +1,50 @@
+/**
+ * Editor styles.
+ *
+ * This file contains CSS that is injected to the editor iframe.
+ */
+
+/* Import the default block editor styles. */
+@import "@wordpress/components/build-style/style.css";
+@import "@wordpress/block-editor/build-style/content.css";
+@import "@wordpress/block-library/build-style/editor.css";
+@import "@wordpress/block-library/build-style/theme.css";
+@import "@wordpress/block-library/build-style/style.css";
+
+body {
+	overflow-y: hidden;
+	background-color: transparent;
+	font-family:
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		Oxygen-Sans,
+		Ubuntu,
+		Cantarell,
+		"Helvetica Neue",
+		sans-serif;
+}
+
+/* This is needed for useResizeObserver to work. */
+.editor__block-canvas-container {
+	box-sizing: border-box;
+	position: absolute;
+	width: 100%;
+}
+
+/* Padding around the canvas. */
+.is-root-container.block-editor-block-list__layout {
+	padding: 10px 20px 60px;
+	display: block;
+}
+
+/* Hide the instructions for IMAGE blocks. */
+.block-editor-media-placeholder .components-placeholder__instructions {
+	display: none;
+}
+
+/* Prevent embed interaction when selecting the block. */
+.wp-block:not(.is-selected) .wp-block-embed__wrapper iframe {
+	pointer-events: none;
+}

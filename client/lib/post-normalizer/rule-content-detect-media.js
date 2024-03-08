@@ -64,7 +64,7 @@ const detectImage = ( image ) => {
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
 const getAutoplayIframe = ( iframe ) => {
-	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress' ];
+	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress', 'pocketcasts' ];
 	const metadata = getEmbedMetadata( iframe.src );
 
 	if ( metadata && includes( KNOWN_SERVICES, metadata.service ) ) {

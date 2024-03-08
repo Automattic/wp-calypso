@@ -1,5 +1,8 @@
 import config from '@automattic/calypso-config';
 import {
+	PLAN_BLUEHOST_CLOUD_2Y,
+	PLAN_BLUEHOST_CLOUD_3Y,
+	PLAN_BLUEHOST_CLOUD_MONTHLY,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,
@@ -79,7 +82,8 @@ import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,
 	TYPE_100_YEAR,
 	PLAN_HOSTING_TRIAL_MONTHLY,
-	TYPE_HOSTING_TRIAL,
+	GROUP_P2,
+	PLAN_BLUEHOST_CLOUD,
 } from '../src/constants';
 import {
 	getPlan,
@@ -1036,7 +1040,11 @@ describe( 'findSimilarPlansKeys', () => {
 				type: TYPE_BUSINESS,
 				group: GROUP_WPCOM,
 			} )
-		).toEqual( [ PLAN_BUSINESS_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ] );
+		).toEqual( [
+			PLAN_BUSINESS_MONTHLY,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
+			PLAN_HOSTING_TRIAL_MONTHLY,
+		] );
 	} );
 } );
 
@@ -1057,6 +1065,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_BLUEHOST_CLOUD_2Y,
 			PLAN_JETPACK_COMPLETE_BI_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 			PLAN_WPCOM_PRO_2_YEARS,
@@ -1065,6 +1074,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_3_YEARS,
 			PLAN_PREMIUM_3_YEARS,
 			PLAN_BUSINESS_3_YEARS,
+			PLAN_BLUEHOST_CLOUD_3Y,
 			PLAN_ECOMMERCE_3_YEARS,
 		] );
 		expect( findPlansKeys( { term: TERM_ANNUALLY } ) ).toEqual( [
@@ -1078,6 +1088,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_PLUS,
 			PLAN_ENTERPRISE_GRID_WPCOM,
+			PLAN_BLUEHOST_CLOUD,
 			PLAN_JETPACK_FREE,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PERSONAL,
@@ -1102,6 +1113,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+			PLAN_BLUEHOST_CLOUD_MONTHLY,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -1157,8 +1169,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
-		] );
-		expect( findPlansKeys( { type: TYPE_HOSTING_TRIAL } ) ).toEqual( [
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
 
@@ -1192,9 +1202,11 @@ describe( 'findPlansKeys', () => {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_PLUS,
 			PLAN_ENTERPRISE_GRID_WPCOM,
+			PLAN_BLUEHOST_CLOUD,
+			PLAN_BLUEHOST_CLOUD_MONTHLY,
+			PLAN_BLUEHOST_CLOUD_2Y,
+			PLAN_BLUEHOST_CLOUD_3Y,
 			PLAN_ECOMMERCE_3_YEARS,
-			PLAN_P2_PLUS,
-			PLAN_P2_FREE,
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
@@ -1228,6 +1240,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_STARTER_MONTHLY,
 			PLAN_JETPACK_GOLDEN_TOKEN,
 		] );
+		expect( findPlansKeys( { group: GROUP_P2 } ) ).toEqual( [ PLAN_P2_PLUS, PLAN_P2_FREE ] );
 	} );
 	test( 'all matching plans keys - by group and type', () => {
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BLOGGER } ) ).toEqual( [
@@ -1252,8 +1265,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_BUSINESS_3_YEARS,
 			PLAN_MIGRATION_TRIAL_MONTHLY,
-		] );
-		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_HOSTING_TRIAL } ) ).toEqual( [
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BLOGGER } ) ).toEqual( [] );

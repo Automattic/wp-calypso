@@ -1,13 +1,14 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { isGravPoweredOAuth2Client, isWPJobManagerOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -42,6 +43,9 @@ class HandleEmailedLinkForm extends Component {
 		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
+		redirectTo: PropTypes.string,
+		transition: PropTypes.bool,
+		activate: PropTypes.string,
 
 		// Connected props
 		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
@@ -149,12 +153,28 @@ class HandleEmailedLinkForm extends Component {
 			translate,
 			initialQuery,
 			oauth2Client,
+			redirectTo,
+			transition,
+			token,
+			activate,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 
-		if ( isExpired ) {
-			return <EmailedLoginLinkExpired isGravPoweredClient={ isGravPoweredClient } />;
+		if ( isExpired && ! isFetching ) {
+			const postId = new URLSearchParams( redirectTo ).get( 'redirect_to_blog_post_id' );
+
+			return (
+				<EmailedLoginLinkExpired
+					isGravPoweredClient={ isGravPoweredClient }
+					redirectTo={ redirectTo }
+					transition={ transition }
+					token={ token }
+					emailAddress={ emailAddress }
+					postId={ postId }
+					activate={ activate }
+				/>
+			);
 		}
 
 		let buttonLabel;
@@ -235,17 +255,24 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
+		// transition is a GET parameter for when the user is transitioning from email user to WPCom user
+		if ( isFetching || transition ) {
+			return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
+		}
+
 		return (
-			<EmptyContent
-				action={ action }
-				className={ classNames( 'magic-login__handle-link', {
-					'magic-login__is-fetching-auth': isFetching,
-				} ) }
-				illustration={ illustration }
-				illustrationWidth={ 500 }
-				line={ line }
-				title={ title }
-			/>
+			! isFetching && (
+				<EmptyContent
+					action={ action }
+					className={ classNames( 'magic-login__handle-link', {
+						'magic-login__is-fetching-auth': isFetching,
+					} ) }
+					illustration={ illustration }
+					illustrationWidth={ 500 }
+					line={ line }
+					title={ title }
+				/>
+			)
 		);
 	}
 }

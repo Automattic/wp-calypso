@@ -3,7 +3,6 @@ import getECommerceTrialDaysLeft from './get-ecommerce-trial-days-left';
 
 /**
  * Returns true if the ECommerce trial has expired. If the trial is not active, returns null.
- *
  * @param {AppState} state - Global state tree
  * @param {number} siteId - Site ID
  * @returns {boolean|null}

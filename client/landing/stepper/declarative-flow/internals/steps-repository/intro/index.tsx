@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { TIMELESS_PLAN_BUSINESS, TIMELESS_PLAN_PREMIUM } from '@automattic/data-stores/src/plans';
 import { useLocale } from '@automattic/i18n-utils';
 import {
 	ECOMMERCE_FLOW,
@@ -21,7 +23,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
 import VideoPressIntroModalContent from './videopress-intro-modal-content';
 import type { Step } from '../../types';
-
 import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
@@ -38,12 +39,13 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 	} );
 
 	if ( VIDEOPRESS_FLOW === flowName ) {
+		const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
 		let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
-			return plan.periodAgnosticSlug === 'premium';
+			return plan.periodAgnosticSlug === TIMELESS_PLAN_PREMIUM;
 		} );
 		if ( ! defaultSupportedPlan ) {
 			defaultSupportedPlan = supportedPlans.find( ( plan ) => {
-				return plan.periodAgnosticSlug === 'business';
+				return plan.periodAgnosticSlug === TIMELESS_PLAN_BUSINESS;
 			} );
 		}
 
@@ -54,13 +56,21 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			);
 
 			if ( planProductObject ) {
-				// eslint-disable-next-line @wordpress/valid-sprintf
-				videoPressGetStartedText = sprintf(
-					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
-					__( 'Starts at %s per month, %s billed annually' ),
-					planProductObject.price,
-					planProductObject.annualPrice
-				);
+				videoPressGetStartedText = isTrialEnabled
+					? // eslint-disable-next-line @wordpress/valid-sprintf
+					  sprintf(
+							/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
+							__( 'After trial, plans start as low as %s per month, %s billed annually' ),
+							planProductObject.price,
+							planProductObject.annualPrice
+					  )
+					: // eslint-disable-next-line @wordpress/valid-sprintf
+					  sprintf(
+							/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
+							__( 'Starts at %s per month, %s billed annually' ),
+							planProductObject.price,
+							planProductObject.annualPrice
+					  );
 			}
 		}
 	}
@@ -107,13 +117,14 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		}
 
 		if ( flowName === VIDEOPRESS_FLOW ) {
+			const isTrialEnabled = config.isEnabled( 'videomaker-trial' );
 			return {
 				title: createInterpolateElement(
 					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
 					{ br: <br /> }
 				),
 				secondaryText: videoPressGetStartedText,
-				buttonText: __( 'Get started' ),
+				buttonText: isTrialEnabled ? __( 'Start a free trial' ) : __( 'Get started' ),
 				modal: {
 					buttonText: __( 'Learn more' ),
 					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),

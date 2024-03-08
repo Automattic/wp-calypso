@@ -31,11 +31,11 @@
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@wordpress/components": "^25.7.0",
-		"@wordpress/data": "^9.11.0",
-		"@wordpress/icons": "^9.32.0",
-		"@wordpress/react-i18n": "^3.39.0",
-		"classnames": "^2.3.1",
+		"@wordpress/components": "^27.0.0",
+		"@wordpress/data": "^9.22.0",
+		"@wordpress/icons": "^9.43.0",
+		"@wordpress/react-i18n": "^3.50.0",
+		"classnames": "^2.3.2",
 		"react-router-dom": "^6.10.0",
 		"tslib": "^2.5.0",
 		"wpcom-proxy-request": "workspace:^"
@@ -43,20 +43,20 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@testing-library/react": "^14.0.0",
-		"@wordpress/base-styles": "^4.32.0",
+		"@testing-library/react": "^14.2.1",
+		"@wordpress/base-styles": "^4.43.0",
 		"copyfiles": "^2.3.0",
 		"css-loader": "^3.6.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1",
 		"sass-loader": "^10.1.1",
-		"style-loader": "^1.2.1",
-		"typescript": "^5.2.2",
-		"webpack": "^5.63.0"
+		"style-loader": "^1.3.0",
+		"typescript": "^5.3.3",
+		"webpack": "^5.90.3"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^4.41.0",
+		"@wordpress/i18n": "^4.52.0",
 		"react": "^18.2.0"
 	},
 	"private": true

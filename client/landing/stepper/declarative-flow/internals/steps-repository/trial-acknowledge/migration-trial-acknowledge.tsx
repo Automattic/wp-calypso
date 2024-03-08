@@ -1,20 +1,22 @@
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
+import { useEffect } from 'react';
+import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { TrialPlan } from 'calypso/my-sites/plans/trials/trial-acknowledge/trial-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { TrialPlan } from './trial-plan';
 import type {
 	Step,
 	ProvidedDependencies,
@@ -33,16 +35,15 @@ interface Props {
 
 const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	const { __ } = useI18n();
+	const hasEnTranslation = useHasEnTranslation();
 	const urlQueryParams = useQuery();
 	const { user, site, siteSlug, flowName, stepName, submit } = props;
-
 	const { data: migrationTrialEligibility, isLoading: isCheckingEligibility } =
 		useCheckEligibilityMigrationTrialPlan( site?.ID );
 	const isEligibleForTrialPlan = migrationTrialEligibility?.eligible;
-
+	const eligibilityErrorCode = migrationTrialEligibility?.error_code;
 	const plan = getPlan( PLAN_BUSINESS );
-	const checkoutUrl = useCheckoutUrl( site.ID, siteSlug );
-	const { addHostingTrial, isLoading: isAddingTrial } = useAddHostingTrialMutation( {
+	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			navigateToImporterStep();
 		},
@@ -57,6 +58,7 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	}
 
 	function navigateToCheckoutPage() {
+		const checkoutUrl = buildCheckoutUrl( siteSlug );
 		const returnUrl = `/setup/${ flowName }/${ stepName }?${ urlQueryParams.toString() }`;
 		const preparedCheckoutUrl = addQueryArgs( checkoutUrl, {
 			redirect_to: returnUrl,
@@ -74,6 +76,14 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 		}
 	}
 
+	useEffect( () => {
+		switch ( eligibilityErrorCode ) {
+			case 'email-unverified':
+				navigateToVerifyEmailStep();
+				break;
+		}
+	}, [ eligibilityErrorCode ] );
+
 	if ( isAddingTrial || isCheckingEligibility ) {
 		return <LoadingEllipsis />;
 	} else if ( ! isEligibleForTrialPlan ) {
@@ -82,8 +92,12 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 				<Title>{ __( 'You already have an active free trial' ) }</Title>
 				<SubTitle>
 					{ createInterpolateElement(
-						__(
-							"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the Business plan."
+						sprintf(
+							/* translators: the planName is the short-from of the Business plan */
+							__(
+								"You're currently enrolled in a free trial. Please wait until it expires to start a new one.<br />To migrate your site now, upgrade to the %(planName)s plan."
+							),
+							{ planName: plan?.getTitle() }
 						),
 						{ br: <br /> }
 					) }
@@ -97,7 +111,9 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 		<TrialPlan
 			planFeatures={ [
 				__( 'Beautiful themes' ),
-				__( 'Advanced Design Tools' ),
+				hasEnTranslation( 'Advanced design tools' )
+					? __( 'Advanced design tools' )
+					: __( 'Advanced Design Tools' ),
 				__( 'Newsletters' ),
 				__( 'Jetpack backups and restores' ),
 				__( 'Spam protection with Akismet' ),

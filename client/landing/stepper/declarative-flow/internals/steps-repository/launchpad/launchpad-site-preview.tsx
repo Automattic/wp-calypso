@@ -9,6 +9,8 @@ import {
 	DESIGN_FIRST_FLOW,
 	VIDEOPRESS_FLOW,
 	VIDEOPRESS_ACCOUNT,
+	ASSEMBLER_FIRST_FLOW,
+	AI_ASSEMBLER_FLOW,
 	isVideoPressFlow,
 } from '@automattic/onboarding';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -31,6 +33,8 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 			case WRITE_FLOW:
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
+			case ASSEMBLER_FIRST_FLOW:
+			case AI_ASSEMBLER_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			case VIDEOPRESS_FLOW:
 			case VIDEOPRESS_ACCOUNT:

@@ -8,9 +8,10 @@ import './style.scss';
 type SubscriberListProps = {
 	onView: ( subscriber: Subscriber ) => void;
 	onUnsubscribe: ( subscriber: Subscriber ) => void;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
-const SubscriberList = ( { onView, onUnsubscribe }: SubscriberListProps ) => {
+const SubscriberList = ( { onView, onUnsubscribe, onGiftSubscription }: SubscriberListProps ) => {
 	const translate = useTranslate();
 	const { subscribers } = useSubscribersPage();
 
@@ -39,6 +40,7 @@ const SubscriberList = ( { onView, onUnsubscribe }: SubscriberListProps ) => {
 					key={ subscriber.subscription_id }
 					subscriber={ subscriber }
 					onView={ onView }
+					onGiftSubscription={ onGiftSubscription }
 					onUnsubscribe={ onUnsubscribe }
 				/>
 			) ) }

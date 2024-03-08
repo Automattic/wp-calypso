@@ -1,5 +1,5 @@
+import { SimplifiedSegmentedControl } from '@automattic/components';
 import * as React from 'react';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
 import './style.scss';
 

@@ -1,7 +1,8 @@
-import { Button, Card, HappinessEngineersTray } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import { HappinessEngineersTray } from 'calypso/components/happiness-engineers-tray';
 import {
 	composeAnalytics,
 	recordTracksEvent,

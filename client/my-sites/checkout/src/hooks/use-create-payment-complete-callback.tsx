@@ -1,5 +1,4 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
@@ -13,7 +12,6 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -29,8 +27,6 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import type { FailedResponse } from '../lib/normalize-transaction-response';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -63,7 +59,6 @@ export default function useCreatePaymentCompleteCallback( {
 	disabledThankYouPage,
 	siteSlug,
 	sitelessCheckoutType,
-	checkoutFlow,
 	connectAfterCheckout,
 	adminUrl: wpAdminUrl,
 	fromSiteSlug,
@@ -78,7 +73,6 @@ export default function useCreatePaymentCompleteCallback( {
 	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
 	sitelessCheckoutType?: SitelessCheckoutType;
-	checkoutFlow?: string;
 	connectAfterCheckout?: boolean;
 	adminUrl?: string;
 	/**
@@ -113,7 +107,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const domains = useSiteDomains( siteId ?? undefined );
 
 	return useCallback(
-		async ( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ) => {
+		async ( { transactionLastResponse }: PaymentEventCallbackArguments ) => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 
@@ -157,11 +151,8 @@ export default function useCreatePaymentCompleteCallback( {
 
 			try {
 				await recordPaymentCompleteAnalytics( {
-					paymentMethodId,
 					transactionResult,
-					redirectUrl: url,
 					responseCart,
-					checkoutFlow,
 					reduxDispatch,
 					sitePlanSlug,
 				} );
@@ -196,7 +187,8 @@ export default function useCreatePaymentCompleteCallback( {
 				receiptId &&
 				transactionResult &&
 				'purchases' in transactionResult &&
-				transactionResult.purchases
+				transactionResult.purchases &&
+				transactionResult.success
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
@@ -213,6 +205,18 @@ export default function useCreatePaymentCompleteCallback( {
 			if ( isInModal && disabledThankYouPage && ! hasEcommercePlan( responseCart ) ) {
 				return;
 			}
+
+			/**
+			 * IMPORTANT
+			 *
+			 * This function is only called for purchases which use specific
+			 * payment methods. Redirect payment methods like PayPal or
+			 * Bancontact or some 3DS credit cards will not trigger this
+			 * function. Functions triggered on the "pending" page will be more
+			 * accurate and will capture most flows, but not purchases made
+			 * through the one-click checkout modal, which only use saved
+			 * credit cards.
+			 */
 
 			debug( 'just redirecting to', url );
 
@@ -237,7 +241,12 @@ export default function useCreatePaymentCompleteCallback( {
 
 			// We need to do a hard redirect if we're redirecting to the stepper.
 			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
-			if ( isURL( url ) || url.includes( '/setup/' ) ) {
+			// The same is true if we are redirecting to the signup flow, we are restricting it to only 1 specific flow here.
+			if (
+				isURL( url ) ||
+				url.includes( '/setup/' ) ||
+				url.includes( '/start/site-content-collection' )
+			) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
@@ -273,7 +282,6 @@ export default function useCreatePaymentCompleteCallback( {
 			createUserAndSiteBeforeTransaction,
 			disabledThankYouPage,
 			sitelessCheckoutType,
-			checkoutFlow,
 			adminPageRedirect,
 			domains,
 			sitePlanSlug,
@@ -284,36 +292,27 @@ export default function useCreatePaymentCompleteCallback( {
 }
 
 async function recordPaymentCompleteAnalytics( {
-	paymentMethodId,
 	transactionResult,
-	redirectUrl,
 	responseCart,
-	checkoutFlow,
 	reduxDispatch,
 	sitePlanSlug,
 }: {
-	paymentMethodId: string | null;
-	transactionResult: WPCOMTransactionEndpointResponse | FailedResponse | undefined;
-	redirectUrl: string;
+	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	responseCart: ResponseCart;
-	checkoutFlow?: string;
 	reduxDispatch: CalypsoDispatch;
 	sitePlanSlug?: string | null;
 } ) {
-	const wpcomPaymentMethod = paymentMethodId
-		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
-		: null;
-
-	const device = resolveDeviceTypeByViewPort();
-	reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_payment_success', {
-			coupon_code: responseCart.coupon,
-			currency: responseCart.currency,
-			payment_method: wpcomPaymentMethod || '',
-			total_cost: responseCart.total_cost,
-			device,
-		} )
-	);
+	/**
+	 * IMPORTANT
+	 *
+	 * Do not rely on analytics recorded in this function because these are
+	 * only recorded for purchases which use specific payment methods. Redirect
+	 * payment methods like PayPal or Bancontact or some 3DS credit cards will
+	 * not trigger this function. Events triggered on the "pending" page will
+	 * be more accurate and will capture most flows, but not purchases made
+	 * through the one-click checkout modal. Prefer backend events which are
+	 * much more accurate.
+	 */
 
 	try {
 		await recordPurchase( {
@@ -334,16 +333,4 @@ async function recordPaymentCompleteAnalytics( {
 			} )
 		);
 	}
-
-	return reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
-			redirect_url: redirectUrl,
-			coupon_code: responseCart.coupon,
-			total: responseCart.total_cost_integer,
-			currency: responseCart.currency,
-			payment_method: wpcomPaymentMethod || '',
-			device,
-			checkout_flow: checkoutFlow,
-		} )
-	);
 }

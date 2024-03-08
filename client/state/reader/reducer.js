@@ -10,7 +10,6 @@ import posts from './posts/reducer';
 import recommendedSites from './recommended-sites/reducer';
 import relatedPosts from './related-posts/reducer';
 import siteBlocks from './site-blocks/reducer';
-import siteDismissals from './site-dismissals/reducer';
 import sites from './sites/reducer';
 import streams from './streams/reducer';
 import tags from './tags/reducer';
@@ -26,7 +25,6 @@ const combinedReducer = combineReducers( {
 	recommendedSites,
 	relatedPosts,
 	siteBlocks,
-	siteDismissals,
 	sites,
 	streams,
 	tags,

@@ -28,7 +28,9 @@ export const useDeleteSitePreviewLink = ( options: UseDeleteSitePreviewLinkOptio
 			onSuccess?.();
 		},
 		onMutate: async ( code: string ) => {
-			await queryClient.cancelQueries( queryKey );
+			await queryClient.cancelQueries( {
+				queryKey,
+			} );
 			const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
 			queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => {
 				const previewLinks = old ?? [];
@@ -56,7 +58,9 @@ export const useDeleteSitePreviewLink = ( options: UseDeleteSitePreviewLinkOptio
 					() => cachedData?.filter( ( previewLink ) => ! previewLink.isRemoving )
 				);
 			}
-			queryClient.invalidateQueries( queryKey );
+			queryClient.invalidateQueries( {
+				queryKey,
+			} );
 		},
 	} );
 

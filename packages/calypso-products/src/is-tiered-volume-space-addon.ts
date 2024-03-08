@@ -5,7 +5,6 @@ import type { WithCamelCaseSlug, WithSnakeCaseSlug } from './types';
 /**
  * This deals with the tiered volume space addon. Also see ./is-space-upgrade.ts for other
  * storage products.
- *
  * @param product Product name
  * @returns boolean indicating whether the product is a space addon.
  */

@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
+import useActionHooks from './use-action-hooks';
 
 // Implement PinnedItems to avoid importing @wordpress/interface.
 // Because @wordpress/interface depends on @wordpress/preferences which is not always available outside the editor,
@@ -44,6 +45,8 @@ function HelpCenterContent() {
 		const timeout = setTimeout( () => setShowHelpIcon( true ), 0 );
 		return () => clearTimeout( timeout );
 	}, [] );
+
+	useActionHooks();
 
 	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
 

@@ -11,11 +11,13 @@
 		margin: 0;
 		overflow: visible;
 		min-height: auto;
+		transform: scale(var(--scaled-block-renderer-scale, 1));
 
 		iframe {
 			max-width: initial;
 			border: none;
-			transition: opacity 0.15s ease-in-out;
+			// Overwrites the inlined transition: all 0.3s ease 0s; from Gutenberg
+			transition: opacity 0.15s ease-in-out !important;
 		}
 	}
 }

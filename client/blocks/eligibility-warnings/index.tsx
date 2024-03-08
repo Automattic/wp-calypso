@@ -5,22 +5,21 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
+	getPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
-import page from 'page';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -56,6 +55,7 @@ interface ExternalProps {
 	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
 	disableContinueButton?: boolean;
+	showFreeTrial?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -84,13 +84,10 @@ export const EligibilityWarnings = ( {
 	makeSitePublic,
 	translate,
 	disableContinueButton,
+	showFreeTrial,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, siteId || undefined )
-	);
 
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
@@ -119,10 +116,14 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+			const planSlug = PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
+			}
+			if ( showFreeTrial ) {
+				onProceed( options );
+				return;
 			}
 			page.redirect( redirectUrl );
 			return;
@@ -179,8 +180,14 @@ export const EligibilityWarnings = ( {
 						<div className="eligibility-warnings__primary-text">
 							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
 								? translate(
-										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
-										{ args: { monthlyCost } }
+										// Translators: %(planName)s is the plan - Business or Creator, and %(monthlyCost)s is the monthly cost.
+										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the %(planName)s plan for %(monthlyCost)s/month.',
+										{
+											args: {
+												monthlyCost,
+												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+											},
+										}
 								  )
 								: '' }
 						</div>
@@ -188,7 +195,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && ! showFreeTrial && (
 				<CompactCard>
 					<HoldList
 						context={ context }
@@ -250,7 +257,7 @@ export const EligibilityWarnings = ( {
 						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, context ) }
+						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -276,11 +283,15 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
-	context: string | null
+	context: string | null,
+	showFreeTrial?: boolean
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
 		if ( context === 'plugin-details' || context === 'plugins' ) {
 			return translate( 'Upgrade and activate plugin' );
+		}
+		if ( showFreeTrial ) {
+			return translate( 'Start your free trial' );
 		}
 		return translate( 'Upgrade and continue' );
 	}

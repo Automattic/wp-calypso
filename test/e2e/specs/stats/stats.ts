@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		} );
 
 		it( 'Select "Months" stats period', async function () {
-			await statsPage.selectStatsPeriod( 'Months' );
+			await statsPage.selectStatsPeriodFromDropdown( 'Months' );
 		} );
 
 		it( 'Filter traffic activity to Likes', async function () {
@@ -96,10 +96,6 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	describe( 'Subscribers', function () {
 		it( 'Click on Subscribers tab', async function () {
 			await statsPage.clickTab( 'Subscribers' );
-		} );
-
-		it( 'Click link to see all annual insights', async function () {
-			await statsPage.selectSubscriberType( 'Email' );
 		} );
 	} );
 

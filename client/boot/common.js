@@ -1,11 +1,11 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { getUrlParts } from '@automattic/calypso-url';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
-import page from 'page';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
@@ -51,9 +51,10 @@ import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
+const isA8CForAgenciesEnabled = config.isEnabled( 'a8c-for-agencies' );
+
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
-		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
 		const path = parsed.pathname + parsed.search || null;
 		context.prevPath = path === context.path ? false : path;
@@ -135,7 +136,7 @@ function saveOauthFlags() {
 
 function authorizePath() {
 	const redirectUri = new URL(
-		isJetpackCloud() ? '/connect/oauth/token' : '/api/oauth/token',
+		isJetpackCloud() || isA8CForAgenciesEnabled ? '/connect/oauth/token' : '/api/oauth/token',
 		window.location
 	);
 	redirectUri.search = new URLSearchParams( {
@@ -154,7 +155,7 @@ function authorizePath() {
 	return authUri.toString();
 }
 
-const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
+const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison', '/manage/pricing' ];
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
@@ -224,8 +225,8 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
-			networkConnection.init( reduxStore )
+		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
+			networkConnection.default.init( reduxStore )
 		);
 	}
 
@@ -431,7 +432,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 		renderLayout( reduxStore, queryClient );
 	}
 
-	page.start( { decodeURLComponents: false } );
+	page.start();
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {

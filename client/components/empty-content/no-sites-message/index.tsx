@@ -12,6 +12,7 @@ interface NoSitesMessageProps {
 	line?: ReactNode;
 	action?: string;
 	actionURL?: string;
+	actionCallback?: () => void;
 	illustration?: false;
 }
 
@@ -20,6 +21,7 @@ const NoSitesMessage = ( {
 	line,
 	action,
 	actionURL,
+	actionCallback,
 	illustration,
 }: NoSitesMessageProps ) => {
 	const { __ } = useI18n();
@@ -44,6 +46,7 @@ const NoSitesMessage = ( {
 			}
 			action={ action ?? __( 'Create a site' ) }
 			actionURL={ actionURL ?? onboardingUrl() + '?ref=calypso-nosites' }
+			actionCallback={ actionCallback }
 			illustration={ illustration === false ? null : noSitesIllustration }
 			illustrationWidth={ 124 }
 			illustrationHeight={ 101 }

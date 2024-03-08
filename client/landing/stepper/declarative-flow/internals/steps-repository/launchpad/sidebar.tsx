@@ -1,37 +1,41 @@
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { Badge, CircularProgressBar, Dialog, Gridicon } from '@automattic/components';
-import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
-import { Launchpad } from '@automattic/launchpad';
+import { Badge, CircularProgressBar, Gridicon, Tooltip } from '@automattic/components';
+import {
+	OnboardSelect,
+	sortLaunchpadTasksByCompletionStatus,
+	useLaunchpad,
+} from '@automattic/data-stores';
+import { LaunchpadInternal, type Task } from '@automattic/launchpad';
 import { isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { copy, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Tooltip from 'calypso/components/tooltip';
-import { useDomainEmailVerification } from 'calypso/data/domains/use-domain-email-verfication';
-import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { type NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { ResponseDomain } from 'calypso/lib/domains/types';
+import { type ResponseDomain } from 'calypso/lib/domains/types';
 import RecurringPaymentsPlanAddEditModal from 'calypso/my-sites/earn/components/add-edit-plan-modal';
+import { TYPE_TIER } from 'calypso/my-sites/earn/memberships/constants';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getEnhancedTasks } from './task-helper';
+import { getEnhancedTasks } from './task-definitions';
 import { getLaunchpadTranslations } from './translations';
-import { Task } from './types';
 
 type SidebarProps = {
 	sidebarDomain: ResponseDomain;
+	launchpadKey: string;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
-	flow: string | null;
+	flow: string;
 };
 
 function getUrlInfo( url: string ) {
@@ -45,7 +49,14 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarProps ) => {
+const Sidebar = ( {
+	sidebarDomain,
+	launchpadKey,
+	siteSlug,
+	submit,
+	goToStep,
+	flow,
+}: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
@@ -53,17 +64,19 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 	const translate = useTranslate();
 	const site = useSite();
 	const siteIntentOption = site?.options?.site_intent ?? null;
+	const checklistSlug = siteIntentOption;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const [ showPlansModal, setShowPlansModal ] = useState( false );
-	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const queryClient = useQueryClient();
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 
 	const {
 		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
-	} = useLaunchpad( siteSlug, siteIntentOption );
+	} = useLaunchpad( launchpadKey, siteIntentOption, {
+		onSuccess: sortLaunchpadTasksByCompletionStatus,
+	} );
 
 	const selectedDomain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -78,45 +91,61 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		! isBlogOnboardingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
-	const { isEmailUnverified: isDomainEmailUnverified } = useDomainEmailVerification(
-		site?.ID,
-		siteSlug ?? '',
-		selectedDomain?.domain_name ?? sidebarDomain?.domain
-	);
-
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const { getPlanCartItem, getDomainCartItem } = useSelect(
+	const { planCartItem, domainCartItem, productCartItems } = useSelect(
 		( select ) => ( {
-			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
 		} ),
 		[]
 	);
 
-	const enhancedTasks: Task[] | null =
-		site &&
-		getEnhancedTasks(
-			launchpadChecklist,
+	const displayGlobalStylesWarning = globalStylesInUse && shouldLimitGlobalStyles;
+
+	const enhancedTasks: Task[] | null = useMemo( () => {
+		if ( ! site ) {
+			return null;
+		}
+
+		return getEnhancedTasks( {
+			tasks: launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
-			globalStylesInUse && shouldLimitGlobalStyles,
-			PLAN_PREMIUM,
+			displayGlobalStylesWarning,
+			globalStylesMinimumPlan: PLAN_PREMIUM,
 			setShowPlansModal,
 			queryClient,
 			goToStep,
 			flow,
 			isEmailVerified,
 			checklistStatuses,
-			getPlanCartItem(),
-			getDomainCartItem(),
+			planCartItem,
+			domainCartItem,
+			productCartItems,
 			stripeConnectUrl,
-			() => setShowConfirmModal( true ),
-			isDomainEmailUnverified
-		);
+		} );
+	}, [
+		site,
+		launchpadChecklist,
+		siteSlug,
+		submit,
+		displayGlobalStylesWarning,
+		setShowPlansModal,
+		queryClient,
+		goToStep,
+		flow,
+		isEmailVerified,
+		checklistStatuses,
+		planCartItem,
+		domainCartItem,
+		productCartItems,
+		stripeConnectUrl,
+	] );
 
 	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
@@ -167,21 +196,21 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 		);
 	}
 
-	if ( ! site ) {
-		return null;
-	}
-
+	// If there is no site yet then we set 1 as numberOfSteps so the CircularProgressBar gets rendered in
+	// an empty state. If site is here then we default to the previous behaviour: show it if enhancedTasks.length > 0.
+	const numberOfSteps = site === null ? 1 : enhancedTasks?.length || null;
 	return (
 		<>
-			<QueryMembershipsSettings siteId={ site.ID } source="launchpad" />
+			{ site && <QueryMembershipsSettings siteId={ site.ID } source="launchpad" /> }
 			<div className="launchpad__sidebar">
 				<div className="launchpad__sidebar-content-container">
 					<div className="launchpad__progress-bar-container">
 						<CircularProgressBar
 							size={ 40 }
 							enableDesktopScaling
-							currentStep={ currentTask || null }
-							numberOfSteps={ enhancedTasks?.length || null }
+							currentStep={ currentTask || 0 }
+							numberOfSteps={ numberOfSteps }
+							showProgressText={ site !== null }
 						/>
 					</div>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
@@ -244,54 +273,34 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goToStep, flow }: SidebarPr
 							</p>
 						</div>
 					) }
-					<Launchpad
-						siteSlug={ siteSlug }
+					<LaunchpadInternal
+						flow={ flow }
+						site={ site }
+						siteSlug={ launchpadKey }
+						checklistSlug={ checklistSlug }
 						taskFilter={ () => enhancedTasks || [] }
+						launchpadContext="onboarding"
 						makeLastTaskPrimaryAction={ true }
 					/>
 					{ showPlansModal && site?.ID && (
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ () => setShowPlansModal( false ) }
-							product={ { subscribe_as_site_subscriber: true, price: 5 } }
-							annualProduct={ { subscribe_as_site_subscriber: true, price: 5 * 12 } }
+							product={ {
+								price: 5,
+								subscribe_as_site_subscriber: true,
+								title: translate( 'Paid newsletter' ),
+								type: TYPE_TIER,
+							} }
+							annualProduct={ {
+								price: 5 * 12,
+								subscribe_as_site_subscriber: true,
+								title: `${ translate( 'Paid newsletter' ) } ${ translate( '(yearly)' ) }`,
+							} }
 							siteId={ site.ID }
 						/>
 					) }
 				</div>
 			</div>
-			<Dialog
-				isVisible={ showConfirmModal }
-				buttons={ [
-					{
-						action: 'cancel',
-						label: translate( 'Cancel' ),
-					},
-					{
-						action: 'launch',
-						label: translate( 'Continue anyway' ),
-						isPrimary: true,
-						onClick: () => {
-							enhancedTasks?.find( ( task ) => task.isLaunchTask )?.actionDispatch?.( true );
-							setShowConfirmModal( false );
-						},
-					},
-				] }
-				onClose={ () => setShowConfirmModal( false ) }
-			>
-				<p>
-					{ translate(
-						'Your domain email address is still unverified. This will cause {{strong}}%(domain)s{{/strong}} to be suspended in the future.{{break/}}{{break/}}Please check your inbox for the ICANN verification email.',
-						{
-							components: {
-								p: <p />,
-								break: <br />,
-								strong: <strong />,
-							},
-							args: { domain: sidebarDomain?.domain },
-						}
-					) }
-				</p>
-			</Dialog>
 		</>
 	);
 };

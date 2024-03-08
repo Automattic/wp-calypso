@@ -47,7 +47,6 @@
 	.button.domain-suggestion__action {
 		flex-grow: 0;
 		text-align: center;
-		transition: all 0.1s linear;
 
 		.is-placeholder & {
 			animation: loading-fade 1.6s ease-in-out infinite;
@@ -118,15 +117,11 @@
 	}
 
 	.domain-registration-suggestion__badges {
-		align-self: flex-start;
+		align-self: center;
 		align-items: center;
 		display: flex;
 		font-size: $font-body-extra-small;
 		order: 2;
-
-		@include break-mobile {
-			align-self: center;
-		}
 
 		.progress-bar {
 			width: 25%;
@@ -230,7 +225,9 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		margin-bottom: initial;
 
 		@include break-wide {
-			flex-direction: row;
+			&:not(.domain-registration-suggestion__larger-domain) {
+				flex-direction: row;
+			}
 		}
 	}
 
@@ -266,7 +263,7 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
 	border-top: 1px solid rgba(220, 220, 222, 0.64);
 
-	@include break-mobile {
+	@include break-small {
 		margin: 0 20px;
 		border-top: none;
 	}

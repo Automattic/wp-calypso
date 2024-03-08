@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import useChangeSiteDomain from '../../../../hooks/use-change-site-domain';
 import type { Step } from '../../types';
 import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
@@ -41,6 +42,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const [ isCartPendingUpdateDomain, setIsCartPendingUpdateDomain ] =
 		useState< DomainSuggestion >();
 	const site = useSite();
+
+	const changeSiteDomain = useChangeSiteDomain();
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -93,6 +96,10 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
+		if ( suggestion?.is_free && suggestion?.domain_name ) {
+			changeSiteDomain( suggestion?.domain_name );
+		}
+
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
 	};
 
@@ -103,6 +110,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					key={ domainSuggestion }
 					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
@@ -236,7 +244,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow || isBlogOnboardingFlow( flow ) }
+				shouldHideNavButtons={ isVideoPressFlow }
+				hideSkip={ isBlogOnboardingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

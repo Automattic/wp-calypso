@@ -1,4 +1,5 @@
 @import "./features/use-classic-block-guide";
+@import "./features/live-preview";
 
 .blog-onboarding-hide {
 	.components-external-link, // "Connect an account" link in Jetpack sidebar
@@ -15,4 +16,11 @@
 	.edit-post-layout .editor-post-publish-panel {
 		top: 0;
 	}
+}
+
+// Hotfix to prevent the site editor's W logo to cover the whole top bar on small screens.
+// @see https://github.com/Automattic/wp-calypso/issues/87247
+.edit-site-layout.is-full-canvas .edit-site-layout__hub {
+	padding-right: 0;
+	width: 60px;
 }

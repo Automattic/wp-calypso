@@ -1,4 +1,5 @@
-export const PATTERN_SOURCE_SITE_ID = 174455321; // dotcompatterns
+export const getPatternSourceSiteID = () => '174455321'; // dotcompatterns
+
 export const PUBLIC_API_URL = 'https://public-api.wordpress.com';
 export const SITE_TAGLINE = 'Site Tagline';
 
@@ -7,19 +8,20 @@ export const NAVIGATOR_PATHS = {
 	MAIN_HEADER: '/main/header',
 	MAIN_FOOTER: '/main/footer',
 	MAIN_PATTERNS: '/main/:categorySlug',
-	SECTIONS: '/sections',
-	SECTIONS_PATTERNS: '/sections/:categorySlug',
 	STYLES: '/styles',
 	STYLES_COLORS: '/styles/colors',
 	STYLES_FONTS: '/styles/fonts',
 	ACTIVATION: '/activation',
 	CONFIRMATION: '/confirmation',
 	UPSELL: '/upsell',
+	PAGES: '/pages',
 };
 
-export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN_HEADER;
+export const INITIAL_PATH = NAVIGATOR_PATHS.MAIN;
 
 export const INITIAL_SCREEN = 'main';
+
+export const INITIAL_CATEGORY = 'intro';
 
 /* Category list of the patterns fetched via PTK API from Dotcompatterns
  *
@@ -48,7 +50,7 @@ export const PATTERN_CATEGORIES = [
 	//'media', -- Not exist
 	'newsletter',
 	//'podcast', -- Hidden
-	//'portfolio', -- Hidden
+	'portfolio', // For page patterns only in v1
 	//'quotes', -- Not exist
 	'services',
 	'store',
@@ -69,4 +71,34 @@ export const ORDERED_PATTERN_CATEGORIES = [
 	'contact',
 ];
 
-export const INITIAL_CATEGORY = ORDERED_PATTERN_CATEGORIES[ 0 ];
+export const INITIAL_PAGES = [ 'about' ];
+
+export const PATTERN_PAGES_CATEGORIES = [
+	'about',
+	'contact',
+	'portfolio', // only in v1
+	'gallery', // only in v2
+	'posts',
+	'services',
+	'store',
+];
+
+export const ORDERED_PATTERN_PAGES_CATEGORIES = [
+	'about',
+	'services',
+	'portfolio', // only in v1
+	'gallery', // only in v2
+	'store',
+	'posts',
+	'contact',
+];
+
+// From URL params for testing
+const searchParams = new URLSearchParams( window.location.search );
+const viewportWidth = searchParams.get( 'viewportWidth' );
+const placeholderHeight = searchParams.get( 'placeholderHeight' );
+
+// Pattern rendering
+export const DEFAULT_VIEWPORT_HEIGHT = 500;
+export const DEFAULT_VIEWPORT_WIDTH = Number( viewportWidth ) || 1200;
+export const PLACEHOLDER_HEIGHT = Number( placeholderHeight ) || 150;

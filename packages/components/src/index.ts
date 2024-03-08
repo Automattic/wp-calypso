@@ -1,12 +1,13 @@
 export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
 export { default as Button } from './button';
-export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
+export { default as FoldableCard } from './foldable-card';
 export { default as Count } from './count';
 export * from './device-switcher';
 export { default as Dialog } from './dialog';
+export type { BaseButton } from './dialog/button-bar';
 export * from './forms';
 export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
@@ -23,7 +24,6 @@ export { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
-export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
@@ -58,6 +58,10 @@ export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-pop
 export { default as JetpackUpsellCard } from './jetpack-upsell-card';
 export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
+export { default as Tooltip } from './tooltip';
+export { default as SegmentedControl } from './segmented-control';
+export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
+export { default as PlanPrice } from './plan-price';
 export * from './theme-type-badge';
 
 // Types

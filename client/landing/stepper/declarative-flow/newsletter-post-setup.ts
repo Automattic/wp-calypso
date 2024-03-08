@@ -11,6 +11,7 @@ const newsletterPostSetup: Flow = {
 	get title() {
 		return translate( 'Newsletter' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [ { slug: 'newsletterPostSetup', component: NewsletterPostSetup } ];
 	},

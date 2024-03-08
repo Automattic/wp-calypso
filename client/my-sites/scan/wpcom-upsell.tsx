@@ -1,14 +1,16 @@
 import {
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+	PLAN_BUSINESS,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
@@ -54,18 +56,14 @@ export default function WPCOMScanUpsellPage() {
 
 	// Only show promos for features the blog does not already have.
 	const filteredPromos: PromoSectionProps = { promos: promos.filter( ( p ) => p.isShown ) };
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (
 		<Main className="scan scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Scan' ) }
-				id="scan-header"
-				align="left"
-				brandFont
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 
 			<PromoCard
 				title={ translate( 'We guard your site. You run your business.' ) }
@@ -80,7 +78,11 @@ export default function WPCOMScanUpsellPage() {
 				</p>
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Upgrade to Business Plan' ),
+						text: translate( 'Upgrade to %(planName)s Plan', {
+							args: {
+								planName: businessPlanName,
+							},
+						} ),
 						action: {
 							url: `/checkout/${ siteSlug }/pro`,
 							onClick: onUpgradeClick,
@@ -92,7 +94,13 @@ export default function WPCOMScanUpsellPage() {
 
 			{ filteredPromos.promos.length > 0 && (
 				<>
-					<h2 className="scan__subheader">{ translate( 'Also included in the Business Plan' ) }</h2>
+					<h2 className="scan__subheader">
+						{ translate( 'Also included in the %(planName)s Plan', {
+							args: {
+								planName: businessPlanName,
+							},
+						} ) }
+					</h2>
 					<PromoSection { ...filteredPromos } />
 				</>
 			) }

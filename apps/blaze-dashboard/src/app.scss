@@ -1,11 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 
-@import "./styles/theme.scss";
 @import "./styles/layout.scss";
 @import "./styles/wp-admin.scss";
 @import "./styles/promote-widget.scss";
 @import "./styles/typography.scss";
 
+// Specific Jetpack Blaze styles
 .jp-blaze-dashboard {
 	.promote-post-notice {
 		margin: 0;
@@ -36,10 +36,10 @@
 				.inline-support-link {
 					font-weight: 600;
 					font-size: 1rem;
-
 					padding: 8px 24px;
 					line-height: 22px;
 					min-width: 110px;
+					background-color: var(--color-surface);
 				}
 
 				button {
@@ -101,8 +101,9 @@
 			}
 		}
 
-		// Post table
-		.post-item__post-promote-button {
+		// Post and Campaign buttons
+		.post-item__post-promote-button,
+		.campaign-item__post-details-button {
 			color: var(--color-accent) !important;
 			border: 1.5px solid var(--color-accent);
 			border-radius: 4px;
@@ -112,8 +113,6 @@
 
 			&:hover {
 				text-decoration: underline;
-				color: var(--color-accent);
-				background-color: var(--color-surface);
 			}
 		}
 
@@ -126,14 +125,14 @@
 		// Campaigns details
 		.campaign-item__container {
 			.campaign-item-header {
-				button.campaign-item-promote-again-button {
+				button.promote-again-button {
 					font-weight: 600;
 					font-size: 1rem;
 					padding: 8px 24px;
 					min-width: 110px;
 					line-height: 24px;
-					margin-top: 15px;
 					border-radius: 4px;
+					height: 100%;
 				}
 			}
 
@@ -143,13 +142,15 @@
 
 			.campaign-item-details__support-buttons-container {
 				.campaign-item-details__support-buttons a {
-					padding: 4px 8px;
+					padding: 10px;
 					background: none;
 					color: var(--color-accent);
-					border: 1.5px solid var(--color-accent);
+					border: 1px solid var(--studio-gray-10);
 					font-weight: 600;
 					font-size: 0.75rem;
-					line-height: 20px;
+					// display: inline-flex;
+					align-items: center;
+					line-height: unset;
 				}
 
 				.campaign-item-details__support-articles-wrapper {
@@ -179,6 +180,68 @@ $break-medium-expanded-menu: $break-medium + 272px;
 				line-height: 16px;
 				padding: 12px;
 			}
+		}
+	}
+}
+
+// Specific Woo Blaze styles
+.woo-blaze-dashboard {
+	.promote-post-i2 {
+		// Header
+		.promote-post-i2__top-bar {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			margin-bottom: 16px;
+
+			.promote-post-i2__top-bar-buttons {
+				height: 100%;
+
+				.inline-support-link {
+					font-size: rem(14px);
+					font-weight: 400;
+
+					height: 36px;
+					line-height: 22px;
+					min-width: auto;
+					padding: 6px 12px;
+					background-color: var(--color-surface);
+				}
+
+				button {
+					font-size: rem(13px);
+					font-weight: 400;
+					height: 36px;
+					justify-content: center;
+					line-height: 22px;
+					min-width: auto;
+					padding: 6px 12px;
+				}
+			}
+		}
+
+		.promote-post-i2 .post-item__post-promote-button :hover {
+			color: var(--color-accent) !important;
+		}
+
+		// Campaigns details
+		.campaign-item__container {
+			.campaign-item-details__support-buttons-container {
+				.campaign-item-details__support-buttons a {
+					height: 100%;
+				}
+			}
+		}
+	}
+}
+
+// Shared styles
+.woo-blaze-dashboard,
+.jp-blaze-dashboard {
+	// Campaigns details
+	.campaign-item__container {
+		.campaign-item-details__ad-destination-url-container a {
+			background: none;
 		}
 	}
 }

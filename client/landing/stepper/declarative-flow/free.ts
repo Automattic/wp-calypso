@@ -1,17 +1,14 @@
-import {
-	updateLaunchpadSettings,
-	type OnboardSelect,
-	type UserSelect,
-} from '@automattic/data-stores';
+import { type OnboardSelect, type UserSelect } from '@automattic/data-stores';
 import { isAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
+import { FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
-import wpcom from 'calypso/lib/wp';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -22,14 +19,8 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DesignSetup from './internals/steps-repository/design-setup';
-import ErrorStep from './internals/steps-repository/error-step';
-import FreeSetup from './internals/steps-repository/free-setup';
-import LaunchPad from './internals/steps-repository/launchpad';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import Processing from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -42,6 +33,7 @@ const free: Flow = {
 	get title() {
 		return translate( 'Free' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
@@ -50,21 +42,19 @@ const free: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'freeSetup', component: FreeSetup },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'launchpad', component: LaunchPad },
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'error', component: ErrorStep },
+			STEPS.FREE_SETUP,
+			STEPS.PROCESSING,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.LAUNCHPAD,
+			STEPS.DESIGN_SETUP,
+			STEPS.PATTERN_ASSEMBLER,
+			STEPS.ERROR,
 		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const selectedDesign = useSelect(
@@ -72,17 +62,7 @@ const free: Flow = {
 			[]
 		);
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -99,9 +79,9 @@ const free: Flow = {
 
 			switch ( _currentStep ) {
 				case 'freeSetup':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'create-site' );
 
-				case 'siteCreationStep':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing':
@@ -151,12 +131,12 @@ const free: Flow = {
 					}
 
 					if ( providedDependencies?.shouldGoToAssembler ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( `processing?siteSlug=${ siteSlug }` );
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( `processing?siteSlug=${ siteSlug }` );
 				}
 
@@ -169,7 +149,7 @@ const free: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'designSetup' );
 			}
 		};
@@ -177,10 +157,12 @@ const free: Flow = {
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'free',
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'freeSetup' );

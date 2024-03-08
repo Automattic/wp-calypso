@@ -43,8 +43,13 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		&__ends,
 		&__budget,
 		&__impressions,
-		&__clicks {
+		&__clicks,
+		&__conversion {
 			padding-right: 16px;
+		}
+
+		&__post-type-mobile {
+			display: none;
 		}
 
 		&__data {
@@ -68,7 +73,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__budget {
-			width: 12%;
+			width: 10%;
 		}
 
 		&__impressions {
@@ -76,7 +81,11 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		&__clicks {
-			width: 10%;
+			width: 6%;
+		}
+
+		&__conversion {
+			width: 12%;
 		}
 
 		&__action {
@@ -121,6 +130,7 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		padding-right: 16px;
 		padding-top: 16px;
 		vertical-align: middle;
+		text-align: left;
 	}
 
 	td:last-child {
@@ -225,14 +235,20 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 		}
 
 		.campaign-item {
+			&__post-type,
 			&__user,
 			&__status,
 			&__ends,
 			&__budget,
 			&__impressions,
 			&__clicks,
+			&__conversion,
 			&__action {
 				display: none;
+			}
+
+			&__post-type-mobile {
+				display: block;
 			}
 
 			&__status-mobile {

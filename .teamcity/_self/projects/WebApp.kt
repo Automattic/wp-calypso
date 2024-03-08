@@ -365,6 +365,9 @@ object RunAllUnitTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
+				echo -n "Node version: " && node --version
+				echo -n "Yarn version: " && yarn --version
+				echo -n "NPM version: " && npm --version
 
 				# Install modules
 				${_self.yarn_install_cmd}
@@ -528,6 +531,10 @@ object CheckCodeStyleBranch : BuildType({
 		)
 	}
 
+	cleanup {
+		artifacts(days = 14)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
@@ -550,21 +557,21 @@ object CheckCodeStyleBranch : BuildType({
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
+				set -x
 				export NODE_ENV="test"
 
 				# Find files to lint
 				if [ "%run_full_eslint%" = "true" ]; then
-					FILES_TO_LINT="."
+					echo "Linting all files"
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
-				fi
-				echo "Files to lint:"
-				echo ${'$'}FILES_TO_LINT
-				echo ""
-
-				# Lint files
-				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
+					# instead of passing the full list of files to eslint directly.
+					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?)${'$'}' || true); do
+						( echo "Linting ${'$'}file"
+						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
+					done
+					wait
 				fi
 			"""
 		}
@@ -806,7 +813,6 @@ object PreReleaseE2ETests : BuildType({
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.TEAMCITY_VERSION", "2021")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.VIEWPORT_NAME", "desktop")
@@ -852,10 +858,11 @@ object PreReleaseE2ETests : BuildType({
 				set -o errexit
 
 				# Retry failed tests only.
-				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures
+				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
+
 
 		bashNodeScript {
 			name = "Collect results"

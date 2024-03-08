@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { PreviewComponent } from '../components';
 
 const selectors = {
@@ -59,6 +60,34 @@ export class ThemesDetailPage {
 		if ( ! keepModal ) {
 			await this.page.keyboard.press( 'Escape' );
 		}
+	}
+
+	/**
+	 * Click on the Pick this design button displayed in Logged out theme details.
+	 */
+	async pickThisDesign(): Promise< void > {
+		await this.page.getByRole( 'link', { name: 'Pick this design' } ).click();
+	}
+
+	/**
+	 * Visit the theme details page.
+	 *
+	 * @param themeSlug
+	 * @param siteSlug
+	 */
+	async visitTheme( themeSlug: string, siteSlug: string | null = null ) {
+		const targetUrl = `theme/${ themeSlug }/${ siteSlug ?? '' }`;
+
+		// We are getting a pending status for https://wordpress.com/cspreport intermittently
+		// which causes the login to hang on networkidle when running the tests locally.
+		// This fulfill's the route request with status 200.
+		// See https://github.com/Automattic/wp-calypso/issues/69294
+		await this.page.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
+		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
 	/**

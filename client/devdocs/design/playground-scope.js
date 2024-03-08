@@ -10,7 +10,12 @@ export {
 	ProgressBar,
 	Ribbon,
 	ScreenReaderText,
+	SegmentedControl,
 	Suggestions,
+	FoldableCard,
+	FormLabel,
+	Tooltip,
+	SelectDropdown,
 } from '@automattic/components';
 
 /**
@@ -40,7 +45,6 @@ export { default as FAQ } from 'calypso/components/faq';
 export { default as FeatureGate } from 'calypso/components/feature-example';
 export { default as FilePickers } from 'calypso/components/file-picker';
 export { default as Focusable } from 'calypso/components/focusable';
-export { default as FoldableCard } from 'calypso/components/foldable-card';
 export { default as FormattedDate } from 'calypso/components/formatted-date';
 export { default as FormattedHeader } from 'calypso/components/formatted-header';
 export { default as FormButton } from 'calypso/components/forms/form-button';
@@ -49,7 +53,6 @@ export { default as FormCheckbox } from 'calypso/components/forms/form-checkbox'
 export { default as FormCountrySelect } from 'calypso/components/forms/form-country-select';
 export { default as FormCurrencyInput } from 'calypso/components/forms/form-currency-input';
 export { default as FormFieldset } from 'calypso/components/forms/form-fieldset';
-export { default as FormLabel } from 'calypso/components/forms/form-label';
 export { default as FormLegend } from 'calypso/components/forms/form-legend';
 export { default as FormPasswordInput } from 'calypso/components/forms/form-password-input';
 export { default as FormPhoneInput } from 'calypso/components/forms/form-phone-input';
@@ -95,8 +98,6 @@ export { default as SectionNav } from 'calypso/components/section-nav';
 export { default as NavTabs } from 'calypso/components/section-nav/tabs';
 export { default as NavSegmented } from 'calypso/components/section-nav/segmented';
 export { default as NavItem } from 'calypso/components/section-nav/item';
-export { default as SegmentedControl } from 'calypso/components/segmented-control';
-export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';
 export { default as SpinnerButton } from 'calypso/components/spinner-button';
@@ -109,7 +110,6 @@ export { default as Timeline } from 'calypso/components/timeline';
 export { default as TimeSince } from 'calypso/components/time-since';
 export { default as Timezone } from 'calypso/components/timezone';
 export { default as TokenFields } from 'calypso/components/token-field';
-export { default as Tooltip } from 'calypso/components/tooltip';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu';
 export { default as VerticalNav } from 'calypso/components/vertical-nav';
 export { default as VerticalNavItem } from 'calypso/components/vertical-nav/item';

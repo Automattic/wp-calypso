@@ -6,6 +6,7 @@ import {
 	FEATURE_CDN,
 	FEATURE_CPUS,
 	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FAST_DNS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_LIVE_CHAT_SUPPORT,
@@ -13,48 +14,63 @@ import {
 	FEATURE_MULTI_SITE,
 	FEATURE_NO_ADS,
 	FEATURE_PLUGINS_THEMES,
-	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	getPlan,
 } from '@automattic/calypso-products';
-import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
+import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { ExternalLink, Tooltip } from '@wordpress/components';
+import { Tooltip } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { Icon as WpIcon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
-import i18n, { useTranslate } from 'i18n-calypso';
-import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
+import { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { useSelector } from 'calypso/state';
+import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
-import { isExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
 
+export type UpgradeModalClosedBy = 'close_icon' | 'cancel_button' | 'dialog_action';
+
 interface UpgradeModalProps {
+	additionalClassNames?: string;
+	additionalOverlayClassNames?: string;
 	/* Theme slug */
 	slug: string;
 	isOpen: boolean;
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
 	isMarketplacePlanSubscriptionNeeeded?: boolean;
 	marketplaceProduct?: ProductListItem;
-	closeModal: () => void;
+	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
 }
 
 interface UpgradeModalContent {
-	header: JSX.Element;
-	text: JSX.Element;
+	header: JSX.Element | null;
+	text: JSX.Element | null;
 	price: JSX.Element | null;
-	action: JSX.Element;
+	action: JSX.Element | null;
 }
 
+/**
+ * - This component provides users with details about a specific theme and outlines the plan they need to upgrade to.
+ * - It is also used outside of Calypso, currently in `apps/wpcom-block-editor`, so refrain from incorporating Calypso state, Gridicons, or any logic that relies on Calypso dependencies.
+ */
 export const ThemeUpgradeModal = ( {
+	additionalClassNames,
+	additionalOverlayClassNames,
 	slug,
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
@@ -64,15 +80,24 @@ export const ThemeUpgradeModal = ( {
 	checkout,
 }: UpgradeModalProps ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const theme = useThemeDetails( slug );
 	const isDesktop = useBreakpoint( '>782px' );
 
 	// Check current theme: Does it have a plugin bundled?
-	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
-	const showBundleVersion = theme_software_set;
-	const isExternallyManaged = useSelector( ( state ) => isExternallyManagedTheme( state, slug ) );
+	const themeSoftwareSet = theme?.data?.taxonomies?.theme_software_set as
+		| ThemeSoftwareSet[]
+		| undefined;
+	const showBundleVersion = themeSoftwareSet?.length;
+	const isExternallyManaged = theme?.data?.theme_type === 'managed-external';
 
+	// Currently, it always get the first software set. In the future, the whole applications can be enhanced to support multiple ones.
+	const firstThemeSoftwareSet = themeSoftwareSet?.[ 0 ];
+	const bundleSettings = useBundleSettings( firstThemeSoftwareSet?.slug );
+
+	const personalPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL ),
+		[]
+	);
 	const premiumPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
 		[]
@@ -89,24 +114,30 @@ export const ThemeUpgradeModal = ( {
 	//Wait until we have theme and product data to show content
 	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
 
-	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const planPrice = premiumPlanProduct?.combined_cost_display;
+	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
+	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
+	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
+	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
+
+	const getPersonalPlanModalData = (): UpgradeModalContent => {
+		const planPrice = personalPlanProduct?.combined_cost_display;
 
 		return {
 			header: (
-				<h1 className="theme-upgrade-modal__heading">
-					{ translate( 'Unlock this premium theme' ) }
-				</h1>
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
 			),
 			text: (
 				<p>
 					{ translate(
-						'Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It’s {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						'Get access to this theme, and a ton of other features, with a subscription to the %(plan)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
 							},
-							args: planPrice,
+							args: {
+								planPrice: planPrice || '',
+								plan: personalPlanName,
+							},
 						}
 					) }
 				</p>
@@ -114,7 +145,54 @@ export const ThemeUpgradeModal = ( {
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle">
-					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						className="theme-upgrade-modal__upgrade-plan"
+						primary
+						onClick={ () => checkout() }
+					>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
+
+	const getStandardPurchaseModalData = (): UpgradeModalContent => {
+		const planPrice = premiumPlanProduct?.combined_cost_display;
+
+		return {
+			header: (
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
+			),
+			text: (
+				<p>
+					{ translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								premiumPlanName: premiumPlanName,
+							},
+						}
+					) }
+				</p>
+			),
+			price: null,
+			action: (
+				<div className="theme-upgrade-modal__actions bundle">
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
@@ -131,28 +209,46 @@ export const ThemeUpgradeModal = ( {
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
 		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+
+		if ( ! bundleSettings ) {
+			return {
+				header: null,
+				text: null,
+				price: null,
+				action: null,
+			};
+		}
+
+		const bundleName = bundleSettings.name;
+		const bundledPluginMessage = bundleSettings.bundledPluginMessage;
+		const color = bundleSettings.color;
+		const Icon = bundleSettings.iconComponent;
+
 		return {
 			header: (
 				<>
-					<img
-						src={ wooCommerceImage }
-						alt="WooCommerce"
-						className="theme-upgrade-modal__woo-logo"
-					/>
+					<div className="theme-upgrade-modal__logo" style={ { backgroundColor: color } }>
+						<Icon />
+					</div>
 					<h1 className="theme-upgrade-modal__heading bundle">
-						{ translate( 'Unlock this WooCommerce theme' ) }
+						{
+							// Translators: %(bundleName)s is the name of the bundle, sometimes represented as a product name. Examples: "WooCommerce" or "Special".
+							translate( 'Unlock this %(bundleName)s theme', { args: { bundleName } } )
+						}
 					</h1>
 				</>
 			),
 			text: (
 				<p>
+					{ bundledPluginMessage }{ ' ' }
 					{ translate(
-						'This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It’s %s per year with a 14-day money-back guarantee.',
+						// translators: %s is the business plan price.
+						'Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features. It’s %(businessPlanPrice)s per year with a 14-day money-back guarantee.',
 						{
-							components: {
-								link: <ExternalLink children={ null } href="https://woocommerce.com/" />,
+							args: {
+								businessPlanPrice: businessPlanPrice || '',
+								businessPlanName: businessPlanName,
 							},
-							args: businessPlanPrice,
 						}
 					) }
 				</p>
@@ -160,7 +256,10 @@ export const ThemeUpgradeModal = ( {
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle">
-					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
@@ -201,7 +300,13 @@ export const ThemeUpgradeModal = ( {
 				<>
 					<p>
 						{ translate(
-							'This partner theme is only available to buy on the Business or eCommerce plans.'
+							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
+							{
+								args: {
+									businessPlanName: businessPlanName,
+									commercePlanName: ecommercePlanName,
+								},
+							}
 						) }
 					</p>
 					<div>
@@ -220,7 +325,13 @@ export const ThemeUpgradeModal = ( {
 							) }
 							{ isMarketplacePlanSubscriptionNeeeded && (
 								<div className="theme-upgrade-modal__price-item">
-									<label>{ translate( 'Business plan' ) }</label>
+									<label>
+										{ translate( '%(businessPlanName)s plan', {
+											args: {
+												businessPlanName: businessPlanName,
+											},
+										} ) }
+									</label>
 									<label className="theme-upgrade-modal__price-value">
 										<strong>{ businessPlanPriceText }</strong>
 									</label>
@@ -233,7 +344,10 @@ export const ThemeUpgradeModal = ( {
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle externally-managed">
-					<Button className="theme-upgrade-modal__cancel" onClick={ () => closeModal() }>
+					<Button
+						className="theme-upgrade-modal__cancel"
+						onClick={ () => closeModal( 'cancel_button' ) }
+					>
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button
@@ -251,7 +365,7 @@ export const ThemeUpgradeModal = ( {
 	const getStandardPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -259,10 +373,19 @@ export const ThemeUpgradeModal = ( {
 		] );
 	};
 
+	const getPersonalPlanFeatureList = () => {
+		return getPlanFeaturesObject( [
+			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_AD_FREE_EXPERIENCE,
+			FEATURE_FAST_DNS,
+		] );
+	};
+
 	const getBundledFirstPartyPurchaseFeatureList = () => {
 		return getPlanFeaturesObject( [
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_PREMIUM_THEMES_V2,
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -300,24 +423,27 @@ export const ThemeUpgradeModal = ( {
 	if ( showBundleVersion ) {
 		modalData = getBundledFirstPartyPurchaseModalData();
 		featureList = getBundledFirstPartyPurchaseFeatureList();
-		featureListHeader =
-			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
-				? translate( 'Included with your Business plan' )
-				: translate( 'Included with your purchase' );
+		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
+			args: { businessPlanName: businessPlanName },
+		} );
 	} else if ( isExternallyManaged ) {
 		modalData = getExternallyManagedPurchaseModalData();
 		featureList = getExternallyManagedFeatureList();
-		featureListHeader =
-			isEnglishLocale || i18n.hasTranslation( 'Included with your Business plan' )
-				? translate( 'Included with your Business plan' )
-				: translate( 'Included with your purchase' );
+		featureListHeader = translate( 'Included with your %(businessPlanName)s plan', {
+			args: { businessPlanName: businessPlanName },
+		} );
+	} else if ( theme?.data?.theme_tier?.feature === WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ) {
+		modalData = getPersonalPlanModalData();
+		featureList = getPersonalPlanFeatureList();
+		featureListHeader = translate( 'Included with your %(plan)s plan', {
+			args: { plan: personalPlanName },
+		} );
 	} else {
 		modalData = getStandardPurchaseModalData();
 		featureList = getStandardPurchaseFeatureList();
-		featureListHeader =
-			isEnglishLocale || i18n.hasTranslation( 'Included with your Premium plan' )
-				? translate( 'Included with your Premium plan' )
-				: translate( 'Included with your purchase' );
+		featureListHeader = translate( 'Included with your %(premiumPlanName)s plan', {
+			args: { premiumPlanName: premiumPlanName },
+		} );
 	}
 
 	const features =
@@ -327,9 +453,9 @@ export const ThemeUpgradeModal = ( {
 				<ul>
 					{ featureList.map( ( feature, i ) => (
 						<li key={ i } className="theme-upgrade-modal__included-item">
-							<Tooltip text={ feature.getDescription?.() } position="top left">
+							<Tooltip text={ feature.getDescription?.() as string } position="top left">
 								<div>
-									<Gridicon icon="checkmark" size={ 16 } />
+									<WpIcon className="wpicon" icon={ check } size={ 24 } />
 									{ feature.getTitle() }
 								</div>
 							</Tooltip>
@@ -341,9 +467,11 @@ export const ThemeUpgradeModal = ( {
 
 	return (
 		<Dialog
+			additionalClassNames={ additionalClassNames }
+			additionalOverlayClassNames={ additionalOverlayClassNames }
 			className={ classNames( 'theme-upgrade-modal', { loading: isLoading } ) }
 			isVisible={ isOpen }
-			onClose={ () => closeModal() }
+			onClose={ () => closeModal( 'dialog_action' ) }
 			isFullScreen
 		>
 			{ isLoading && <LoadingEllipsis /> }
@@ -358,8 +486,12 @@ export const ThemeUpgradeModal = ( {
 						{ modalData.action }
 					</div>
 					<div className="theme-upgrade-modal__col">{ features }</div>
-					<Button className="theme-upgrade-modal__close" borderless onClick={ () => closeModal() }>
-						<Gridicon icon="cross" size={ 12 } />
+					<Button
+						className="theme-upgrade-modal__close"
+						borderless
+						onClick={ () => closeModal( 'close_icon' ) }
+					>
+						<WpIcon className="wpicon" icon={ close } size={ 24 } />
 						<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 					</Button>
 				</>

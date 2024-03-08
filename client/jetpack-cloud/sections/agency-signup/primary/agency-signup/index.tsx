@@ -9,7 +9,7 @@ export default function AgencySignup() {
 
 	return (
 		<Main className="agency-signup">
-			<DocumentHead title={ translate( 'Sign up as an Agency' ) } />
+			<DocumentHead title={ translate( 'Sign up for Jetpack Manage' ) } />
 			<SidebarNavigation />
 
 			<AgencySignupForm />

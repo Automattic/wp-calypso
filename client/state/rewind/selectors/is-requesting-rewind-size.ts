@@ -4,7 +4,6 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns whether or not Rewind site size information is currently being
  * requested for a given site ID.
- *
  * @param state The application state.
  * @param siteId The site for which to retrieve request status.
  * @returns True if size info is being requested; otherwise, false.

@@ -6,9 +6,11 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
+	DESIGN_FIRST_FLOW,
 	DOMAIN_UPSELL_FLOW,
-	ONBOARDING_PM_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
+	isDomainUpsellFlow,
+	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -31,6 +33,7 @@ import {
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 } from 'calypso/state/domains/actions';
+import useChangeSiteDomain from '../../../../hooks/use-change-site-domain';
 import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
@@ -42,9 +45,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
+	const [ isCartPendingUpdate, setIsCartPendingUpdate ] = useState( false );
+	const [ isCartPendingUpdateDomain, setIsCartPendingUpdateDomain ] =
+		useState< DomainSuggestion >();
+
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
+
+	const changeSiteDomain = useChangeSiteDomain();
 
 	const { submit, exitFlow, goBack } = navigation;
 
@@ -90,11 +99,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		shouldHideFreePlan = false
 	) => {
 		if ( ! suggestion ) {
+			// No domain was selected, 'decide later' button was clicked
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
 			setDomain( undefined );
-			return submit?.();
+			return submit?.( { freeDomain: true } );
 		}
+		// this is used mainly to change the button state to busy to show a loading indicator.
+		setIsCartPendingUpdate( true );
+		setIsCartPendingUpdateDomain( suggestion );
 
 		setDomain( suggestion );
 
@@ -110,6 +123,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
+		}
+
+		if ( suggestion?.is_free && suggestion?.domain_name ) {
+			changeSiteDomain( suggestion?.domain_name );
 		}
 
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );
@@ -169,7 +186,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
 			case DOMAIN_UPSELL_FLOW:
-			case ONBOARDING_PM_FLOW:
 				return __( 'Enter some descriptive keywords to get started' );
 			case HUNDRED_YEAR_PLAN_FLOW:
 				return __( 'Secure your 100-Year domain and start building your legacy.' );
@@ -188,7 +204,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === NEWSLETTER_FLOW ) {
+		if ( flow === NEWSLETTER_FLOW || DESIGN_FIRST_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
@@ -252,6 +268,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			onSkip={ handleSkip }
 			onUseYourDomainClick={ () => setShowUseYourDomain( true ) }
 			showUseYourDomain={ showUseYourDomain }
+			isCartPendingUpdate={ isCartPendingUpdate }
+			isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 		/>
 	);
 
@@ -260,21 +278,21 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( [ DOMAIN_UPSELL_FLOW ].includes( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_FLOW ].includes( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );
@@ -298,7 +316,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				<FormattedHeader
 					id="domains-header"
 					align={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
-					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : 'left' }
+					subHeaderAlign={ flow === HUNDRED_YEAR_PLAN_FLOW ? 'center' : null }
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

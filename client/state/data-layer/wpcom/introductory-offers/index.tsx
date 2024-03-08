@@ -10,18 +10,19 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 
-const fetchIntroOffers = ( action: { siteId: number | 'none' } ) => {
+const fetchIntroOffers = ( action: { siteId: number | 'none'; currency: string | undefined } ) => {
 	return http(
 		{
 			method: 'GET',
 			path: `/introductory-offers`,
 			apiNamespace: 'wpcom/v2',
-			query:
-				typeof action.siteId === 'number' && action.siteId > 0
-					? {
-							site: action.siteId,
-					  }
-					: undefined,
+			query: {
+				site: typeof action.siteId === 'number' && action.siteId > 0 ? action.siteId : undefined,
+				currency:
+					typeof action.currency === 'string' && action.currency.length > 0
+						? action.currency
+						: undefined,
+			},
 		},
 		action
 	);

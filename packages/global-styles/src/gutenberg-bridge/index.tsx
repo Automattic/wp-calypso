@@ -12,7 +12,7 @@ import { isPlainObject } from 'is-plain-object';
 import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+	'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
 	'@wordpress/block-editor'
 );
 
@@ -33,14 +33,7 @@ const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user: GlobalStylesOb
 
 const withExperimentalBlockEditorProvider = createHigherOrderComponent(
 	< OuterProps extends object >( InnerComponent: React.ComponentType< OuterProps > ) => {
-		// Use fake assets to eliminate the compatStyles without the id.
-		// See https://github.com/WordPress/gutenberg/blob/f77958cfc13c02b0c0e6b9b697b43bbcad4ba40b/packages/block-editor/src/components/iframe/index.js#L127
-		const settings = {
-			__unstableResolvedAssets: {
-				styles: '<style id="" />',
-			},
-		};
-
+		const settings = {};
 		return ( props: OuterProps ) => (
 			<ExperimentalBlockEditorProvider settings={ settings }>
 				<InnerComponent { ...props } />

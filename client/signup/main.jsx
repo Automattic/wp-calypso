@@ -5,6 +5,7 @@ import {
 	isDomainMapping,
 	isPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import debugModule from 'debug';
@@ -21,7 +22,6 @@ import {
 	omit,
 	startsWith,
 } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -58,6 +58,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -75,6 +76,7 @@ import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
+import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
@@ -87,8 +89,6 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
-	isReskinnedFlow,
-	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -246,7 +246,7 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
+		this.props.flowName === 'website-design-services' && addHotJarScript();
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
@@ -330,7 +330,9 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies, hostingFlow } = this.props;
+		const { signupDependencies, hostingFlow, queryObject } = this.props;
+		const mainFlow = queryObject?.main_flow;
+
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
 
 		if ( ! theme && signupDependencies.themeParameter ) {
@@ -345,6 +347,7 @@ class Signup extends Component {
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 			is_in_hosting_flow: hostingFlow,
+			...( mainFlow ? { flow: mainFlow } : {} ),
 		};
 	}
 
@@ -786,15 +789,19 @@ class Signup extends Component {
 	}
 
 	renderCurrentStep( isReskinned ) {
-		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
+		const { stepName, flowName } = this.props;
+
+		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
+		const flowStepProps = flow?.props?.[ stepName ] || {};
+
+		const currentStepProgress = find( this.props.progress, { stepName } );
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = {
 			...omit( this.props, 'locale' ),
-			...steps[ this.props.stepName ].props,
+			...steps[ stepName ].props,
+			...flowStepProps,
 		};
-		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-
+		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
@@ -807,11 +814,14 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
+		// If a coupon is provided as a query dependency, then hide the free plan.
+		// It's assumed here that the coupon applies to paid plans at the minimum, and
+		// in this scenario it wouldn't be necessary to show a free plan.
+		const hideFreePlan = this.props.signupDependencies.coupon ?? false;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ stepClassName }` }>
+				<div className={ `signup__step is-${ stepName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
@@ -823,16 +833,16 @@ class Signup extends Component {
 							step={ currentStepProgress }
 							initialContext={ this.props.initialContext }
 							steps={ flow.steps }
-							stepName={ this.props.stepName }
+							stepName={ stepName }
 							meta={ flow.meta || {} }
 							goToNextStep={ this.goToNextStep }
 							goToStep={ this.goToStep }
 							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
+							flowName={ flowName }
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
-							hideFreePlan={ false }
+							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
 							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
@@ -888,7 +898,11 @@ class Signup extends Component {
 
 		return (
 			<>
-				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<div
+					className={ `signup is-${ kebabCase( this.props.flowName ) } ${
+						this.props.wooPasswordless ? 'is-woo-passwordless' : ''
+					}` }
+				>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ showPageHeader && (
 						<SignupHeader
@@ -957,6 +971,7 @@ export default connect(
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
+			wooPasswordless: getWooPasswordless( state ),
 		};
 	},
 	{

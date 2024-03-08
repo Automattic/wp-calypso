@@ -1,15 +1,14 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Card, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map, find } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';

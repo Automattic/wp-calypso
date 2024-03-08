@@ -4,11 +4,9 @@ import {
 	UseQueryResult,
 	QueryFunctionContext,
 } from '@tanstack/react-query';
-import { useTranslate } from 'i18n-calypso';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { useDispatch, useSelector } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { useSelector } from 'calypso/state';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 import type { APIInvoices, Invoices } from 'calypso/state/partner-portal/types';
 
@@ -36,6 +34,8 @@ function selectInvoices( api: APIInvoices ): Invoices {
 			id: apiInvoice.id,
 			number: apiInvoice.number,
 			dueDate: apiInvoice.due_date,
+			created: apiInvoice.created,
+			effectiveAt: apiInvoice.effective_at,
 			status: apiInvoice.status,
 			total: apiInvoice.total,
 			currency: apiInvoice.currency,
@@ -49,8 +49,6 @@ export default function useInvoicesQuery(
 	pagination: Pagination,
 	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >
 ): UseQueryResult< Invoices, QueryError > {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
 	return useQuery< APIInvoices, QueryError, Invoices >( {
@@ -58,13 +56,6 @@ export default function useInvoicesQuery(
 		queryFn: queryInvoices,
 		refetchOnWindowFocus: false,
 		select: selectInvoices,
-		onError: () => {
-			dispatch(
-				errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
-					id: 'partner-portal-invoices-failure',
-				} )
-			);
-		},
 		...options,
 	} );
 }

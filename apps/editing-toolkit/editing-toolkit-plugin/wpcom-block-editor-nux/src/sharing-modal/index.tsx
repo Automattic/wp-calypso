@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { FormLabel } from '@automattic/components';
 import { START_WRITING_FLOW, DESIGN_FIRST_FLOW } from '@automattic/onboarding';
-import { Modal, Button, ExternalLink } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { Icon, globe, link as linkIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useI18n } from '@wordpress/react-i18n';
@@ -10,7 +11,6 @@ import classnames from 'classnames';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import { useShouldShowFirstPostPublishedModal } from '../../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
@@ -18,6 +18,7 @@ import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-ce
 import postPublishedImage from './images/illo-share.svg';
 import InlineSocialLogo from './inline-social-logo';
 import InlineSocialLogosSprite from './inline-social-logos-sprite';
+import SuggestedTags from './suggested-tags';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
 
 import './style.scss';
@@ -68,6 +69,7 @@ const SharingModalInner: React.FC = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 	const { createNotice } = useDispatch( noticesStore );
+	const [ shouldShowSuggestedTags, setShouldShowSuggestedTags ] = React.useState( true );
 
 	useEffect( () => {
 		// The first post will show a different modal.
@@ -172,12 +174,6 @@ const SharingModalInner: React.FC = () => {
 			type: 'snackbar',
 		} );
 	};
-	const trackSubscribersClick = () => {
-		recordTracksEvent( 'calypso_editor_sharing_view_subscribers' );
-	};
-
-	const subscribersUrl = `https://wordpress.com/people/subscribers/${ window.location.hostname }`;
-
 	return (
 		<Modal
 			className="wpcom-block-editor-post-published-sharing-modal"
@@ -188,23 +184,6 @@ const SharingModalInner: React.FC = () => {
 			<div className="wpcom-block-editor-post-published-sharing-modal__inner">
 				<div className="wpcom-block-editor-post-published-sharing-modal__left">
 					<h1> { __( 'Post published!', 'full-site-editing' ) } </h1>
-					<p>
-						{ createInterpolateElement(
-							__(
-								'Your post is now live and was delivered to each of <a>your subscribers</a>.',
-								'full-site-editing'
-							),
-							{
-								a: (
-									<ExternalLink
-										children={ null }
-										href={ subscribersUrl }
-										onClick={ trackSubscribersClick }
-									/>
-								),
-							}
-						) }
-					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
 						<a
 							href={ link }
@@ -282,11 +261,15 @@ const SharingModalInner: React.FC = () => {
 					</div>
 				</div>
 				<div className="wpcom-block-editor-post-published-sharing-modal__right">
-					<img
-						className="wpcom-block-editor-post-published-sharing-modal__image"
-						src={ postPublishedImage }
-						alt={ __( 'Share Post', 'full-site-editing' ) }
-					/>
+					{ shouldShowSuggestedTags ? (
+						<SuggestedTags setShouldShowSuggestedTags={ setShouldShowSuggestedTags } />
+					) : (
+						<img
+							className="wpcom-block-editor-post-published-sharing-modal__image"
+							src={ postPublishedImage }
+							alt={ __( 'Share Post', 'full-site-editing' ) }
+						/>
+					) }
 				</div>
 			</div>
 		</Modal>

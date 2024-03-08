@@ -105,3 +105,35 @@
 		}
 	}
 }
+
+.license-details--child-license {
+	&,
+	.license-details__actions a:not(.license-details__assign-button),
+	.license-details__actions button {
+		background-color: #fafafa;
+	}
+}
+
+.license-details__actions .button.is-compact {
+	padding: 8px 14px;
+	font-size: 1rem;
+	line-height: 1.375;
+
+	@include break-large {
+		padding: 7px;
+		font-size: 0.75rem;
+		line-height: 1;
+	}
+}
+
+.bundle-details__footer {
+	padding: 16px 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bundle-details__footer,
+.bundle-details .license-preview.license-preview--placeholder .license-preview__card {
+	background-color: #fafafa;
+}

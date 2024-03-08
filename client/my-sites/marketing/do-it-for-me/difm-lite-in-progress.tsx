@@ -11,13 +11,13 @@ import { useCurrentRoute } from 'calypso/components/route';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
-import { getSiteSlug, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { AppState, SiteId, SiteSlug } from 'calypso/types';
 
@@ -142,7 +142,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( siteSlug, currentRoute ) }
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
-			secondaryActionURL={ emailManagement( siteSlug, null ) }
+			secondaryActionURL={ getEmailManagementPath( siteSlug ) }
 			secondaryActionCallback={ recordEmailClick }
 			illustration={ SiteBuildInProgressIllustration }
 			illustrationWidth={ 144 }
@@ -153,22 +153,19 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	const isLoadingSite = useSelector(
-		( state: AppState ) =>
-			isRequestingSite( state, siteId ) ||
-			isRequestingSites( state ) ||
-			isFetchingSitePurchases( state )
+	useQuerySitePurchases( siteId );
+	const isLoadingSitePurchases = useSelector( ( state: AppState ) =>
+		isFetchingSitePurchases( state )
 	);
-	const isWebsiteContentSubmitted = useSelector( ( state ) =>
-		isDIFMLiteWebsiteContentSubmitted( state, siteId )
-	);
+	const { isLoading: isLoadingWebsiteContent, data: websiteContentQueryResult } =
+		useGetWebsiteContentQuery( siteSlug );
 	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
 
-	useQuerySitePurchases( siteId );
+	const isLoading = isLoadingSitePurchases || isLoadingWebsiteContent;
 
-	if ( ! primaryDomain || ! siteSlug || isLoadingSite ) {
+	if ( ! primaryDomain || ! siteSlug || isLoading ) {
 		return (
 			<>
 				<QuerySiteDomains siteId={ siteId } />
@@ -181,7 +178,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		);
 	}
 
-	if ( isWebsiteContentSubmitted ) {
+	if ( websiteContentQueryResult?.isWebsiteContentSubmitted ) {
 		return <WebsiteContentSubmitted primaryDomain={ primaryDomain } siteSlug={ siteSlug } />;
 	}
 

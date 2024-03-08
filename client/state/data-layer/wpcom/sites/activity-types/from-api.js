@@ -14,6 +14,7 @@ export function transformer( apiResponse ) {
 			key: slug,
 			name: group.name,
 			count: group.count,
+			...( group.children && { children: group.children } ),
 		} );
 	} );
 	return groups;

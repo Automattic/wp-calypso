@@ -138,12 +138,7 @@ class EmailUnverifiedNotice extends Component {
 		);
 
 		return (
-			<Notice
-				text={ noticeText }
-				icon="info"
-				showDismiss={ false }
-				status={ this.props.noticeStatus }
-			>
+			<Notice text={ noticeText } showDismiss={ false } status={ this.props.noticeStatus }>
 				{ this.props.noticeText && (
 					<NoticeAction onClick={ this.handleSendVerificationEmail }>
 						{ this.props.translate( 'Resend Email' ) }

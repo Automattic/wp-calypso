@@ -1,8 +1,8 @@
-import { translationExists } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 import type { Design } from '@automattic/design-picker';
 
 interface Props {
@@ -50,17 +50,13 @@ const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 		} );
 	}
 
-	const title = translationExists(
+	const title = translate(
 		"Can't decide? No problem, we can create the perfect design for your site!"
-	)
-		? translate( "Can't decide? No problem, we can create the perfect design for your site!" )
-		: translate(
-				"Can't decide? No problem, our experts can choose the perfect design for your site!"
-		  );
+	);
 
 	return (
 		<LetUsChooseContainer>
-			<div>{ title }</div>
+			<div>{ preventWidows( title ) }</div>
 			<LetUsChooseButton variant="secondary" onClick={ onClick }>
 				{ translate( 'Let us choose' ) }
 			</LetUsChooseButton>

@@ -43,9 +43,18 @@ export class BlazeCampaignPage {
 	 * @param {TestFile} path TestFile object.
 	 */
 	async uploadImage( path: TestFile ) {
-		await this.page
-			.getByLabel( 'Click or drag an image here to upload.' )
-			.setInputFiles( path.fullpath );
+		const timeout = 15_000;
+		const fileChooserPromise = this.page.waitForEvent( 'filechooser', { timeout } );
+
+		const [ fileChooser ] = await Promise.all( [
+			fileChooserPromise,
+			this.page
+				.getByRole( 'region', { name: 'Appearance' } )
+				.getByRole( 'button', { name: 'Upload' } )
+				.click( { timeout } ),
+		] );
+
+		await fileChooser.setFiles( path.fullpath );
 
 		await this.page.getByRole( 'region', { name: 'Appearance' } ).locator( 'img' ).waitFor();
 	}

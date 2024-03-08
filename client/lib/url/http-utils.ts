@@ -5,7 +5,6 @@ const urlWithoutHttpRegex = /^https?:\/\//;
 
 /**
  * Returns the supplied URL without the initial http(s).
- *
  * @param  url The URL to remove http(s) from
  * @returns     URL without the initial http(s)
  */
@@ -38,7 +37,6 @@ export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
  * Removes the `http(s)://` part and the trailing slash from a URL.
  * "http://blog.wordpress.com" will be converted into "blog.wordpress.com".
  * "https://www.wordpress.com/blog/" will be converted into "www.wordpress.com/blog".
- *
  * @param  urlToConvert The URL to convert
  * @returns              The URL's domain and path
  */

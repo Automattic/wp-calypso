@@ -1,8 +1,9 @@
 import {
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
+	isDomainUpsellFlow,
 	LINK_IN_BIO_TLD_FLOW,
-	ONBOARDING_PM_FLOW,
+	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
@@ -37,6 +38,8 @@ interface DomainFormControlProps {
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;
 	onUseYourDomainClick: () => void;
 	showUseYourDomain: boolean;
+	isCartPendingUpdate: boolean;
+	isCartPendingUpdateDomain: DomainSuggestion | undefined;
 }
 
 export function DomainFormControl( {
@@ -48,13 +51,11 @@ export function DomainFormControl( {
 	onSkip,
 	onUseYourDomainClick,
 	showUseYourDomain,
+	isCartPendingUpdate,
+	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
-	const { selectedSite, productsList } = useSelector( ( state ) => {
-		return {
-			selectedSite: getSelectedSite( state ),
-			productsList: getAvailableProductsList( state ),
-		};
-	} );
+	const selectedSite = useSelector( getSelectedSite );
+	const productsList = useSelector( getAvailableProductsList );
 
 	const { domainForm, siteTitle } = useSelect(
 		( select ) => ( {
@@ -209,7 +210,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return [ DOMAIN_UPSELL_FLOW, ONBOARDING_PM_FLOW ].includes( flow );
+		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
 	};
 
 	const renderDomainForm = () => {
@@ -242,6 +243,8 @@ export function DomainFormControl( {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					analyticsSection={ analyticsSection }
 					basePath={ path }
 					deemphasiseTlds={ flow === 'ecommerce' ? [ 'blog' ] : [] }

@@ -1,30 +1,11 @@
-import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent } from 'react';
-import {
-	TextAreaField,
-	HorizontalGrid,
-	ContactInformation,
-	LabelBlock,
-} from 'calypso/signup/accordion-form/form-components';
+import { TextAreaField, ContactInformation } from 'calypso/signup/accordion-form/form-components';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
-import {
-	MediaUploadData,
-	WordpressMediaUpload,
-} from 'calypso/signup/steps/website-content/wordpress-media-upload';
-import { useSelector, useDispatch } from 'calypso/state';
-import {
-	websiteContentFieldChanged,
-	mediaUploaded,
-	mediaRemoved,
-	mediaUploadFailed,
-	mediaUploadInitiated,
-} from 'calypso/state/signup/steps/website-content/actions';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MediaUpload } from './components/media-upload';
+import { useChangeHandlers } from './hooks/use-change-handlers';
 import type { PageDetailsParams } from './default-page-details';
 import type { ContactPageData } from 'calypso/state/signup/steps/website-content/types';
-
-export const CONTENT_SUFFIX = 'Content';
-export const IMAGE_PREFIX = 'Image';
 
 export function ContactPageDetails( {
 	page,
@@ -32,80 +13,20 @@ export function ContactPageDetails( {
 	context,
 	onChangeField,
 }: PageDetailsParams< ContactPageData > ) {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
-	const pageID = page.id;
-	const description = useTranslatedPageDescriptions( pageID, context );
+	const description = useTranslatedPageDescriptions( page.id, context );
+	const { onFieldChanged } = useChangeHandlers( {
+		pageId: page.id,
+		onChangeField,
+	} );
 
-	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
-		dispatch(
-			mediaUploadFailed( {
-				pageId: page.id,
-				mediaIndex,
-			} )
-		);
-	};
-
-	const onMediaUploadStart = ( { mediaIndex }: MediaUploadData ) => {
-		dispatch(
-			mediaUploadInitiated( {
-				pageId: page.id,
-				mediaIndex,
-			} )
-		);
-	};
-
-	const onMediaUploadComplete = ( {
-		title,
-		URL,
-		uploadID,
-		mediaIndex,
-		thumbnailUrl,
-	}: MediaUploadData ) => {
-		dispatch(
-			mediaUploaded( {
-				pageId: page.id,
-				media: { url: URL as string, caption: title as string, uploadID, thumbnailUrl },
-				mediaIndex,
-			} )
-		);
-		onChangeField &&
-			onChangeField( {
-				target: { name: pageID + IMAGE_PREFIX + mediaIndex, value: URL },
-			} as ChangeEvent< HTMLInputElement > );
-	};
-
-	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
-		dispatch(
-			mediaRemoved( {
-				pageId: page.id,
-				mediaIndex,
-			} )
-		);
-	};
-
-	const onFieldChanged = ( e: ChangeEvent< HTMLInputElement > ) => {
-		const {
-			target: { name, value },
-		} = e;
-		dispatch(
-			websiteContentFieldChanged( {
-				pageId: page.id,
-				fieldName: name,
-				fieldValue: value,
-			} )
-		);
-		onChangeField?.( e );
-	};
-	const fieldName = page.id + CONTENT_SUFFIX;
 	return (
 		<>
 			<TextAreaField
 				name="content"
 				onChange={ onFieldChanged }
 				value={ page.content }
-				error={ formErrors[ fieldName ] }
+				error={ formErrors[ 'content' ] }
 				label={ description }
 			/>
 			<ContactInformation
@@ -124,31 +45,7 @@ export function ContactPageDetails( {
 				onChange={ onFieldChanged }
 			/>
 
-			<LabelBlock>
-				{ translate(
-					'Upload up to %(noOfImages)d images. You can find stock images {{a}}here{{/a}}, or we’ll select some during the build.',
-					{
-						args: { noOfImages: page.media.length },
-						components: {
-							a: <a href="https://www.pexels.com/" target="_blank" rel="noreferrer" />,
-						},
-					}
-				) }
-			</LabelBlock>
-			<HorizontalGrid>
-				{ page.media.map( ( media, i ) => (
-					<WordpressMediaUpload
-						media={ media }
-						key={ media.uploadID ?? i }
-						mediaIndex={ i }
-						site={ site }
-						onMediaUploadStart={ onMediaUploadStart }
-						onMediaUploadFailed={ onMediaUploadFailed }
-						onMediaUploadComplete={ onMediaUploadComplete }
-						onRemoveImage={ onMediaRemoved }
-					/>
-				) ) }
-			</HorizontalGrid>
+			{ site && <MediaUpload page={ page } site={ site } onChangeField={ onChangeField } /> }
 		</>
 	);
 }

@@ -2,7 +2,7 @@
 
 ## v2.0.1-beta
 
-- Added Mastodon and Instagram previews
+- Added Mastodon, Instagram and Nextdoor previews
 - Fixed hyperlinks for Facebook
 - Fixed multiple empty lines issue in preview text
 - Fixed video previews for Instagram and Tumblr

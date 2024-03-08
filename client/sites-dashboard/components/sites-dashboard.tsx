@@ -6,6 +6,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { Icon, download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
@@ -21,6 +22,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
+import { HostingCommandPaletteBanner } from './hosting-command-palette-banner';
 import { NoSitesMessage } from './no-sites-message';
 import {
 	SitesDashboardQueryParams,
@@ -30,13 +32,13 @@ import {
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
 
-const MAX_PAGE_WIDTH = '1280px';
+const MAX_PAGE_WIDTH = '1224px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
@@ -56,14 +58,11 @@ const PageHeader = styled.div( {
 
 	backgroundColor: 'var( --studio-white )',
 
-	paddingBlockStart: '24px',
 	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px',
 	},
-
-	boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
 } );
 
 const PageBodyWrapper = styled.div( {
@@ -79,7 +78,7 @@ const HeaderControls = styled.div( {
 	marginInline: 'auto',
 	display: 'flex',
 	flexDirection: 'row',
-	alignItems: 'center',
+	alignItems: 'flex-start',
 } );
 
 const DashboardHeading = styled.h1( {
@@ -88,12 +87,26 @@ const DashboardHeading = styled.h1( {
 	lineHeight: '26px',
 	color: 'var( --studio-gray-100 )',
 	flex: 1,
+	marginInlineEnd: '1rem',
+} );
+
+const sitesMarginTable = css( {
+	backgroundColor: 'var( --studio-white )',
+	marginBlockStart: '14px',
+	marginInline: 0,
+	marginBlockEnd: '1.5em',
+	[ MEDIA_QUERIES.small ]: {
+		marginBlockStart: '0',
+	},
 } );
 
 const sitesMargin = css( {
-	marginBlockStart: 0,
+	marginBlockStart: '32px',
 	marginInline: 0,
 	marginBlockEnd: '1.5em',
+	[ MEDIA_QUERIES.small ]: {
+		marginBlockStart: '0',
+	},
 } );
 
 export const PageBodyBottomContainer = styled.div( {
@@ -142,7 +155,24 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 
 const ManageAllDomainsButton = styled( Button )`
 	margin-inline-end: 1rem;
+	white-space: nowrap;
 `;
+
+const DownloadIcon = styled( Icon )`
+	margin-right: 8px;
+	vertical-align: bottom;
+`;
+
+const popoverHoverStyles = css`
+	&:hover,
+	&:focus {
+		fill: var( --color-text-inverted );
+	}
+`;
+
+const StyledHostingCommandPaletteBanner = styled( HostingCommandPaletteBanner )( {
+	maxWidth: MAX_PAGE_WIDTH,
+} );
 
 const SitesDashboardSitesList = createSitesListComponent();
 
@@ -187,6 +217,7 @@ export function SitesDashboard( {
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
+				<StyledHostingCommandPaletteBanner />
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<ManageAllDomainsButton href="/domains/manage">
@@ -215,12 +246,13 @@ export function SitesDashboard( {
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
+							className={ `${ popoverHoverStyles }` }
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
 							href={ importSiteUrl }
-							icon="arrow-down"
 						>
+							<DownloadIcon icon={ download } size={ 18 } />
 							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
@@ -261,7 +293,7 @@ export function SitesDashboard( {
 													<SitesTable
 														isLoading={ isLoading }
 														sites={ paginatedSites }
-														className={ sitesMargin }
+														className={ sitesMarginTable }
 													/>
 												) }
 												{ displayMode === 'tile' && (

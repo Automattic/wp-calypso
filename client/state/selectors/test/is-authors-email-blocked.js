@@ -18,7 +18,7 @@ const state = {
 	},
 };
 
-const noSiteSettingsState = { siteSettings: {} };
+const noSiteSettingsState = { siteSettings: { items: {} } };
 
 describe( 'isAuthorsEmailBlocked()', () => {
 	test( 'should return true if email is blocked', () => {

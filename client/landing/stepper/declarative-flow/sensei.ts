@@ -1,11 +1,9 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { SENSEI_FLOW, useFlowProgress } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { SENSEI_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../stores';
 import { redirect } from './internals/steps-repository/import/util';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -18,9 +16,9 @@ import { AssertConditionState, Flow } from './internals/types';
 import './internals/sensei.scss';
 
 function getStartUrl( step: string, locale: string ) {
-	return locale && locale !== 'en'
-		? `/start/account/user/${ locale }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`
-		: `/start/account/user?redirect_to=/setup/${ SENSEI_FLOW }/${ step }`;
+	const localeUrlPart = locale && locale !== 'en' ? `/${ locale }` : '';
+
+	return `/start/account/user${ localeUrlPart }?redirect_to=/setup/${ SENSEI_FLOW }/${ step }&main_flow=${ SENSEI_FLOW }`;
 }
 
 const sensei: Flow = {
@@ -28,6 +26,7 @@ const sensei: Flow = {
 	get title() {
 		return translate( 'Course Creator' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'intro', component: Intro },
@@ -41,14 +40,9 @@ const sensei: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
 		const locale = useLocale();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		const siteSlug = useSiteSlug();
 		const isLoggedIn = useSelector( isUserLoggedIn );
-
-		setStepProgress( flowProgress );
 
 		const submit = ( deps: any, stepResult?: string ) => {
 			if ( stepResult ) {

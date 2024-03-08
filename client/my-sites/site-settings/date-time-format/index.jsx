@@ -1,8 +1,8 @@
+import { FoldableCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { capitalize, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
 import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';

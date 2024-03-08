@@ -10,13 +10,19 @@ interface Props {
 }
 
 const PricingPlansHeader: FunctionComponent< Props > = ( { currentPlan, attributes } ) => {
-	const learnMoreLink = attributes.domain
-		? `https://wordpress.com/plans/${ attributes.domain }`
-		: `https://wordpress.com/pricing/`;
+	let learnMoreLink = 'https://wordpress.com/pricing/';
+
+	if ( attributes.domain ) {
+		learnMoreLink = `https://wordpress.com/plans/${ attributes.domain }`;
+	}
+
+	if ( attributes.affiliateLink ) {
+		learnMoreLink = attributes.affiliateLink;
+	}
 
 	return (
 		<section className="hb-pricing-plans-embed__header">
-			<div className="hb-pricing-plans-embed__header-label">{ currentPlan.getTitle() }</div>
+			<div className="hb-pricing-plans-embed__header-label">{ currentPlan.productNameShort }</div>
 			{ attributes.domain && (
 				<div className="hb-pricing-plans-embed__header-domain">
 					{

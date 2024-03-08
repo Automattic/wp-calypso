@@ -3,7 +3,10 @@ import config from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
 	planHasFeature,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PRODUCT_1GB_SPACE,
 	isEcommerce,
 	isDomainTransfer,
 } from '@automattic/calypso-products';
@@ -13,7 +16,6 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import page from 'page';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -24,6 +26,7 @@ import {
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
@@ -356,7 +359,11 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
 		dependencies.isStoreFlow = true;
 	}
-	const extra = buildDIFMCartExtrasObject( dependencies );
+	const extra = buildDIFMCartExtrasObject(
+		dependencies,
+		siteSlug,
+		`step-actions-flow-${ step.lastKnownFlow || '' }`
+	);
 	const cartItem = {
 		product_slug: WPCOM_DIFM_LITE,
 		extra,
@@ -372,7 +379,32 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
+
+	const logErrorIfExistsCallback = ( error, result ) => {
+		if ( error ) {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: error?.message || '',
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				properties: {
+					type: 'calypso_bbe_process_item_cart_error',
+					flow: step.lastKnownFlow,
+					dependencies: JSON.stringify( providedDependencies ),
+				},
+			} );
+			callback( error );
+			return;
+		}
+		callback( error, result );
+	};
+
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		logErrorIfExistsCallback,
+		reduxStore,
+		siteSlug
+	);
 }
 
 /**
@@ -392,6 +424,16 @@ export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxS
 
 		const createSiteWithCartCallback = ( error, result ) => {
 			if ( error ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: error?.message || '',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					properties: {
+						type: 'calypso_bbe_create_site_with_cart_error',
+						flow: step.lastKnownFlow,
+						dependencies: JSON.stringify( providedDependencies ),
+					},
+				} );
 				callback( error );
 				return;
 			}
@@ -426,31 +468,6 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		.catch( ( error ) => {
 			reduxStore.dispatch( errorNotice( error.message ) );
 			callback( [ error ] );
-		} );
-}
-
-export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
-	if ( ! selectedDesign ) {
-		defer( callback );
-		return;
-	}
-
-	const { theme } = selectedDesign;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
-		.then( () =>
-			wpcom.req.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
-			} )
-		)
-		.then( () => {
-			callback();
-		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
 		} );
 }
 
@@ -545,7 +562,9 @@ export function addWithThemePlanToCart( callback, dependencies, stepProvidedItem
 				reduxStore.dispatch,
 				themeSlug,
 				dependencies.siteSlug,
-				planCartItem
+				planCartItem,
+				callback,
+				{ cartItems: stepProvidedItems.cartItems }
 			).then( () => {} );
 		} else {
 			addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore );
@@ -571,9 +590,19 @@ const setIsLoadingCart = ( isLoading ) => ( dispatch ) => {
  * @param themeId
  * @param siteSlug
  * @param planCartItem
+ * @param callback
+ * @param providedDependencies
  * @returns {Promise<void>}
  */
-async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug, planCartItem ) {
+async function addExternalManagedThemeToCart(
+	state,
+	dispatch,
+	themeId,
+	siteSlug,
+	planCartItem,
+	callback,
+	providedDependencies
+) {
 	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
 
 	if ( undefined === products || products.length === 0 ) {
@@ -612,7 +641,7 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 		.forCartKey( cartKey )
 		.actions.addProductsToCart( cartItems )
 		.then( () => {
-			page( `/checkout/${ siteSlug }` );
+			callback( undefined, providedDependencies );
 		} )
 		.finally( () => {
 			dispatch( setIsLoadingCart( false ) );
@@ -795,8 +824,9 @@ export function createAccount(
 	const flowToCheck = flowName || lastKnownFlow;
 
 	if ( 'onboarding-registrationless' === flowToCheck ) {
-		const { cartItem, domainItem } = dependencies;
-		const isPurchasingItem = ! isEmpty( cartItem ) || ! isEmpty( domainItem );
+		const { cartItem, domainItem, cartItems } = dependencies;
+		const isPurchasingItem =
+			! isEmpty( cartItem ) || ! isEmpty( domainItem ) || ! isEmpty( cartItems );
 
 		// If purchasing item in this flow, return without creating a user account.
 		if ( isPurchasingItem ) {
@@ -1183,6 +1213,13 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	flows.excludeStep( stepName );
 }
 
+export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
+	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
+}
+
 export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
@@ -1218,6 +1255,48 @@ export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
+	}
+}
+
+export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep, sitePlanSlug, store } = nextProps;
+	const fulfilledDependencies = [];
+	const cartItem = [];
+
+	const state = store.getState();
+	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
+
+	switch ( selectedStorage ) {
+		case FEATURE_50GB_STORAGE_ADD_ON:
+			cartItem.push( {
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 50,
+				volume: 1,
+				extra: { feature_slug: FEATURE_50GB_STORAGE_ADD_ON },
+			} );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: FEATURE_50GB_STORAGE_ADD_ON,
+			} );
+			break;
+		case FEATURE_100GB_STORAGE_ADD_ON:
+			cartItem.push( {
+				product_slug: PRODUCT_1GB_SPACE,
+				quantity: 100,
+				volume: 1,
+				extra: { feature_slug: FEATURE_100GB_STORAGE_ADD_ON },
+			} );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: FEATURE_100GB_STORAGE_ADD_ON,
+			} );
+			break;
+	}
+
+	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
+	fulfilledDependencies.push( 'cartItems' );
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+		recordExcludeStepEvent( stepName, sitePlanSlug );
 	}
 }
 
@@ -1268,27 +1347,6 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-/**
- * Skip the step if the user does not have any existing sites
- */
-export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { existingSiteCount, submitSignupStep } = nextProps;
-	if ( ! existingSiteCount || 0 === existingSiteCount ) {
-		const stepProvidesDependency =
-			steps[ stepName ].providesDependencies.includes( 'newOrExistingSiteChoice' );
-		let dependency = undefined;
-		if ( stepProvidesDependency ) {
-			dependency = {
-				newOrExistingSiteChoice: 'new-site',
-				forceAutoGeneratedBlogName: true,
-			};
-		}
-		submitSignupStep( { stepName, wasSkipped: true }, dependency );
-		recordExcludeStepEvent( stepName );
-		flows.excludeStep( stepName );
-	}
-}
-
 export const buildUpgradeFunction = ( planProps, cartItems ) => {
 	const {
 		additionalStepData,
@@ -1306,7 +1364,6 @@ export const buildUpgradeFunction = ( planProps, cartItems ) => {
 	if ( planCartItem ) {
 		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: planCartItem.product_slug,
-			free_trial: planCartItem.free_trial,
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
 

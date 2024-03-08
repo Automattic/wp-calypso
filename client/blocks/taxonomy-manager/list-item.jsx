@@ -1,8 +1,8 @@
-import { Count, Dialog, Gridicon } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Count, Dialog, Gridicon, Tooltip } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -10,7 +10,6 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PodcastIndicator from 'calypso/components/podcast-indicator';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
-import Tooltip from 'calypso/components/tooltip';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';

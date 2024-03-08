@@ -125,8 +125,8 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		setUpcomingRenewalsDialogVisible( false );
 	}, [ setUpcomingRenewalsDialogVisible ] );
 
-	const arePurchasesLoaded = useSelector( ( state ) => hasLoadedUserPurchasesFromServer( state ) );
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const arePurchasesLoaded = useSelector( hasLoadedUserPurchasesFromServer );
+	const userId = useSelector( getCurrentUserId );
 
 	if ( ! userId || ! selectedSite ) {
 		return null;

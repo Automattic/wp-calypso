@@ -81,7 +81,7 @@
 					border-right: none;
 				}
 
-				.plan-pill.is-in-signup {
+				.plans-grid__plan-pill.is-in-signup {
 					font-size: 0.75rem;
 					font-weight: 500;
 					letter-spacing: 0.2px;
@@ -135,27 +135,8 @@
 	}
 }
 
-// Onboarding flow
-
-.onboarding-media.plans {
-	.signup-header h1 {
-		display: none;
-	}
-
-	button.button.navigation-link.is-borderless {
-		background: none;
-		border: none;
-		color: var(--studio-gray-100);
-		font-size: 0.875rem;
-		font-weight: 600;
-		padding: 0;
-		text-decoration: none;
-	}
-}
-
-// Domain upsell flow
-
-.domain-upsell.plans {
+.domain-upsell.plans,
+.new-hosted-site.plans {
 	.signup-header h1 {
 		display: none;
 	}

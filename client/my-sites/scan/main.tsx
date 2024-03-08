@@ -8,12 +8,12 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import FormattedHeader from 'calypso/components/formatted-header';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -349,7 +349,7 @@ class ScanPage extends Component< Props > {
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackPlatform && (
-					<FormattedHeader headerText="Jetpack Scan" align="left" brandFont />
+					<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 				) }
 
 				<QueryJetpackScan siteId={ siteId } />

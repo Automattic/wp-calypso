@@ -4,7 +4,6 @@ import type { Purchase } from './types';
 
 /**
  * Finds a purchase by the slug of its associated product.
- *
  * @param {Purchase[]} purchases List of purchases to search in
  * @param {string} slug Product slug
  * @returns {Purchase} Found purchase, if any
@@ -18,7 +17,6 @@ export function getPurchaseByProductSlug(
 
 /**
  * Returns the purchase cancellation flow.
- *
  * @param {Purchase} purchase The purchase object
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): string {

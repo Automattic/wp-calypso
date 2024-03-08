@@ -12,12 +12,12 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 	return (
 		<div className="subscribers-overview highlight-cards">
 			<div className="highlight-cards-list">
-				{ overviewData.map( ( { count, label }, index ) => {
+				{ overviewData.map( ( { count, heading }, index ) => {
 					return (
 						// TODO: Communicate loading vs error state to the user.
 						<CountComparisonCard
 							key={ index }
-							heading={ label }
+							heading={ heading }
 							count={ isLoading || isError ? null : count }
 							showValueTooltip
 							icon={ false }

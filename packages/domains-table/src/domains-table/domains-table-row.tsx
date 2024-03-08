@@ -11,7 +11,7 @@ import { getDomainTypeText } from '../utils/get-domain-type-text';
 import { domainManagementLink } from '../utils/paths';
 import { useDomainsTable } from './domains-table';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
-import { DomainsTableExpiresRewnewsOnCell } from './domains-table-expires-renew-cell';
+import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
 import { DomainsTableRowActions } from './domains-table-row-actions';
 import { DomainsTableSiteCell } from './domains-table-site-cell';
@@ -97,11 +97,16 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 					) }
 				</td>
 			) }
+
 			{ domainsTableColumns.map( ( column ) => {
 				if ( column.name === 'domain' ) {
 					return (
 						// The in-view ref is attached to the domain cell because the <tr> is display:contents, which appears to break the in-view logic
-						<td key={ column.name } className="domains-table-row__domain" ref={ ref }>
+						<td
+							key={ domain.domain + column.name }
+							className="domains-table-row__domain"
+							ref={ ref }
+						>
 							{ shouldDisplayPrimaryDomainLabel && <PrimaryDomainLabel /> }
 							{ isManageableDomain ? (
 								<a
@@ -124,17 +129,17 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				}
 
 				if ( column.name === 'owner' ) {
-					return <td key={ column.name }>{ renderOwnerCell() }</td>;
+					return <td key={ domain.domain + column.name }>{ renderOwnerCell() }</td>;
 				}
 
 				if ( column.name === 'site' ) {
-					return <td key={ column.name }>{ renderSiteCell() }</td>;
+					return <td key={ domain.domain + column.name }>{ renderSiteCell() }</td>;
 				}
 
 				if ( column.name === 'expire_renew' ) {
 					return (
-						<DomainsTableExpiresRewnewsOnCell
-							key={ column.name }
+						<DomainsTableExpiresRenewsOnCell
+							key={ domain.domain + column.name }
 							as="td"
 							domain={ domain }
 							isCompact={ isCompact }
@@ -144,12 +149,12 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'status' ) {
 					return isLoadingRowDetails ? (
-						<td key={ column.name }>
+						<td key={ domain.domain + column.name }>
 							<DomainsTablePlaceholder style={ { width: `${ placeholderWidth }%` } } />
 						</td>
 					) : (
 						<DomainsTableStatusCell
-							key={ column.name }
+							key={ domain.domain + column.name }
 							as="td"
 							domainStatus={ domainStatus }
 							pendingUpdates={ pendingUpdates }
@@ -159,7 +164,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'status_action' ) {
 					return (
-						<td key={ column.name }>
+						<td key={ domain.domain + column.name }>
 							{ ! domainStatus?.callToAction || isLoadingRowDetails ? null : (
 								<DomainsTableStatusCTA callToAction={ domainStatus.callToAction } />
 							) }
@@ -169,7 +174,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'email' ) {
 					return (
-						<td>
+						<td key={ domain.domain + column.name }>
 							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
 						</td>
 					);
@@ -177,7 +182,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 
 				if ( column.name === 'action' ) {
 					return (
-						<td key={ column.name } className="domains-table-row__actions">
+						<td key={ domain.domain + column.name } className="domains-table-row__actions">
 							{ currentDomainData && (
 								<DomainsTableRowActions
 									siteSlug={ siteSlug }

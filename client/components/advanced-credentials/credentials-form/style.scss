@@ -32,6 +32,11 @@
 			font-size: $font-body;
 		}
 	}
+
+	&__remember-credentials-info-popover {
+		vertical-align: middle;
+		margin-inline-start: 2px;
+	}
 }
 
 .credentials-form__buttons .credentials-form__buttons-flex {
@@ -74,7 +79,6 @@
 		}
 	}
 }
-
 
 .credentials-form__row {
 	display: flex;

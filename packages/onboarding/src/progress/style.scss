@@ -13,18 +13,14 @@
 	}
 
 	.onboarding-title {
-		color: var(--studio-gray-100);
-		font-size: 2rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1em;
-		margin-bottom: 1.5rem;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.625rem; // 26px
+		margin-bottom: 2rem;
 	}
 
 	.onboarding-subtitle {
-		color: var(--studio-gray-40);
 		font-size: 0.875rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.5rem;
+		line-height: 1.5;
 
 		span {
 			color: var(--studio-gray-100);
@@ -32,12 +28,7 @@
 	}
 
 	.progress-bar {
-		margin-bottom: 1.5em;
-		background: var(--studio-gray-5);
-		border-radius: 0;
-
-		.progress-bar__progress {
-			border-radius: 0;
-		}
+		margin-bottom: 1.5rem;
+		background: var(--studio-gray-10);
 	}
 }

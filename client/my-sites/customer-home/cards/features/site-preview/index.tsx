@@ -49,9 +49,15 @@ const ThumbnailWrapper = ( { showEditSite, editSiteURL, children }: ThumbnailWra
 
 interface SitePreviewProps {
 	isFSEActive: boolean;
+	showEditSite?: boolean;
+	showSiteDetails?: boolean;
 }
 
-const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
+const SitePreview = ( {
+	isFSEActive,
+	showEditSite = true,
+	showSiteDetails = true,
+}: SitePreviewProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
 	const canManageSite = useSelector( ( state ) =>
@@ -60,17 +66,27 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 	const isMobile = useMobileBreakpoint();
 	const wpcomDomain = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSite?.ID ) );
 
-	if ( isMobile || ! selectedSite || ! wpcomDomain ) {
+	if ( isMobile ) {
 		return <></>;
 	}
 
-	const shouldShowEditSite = isFSEActive && canManageSite;
+	const shouldShowEditSite =
+		Boolean( selectedSite ) && isFSEActive && showEditSite && canManageSite;
 
-	const editSiteURL = addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
-		canvas: 'edit',
-	} );
+	const editSiteURL = selectedSite
+		? addQueryArgs( `/site-editor/${ selectedSite.slug }`, {
+				canvas: 'edit',
+		  } )
+		: '#';
 
-	const iframeSrcKeepHomepage = `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true`;
+	// We use an iframe rather than mShot to not cache changes.
+	const iframeSrcKeepHomepage = wpcomDomain
+		? `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`
+		: '#';
+
+	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
+	const selectedSiteSlug = selectedSite ? selectedSite.slug : '...';
+	const selectedSiteName = selectedSite ? selectedSite.name : '&nbsp;';
 
 	return (
 		<div className="home-site-preview">
@@ -81,23 +97,29 @@ const SitePreview = ( { isFSEActive }: SitePreviewProps ): JSX.Element => {
 					</Button>
 				) }
 				<div className="home-site-preview__thumbnail">
-					<iframe
-						scrolling="no"
-						loading="lazy"
-						title={ __( 'Site Preview' ) }
-						src={ iframeSrcKeepHomepage }
-					/>
+					{ wpcomDomain ? (
+						<iframe
+							scrolling="no"
+							loading="lazy"
+							title={ __( 'Site Preview' ) }
+							src={ iframeSrcKeepHomepage }
+						/>
+					) : (
+						<div className="home-site-preview__thumbnail-placeholder" />
+					) }
 				</div>
 			</ThumbnailWrapper>
-			<div className="home-site-preview__action-bar">
-				<div className="home-site-preview__site-info">
-					<h2 className="home-site-preview__info-title">{ selectedSite.name }</h2>
-					<SiteUrl href={ selectedSite.URL } title={ selectedSite.URL }>
-						<Truncated>{ selectedSite.slug }</Truncated>
-					</SiteUrl>
+			{ showSiteDetails && (
+				<div className="home-site-preview__action-bar">
+					<div className="home-site-preview__site-info">
+						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
+						<SiteUrl href={ selectedSiteURL } title={ selectedSiteURL }>
+							<Truncated>{ selectedSiteSlug }</Truncated>
+						</SiteUrl>
+					</div>
+					<SitePreviewEllipsisMenu />
 				</div>
-				<SitePreviewEllipsisMenu />
-			</div>
+			) }
 		</div>
 	);
 };

@@ -74,6 +74,7 @@ const TOSItemWrapper = styled.div`
 	padding-left: 24px;
 	position: relative;
 	font-size: 12px;
+	margin: 1.5em auto 0;
 
 	> svg {
 		position: absolute;
@@ -95,6 +96,11 @@ const TOSItemWrapper = styled.div`
 	}
 `;
 
+/**
+ * A component to handle assigning payment methods to existing subscriptions.
+ * This is quite different than the payment methods step of checkout even
+ * though they use many of the same systems.
+ */
 export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,

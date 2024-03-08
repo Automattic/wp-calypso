@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { sectionify } from 'calypso/lib/route';

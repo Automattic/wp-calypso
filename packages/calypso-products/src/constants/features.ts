@@ -113,7 +113,12 @@ export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
-export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+/*
+ * TODO: To avoid confusion, this constant value should be renamed to `premium-themes` after
+ * `WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED` has been renamed to `premium-themes-unlimited`
+ * (see comment below).
+ */
+export const FEATURE_PREMIUM_THEMES = 'premium-themes-v3';
 export const FEATURE_STATS_PAID = 'stats-paid';
 export const FEATURE_STATS_FREE = 'stats-free';
 
@@ -219,6 +224,7 @@ export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
 export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 export const FEATURE_SOCIAL_MASTODON_CONNECTION = 'social-mastodon-connection';
 export const FEATURE_SOCIAL_INSTAGRAM_CONNECTION = 'social-instagram-connection';
+export const FEATURE_SOCIAL_NEXTDOOR_CONNECTION = 'social-nextdoor-connection';
 export const FEATURE_JETPACK_MONITOR_MONTHLY = PRODUCT_JETPACK_MONITOR_MONTHLY;
 export const FEATURE_JETPACK_MONITOR_YEARLY = PRODUCT_JETPACK_MONITOR_YEARLY;
 export const FEATURE_MONITOR_1_MINUTE_CHECK_INTERVAL = 'monitor-1-minute-check-interval';
@@ -281,10 +287,20 @@ export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
 export const WPCOM_FEATURES_MANAGE_PLUGINS = 'manage-plugins';
 export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
 export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
-export const WPCOM_FEATURES_PREMIUM_THEMES = 'premium-themes';
+/*
+ * TODO: This constant value should be renamed (here and in `class-wpcom-features.php` in
+ * WPCOM) to `premium-themes-unlimited` so it's not confused with `FEATURE_PREMIUM_THEMES`.
+ */
+export const WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED = 'premium-themes';
+/*
+ * TODO: This constant value should be renamed (here and in `class-wpcom-features.php` in
+ * WPCOM) to `premium-themes-limited` so it better reflects the actual feature.
+ */
+export const WPCOM_FEATURES_PREMIUM_THEMES_LIMITED = 'personal-themes';
 export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
+export const WPCOM_FEATURES_SCHEDULED_UPDATES = 'scheduled-updates';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
 export const WPCOM_FEATURES_LOCKED_MODE = 'locked-mode';
@@ -325,6 +341,8 @@ export const FEATURE_PAYMENT_TRANSACTION_FEES_0_WOO = 'payment-transaction-fees-
 export const FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL = 'payment-transaction-fees-0-all';
 export const FEATURE_PAYMENT_TRANSACTION_FEES_2_REGULAR = 'payment-transaction-fees-2-regular';
 export const FEATURE_GROUP_PAYMENT_TRANSACTION_FEES = 'payment-transaction-fees-group';
+export const FEATURE_COMMISSION_FEE_STANDARD_FEATURES = 'payment-commission-fee-standard';
+export const FEATURE_COMMISSION_FEE_WOO_FEATURES = 'payment-commission-fee-woo';
 export const FEATURE_THE_READER = 'the-reader';
 
 // Pricing Grid 2023 Features
@@ -340,7 +358,6 @@ export const FEATURE_FAST_DNS = 'fast-dns';
 export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
 export const FEATURE_SUPPORT_EMAIL = 'support-email-v1';
 export const FEATURE_DESIGN_TOOLS = 'design-tools';
-export const FEATURE_PREMIUM_THEMES_V2 = 'premium-themes-v2';
 export const FEATURE_WORDADS = 'wordads-v2';
 export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
 export const FEATURE_BANDWIDTH = 'bandwidth-v1';
@@ -421,11 +438,6 @@ export const FEATURE_SHIPPING_INTEGRATIONS = 'shipping-integrations';
 export const FEATURE_50GB_STORAGE_ADD_ON = '50gb-storage-add-on';
 export const FEATURE_100GB_STORAGE_ADD_ON = '100gb-storage-add-on';
 
-export const WPCOM_STORAGE_ADD_ONS = < const >[
-	FEATURE_50GB_STORAGE_ADD_ON,
-	FEATURE_100GB_STORAGE_ADD_ON,
-];
-
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
 export const FEATURE_WOOCOMMERCE_MOBILE_APP = 'woocommerce-mobile-app'; // WooCommerce mobile app
@@ -453,3 +465,23 @@ export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shippi
 export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
 export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels
 export const FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION = 'ai-assisted-product-descriptions'; // AI-assisted product descriptions
+
+// Sensei Features
+export const FEATURE_SENSEI_SUPPORT = 'sensei-support';
+export const FEATURE_SENSEI_UNLIMITED = 'sensei-unlimited';
+export const FEATURE_SENSEI_INTERACTIVE = 'sensei-interactive';
+export const FEATURE_SENSEI_QUIZZES = 'sensei-quizzes';
+export const FEATURE_SENSEI_SELL_COURSES = 'sensei-sell-courses';
+export const FEATURE_SENSEI_STORAGE = 'sensei-storage';
+export const FEATURE_SENSEI_HOSTING = 'sensei-hosting';
+export const FEATURE_SENSEI_JETPACK = 'sensei-jetpack';
+
+// Feature types
+export const FEATURE_TYPE_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
+export const FEATURE_TYPE_JETPACK_ACTIVITY_LOG = 'jetpack_activity_log';
+export const FEATURE_TYPE_JETPACK_BACKUP = 'jetpack_backup';
+export const FEATURE_TYPE_JETPACK_BOOST = 'jetpack_boost';
+export const FEATURE_TYPE_JETPACK_SCAN = 'jetpack_scan';
+export const FEATURE_TYPE_JETPACK_SEARCH = 'jetpack_search';
+export const FEATURE_TYPE_JETPACK_STATS = 'jetpack_stats';
+export const FEATURE_TYPE_JETPACK_VIDEOPRESS = 'jetpack_videopress';

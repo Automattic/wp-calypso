@@ -1,4 +1,9 @@
-import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
+import {
+	StepContainer,
+	base64ImageToBlob,
+	isSiteAssemblerFlow,
+	uploadAndSetSiteLogo,
+} from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -12,8 +17,8 @@ import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-
 import type { Step } from '../../types';
 import '../free-setup/styles.scss';
 
-const FreePostSetup: Step = ( { navigation } ) => {
-	const { submit } = navigation;
+const FreePostSetup: Step = ( { navigation, flow } ) => {
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();
 
@@ -71,7 +76,8 @@ const FreePostSetup: Step = ( { navigation } ) => {
 		<StepContainer
 			stepName="free-setup"
 			isWideLayout={ true }
-			hideBack={ true }
+			hideBack={ ! isSiteAssemblerFlow( flow ) }
+			goBack={ goBack }
 			flowName="free"
 			formattedHeader={
 				<FormattedHeader

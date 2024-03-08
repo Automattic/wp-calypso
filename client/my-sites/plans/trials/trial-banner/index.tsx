@@ -20,16 +20,14 @@ interface TrialBannerProps {
 
 const TrialBanner = ( props: TrialBannerProps ) => {
 	const { callToAction, isEcommerceTrial } = props;
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+	const selectedSiteId = useSelector( getSelectedSiteId ) || -1;
 
-	const { currentPlan, trialDaysLeft, trialExpired, trialExpiration } = useSelector(
-		( state ) => ( {
-			currentPlan: getCurrentPlan( state, selectedSiteId ),
-			trialExpired: isTrialExpired( state, selectedSiteId ),
-			trialDaysLeft: Math.ceil( getTrialDaysLeft( state, selectedSiteId ) || 0 ),
-			trialExpiration: getTrialExpiration( state, selectedSiteId ),
-		} )
+	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
+	const trialDaysLeft = useSelector( ( state ) =>
+		Math.floor( getTrialDaysLeft( state, selectedSiteId ) || 0 )
 	);
+	const trialExpiration = useSelector( ( state ) => getTrialExpiration( state, selectedSiteId ) );
+	const trialExpired = useSelector( ( state ) => isTrialExpired( state, selectedSiteId ) );
 
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();

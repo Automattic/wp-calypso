@@ -1,10 +1,17 @@
 import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from './default-query-params';
 
-const querySubscribersTotals = ( siteId: number | null ): Promise< any > => {
-	return wpcom.req.get( {
-		path: `/sites/${ siteId }/stats/followers`,
-	} );
+const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ): Promise< any > => {
+	return wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/stats/followers`,
+		},
+		{
+			type: 'all',
+			filter_admin: filterAdmin ? true : false,
+		}
+	);
 };
 
 const queryMore = ( siteId: number | null ): Promise< any > => {
@@ -18,10 +25,13 @@ const selectSubscribers = ( payload: {
 	total: number;
 	total_email: number;
 	total_wpcom: number;
+	is_owner_subscribing: boolean;
 } ) => {
 	return {
+		total: payload.total,
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
+		is_owner_subscribing: payload.is_owner_subscribing,
 	};
 };
 
@@ -40,16 +50,22 @@ const selectPaidSubscribers = ( payload: {
 	};
 };
 
-export default function useSubscribersTotalsQueries( siteId: number | null ) {
+export function useSubscribersTotalsWithoutAdminQueries( siteId: number | null ) {
+	return useSubscribersTotalsQueries( siteId, true );
+}
+
+function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boolean ) {
 	const queries = useQueries( {
 		queries: [
 			{
-				queryKey: [ 'stats', 'totals', 'subscribers', siteId ],
-				queryFn: () => querySubscribersTotals( siteId ),
+				...getDefaultQueryParams(),
+				queryKey: [ 'stats', 'totals', 'subscribers', siteId, filterAdmin ],
+				queryFn: () => querySubscribersTotals( siteId, filterAdmin ),
 				select: selectSubscribers,
 				staleTime: 1000 * 60 * 5, // 5 minutes
 			},
 			{
+				...getDefaultQueryParams(),
 				queryKey: [ 'stats', 'totals', 'paid', 'subscribers', siteId ],
 				queryFn: () => queryMore( siteId ),
 				select: selectPaidSubscribers,
@@ -62,7 +78,7 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 		data: {
 			total_email: queries[ 0 ]?.data?.total_email,
 			total_wpcom: queries[ 0 ]?.data?.total_wpcom,
-			total: queries[ 1 ]?.data?.email_subscribers,
+			total: queries[ 0 ]?.data?.total,
 			paid_subscribers: queries[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
 				queries[ 1 ]?.data?.email_subscribers !== undefined &&
@@ -70,8 +86,11 @@ export default function useSubscribersTotalsQueries( siteId: number | null ) {
 					? queries[ 1 ].data.email_subscribers - queries[ 1 ].data.paid_subscribers
 					: null,
 			social_followers: queries[ 1 ]?.data?.social_followers,
+			is_owner_subscribing: queries[ 0 ]?.data?.is_owner_subscribing,
 		},
 		isLoading: queries.some( ( result ) => result.isLoading ),
 		isError: queries.some( ( result ) => result.isError ),
 	};
 }
+
+export default useSubscribersTotalsQueries;

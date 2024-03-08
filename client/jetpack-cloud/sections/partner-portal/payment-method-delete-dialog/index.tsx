@@ -51,7 +51,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 			</h2>
 			<p>
 				{ translate(
-					'The payment method {{paymentMethodSummary/}} will be removed from your account and from all the associated subscriptions.',
+					'The payment method {{paymentMethodSummary/}} will be removed from your account',
 					{
 						components: {
 							paymentMethodSummary: <strong>{ paymentMethodSummary }</strong>,

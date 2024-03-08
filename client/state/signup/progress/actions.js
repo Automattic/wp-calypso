@@ -50,7 +50,6 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 				/**
 				 * There's no need to include a resource ID in our event.
 				 * Just record that a preview was fetched
-				 *
 				 * @see the `sitePreviewImageBlob` dependency
 				 */
 				propName = 'site_preview_image_fetched';
@@ -136,6 +135,7 @@ export function submitSignupStep( step, providedDependencies, optionalProps ) {
 			recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, {
 				intent,
 				...optionalProps,
+				...( step.wasSkipped && { was_skipped: step.wasSkipped } ),
 			} )
 		);
 

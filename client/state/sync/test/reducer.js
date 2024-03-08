@@ -1,6 +1,6 @@
 import {
 	SITE_SYNC_STATUS_REQUEST as REQUEST_STATUS,
-	SITE_SYNC_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+	SITE_SYNC_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
 import { setSiteSyncStatus, setSyncInProgress } from 'calypso/state/sync/actions';
 import { serialize, deserialize } from 'calypso/state/utils';
@@ -29,14 +29,19 @@ describe( 'state', () => {
 						status: 'completed',
 						progress: 1,
 						isSyncingInProgress: true,
-						syncingSiteType: 'production',
+						syncingTargetSite: 'production',
+						syncingSourceSite: 'staging',
+						lastRestoreId: '12345',
 						fetchingStatus: true,
 					},
 				};
+
 				const serialized = serialize( persistentReducer, AT_STATE ).root();
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'status' );
 				expect( serialized[ SITE_ID ] ).toHaveProperty( 'progress' );
-				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSiteType' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingTargetSite' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSourceSite' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'lastRestoreId' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'isSyncingInProgress' );
 				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'error' );
@@ -44,7 +49,9 @@ describe( 'state', () => {
 				const deserialized = deserialize( persistentReducer, AT_STATE );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status' );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'progress' );
-				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSiteType' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingTargetSite' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'syncingSourceSite' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'lastRestoreId' );
 				// The non-persisted property has default value, persisted value is ignored
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );
@@ -57,7 +64,9 @@ describe( 'state', () => {
 					status: SiteSyncStatus.COMPLETED,
 					progress: 1,
 					isSyncingInProgress: true,
-					syncingSiteType: 'production',
+					syncingTargetSite: 'production',
+					syncingSourceSite: 'staging',
+					lastRestoreId: '12345',
 					fetchingStatus: false,
 					error: null,
 				};
@@ -72,7 +81,9 @@ describe( 'state', () => {
 					status: SiteSyncStatus.PENDING,
 					progress: 1,
 					isSyncingInProgress: true,
-					syncingSiteType: 'production',
+					syncingTargetSite: 'production',
+					syncingSourceSite: 'staging',
+					lastRestoreId: '12345',
 					fetchingStatus: false,
 					error: null,
 				};
@@ -83,6 +94,29 @@ describe( 'state', () => {
 				);
 				expect( newState ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( newState ).toHaveProperty( 'status', SiteSyncStatus.COMPLETED );
+				expect( newState ).toHaveProperty( 'progress', 1 );
+				expect( newState ).toHaveProperty( 'fetchingStatus', false );
+			} );
+
+			test( 'should set isSyncingInProgress to false if status become allow_retry', () => {
+				const SITE_ID = 12345;
+				const AT_STATE = {
+					status: SiteSyncStatus.PENDING,
+					progress: 1,
+					isSyncingInProgress: true,
+					syncingTargetSite: 'production',
+					syncingSourceSite: 'staging',
+					lastRestoreId: '12345',
+					fetchingStatus: false,
+					error: null,
+				};
+				reducer( AT_STATE, {} );
+				const newState = reducer(
+					AT_STATE,
+					setSiteSyncStatus( SITE_ID, SiteSyncStatus.ALLOW_RETRY )
+				);
+				expect( newState ).toHaveProperty( 'isSyncingInProgress', false );
+				expect( newState ).toHaveProperty( 'status', SiteSyncStatus.ALLOW_RETRY );
 				expect( newState ).toHaveProperty( 'progress', 1 );
 				expect( newState ).toHaveProperty( 'fetchingStatus', false );
 			} );

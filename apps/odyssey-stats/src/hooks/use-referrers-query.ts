@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 
 interface QueryReferrersParams {
 	period: string;
@@ -7,6 +8,10 @@ interface QueryReferrersParams {
 	date: string;
 	summarize?: number;
 	max?: number;
+}
+
+interface ReferresResponse {
+	summary: { groups: ( GroupWithChildren & GroupWithoutChildren )[] };
 }
 
 interface GroupWithChildren {
@@ -37,6 +42,7 @@ export default function useReferrersQuery(
 	max = 0
 ) {
 	return useQuery( {
+		...getDefaultQueryParams< ReferresResponse >(),
 		queryKey: [ 'stats-widget', 'referrers', siteId, period, num, date, summarize, max ],
 		queryFn: () => queryReferrers( siteId, { period, num, date, summarize, max } ),
 		select: ( data ) => {

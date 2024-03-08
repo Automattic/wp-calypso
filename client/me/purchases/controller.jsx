@@ -1,17 +1,15 @@
-import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import i18n, { getLocaleSlug, localize, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import {
@@ -22,7 +20,7 @@ import {
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
-import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
+import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -36,16 +34,7 @@ import useVatDetails from './vat-info/use-vat-details';
 function useLogPurchasesError( message ) {
 	return useCallback(
 		( error ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message,
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-				extra: {
-					env: config( 'env_id' ),
-					type: 'account_level_purchases',
-					message: convertErrorToString( error ),
-				},
-			} );
+			logStashLoadErrorEvent( 'account_level_purchases', error, { message } );
 		},
 		[ message ]
 	);
@@ -90,7 +79,8 @@ export function cancelPurchase( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
 				<Main wideLayout className="purchases__cancel">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
@@ -115,7 +105,8 @@ export function confirmCancelDomain( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.confirmCancelDomain }>
 				<Main wideLayout className="purchases__cancel-domain confirm-cancel-domain">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+
 					<ConfirmCancelDomain
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
@@ -169,7 +160,7 @@ export function vatDetails( context, next ) {
 				<Main wideLayout className={ classes }>
 					<PageViewTracker path={ vatDetailsPath } title="Purchases > VAT Details" />
 
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<HeaderCake onClick={ goToBillingHistory }>{ title }</HeaderCake>
 
 					<VatInfoPage siteSlug={ context.params.site } />
@@ -189,7 +180,7 @@ export function managePurchase( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
 				<Main wideLayout className={ classes }>
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<PageViewTracker
 						path="/me/purchases/:site/:purchaseId"
 						title="Purchases > Manage Purchase"
@@ -214,7 +205,7 @@ export function managePurchaseByOwnership( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
 				<Main wideLayout className={ classes }>
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<PageViewTracker
 						path="/me/purchases/:ownershipId"
 						title="Purchases > Manage Purchase by Ownership"
@@ -243,7 +234,7 @@ export function changePaymentMethod( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.changePaymentMethod }>
 				<Main wideLayout className="purchases__edit-payment-method">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 					<CheckoutErrorBoundary
 						errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 						onError={ logPurchasesError }

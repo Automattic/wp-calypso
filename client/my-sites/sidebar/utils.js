@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const pathIncludes = ( currentPath, term, position ) =>
@@ -62,6 +63,18 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	// All URLs in the Licensing Portal start with 'partner-portal', so we need to compare them at the
 	// second position (i.e., compare whatever comes after partner-portal/).
 	if ( isJetpackCloud() && pathIncludes( currentPath, 'partner-portal', 1 ) ) {
+		const isAssignLicensePath = pathIncludes( currentPath, 'assign-license', 2 );
+
+		// For Assign license path, we will override it to be license path.
+		if ( isAssignLicensePath ) {
+			return fragmentIsEqual( path, '/partner-portal/licenses', 2 );
+		}
+
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	// All URLs in the A4A Purchases start with 'purchases' will need to compare at the second position.
+	if ( isEnabled( 'a8c-for-agencies' ) && pathIncludes( currentPath, 'purchases', 1 ) ) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 

@@ -1,10 +1,10 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import SupportInfo from 'calypso/components/support-info';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import RelatedContentPreview from './related-content-preview';
 
@@ -15,17 +15,12 @@ export const RelatedPostsSetting = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
+	isJetpackSelfHosted,
 } ) => {
 	const translate = useTranslate();
+
 	return (
 		<FormFieldset>
-			<SupportInfo
-				text={ translate(
-					'The feature helps visitors find more of your content by displaying related posts at the bottom of each post.'
-				) }
-				link="https://jetpack.com/support/related-posts/"
-			/>
-
 			<ToggleControl
 				checked={ !! fields.jetpack_relatedposts_enabled }
 				disabled={ isRequestingSettings || isSavingSettings }
@@ -75,7 +70,13 @@ export const RelatedPostsSetting = ( {
 						components: {
 							a: (
 								<a
-									href="https://jetpack.com/support/jetpack-blocks/related-posts-block/"
+									href={
+										isJetpackSelfHosted
+											? localizeUrl( 'https://jetpack.com/support/related-posts/' )
+											: localizeUrl(
+													'https://wordpress.com/support/related-posts/#add-a-related-posts-block'
+											  )
+									}
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

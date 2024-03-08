@@ -6,6 +6,7 @@
 		margin-top: 0;
 	}
 
+	.card > .card-icon,
 	.card > .material-icon,
 	.card > .gridicon {
 		display: inline-block;
@@ -63,9 +64,10 @@
 
 	@include breakpoint-deprecated( ">1280px" ) {
 		&__main-layout-col {
-			.card {
+			.card:not(.github-deployments-card) {
 				padding-left: 72px;
 
+				> .card-icon,
 				> .material-icon,
 				> .gridicon {
 					display: block;
@@ -89,6 +91,16 @@
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.github-deployments-card {
+		.banner__icons .banner__icon-no-circle {
+			margin-right: 13px;
+		}
+
+		.banner__action {
+			margin-right: 0;
+		}
 	}
 }
 

@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Dialog, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

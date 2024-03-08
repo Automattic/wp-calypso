@@ -1,9 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useEffect, useState } from '@wordpress/element';
 import wp from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
 import { PREPARE_DOWNLOAD_STATUS } from './constants';
-import { onPreparingDownloadError } from './notices';
 
 interface PrepareDownloadArgs {
 	siteId: number;
@@ -25,9 +23,7 @@ interface FilteredStatusResponse {
 	url: string;
 }
 
-export const usePrepareDownload = ( siteId: number ) => {
-	const dispatch = useDispatch();
-
+export const usePrepareDownload = ( siteId: number, onError: () => void ) => {
 	const [ status, setStatus ] = useState( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
 	const [ dataType, setDataType ] = useState( 0 );
 	const [ buildKey, setBuildKey ] = useState( '' );
@@ -36,11 +32,14 @@ export const usePrepareDownload = ( siteId: number ) => {
 		// Reset the status to not started so that the user can try again.
 		setStatus( PREPARE_DOWNLOAD_STATUS.NOT_STARTED );
 
-		// Dispatch an error notice
-		dispatch( onPreparingDownloadError() );
-	}, [ dispatch ] );
+		onError();
+	}, [ onError ] );
 
-	const { data } = useQuery( {
+	const {
+		data,
+		isSuccess: isQuerySuccess,
+		isError: isQueryError,
+	} = useQuery< FilteredStatusResponse >( {
 		queryKey: [ 'jetpack-backup-filtered-status', buildKey, siteId, dataType ],
 		queryFn: () =>
 			wp.req.post(
@@ -56,13 +55,17 @@ export const usePrepareDownload = ( siteId: number ) => {
 		enabled: buildKey !== '' && status === PREPARE_DOWNLOAD_STATUS.PREPARING,
 		refetchInterval: 5000, // 5 seconds
 		retry: false,
-		onSuccess: ( data: FilteredStatusResponse ) => {
-			if ( data.status === 'ready' ) {
-				setStatus( PREPARE_DOWNLOAD_STATUS.READY );
-			}
-		},
-		onError: handleError,
 	} );
+
+	useEffect( () => {
+		if ( isQuerySuccess && data?.status === 'ready' ) {
+			setStatus( PREPARE_DOWNLOAD_STATUS.READY );
+		}
+
+		if ( isQueryError ) {
+			handleError();
+		}
+	}, [ isQuerySuccess, isQueryError, handleError, data?.status ] );
 
 	const mutation = useMutation( {
 		mutationFn: ( { siteId, rewindId, manifestFilter, dataType }: PrepareDownloadArgs ) =>

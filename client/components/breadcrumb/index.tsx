@@ -57,7 +57,7 @@ const StyledItem = styled.div`
 `;
 
 const StyledGridicon = styled( Gridicon )`
-	margin: 0 12px;
+	margin: 0 16px;
 	color: var( --color-neutral-10 );
 `;
 

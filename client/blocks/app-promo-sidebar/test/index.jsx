@@ -31,9 +31,9 @@ describe( 'AppPromoSidebar', () => {
 		test( 'should render the primary components', () => {
 			const { container } = render( AppPromoSidebarComponent );
 
-			expect( container.getElementsByClassName( 'app-promo' ) ).toHaveLength( 1 );
-			expect( container.getElementsByClassName( 'app-promo__dismiss' ) ).toHaveLength( 1 );
-			expect( container.getElementsByClassName( 'app-promo__icon' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo-sidebar' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo-sidebar__dismiss' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo-sidebar__icon' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should render the promo text', () => {
@@ -47,7 +47,7 @@ describe( 'AppPromoSidebar', () => {
 		test( 'should render the promo link', () => {
 			const { container } = render( AppPromoSidebarComponent );
 
-			const promoLink = container.getElementsByClassName( 'app-promo__link' );
+			const promoLink = container.getElementsByClassName( 'app-promo-sidebar__link' );
 			expect( promoLink ).toHaveLength( 1 );
 			expect( promoLink[ 0 ].getAttribute( 'href' ) ).toBe( appPromoSidebarLink );
 		} );

@@ -87,7 +87,7 @@
 		font-weight: 400;
 		line-height: 40px;
 		color: var(--studio-blue-90);
-		padding-top: 40px;
+		margin-top: 24px;
 	}
 	.search-box-header__sticky-ref {
 		padding-bottom: 48px;
@@ -216,9 +216,15 @@ main.is-logged-out .search-box-header {
 				transform: scaleX(-1);
 				height: 33px;
 			}
+
 			input.search-component__input[type="search"],
 			input.search-component__input[type="search"]::placeholder {
 				color: var(--studio-gray-50);
+			}
+
+			&.has-focus {
+				border-color: var(--color-neutral-20);
+				box-shadow: none;
 			}
 		}
 	}

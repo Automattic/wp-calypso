@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
+import { PLAN_PREMIUM, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -278,7 +278,9 @@ class PostTypeList extends Component {
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpsellNudge
-						title={ translate( 'No Ads with WordPress.com Premium' ) }
+						title={ translate( 'No Ads with WordPress.com %(premiumPlanName)s', {
+							args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() },
+						} ) }
 						description={ translate( 'Prevent ads from showing on your site.' ) }
 						feature={ WPCOM_FEATURES_NO_ADVERTS }
 						event="published_posts_no_ads"

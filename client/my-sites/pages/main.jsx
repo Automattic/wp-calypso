@@ -6,11 +6,10 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { Experiment } from 'calypso/lib/explat';
 import { mapPostStatus } from 'calypso/lib/route';
@@ -95,18 +94,17 @@ class PagesMain extends Component {
 
 		return (
 			<Main wideLayout classname="pages">
-				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SitePreview />
-				<FormattedHeader
-					brandFont
-					className="pages__page-heading"
-					headerText={ translate( 'Pages' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="edit.php?post_type=page"
+					navigationItems={ [] }
+					title={ translate( 'Pages' ) }
+					subtitle={ translate(
 						'Create, edit, and manage the pages on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						'Create, edit, and manage the pages on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
@@ -116,8 +114,6 @@ class PagesMain extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList

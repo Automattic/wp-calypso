@@ -22,6 +22,7 @@ interface DesignPreviewProps {
 	selectedDesignTitle: string;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitDefaultVariation: boolean;
+	needsUpgrade?: boolean;
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
@@ -56,6 +57,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	selectedVariation,
 	onSelectVariation,
 	splitDefaultVariation,
+	needsUpgrade,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
@@ -96,6 +98,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		limitGlobalStyles,
 		variations,
 		splitDefaultVariation,
+		needsUpgrade,
 		selectedVariation,
 		selectedColorVariation,
 		selectedFontVariation,

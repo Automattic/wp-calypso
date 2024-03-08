@@ -25,7 +25,7 @@
 .signup-form__terms-of-service-link {
 	font-size: $font-body-extra-small;
 	margin: 0 0 20px;
-	text-align: center;
+	text-align: left;
 
 	a {
 		@include breakpoint-deprecated(">480px") {
@@ -34,7 +34,7 @@
 	}
 }
 
-.signup-form__social {
+.auth-form__social {
 	max-width: 400px;
 	margin: 0 auto;
 	padding: 16px;
@@ -52,7 +52,7 @@
 	}
 }
 
-.signup-form__social-buttons {
+.auth-form__social-buttons {
 	button {
 		display: block;
 		margin: 0 auto 15px;
@@ -63,7 +63,7 @@
 	}
 }
 
-.signup-form__social-buttons-tos a {
+.auth-form__social-buttons-tos a {
 	text-decoration: underline;
 }
 
@@ -127,7 +127,7 @@
 	}
 
 	.signup-form.is-showing-recaptcha-tos {
-		.signup-form__social {
+		.auth-form__social {
 			padding-bottom: 28px;
 		}
 
@@ -139,29 +139,49 @@
 
 body.is-section-signup,
 body.is-section-accept-invite {
-	.signup__step.is-user-social {
+	.signup__step.is-user-social,
+	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
+	// This selector is part of an experiment which is supposed to be cleaned up
+	// https://github.com/Automattic/wp-calypso/pull/83886
+	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment {
 		.signup-form-social-first {
 			width: 327px;
 			margin: 0 auto;
 
-			.signup-form__social {
+			.signup-form__notice {
+				width: 327px;
+				margin-left: 0;
+				margin-right: 0;
+
+				&.is-transparent-info {
+					color: var(--studio-gray-80, #2c3338);
+				}
+			}
+
+			.auth-form__social {
 				padding: 0 !important;
 			}
 
-			.signup-form-social-first__tos-link {
+			.signup-form-social-first__tos-link,
+			.signup-form-social-first__email-tos-link {
 				color: var(--studio-gray-50, #646970);
-				text-align: center;
 				font-family: "SF Pro Text", sans-serif;
 				font-size: 0.75rem;
 				font-style: normal;
 				font-weight: 400;
 				line-height: 18px;
-				margin-top: 32px;
+				margin-top: 24px;
+				margin-bottom: 12px;
 
 				a {
 					color: var(--studio-gray-50, #646970);
 					text-decoration-line: underline;
 				}
+			}
+
+			.signup-form-social-first__tos-link {
+				margin-top: 32px;
+				text-align: center;
 			}
 		}
 
@@ -171,10 +191,24 @@ body.is-section-accept-invite {
 				padding-left: 0;
 				padding-right: 0;
 
-				button {
+				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
 					display: block;
 					max-width: 327px;
 					margin: 0 auto;
+				}
+
+				button.signup-form__domain-suggestion-confirmation {
+					text-decoration: underline;
+					cursor: pointer;
+				}
+
+				button.is-borderless {
+					color: var(--color-link);
+					padding: 0;
+
+					&:hover {
+						color: var(--color-link-dark);
+					}
 				}
 			}
 
@@ -188,7 +222,8 @@ body.is-section-accept-invite {
 			}
 
 			.logged-out-form__footer {
-				margin-top: 16px;
+				margin-top: 12px;
+				padding-top: 0;
 			}
 
 			button.back-button {
@@ -215,7 +250,7 @@ body.is-section-accept-invite {
 				}
 			}
 
-			button.button {
+			button.button:not(.is-borderless) {
 				border-radius: 4px;
 
 				&:focus {

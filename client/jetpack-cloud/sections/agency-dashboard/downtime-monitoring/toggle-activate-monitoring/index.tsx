@@ -1,12 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Tooltip } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useState, useRef } from 'react';
 import alertIcon from 'calypso/assets/images/jetpack/alert-icon.svg';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import Tooltip from 'calypso/components/tooltip';
 import { useSelector } from 'calypso/state';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent, useToggleActivateMonitor } from '../../hooks';
@@ -47,7 +46,7 @@ export default function ToggleActivateMonitoring( {
 	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
 
 	const shouldDisplayUpgradePopover =
-		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor;
+		status === 'success' && isPaidTierEnabled && ! site.has_paid_agency_monitor && ! site.is_atomic;
 
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -144,11 +143,12 @@ export default function ToggleActivateMonitoring( {
 	};
 
 	const toggleContent = (
+		// For Atomic sites which do not support monitoring, we show the toggle as disabled.
 		<ToggleControl
 			onChange={ handleToggleActivateMonitoring }
 			checked={ isChecked }
-			disabled={ isLoading || siteError }
-			label={ isChecked && currentSettings() }
+			disabled={ site.is_atomic || isLoading || siteError }
+			label={ ! site.is_atomic && isChecked && currentSettings() }
 		/>
 	);
 
@@ -172,10 +172,12 @@ export default function ToggleActivateMonitoring( {
 				/>
 			);
 		}
+
 		let tooltipText = tooltip;
 		if ( isPaidTierEnabled && smsLimitReached && status === 'success' ) {
 			tooltipText = translate( 'You have reached the SMS limit' );
 		}
+
 		if ( tooltipText ) {
 			return (
 				<Tooltip

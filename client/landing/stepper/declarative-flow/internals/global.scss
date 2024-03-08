@@ -8,6 +8,11 @@
 @import "@automattic/components/src/styles/typography";
 
 /**
+ * Importers styles
+ */
+@import "~calypso/blocks/import/style/base";
+
+/**
  * General onboarding styling
  */
 body {
@@ -65,10 +70,10 @@ button {
  * Site Setup
  */
 .ai-assembler,
-.onboarding-media,
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
+.site-migration,
 .import-focused,
 .plugin-bundle,
 .newsletter-setup,
@@ -89,38 +94,39 @@ button {
 .free-post-setup,
 .free,
 .with-theme-assembler,
+.assembler-first,
 .setup-blog,
 .celebration-step,
 .use-my-domain,
 .domain-transfer,
 .update-design,
-.hundred-year-plan {
-	padding: 60px 0 0;
+.update-options,
+.hundred-year-plan,
+.link-in-bio-tld {
 	box-sizing: border-box;
 
-	&.courses {
-		padding: 0;
-	}
+	&.step-route {
+		padding: 60px 0 0;
 
-	.flow-progress {
-		position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
-		border-radius: 0;
-		z-index: 99;
-		height: 8px;
-		background-color: transparent;
-
-		.progress-bar__progress {
-			background-color: $onboarding-accent-blue;
-			border-radius: 0;
+		// Launchpad has its own header
+		&.launchpad {
+			margin-top: -60px;
 		}
-	}
 
-	.import-step,
-	.importer-step {
-		@include onboarding-block-margin;
+		@include break-small {
+			&.courses,
+			&.site-picker,
+			&.new-or-existing-site {
+				margin-top: -60px;
+			}
+		}
+
+		// Importer flows
+		&.import-focused,
+		&.import-hosted-site,
+		&.site-setup[class*=" import"] {
+			padding: 3.75rem 0;
+		}
 	}
 
 	/**
@@ -163,7 +169,6 @@ button {
  	 * Step Container
  	 */
 	.step-container {
-
 		.form-fieldset {
 			label {
 				text-transform: none;
@@ -206,7 +211,8 @@ button {
 
 }
 
-.import-focused .step-container.site-picker {
+.import-focused .step-container.site-picker,
+.import-hosted-site .step-container.site-picker {
 	max-width: 1280px;
 	padding: 1.5rem;
 }
@@ -338,15 +344,6 @@ button {
 		}
 	}
 
-	.progress-bar {
-		background-color: #fff;
-		position: absolute;
-
-		.progress-bar__progress {
-			border-radius: 0;
-		}
-	}
-
 	&.intro {
 		button.intro__button {
 			border-radius: 4px;
@@ -443,9 +440,6 @@ button {
 		font-family: proxima-nova, sans-serif;
 		font-weight: 600;
 		font-size: $font-title-large;
-	}
-	.flow-progress.progress-bar {
-		display: none;
 	}
 	.loading-bar {
 		background-color: var(--studio-woocommerce-purple-5);

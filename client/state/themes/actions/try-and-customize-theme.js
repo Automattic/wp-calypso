@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { isExternal } from 'calypso/lib/url';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 

@@ -17,7 +17,7 @@ interface StarterDesignsQueryParams {
 	_locale: string;
 }
 
-interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
+interface Options extends QueryOptions< StarterDesignsResponse > {
 	enabled?: boolean;
 	select?: ( response: StarterDesigns ) => StarterDesigns;
 }
@@ -26,6 +26,12 @@ interface StarterDesignsResponse {
 	filters: { subject: Record< string, Category > };
 	static: { designs: StarterDesign[] };
 }
+
+export type ThemeTier = {
+	slug: string;
+	feature: string;
+	platform: string;
+};
 
 interface StarterDesign {
 	slug: string;
@@ -41,6 +47,7 @@ interface StarterDesign {
 	design_type?: DesignType;
 	theme_type?: string;
 	screenshot?: string;
+	theme_tier: ThemeTier;
 }
 
 export function useStarterDesignsQuery(
@@ -89,13 +96,13 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		preview_data,
 		design_type,
 		screenshot,
+		theme_tier,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
 	const is_externally_managed = design.theme_type === 'managed-external';
-
-	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+	const is_bundled_with_woo = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
 
@@ -107,17 +114,15 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		categories,
 		is_premium,
 		is_externally_managed,
-		is_bundled_with_woo_commerce,
+		is_bundled_with_woo,
 		price,
 		software_sets,
 		design_type: design_type ?? ( is_premium ? 'premium' : 'standard' ),
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		...( preview_data && { preview_data } ),
-		// Deprecated; used for /start flow
-		features: [],
-		template: '',
 		theme: '',
 		screenshot,
+		design_tier: theme_tier?.slug,
 	};
 }

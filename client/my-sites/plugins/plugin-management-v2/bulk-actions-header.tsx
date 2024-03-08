@@ -28,7 +28,7 @@ const BulkActionsHeader: ( props: Props ) => JSX.Element = ( {
 		<div className="plugin-common-table__bulk-actions">
 			{ showUpdatePlugins && <UpdatePlugins plugins={ plugins } /> }
 			<ButtonGroup className="plugin-management-v2__table-button-group">
-				<Button compact onClick={ onClickEditAll }>
+				<Button compact id="plugin-management-v2__edit-all-button" onClick={ onClickEditAll }>
 					{ translate( 'Edit All', { context: 'button label' } ) }
 				</Button>
 			</ButtonGroup>

@@ -21,7 +21,6 @@ const NO_INFO: JetpackScanThreatCounts = {};
 /**
  * Returns a count of all threats Jetpack Scan has discovered for a site, by status.
  * Returns an empty object if the site is unknown, or there is no information yet.
- *
  * @param  {Object}   state    		Global state tree
  * @param  {number}   siteId   		The ID of the site we're querying
  * @returns {JetpackScanThreatCounts} Threat counts, by status

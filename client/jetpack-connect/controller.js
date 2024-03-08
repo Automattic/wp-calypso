@@ -20,10 +20,10 @@ import {
 	getProductFromSlug,
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import Debug from 'debug';
 import { get, some, startsWith } from 'lodash';
-import page from 'page';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';

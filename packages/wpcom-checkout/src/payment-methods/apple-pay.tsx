@@ -34,6 +34,7 @@ export function createApplePayMethod(
 		),
 		inactiveContent: <ApplePaySummary />,
 		getAriaLabel: ( __ ) => __( 'Apple Pay' ),
+		isInitiallyDisabled: true,
 	};
 }
 

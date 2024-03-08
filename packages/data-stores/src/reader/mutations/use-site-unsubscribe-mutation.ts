@@ -85,12 +85,13 @@ const useSiteUnsubscribeMutation = () => {
 				userId
 			);
 
-			await queryClient.cancelQueries( siteSubscriptionsQueryKey );
-			await queryClient.cancelQueries( subscriptionsCountQueryKey );
-			await queryClient.cancelQueries( siteSubscriptionDetailsQueryKey );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionsQueryKey } );
+			await queryClient.cancelQueries( { queryKey: subscriptionsCountQueryKey } );
+			await queryClient.cancelQueries( { queryKey: siteSubscriptionDetailsQueryKey } );
 
 			const previousSiteSubscriptions =
 				queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsQueryKey );
+
 			// remove blog from site subscriptions
 			if ( previousSiteSubscriptions ) {
 				queryClient.setQueryData( siteSubscriptionsQueryKey, {
@@ -99,14 +100,16 @@ const useSiteUnsubscribeMutation = () => {
 						return {
 							...page,
 							total_subscriptions: page.total_subscriptions - 1,
-							subscriptions: page.subscriptions.map( ( siteSubscription ) => ( {
-								...siteSubscription,
-								isDeleted:
-									Number( siteSubscription.ID ) === params.subscriptionId ||
-									( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
-										? true
-										: siteSubscription.isDeleted,
-							} ) ),
+							subscriptions: page.subscriptions.map( ( siteSubscription ) =>
+								Number( siteSubscription.ID ) === params.subscriptionId ||
+								( isValidId( params.blog_id ) && siteSubscription.blog_ID === params.blog_id ) //siteSubscription.blog_ID is not valid ID for non-wpcom subscriptions, so when unsubscribing from such site, the param.blog_id will also be not valid, this would create false positive
+									? {
+											...siteSubscription,
+											isDeleted: true,
+											resubscribed: false,
+									  }
+									: siteSubscription
+							),
 						};
 					} ),
 				} );
@@ -146,7 +149,7 @@ const useSiteUnsubscribeMutation = () => {
 					userId
 				);
 
-				await queryClient.cancelQueries( siteSubscriptionDetailsCacheKey );
+				await queryClient.cancelQueries( { queryKey: siteSubscriptionDetailsCacheKey } );
 
 				previousSiteSubscriptionDetailsByBlogId = queryClient.getQueryData(
 					siteSubscriptionDetailsCacheKey
@@ -200,23 +203,28 @@ const useSiteUnsubscribeMutation = () => {
 		},
 		onSettled: ( _data, _error, params ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
-				queryClient.invalidateQueries( siteSubscriptionsQueryKey );
+				queryClient.invalidateQueries( { queryKey: siteSubscriptionsQueryKey } );
 			}
 
 			if ( isValidId( params.blog_id ) ) {
 				const siteSubscriptionDetailsByBlogIdQueryKey =
 					buildSiteSubscriptionDetailsByBlogIdQueryKey( params.blog_id, isLoggedIn, userId );
-				queryClient.invalidateQueries( siteSubscriptionDetailsByBlogIdQueryKey, {
+				queryClient.invalidateQueries( {
+					queryKey: siteSubscriptionDetailsByBlogIdQueryKey,
 					refetchType: 'none',
 				} );
-				queryClient.invalidateQueries( [ 'read', 'sites', Number( params.blog_id ) ] );
+				queryClient.invalidateQueries( {
+					queryKey: [ 'read', 'sites', Number( params.blog_id ) ],
+				} );
 			}
 
-			queryClient.invalidateQueries( subscriptionsCountQueryKey );
-			queryClient.invalidateQueries( [ 'read', 'feed', 'search' ] );
-			queryClient.invalidateQueries(
-				buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId )
-			);
+			queryClient.invalidateQueries( { queryKey: subscriptionsCountQueryKey } );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'feed', 'search' ],
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId ),
+			} );
 		},
 	} );
 };

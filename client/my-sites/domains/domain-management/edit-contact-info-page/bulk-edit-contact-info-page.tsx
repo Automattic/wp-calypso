@@ -1,3 +1,4 @@
+import page, { type Context } from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import {
 	useAllDomainsQuery,
@@ -10,7 +11,6 @@ import { useQueries } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import page from 'page';
 import { useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -42,7 +42,7 @@ import './style.scss';
 
 interface BulkEditContactInfoPageProps {
 	selectedSite: SiteDetails | null;
-	context: PageJS.Context;
+	context: Context;
 }
 
 export default function BulkEditContactInfoPage( {

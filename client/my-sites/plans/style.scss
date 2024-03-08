@@ -2,7 +2,9 @@
 @import "@wordpress/base-styles/mixins";
 
 .plans main {
-	padding-top: 24px;
+	@include break-medium {
+		padding-top: 24px;
+	}
 	// a formatted-header instance used within main (not as section header)
 	.plans__formatted-header {
 		&.is-domain-upsell {
@@ -22,10 +24,53 @@
 	}
 }
 
+body.is-section-plans {
+	.layout:not(.has-no-sidebar) .layout__content {
+		@media (min-width: $break-small) {
+			padding-left: 0 !important;
+			padding-right: 0 !important;
+		}
+		@media (min-width: $break-medium) {
+			padding-left: calc(var(--sidebar-width-max) + 1px) !important;
+			padding-right: 0 !important;
+		}
+		@media (max-width: $break-medium) {
+			.navigation-header {
+				padding-left: max(calc(50% - 612px), 32px);
+				padding-right: max(calc(50% - 612px), 32px);
+			}
+			.section-nav__panel {
+				padding: 0 max(calc(50% - 612px), 32px);
+			}
+			.main {
+				padding: 17px max(calc(50% - 612px), 32px);
+			}
+		}
+		@media (max-width: $break-mobile) {
+			.navigation-header {
+				padding-left: max(calc(50% - 612px), 15px);
+				padding-right: max(calc(50% - 612px), 15px);
+			}
+			.section-nav__panel {
+				padding: 0 max(calc(50% - 612px), 15px);
+			}
+			.main {
+				padding: 17px max(calc(50% - 612px), 15px);
+			}
+		}
+	}
+
+	.layout:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+		@media (min-width: $break-small) {
+			padding-top: 79px !important;
+		}
+	}
+}
 body.is-section-plans.is-domain-plan-package-flow {
 	background: var(--color-body-background);
 
 	.layout__content {
+		padding-top: 0 !important;
 		padding-left: 0 !important;
 	}
 

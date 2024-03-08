@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="84" height="32" viewBox="0 0 84 32" fill="none">
+    <path d="M24 0C15.1641 0 8 7.16345 8 16V17.3726C8 21.616 6.31445 25.6857 3.31445 28.6863L0 32H5C8.55664 32 11.8438 30.8391 14.5 28.8755C17.1562 30.8391 20.4434 32 24 32H68C76.8359 32 84 24.8365 84 16C84 7.16345 76.8359 0 68 0H24Z" fill="#FFD200"/>
+    <!--Circle 1-->
+    <circle cx="30" cy="16" r="6" fill="black">
+      <!--First, it will shrink from 6 to 3 in 320ms-->
+      <animate id="shrink" attributeName="r" from="6" to="3" dur="320ms" begin="0s;grow.end" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+      <!--Then, it will grow back from 3 to 6 in 320ms after waiting for 640ms-->
+      <animate id="grow" attributeName="r" from="3" to="6" dur="320ms" begin="shrink3.begin" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+    </circle>
+    <!--Circle 2-->
+    <circle cx="46" cy="16" r="3" fill="black">
+      <animate id="grow2" attributeName="r" from="3" to="6" dur="320ms" begin="0s;shrink.begin" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+      <animate id="shrink2" attributeName="r" from="6" to="3" dur="320ms" begin="grow2.end" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+    </circle>
+    <!--Circle 3-->
+    <circle cx="62" cy="16" r="3" fill="black">
+      <!--It starts growing when the second circle starts shrinking-->
+      <animate id="grow3" attributeName="r" from="3" to="6" dur="320ms" begin="shrink2.begin" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+      <!--After growing, it should start shrinking-->
+      <animate id="shrink3" attributeName="r" from="6" to="3" dur="320ms" begin="grow3.end" fill="freeze" calcMode="spline" keySplines="0.42 0 0.58 1"/>
+    </circle>
+  </svg>
+  

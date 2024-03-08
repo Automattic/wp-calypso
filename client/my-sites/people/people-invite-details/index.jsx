@@ -1,25 +1,28 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import InviteStatus from 'calypso/my-sites/people/invite-status';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import { deleteInvite } from 'calypso/state/invites/actions';
+import { deleteInvite, resendInvite } from 'calypso/state/invites/actions';
 import {
 	isRequestingInvitesForSite,
 	getInviteForSite,
 	isDeletingInvite,
 	didInviteDeletionSucceed,
+	isRequestingInviteResend,
+	didInviteResendSucceed,
 } from 'calypso/state/invites/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -45,6 +48,19 @@ export class PeopleInviteDetails extends PureComponent {
 
 		// Go back to last route with provided route as the fallback
 		page.back( fallback );
+	};
+
+	onResend = ( event ) => {
+		const { requestingResend, resendSuccess, invite, site } = this.props;
+		// Prevents navigation to invite-details screen and onClick event.
+		event.preventDefault();
+		event.stopPropagation();
+
+		if ( requestingResend || resendSuccess ) {
+			return null;
+		}
+
+		this.props.resendInvite( site.ID, invite.key );
 	};
 
 	handleDelete = () => {
@@ -75,7 +91,17 @@ export class PeopleInviteDetails extends PureComponent {
 	}
 
 	renderInvite() {
-		const { site, requesting, invite, translate, deleteSuccess } = this.props;
+		const {
+			site,
+			requesting,
+			invite,
+			translate,
+			deleteSuccess,
+			requestingResend,
+			resendSuccess,
+			inviteWasDeleted,
+			deletingInvite,
+		} = this.props;
 
 		if ( ! site || ! site.ID || deleteSuccess ) {
 			return this.renderPlaceholder();
@@ -100,10 +126,19 @@ export class PeopleInviteDetails extends PureComponent {
 						site={ site }
 						type="invite-details"
 						isSelectable={ false }
-						showStatus={ true }
-						RevokeClearBtn={ this.renderClearOrRevoke }
 					/>
 					{ this.renderInviteDetails() }
+					<InviteStatus
+						type="invite-details"
+						invite={ invite }
+						site={ site }
+						requestingResend={ requestingResend }
+						resendSuccess={ resendSuccess }
+						inviteWasDeleted={ inviteWasDeleted }
+						deletingInvite={ deletingInvite }
+						handleDelete={ this.handleDelete }
+						onResend={ this.onResend }
+					/>
 				</Card>
 			</div>
 		);
@@ -169,15 +204,10 @@ export class PeopleInviteDetails extends PureComponent {
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 
 				{ isEnabled( 'user-management-revamp' ) && (
-					<FormattedHeader
-						brandFont
-						className="people__page-heading"
-						headerText={ translate( 'Users' ) }
-						subHeaderText={ translate(
-							'People who have subscribed to your site and team members.'
-						) }
-						align="left"
-						hasScreenOptions
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Users' ) }
+						subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
 					/>
 				) }
 
@@ -203,7 +233,11 @@ export default connect(
 			deleteSuccess: didInviteDeletionSucceed( state, siteId, ownProps.inviteKey ),
 			invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
 			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			requestingResend: isRequestingInviteResend( state, siteId, ownProps.inviteKey ),
+			resendSuccess: didInviteResendSucceed( state, siteId, ownProps.inviteKey ),
+			inviteWasDeleted: didInviteDeletionSucceed( state, siteId, ownProps.inviteKey ),
+			deletingInvite: isDeletingInvite( state, siteId, ownProps.inviteKey ),
 		};
 	},
-	{ deleteInvite }
+	{ deleteInvite, resendInvite }
 )( localize( withLocalizedMoment( PeopleInviteDetails ) ) );

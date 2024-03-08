@@ -1,4 +1,12 @@
-import { isMonthly, getPlanByPathSlug, TERM_MONTHLY, Product } from '@automattic/calypso-products';
+import {
+	isMonthly,
+	getPlanByPathSlug,
+	TERM_MONTHLY,
+	Product,
+	isPlan,
+} from '@automattic/calypso-products';
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
+import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
@@ -7,23 +15,15 @@ import classnames from 'classnames';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
-import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
-import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import {
-	getTaxValidationResult,
-	isContactValidationResponseValid,
-} from 'calypso/my-sites/checkout/src/lib/contact-validation';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -41,7 +41,6 @@ import {
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import getCountries from 'calypso/state/selectors/get-countries';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import {
@@ -52,17 +51,14 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
+import PurchaseModal from '../purchase-modal';
+import {
+	type WithIsEligibleForOneClickCheckoutProps,
+	withIsEligibleForOneClickCheckout,
+} from '../purchase-modal/with-is-eligible-for-one-click-checkout';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import PurchaseModal, { wrapValueInManagedValue } from './purchase-modal';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type {
-	CountryListItem,
-	ManagedContactDetails,
-	VatDetails,
-} from '@automattic/wpcom-checkout';
-import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
@@ -104,115 +100,26 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	trackUpsellButtonClick: ( key: string ) => void;
 	translate: ReturnType< typeof useTranslate >;
 	currentPlanTerm: string;
-	countries: CountryListItem[] | null;
 }
 
 export type UpsellNudgeProps = UpsellNudgeManualProps &
 	UpsellNudgeAutomaticProps &
-	WithStoredPaymentMethodsProps;
+	WithIsEligibleForOneClickCheckoutProps;
 
 interface UpsellNudgeState {
 	cartItem: MinimalRequestCartProduct | null;
 	showPurchaseModal: boolean;
-	isContactInfoValid: boolean;
-	isValidating: boolean;
 }
 
 export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState > {
-	lastCardIds: string[] | undefined = undefined;
-
 	state: UpsellNudgeState = {
 		cartItem: null,
 		showPurchaseModal: false,
-		isContactInfoValid: false,
-		isValidating: false,
 	};
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
-		this.validateContactInfo();
 	}
-
-	componentDidUpdate() {
-		this.validateContactInfo();
-	}
-
-	validateContactInfo = () => {
-		if ( this.props.isLoading ) {
-			return;
-		}
-		if ( this.props.paymentMethodsState.isLoading ) {
-			debug( 'not validating contact info because cards are still loading' );
-			return;
-		}
-		if ( ! this.haveCardsChanged() ) {
-			debug( 'cancelling validating contact info; cards have not changed' );
-			return;
-		}
-		if ( this.state.isValidating ) {
-			debug( 'cancelling validating contact info; validation is in-progress' );
-			return;
-		}
-		if ( this.props.paymentMethodsState.paymentMethods.length === 0 ) {
-			debug( 'not validating contact info because there are no cards' );
-			this.setState( { isContactInfoValid: false, isValidating: false } );
-			return;
-		}
-		debug( 'validating contact info' );
-
-		const storedCard =
-			this.props.paymentMethodsState.paymentMethods.length > 0
-				? this.props.paymentMethodsState.paymentMethods[ 0 ]
-				: undefined;
-
-		const validateContactDetails = async () => {
-			const validationResult = await getTaxValidationResult( {
-				state: wrapValueInManagedValue( storedCard?.tax_location?.subdivision_code ),
-				city: wrapValueInManagedValue( storedCard?.tax_location?.city ),
-				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
-				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
-				organization: wrapValueInManagedValue( storedCard?.tax_location?.organization ),
-				address1: wrapValueInManagedValue( storedCard?.tax_location?.address ),
-				vatId: wrapValueInManagedValue( storedCard?.tax_location?.vat_id ),
-			} );
-			return isContactValidationResponseValid( validationResult );
-		};
-
-		this.setState( {
-			isContactInfoValid: false,
-			isValidating: true,
-		} );
-
-		validateContactDetails().then( ( isValid ) => {
-			debug( 'validation of contact details result is', isValid );
-			this.setState( {
-				isContactInfoValid: isValid,
-				isValidating: false,
-			} );
-		} );
-	};
-
-	haveCardsChanged = () => {
-		const cardIds = this.props.paymentMethodsState.paymentMethods.map(
-			( card ) => card.stored_details_id
-		);
-		if ( ! this.lastCardIds ) {
-			this.lastCardIds = cardIds;
-			return true;
-		}
-		if ( this.lastCardIds.length !== cardIds.length ) {
-			this.lastCardIds = cardIds;
-			return true;
-		}
-		cardIds.forEach( ( id ) => {
-			if ( ! this.lastCardIds?.includes( id ) ) {
-				this.lastCardIds = cardIds;
-				return true;
-			}
-		} );
-		this.lastCardIds = cardIds;
-		return false;
-	};
 
 	render() {
 		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType, upgradeItem } = this.props;
@@ -232,7 +139,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					'is-wide-layout': BUSINESS_PLAN_UPGRADE_UPSELL === upsellType,
 				} ) }
 			>
-				<QueryPaymentCountries />
 				<QuerySites siteId={ siteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && typeof siteId === 'number' && ! isNaN( siteId ) && (
@@ -307,8 +213,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			isLoading: isFetchingData,
 		} = this.props;
 
-		const isLoading =
-			isFetchingData || this.props.paymentMethodsState.isLoading || this.state.isValidating;
+		const isLoading = isFetchingData || this.props.isEligibleForOneClickCheckout.isLoading;
 
 		switch ( upsellType ) {
 			case CONCIERGE_QUICKSTART_SESSION:
@@ -343,7 +248,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell
-						currencyCode={ currencyCode ?? 'USD' }
 						domainName={ upgradeItem ?? '' }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
@@ -396,64 +300,29 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 	};
 
+	getProductToAdd = () => {
+		let productToAdd = this.props.product;
+		if ( PROFESSIONAL_EMAIL_UPSELL === this.props.upsellType && this.state.cartItem ) {
+			productToAdd = this.state.cartItem;
+		}
+		return productToAdd;
+	};
+
 	handleClickAccept = async ( buttonAction: string ) => {
-		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
+		const { siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
 		debug( 'accept upsell clicked' );
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
-		let productToAdd = product;
-		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType && this.state.cartItem ) {
-			productToAdd = this.state.cartItem;
-		}
+		const productToAdd = this.getProductToAdd();
 
-		const storedCard =
-			this.props.paymentMethodsState.paymentMethods.length > 0
-				? this.props.paymentMethodsState.paymentMethods[ 0 ]
-				: undefined;
-		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd && storedCard ) {
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd ) {
 			debug( 'accept upsell allows one-click, has a product, and a stored card' );
 			this.setState( {
 				showPurchaseModal: true,
 			} );
-
-			const vatDetails: VatDetails = {
-				country: storedCard.tax_location?.country_code,
-				id: storedCard.tax_location?.vat_id,
-				name: storedCard.tax_location?.organization,
-				address: storedCard.tax_location?.address,
-			};
-			const contactInfo: ManagedContactDetails = {
-				state: wrapValueInManagedValue( storedCard.tax_location?.subdivision_code ),
-				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
-				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
-			};
-
-			try {
-				debug(
-					'updating cart with contact info and product',
-					contactInfo,
-					vatDetails,
-					productToAdd
-				);
-				Promise.all( [
-					updateCartContactDetailsForCheckout(
-						this.props.countries ?? [],
-						this.props.cart,
-						this.props.shoppingCartManager.updateLocation,
-						contactInfo,
-						vatDetails
-					),
-					this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ),
-				] );
-			} catch ( error ) {
-				// If updating the cart fails, we should not continue. No need
-				// to do anything else, though, because CartMessages will
-				// display the error.
-				debug( 'an error occurred when updating the cart', error );
-			}
 			return;
 		}
 		debug(
@@ -533,15 +402,8 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return false;
 		}
 
-		// stored cards should exist
-		const storedCards = this.props.paymentMethodsState.paymentMethods.filter( isCreditCard );
-		if ( storedCards.length === 0 ) {
-			debug( 'not eligible for one-click upsell because there are no cards' );
-			return false;
-		}
-
-		if ( ! this.state.isContactInfoValid ) {
-			debug( 'not eligible for one-click upsell because the contact info is not valid' );
+		if ( ! this.props.isEligibleForOneClickCheckout.result ) {
+			debug( 'not eligible for one-click upsell because not eligible for one-click checkout' );
 			return false;
 		}
 
@@ -550,32 +412,30 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	renderPurchaseModal = () => {
-		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
-		const onCloseModal = async () => {
-			try {
-				this.props.shoppingCartManager.updateLocation( { countryCode: '' } );
-				this.props.shoppingCartManager.replaceProductsInCart( [] );
-			} catch {
-				// No need to do anything if this fails.
-			}
+		const onCloseModal = () => {
 			this.setState( { showPurchaseModal: false } );
 		};
 
-		if ( ! this.props.siteSlug ) {
+		const productToAdd = this.getProductToAdd();
+
+		if ( ! this.props.siteSlug || ! productToAdd ) {
 			return null;
 		}
 
-		const storedCards = this.props.paymentMethodsState.paymentMethods.filter( isCreditCard );
-
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
-				<PurchaseModal
-					cart={ this.props.cart }
-					cards={ storedCards }
-					onClose={ onCloseModal }
-					siteSlug={ this.props.siteSlug }
-					isCartUpdating={ isCartUpdating }
-				/>
+				<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+					<PurchaseModal
+						productToAdd={ productToAdd }
+						onClose={ onCloseModal }
+						siteSlug={ this.props.siteSlug }
+						showFeatureList={
+							!! (
+								this.props.product && isPlan( { productSlug: this.props.product?.product_slug } )
+							)
+						}
+					/>
+				</RazorpayHookProvider>
 			</StripeHookProvider>
 		);
 	};
@@ -645,7 +505,6 @@ export default connect(
 				: undefined;
 
 		return {
-			countries: getCountries( state, 'payments' ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanTerm,
 			currentProduct,
@@ -667,7 +526,5 @@ export default connect(
 		trackUpsellButtonClick,
 	}
 )(
-	withStoredPaymentMethods( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ), {
-		type: 'card',
-	} )
+	withIsEligibleForOneClickCheckout( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) )
 );

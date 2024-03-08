@@ -2,6 +2,7 @@ import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso
 import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import wpcomRequest from 'wpcom-proxy-request';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';
 
@@ -11,6 +12,8 @@ export interface BlockPlan extends Plan {
 	rawPrice: number;
 	price: string;
 	upgradeLabel: string;
+	productNameShort: string;
+	productName: string;
 }
 
 const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
@@ -32,8 +35,10 @@ const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
 				upgradeLabel: sprintf(
 					// translators: %s is the plan name
 					__( 'Upgrade to %s', 'happy-blocks' ),
-					plan.getTitle()
+					apiPlan.product_name_short
 				),
+				productName: apiPlan.product_name,
+				productNameShort: apiPlan.product_name_short,
 			};
 		} );
 };
@@ -52,10 +57,10 @@ const usePricingPlans = () => {
 			setIsLoading( true );
 			setError( null );
 			try {
-				const response = await fetch(
-					'https://public-api.wordpress.com/rest/v1.5/plans?locale=' + config.locale
-				);
-				const data = await response.json();
+				const data: ApiPricingPlan[] = await wpcomRequest( {
+					path: '/plans?locale=' + config.locale,
+					apiVersion: '1.5',
+				} );
 				setPlans( parsePlans( data ) );
 			} catch ( e: unknown ) {
 				setError( e );

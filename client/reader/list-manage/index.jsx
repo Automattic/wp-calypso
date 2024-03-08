@@ -6,8 +6,8 @@ import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/con
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -25,6 +25,7 @@ import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
 import ListItem from './list-item';
+
 import './style.scss';
 
 function Details( { list } ) {
@@ -97,7 +98,7 @@ function ReaderListCreate() {
 
 	return (
 		<Main>
-			<FormattedHeader headerText={ translate( 'Create List' ) } />
+			<NavigationHeader title={ translate( 'Create List' ) } />
 			<ListForm
 				isCreateForm
 				isSubmissionDisabled={ isCreatingList }
@@ -139,8 +140,8 @@ function ReaderListEdit( props ) {
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
 			{ ! listItems && list && <QueryReaderListItems owner={ props.owner } slug={ props.slug } /> }
 			<Main>
-				<FormattedHeader
-					headerText={ translate( 'Manage %(listName)s', {
+				<NavigationHeader
+					title={ translate( 'Manage %(listName)s', {
 						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
 				/>

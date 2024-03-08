@@ -14,6 +14,7 @@ import {
 	JETPACK_STATS_PRODUCTS,
 	JETPACK_MONITOR_PRODUCTS,
 	WOOCOMMERCE_PRODUCTS,
+	JETPACK_CREATOR_PRODUCTS,
 } from '@automattic/calypso-products';
 import JetpackProductIconAILight from 'calypso/assets/images/jetpack/jetpack-product-icon-ai-light.svg';
 import JetpackProductIconAI from 'calypso/assets/images/jetpack/jetpack-product-icon-ai.svg';
@@ -24,6 +25,7 @@ import JetpackProductIconBackup from 'calypso/assets/images/jetpack/jetpack-prod
 import JetpackProductIconBoostLight from 'calypso/assets/images/jetpack/jetpack-product-icon-boost-light.svg';
 import JetpackProductIconBoost from 'calypso/assets/images/jetpack/jetpack-product-icon-boost.svg';
 import JetpackProductIconComplete from 'calypso/assets/images/jetpack/jetpack-product-icon-complete.svg';
+import JetpackProductIconCreator from 'calypso/assets/images/jetpack/jetpack-product-icon-creator.svg';
 import JetpackProductIconCRMLight from 'calypso/assets/images/jetpack/jetpack-product-icon-crm-light.svg';
 import JetpackProductIconCRM from 'calypso/assets/images/jetpack/jetpack-product-icon-crm.svg';
 import JetpackProductIconMonitorLight from 'calypso/assets/images/jetpack/jetpack-product-icon-monitor-light.svg';
@@ -107,6 +109,10 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 		regular: JetpackProductIconSecurity,
 		light: '',
 	} ),
+	...setProductsIcon( JETPACK_CREATOR_PRODUCTS, {
+		regular: JetpackProductIconCreator,
+		light: '',
+	} ),
 	...setProductsIcon( WOOCOMMERCE_PRODUCTS, {
 		regular: WooCommerceProductIcon,
 		light: WooCommerceProductIcon,
@@ -115,8 +121,7 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 
 const getProductIcon = ( { productSlug, light }: productIconProps ): string => {
 	const iconResource = PRODUCT_ICON_MAP[ productSlug ];
-
-	return light ? iconResource.light : iconResource.regular;
+	return light ? iconResource?.light : iconResource?.regular;
 };
 
 export default getProductIcon;

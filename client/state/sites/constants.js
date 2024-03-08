@@ -24,6 +24,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_wpcom_staging_site',
 	'was_ecommerce_trial',
 	'was_migration_trial',
+	'was_upgraded_from_trial',
 	'was_hosting_trial',
 	'description',
 	'user_interactions',
@@ -76,7 +77,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_creation_flow',
 	'site_source_slug',
 	'is_difm_lite_in_progress',
-	'difm_lite_site_options',
 	'site_intent',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',
@@ -84,4 +84,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_staging_blog_ids',
 	'can_blaze',
 	'is_commercial',
+	'is_commercial_reasons',
+	'wpcom_admin_interface',
+	'wpcom_classic_early_release',
 ].join();

@@ -14,7 +14,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Post types which can be configured in the Writing Site Settings for a site,
  * regardless of whether the current theme supports it.
- *
  * @type {Array}
  */
 const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];

@@ -18,6 +18,7 @@ class SectionNav extends Component {
 		onMobileNavPanelOpen: PropTypes.func,
 		className: PropTypes.string,
 		allowDropdown: PropTypes.bool,
+		variation: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -78,6 +79,7 @@ class SectionNav extends Component {
 			'is-open': this.state.mobileOpen,
 			'section-nav-updated': this.props.applyUpdatedStyles,
 			'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems,
+			minimal: 'minimal' === this.props.variation,
 		} );
 
 		return (

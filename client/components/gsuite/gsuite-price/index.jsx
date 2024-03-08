@@ -8,7 +8,6 @@ import './style.scss';
 
 /**
  * Determines whether a discount can be applied to the specified product via a sales coupon.
- *
  * @param {undefined|null|{sale_cost?: number, sale_coupon?:{start_date?: string; expires?: string}}} product - G Suite product
  * @returns {boolean} - true if a discount can be applied, false otherwise
  */

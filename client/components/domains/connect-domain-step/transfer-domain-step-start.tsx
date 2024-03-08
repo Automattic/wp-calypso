@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import { useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';

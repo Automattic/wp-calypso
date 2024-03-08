@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -41,6 +41,7 @@ export default function () {
 		'filedownloads',
 		'searchterms',
 		'annualstats',
+		'utm',
 	].join( '|' );
 
 	// Redirect this to default /stats/day view in order to keep

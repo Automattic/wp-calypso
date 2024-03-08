@@ -1,8 +1,7 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 import { STORAGE_RETENTION_LEARN_MORE_LINK } from '../constants';
 import './style.scss';
 

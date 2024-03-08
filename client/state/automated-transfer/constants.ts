@@ -15,6 +15,7 @@ export const transferStates = {
 	BACKFILLING: 'backfilling',
 	RELOCATING: 'relocating_switcheroo',
 	COMPLETE: 'complete',
+	COMPLETED: 'completed', // there seems to be two spellings for this state
 	/**
 	 * Similar to 'none' there is no existing transfer, but this is when the site has been already reverted from atomic
 	 */
@@ -26,6 +27,14 @@ export const transferStates = {
 	 */
 	REQUEST_FAILURE: 'request_failure',
 } as const;
+
+export const transferInProgress = [
+	transferStates.PENDING,
+	transferStates.ACTIVE,
+	transferStates.PROVISIONED,
+] as const;
+
+export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
 
 export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];
 

@@ -35,20 +35,10 @@ export class RelatedPostsFlow implements BlockFlow {
 		await context.addedBlockLocator.waitFor();
 
 		if ( this.configurationData.headline ) {
-			await context.editorPage.openSettings();
-			await context.editorPage.clickSettingsTab( 'Block' );
-
-			const editorParent = await context.editorPage.getEditorParent();
-			// Toggle on the Headline text field.
-			await editorParent.getByLabel( 'Display headline' ).click();
-			// Fill the headline field.
-			await editorParent
-				.getByLabel( 'Headline', { exact: true } )
+			await context.addedBlockLocator
+				.getByRole( 'document', { name: 'Block: Heading' } )
 				.fill( this.configurationData.headline );
 		}
-
-		// For mobile viewports, this block automatically opens the Block Settings sidebar.
-		await context.editorPage.closeSettings();
 	}
 
 	/**

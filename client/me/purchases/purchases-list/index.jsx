@@ -9,9 +9,9 @@ import QueryMembershipsSubscriptions from 'calypso/components/data/query-members
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
@@ -100,7 +100,7 @@ class PurchasesList extends Component {
 				return (
 					<Main wideLayout className="purchases-list">
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
-						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+						<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 						<PurchasesNavigation section="activeUpgrades" />
 						<NoSitesMessage />
 					</Main>
@@ -132,10 +132,10 @@ class PurchasesList extends Component {
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 
-				<FormattedHeader
-					brandFont
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -143,7 +143,6 @@ class PurchasesList extends Component {
 							},
 						}
 					) }
-					align="left"
 				/>
 				<PurchasesNavigation section="activeUpgrades" />
 				{ content }

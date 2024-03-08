@@ -5,11 +5,16 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
+import {
+	displaySiteUrl,
+	getDashboardUrl,
+	isStagingSite,
+	siteDefaultInterface,
+	getSiteWpAdminUrl,
+} from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
@@ -23,6 +28,7 @@ import SitesStagingBadge from './sites-staging-badge';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { ThumbnailLink } from './thumbnail-link';
 import { WithAtomicTransfer } from './with-atomic-transfer';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SIZES_ATTR = [
 	'(min-width: 1345px) calc((1280px - 64px) / 3)',
@@ -65,7 +71,8 @@ export const siteThumbnail = css( {
 
 const SitesGridItemSecondary = styled.div( {
 	display: 'flex',
-	gap: '32px',
+	gap: '20px',
+	fontSize: '14px',
 	justifyContent: 'space-between',
 } );
 
@@ -109,14 +116,17 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
-
+	const wpAdminUrl = getSiteWpAdminUrl( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const ThumbnailWrapper = showThumbnailLink ? ThumbnailLink : 'div';
 
 	const siteDashboardUrlProps = showThumbnailLink
 		? {
-				href: getDashboardUrl( site.slug ),
+				href:
+					siteDefaultInterface( site ) === 'wp-admin'
+						? wpAdminUrl || getDashboardUrl( site.slug )
+						: getDashboardUrl( site.slug ),
 				title: __( 'Visit Dashboard' ),
 		  }
 		: {};
@@ -125,7 +135,6 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 		siteUrl = site.options?.unmapped_url;
 	}
-
 	return (
 		<SitesGridTile
 			ref={ ref }
@@ -187,13 +196,14 @@ export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 					</SiteUrl>
 					<WithAtomicTransfer site={ site }>
-						{ ( result ) =>
-							result.wasTransferring ? (
-								<TransferNoticeWrapper { ...result } />
-							) : (
-								<>{ showLaunchNag && <SiteLaunchNag site={ site } /> }</>
-							)
-						}
+						{ ( result ) => {
+							if ( result.wasTransferring ) {
+								return <TransferNoticeWrapper { ...result } />;
+							} else if ( showLaunchNag && 'unlaunched' === site.launch_status ) {
+								return <SiteLaunchNag site={ site } />;
+							}
+							return <></>;
+						} }
 					</WithAtomicTransfer>
 				</SitesGridItemSecondary>
 			}

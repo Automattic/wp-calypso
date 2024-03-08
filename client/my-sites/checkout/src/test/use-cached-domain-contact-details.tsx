@@ -8,11 +8,13 @@ import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
 } from '@automattic/shopping-cart';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import useCachedDomainContactDetails from 'calypso/my-sites/checkout/src/hooks/use-cached-domain-contact-details';
+import { useExperiment } from 'calypso/lib/explat';
+import { usePrefillCheckoutContactForm } from 'calypso/my-sites/checkout/src/hooks/use-prefill-checkout-contact-form';
 import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/src/lib/wpcom-store';
 import {
 	countryList,
@@ -21,6 +23,9 @@ import {
 	mockCachedContactDetailsEndpoint,
 } from './util';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+
+jest.mock( 'calypso/lib/explat' );
+( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
 const initialCart = getEmptyResponseCart();
 const { getCart, setCart } = mockCartEndpoint( initialCart, 'USD', 'US' );
@@ -35,25 +40,36 @@ function MyTestWrapper( {
 	countries: CountryListItem[];
 	reduxStore: ReturnType< typeof createTestReduxStore >;
 } ) {
+	const queryClient = useMemo( () => new QueryClient(), [] );
 	return (
 		<ReduxProvider store={ reduxStore }>
-			<ShoppingCartProvider managerClient={ cartManagerClient }>
-				<CheckoutProvider paymentMethods={ paymentMethods } paymentProcessors={ paymentProcessors }>
-					<CheckoutStepGroup>
-						<CheckoutStep
-							stepId="contact-form"
-							titleContent={ <em>Contact step</em> }
-							isCompleteCallback={ () => false }
-							activeStepContent={ <MyTestContent countries={ countries } /> }
-						/>
-						<CheckoutStep
-							stepId="other-step"
-							titleContent={ <em>Other step</em> }
-							isCompleteCallback={ () => false }
-						/>
-					</CheckoutStepGroup>
-				</CheckoutProvider>
-			</ShoppingCartProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ShoppingCartProvider managerClient={ cartManagerClient }>
+					<CheckoutProvider
+						paymentMethods={ paymentMethods }
+						paymentProcessors={ paymentProcessors }
+					>
+						<CheckoutStepGroup>
+							<CheckoutStep
+								stepId="contact-form"
+								titleContent={ <em>Contact step</em> }
+								isCompleteCallback={ () => false }
+								activeStepContent={ <MyTestContent countries={ countries } /> }
+							/>
+							<CheckoutStep
+								stepId="payment-method-step"
+								titleContent={ <em>Payment Method Step</em> }
+								isCompleteCallback={ () => false }
+							/>
+							<CheckoutStep
+								stepId="other-step"
+								titleContent={ <em>Other step</em> }
+								isCompleteCallback={ () => false }
+							/>
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</ShoppingCartProvider>
+			</QueryClientProvider>
 		</ReduxProvider>
 	);
 }
@@ -62,7 +78,10 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
-	useCachedDomainContactDetails( () => null, countries );
+	usePrefillCheckoutContactForm( {
+		setShouldShowContactDetailsValidationErrors: () => null,
+		overrideCountryList: countries,
+	} );
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
 	const onChangeCountry = ( evt ) => {

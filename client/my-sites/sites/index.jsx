@@ -29,10 +29,16 @@ class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 		clearPageTitle: PropTypes.bool,
+		isPostShare: PropTypes.bool,
 	};
 
 	componentDidMount() {
 		const path = this.getPath();
+		recordTracksEvent( 'calypso_site_selector_view', {
+			path,
+			is_post_share: this.props.isPostShare,
+		} );
+
 		if ( this.props.fromSite && path ) {
 			recordTracksEvent( 'calypso_site_selector_site_missing', {
 				path,
@@ -146,6 +152,50 @@ class Sites extends Component {
 				break;
 			case 'site-monitoring':
 				path = translate( 'Site Monitoring' );
+				break;
+			case 'github-deployments':
+				path = translate( 'GitHub Deployments' );
+			case 'earn':
+				path = translate( 'Monetize' );
+				break;
+			case 'subscribers':
+				path = translate( 'Subscribers' );
+				break;
+			case 'themes':
+				path = translate( 'Themes' );
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
+				break;
+			case 'email':
+				path = translate( 'Emails' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
+			case 'customize':
+				path = translate( 'Customizer' );
+				break;
+			case 'google-my-business':
+				path = translate( 'Google Business Profile' );
+				break;
+			case 'view':
+				path = translate( 'Preview' );
+				break;
+			case 'woocommerce-installation':
+				path = 'WooCommerce';
+				break;
+			case 'store':
+				path = translate( 'Store' );
+				break;
+			case 'add-ons':
+				path = translate( 'Add-ons' );
 				break;
 		}
 

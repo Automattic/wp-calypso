@@ -1,7 +1,7 @@
+import page, { type Callback } from '@automattic/calypso-router';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import { useRef, useCallback, useEffect, ComponentType } from 'react';
 
 /**
@@ -117,7 +117,7 @@ function windowConfirm() {
 	return window.confirm( confirmText );
 }
 
-export const checkFormHandler: PageJS.Callback = ( context, next ) => {
+export const checkFormHandler: Callback = ( context, next ) => {
 	if ( ! formsChanged.size ) {
 		return next();
 	}

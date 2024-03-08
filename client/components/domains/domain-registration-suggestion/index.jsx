@@ -18,7 +18,6 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
-	getDomainRegistrations,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -31,6 +30,7 @@ import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from './premium-badge';
@@ -65,6 +65,7 @@ class DomainRegistrationSuggestion extends Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
+		renewCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
 		isReskinned: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
@@ -104,7 +105,7 @@ class DomainRegistrationSuggestion extends Component {
 		}
 	}
 
-	onButtonClick = () => {
+	onButtonClick = ( previousState ) => {
 		const { suggestion, railcarId, uiPosition } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
@@ -118,7 +119,7 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 		}
 
-		this.props.onButtonClick( suggestion, uiPosition );
+		this.props.onButtonClick( suggestion, uiPosition, previousState );
 	};
 
 	isUnavailableDomain = ( domain ) => {
@@ -138,9 +139,25 @@ class DomainRegistrationSuggestion extends Component {
 			premiumDomain,
 			isCartPendingUpdateDomain,
 			flowName,
+			temporaryCart,
+			domainRemovalQueue,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = suggestionSelected || hasDomainInCart( cart, domain );
+
+		let isAdded =
+			suggestionSelected ||
+			hasDomainInCart( cart, domain ) ||
+			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
+
+		// If we're removing this domain, let's instantly show that for the user
+		if (
+			domainRemovalQueue?.length > 0 &&
+			domainRemovalQueue.some( ( item ) => item.meta === domain ) &&
+			! ( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) )
+		) {
+			isAdded = false;
+		}
+
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
 
@@ -157,7 +174,7 @@ class DomainRegistrationSuggestion extends Component {
 
 				buttonContent = translate( '{{checkmark/}} Selected', {
 					context: 'Domain is already added to shopping cart',
-					components: { checkmark: <Gridicon icon="checkmark" /> },
+					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
 				} );
 			}
 		} else {
@@ -194,13 +211,14 @@ class DomainRegistrationSuggestion extends Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 
-		if ( shouldUseMultipleDomainsInCart( flowName ) && getDomainRegistrations( cart ).length > 0 ) {
-			buttonStyles = { ...buttonStyles, primary: false };
+		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+			buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
 		}
 
 		return {
 			buttonContent,
 			buttonStyles,
+			isAdded,
 		};
 	}
 
@@ -242,16 +260,6 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	renderDomainParts( domain ) {
-		const { name, tld } = this.getDomainParts( domain );
-		return (
-			<div className="domain-registration-suggestion__domain-title">
-				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
-				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
-			</div>
-		);
-	}
-
 	renderDomain() {
 		const {
 			showHstsNotice,
@@ -259,17 +267,22 @@ class DomainRegistrationSuggestion extends Component {
 			suggestion: { domain_name: domain },
 		} = this.props;
 
-		const title = this.renderDomainParts( domain );
+		const { name, tld } = this.getDomainParts( domain );
 
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
 				this.props.showStrikedOutPrice && ! this.props.isFeatured,
+			'domain-registration-suggestion__larger-domain': name.length > 15 ? true : false,
 		} );
 
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">
-					{ title } { ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+					<div className="domain-registration-suggestion__domain-title">
+						<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+						<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+						{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+					</div>
 				</h3>
 				{ this.renderBadges() }
 			</div>
@@ -324,6 +337,7 @@ class DomainRegistrationSuggestion extends Component {
 				className="domain-registration-suggestion__hsts-tooltip"
 				iconSize={ infoPopoverSize }
 				position="right"
+				showOnHover
 			>
 				{ ( showHstsNotice && this.getHstsMessage() ) ||
 					( showDotGayNotice && this.getDotGayMessage() ) }
@@ -408,6 +422,7 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			suggestion: { domain_name: domain },
 			productCost,
+			renewCost,
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
@@ -427,6 +442,7 @@ class DomainRegistrationSuggestion extends Component {
 				premiumDomain={ premiumDomain }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
+				renewPrice={ renewCost }
 				salePrice={ productSaleCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
@@ -454,9 +470,11 @@ const mapStateToProps = ( state, props ) => {
 
 	let productCost;
 	let productSaleCost;
+	let renewCost;
 
 	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
+		renewCost = props.premiumDomain?.renew_cost;
 		if ( props.premiumDomain?.sale_cost ) {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
 				stripZeros,
@@ -464,6 +482,8 @@ const mapStateToProps = ( state, props ) => {
 		}
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		// Renew cost is the same as the product cost for non-premium domains
+		renewCost = productCost;
 		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
@@ -476,8 +496,10 @@ const mapStateToProps = ( state, props ) => {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
+		renewCost,
 		productSaleCost,
 		flowName,
+		currentUser: getCurrentUser( state ),
 	};
 };
 

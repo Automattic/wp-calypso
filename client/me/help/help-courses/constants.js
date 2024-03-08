@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
 export const helpCourses = [
@@ -15,11 +16,17 @@ export const helpCourses = [
 	},
 	{
 		title: i18n.translate( 'How to Make a Business Site on WordPress.com' ),
+		// translators: %(planName)s is the name of the Creator/Business plan.
 		description: i18n.translate(
 			'A 60-minute overview course with two of our Happiness Engineers. In this live group session, ' +
-				'we provide an overview of WordPress.com, discuss features of the WordPress.com Business ' +
+				'we provide an overview of WordPress.com, discuss features of the WordPress.com %(planName)s ' +
 				'plan, provide a basic setup overview to help you get started with your site, and show you ' +
-				'where to find additional resources and help in the future.'
+				'where to find additional resources and help in the future.',
+			{
+				args: {
+					planName: getPlan( PLAN_BUSINESS )?.getTitle(),
+				},
+			}
 		),
 		video: {
 			youtubeId: 'S2h_mV0OAcU',

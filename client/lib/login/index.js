@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
 import cookie from 'cookie';
 import { get, includes, startsWith } from 'lodash';
 import {
@@ -6,6 +7,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
 	isWooOAuth2Client,
 	isIntenseDebateOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -45,7 +47,7 @@ export function pathWithLeadingSlash( path ) {
 }
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
-	let signupUrl = config( 'signup_url' );
+	const signupUrl = config( 'signup_url' );
 
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
 	const signupFlow = get( currentQuery, 'signup_flow' );
@@ -74,14 +76,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			 * this case, the redirect_to will handle signups as part of the flow. Use the
 			 * `redirect_to` parameter directly for signup.
 			 */
-			signupUrl = currentQuery.redirect_to;
-		} else {
-			signupUrl = '/jetpack/connect';
+			return currentQuery.redirect_to;
 		}
+		return '/jetpack/connect';
 	} else if ( '/jetpack-connect' === pathname ) {
-		signupUrl = '/jetpack/connect';
-	} else if ( signupFlow ) {
-		signupUrl += '/' + signupFlow;
+		return '/jetpack/connect';
 	}
 
 	if ( isAkismetOAuth2Client( oauth2Client ) || isIntenseDebateOAuth2Client( oauth2Client ) ) {
@@ -90,12 +89,12 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
-	// Gravatar powered clients signup via the magic login page
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-		signupUrl = login( {
+		// Gravatar powered clients signup via the magic login page
+		return login( {
 			locale,
 			twoFactorAuthType: 'link',
 			oauth2ClientId: oauth2Client.id,
@@ -109,7 +108,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
 	if ( oauth2Client && isWooOAuth2Client( oauth2Client ) ) {
@@ -120,26 +119,41 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		if ( wccomFrom ) {
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
-		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
+	if ( oauth2Client ) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+	}
+
+	if ( signupFlow ) {
+		if ( redirectTo ) {
+			const params = new URLSearchParams( {
+				redirect_to: redirectTo,
+			} );
+			return `${ signupUrl }/${ signupFlow }?${ params.toString() }`;
+		}
+		return `${ signupUrl }/${ signupFlow }`;
 	}
 
 	if (
 		isFromMigrationPlugin ||
 		isFromPublicAPIConnectFlow ||
-		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) )
+		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) ||
+		redirectTo
 	) {
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );
-		signupUrl = `/start/account?${ params.toString() }`;
+		return `${ signupUrl }/account?${ params.toString() }`;
+	}
+
+	if ( ! isDefaultLocale( locale ) ) {
+		return addLocaleToPath( signupUrl, locale );
 	}
 
 	return signupUrl;
@@ -151,4 +165,45 @@ export const isReactLostPasswordScreenEnabled = () => {
 		config.isEnabled( 'login/react-lost-password-screen' ) ||
 		cookies.enable_react_password_screen === 'yes'
 	);
+};
+
+export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
+	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
+		return false;
+	}
+
+	// jetpack cloud cannot have users being sent to WordPress.com
+	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+		return false;
+	}
+
+	// Automattic for Agencies cannot have users being sent to WordPress.com
+	if ( isA4AOAuth2Client( oauth2Client ) ) {
+		return false;
+	}
+
+	if ( isJetpackWooCommerceFlow ) {
+		return false;
+	}
+
+	return true;
+};
+
+export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, signupUrl, oauth2ClientId ) => {
+	// The email address from the URL (if present) is added to the login
+	// parameters in this.handleMagicLoginLinkClick(). But it's left out
+	// here deliberately, to ensure that if someone copies this link to
+	// paste somewhere else, their email address isn't included in it.
+	const loginParameters = {
+		locale: locale,
+		twoFactorAuthType: 'link',
+		signupUrl: signupUrl,
+		oauth2ClientId,
+	};
+
+	if ( currentRoute === '/log-in/jetpack' ) {
+		loginParameters.twoFactorAuthType = 'jetpack/link';
+	}
+
+	return login( loginParameters );
 };

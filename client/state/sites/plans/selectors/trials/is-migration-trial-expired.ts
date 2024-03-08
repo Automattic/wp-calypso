@@ -4,7 +4,6 @@ import getMigrationTrialDaysLeft from './get-migration-trial-days-left';
 
 /**
  * Returns true if the Migration trial has expired. If the trial is not active, returns null.
- *
  * @param {AppState} state - Global state tree
  * @param {number} siteId - Site ID
  * @returns {boolean|null}

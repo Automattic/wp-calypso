@@ -14,10 +14,6 @@
 	line-height: $row-line-height;
 	color: $font-color;
 	background-color: var(--studio-white);
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-
 
 	@media ( max-width: $break-medium ) {
 		border-radius: 0;
@@ -94,6 +90,36 @@
 		&:focus {
 			text-decoration: underline;
 		}
+	}
+
+	&.stats-card__hasoverlay {
+		display: grid;
+
+		.stats-card__content,
+		.stats-card__overlay {
+			grid-column: 1;
+			grid-row: 1;
+		}
+
+		.stats-card__content .stats-card--header-and-body .stats-card--body,
+		.stats-card__content .stats-card--hero,
+		.stats-card__content .stats-card--footer {
+			filter: blur(10px);
+			z-index: 0;
+			margin-bottom: 24px;
+		}
+
+		.stats-card__overlay {
+			z-index: 1;
+		}
+	}
+
+	.stats-card__content {
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
 	}
 }
 

@@ -9,7 +9,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const PluginsAnnouncementModal = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const selectedSiteUrl = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const selectedSiteUrl = useSelector( getSelectedSiteSlug );
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);

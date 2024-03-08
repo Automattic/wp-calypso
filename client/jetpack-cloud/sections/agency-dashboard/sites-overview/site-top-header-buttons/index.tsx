@@ -5,14 +5,16 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import AddNewSiteButton from 'calypso/components/jetpack/add-new-site-button';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import WPCOMHostingPopover from './wpcom-hosting-popover';
 
 export default function SiteTopHeaderButtons() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
+	const partner = useSelector( getCurrentPartner );
 
 	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
 		'jetpack/pro-dashboard-wpcom-atomic-hosting'
@@ -21,6 +23,12 @@ export default function SiteTopHeaderButtons() {
 	const buttonRef = useRef< HTMLElement | null >( null );
 	const [ toggleIsOpen, setToggleIsOpen ] = useState( false );
 
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
+
+	const onIssueNewLicenseClick = () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' ) );
+	};
+
 	return (
 		<div
 			className={ classNames( 'sites-overview__add-site-issue-license-buttons', {
@@ -28,19 +36,16 @@ export default function SiteTopHeaderButtons() {
 			} ) }
 		>
 			<Button
+				href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 				className="sites-overview__issue-license-button"
-				href="/partner-portal/issue-license"
-				onClick={ () =>
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_agency_dashboard_issue_license_button_click' )
-					)
-				}
+				disabled={ ! partnerCanIssueLicense }
+				onClick={ onIssueNewLicenseClick }
 			>
 				{ translate( 'Issue License', { context: 'button label' } ) }
 			</Button>
 
 			{ isWPCOMAtomicSiteCreationEnabled ? (
-				<span>
+				<span id="sites-overview-add-sites-button">
 					<AddNewSiteButton
 						showMainButtonLabel={ ! isMobile }
 						popoverContext={ buttonRef }
@@ -63,6 +68,20 @@ export default function SiteTopHeaderButtons() {
 							dispatch(
 								recordTracksEvent(
 									'calypso_jetpack_agency_dashboard_sites_overview_connect_jetpack_site_click'
+								)
+							)
+						}
+						onClickBluehostMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_create_bluehost_site_click'
+								)
+							)
+						}
+						onClickUrlMenuItem={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_agency_dashboard_sites_overview_connect_url_site_click'
 								)
 							)
 						}

@@ -7,8 +7,6 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	isDotComPlan,
-	WPCOM_DIFM_LITE,
-	isDIFMProduct,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
@@ -31,7 +29,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
-jest.mock( '../redesign-v2/sections/Footer', () => () => 'component--redesign-v2-footer' );
 jest.mock( '../atomic-store-thank-you-card', () => () => (
 	<div data-testid="atomic-store-thank-you-card" />
 ) );
@@ -46,8 +43,8 @@ jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wo
 jest.mock( '../premium-plan-details', () => () => 'premium-plan-details' );
 jest.mock( '../business-plan-details', () => () => <div data-testid="business-plan-details" /> );
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
-jest.mock( 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you', () => () => (
-	<div data-testid="difm-lite-thank-you" />
+jest.mock( '../redesign-v2/pages/plan-only', () => () => (
+	<div data-testid="component--plan-only-thank-you" />
 ) );
 
 const translate = ( x ) => x;
@@ -231,58 +228,6 @@ describe( 'CheckoutThankYou', () => {
 		} );
 	} );
 
-	describe( 'Presence of <DIFMLiteThankYou /> in render() output', () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: PLAN_PREMIUM }, { productSlug: WPCOM_DIFM_LITE }, [] ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_PREMIUM,
-		};
-		test( 'Should be there with DIFM product', () => {
-			isDIFMProduct.mockImplementation( () => true );
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } />
-				</Provider>
-			);
-
-			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).toBeVisible();
-		} );
-
-		test( 'Should not be there when no DIFM product', () => {
-			isDIFMProduct.mockImplementation( () => false );
-
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou
-						{ ...{
-							...props,
-							receipt: {
-								...props.receipt,
-								data: {
-									purchases: [ { productSlug: PLAN_PREMIUM }, [] ],
-								},
-							},
-						} }
-					/>
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).not.toBeInTheDocument();
-		} );
-	} );
-
 	it( 'renders the failed purchases content if there are failed purchases', async () => {
 		const props = {
 			...defaultProps,
@@ -342,7 +287,7 @@ describe( 'CheckoutThankYou', () => {
 		expect( await screen.findByText( 'component--jetpack-plan-details' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the redesignV2 footer content if the purchases include a Personal plan', async () => {
+	it( 'renders the <PlanOnlyThankYou> component if the purchases include a Personal plan', async () => {
 		const props = {
 			...defaultProps,
 			receiptId: 12,
@@ -368,6 +313,6 @@ describe( 'CheckoutThankYou', () => {
 			</Provider>
 		);
 
-		expect( await screen.findByText( 'component--redesign-v2-footer' ) ).toBeInTheDocument();
+		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
 	} );
 } );

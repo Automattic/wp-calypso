@@ -1,4 +1,5 @@
 import { useMemo } from '@wordpress/element';
+import usePlans from '../queries/use-plans';
 import useSitePlans from '../queries/use-site-plans';
 import type { PlanIntroductoryOffer } from '../types';
 
@@ -7,31 +8,38 @@ interface IntroOffersIndex {
 }
 
 interface Props {
-	siteId?: string | number | null;
+	siteId: string | number | null | undefined;
+	coupon: string | undefined;
 }
 
 /**
  * Get introductory offers for plans that have these defined
- *  - Currently retrieved off site-plans: https://public-api.wordpress.com/rest/v1.3/sites/[siteId]/plans
- *  - Can be extended to include /plans endpoint
- *
- * @returns {IntroOffersIndex | undefined} - an object of planSlug->PlanIntroductoryOffer, or undefined if we haven't observed any metadata yet
+ * - Returns a union of the introductory offers from `/plans` and `/sites/[id]/plans` endpoints
+ * - `/sites/[id]/plans` takes precedence over `/plans` (if both are defined for a plan)
+ * @returns {IntroOffersIndex | undefined} - an object `{ [ planSlug: string ]: PlanIntroductoryOffer | null }`,
+ * or `undefined` if we haven't observed any metadata yet
  */
-const useIntroOffers = ( { siteId }: Props ): IntroOffersIndex | undefined => {
+const useIntroOffers = ( { siteId, coupon }: Props ): IntroOffersIndex | undefined => {
 	const sitePlans = useSitePlans( { siteId } );
+	const plans = usePlans( { coupon } );
 
 	return useMemo( () => {
-		if ( ! sitePlans.data ) {
+		if ( ! sitePlans.data && ! plans.data ) {
 			return undefined;
 		}
 
-		return Object.values( sitePlans?.data ).reduce< IntroOffersIndex >( ( acc, plan ) => {
-			return {
-				...acc,
-				[ plan.planSlug ]: plan.introOffer ?? null,
-			};
-		}, {} );
-	}, [ sitePlans.data ] );
+		return Object.keys( { ...sitePlans.data, ...plans.data } ).reduce< IntroOffersIndex >(
+			( acc, planSlug ) => {
+				const plan = sitePlans?.data?.[ planSlug ] ?? plans?.data?.[ planSlug ];
+
+				return {
+					...acc,
+					[ planSlug ]: plan?.pricing?.introOffer ?? null,
+				};
+			},
+			{}
+		);
+	}, [ sitePlans.data, plans.data ] );
 };
 
 export default useIntroOffers;

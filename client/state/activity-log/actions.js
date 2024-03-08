@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
 	ACTIVITY_LOG_FILTER_SET,

@@ -20,4 +20,6 @@ export enum SiteIntent {
 	WpAdmin = 'wpadmin',
 	Import = 'import', // deprecated
 	WithThemeAssembler = 'with-theme-assembler',
+	AssemblerFirst = 'assembler-first',
+	AIAssembler = 'ai-assembler',
 }

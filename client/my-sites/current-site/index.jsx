@@ -38,6 +38,42 @@ class CurrentSite extends Component {
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
+	onAllSitesClick = () => {
+		this.props.recordTracksEvent( 'calypso_sidebar_all_sites_click' );
+	};
+
+	renderSiteSwitcher = () => {
+		const { translate, isRtl } = this.props;
+		const arrowDirection = isRtl ? 'right' : 'left';
+
+		if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+			return (
+				<span className="current-site__switch-sites">
+					<Button borderless href="/sites" onClick={ this.onAllSitesClick }>
+						<span
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+						></span>
+						<span className="current-site__switch-sites-label">{ translate( 'All Sites' ) }</span>
+					</Button>
+				</span>
+			);
+		}
+		return (
+			this.props.siteCount > 1 && (
+				<span className="current-site__switch-sites">
+					<Button borderless onClick={ this.switchSites }>
+						<span
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+						></span>
+						<span className="current-site__switch-sites-label">{ translate( 'Switch Site' ) }</span>
+					</Button>
+				</span>
+			)
+		);
+	};
+
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
@@ -66,31 +102,17 @@ class CurrentSite extends Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 		}
 
-		const arrowDirection = this.props.isRtl ? 'right' : 'left';
-
 		return (
 			<Card className="current-site">
 				<div role="button" tabIndex="0" aria-hidden="true" onClick={ this.expandUnifiedNavSidebar }>
-					{ this.props.siteCount > 1 && (
-						<span className="current-site__switch-sites">
-							<Button borderless onClick={ this.switchSites }>
-								<span
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-								></span>
-								<span className="current-site__switch-sites-label">
-									{ translate( 'Switch site' ) }
-								</span>
-							</Button>
-						</span>
-					) }
+					{ this.renderSiteSwitcher() }
 
 					{ selectedSite ? (
 						<div>
 							<Site site={ selectedSite } homeLink={ true } />
 						</div>
 					) : (
-						<AllSites />
+						<AllSites href="/sites" onSelect={ this.onAllSitesClick } />
 					) }
 					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
 						<AsyncLoad

@@ -1,0 +1,78 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.migrate-subscribers-modal {
+	.components-modal__frame {
+		width: 560px;
+		// Allow site picker to expand beyond modal.
+		overflow: visible;
+		max-height: unset;
+
+		.components-modal__header {
+			padding: 0 24px;
+			h1 {
+				// limit the width so that the text-overflow kicks in.
+				max-width: 460px;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+				line-height: unset;
+				@media ( max-width: $break-small ) {
+					max-width: 80vw;
+				}
+			}
+		}
+
+		.components-modal__content {
+			padding: 0 24px 24px;
+			overflow: visible;
+		}
+
+		@media ( max-width: $break-small ) {
+			width: auto;
+		}
+	}
+
+	.migrate-subscribers-modal__content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 20px;
+	}
+
+	.migrate-subscribers-modal__form--container {
+		width: 100%;
+	}
+
+	.migrate-subscriber__form-cancel-btn {
+		box-shadow: unset;
+	}
+
+
+	.migrate-subscribers-modal__form--disclaimer {
+		font-size: $font-body-small;
+		line-height: 1.25;
+		color: var(--studio-gray-50);
+		margin-top: 16px;
+		strong {
+			white-space: nowrap;
+		}
+
+		a,
+		button {
+			font-size: $font-body-small;
+			color: var(--color-text);
+			text-decoration: underline;
+			height: unset;
+
+			&:hover {
+				color: var(--color-text-subtle);
+			}
+		}
+
+		.components-button {
+			padding: 0;
+		}
+	}
+}

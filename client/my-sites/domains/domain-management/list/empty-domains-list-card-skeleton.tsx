@@ -1,6 +1,5 @@
 import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
-import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/domains/free-domain.svg';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -43,10 +42,6 @@ export const EmptyDomainsListCardSkeleton = ( {
 			);
 		};
 
-	const illustration = customerHomeIllustrationTaskFindDomain && (
-		<img src={ customerHomeIllustrationTaskFindDomain } alt="" width={ 150 } />
-	);
-
 	return (
 		<Card className={ classNames( 'empty-domains-list-card', className ) }>
 			<div
@@ -55,7 +50,6 @@ export const EmptyDomainsListCardSkeleton = ( {
 					'has-title-only': title && ! line,
 				} ) }
 			>
-				<div className="empty-domains-list-card__illustration">{ illustration }</div>
 				<div className="empty-domains-list-card__content">
 					<div className="empty-domains-list-card__text">
 						{ title ? <h2>{ title }</h2> : null }

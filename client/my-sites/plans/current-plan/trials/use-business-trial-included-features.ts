@@ -1,6 +1,6 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import page from '@automattic/calypso-router';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import advancedDesignTools from 'calypso/assets/images/plans/wpcom/business-trial/advanced-design-tools.svg';
 import beautifulThemes from 'calypso/assets/images/plans/wpcom/business-trial/beautiful-themes.svg';
 import bestInClassHosting from 'calypso/assets/images/plans/wpcom/business-trial/best-in-class-hosting.svg';
@@ -16,6 +16,7 @@ export default function useBusinessTrialIncludedFeatures(
 	siteAdminUrl: string
 ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	return [
 		{
@@ -25,11 +26,13 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: beautifulThemes,
 			showButton: true,
 			buttonText: translate( 'Browse themes' ),
-			buttonClick: () => page.redirect( `/themes/${ siteSlug }` ),
+			buttonClick: () => page( `/themes/${ siteSlug }` ),
 		},
 		{
 			id: 'advanced-design-tools',
-			title: translate( 'Advanced Design Tools' ),
+			title: hasEnTranslation( 'Advanced design tools' )
+				? translate( 'Advanced design tools' )
+				: translate( 'Advanced Design Tools' ),
 			text: translate(
 				'Make your site even more unique with extended color schemes, typography, and control over your site’s CSS.'
 			),
@@ -57,8 +60,8 @@ export default function useBusinessTrialIncludedFeatures(
 			),
 			illustration: jetpackBackupsAndRestores,
 			showButton: true,
-			buttonText: 'View your backup activity',
-			buttonClick: () => page.redirect( `/backup/${ siteSlug }` ),
+			buttonText: translate( 'View your backup activity' ),
+			buttonClick: () => page( `/backup/${ siteSlug }` ),
 		},
 		{
 			id: 'spam-protection',
@@ -70,7 +73,10 @@ export default function useBusinessTrialIncludedFeatures(
 			showButton: true,
 			buttonText: translate( 'Keep your site safe' ),
 			buttonClick: () =>
-				( location.href = localizeUrl( 'https://jetpack.com/blog/what-is-spam/' ) ),
+				( location.href = `//${ siteSlug.replace(
+					'::',
+					'/'
+				) }/wp-admin/admin.php?page=akismet-key-config` ),
 		},
 		{
 			id: 'seo-tools',
@@ -79,8 +85,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: seoTools,
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
-			buttonClick: () =>
-				( location.href = localizeUrl( 'https://wordpress.com/support/seo-tools/' ) ),
+			buttonClick: () => page( `/marketing/traffic/${ siteSlug }` ),
 		},
 		{
 			id: 'google-analytics',
@@ -89,8 +94,7 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: googleAnalytics,
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
-			buttonClick: () =>
-				( location.href = localizeUrl( 'https://wordpress.com/support/google-analytics/' ) ),
+			buttonClick: () => page( `/marketing/traffic/${ siteSlug }#analytics` ),
 		},
 		{
 			id: 'hosting',

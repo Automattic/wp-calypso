@@ -27,7 +27,7 @@ const ReaderUnsubscribedWpcomFeedItem = ( {
 }: ReaderUnsubscribedWpcomFeedItemProps ) => {
 	const {
 		mutate: subscribe,
-		isLoading: subscribing,
+		isPending: subscribing,
 		isSuccess: subscribed,
 	} = SubscriptionManager.useSiteSubscribeMutation();
 	const dispatch = useDispatch();

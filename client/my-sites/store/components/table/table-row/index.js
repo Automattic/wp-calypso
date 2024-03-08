@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import classnames from 'classnames';
-import page from 'page';
 import PropTypes from 'prop-types';
 import getKeyboardHandler from '../../../lib/get-keyboard-handler';
 

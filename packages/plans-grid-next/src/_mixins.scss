@@ -1,0 +1,15 @@
+@mixin plans-grid-large() {
+	.plans-grid-next.is-large &,
+	.plans-grid-next.is-xlarge &, {
+		@content;
+	}
+}
+
+@mixin plans-grid-medium-large() {
+	.plans-grid-next.is-smedium &,
+	.plans-grid-next.is-medium &,
+	.plans-grid-next.is-large &,
+	.plans-grid-next.is-xlarge & {
+		@content;
+	}
+}

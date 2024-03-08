@@ -47,6 +47,7 @@ export type SettingsPageNameServerHocProps = {
 export type SettingsPageConnectedDispatchProps = {
 	requestWhois: ( domain: string ) => void;
 	recordTracksEvent: typeof recordTracksEvent;
+	verifyIcannEmail: ( domain: string ) => void;
 };
 
 export type SettingsPageProps = SettingsPagePassedProps &

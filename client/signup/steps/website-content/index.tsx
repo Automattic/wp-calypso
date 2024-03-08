@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -113,7 +113,7 @@ function WebsiteContentStep( {
 		? BBE_STORE_WEBSITE_CONTENT_FILLING_STEP
 		: BBE_WEBSITE_CONTENT_FILLING_STEP;
 
-	const { isLoading: isSaving, mutateAsync } = useSaveWebsiteContentMutation(
+	const { isPending: isSaving, mutateAsync } = useSaveWebsiteContentMutation(
 		siteId,
 		websiteContent
 	);

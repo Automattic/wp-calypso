@@ -1,7 +1,6 @@
-import { Card } from '@automattic/components';
+import { Card, SimplifiedSegmentedControl } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import StatsHeatMapLegend from '../stats-heap-map/legend';

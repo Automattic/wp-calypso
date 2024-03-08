@@ -7,7 +7,7 @@ import initialReducer from 'calypso/state/reducer';
 
 export const renderWithProvider = (
 	ui,
-	{ initialState, store, reducers, ...renderOptions } = {}
+	{ initialState, store = null, reducers, ...renderOptions } = {}
 ) => {
 	const queryClient = new QueryClient();
 
@@ -56,5 +56,8 @@ export const renderHookWithProvider = (
 		</QueryClientProvider>
 	);
 
-	return rtlRenderHook( hookContainer, { wrapper: Wrapper, ...renderOptions } );
+	return {
+		store,
+		...rtlRenderHook( hookContainer, { wrapper: Wrapper, ...renderOptions } ),
+	};
 };

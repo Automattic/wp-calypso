@@ -13,7 +13,7 @@ interface Props {
 function PeopleSectionNavCompact( props: Props ) {
 	const translate = useTranslate();
 	const { selectedFilter, searchTerm, filterCount } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const searchPlaceholder =
 		selectedFilter === 'subscribers' ? translate( 'Search by email…' ) : undefined;
 

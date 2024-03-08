@@ -1,5 +1,5 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
-import { localizeUrl, translationExists } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import {
 	hasDomainRegistration,
@@ -55,7 +55,18 @@ function getCopyForBillingTerm( cart ) {
 	);
 }
 
-export default function BundledDomainNotice( { cart } ) {
+/**
+ * Use showBundledDomainNotice to manage BundleDomainNotice visibility when called.
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart
+ * @returns boolean
+ */
+export const showBundledDomainNotice = ( cart ) => {
+	const isGiftPurchase = cart.is_gift_purchase;
+
+	if ( isGiftPurchase ) {
+		return false;
+	}
+
 	// A dotcom plan should exist.
 	if (
 		! hasPlan( cart ) ||
@@ -64,24 +75,18 @@ export default function BundledDomainNotice( { cart } ) {
 		hasP2PlusPlan( cart ) ||
 		has100YearPlan( cart )
 	) {
-		return null;
+		return false;
 	}
 
 	// The plan should bundle a free domain
 	if ( ! isNextDomainFree( cart ) ) {
-		return null;
+		return false;
 	}
 
-	// Hide non-translated text for non-English users.
-	// TODO: the following lines of code should be removed once all translations are ready.
-	if (
-		! translationExists(
-			'Purchasing a one-year subscription to a WordPress.com plan gives you one year of access to your plan’s features and one year of a custom domain name.'
-		)
-	) {
-		return null;
-	}
+	return true;
+};
 
+export default function BundledDomainNotice( { cart } ) {
 	const domainRegistrationLink = (
 		<a href={ localizeUrl( REGISTER_DOMAIN ) } target="_blank" rel="noopener noreferrer" />
 	);

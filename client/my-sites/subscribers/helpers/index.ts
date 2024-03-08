@@ -1,19 +1,14 @@
 import { SubscriberListArgs } from '../types';
 
-const URL_PREFIX = 'https://wordpress.com';
-
-const getEarnPageUrl = ( siteSlug: string | null ) => `${ URL_PREFIX }/earn/${ siteSlug ?? '' }`;
-
-const getEarnPaymentsPageUrl = ( siteSlug: string | null ) =>
-	`${ URL_PREFIX }/earn/payments/${ siteSlug ?? '' }`;
-
 const getSubscribersCacheKey = (
 	siteId: number | undefined | null,
 	currentPage?: number,
 	perPage?: number,
 	search?: string,
 	sortTerm?: string,
-	filterOption?: string
+	filterOption?: string,
+	hasManySubscribers?: boolean,
+	timestamp?: number
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -30,6 +25,12 @@ const getSubscribersCacheKey = (
 	}
 	if ( filterOption ) {
 		cacheKey.push( 'filter-option', filterOption );
+	}
+	if ( timestamp ) {
+		cacheKey.push( timestamp );
+	}
+	if ( hasManySubscribers ) {
+		cacheKey.push( 'many-subscribers' );
 	}
 	return cacheKey;
 };
@@ -93,8 +94,6 @@ const sanitizeInt = ( intString: string ) => {
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
 export {
-	getEarnPageUrl,
-	getEarnPaymentsPageUrl,
 	getSubscriberDetailsCacheKey,
 	getSubscriberDetailsUrl,
 	getSubscriberDetailsType,

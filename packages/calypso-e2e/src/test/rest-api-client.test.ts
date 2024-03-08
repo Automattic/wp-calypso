@@ -75,7 +75,7 @@ describe( 'RestAPIClient: getMyAccountInformation', function () {
 			.get( requestURL.pathname )
 			.reply( 400, { error: code, message: message } );
 
-		await expect( restAPIClient.getMyAccountInformation() ).rejects.toThrowError(
+		await expect( restAPIClient.getMyAccountInformation() ).rejects.toThrow(
 			`${ code }: ${ message }`
 		);
 	} );
@@ -120,7 +120,7 @@ describe( 'RestAPIClient: getAllDomains', function () {
 			.get( requestURL.pathname )
 			.reply( 400, { error: code, message: message } );
 
-		await expect( restAPIClient.getAllDomains() ).rejects.toThrowError( `${ code }: ${ message }` );
+		await expect( restAPIClient.getAllDomains() ).rejects.toThrow( `${ code }: ${ message }` );
 	} );
 } );
 

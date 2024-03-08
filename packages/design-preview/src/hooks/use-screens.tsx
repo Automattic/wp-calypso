@@ -22,6 +22,7 @@ interface Props {
 	limitGlobalStyles?: boolean;
 	variations?: StyleVariation[];
 	splitDefaultVariation: boolean;
+	needsUpgrade?: boolean;
 	selectedVariation?: StyleVariation;
 	selectedColorVariation: GlobalStylesObject | null;
 	selectedFontVariation: GlobalStylesObject | null;
@@ -42,6 +43,7 @@ const useScreens = ( {
 	limitGlobalStyles,
 	variations,
 	splitDefaultVariation,
+	needsUpgrade,
 	selectedVariation,
 	selectedColorVariation,
 	selectedFontVariation,
@@ -71,6 +73,7 @@ const useScreens = ( {
 									globalStylesVariations={ variations as GlobalStylesObject[] }
 									selectedGlobalStylesVariation={ selectedVariation as GlobalStylesObject }
 									splitDefaultVariation={ splitDefaultVariation }
+									needsUpgrade={ needsUpgrade }
 									showOnlyHoverViewDefaultVariation={ false }
 									onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 										onSelectVariation( globalStyleVariation as StyleVariation )
@@ -96,7 +99,7 @@ const useScreens = ( {
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
 						description: translate(
-							'Discover your ideal color blend, from free to custom styles.'
+							'Discover your ideal color blend, from free to premium styles.'
 						),
 						content: (
 							<div className="design-preview__sidebar-variations">

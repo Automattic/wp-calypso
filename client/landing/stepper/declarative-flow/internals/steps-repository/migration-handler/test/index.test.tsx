@@ -89,8 +89,6 @@ describe( 'MigrationHandlerStep', () => {
 			isError: true,
 		} ) );
 		renderMigrationHandlerStep();
-
-		expect( screen.getByText( 'Scanning your site' ) ).toBeInTheDocument();
 		expect( jest.spyOn( navigation, 'submit' ) ).not.toHaveBeenCalled();
 	} );
 
@@ -117,8 +115,7 @@ describe( 'MigrationHandlerStep', () => {
 	test( 'should show non authorized screen', async () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSourceMigrationStatusQuery.mockImplementationOnce( ( sourceIdOrSlug, onErrorCallback ) => {
-			onErrorCallback?.();
+		useSourceMigrationStatusQuery.mockImplementationOnce( () => {
 			return { data: {}, isError: true };
 		} );
 
@@ -126,8 +123,7 @@ describe( 'MigrationHandlerStep', () => {
 
 		await waitFor( () => {
 			expect( jest.spyOn( navigation, 'submit' ) ).not.toHaveBeenCalled();
-			expect( screen.getByText( 'You are not authorized to import content' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Please check with your site admin.' ) ).toBeInTheDocument();
+			expect( screen.getByText( "We couldn't start the migration" ) ).toBeInTheDocument();
 		} );
 	} );
 } );

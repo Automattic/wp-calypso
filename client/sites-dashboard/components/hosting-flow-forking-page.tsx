@@ -18,6 +18,7 @@ export const HostingFlowForkingPage = ( { siteCount }: HostingFlowForkingPagePro
 				alignItems: 'center',
 				margin: 0,
 				padding: 0,
+				gap: '32px',
 				[ MEDIA_QUERIES.small ]: {
 					width: '100%',
 					maxWidth: '100%',
@@ -42,6 +43,7 @@ export const HostingFlowForkingPage = ( { siteCount }: HostingFlowForkingPagePro
 			<div
 				css={ {
 					display: 'flex',
+					padding: '2px',
 					flexDirection: 'column',
 					[ MEDIA_QUERIES.small ]: {
 						width: '100%',

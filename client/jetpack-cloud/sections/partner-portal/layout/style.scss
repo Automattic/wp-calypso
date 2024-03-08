@@ -49,6 +49,10 @@
 	display: flex;
 	align-items: center;
 
+	h1 {
+		font-weight: 600;
+	}
+
 	> * + * {
 		margin-inline-start: 24px;
 	}

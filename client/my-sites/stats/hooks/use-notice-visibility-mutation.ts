@@ -28,7 +28,7 @@ export default function useNoticeVisibilityMutation(
 	postponedFor = 0
 ) {
 	return useMutation( {
-		mutationKey: [ 'stats', 'notices-visibility', siteId, noticeId ],
+		mutationKey: [ 'stats', 'notices-visibility', 'raw', siteId ],
 		mutationFn: () => dismissNotice( siteId, noticeId, status, postponedFor ),
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds

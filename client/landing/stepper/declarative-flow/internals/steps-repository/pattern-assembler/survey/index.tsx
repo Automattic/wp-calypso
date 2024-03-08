@@ -22,10 +22,11 @@ const Survey = ( { eventName, eventUrl, title, setSurveyDismissed }: Props ) => 
 				) : (
 					// Translation to other locales is not required
 					<>
+						We’d love to hear your thoughts. Fill out this{ ' ' }
 						<a href={ eventUrl } target="blank">
-							Fill out this quick survey
+							quick survey
 						</a>{ ' ' }
-						and help us to improve our product.
+						on your onboarding experience.
 					</>
 				)
 			}

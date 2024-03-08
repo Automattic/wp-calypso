@@ -9,20 +9,29 @@
 	margin-bottom: 16px;
 
 	@include break-mobile {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-radius: 3px;
 	}
 
 	.customer-home-launchpad__header {
 		display: flex;
 		align-items: center;
 
+		&.is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var(--color-neutral-light);
+			color: transparent;
+			min-height: 52px;
+		}
+
 		.customer-home-launchpad__progress-bar-container {
-			margin: 5px;
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
 		}
 
 		.customer-home-launchpad__title {
 			flex: 1;
-			font-size: $font-title-small;
+			font-size: $font-body-large;
 			font-weight: 500;
 			font-family: $font-sf-pro-display;
 		}

@@ -211,4 +211,45 @@ $heading-font-family: "SF Pro Display", $sans;
 		display: flex;
 		align-items: center;
 	}
+
+	.domains-transfer-chat-button {
+		display: none;
+		position: absolute;
+		right: 1rem;
+		font-size: inherit;
+
+		&.button {
+			display: none;
+		}
+
+		&.at-bottom {
+			display: inline-block;
+			font-size: 0;
+		}
+
+		@include break-small {
+			transform: translateY(-4px);
+
+			&.button {
+				display: inline-block;
+			}
+
+			&.at-bottom {
+				display: none;
+			}
+		}
+
+		.material-icon {
+			fill: var(--studio-gray-50);
+			width: 1.5rem;
+			height: 1.5rem;
+			margin-right: 0.5rem;
+			vertical-align: middle;
+
+			@include break-small {
+				width: 1rem;
+				height: 1rem;
+			}
+		}
+	}
 }

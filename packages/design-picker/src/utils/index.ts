@@ -1,8 +1,7 @@
-export * from './available-designs-config';
 export * from './available-designs';
 export * from './designs';
-export * from './fonts';
 export * from './global-styles';
+export * from './is-locked-style-variation';
 import { SHOW_ALL_SLUG } from '../constants';
 import { isBlankCanvasDesign } from './available-designs';
 import type { Category, Design } from '../types';

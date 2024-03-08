@@ -3,23 +3,26 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import InlineSupportLink from 'calypso/components/inline-support-link';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import MainComponent from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
+import { useMarketplaceReviewsQuery } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { MarketplaceReviewsCards } from 'calypso/my-sites/marketplace/components/reviews-cards';
+import { ReviewsModal } from 'calypso/my-sites/marketplace/components/reviews-modal';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -27,6 +30,7 @@ import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header'
 import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
+import PluginNotFound from 'calypso/my-sites/plugins/plugin-not-found';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import { RelatedPlugins } from 'calypso/my-sites/plugins/related-plugins';
@@ -42,7 +46,8 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { canPublishProductReviews } from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSites,
 	isRequestingForAllSites,
@@ -86,7 +91,7 @@ function PluginDetails( props ) {
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
+	const requestingPluginsForSites = useSelector( isRequestingForAllSites );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { localizePath } = useLocalizedPlugins();
@@ -113,6 +118,7 @@ function PluginDetails( props ) {
 				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 				: canCurrentUserManagePlugins( state ) )
 	);
+	const [ isReviewsModalVisible, setIsReviewsModalVisible ] = useState( false );
 
 	// Site type.
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -129,10 +135,10 @@ function PluginDetails( props ) {
 		);
 
 	// Header Navigation and billing period switcher.
-	const isWide = useBreakpoint( '>1280px' );
+	const isWide = useBreakpoint( '>960px' );
 
 	// Determine if the plugin is WPcom or WPorg hosted
-	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
@@ -223,6 +229,18 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
+	const canPublishReview = useSelector( ( state ) =>
+		canPublishProductReviews( state, 'plugin', fullPlugin.slug, fullPlugin.variations )
+	);
+	const currentUserId = useSelector( getCurrentUserId );
+	const { data: userReviews = [] } = useMarketplaceReviewsQuery( {
+		productType: 'plugin',
+		slug: fullPlugin.slug,
+		perPage: 1,
+		author: currentUserId ?? undefined,
+		status: 'all',
+	} );
+
 	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
@@ -230,14 +248,6 @@ function PluginDetails( props ) {
 					label: translate( 'Plugins' ),
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-							},
-						}
-					),
 				} )
 			);
 		}
@@ -288,7 +298,7 @@ function PluginDetails( props ) {
 	}
 
 	if ( existingPlugin === false ) {
-		return <PluginDoesNotExistView />;
+		return <PluginNotFound />;
 	}
 
 	const showPlaceholder = existingPlugin === 'unknown';
@@ -339,7 +349,7 @@ function PluginDetails( props ) {
 	} );
 
 	return (
-		<MainComponent wideLayout>
+		<MainComponent className="is-plugin-details" wideLayout isLoggedOut={ ! isLoggedIn }>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker
 				path={ analyticsPath }
@@ -350,8 +360,9 @@ function PluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
+			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+			<NavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
@@ -375,11 +386,40 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
+			<ReviewsModal
+				isVisible={ isReviewsModalVisible }
+				onClose={ () => setIsReviewsModalVisible( false ) }
+				productName={ fullPlugin.name }
+				slug={ fullPlugin.slug }
+				variations={ fullPlugin.variations }
+				productType="plugin"
+			/>
 			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
+
+			{ userReviews.length === 0 &&
+				canPublishReview &&
+				isMarketplaceProduct &&
+				! showPlaceholder && (
+					<Banner
+						className="plugin-details__reviews-banner"
+						title={ translate( 'Review this plugin!' ) }
+						description={ translate(
+							'Please help other users by sharing your experience with this plugin.'
+						) }
+						onClick={ () => setIsReviewsModalVisible( true ) }
+						disableHref
+						event="calypso_marketplace_reviews_plugin_banner"
+					/>
+				) }
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
-						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						<PluginDetailsHeader
+							plugin={ fullPlugin }
+							isPlaceholder={ showPlaceholder }
+							onReviewsClick={ () => setIsReviewsModalVisible( true ) }
+							isMarketplaceProduct={ isMarketplaceProduct }
+						/>
 					</div>
 					<div className="plugin-details__content">
 						{ ! showPlaceholder && (
@@ -459,26 +499,16 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
+			{ ! showPlaceholder && (
+				<div className="plugin-details__reviews">
+					<MarketplaceReviewsCards
+						slug={ fullPlugin.slug }
+						productType="plugin"
+						showMarketplaceReviews={ () => setIsReviewsModalVisible( true ) }
+					/>
+				</div>
+			) }
 			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
-		</MainComponent>
-	);
-}
-
-function PluginDoesNotExistView() {
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );
-	const action = translate( 'Browse all plugins' );
-
-	return (
-		<MainComponent wideLayout>
-			<EmptyContent
-				title={ translate( "Oops! We can't find this plugin!" ) }
-				line={ translate( "The plugin you are looking for doesn't exist." ) }
-				actionURL={ actionUrl }
-				action={ action }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
 		</MainComponent>
 	);
 }

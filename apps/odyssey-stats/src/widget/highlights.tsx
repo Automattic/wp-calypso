@@ -1,10 +1,9 @@
-import { formattedNumber } from '@automattic/components';
+import { formattedNumber, SegmentedControl } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState, FunctionComponent } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { HighLightItem } from '../typings';

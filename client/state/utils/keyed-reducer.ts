@@ -28,7 +28,6 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  * The keyed reducer implements the `serialize` and `deserialize` methods and makes sure
  * that Calypso state persistence works as expected (ignoring empty and initial state,
  * serialization into multiple storage keys etc.)
- *
  * @example
  * const age = ( state = 0, action ) =>
  *     GROW === action.type

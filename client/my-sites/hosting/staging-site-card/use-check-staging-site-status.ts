@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
 	isFetchingAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
 
-export const useCheckStagingSiteStatus = ( siteId: number ) => {
+export const useCheckStagingSiteStatus = ( siteId: number, isEnabled: boolean ) => {
 	const dispatch = useDispatch();
+	const [ isAutomatedTransferFetched, setIsAutomatedTransferFetched ] = useState( false );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
@@ -16,30 +16,22 @@ export const useCheckStagingSiteStatus = ( siteId: number ) => {
 	);
 
 	useEffect( () => {
-		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
-			return;
-		}
-
-		let transferInterval: NodeJS.Timeout;
-
-		if ( ! isFetchingTransferStatus ) {
-			transferInterval = setInterval(
-				() => dispatch( fetchAutomatedTransferStatus( siteId ) ),
-				5000
-			);
-		}
-		return () => {
-			clearInterval( transferInterval );
-		};
-	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus ] );
-
-	// Fetch the status once on mount to avoid waiting the interval delay
-	useEffect( () => {
 		if ( ! siteId ) {
 			return;
 		}
-		dispatch( fetchAutomatedTransferStatus( siteId ) );
-	}, [ siteId, dispatch ] );
+		if ( siteId && isAutomatedTransferFetched ) {
+			return;
+		}
+		if ( ! isFetchingTransferStatus ) {
+			// We don't need to polling as the reducer will do it for us
+			dispatch( fetchAutomatedTransferStatus( siteId ) );
+		}
+		setIsAutomatedTransferFetched( true );
+	}, [ dispatch, isFetchingTransferStatus, siteId, transferStatus, isAutomatedTransferFetched ] );
+
+	if ( ( siteId && isFetchingTransferStatus ) || ! isEnabled ) {
+		return '';
+	}
 
 	return transferStatus;
 };

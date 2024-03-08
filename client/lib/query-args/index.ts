@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { getQueryArgs as wpGetQueryArgs } from '@wordpress/url';
-import page from 'page';
 
 function getRelativeUrlWithParameters(
 	queryArgs: object,
@@ -32,7 +32,6 @@ function getRelativeUrlWithParameters(
  *     uri: 'https://wordpress.com/read/search?s=seo',
  *     queryArgs: '{}'
  *    } --> '/read/search'
- *
  * @param queryArgs search object
  * @param redirect boolean if set to true, the history will be replaced instead of pushed
  * Every object key will be created in the URL
@@ -57,7 +56,6 @@ export function setQueryArgs( queryArgs: object, redirect = false ) {
  *     uri: 'https://wordpress.com/read/search',
  *     queryArgs: '{ s: seo, c: "category" }'
  *    } --> '/read/search?s=seo&c=category'
- *
  * @param queryArgs search object
  * Every object key found in the URL will be replaced
  */
@@ -69,7 +67,6 @@ export function updateQueryArgs( queryArgs: object ) {
 
 /**
  * Get query args from a URL
- *
  * @returns object Object containing query args or empty object if doesn't have any
  * 1. { uri: 'https://wordpress.com/plugins?s=hello' } --> { s: 'hello' }
  * 2. { uri: 'https://wordpress.com/plugins?s=seo&c=category' } --> { s: 'seo', c: 'category' }

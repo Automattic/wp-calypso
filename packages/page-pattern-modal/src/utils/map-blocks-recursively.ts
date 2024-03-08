@@ -5,7 +5,6 @@ type Writeable< T > = { -readonly [ P in keyof T ]: T[ P ] };
 /**
  * Recursively maps over a collection of blocks calling the modifier function on
  * each to modify it and returning a collection of new block references.
- *
  * @param blocks an array of block objects
  * @param modifier a callback function used to modify the blocks
  */

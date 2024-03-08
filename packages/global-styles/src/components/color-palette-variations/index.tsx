@@ -70,7 +70,7 @@ const ColorPaletteVariation = ( {
 						<div className="global-styles-variation__item-preview" ref={ ref }>
 							{ ( isActive || inView ) && (
 								<GlobalStylesContext.Provider value={ context }>
-									<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
+									<ColorPaletteVariationPreview />
 								</GlobalStylesContext.Provider>
 							) }
 						</div>
@@ -114,7 +114,7 @@ const ColorPaletteVariations = ( {
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
 					<span className="global-styles-variations__group-title-actual">
-						{ translate( 'Custom styles' ) }
+						{ translate( 'Premium styles' ) }
 					</span>
 					<PremiumBadge
 						shouldHideTooltip

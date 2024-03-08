@@ -1,4 +1,4 @@
-import { Button, Card, LoadingPlaceholder } from '@automattic/components';
+import { Button, Card, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -9,7 +9,6 @@ import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version'
 import QuerySiteStaticFile404 from 'calypso/components/data/query-site-static-file-404';
 import QuerySiteWpVersion from 'calypso/components/data/query-site-wp-version';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -184,7 +183,7 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
-	const recommendedValue = '8.0';
+	const recommendedValue = '8.1';
 
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
@@ -208,21 +207,19 @@ const WebServerSettingsCard = ( {
 				value: '7.4',
 			},
 			{
+				label: '8.0',
+				value: '8.0',
+				disabled: true, // EOL 26th November, 2023
+			},
+			{
 				label: translate( '%s (recommended)', {
-					args: '8.0',
+					args: '8.1',
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
 			},
 			{
-				label: '8.1',
-				value: '8.1',
-			},
-			{
-				label: translate( '%s (experimental)', {
-					args: '8.2',
-					comment: 'PHP Version for a version switcher',
-				} ),
+				label: '8.2',
 				value: '8.2',
 			},
 		];

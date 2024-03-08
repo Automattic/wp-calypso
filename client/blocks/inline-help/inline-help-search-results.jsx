@@ -1,11 +1,11 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { getContextResults } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -78,7 +78,7 @@ function HelpSearchResults( {
 
 	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
 		searchQuery,
-		'',
+		getLocaleSlug(),
 		{},
 		sectionName
 	);
@@ -199,13 +199,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Recommended resources' ),
+				title: translate( 'Recommended Resources' ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'Recommended resources' ) : '',
+				title: ! searchQuery.length ? translate( 'Recommended Resources' ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},

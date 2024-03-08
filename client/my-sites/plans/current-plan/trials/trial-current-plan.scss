@@ -178,7 +178,13 @@ body.is-section-plans.is-business-trial-plan {
 					padding: 0;
 					text-align: center;
 					width: 100%;
-					margin-top: 20px;
+
+					&.is-ecommerce {
+						margin-top: 20px;
+					}
+					&:not(.is-ecommerce) {
+						margin-bottom: 40px;
+					}
 				}
 
 				.feature-included-card__text {

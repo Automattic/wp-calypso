@@ -20,7 +20,6 @@ const iterationNames: string[] = Object.values( Iterations );
  *
  * NOTE:** Avoid using this externally; instead, opt for either
  * `getForCurrentCROIteration` or `doForCurrentCROIteration`.
- *
  * @see Iterations
  * @see getForCurrentCROIteration
  * @see doForCurrentCROIteration
@@ -52,7 +51,6 @@ type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
 /**
  * Returns a value based on the current CRO test iteration,
  * or undefined if no matching value could be found.
- *
  * @param valueGetter {IterationValueMap|IterationValueFunction} Either a map
  * from Iterations to return values, or a function that accepts the current Iteration as an argument.
  * @see getCurrentCROIterationName
@@ -80,7 +78,6 @@ export const getForCurrentCROIteration = < T >(
 /**
  * Resolves the current CRO iteration and passes that information to a given
  * function.
- *
  * @param fn The function to execute.
  */
 export const doForCurrentCROIteration = ( fn: ( key: Iterations | null ) => void ): void =>

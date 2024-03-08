@@ -1,14 +1,18 @@
-import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -22,7 +26,6 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
@@ -129,7 +132,9 @@ const BackupUpsellBody = () => {
 				{ isAdmin && isWPcomSite && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Business Plan' ),
+							text: translate( 'Upgrade to %(planName)s Plan', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ),
 							action: {
 								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
@@ -157,7 +162,9 @@ const BackupUpsellBody = () => {
 			{ isWPcomSite && ! hasFullActivityLogFeature && (
 				<>
 					<h2 className="backup__subheader">
-						{ translate( 'Also included in the Business Plan' ) }
+						{ translate( 'Also included in the %(planName)s Plan', {
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						} ) }
 					</h2>
 
 					<PromoSection { ...promos } />
@@ -189,13 +196,7 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ) {
 		<Main className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack VaultPress Backup" />
 			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
-
-			<FormattedHeader
-				headerText={ translate( 'Jetpack VaultPress Backup' ) }
-				id="backup-header"
-				align="left"
-				brandFont
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack VaultPress Backup' ) } />
 
 			{ body }
 		</Main>

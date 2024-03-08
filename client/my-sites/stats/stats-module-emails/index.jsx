@@ -5,7 +5,7 @@ import statsStrings from '../stats-strings';
 const StatsModuleEmails = ( props ) => {
 	// ToDo: Add typing/testing of period & query props.
 	// Currently accepts undefined without issue.
-	const { period, query } = props;
+	const { period, query, className } = props;
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 
@@ -31,6 +31,8 @@ const StatsModuleEmails = ( props ) => {
 			mainItemLabel={ translate( 'Latest Emails' ) }
 			metricLabel={ translate( 'Clicks' ) }
 			showSummaryLink
+			className={ className }
+			hasNoBackground
 		/>
 	);
 };

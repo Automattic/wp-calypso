@@ -2,7 +2,6 @@
  * A hidden inline svg sprite of social logos.
  *
  * Sprite was coppied from https://wordpress.com/calypso/images/social-logos-d55401f99bb02ebd6cf4.svg
- *
  * @returns see above.
  */
 const InlineSocialLogosSprite = () => {

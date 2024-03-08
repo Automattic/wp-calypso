@@ -1,8 +1,8 @@
-import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_ATOMIC, getPlan } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { WordPressWordmark, Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -100,7 +100,7 @@ const MarketplaceProductInstall = ( {
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
-	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, pluginSlug )
@@ -356,9 +356,14 @@ const MarketplaceProductInstall = ( {
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
-						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
+						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
+						{
+							args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						}
 					) }
-					action={ translate( 'Upgrade to Business Plan' ) }
+					action={ translate( 'Upgrade to %(planName)s Plan', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) }
 					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);

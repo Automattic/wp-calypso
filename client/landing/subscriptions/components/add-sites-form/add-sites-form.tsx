@@ -22,7 +22,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 
-	const { mutate: subscribe, isLoading: subscribing } =
+	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	const validateInputValue = useCallback(

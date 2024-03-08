@@ -1,0 +1,114 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.customer {
+	.customer__header {
+		display: flex;
+		margin: 16px 0 48px;
+
+		.customer__header-image {
+			height: 56px;
+			width: 56px;
+			margin-right: 16px;
+		}
+
+		.customer__header-details {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			.customer__header-name {
+				font-weight: 500;
+				font-size: $font-title-small;
+				line-height: rem(26px);
+			}
+
+			.customer__header-email {
+				font-weight: 400;
+				font-size: $font-body;
+				line-height: rem(24px);
+				color: $studio-gray-40;
+			}
+		}
+	}
+
+	.customer__stats {
+		.customer__stats-card-heading {
+			display: flex;
+			align-items: center;
+		}
+		.customer__stats-card-icon {
+			max-width: 30px;
+			margin-bottom: 20px;
+		}
+		.customer__stats-list {
+			@media ( max-width: $break-large ) {
+				flex-flow: column;
+				gap: 24px;
+				padding-left: 0;
+				padding-right: 0;
+				overflow-x: visible;
+			}
+		}
+	}
+
+	.customer-details__content {
+		display: flex;
+		flex-direction: column;
+		padding: 24px;
+		margin-top: 30px;
+		border-radius: 4px;
+		border: 1px solid $studio-gray-5;
+		gap: 16px;
+	}
+
+	.customer-details__content-title {
+		color: #000;
+		font-size: $font-body-large;
+		line-height: rem(26px);
+	}
+
+	.customer-details__content-body {
+		display: flex;
+		gap: 32px;
+
+		.customer-details__content-column {
+			flex: 1 1 0;
+			overflow: hidden;
+			word-wrap: break-word;
+			@media ( max-width: $break-large ) {
+				flex: auto;
+			}
+		}
+
+		.customer-details__content-label {
+			border-bottom: 1px solid #eee;
+			font-size: $font-body-small;
+			font-weight: 500;
+			line-height: rem(20px);
+			letter-spacing: -0.15px;
+			margin-bottom: 6px;
+			padding-bottom: 5px;
+		}
+
+		.customer-details__content-value {
+			display: block;
+			color: $studio-gray-60;
+			font-size: $font-body-small;
+			line-height: rem(20px);
+			letter-spacing: -0.15px;
+		}
+
+		@media ( max-width: $break-large ) {
+			flex-direction: column;
+		}
+	}
+
+	.customer__action-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 12px;
+		margin-top: 30px;
+	}
+}

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestThemes } from 'calypso/state/themes/actions';
 import { getThemesForQuery, isRequestingThemesForQuery } from 'calypso/state/themes/selectors';
@@ -31,7 +32,7 @@ QueryThemes.propTypes = {
 		// The search string
 		search: PropTypes.string,
 		// The tier to look for -- 'free', 'premium', 'marketplace', or '' (for all themes)
-		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] ),
 		// Comma-separated list of filters; see my-sites/themes/theme-filters
 		filter: PropTypes.string,
 		// Which page of the results list to display

@@ -29,8 +29,7 @@
 		.legend-item {
 			flex-direction: row;
 			.legend-item__title::after {
-				content: "-";
-				padding-left: 3px;
+				content: ":";
 				padding-right: 3px;
 			}
 			.legend-item__detail {

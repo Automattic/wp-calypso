@@ -11,6 +11,31 @@ export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 		value,
 	} ) as const;
 
+export const receiveSeenWhatsNewAnnouncements = ( value: string[] | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_SEEN_WHATS_NEW_ANNOUNCEMENTS',
+		value,
+	} ) as const;
+
+export function* fetchSeenWhatsNewAnnouncements() {
+	let response: {
+		seen_announcement_ids: string[];
+	};
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `/whats-new/seen-announcement-ids`,
+			apiNamespace: 'wpcom/v2',
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/wpcom/v2/whats-new/seen-announcement-ids`,
+		} as APIFetchOptions );
+	}
+
+	return receiveSeenWhatsNewAnnouncements( response.seen_announcement_ids );
+}
+
 export function* setHasSeenWhatsNewModal( value: boolean ) {
 	let response: {
 		has_seen_whats_new_modal: boolean;
@@ -34,6 +59,31 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	}
 
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
+}
+
+export function* setSeenWhatsNewAnnouncements( ids: string[] ) {
+	let response: {
+		seen_announcement_ids: string[];
+	};
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `/whats-new/seen-announcement-ids`,
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			body: {
+				seen_announcement_ids: ids,
+			},
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/wpcom/v2/whats-new/seen-announcement-ids`,
+			method: 'POST',
+			data: { seen_announcement_ids: ids },
+		} as APIFetchOptions );
+	}
+
+	return receiveSeenWhatsNewAnnouncements( response.seen_announcement_ids );
 }
 
 export const setSite = ( site: HelpCenterSite | undefined ) =>
@@ -129,10 +179,11 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
-export const setShowSupportDoc = function* ( link: string, postId: number ) {
+export const setShowSupportDoc = function* ( link: string, postId: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
 		postId: String( postId ),
+		...( blogId && { blogId: String( blogId ) } ), // Conditionally add blogId if it exists, the default is support blog
 		cacheBuster: String( Date.now() ),
 	} );
 	yield setInitialRoute( `/post/?${ params }` );
@@ -147,6 +198,7 @@ export type HelpCenterAction =
 			| typeof setSubject
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
+			| typeof receiveSeenWhatsNewAnnouncements
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -154,4 +206,9 @@ export type HelpCenterAction =
 			| typeof setIsMinimized
 			| typeof setInitialRoute
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
+	| GeneratorReturnType<
+			| typeof setShowHelpCenter
+			| typeof setHasSeenWhatsNewModal
+			| typeof setSeenWhatsNewAnnouncements
+			| typeof fetchSeenWhatsNewAnnouncements
+	  >;

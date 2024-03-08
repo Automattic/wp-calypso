@@ -1,40 +1,40 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
+import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep from './internals/steps-repository/processing-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
+	isSignupFlow: true,
 
 	useSteps() {
 		return [
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'error', component: ErrorStep },
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ASSIGN_TRIAL_PLAN,
+			STEPS.WAIT_FOR_ATOMIC,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.ERROR,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
+		const { setSiteSetupError } = useDispatch( SITE_STORE );
+		const translate = useTranslate();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -52,6 +52,13 @@ const wooexpress: Flow = {
 		const queryLocaleSlug = getLocaleFromQueryParam();
 		const pathLocaleSlug = getLocaleFromPathname();
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
+
+		setSiteSetupError(
+			undefined,
+			translate(
+				'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+			)
+		);
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
@@ -106,11 +113,35 @@ const wooexpress: Flow = {
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/wooexpress/siteCreationStep route which has no locale in the path so we need to
+		// /setup/wooexpress/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/siteCreationStep/<locale> urls.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
+			// Log when profiler data does not contain valid data.
+			let isValidProfile = false;
+			try {
+				if ( profilerData ) {
+					const data = JSON.parse( decodeURIComponent( escape( window.atob( profilerData ) ) ) );
+					isValidProfile = [ 'woocommerce_onboarding_profile', 'blogname' ].every(
+						( key ) => key in data
+					);
+				}
+			} catch {}
+			if ( ! isValidProfile ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'calypso_stepper_wooexpress_invalid_profiler_data',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					properties: {
+						env: config( 'env_id' ),
+					},
+					extra: {
+						'profiler-data': profilerData,
+					},
+				} );
+			}
+
 			if ( ! userIsLoggedIn ) {
 				const logInUrl = getStartUrl();
 				window.location.assign( logInUrl );
@@ -134,11 +165,8 @@ const wooexpress: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 
-		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
-
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-		setStepProgress( flowProgress );
 
 		const { getSiteIdBySlug, getSiteOption } = useSelect(
 			( select ) => select( SITE_STORE ) as SiteSelect,
@@ -156,7 +184,7 @@ const wooexpress: Flow = {
 			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'siteCreationStep': {
+				case 'create-site': {
 					return navigate( 'processing', {
 						currentStep,
 					} );
@@ -175,7 +203,14 @@ const wooexpress: Flow = {
 
 					if ( providedDependencies?.pluginsInstalled ) {
 						recordGTMDatalayerEvent( 'free trial processing' );
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to the wc admin page after.
+						const redirectTo = encodeURIComponent(
+							`${ adminUrl as string }admin.php?page=wc-admin`
+						);
+
+						return exitFlow(
+							`//${ siteSlug }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`
+						);
 					}
 
 					return navigate( 'assignTrialPlan', { siteSlug } );

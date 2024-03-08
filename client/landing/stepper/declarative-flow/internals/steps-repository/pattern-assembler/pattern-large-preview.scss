@@ -13,6 +13,12 @@
 	box-sizing: border-box;
 	z-index: 1;
 	transition: margin-inline-start 0.2s ease-out;
+
+	&.device-switcher__container--is-computer:has(.pattern-large-preview__placeholder) {
+		.device-switcher__frame {
+			max-width: 1080px;
+		}
+	}
 }
 
 .pattern-large-preview__patterns {
@@ -22,6 +28,11 @@
 	list-style-type: none;
 	overflow: auto;
 	background: var(--pattern-large-preview-background);
+
+	&--has-placeholder {
+		display: flex;
+		flex-direction: column;
+	}
 
 	/**
 	 * Hides the scrollbar to avoid the layout keeps changes forever
@@ -36,45 +47,6 @@
 .pattern-large-preview__pattern {
 	$pattern-large-preview-outer-border-radius: calc(var(--device-switcher-border-radius) - var(--device-switcher-border-width));
 	position: relative;
-
-	.pattern-action-bar {
-		box-sizing: border-box;
-		position: absolute;
-		top: 16px;
-		left: 16px;
-		right: unset;
-		padding: 0;
-		border: 1px solid #1e1e1e;
-		border-radius: 2px;
-		gap: 0;
-		background-color: #fff;
-		opacity: 0;
-		z-index: 1;
-		// Scale up the action bar in fixed viewport
-		transform: scale(calc(1 / var(--viewport-scale)));
-		transform-origin: top left;
-
-		> .pattern-action-bar__action {
-			position: relative;
-			min-height: 40px;
-			min-width: 40px;
-			padding: 2px;
-
-			&:first-child::after {
-				content: none;
-			}
-
-			&::after {
-				background-color: #1e1e1e;
-				bottom: 0;
-				content: "";
-				left: 0;
-				position: absolute;
-				top: 0;
-				width: 1px;
-			}
-		}
-	}
 
 	&::after {
 		content: "";
@@ -96,16 +68,13 @@
 		border-bottom-right-radius: $pattern-large-preview-outer-border-radius;
 	}
 
+	&--active,
 	&:hover,
 	&:focus,
 	&:focus-within {
-		.pattern-action-bar {
-			opacity: 1;
-		}
-
 		&::after {
-			// Scale up the border of a hovered pattern in fixed viewport
-			border: calc(2px * (1 / var(--viewport-scale))) solid var(--color-primary-light);
+			// Scale up the border of a active pattern
+			border: calc(2px * (1 / var(--viewport-scale) / var(--pattern-large-preview-zoom-out-scale))) solid var(--color-primary-light);
 		}
 	}
 }
@@ -113,43 +82,60 @@
 .pattern-large-preview__placeholder {
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
+	padding: 40px;
 	color: var(--studio-gray-60);
 	background: #f8f8f8;
 
-	.pattern-large-preview__placeholder-icon {
-		margin-bottom: 24px;
-		fill: var(--studio-gray-10);
-	}
-
 	h2 {
 		color: #000;
-		margin-bottom: 4px;
-		font-size: $font-title-small;
-		font-weight: 500;
+		margin-bottom: 16px;
+		font-size: $font-body-large;
+		font-weight: 400;
 	}
 
-	span {
-		color: #000;
-		font-size: $font-body;
-		max-width: 600px;
-		text-align: center;
-		padding: 0 60px;
-	}
-
-	button {
-		border: 1px solid var(--studio-gray-10);
-		border-radius: 4px;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-		background-color: #fff;
-		color: var(--studio-gray-100);
+	> ul {
+		color: var(--studio-gray-80);
+		counter-reset: li;
+		display: flex;
+		flex-direction: column;
 		font-size: $font-body-small;
-		font-weight: 500;
-		letter-spacing: -0.15px;
+		font-weight: 400;
+		gap: 10px;
 		line-height: 20px;
-		margin-top: 24px;
-		padding: 10px 24px;
+		list-style-type: none;
+		margin: 0;
+		max-width: 300px;
+
+		> li {
+			align-items: center;
+			display: flex;
+			padding-left: 28px;
+			position: relative;
+
+			&::before {
+				align-items: center;
+				border: 0.909px solid var(--studio-gray-100);
+				border-radius: 50%;
+				box-sizing: border-box;
+				color: var(--studio-gray-100);
+				content: counter(li);
+				counter-increment: li;
+				display: flex;
+				font-size: 10.909px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-weight: 400;
+				height: 16px;
+				justify-content: center;
+				left: 0;
+				letter-spacing: -0.061px;
+				line-height: 16px;
+				position: absolute;
+				top: 2px;
+				width: 16px;
+			}
+		}
 	}
 }

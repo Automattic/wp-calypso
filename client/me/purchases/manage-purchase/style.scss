@@ -118,6 +118,10 @@
 	}
 }
 
+.manage-purchase__description.is-placeholder {
+	@include placeholder( --color-neutral-10 );
+}
+
 .manage-purchase__header,
 .manage-purchase__content {
 	padding: 16px 24px;
@@ -300,6 +304,11 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		text-align: left;
+	}
+
+	& > button.info-popover {
+		position: relative;
+		top: 3px;
 	}
 
 	.components-toggle-control {

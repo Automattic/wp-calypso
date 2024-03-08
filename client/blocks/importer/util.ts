@@ -11,6 +11,16 @@ export function isTargetSitePlanCompatible( targetSite: SiteDetails | undefined 
 	return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 }
 
+export function addProtocolToUrl( url: string, protocol = 'https' ) {
+	if ( ! url ) {
+		return '';
+	}
+	if ( url.startsWith( 'http' ) ) {
+		return url;
+	}
+	return `${ protocol }://${ url }`;
+}
+
 export function formatSlugToURL( inputUrl: string ) {
 	if ( ! inputUrl ) {
 		return '';
@@ -20,9 +30,16 @@ export function formatSlugToURL( inputUrl: string ) {
 		return inputUrl;
 	}
 	let url = inputUrl.trim().toLowerCase();
-	if ( url && url.substr( 0, 4 ) !== 'http' ) {
+	if ( url && ! url.startsWith( 'http' ) ) {
 		url = 'http://' + url;
 	}
 	url = url.replace( /wp-admin\/?$/, '' );
 	return untrailingslashit( url );
+}
+
+export function buildCheckoutUrl( siteSlug: string | undefined | null, plan = 'business' ) {
+	if ( ! siteSlug ) {
+		return `/checkout/${ plan }`;
+	}
+	return `/checkout/${ siteSlug }/${ plan }`;
 }

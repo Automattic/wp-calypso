@@ -6,8 +6,7 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { UsersQuery } from './types';
-import type { Member } from '../types';
+import type { UsersQuery, Member } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -15,11 +14,12 @@ interface Props {
 	search?: string;
 	usersQuery: UsersQuery;
 	showAddTeamMembersBtn?: boolean;
+	showHeader?: boolean;
 }
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
-	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const { search, usersQuery, showAddTeamMembersBtn = true, showHeader = true } = props;
+	const site = useSelector( getSelectedSite );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
@@ -78,13 +78,15 @@ function TeamMembers( props: Props ) {
 		case 'loading':
 			return (
 				<>
-					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
-						{ showAddTeamMembersBtn && (
-							<Button compact primary href={ addTeamMemberLink }>
-								{ translate( 'Add a team member' ) }
-							</Button>
-						) }
-					</PeopleListSectionHeader>
+					{ showHeader && (
+						<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
+							{ showAddTeamMembersBtn && (
+								<Button compact primary href={ addTeamMemberLink }>
+									{ translate( 'Add a team member' ) }
+								</Button>
+							) }
+						</PeopleListSectionHeader>
+					) }
 					<Card className="people-team-members-list">
 						{ isLoading && renderLoadingPeople() }
 						<InfiniteList

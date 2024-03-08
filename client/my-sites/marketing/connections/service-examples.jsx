@@ -6,6 +6,7 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import nextdoorExample from 'calypso/assets/images/connections/connections-nextdoor.png';
 import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -24,7 +25,6 @@ import './service-examples.scss';
  *
  * When adding examples for more services, please update the list in addition to adding
  * a method with the example's content.
- *
  * @type {string[]}
  */
 const SERVICES_WITH_EXAMPLES = [
@@ -36,6 +36,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'instagram-basic-display',
 	'linkedin',
 	'tumblr',
+	'nextdoor',
 	'twitter',
 	'google_photos',
 	'google-drive',
@@ -236,11 +237,13 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
-					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
+					alt: this.props.translate( 'Manage Google Business Profile locations', {
+						textOnly: true,
+					} ),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to view stats and other useful information from your ' +
-						'Google My Business account inside WordPress.com.',
+						'Google Business Profile account inside WordPress.com.',
 					{
 						components: {
 							strong: <strong />,
@@ -320,6 +323,26 @@ class SharingServiceExamples extends Component {
 						image,
 					},
 			  ];
+	}
+
+	nextdoor() {
+		const label = this.props.translate(
+			'Connect with friends, neighbors, and local businesses by automatically sharing your posts to Nextdoor.'
+		);
+		const image = {
+			src: nextdoorExample,
+			alt: this.props.translate( 'Share posts with your local community on Nextdoor.', {
+				textOnly: true,
+			} ),
+		};
+		return [
+			{
+				label,
+			},
+			{
+				image,
+			},
+		];
 	}
 
 	tumblr() {

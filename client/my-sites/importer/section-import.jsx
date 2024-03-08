@@ -9,10 +9,9 @@ import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-war
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
@@ -45,7 +44,6 @@ import './section-import.scss';
  * Configuration mapping import engines to associated import components.
  * The key is the engine, and the value is the component. To add new importers,
  * add it here and add its configuration to lib/importer/importer-config.
- *
  * @type {Object}
  */
 const importerComponents = {
@@ -182,7 +180,6 @@ class SectionImport extends Component {
 
 	/**
 	 * Renders each enabled importer at the provided `state`
-	 *
 	 * @param {string} importerState The state constant for the importer components
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
@@ -231,7 +228,6 @@ class SectionImport extends Component {
 
 	/**
 	 * Renders list of importer elements for active import jobs
-	 *
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
 	renderActiveImporters() {
@@ -262,7 +258,6 @@ class SectionImport extends Component {
 
 	/**
 	 * Return rendered importer elements
-	 *
 	 * @returns {Array} Importer react elements
 	 */
 	renderImporters() {
@@ -341,13 +336,12 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
-				<ScreenOptionsTab wpAdminPath="import.php" />
 				<DocumentHead title={ translate( 'Import Content' ) } />
-				<FormattedHeader
-					brandFont
-					className="importer__page-heading"
-					headerText={ translate( 'Import Content' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="import.php"
+					navigationItems={ [] }
+					title={ translate( 'Import Content' ) }
+					subtitle={ translate(
 						'Import content from another website or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -355,8 +349,6 @@ class SectionImport extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack && ! isAtomic && ! hasUnifiedImporter ? (

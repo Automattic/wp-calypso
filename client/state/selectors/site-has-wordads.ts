@@ -4,7 +4,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Whether site has wordads feature.
- *
  * @param  {Object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @returns {boolean} True if the site has WPCOM_FEATURES_WORDADS feature. Otherwise, False.

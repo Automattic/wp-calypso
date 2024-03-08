@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-imports */
+import wpcom from 'calypso/lib/wp'; // Import restricted
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	AddSubscribersResponse,
@@ -41,7 +43,7 @@ export function createActions() {
 		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
-			const data: ImportSubscribersResponse = yield wpcomRequest( {
+			const data: ImportSubscribersResponse = yield wpcom.req.post( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
@@ -132,14 +134,18 @@ export function createActions() {
 	} );
 
 	function* getSubscribersImports( siteId: number, status?: ImportJobStatus ) {
-		const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
-		const data: GetSubscribersImportsResponse = yield wpcomRequest( {
-			path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
-			method: 'GET',
-			apiNamespace: 'wpcom/v2',
-		} );
+		try {
+			const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
+			const data: GetSubscribersImportsResponse = yield wpcomRequest( {
+				path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			} );
 
-		yield getSubscribersImportsSuccess( siteId, data );
+			yield getSubscribersImportsSuccess( siteId, data );
+		} catch ( error ) {
+			yield importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
+		}
 	}
 
 	return {

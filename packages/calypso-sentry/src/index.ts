@@ -43,13 +43,13 @@ type SentryState =
 	// Nothing started
 	| { state: 'initial' }
 	// Queued load
-	| { state: 'loading' }
+	| { state: 'loading'; params: SentryOptions }
 	// Load failed
-	| { state: 'error' }
+	| { state: 'error'; params: SentryOptions }
 	// Sentry will not be enabled
-	| { state: 'disabled' }
+	| { state: 'disabled'; params: SentryOptions }
 	// Fully loaded!
-	| { state: 'loaded'; sentry: typeof import('@sentry/react') };
+	| { state: 'loaded'; params: SentryOptions; sentry: typeof import('@sentry/react') };
 let state: SentryState = { state: 'initial' };
 
 function dispatchSentryMethodCall< Method extends SupportedMethods >(
@@ -118,33 +118,52 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 	return breadcrumb;
 }
 
-function shouldEnableSentry(): boolean {
+function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 	// This flag overrides the other settings, always enabling Sentry:
 	if ( config.isEnabled( 'always-enable-sentry' ) ) {
 		return true;
 	}
 
-	// Only load for 10% of requests when Sentry is enabled in the environment:
-	return config.isEnabled( 'catch-js-errors' ) && Math.floor( Math.random() * 10 ) === 1;
+	// By default, only load for 10% of requests when Sentry is enabled in the environment:
+	return (
+		config.isEnabled( 'catch-js-errors' ) &&
+		Math.ceil( Math.random() * 10 ) <= Math.floor( sampleRate * 10 )
+	);
 }
 
 interface SentryOptions {
-	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
+	beforeSend?: ( e: SentryApi.Event ) => SentryApi.Event | null;
 	userId?: number;
+	sampleRate?: number;
 }
-export async function initSentry( { beforeSend, userId }: SentryOptions ) {
+
+/**
+ * Sentry initialization function.
+ * It can be called multiple times, but it will only initialize Sentry once, if the sampleRate is met (default 10%).
+ * It stores the previous execution parameters, and will use them as default if the function is called again.
+ * @param parameters Initialization parameters
+ */
+export async function initSentry( parameters?: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
 		// No double-loading.
-		if ( typeof document === 'undefined' || state.state !== 'initial' ) {
+		if ( typeof document === 'undefined' || ! [ 'initial', 'disabled' ].includes( state.state ) ) {
 			return;
 		}
-		state = { state: 'loading' };
+
+		// We use previous invocation parameters here, allowing the user to override any of them
+		// We need this because some of the params are initialized at app boot, and can't be recreated when the app is already running
+		const params =
+			state.state === 'initial' ? parameters || {} : { ...state.params, ...parameters };
+
+		const { beforeSend, userId, sampleRate } = params;
+
+		state = { state: 'loading', params };
 
 		// Set state to disabled when we know we won't enable it for this request.
-		if ( ! shouldEnableSentry() ) {
-			state = { state: 'disabled' };
+		if ( ! shouldEnableSentry( sampleRate ) ) {
+			state = { state: 'disabled', params };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
 			return;
@@ -200,9 +219,9 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 				beforeBreadcrumb,
 				beforeSend,
 			} );
-			state = { state: 'loaded', sentry: Sentry };
+			state = { state: 'loaded', params, sentry: Sentry };
 		} catch ( err ) {
-			state = { state: 'error' };
+			state = { state: 'error', params };
 			// Make sure handlers are removed if Sentry fails
 			window.removeEventListener( 'error', errorHandler );
 			window.removeEventListener( 'unhandledrejection', rejectionHandler );

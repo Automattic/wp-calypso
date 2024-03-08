@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
@@ -51,6 +51,9 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	getIsLoadingCart,
 	getIsLivePreviewSupported,
+	getThemeTiers,
+	getThemeTier,
+	getThemeTierForTheme,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -64,6 +67,13 @@ const twentyfifteen = {
 	author_uri: 'https://wordpress.org/',
 };
 
+const freeThemeTier = {
+	slug: 'free',
+	name: 'Free',
+	plan: PLAN_FREE,
+	feature: FEATURE_WOOP,
+};
+
 const twentysixteen = {
 	id: 'twentysixteen',
 	name: 'Twenty Sixteen',
@@ -73,6 +83,7 @@ const twentysixteen = {
 	stylesheet: 'pub/twentysixteen',
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 	author_uri: 'https://wordpress.org/',
+	theme_tier: freeThemeTier,
 };
 
 const mood = {
@@ -856,6 +867,9 @@ describe( 'themes selectors', () => {
 		test( 'should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {},
 					},
@@ -870,6 +884,9 @@ describe( 'themes selectors', () => {
 		test( 'should return null if the query manager has not received items for query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -889,6 +906,9 @@ describe( 'themes selectors', () => {
 		test( 'should return a concatenated array of all site themes ignoring page', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -918,6 +938,9 @@ describe( 'themes selectors', () => {
 		test( 'should remove recommendedThemes with no filter and no search in query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -946,6 +969,9 @@ describe( 'themes selectors', () => {
 		test( "should omit found items for which the requested result hasn't been received", () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
+					sites: {
+						plans: {},
+					},
 					themes: {
 						queries: {
 							2916284: new ThemeQueryManager( {
@@ -1511,7 +1537,7 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( signupUrl ).toEqual(
-				'/start/with-theme?ref=calypshowcase&theme=twentysixteen&theme_type=free'
+				'/start/with-theme?ref=calypshowcase&theme=twentysixteen&theme_type=free&intervalType=yearly'
 			);
 		} );
 
@@ -1537,6 +1563,7 @@ describe( 'themes selectors', () => {
 				theme: 'mood',
 				premium: 'true',
 				theme_type: 'premium',
+				intervalType: 'yearly',
 			} );
 		} );
 	} );
@@ -2503,7 +2530,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2547,7 +2574,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
@@ -2593,7 +2620,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( "Should return false when the customer has a premium plan but didn't purchase a externally managed theme", () => {
-			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -3393,5 +3420,57 @@ describe( '#getIsLivePreviewSupported()', () => {
 			const isLivePreviewSupported = getIsLivePreviewSupported( baseState, 'pendant', 2916284 );
 			expect( isLivePreviewSupported ).toBe( true );
 		} );
+	} );
+} );
+
+describe( '#getThemeTiers', () => {
+	test( 'should return an empty object if the state is empty', () => {
+		const themeTiers = getThemeTiers( {} );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const themeTiers = getThemeTiers( { themes: { themeTiers: { free: {} } } } );
+		expect( themeTiers ).toEqual( { free: {} } );
+	} );
+} );
+describe( '#getThemeTier', () => {
+	const state = { themes: { themeTiers: { free: { foo: 'bar' } } } };
+	test( 'should return an empty object if the state is empty', () => {
+		const themeTiers = getThemeTier( {}, 'free' );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return an empty object if the tier is empty', () => {
+		const themeTiers = getThemeTier( state, null );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const themeTiers = getThemeTier( state, 'free' );
+		expect( themeTiers ).toEqual( { foo: 'bar' } );
+	} );
+} );
+describe( '#getThemeTierForTheme', () => {
+	test( 'should return an empty object if the theme is not found', () => {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: null,
+				},
+			},
+		};
+		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
+		expect( themeTiers ).toEqual( {} );
+	} );
+	test( 'should return the tier object if it exists', () => {
+		const state = {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: { twentysixteen },
+					} ),
+				},
+			},
+		};
+		const themeTiers = getThemeTierForTheme( state, 'twentysixteen' );
+		expect( themeTiers ).toEqual( freeThemeTier );
 	} );
 } );

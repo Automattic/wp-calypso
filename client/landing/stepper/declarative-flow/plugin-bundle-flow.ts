@@ -1,19 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard, getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useDispatch as reduxDispatch } from 'calypso/state';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-theme-activation';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -23,38 +20,42 @@ import {
 	ProvidedDependencies,
 	StepperStep,
 } from './internals/types';
-import pluginBundleData from './plugin-bundle-data';
-import type { BundledPlugin } from './plugin-bundle-data';
+import {
+	initialBundleSteps,
+	beforeCustomBundleSteps,
+	afterCustomBundleSteps,
+	bundleStepsSettings,
+} from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+
+const getNextStep = ( currentStep: string, steps: string[] ): string | undefined => {
+	const currentStepIndex = steps.indexOf( currentStep );
+	const nextStep = steps[ currentStepIndex + 1 ];
+
+	return nextStep;
+};
 
 const SiteIntent = Onboard.SiteIntent;
 
 const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
+	isSignupFlow: false,
 
 	useSteps() {
-		const siteSlugParam = useSiteSlugParam();
-		const pluginSlug = useSelect(
-			( select ) =>
-				( select( SITE_STORE ) as SiteSelect ).getBundledPluginSlug( siteSlugParam || '' ),
-			[ siteSlugParam ]
-		) as BundledPlugin;
-
-		const steps = [
-			{
-				slug: 'getCurrentThemeSoftwareSets',
-				component: GetCurrentThemeSoftwareSets,
-			},
-		];
+		const pluginSlug = useSitePluginSlug();
 
 		let bundlePluginSteps: StepperStep[] = [];
 
-		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
-			bundlePluginSteps = pluginBundleData[ pluginSlug ];
+		if ( pluginSlug && bundleStepsSettings.hasOwnProperty( pluginSlug ) ) {
+			bundlePluginSteps = [
+				...beforeCustomBundleSteps,
+				...bundleStepsSettings[ pluginSlug ].customSteps,
+				...afterCustomBundleSteps,
+			];
 		}
-		return [ ...steps, ...bundlePluginSteps ];
+		return [ ...initialBundleSteps, ...bundlePluginSteps ];
 	},
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( currentStep, navigate, steps = [] ) {
 		const flowName = this.name;
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -74,7 +75,6 @@ const pluginBundleFlow: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
-		const currentUser = useSelector( getCurrentUser );
 		const comingFromThemeActivation = useComingFromThemeActivationParam();
 
 		let siteSlug: string | null = null;
@@ -86,7 +86,11 @@ const pluginBundleFlow: Flow = {
 
 		const adminUrl = useSelect(
 			( select ) =>
-				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+				String(
+					( site &&
+						( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ) ) ||
+						''
+				),
 			[ site ]
 		);
 		const isAtomic = useSelect(
@@ -97,21 +101,14 @@ const pluginBundleFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
 			[]
 		);
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
-			useDispatch( ONBOARD_STORE );
+		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setDesignOnSite } = useDispatch( SITE_STORE );
 		const siteDetails = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
 			[ site ]
 		);
 		const dispatch = reduxDispatch();
-
-		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
+		const pluginSlug = useSitePluginSlug();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -152,42 +149,39 @@ const pluginBundleFlow: Flow = {
 			let defaultExitDest = `/home/${ siteSlug }`;
 			if ( siteDetails?.options?.theme_slug ) {
 				const themeId = getThemeIdFromStylesheet( siteDetails?.options?.theme_slug );
-				if ( isEnabled( 'themes/display-thank-you-page-for-woo' ) ) {
+				if ( isEnabled( 'themes/display-thank-you-page-for-bundle' ) ) {
 					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }`;
 				} else {
 					defaultExitDest = `/theme/${ themeId }/${ siteSlug }`;
 				}
 			}
-			switch ( currentStep ) {
-				case 'checkForWoo':
-					// If WooCommerce is already installed, we should exit the flow.
-					if ( providedDependencies?.hasWooCommerce ) {
-						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
 
-						return exitFlow( defaultExitDest );
-					}
+			if ( 'checkForPlugins' === currentStep ) {
+				// If plugins are already installed, we should exit the flow.
+				if ( providedDependencies?.hasPlugins ) {
+					// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
 
-					// Otherwise, we should continue to the next step.
-					return navigate( 'storeAddress' );
-
-				case 'storeAddress':
-					return navigate( 'businessInfo' );
-
-				case 'businessInfo': {
-					if ( isAtomic ) {
-						return navigate( 'wooInstallPlugins' );
-					}
-					return navigate( 'wooConfirm' );
+					return exitFlow( defaultExitDest );
 				}
+			}
 
-				case 'wooConfirm': {
+			const nextStep = getNextStep( currentStep, steps );
+
+			if ( 'bundleConfirm' === nextStep ) {
+				if ( isAtomic ) {
+					return navigate( 'bundleInstallPlugins' );
+				}
+			}
+
+			switch ( currentStep ) {
+				case 'bundleConfirm': {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
 						window.location.replace( checkoutUrl.toString() );
 					}
 
-					return navigate( 'wooTransfer' );
+					return navigate( 'bundleTransfer' );
 				}
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
@@ -205,27 +199,29 @@ const pluginBundleFlow: Flow = {
 						return exitFlow( `/post/${ siteSlug }` );
 					}
 
-					// End of woo flow
-					if ( intent === 'sell' && storeType === 'power' ) {
-						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
-
-						if (
-							isEnabled( 'signup/woo-verify-email' ) &&
-							currentUser &&
-							! currentUser.email_verified
-						) {
-							return navigate( 'wooVerifyEmail' );
-						}
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+					// Custom end of flow.
+					const settings = bundleStepsSettings[ pluginSlug ];
+					const endReturn = settings?.endFlow?.( {
+						intent,
+						storeType,
+						adminUrl,
+						dispatch,
+						exitFlow,
+					} );
+					if ( settings?.endFlow && false !== endReturn ) {
+						return endReturn;
 					}
 
 					return exitFlow( defaultExitDest );
 				}
-
-				case 'wooTransfer':
+				case 'bundleTransfer': {
 					return navigate( 'processing' );
-				case 'wooInstallPlugins':
-					return navigate( 'processing' );
+				}
+				default: {
+					if ( nextStep ) {
+						return navigate( nextStep );
+					}
+				}
 			}
 		}
 
@@ -233,23 +229,21 @@ const pluginBundleFlow: Flow = {
 			if ( comingFromThemeActivation ) {
 				return exitFlow( `/themes/${ siteSlug }` );
 			}
-			switch ( currentStep ) {
-				case 'businessInfo':
-					return navigate( 'storeAddress' );
 
-				case 'wooConfirm':
-					return navigate( 'businessInfo' );
-
-				default:
-					return navigate( 'checkForWoo' );
+			// Custom back navigation.
+			const navigateReturn = bundleStepsSettings[ pluginSlug ]?.goBack?.( currentStep, navigate );
+			if ( false !== navigateReturn ) {
+				return navigateReturn;
 			}
+
+			return navigate( 'checkForPlugins' );
 		};
 
 		const goNext = () => {
 			switch ( currentStep ) {
 				// TODO - Do we need anything here?
 				default:
-					return navigate( 'checkForWoo' );
+					return navigate( 'checkForPlugins' );
 			}
 		};
 

@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type TranslateResult } from 'i18n-calypso';
 import { forwardRef } from 'react';
-import { plansBreakSmall } from 'calypso/my-sites/plans-grid/media-queries';
+import { plansPageBreakSmall } from '../media-queries';
 import '../style.scss';
 
 const ComparisonGridToggle = forwardRef<
@@ -17,8 +17,6 @@ const ComparisonGridToggle = forwardRef<
 		display: flex;
 		justify-content: center;
 		margin-top: 32px;
-		margin-left: 20px;
-		margin-right: 20px;
 
 		button {
 			background: var( --studio-white );
@@ -33,9 +31,10 @@ const ComparisonGridToggle = forwardRef<
 			line-height: 20px;
 			padding: 0 24px;
 			width: 100%;
+			max-width: 440px;
 			transition: border-color 0.15s ease-out;
 
-			${ plansBreakSmall( css`
+			${ plansPageBreakSmall( css`
 				width: initial;
 				height: 40px;
 			` ) }

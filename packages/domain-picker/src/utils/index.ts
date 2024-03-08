@@ -30,7 +30,6 @@ export function mockDomainSuggestion(
 
 /**
  * Get the suggestions vendor
- *
  * @param {Object} [options={}] Options to determine the suggestion vendor
  * @param {boolean} [options.isSignup=false] Flag to indicate that we're in a signup context
  * @param {boolean} [options.isDomainOnly=false] Flag to indicate that we're in a domain-only context

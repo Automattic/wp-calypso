@@ -129,6 +129,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
+	'cloud.jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'apps.wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),

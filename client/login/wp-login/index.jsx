@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -14,8 +15,13 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
-import { getSignupUrl } from 'calypso/lib/login';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import {
+	isJetpackCloudOAuth2Client,
+	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
@@ -32,6 +38,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import LoginButtons from './login-buttons';
+import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
 
@@ -282,7 +290,107 @@ export class Login extends Component {
 		);
 	}
 
-	renderContent() {
+	recordResetPasswordLinkClick = () => {
+		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+	};
+
+	getLostPasswordLink() {
+		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+			return null;
+		}
+
+		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
+
+		// If we got here coming from Jetpack Cloud login page, we want to go back
+		// to it after we finish the process
+		if (
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client )
+		) {
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.append( 'lostpassword_flow', true );
+			const queryArgs = {
+				redirect_to: currentUrl.toString(),
+
+				// This parameter tells WPCOM that we are coming from Jetpack.com,
+				// so it can present the user a Lost password page that works in
+				// the context of Jetpack.com.
+				client_id: this.props.oauth2Client.id,
+			};
+			lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
+		}
+
+		return (
+			<a
+				href={ lostPasswordUrl }
+				key="lost-password-link"
+				className="login__lost-password-link"
+				onClick={ this.recordResetPasswordLinkClick }
+				rel="external"
+			>
+				{ this.props.translate( 'Lost your password?' ) }
+			</a>
+		);
+	}
+
+	renderSignUpLink( signupLinkText ) {
+		// Taken from client/layout/masterbar/logged-out.jsx
+		const {
+			currentRoute,
+			isP2Login,
+			locale,
+			oauth2Client,
+			pathname,
+			currentQuery,
+			translate,
+			usernameOrEmail,
+		} = this.props;
+
+		if (
+			( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) &&
+			'/log-in/authenticator' !== currentRoute
+		) {
+			return null;
+		}
+
+		if ( isP2Login && currentQuery?.redirect_to ) {
+			const urlParts = getUrlParts( currentQuery.redirect_to );
+			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
+				return null;
+			}
+		}
+
+		// use '?signup_url' if explicitly passed as URL query param
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+
+		return (
+			<a
+				href={ addQueryArgs(
+					{
+						user_email: usernameOrEmail,
+					},
+					signupUrl
+				) }
+				key="sign-up-link"
+				onClick={ this.recordSignUpLinkClick }
+				rel="external"
+			>
+				{ signupLinkText ?? translate( 'Create a new account' ) }
+			</a>
+		);
+	}
+
+	renderLoginHeaderNavigation() {
+		return (
+			<div className="wp-login__header-navigation">
+				{ this.renderSignUpLink( this.props.translate( 'Create an account' ) ) }
+			</div>
+		);
+	}
+
+	renderContent( isSocialFirst ) {
 		const {
 			clientId,
 			domain,
@@ -324,20 +432,43 @@ export class Login extends Component {
 
 		const footer = (
 			<>
-				{ shouldRenderFooter && (
-					<LoginLinks
+				{ isSocialFirst ? (
+					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
+				) : (
+					shouldRenderFooter && (
+						<LoginLinks
+							locale={ locale }
+							privateSite={ privateSite }
+							twoFactorAuthType={ twoFactorAuthType }
+							isWhiteLogin={ isWhiteLogin }
+							isP2Login={ isP2Login }
+							isGravPoweredClient={ isGravPoweredClient }
+							signupUrl={ signupUrl }
+							usernameOrEmail={ this.state.usernameOrEmail }
+							oauth2Client={ this.props.oauth2Client }
+							getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
+							renderSignUpLink={ this.renderSignUpLink.bind( this ) }
+						/>
+					)
+				) }
+				{ isLoginView && <TranslatorInvite path={ path } /> }
+			</>
+		);
+
+		const loginButtons = (
+			<>
+				{ isSocialFirst && isWhiteLogin && (
+					<LoginButtons
 						locale={ locale }
-						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
 						isP2Login={ isP2Login }
 						isGravPoweredClient={ isGravPoweredClient }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2ClientId={ this.props.oauth2Client?.id }
+						oauth2Client={ this.props.oauth2Client }
 					/>
 				) }
-				{ isLoginView && <TranslatorInvite path={ path } /> }
 			</>
 		);
 
@@ -371,21 +502,28 @@ export class Login extends Component {
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
+				isSocialFirst={ isSocialFirst }
+				loginButtons={ loginButtons }
 			/>
 		);
 	}
 
 	render() {
-		const { locale, translate, isFromMigrationPlugin } = this.props;
+		const { locale, translate, isFromMigrationPlugin, isGravPoweredClient, isWoo, isWhiteLogin } =
+			this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const mainClassNames = classNames( 'wp-login__main', {
-			'is-wpcom-migration': isFromMigrationPlugin,
-		} );
+		const isSocialFirst =
+			config.isEnabled( 'login/social-first' ) && isWhiteLogin && ! isGravPoweredClient && ! isWoo;
 
 		return (
 			<div>
 				{ this.props.isP2Login && this.renderP2Logo() }
-				<Main className={ mainClassNames }>
+				<Main
+					className={ classNames( 'wp-login__main', {
+						'is-wpcom-migration': isFromMigrationPlugin,
+						'is-social-first': isSocialFirst,
+					} ) }
+				>
 					{ this.renderI18nSuggestions() }
 
 					<DocumentHead
@@ -394,7 +532,8 @@ export class Login extends Component {
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
-					<div className="wp-login__container">{ this.renderContent() }</div>
+					{ isSocialFirst && this.renderLoginHeaderNavigation() }
+					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
 				</Main>
 
 				{ this.renderFooter() }
@@ -407,17 +546,19 @@ export class Login extends Component {
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			locale: getCurrentLocaleSlug( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
+			isWoo: isWooOAuth2Client( oauth2Client ),
 			currentRoute: getCurrentRoute( state ),
 			currentQuery,
 		};

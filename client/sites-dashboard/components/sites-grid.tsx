@@ -1,10 +1,9 @@
 import { css } from '@emotion/css';
 import classnames from 'classnames';
 import { MEDIA_QUERIES } from '../utils';
-import { LinkInBioBanner } from './link-in-bio-banner/link-in-bio-banner';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const N_LOADING_ROWS = 3;
 
@@ -28,19 +27,11 @@ interface SitesGridProps {
 	isLoading: boolean;
 	sites: SiteExcerptData[];
 	siteSelectorMode?: boolean;
-	showLinkInBioBanner?: boolean;
 	onSiteSelectBtnClick?: ( site: SiteExcerptData ) => void;
 }
 
 export const SitesGrid = ( props: SitesGridProps ) => {
-	const {
-		sites,
-		isLoading,
-		className,
-		showLinkInBioBanner = true,
-		siteSelectorMode = false,
-		onSiteSelectBtnClick,
-	} = props;
+	const { sites, isLoading, className, siteSelectorMode = false, onSiteSelectBtnClick } = props;
 	const additionalProps = siteSelectorMode
 		? {
 				showLaunchNag: false,
@@ -60,7 +51,6 @@ export const SitesGrid = ( props: SitesGridProps ) => {
 				: sites.map( ( site ) => (
 						<SitesGridItem site={ site } key={ site.ID } { ...additionalProps } />
 				  ) ) }
-			{ showLinkInBioBanner && <LinkInBioBanner displayMode="grid" /> }
 		</div>
 	);
 };

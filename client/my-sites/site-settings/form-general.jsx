@@ -1,17 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
-	PLAN_PREMIUM,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-	FEATURE_STYLE_CUSTOMIZATION,
+	getPlan,
 } from '@automattic/calypso-products';
 import {
 	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
 	WPCOM_FEATURES_LOCKED_MODE,
 	WPCOM_FEATURES_LEGACY_CONTACT,
 } from '@automattic/calypso-products/src';
-import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
+import { Card, CompactCard, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { ToggleControl } from '@wordpress/components';
@@ -20,27 +19,21 @@ import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
-import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import Banner from 'calypso/components/banner';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SitePreviewLink from 'calypso/components/site-preview-link';
 import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SiteSettingPrivacy from 'calypso/my-sites/site-settings/site-setting-privacy';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -50,14 +43,13 @@ import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
-	isTrialSite,
 } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
+	isGlobalSiteViewEnabled,
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
@@ -67,9 +59,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { BuiltByUpsell } from './built-by-upsell-banner';
 import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
-import TrialUpsellNotice from './trial-upsell-notice';
+import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {
@@ -348,197 +341,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	visibilityOptionsComingSoon() {
-		const {
-			fields,
-			isAtomicAndEditingToolkitDeactivated,
-			isRequestingSettings,
-			isWpcomStagingSite,
-			isWPForTeamsSite,
-			eventTracker,
-			siteIsJetpack,
-			siteIsAtomic,
-			translate,
-			shouldShowPremiumStylesNotice,
-			isSavingSettings,
-			hasSitePreviewLink,
-			siteId,
-			site,
-			isComingSoon,
-		} = this.props;
-
-		const blogPublic = parseInt( fields.blog_public, 10 );
-		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
-		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
-		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
-		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
-		const isAnyComingSoonEnabled =
-			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
-		const isComingSoonDisabled = isRequestingSettings || isAtomicAndEditingToolkitDeactivated;
-		const comingSoonFormLabelClasses = classNames(
-			'site-settings__visibility-label is-coming-soon',
-			{
-				'is-coming-soon-disabled': isComingSoonDisabled,
-			}
-		);
-		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-		const PublicFormRadio = () => (
-			<FormLabel className="site-settings__visibility-label is-public">
-				<FormRadio
-					name="blog_public"
-					value="1"
-					checked={
-						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-						( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
-						blogPublic === 1
-					}
-					onChange={ () =>
-						this.handleVisibilityOptionChange( {
-							blog_public: isWpcomStagingSite ? 0 : 1,
-							wpcom_coming_soon: 0,
-							wpcom_public_coming_soon: 0,
-						} )
-					}
-					disabled={ isRequestingSettings }
-					onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					label={ translate( 'Public' ) }
-				/>
-			</FormLabel>
-		);
-
-		return (
-			<FormFieldset>
-				{ ! isNonAtomicJetpackSite &&
-					! isWPForTeamsSite &&
-					! isAtomicAndEditingToolkitDeactivated && (
-						<>
-							{ shouldShowPremiumStylesNotice && this.advancedCustomizationNotice() }
-							<FormLabel className={ comingSoonFormLabelClasses }>
-								<FormRadio
-									name="blog_public"
-									value="0"
-									checked={ isAnyComingSoonEnabled }
-									onChange={ () =>
-										this.handleVisibilityOptionChange( {
-											blog_public: 0,
-											wpcom_coming_soon: 0,
-											wpcom_public_coming_soon: 1,
-										} )
-									}
-									disabled={ isComingSoonDisabled }
-									onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-									label={ translate( 'Coming Soon' ) }
-								/>
-							</FormLabel>
-							<FormSettingExplanation>
-								{ translate(
-									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-								) }
-							</FormSettingExplanation>
-							{ showPreviewLink && (
-								<div className="site-settings__visibility-label is-checkbox">
-									<SitePreviewLink
-										siteUrl={ site.URL }
-										siteId={ siteId }
-										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
-										forceOff={ ! isAnyComingSoonEnabled }
-										source="privacy-settings"
-									/>
-								</div>
-							) }
-						</>
-					) }
-				{ isWpcomStagingSite && (
-					<>
-						<PublicFormRadio />
-						<FormSettingExplanation>
-							{ translate(
-								'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
-							) }
-						</FormSettingExplanation>
-					</>
-				) }
-				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
-				{ ! isWpcomStagingSite && (
-					<>
-						<FormSettingExplanation>
-							{ translate( 'Your site is visible to everyone.' ) }
-						</FormSettingExplanation>
-						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
-							<FormInputCheckbox
-								name="blog_public"
-								value="0"
-								checked={
-									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-									( 0 === blogPublic && ! wpcomPublicComingSoon )
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public:
-											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 0,
-									} )
-								}
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-							/>
-							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-							<FormSettingExplanation>
-								{ translate(
-									'This option does not block access to your site — it is up to search engines to honor your request.'
-								) }
-							</FormSettingExplanation>
-						</FormLabel>
-					</>
-				) }
-				{ ! isNonAtomicJetpackSite && (
-					<>
-						<FormLabel className="site-settings__visibility-label is-private">
-							<FormRadio
-								name="blog_public"
-								value="-1"
-								checked={
-									( -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched ) ||
-									( wpcomComingSoon && isAtomicAndEditingToolkitDeactivated )
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public: -1,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 0,
-									} )
-								}
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-								label={ translate( 'Private' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation>
-							{ translate(
-								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-							) }
-						</FormSettingExplanation>
-					</>
-				) }
-			</FormFieldset>
-		);
-	}
-
-	handleVisibilityOptionChange = ( {
-		blog_public,
-		wpcom_coming_soon,
-		wpcom_public_coming_soon,
-	} ) => {
-		const { trackEvent, updateFields } = this.props;
-		trackEvent( `Set blog_public to ${ blog_public }` );
-		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
-		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
-		updateFields( { blog_public, wpcom_coming_soon, wpcom_public_coming_soon } );
-	};
-
 	Timezone() {
 		const { fields, isRequestingSettings, translate } = this.props;
 		const guessedTimezone = guessTimezone();
@@ -591,150 +393,17 @@ export class SiteSettingsFormGeneral extends Component {
 		recordTracksEvent( eventName );
 	};
 
-	getTrialUpsellNotice() {
-		const { translate, siteSlug, isSiteOnECommerceTrial, isSiteOnMigrationTrial, isLaunchable } =
-			this.props;
-		if ( isLaunchable ) {
-			return null;
-		}
-		let noticeText;
-		if ( isSiteOnECommerceTrial ) {
-			noticeText = translate(
-				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
-				{
-					components: {
-						a: (
-							<a
-								href={ `/plans/${ siteSlug }` }
-								onClick={ this.recordTracksEventForTrialNoticeClick }
-							/>
-						),
-					},
-				}
-			);
-		} else if ( isSiteOnMigrationTrial ) {
-			noticeText = translate( 'Ready to launch your site? {{a}}Upgrade to a paid plan{{/a}}.', {
-				components: {
-					a: (
-						<a
-							href={ `/plans/${ siteSlug }` }
-							onClick={ this.recordTracksEventForTrialNoticeClick }
-						/>
-					),
-				},
-			} );
-		}
-
-		return noticeText && <TrialUpsellNotice text={ noticeText } />;
-	}
-
-	renderLaunchSite() {
-		const {
-			translate,
-			siteDomains,
-			siteSlug,
-			siteId,
-			isPaidPlan,
-			isComingSoon,
-			fields,
-			hasSitePreviewLink,
-			site,
-			isLaunchable,
-		} = this.props;
-
-		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
-			'site-settings__disable-privacy-settings': ! siteDomains.length,
-		} );
-		const btnText = translate( 'Launch site' );
-		let querySiteDomainsComponent;
-		let btnComponent;
-
-		if ( 0 === siteDomains.length ) {
-			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
-			btnComponent = <Button>{ btnText }</Button>;
-		} else if ( isPaidPlan && siteDomains.length > 1 ) {
-			btnComponent = (
-				<Button onClick={ this.props.launchSite } disabled={ ! isLaunchable }>
-					{ btnText }
-				</Button>
-			);
-			querySiteDomainsComponent = '';
-		} else {
-			btnComponent = (
-				<Button
-					href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&hide_initial_query=yes` }
-				>
-					{ btnText }
-				</Button>
-			);
-			querySiteDomainsComponent = '';
-		}
-
-		const blogPublic = parseInt( fields.blog_public, 10 );
-		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
-		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
-
-		const showPreviewLink = isComingSoon && hasSitePreviewLink;
-
-		const LaunchCard = showPreviewLink ? CompactCard : Card;
-
-		return (
-			<>
-				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
-				<LaunchCard>
-					{ this.getTrialUpsellNotice() }
-					<div className="site-settings__general-settings-launch-site">
-						<div className="site-settings__general-settings-launch-site-text">
-							<p>
-								{ isComingSoon || isPrivateAndUnlaunched
-									? translate(
-											'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-									  )
-									: translate(
-											"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-									  ) }
-							</p>
-						</div>
-						<div className={ launchSiteClasses }>{ btnComponent }</div>
-					</div>
-				</LaunchCard>
-				{ showPreviewLink && (
-					<Card>
-						<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
-					</Card>
-				) }
-
-				{ querySiteDomainsComponent }
-			</>
-		);
-	}
-
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
+		const { fields, handleSubmitForm, updateFields, isRequestingSettings, isSavingSettings } =
 			this.props;
-
-		if ( isP2HubSite ) {
-			return <></>;
-		}
 		return (
-			<>
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					id="site-privacy-settings"
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Privacy {{learnMoreLink/}}', {
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
-						},
-						comment: 'Privacy Settings header',
-					} ) }
-				/>
-				<Card>
-					<form> { this.visibilityOptionsComingSoon() }</form>
-				</Card>
-			</>
+			<SiteSettingPrivacy
+				fields={ fields }
+				handleSubmitForm={ handleSubmitForm }
+				updateFields={ updateFields }
+				isRequestingSettings={ isRequestingSettings }
+				isSavingSettings={ isSavingSettings }
+			/>
 		);
 	}
 
@@ -880,45 +549,6 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
-	builtByUpsell() {
-		const { translate, site, isUnlaunchedSite: propsisUnlaunchedSite } = this.props;
-
-		// Do not show for launched sites
-		if ( ! propsisUnlaunchedSite ) {
-			return;
-		}
-
-		// Do not show if we don't know when the site was created
-		if ( ! site?.options?.created_at ) {
-			return;
-		}
-
-		// Do not show if the site is less than 4 days old
-		const siteCreatedAt = Date.parse( site?.options?.created_at );
-		const FOUR_DAYS_IN_MILLISECONDS = 4 * 24 * 60 * 60 * 1000;
-		if ( Date.now() - siteCreatedAt < FOUR_DAYS_IN_MILLISECONDS ) {
-			return;
-		}
-
-		return (
-			<Banner
-				className="site-settings__built-by-upsell"
-				title={ translate( 'We’ll build your site for you' ) }
-				description={ translate(
-					'Leave the heavy lifting to us and let our professional builders craft your compelling website.'
-				) }
-				callToAction={ translate( 'Get started' ) }
-				href="https://wordpress.com/website-design-service/?ref=unlaunched-settings"
-				target="_blank"
-				iconPath={ builtByLogo }
-				disableCircle={ true }
-				event="settings_bb_upsell"
-				tracksImpressionName="calypso_settings_bb_upsell_impression"
-				tracksClickName="calypso_settings_bb_upsell_cta_click"
-			/>
-		);
-	}
-
 	render() {
 		const {
 			customizerUrl,
@@ -933,8 +563,9 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 			isAtomicAndEditingToolkitDeactivated,
 			isWpcomStagingSite,
+			isUnlaunchedSite: propsisUnlaunchedSite,
+			isClassicView,
 		} = this.props;
-
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
@@ -943,31 +574,41 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				<SettingsSectionHeader
-					data-tip-target="settings-site-profile-save"
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Site profile' ) }
-				/>
-				<Card>
-					<form>
-						{ this.siteOptions() }
-						{ this.blogAddress() }
-						{ this.languageOptions() }
-						{ this.Timezone() }
-						{ siteIsJetpack && this.WordPressVersion() }
-					</form>
-				</Card>
+				{ ! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
+					<>
+						<SettingsSectionHeader
+							data-tip-target="settings-site-profile-save"
+							disabled={ isRequestingSettings || isSavingSettings }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+							title={ translate( 'Site profile' ) }
+						/>
+						<Card>
+							<form>
+								{ this.siteOptions() }
+								{ this.blogAddress() }
+								{ this.languageOptions() }
+								{ this.Timezone() }
+								{ siteIsJetpack && this.WordPressVersion() }
+							</form>
+						</Card>
+					</>
+				) }
 
 				{ this.props.isUnlaunchedSite &&
 				! isAtomicAndEditingToolkitDeactivated &&
-				! isWpcomStagingSite
-					? this.renderLaunchSite()
-					: this.privacySettings() }
+				! isWpcomStagingSite ? (
+					<LaunchSite />
+				) : (
+					this.privacySettings()
+				) }
 				{ this.enhancedOwnershipSettings() }
-				{ this.builtByUpsell() }
+				<BuiltByUpsell
+					site={ site }
+					isUnlaunchedSite={ propsisUnlaunchedSite }
+					urlRef="unlaunched-settings"
+				/>
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
@@ -995,7 +636,9 @@ export class SiteSettingsFormGeneral extends Component {
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ PLAN_BUSINESS }
 								title={ translate(
-									'Remove the footer credit entirely with WordPress.com Business'
+									'Remove the footer credit entirely with WordPress.com %(businessPlanName)s',
+
+									{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
 								) }
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
@@ -1012,47 +655,7 @@ export class SiteSettingsFormGeneral extends Component {
 			</div>
 		);
 	}
-
-	advancedCustomizationNotice() {
-		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
-
-		return (
-			<>
-				<div className="site-settings__advanced-customization-notice">
-					<div className="site-settings__advanced-customization-notice-cta">
-						<Gridicon icon="info-outline" />
-						<span>
-							{ translate(
-								'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
-							) }
-						</span>
-					</div>
-					<div className="site-settings__advanced-customization-notice-buttons">
-						<Button href={ selectedSite.URL } target="_blank">
-							{ translate( 'View site' ) }
-						</Button>
-						<Button
-							className="is-primary"
-							href={ upgradeUrl }
-							onClick={ this.trackAdvancedCustomizationUpgradeClick }
-						>
-							{ translate( 'Upgrade' ) }
-						</Button>
-					</div>
-				</div>
-			</>
-		);
-	}
 }
-
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { site } = ownProps;
-
-	return {
-		launchSite: () => dispatch( launchSite( site.ID ) ),
-	};
-};
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
@@ -1062,6 +665,7 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+		isClassicView: isGlobalSiteViewEnabled( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
@@ -1078,9 +682,10 @@ const connectComponent = connect( ( state ) => {
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
 		isSiteOnMigrationTrial: getIsSiteOnMigrationTrial( state, siteId ),
-		isLaunchable: ! isTrialSite( state, siteId ),
+		isLaunchable:
+			! getIsSiteOnECommerceTrial( state, siteId ) && ! getIsSiteOnMigrationTrial( state, siteId ),
 	};
-}, mapDispatchToProps );
+} );
 
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {
@@ -1090,6 +695,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: '',
 		blog_public: '',
 		wpcom_coming_soon: '',
+		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
 		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
@@ -1110,6 +716,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
+		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 		wpcom_legacy_contact: settings.wpcom_legacy_contact,
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,

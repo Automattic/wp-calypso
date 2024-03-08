@@ -30,6 +30,10 @@
 			padding-right: 50px;
 		}
 	}
+	&.minimal {
+		background: transparent;
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
 }
 
 .section-nav__mobile-header {
@@ -43,6 +47,10 @@
 	color: var(--color-neutral-70);
 	font-weight: 600;
 	cursor: pointer;
+
+	.minimal & {
+		background: var(--color-surface);
+	}
 
 	.gridicons-chevron-down {
 		fill: var(--color-neutral-50);

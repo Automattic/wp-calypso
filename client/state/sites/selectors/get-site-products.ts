@@ -29,7 +29,6 @@ function isSiteWithProducts( site: unknown ): site is SiteWithProducts {
 
 /**
  * Gets a site's products from the state.
- *
  * @param state Redux state.
  * @param siteId The site ID.
  */

@@ -1,10 +1,10 @@
+import { SelectDropdown } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import ReactDom from 'react-dom';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 

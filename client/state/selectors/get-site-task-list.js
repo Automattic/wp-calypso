@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getTaskList } from 'calypso/lib/checklist';
 import getChecklistTaskUrls from './get-checklist-task-urls';
 import getSiteChecklist from './get-site-checklist';
@@ -12,8 +11,8 @@ import getSiteChecklist from './get-site-checklist';
 export default function getSiteTaskList( state, siteId ) {
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const taskList = getTaskList( {
-		taskStatuses: get( siteChecklist, 'tasks' ),
-		siteSegment: get( siteChecklist, 'siteSegment' ),
+		taskStatuses: siteChecklist?.tasks,
+		siteSegment: siteChecklist?.siteSegment,
 	} );
 	const taskUrls = getChecklistTaskUrls( state, siteId );
 	taskList.removeTasksWithoutUrls( taskUrls );

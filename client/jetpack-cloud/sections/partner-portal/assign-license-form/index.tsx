@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';

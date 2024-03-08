@@ -16,9 +16,6 @@
 		<testsuite name="default">
 			<directory suffix="-test.php">./phpunit/</directory>
 		</testsuite>
-		<testsuite name="block-patterns">
-			<directory suffix="-test.php">./block-patterns/test/</directory>
-		</testsuite>
 		<testsuite name="help-center">
 			<directory suffix="-test.php">./help-center/test/</directory>
 		</testsuite>

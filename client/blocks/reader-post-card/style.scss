@@ -103,6 +103,7 @@
 				color: var(--color-text-inverted);
 				display: inline;
 				font-size: $font-body-extra-small;
+				line-height: 20px;
 			}
 
 			.reader-post-actions {
@@ -147,19 +148,6 @@
 	}
 
 	&.is-compact {
-		.reader-featured-image {
-			width: 200px !important;
-
-			@include breakpoint-deprecated( "<660px" ) {
-				width: auto !important;
-				height: 300px !important;
-			}
-
-			@include breakpoint-deprecated( "<480px" ) {
-				height: 200px !important;
-			}
-		}
-
 		.reader-post-card__post {
 			display: inherit;
 			margin: 0;
@@ -177,6 +165,31 @@
 
 			@include breakpoint-deprecated( "<660px" ) {
 				flex-direction: column-reverse;
+			}
+
+			&.reader-post-card__no-excerpt {
+				flex-direction: column;
+				gap: 0;
+
+				.reader-post-card__post-details {
+					min-height: auto;
+					padding-bottom: 6px;
+				}
+			}
+
+			&:not(.reader-post-card__no-excerpt) {
+				.reader-featured-image {
+					width: 200px !important;
+
+					@include breakpoint-deprecated( "<660px" ) {
+						width: auto !important;
+						height: 300px !important;
+					}
+
+					@include breakpoint-deprecated( "<480px" ) {
+						height: 200px !important;
+					}
+				}
 			}
 		}
 
@@ -206,7 +219,7 @@
 	}
 
 	&:not(.is-compact) {
-		.reader-post-card__title {
+		.reader-post-card__post-details .reader-post-card__title {
 			margin-top: 24px;
 		}
 		.reader-excerpt__content {
@@ -663,7 +676,7 @@
 
 // Gallery cards
 .reader-post-card .reader-featured-video__video {
-	padding-bottom: 17px;
+	padding-bottom: 0;
 }
 
 .reader-post-card__gallery-image {

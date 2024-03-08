@@ -5,7 +5,6 @@ import { focus } from '@wordpress/dom';
 import { useEffect, useCallback, useState } from '@wordpress/element';
 /**
  * A hook that constraints tabbing/focus on focuable elements in the given element ref.
- *
  * @param ref React.MutableRefObject< null | HTMLElement >
  */
 const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void => {

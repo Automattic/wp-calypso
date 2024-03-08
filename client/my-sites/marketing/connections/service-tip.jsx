@@ -17,13 +17,11 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
  *
  * When adding tips for more services, please update the list in addition to adding
  * a method with the tip's content.
- *
  * @type {string[]}
  */
 const SERVICES_WITH_TIPS = [ 'instagram', 'google_plus' ];
 /**
  * List of services we provide tips for, only if the site is connected to Jetpack.
- *
  * @type {string[]}
  */
 const JETPACK_SERVICES_WITH_TIPS = SERVICES_WITH_TIPS.concat( [ 'facebook', 'twitter' ] );

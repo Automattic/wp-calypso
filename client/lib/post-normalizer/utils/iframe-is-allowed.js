@@ -41,6 +41,7 @@ export function iframeIsAllowed( iframe ) {
 		'icloud.com',
 		'read.amazon.com',
 		'loom.com',
+		'pca.st',
 	];
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

@@ -1,4 +1,4 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { generatePassword } from '@automattic/generate-password';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { protectForm } from 'calypso/lib/protect-form';
@@ -58,13 +57,23 @@ class AccountPassword extends Component {
 			return;
 		}
 
-		try {
-			const validation = await wp.req.post( '/me/settings/password/validate', { password } );
+		const validation = await wp.req
+			.post( '/me/settings/password/validate', { password } )
+			.catch( () => ( {
+				passed: false,
+				test_results: {
+					failed: [
+						{
+							test_name: 'network_error',
+							explanation: this.props.translate(
+								'The password could not be validated. Please check your network connection and try again.'
+							),
+						},
+					],
+				},
+			} ) );
 
-			this.setState( { pendingValidation: false, validation } );
-		} catch ( err ) {
-			this.setState( { pendingValidation: false } );
-		}
+		this.setState( { pendingValidation: false, validation } );
 	}, 300 );
 
 	handlePasswordChange = ( event ) => {

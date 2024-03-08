@@ -20,7 +20,6 @@ export interface ExPlatClientReactHelpers {
 	 * An ExPlat useExperiment hook.
 	 *
 	 * NOTE: Doesn't obey ExperimentAssignment TTL in order to keep stable UX.
-	 *
 	 * @returns [isExperimentAssignmentLoading, ExperimentAssignment | null]
 	 */
 	useExperiment: (

@@ -27,7 +27,6 @@ const defaultProps = {
 			admin_url: 'https://example.com/wp-admin/',
 		},
 	},
-	recordGoogleEvent: jest.fn(),
 	recordTracksEvent: jest.fn(),
 	trackSiteDisconnect: jest.fn(),
 	translate: ( text ) => text,

@@ -4,9 +4,12 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { useClearEdgeCacheMutation } from 'calypso/my-sites/hosting/cache-card/use-clear-edge-cache';
-import { useEdgeCacheQuery } from 'calypso/my-sites/hosting/cache-card/use-edge-cache';
-import { useToggleEdgeCacheMutation } from 'calypso/my-sites/hosting/cache-card/use-toggle-edge-cache';
+import {
+	useEdgeCacheQuery,
+	useSetEdgeCacheMutation,
+	useIsSetEdgeCacheMutating,
+	useClearEdgeCacheMutation,
+} from 'calypso/data/hosting/use-cache';
 import { CacheCard } from '..';
 
 const INITIAL_STATE = {
@@ -35,30 +38,22 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/my-sites/hosting/cache-card/use-clear-edge-cache', () => ( {
-	__esModule: true,
-	useClearEdgeCacheMutation: jest.fn( () => {
-		return {
-			clearEdgeCache: jest.fn(),
-			loading: false,
-		};
-	} ),
-} ) );
-
-jest.mock( 'calypso/my-sites/hosting/cache-card/use-edge-cache', () => ( {
+jest.mock( 'calypso/data/hosting/use-cache', () => ( {
 	__esModule: true,
 	useEdgeCacheQuery: jest.fn( () => {
 		return {
 			data: true,
 		};
 	} ),
-} ) );
-
-jest.mock( 'calypso/my-sites/hosting/cache-card/use-toggle-edge-cache', () => ( {
-	__esModule: true,
-	useToggleEdgeCacheMutation: jest.fn( () => {
+	useSetEdgeCacheMutation: jest.fn( () => {
 		return {
 			toggleEdgeCache: jest.fn(),
+		};
+	} ),
+	useIsSetEdgeCacheMutating: jest.fn( () => false ),
+	useClearEdgeCacheMutation: jest.fn( () => {
+		return {
+			clearEdgeCache: jest.fn(),
 			isLoading: false,
 		};
 	} ),
@@ -104,17 +99,18 @@ describe( 'CacheCard component', () => {
 
 	it( 'toggles edge cache state when edge cache checkbox is clicked', async () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );
-		useToggleEdgeCacheMutation.mockReturnValue( { toggleEdgeCache: jest.fn(), isLoading: false } );
+		useSetEdgeCacheMutation.mockReturnValue( { setEdgeCache: jest.fn(), isLoading: false } );
+		useIsSetEdgeCacheMutating.mockReturnValue( false );
 
 		render(
 			<Provider store={ store }>
 				<CacheCard { ...defaultProps } />
 			</Provider>
 		);
-		expect( useToggleEdgeCacheMutation().toggleEdgeCache ).not.toHaveBeenCalled();
+		expect( useSetEdgeCacheMutation().setEdgeCache ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'checkbox' ) ).toBeVisible();
 		screen.getByRole( 'checkbox' ).click();
-		expect( useToggleEdgeCacheMutation().toggleEdgeCache ).toHaveBeenCalledWith( true );
+		expect( useSetEdgeCacheMutation().setEdgeCache ).toHaveBeenCalledWith( 1, true );
 	} );
 	it( 'displays rate limit message when shouldRateLimitCacheClear prop is true', () => {
 		useEdgeCacheQuery.mockReturnValue( { data: false, isLoading: false } );

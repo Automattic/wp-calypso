@@ -5,9 +5,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AccountPassword from 'calypso/me/account-password';
@@ -42,7 +42,7 @@ class Security extends Component {
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 
-				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (

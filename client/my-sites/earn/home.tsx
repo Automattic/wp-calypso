@@ -1,29 +1,34 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
+	getPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
-import page from 'page';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, {
 	Props as PromoSectionProps,
 	PromoSectionCardProps,
 } from 'calypso/components/promo-section';
+import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -32,7 +37,10 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import EarnSupportButton from './components/earn-support-button';
 import StatsSection from './components/stats';
+import { useEarnLaunchpadTasks } from './hooks/use-earn-launchpad-tasks';
+import EarnLaunchpad from './launchpad';
 
 import './style.scss';
 
@@ -40,7 +48,7 @@ const Home = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, site?.ID ?? 0 ) );
 	const hasWordAdsFeature = useSelector( ( state ) => siteHasWordAds( state, site?.ID ?? null ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
@@ -48,21 +56,20 @@ const Home = () => {
 	const isUserAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
-	const connectedAccountId = useSelector( ( state ) =>
-		getConnectedAccountIdForSiteId( state, site?.ID )
+	const hasConnectedAccount = useSelector( ( state ) =>
+		getIsConnectedForSiteId( state, site?.ID )
 	);
 	const hasSimplePayments = useSelector( ( state ) =>
 		siteHasFeature( state, site?.ID ?? null, FEATURE_SIMPLE_PAYMENTS )
 	);
-	const eligibleForProPlan = useSelector( ( state ) => isEligibleForProPlan( state, site?.ID ) );
 	const isRequestingWordAds = useSelector( ( state ) =>
 		isRequestingWordAdsApprovalForSite( state, site )
 	);
-
-	const hasConnectedAccount = Boolean( connectedAccountId );
 	const isNonAtomicJetpack = Boolean( isJetpack && ! isSiteTransfer );
 	const hasSetupAds = Boolean( site?.options?.wordads || isRequestingWordAds );
 	const isLoading = hasConnectedAccount === null || sitePlanSlug === null;
+
+	const launchpad = useEarnLaunchpadTasks();
 
 	function trackUpgrade( plan: string, feature: string ) {
 		dispatch(
@@ -114,7 +121,7 @@ const Home = () => {
 	};
 
 	const getAnyPlanNames = () => {
-		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
+		const jetpackText = translate( 'Available with Jetpack Creator, or a bundled plan.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack
@@ -123,10 +130,17 @@ const Home = () => {
 	};
 
 	const getPremiumPlanNames = () => {
-		const nonAtomicJetpackText = eligibleForProPlan
-			? translate( 'Available only with a Pro plan.' )
-			: translate( 'Available only with a Premium, Business, or Commerce plan.' );
-
+		const nonAtomicJetpackText = translate(
+			// Translators: %(premiumPlanName)s is Explorer or Premium, %(businessPlanName)s is Creator or Business, %(commercePlanName)s is Entrepreneur or eCommerce.
+			'Available only with a %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s plan.',
+			{
+				args: {
+					premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() || '',
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
+					commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle() || '',
+				},
+			}
+		);
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
 	};
@@ -135,19 +149,20 @@ const Home = () => {
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 */
 	const getSimplePaymentsCard = (): PromoSectionCardProps => {
-		const supportLink = localizeUrl(
-			'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
-		);
 		const cta = hasSimplePayments
 			? {
-					text: translate( 'Learn how to get started' ),
+					text: translate( 'Learn more' ),
+					component: <EarnSupportButton supportContext="paypal" />,
 					action: () => {
 						trackCtaButton( 'simple-payments' );
-						page( supportLink );
+						window.location.href = localizeUrl(
+							'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
+						);
 					},
 			  }
 			: {
 					text: translate( 'Unlock this feature' ),
+					isPrimary: true,
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						page(
@@ -158,26 +173,18 @@ const Home = () => {
 						);
 					},
 			  };
-		const learnMoreLink = hasSimplePayments
-			? null
-			: { url: supportLink, onClick: () => trackLearnLink( 'simple-payments' ) };
 		const title = translate( 'Collect PayPal payments' );
-		const body = (
-			<>
-				{ translate(
-					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
-				) }
-				{ ! hasSimplePayments && <em>{ getPremiumPlanNames() }</em> }
-			</>
+		const body = translate(
+			'Accept credit and debit card payments via PayPal for physical products, services, donations, tips, or memberships.'
 		);
 
 		return {
 			title,
 			body,
 			icon: 'credit-card',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -186,14 +193,16 @@ const Home = () => {
 	 * Return the content to display in the Recurring Payments card based on the current plan.
 	 */
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
-		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
-		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: <EarnSupportButton supportContext="payment_button_block" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
-				page( `/earn/payments/${ site?.slug }` );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+				}
 			},
 		};
 		const title = translate( 'Collect payments' );
@@ -210,25 +219,13 @@ const Home = () => {
 			</>
 		);
 
-		const learnMoreLink = ! hasConnectedAccount
-			? {
-					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-					onClick: () => trackLearnLink( 'recurring-payments' ),
-			  }
-			: {
-					url: localizeUrl(
-						'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block'
-					),
-					onClick: () => trackLearnLink( 'recurring-payments' ),
-					label: translate( 'Support documentation' ),
-			  };
 		return {
 			title,
 			body,
 			icon: 'money',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -237,49 +234,32 @@ const Home = () => {
 	 * Return the content to display in the Donations card based on the current plan.
 	 */
 	const getDonationsCard = (): PromoSectionCardProps => {
-		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
-		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
+			...( hasConnectedAccount && {
+				component: <EarnSupportButton supportContext="donations" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'donations' );
-				page( `/earn/payments/${ site?.slug }` );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+				}
 			},
 		};
-		const title = translate( 'Accept donations and tips' );
 
-		const body = (
-			<>
-				{ hasConnectedAccount
-					? translate(
-							'Accept one-time and recurring donations by inserting the Donations Form block.'
-					  )
-					: translate(
-							'Accept one-time and recurring donations by enabling the Donations Form block.'
-					  ) }
-				<></>
-			</>
+		const title = translate( 'Receive donations and tips' );
+
+		const body = translate(
+			'The Donations Form block lets you accept credit and debit card payments for one-time donations, contributions, and tips.'
 		);
-
-		const learnMoreLink = ! hasConnectedAccount
-			? {
-					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-					onClick: () => trackLearnLink( 'donations' ),
-			  }
-			: {
-					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
-					onClick: () => trackLearnLink( 'donations' ),
-					label: translate( 'Support documentation' ),
-			  };
 
 		return {
 			title,
 			body,
 			icon: 'heart-outline',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -288,42 +268,33 @@ const Home = () => {
 	 * Return the content to display in the Premium Content Block card based on the current plan.
 	 */
 	const getPremiumContentCard = (): PromoSectionCardProps | undefined => {
-		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
-		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
-		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
 		const cta = {
-			text: ctaTitle,
+			text: translate( 'Learn more' ),
+			component: <EarnSupportButton supportContext="premium_content_block" />,
 			action: () => {
-				trackCtaButton( 'premium-content' );
-				page( `/earn/payments/${ site?.slug }` );
+				trackLearnLink( 'premium-content' );
+				if ( window && window.location ) {
+					window.location.href = localizeUrl(
+						'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
+					);
+				}
 			},
 		};
-		const title = translate( 'Profit from subscriber-only content' );
-		const hasConnectionBodyText = translate(
-			'Create paid subscriptions so only subscribers can see selected content on your site — everyone else will see a paywall.'
+		const title = translate( 'Create subscriber-only content' );
+		const body = translate(
+			'Create paid subscription options and gate access to text, video, image, or any other kind of content.'
 		);
-		const noConnectionBodyText = translate(
-			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
-		);
-		const body = <>{ hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText }</>;
-		const learnMoreLink = {
-			url: localizeUrl(
-				'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
-			),
-			onClick: () => trackLearnLink( 'premium-content' ),
-			label: hasConnectedAccount ? translate( 'Support documentation' ) : undefined,
-		};
 
 		return {
 			title,
 			body,
 			icon: 'bookmark-outline',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
-				learnMoreLink,
 			},
 		};
 	};
@@ -337,6 +308,7 @@ const Home = () => {
 		}
 		const cta = {
 			text: translate( 'Learn more' ),
+			component: <EarnSupportButton supportContext="paid-newsletters" />,
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
@@ -344,18 +316,18 @@ const Home = () => {
 				}
 			},
 		};
-		const title = translate( 'Send paid email newsletters' );
+		const title = translate( 'Set up a paid newsletter' );
 		const body = translate(
-			'Share premium content with paying subscribers automatically through email.'
+			'Reach and grow your audience with a newsletter and earn with paid subscriptions, gated content options, and one-time offerings.'
 		);
 
 		return {
 			title,
 			body,
 			icon: 'mail',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
-				featureIncludedInPlan: true,
 			},
 		};
 	};
@@ -381,10 +353,10 @@ const Home = () => {
 		}
 
 		return {
-			title: translate( 'Refer a friend, you’ll both earn credits' ),
+			title: translate( 'Refer a friend' ),
 			body: peerReferralLink
 				? translate(
-						'To earn free credits, share the link below with your friends, family, and website visitors.'
+						'Share the link below and, for every paying customer you send our way, you’ll both earn US$25 in credits.'
 				  )
 				: translate(
 						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
@@ -401,6 +373,7 @@ const Home = () => {
 						}
 				  ),
 			icon: 'user-add',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 			},
@@ -422,6 +395,7 @@ const Home = () => {
 				  }
 				: {
 						text: translate( 'Unlock this feature' ),
+						isPrimary: true,
 						action: () => {
 							trackUpgrade( 'plans', 'ads' );
 							page(
@@ -439,7 +413,7 @@ const Home = () => {
 		) : (
 			<>
 				{ translate(
-					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
+					'Make money each time someone visits your site by displaying ads on your posts and pages.'
 				) }
 				{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
 			</>
@@ -448,10 +422,12 @@ const Home = () => {
 		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
+
 		return {
 			title,
 			body,
 			icon: 'speaker',
+			variation: PromoCardVariation.Compact,
 			actions: {
 				cta,
 				learnMoreLink,
@@ -488,16 +464,18 @@ const Home = () => {
 		<>
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			<QueryMembershipsSettings siteId={ site?.ID ?? 0 } />
+			<QueryMembershipProducts siteId={ site?.ID ?? 0 } />
+			<QuerySitePlans siteId={ site?.ID ?? 0 } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection promos={ [ getPlaceholderPromoCard(), getPlaceholderPromoCard() ] } />
 				</div>
 			) }
 			{ ! isLoading && (
-				<>
-					<StatsSection />
+				<div>
+					{ launchpad.shouldLoad ? <EarnLaunchpad launchpad={ launchpad } /> : <StatsSection /> }
 					<PromoSection { ...promos } />
-				</>
+				</div>
 			) }
 		</>
 	);

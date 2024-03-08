@@ -15,7 +15,7 @@ const container = css( {
 export type SitesDisplayMode = 'tile' | 'list';
 
 export const useSitesDisplayMode = () => {
-	const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+	const siteCount = useSelector( getCurrentUserSiteCount );
 	return useAsyncPreference< SitesDisplayMode >( {
 		defaultValue: siteCount && siteCount > 6 ? 'list' : 'tile',
 		preferenceName: 'sites-management-dashboard-display-mode',

@@ -1,5 +1,8 @@
 /* Overide very specific css on an attribute */
 .sidebar {
+	li.sidebar-streams__search {
+		margin-top: 8px;
+	}
 	li.reader-sidebar-tags__list {
 		margin-bottom: 8px;
 	}
@@ -17,25 +20,33 @@
 		box-shadow: none;
 
 		.form-text-input {
-			color: var(--color-sidebar-text);
-			box-shadow: 0 0 1px var(--color-neutral-10);
+			color: var(--color-sidebar-submenu-text);
+			box-shadow: 0 0 1px var(--color-sidebar-submenu-text);
 			background-color: transparent;
 			padding: 0 8px;
 			margin: 4px 4px 4px 0;
 			font-size: $font-body-small;
 
 			&:focus {
-				box-shadow: 0 0 0 2px var(--color-primary-10);
+				box-shadow: 0 0 0 1px var(--color-sidebar-submenu-hover-text);
 			}
 
 			&::placeholder {
-				color: rgba(var(--color-sidebar-text-rgb), 0.4);
+				color: var(--color-sidebar-submenu-text);
+				opacity: 0.3; // Same as disabled button's opacity.
+			}
+		}
+
+		.form-text-input-with-action__button {
+			color: var(--color-sidebar-submenu-text);
+
+			&:disabled {
+				color: var(--color-sidebar-submenu-text);
 			}
 		}
 	}
 
 	.reader-sidebar-tags__all-tags-link {
-		color: var(--studio-white);
 		font-weight: bold;
 		margin-bottom: 2px;
 	}

@@ -1,11 +1,11 @@
+import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import { SearchIcon, type ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
 import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
@@ -24,7 +24,7 @@ const FilterBar = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '16px',
-	paddingBlock: '32px',
+	marginBottom: '32px',
 	paddingInline: 0,
 
 	flexDirection: 'column',
@@ -35,6 +35,10 @@ const FilterBar = styled.div( {
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingBlock: '16px',
+
+		'.layout.focus-sidebar &': {
+			flexWrap: 'wrap',
+		},
 	},
 } );
 

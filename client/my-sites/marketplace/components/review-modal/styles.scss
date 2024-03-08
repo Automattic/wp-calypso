@@ -1,0 +1,45 @@
+@import "@automattic/typography/styles/variables.scss";
+
+.marketplace-review-modal__card {
+	padding: 0 1rem;
+	box-shadow: none;
+}
+
+.marketplace-review-modal__card-success {
+	box-shadow: none;
+	padding: 26px 40px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 0;
+
+	& .marketplace-review-modal__card-success-title {
+		font-family: $brand-serif;
+		font-size: $font-title-large;
+		font-weight: 400;
+		color: var(--studio-gray-100);
+		margin: 0;
+	}
+
+	& .marketplace-review-modal__card-success-body {
+		max-width: 400px;
+		font-size: $font-body-small;
+		text-align: center;
+		color: var(--studio-gray-60);
+	}
+}
+
+
+.marketplace-reviews-modal__error {
+	font-size: $font-body-small;
+	color: var(--color-error);
+}
+
+.marketplace-review-modal__button-submit {
+	display: flex;
+}
+.marketplace-review-modal__buttons-container {
+	display: flex;
+	gap: 8px;
+	padding-top: 8px;
+}

@@ -76,11 +76,12 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 /**
  * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
  */
-export const redirectLoggedInUrl = () => {};
+export const redirectWithoutLocaleParamInFrontIfLoggedIn = () => {};
 export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
 export const redirectLoggedOutToSignup = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
+export const redirectIfCurrentUserCannot = () => {};
 // eslint-disable-next-line no-unused-vars
 export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;

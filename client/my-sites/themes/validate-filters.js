@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { composeHandlers } from 'calypso/controller/shared';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import {

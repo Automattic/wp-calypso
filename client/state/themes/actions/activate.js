@@ -1,5 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -13,9 +12,9 @@ import {
 	hasActivationModalAccepted,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
+	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
-import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/should-redirect-to-thank-you-page';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -24,7 +23,6 @@ import { shouldRedirectToThankYouPage } from 'calypso/state/themes/selectors/sho
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @param  {boolean}  skipActivationModal Skip the Activation Modal to be shown even if needed on flows that don't require it
  * @returns {Function}          Action thunk
  */
@@ -33,14 +31,10 @@ export function activate(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepCurrentHomepage = false,
 	skipActivationModal = false
 ) {
 	return ( dispatch, getState ) => {
-		if ( ! isEnabled( 'themes/atomic-homepage-replace' ) ) {
-			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
-			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
-		}
+		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 
 		/**
 		 * Make sure to show the Atomic transfer dialog if the theme requires
@@ -63,14 +57,8 @@ export function activate(
 		}
 
 		/**
-		 * Check if its a free or premium dotcom theme, if so, dispatch the activate action
+		 * Check if its a dotcom theme, if so, dispatch the activate action
 		 * and redirect to the Marketplace Thank You Page.
-		 *
-		 * A theme is considered free or premium when it is not:
-		 * - ExternallyManaged
-		 * - A software bundle (like woo-on-plans)
-		 *
-		 * Currently a feature flag check is also being applied.
 		 */
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const siteSlug = getSiteSlug( getState(), siteId );
@@ -78,25 +66,28 @@ export function activate(
 			themeId,
 			siteId,
 			source,
-			purchased,
-			keepCurrentHomepage
+			purchased
 		);
 
-		if ( shouldRedirectToThankYouPage( getState(), themeId ) ) {
+		if ( isDotComTheme ) {
 			dispatchActivateAction( dispatch, getState );
 
-			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
+			const continueWithPluginBundle =
+				isWooTheme && skipActivationModal ? `&continueWithPluginBundle=true` : '';
+
+			return page(
+				`/marketplace/thank-you/${ siteSlug }?themes=${ themeId }${ continueWithPluginBundle }`
+			);
 		}
 
-		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
-		 * and redirect it to the Marketplace theme installation page
-		 */
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		if ( isDotOrgTheme && ! isDotComTheme ) {
+		if ( isDotOrgTheme ) {
 			dispatch( productToBeInstalled( themeId, siteSlug ) );
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
+		// Themes should only be either dotCom or dotOrg so this line should never be reached.
+		// Leaving it to prevent potential regression issues.
 		return dispatchActivateAction( dispatch, getState );
 	};
 }
@@ -108,26 +99,22 @@ export function activate(
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}          Action thunk
  */
 export function activateOrInstallThenActivate(
 	themeId,
 	siteId,
 	source = 'unknown',
-	purchased = false,
-	keepCurrentHomepage = false
+	purchased = false
 ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch(
-				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
-			);
+			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
 		}
 
-		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
 	};
 }

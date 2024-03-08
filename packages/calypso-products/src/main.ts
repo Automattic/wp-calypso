@@ -40,7 +40,9 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	WOO_EXPRESS_PLANS,
 	TERM_CENTENNIALLY,
-	TYPE_HOSTING_TRIAL,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	GROUP_P2,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -175,6 +177,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isFreeHostingTrial( planKey ) ) {
 		return 'is-free-hosting-trial';
+	}
+
+	if ( isP2PlusPlan( planKey ) ) {
+		return 'is-p2-plus-plan';
 	}
 
 	return '';
@@ -334,7 +340,11 @@ export function isFreePlan( planSlug: string ): boolean {
 }
 
 export function isFreeHostingTrial( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_HOSTING_TRIAL } );
+	return planSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+}
+
+export function isBusinessTrial( planSlug: string ): boolean {
+	return planSlug === PLAN_HOSTING_TRIAL_MONTHLY || planSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 }
 
 export function is100YearPlan( planSlug: string ): boolean {
@@ -461,6 +471,10 @@ export function isJetpackFreePlan( planSlug: string ): boolean {
 
 export function isJetpackOfferResetPlan( planSlug: string ): boolean {
 	return ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isP2FreePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_P2 } );
 }
 
 export function isP2PlusPlan( planSlug: string ): boolean {

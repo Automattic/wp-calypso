@@ -63,6 +63,11 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		};
 	}
 
+	function onTryAgainClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -91,7 +96,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
+			<div className={ classnames( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( ! job ) {
 						return;
@@ -106,12 +111,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
+						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}

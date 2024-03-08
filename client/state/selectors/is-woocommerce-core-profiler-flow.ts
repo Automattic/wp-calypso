@@ -6,7 +6,6 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns true if the user reached Calypso via the WooCommerce Core Profiler flow.
  * This is indicated by the `from` query argument being set to `woocommerce-core-profiler`.
- *
  * @param  {Object}   state  Global state tree
  * @returns {?boolean}        Whether the user reached Calypso via the WooCommerce Core Profiler flow
  */

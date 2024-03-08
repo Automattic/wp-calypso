@@ -6,6 +6,7 @@ export interface JetpackSaleCoupon {
 	start_date: string;
 	expiry_date: string;
 	sale_title: string;
+	sale_description: string;
 	final_discount: number;
 }
 

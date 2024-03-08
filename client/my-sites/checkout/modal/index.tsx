@@ -1,3 +1,4 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Modal } from '@wordpress/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
@@ -5,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { navigate } from 'calypso/lib/navigate';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -40,31 +41,20 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const {
-		siteSlug,
-		selectedSiteId,
-		hasSelectedSiteId,
-		previousRoute,
-		redirectTo,
-		cancelTo,
-		isJetpackNotAtomic,
-	} = useSelector( ( state ) => {
-		const site = getSelectedSite( state );
-		const selectedSiteId = getSelectedSiteId( state );
-		const hasSelectedSiteId = selectedSiteId && siteId === selectedSiteId;
-		const previousRoute = getPreviousRoute( state );
-
-		return {
-			siteSlug: site?.slug,
-			selectedSiteId,
-			hasSelectedSiteId,
-			previousRoute: removeQueryArgs( previousRoute, KEY_PRODUCTS ),
-			redirectTo: ( getQueryArg( window.location.href, 'redirect_to' ) as string ) || previousRoute,
-			cancelTo: ( getQueryArg( window.location.href, 'cancel_to' ) as string ) || previousRoute,
-			isJetpackNotAtomic:
-				!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
-		};
-	} );
+	const site = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const hasSelectedSiteId = selectedSiteId && siteId === selectedSiteId;
+	const previousRouteWithArgs = useSelector( getPreviousRoute );
+	const siteSlug = site?.slug;
+	const previousRoute = removeQueryArgs( previousRouteWithArgs, KEY_PRODUCTS );
+	const redirectTo =
+		( getQueryArg( window.location.href, 'redirect_to' ) as string ) || previousRouteWithArgs;
+	const cancelTo =
+		( getQueryArg( window.location.href, 'cancel_to' ) as string ) || previousRouteWithArgs;
+	const isJetpackNotAtomic = useSelector(
+		( state ) =>
+			!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
+	);
 
 	const handleRequestClose = () => {
 		onClose?.();
@@ -106,23 +96,26 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 				previousPath={ previousRoute }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				isLeavingAllowed
+				loadHelpCenterIcon
 			/>
 			<CalypsoShoppingCartProvider>
 				<StripeHookProvider
 					fetchStripeConfiguration={ getStripeConfiguration }
 					locale={ translate.localeSlug }
 				>
-					<CheckoutMain
-						siteId={ selectedSiteId ?? undefined }
-						siteSlug={ siteSlug }
-						productAliasFromUrl={ productAliasFromUrl }
-						// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
-						redirectTo={ redirectTo }
-						customizedPreviousPath={ previousRoute }
-						isInModal
-						disabledThankYouPage
-						onAfterPaymentComplete={ handleAfterPaymentComplete }
-					/>
+					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+						<CheckoutMain
+							siteId={ selectedSiteId ?? undefined }
+							siteSlug={ siteSlug }
+							productAliasFromUrl={ productAliasFromUrl }
+							// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
+							redirectTo={ redirectTo }
+							customizedPreviousPath={ previousRoute }
+							isInModal
+							disabledThankYouPage
+							onAfterPaymentComplete={ handleAfterPaymentComplete }
+						/>
+					</RazorpayHookProvider>
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</Modal>

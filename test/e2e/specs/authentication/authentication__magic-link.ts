@@ -13,7 +13,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	let page: Page;
 	let loginPage: LoginPage;
 	let emailClient: EmailClient;
-	let magicLinkURL: string;
+	let magicLinkURL: URL;
 	let magicLinkEmail: Message;
 
 	beforeAll( async () => {
@@ -38,18 +38,17 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 			sentTo: credentials.email as string,
 			subject: 'Log in to WordPress.com',
 		} );
-		const links = await emailClient.getLinksFromMessage( magicLinkEmail );
-		magicLinkURL = links.find( ( link: string ) => link.includes( 'wpcom_email_click' ) ) as string;
+		magicLinkURL = emailClient.getMagicLink( magicLinkEmail );
 
-		expect( magicLinkURL ).toBeDefined();
+		expect( magicLinkURL.href ).toBeDefined();
 	} );
 
-	it( 'Go to the Magic Link URL', async function () {
-		await page.goto( new URL( magicLinkURL ).toString() );
+	it( 'Open the magic link', async function () {
+		await page.goto( magicLinkURL.href );
 	} );
 
 	it( 'Redirected to Home dashboard', async function () {
-		await page.waitForURL( /home/ );
+		await page.waitForURL( /home/, { timeout: 15 * 1000 } );
 	} );
 
 	afterAll( async () => {

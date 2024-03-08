@@ -15,10 +15,10 @@ const selectors = {
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
-	previewButton: `${ panel } :text("Preview"):visible, [aria-label="Preview"]:visible`,
+	previewButton: `${ panel } :text("View"):visible, [aria-label="View"]:visible`,
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
-	previewPane: ( target: EditorPreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
+	previewPane: `.edit-post-visual-editor`,
 
 	// Publish
 	publishButton: ( state: 'disabled' | 'enabled' ) => {
@@ -73,9 +73,9 @@ export class EditorToolbarComponent {
 	/**
 	 * Translate string.
 	 */
-	private async translateFromPage( string: string ): Promise< string > {
+	private async translateFromPage( string: string, context?: string ): Promise< string > {
 		const editorParent = await this.editor.parent();
-		return translateFromPage( editorParent, string );
+		return translateFromPage( editorParent, string, context );
 	}
 
 	/* General helper */
@@ -104,7 +104,10 @@ export class EditorToolbarComponent {
 	async openBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage( 'Toggle block inserter' );
+		const translatedButtonName = await this.translateFromPage(
+			'Toggle block inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
 			name: translatedButtonName,
 			exact: true,
@@ -123,7 +126,10 @@ export class EditorToolbarComponent {
 	async closeBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage( 'Toggle block inserter' );
+		const translatedButtonName = await this.translateFromPage(
+			'Toggle block inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
 			name: translatedButtonName,
 			exact: true,
@@ -193,7 +199,7 @@ export class EditorToolbarComponent {
 		await desktopPreviewMenuItemLocator.click();
 
 		// Verify the editor panel is resized and stable.
-		const desktopPreviewPaneLocator = editorParent.locator( selectors.previewPane( target ) );
+		const desktopPreviewPaneLocator = editorParent.locator( selectors.previewPane );
 		await desktopPreviewPaneLocator.waitFor();
 		const elementHandle = await desktopPreviewPaneLocator.elementHandle();
 		await elementHandle?.waitForElementState( 'stable' );
@@ -208,7 +214,7 @@ export class EditorToolbarComponent {
 	async openDesktopPreviewMenu(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage( 'Preview' );
+		const translatedButtonName = await this.translateFromPage( 'View' );
 		const previewButton = editorParent.getByRole( 'button', {
 			name: translatedButtonName,
 			exact: true,
@@ -227,7 +233,7 @@ export class EditorToolbarComponent {
 	async closeDesktopPreviewMenu(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage( 'Preview' );
+		const translatedButtonName = await this.translateFromPage( 'View' );
 		const previewButton = editorParent.getByRole( 'button', {
 			name: translatedButtonName,
 			exact: true,

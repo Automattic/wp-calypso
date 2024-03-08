@@ -59,14 +59,7 @@ module.exports = {
 	optimization: {
 		minimize: ! isDevelopment,
 		concatenateModules: ! shouldEmitStats,
-		minimizer: Minify( {
-			extractComments: false,
-			terserOptions: {
-				ecma: 5,
-				safari10: true,
-				mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
-			},
-		} ),
+		minimizer: Minify(),
 		splitChunks: false,
 	},
 	module: {
@@ -194,7 +187,7 @@ module.exports = {
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/formatted-header$/,
-			path.resolve( __dirname, 'src/components/jetpack-blaze-header' )
+			path.resolve( __dirname, 'src/components/generic-header' )
 		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&

@@ -14,7 +14,6 @@ export interface CombinedReducer extends SerializableReducer {
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
- *
  * @param origReducer Original reducer to copy `storageKey` and other flags from
  * @param reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
@@ -80,7 +79,6 @@ export function addReducer(
 /**
  * Returns a single reducer function that ensures that persistence is opt-in and that
  * has support for adding reducers dynamically.
- *
  * @example
  * ```js
  * const age = ( state = 0, action ) =>

@@ -19,7 +19,6 @@ const MUTATION_KEY = 'removeEmailForward';
 
 /**
  * Deletes an email forward, including relevant optimistic data mutations.
- *
  * @param domainName The domain name of the mailbox
  * @param mutationOptions Mutation options passed on to `useMutation`
  * @returns Returns the result of the `useMutation` call
@@ -49,15 +48,15 @@ export default function useRemoveEmailForwardMutation(
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
 
-		queryClient.invalidateQueries( emailAccountsQueryKey );
-		queryClient.invalidateQueries( domainsQueryKey );
+		queryClient.invalidateQueries( { queryKey: emailAccountsQueryKey } );
+		queryClient.invalidateQueries( { queryKey: domainsQueryKey } );
 	};
 
 	mutationOptions.onMutate = async ( emailForward ) => {
 		suppliedOnMutate?.( emailForward );
 
-		await queryClient.cancelQueries( emailAccountsQueryKey );
-		await queryClient.cancelQueries( domainsQueryKey );
+		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
+		await queryClient.cancelQueries( { queryKey: domainsQueryKey } );
 
 		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
 

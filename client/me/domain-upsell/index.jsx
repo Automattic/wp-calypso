@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

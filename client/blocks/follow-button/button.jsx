@@ -44,7 +44,9 @@ class FollowButton extends Component {
 	};
 
 	render() {
-		let label = this.props.followLabel ? this.props.followLabel : this.props.translate( 'Follow' );
+		let label = this.props.followLabel
+			? this.props.followLabel
+			: this.props.translate( 'Subscribe' );
 		const menuClasses = [ 'button', 'follow-button', 'has-icon', this.props.className ];
 		const iconSize = this.props.iconSize;
 
@@ -52,7 +54,7 @@ class FollowButton extends Component {
 			menuClasses.push( 'is-following' );
 			label = this.props.followingLabel
 				? this.props.followingLabel
-				: this.props.translate( 'Following' );
+				: this.props.translate( 'Subscribed' );
 		}
 
 		if ( this.props.disabled ) {

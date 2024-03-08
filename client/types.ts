@@ -1,3 +1,4 @@
+import { StyleVariation } from '@automattic/design-picker';
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
@@ -41,6 +42,7 @@ export interface Theme {
 	preview_url: string;
 	screenshot: string;
 	screenshots: string[];
+	style_variations: StyleVariation[];
 	stylesheet: string;
 	supportDocumentation: string;
 	tags: string[];
@@ -51,6 +53,11 @@ export interface Theme {
 	};
 	template: string;
 	theme_uri: string;
+	theme_tier: {
+		slug: string;
+		feature: string;
+		platform: string;
+	};
 	trending_rank: number;
 	version: string;
 }
@@ -72,7 +79,7 @@ interface ThemeFeature {
 	term_id: string;
 }
 
-interface ThemeSoftwareSet {
+export interface ThemeSoftwareSet {
 	name: string;
 	slug: string;
 	term_id: string;

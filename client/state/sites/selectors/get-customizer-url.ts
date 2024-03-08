@@ -8,7 +8,6 @@ import isJetpackSite from './is-jetpack-site';
 
 /**
  * Returns the customizer URL for a site, or null if it cannot be determined.
- *
  * @param   {Object}  state        Global state tree
  * @param   {?number} siteId       Site ID
  * @param   {?string} [panel]        Optional panel to autofocus

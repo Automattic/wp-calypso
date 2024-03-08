@@ -51,6 +51,7 @@ export type ResponseDomain = {
 	aftermarketAuctionEnd: string | null;
 	aftermarketAuctionStart: string | null;
 	aRecordsRequiredForMapping?: Array< string >;
+	authCodeRequired: boolean;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
 	beginTransferUntilDate: string;
@@ -88,6 +89,7 @@ export type ResponseDomain = {
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean;
 	isLocked: boolean;
+	isMappedToAtomicSite: boolean;
 	isMoveToNewSitePending: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
@@ -108,12 +110,16 @@ export type ResponseDomain = {
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
+	pendingRegistrationAtRegistry: boolean;
+	pendingRegistrationAtRegistryUrl: string;
 	pendingRegistrationTime: string;
 	pendingTransfer?: boolean;
 	pointsToWpcom: boolean;
 	privacyAvailable: boolean;
 	privateDomain: boolean;
 	redeemableUntil: string;
+	registeredViaTrustee: boolean;
+	registeredViaTrusteeUrl: string;
 	registrar: string;
 	registrationDate: string;
 	registryExpiryDate: string;
@@ -179,5 +185,22 @@ export type SetDomainNoticeResponseDataSuccess = {
 		[ domainName: string ]: {
 			[ domainNotice: string ]: string;
 		};
+	};
+};
+
+export type DomainDiagnostics = {
+	email_dns_records: {
+		code?: string;
+		records: {
+			[ dnsRecordType: string ]: {
+				status: string;
+				correct_record: string;
+				error_message?: string;
+			};
+		};
+		is_using_wpcom_name_servers: boolean;
+		all_essential_email_dns_records_are_correct: boolean;
+		dismissed_email_dns_issues_notice: boolean;
+		should_offer_automatic_fixes: boolean;
 	};
 };

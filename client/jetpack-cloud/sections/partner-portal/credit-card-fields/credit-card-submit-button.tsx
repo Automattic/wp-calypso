@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardElement } from '@stripe/react-stripe-js';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -43,15 +44,20 @@ export default function CreditCardSubmitButton( {
 	const cardElement = elements?.getElement( CardElement ) ?? undefined;
 	const formSubmitting = FormStatus.SUBMITTING === formStatus;
 
+	const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
+
 	const buttonContents = useMemo( () => {
 		if ( formStatus === FormStatus.SUBMITTING ) {
 			return __( 'Processing…' );
 		}
 		if ( formStatus === FormStatus.READY ) {
-			return activeButtonText || __( 'Save payment method' );
+			return (
+				activeButtonText ||
+				( isNewCardAdditionEnabled ? __( 'Add card' ) : __( 'Save payment method' ) )
+			);
 		}
 		return __( 'Please wait…' );
-	}, [ formStatus, activeButtonText, __ ] );
+	}, [ formStatus, __, activeButtonText, isNewCardAdditionEnabled ] );
 
 	const { setCardDataError, setFieldValue, setFieldError } = useDispatch( creditCardStore );
 

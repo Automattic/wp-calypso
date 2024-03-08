@@ -65,7 +65,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
-	const previousPath = useSelector( ( state ) => getPreviousRoute( state ) );
+	const previousPath = useSelector( getPreviousRoute );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
@@ -144,9 +144,13 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const isLoadingStagingSites = isRequestingStagingList && ! hasFetchedStagingList;
 
 	const getDestinationUrl = () => {
-		if ( isCloneToStaging ) {
+		if ( isCloneToStaging || cloneDestination.startsWith( 'staging-' ) ) {
 			return (
-				stagingSites.find( ( site ) => site.blog_id.toString() === cloneDestination )?.siteurl || ''
+				stagingSites.find(
+					( site ) =>
+						site.blog_id.toString() === cloneDestination ||
+						site.role?.toString() === cloneDestination
+				)?.siteurl || ''
 			);
 		}
 
@@ -163,10 +167,17 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		if ( true === isNavigating ) {
 			const selectedSite = stagingSites.find( ( site ) => site.siteurl === newValue );
 			if ( selectedSite ) {
-				setCloneDestination( selectedSite.blog_id.toString() );
-				setUserHasSetDestination( true );
-				setIsCloneToStaging( true );
-				dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site' ) );
+				if ( selectedSite.role?.startsWith( 'staging-' ) ) {
+					setCloneDestination( selectedSite.role );
+					setUserHasSetDestination( true );
+					setIsCloneToStaging( false );
+					dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site_with_role' ) );
+				} else {
+					setCloneDestination( selectedSite.blog_id.toString() );
+					setUserHasSetDestination( true );
+					setIsCloneToStaging( true );
+					dispatch( recordTracksEvent( 'calypso_jetpack_clone_flow_set_staging_site' ) );
+				}
 			}
 		}
 	}
@@ -180,7 +191,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		}
 
 		return dispatch(
-			rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
+			rewindClone( siteId, backupPeriod, {
+				types: rewindConfig,
+				roleName: cloneDestination || CredSettings.role,
+			} )
 		);
 	}, [
 		isCloneToStaging,

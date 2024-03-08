@@ -23,8 +23,6 @@ import { WPImportOption } from './types';
 import { storeMigrateSource, retrieveMigrateSource } from './utils';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-import './style.scss';
-
 interface Props {
 	job?: ImportJob;
 	run?: boolean;
@@ -63,7 +61,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
+	const hasAllSitesFetched = useSelector( hasAllSitesList );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 	const isMigrateFromWp = useSelect(
@@ -158,7 +156,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					! hasAllSitesFetched ||
 					( WPImportOption.EVERYTHING === option && ! siteItem )
 				) {
-					return <LoadingEllipsis />;
+					return (
+						<div className="import-layout__center">
+							<LoadingEllipsis />;
+						</div>
+					);
 				} else if ( undefined === option && fromSite ) {
 					return (
 						<ContentChooser

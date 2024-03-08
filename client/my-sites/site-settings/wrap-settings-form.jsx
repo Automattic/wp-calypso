@@ -77,7 +77,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
 					if ( ! this.state.isSiteTitleTaskCompleted && this.state.blogNameChanged ) {
-						noticeSettings.button = 'Next steps';
+						noticeSettings.button = this.props.translate( 'Next steps' );
 						noticeSettings.onClick = () => {
 							window.location.assign( `/home/${ this.props.siteSlug }` );
 						};
@@ -103,6 +103,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					this.props.errorNotice( text, noticeSettings );
 				}
 			} else if (
+				! this.props.isSavingSettings &&
 				this.props.siteIsJetpack &&
 				this.props.saveInstantSearchRequest?.status === 'success' &&
 				( typeof prevProps.saveInstantSearchRequest?.lastUpdated === 'undefined' ||
@@ -151,7 +152,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 		// Some Utils
 		handleSubmitForm = ( event ) => {
-			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
+			const { dirtyFields, fields, settings, trackTracksEvent, path } = this.props;
 
 			if ( event && ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
@@ -191,6 +192,28 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'sm_enabled':
+						trackTracksEvent( 'calypso_settings_subscription_modal_updated', {
+							value: fields.sm_enabled,
+							path,
+						} );
+						break;
+					case 'subscription_options':
+						if ( fields.subscription_options.welcome !== settings.subscription_options.welcome ) {
+							trackTracksEvent( 'calypso_settings_subscription_options_welcome_updated', {
+								path,
+							} );
+						}
+
+						if (
+							fields.subscription_options.comment_follow !==
+							settings.subscription_options.comment_follow
+						) {
+							trackTracksEvent( 'calypso_settings_subscription_options_comment_follow_updated', {
+								path,
+							} );
+						}
+						break;
 				}
 			} );
 			if ( path === '/settings/reading/:site' ) {
@@ -209,7 +232,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			this.props.removeNotice( 'site-settings-save' );
 			debug( 'submitForm', { fields, settingsFields } );
 
-			if ( siteIsJetpack ) {
+			if ( siteIsJetpack && Object.keys( jetpackFieldsToUpdate ).length > 0 ) {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
 

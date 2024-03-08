@@ -2,6 +2,7 @@ export interface BlockAttributes {
 	defaultProductSlug: string;
 	productSlug: string;
 	domain: string | false;
+	affiliateLink: string | false;
 	planTypeOptions: string[];
 }
 
@@ -14,6 +15,8 @@ export interface ApiPricingPlan {
 	bill_period: number;
 	product_slug: string;
 	currency_code: 'EUR' | 'USD' | 'GBP';
+	product_name_short: string;
+	product_name: string;
 }
 
 declare global {

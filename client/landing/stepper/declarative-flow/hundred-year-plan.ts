@@ -20,6 +20,7 @@ const HundredYearPlanFlow: Flow = {
 	get title() {
 		return translate( '100-year Plan' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		const currentUser = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
@@ -51,8 +52,8 @@ const HundredYearPlanFlow: Flow = {
 				},
 
 				{
-					slug: 'siteCreationStep',
-					asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+					slug: 'createSite',
+					asyncComponent: () => import( './internals/steps-repository/create-site' ),
 				},
 			];
 		}
@@ -72,8 +73,8 @@ const HundredYearPlanFlow: Flow = {
 			},
 
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 		];
 	},
@@ -141,8 +142,8 @@ const HundredYearPlanFlow: Flow = {
 					setPlanCartItem( {
 						product_slug: PLAN_100_YEARS,
 					} );
-					return navigate( 'siteCreationStep' );
-				case 'siteCreationStep':
+					return navigate( 'createSite' );
+				case 'createSite':
 					return navigate( 'processing' );
 				case 'processing':
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {

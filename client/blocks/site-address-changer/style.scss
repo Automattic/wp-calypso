@@ -1,3 +1,20 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/colors.native";
+
+.dialog__content.site-address-changer {
+	padding: 48px 48px 0;
+	max-width: 800px;
+
+}
+
+.dialog__action-buttons {
+	border: 0;
+	padding: 35px 48px 48px;
+
+	&::before {
+		display: none;
+	}
+}
 
 .site-address-changer__dialog {
 	text-align: left;
@@ -61,7 +78,32 @@
 }
 
 .site-address-changer__details {
-	margin-top: 20px;
+	margin-top: 32px;
+
+	.form-input-validation.email-not-verified {
+		padding-bottom: 0;
+
+		&.already-sent {
+			padding-bottom: 16px;
+		}
+	}
+
+	.site-address-changer__resend-email-link {
+		margin-left: 33px;
+		margin-bottom: 16px;
+
+		button {
+			color: var(--color-link);
+			cursor: pointer;
+			font-size: $font-body-small;
+		}
+	}
+
+	.site-address-changer__info-custom-domain a {
+		margin-top: 10px;
+		font-size: 0.875rem;
+		color: $gray-60;
+	}
 }
 
 .site-address-changer__only-owner-info {
@@ -83,6 +125,23 @@
 }
 
 .site-address-changer__content {
+	.form-section-heading {
+		font-size: 1.25rem;
+		margin: 0;
+		padding: 10px 0 5px;
+	}
+
+	.site-address-changer__email-confirmation-banner {
+
+		.gridicon {
+			fill: var(--color-accent);
+		}
+
+		.banner__icon-circle {
+			background-color: transparent !important;
+		}
+	}
+
 	@include breakpoint-deprecated( "<480px" ) {
 		.form-text-input-with-affixes__suffix {
 			padding-left: 8px;

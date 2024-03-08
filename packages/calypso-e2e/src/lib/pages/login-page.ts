@@ -126,10 +126,10 @@ export class LoginPage {
 	}
 
 	/**
-	 * Clicks the "Create a new account" link.
+	 * Clicks the "Create an account" link.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
-		const locator = this.page.getByRole( 'link', { name: 'Create a new account' } );
+		const locator = this.page.getByRole( 'link', { name: 'Create an account' } );
 		await locator.waitFor();
 		await locator.click();
 

@@ -1,11 +1,10 @@
-import { Gridicon, ConfettiAnimation } from '@automattic/components';
+import { Gridicon, ConfettiAnimation, Tooltip } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Tooltip from 'calypso/components/tooltip';
 import { omitUrlParams } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';

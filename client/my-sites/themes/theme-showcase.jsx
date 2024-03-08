@@ -1,9 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
+import { isAssemblerSupported } from '@automattic/design-picker';
+import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,30 +16,48 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
+import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
+import getSiteAssemblerUrl from 'calypso/components/themes-list/get-site-assembler-url';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
-import ThemeCollectionsLayout from 'calypso/my-sites/themes/collections/theme-collections-layout';
+import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
+import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
+import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
+import { STATIC_FILTERS, DEFAULT_STATIC_FILTER } from 'calypso/state/themes/constants';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
 	prependThemeFilterKeys,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
+	getThemeTiers,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
-import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
+import {
+	addTracking,
+	getSubjectsFromTermTable,
+	trackClick,
+	localizeThemesPath,
+	isStaticFilter,
+	constructThemeShowcaseUrl,
+	shouldSelectSite,
+} from './helpers';
+import PatternAssemblerButton from './pattern-assembler-button';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
@@ -52,20 +73,29 @@ const optionShape = PropTypes.shape( {
 
 const staticFilters = {
 	MYTHEMES: {
-		key: 'my-themes',
+		key: STATIC_FILTERS.MYTHEMES,
 		text: translate( 'My Themes' ),
 	},
 	RECOMMENDED: {
-		key: 'recommended',
+		key: STATIC_FILTERS.RECOMMENDED,
 		text: translate( 'Recommended' ),
 	},
 	ALL: {
-		key: 'all',
+		key: STATIC_FILTERS.ALL,
 		text: translate( 'All' ),
 	},
 };
 
+const defaultStaticFilter = Object.values( staticFilters ).find(
+	( staticFilter ) => staticFilter.key === DEFAULT_STATIC_FILTER
+);
+
 class ThemeShowcase extends Component {
+	state = {
+		isDesignThemeModalVisible: false,
+		isSiteSelectorModalVisible: false,
+	};
+
 	constructor( props ) {
 		super( props );
 		this.scrollRef = createRef();
@@ -76,8 +106,9 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
+		tier: PropTypes.oneOf( [ '', ...Object.keys( THEME_TIERS ) ] ),
 		search: PropTypes.string,
+		isCollectionView: PropTypes.bool,
 		pathName: PropTypes.string,
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
@@ -85,6 +116,7 @@ class ThemeShowcase extends Component {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteCanInstallThemes: PropTypes.bool,
+		siteCount: PropTypes.number,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
@@ -134,11 +166,11 @@ class ThemeShowcase extends Component {
 		this.props.setBackPath( this.constructUrl() );
 	}
 
-	isStaticFilter = ( tabFilter ) => {
-		return Object.values( staticFilters ).some(
-			( staticFilter ) => tabFilter.key === staticFilter.key
-		);
-	};
+	isThemeDiscoveryEnabled = () => config.isEnabled( 'themes/discovery' );
+
+	getDefaultStaticFilter = () => defaultStaticFilter;
+
+	isStaticFilter = ( tabFilter ) => isStaticFilter( tabFilter.key );
 
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
@@ -152,14 +184,20 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const shouldShowMyThemesFilter =
-			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
+		if ( this.props.isSiteWooExpress ) {
+			return {
+				MYTHEMES: staticFilters.MYTHEMES,
+				RECOMMENDED: {
+					...staticFilters.RECOMMENDED,
+					text: translate( 'All Themes' ),
+				},
+			};
+		}
+
+		const shouldShowMyThemesFilter = !! this.props.siteId;
 
 		return {
-			...( shouldShowMyThemesFilter && {
-				MYTHEMES: staticFilters.MYTHEMES,
-			} ),
+			...( shouldShowMyThemesFilter && { MYTHEMES: staticFilters.MYTHEMES } ),
 			RECOMMENDED: staticFilters.RECOMMENDED,
 			ALL: staticFilters.ALL,
 			...this.subjectFilters,
@@ -167,29 +205,27 @@ class ThemeShowcase extends Component {
 	};
 
 	getTiers = () => {
-		const { isSiteWooExpressOrEcomFreeTrial } = this.props;
-		const tiers = [
-			{ value: 'all', label: this.props.translate( 'All' ) },
-			{ value: 'free', label: this.props.translate( 'Free' ) },
-		];
+		const { themeTiers } = this.props;
 
-		if ( ! isSiteWooExpressOrEcomFreeTrial ) {
-			tiers.push( { value: 'premium', label: this.props.translate( 'Premium' ) } );
-		}
+		const tiers = Object.keys( themeTiers ).reduce( ( availableTiers, tier ) => {
+			if ( ! THEME_TIERS[ tier ]?.isFilterable ) {
+				return availableTiers;
+			}
+			return [
+				...availableTiers,
+				{
+					value: tier,
+					label: THEME_TIERS[ tier ].label,
+				},
+			];
+		}, [] );
 
-		tiers.push( {
-			value: 'marketplace',
-			label: this.props.translate( 'Partner', {
-				context: 'This theme is developed and supported by a theme partner',
-			} ),
-		} );
-
-		return tiers;
+		return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		staticFilters.RECOMMENDED;
+		this.getDefaultStaticFilter();
 
 	getSelectedTabFilter = () => {
 		const filter = this.props.filter ?? '';
@@ -246,6 +282,10 @@ class ThemeShowcase extends Component {
 			filter: filterString,
 			// Strip filters and excess whitespace
 			search,
+			...( ( this.isThemeDiscoveryEnabled() && ! this.props.category && search ) ||
+				( filterString && {
+					category: staticFilters.ALL.key,
+				} ) ),
 			// If a category isn't selected we search in the all category.
 			...( search &&
 				! subjectStringFilter && {
@@ -265,46 +305,37 @@ class ThemeShowcase extends Component {
 	 * @param {string} sections.filter override filter prop
 	 * @param {string} sections.siteSlug override siteSlug prop
 	 * @param {string} sections.search override search prop
+	 * @param {string} sections.isCollectionView should display the collection view.
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { category, vertical, tier, filter, siteSlug, search, locale, isLoggedIn } = {
+		return constructThemeShowcaseUrl( {
 			...this.props,
 			...sections,
-		};
-		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
-		const categorySection =
-			category && category !== staticFilters.RECOMMENDED.key ? `/${ category }` : '';
-		const verticalSection = vertical ? `/${ vertical }` : '';
-		const tierSection = tier && tier !== 'all' ? `/${ tier }` : '';
-
-		let filterSection = filter ? `/filter/${ filter }` : '';
-		filterSection = filterSection.replace( /\s/g, '+' );
-		const url = localizeThemesPath(
-			`/themes${ categorySection }${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
-			locale,
-			! isLoggedIn
-		);
-		return buildRelativeSearchUrl( url, search );
+		} );
 	};
 
-	onTierSelect = ( { value: tier } ) => {
+	onTierSelectFilter = ( { value: tier } ) => {
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
+		trackClick( 'search bar filter', tier );
+
+		const category = tier !== 'all' && ! this.props.category ? '' : this.props.category;
+		const showCollection =
+			this.isThemeDiscoveryEnabled() && ! this.props.filterString && ! category && tier !== 'all';
+
 		const url = this.constructUrl( {
 			tier,
+			category,
+			search: showCollection ? '' : this.props.search,
 			// Due to the search backend limitation, "My Themes" can only have "All" tier.
 			...( tier !== 'all' &&
 				this.props.category === staticFilters.MYTHEMES.key && {
 					category: staticFilters.RECOMMENDED.key,
 				} ),
 		} );
+
 		page( url );
 		this.scrollToSearchInput();
-	};
-
-	onTierSelectFilter = ( { value: tier } ) => {
-		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
-		trackClick( 'search bar filter', tier );
-		this.onTierSelect( { value: tier } );
 	};
 
 	onFilterClick = ( tabFilter ) => {
@@ -319,6 +350,7 @@ class ThemeShowcase extends Component {
 			.join( '+' );
 
 		const newUrlParams = {};
+
 		if ( this.isStaticFilter( tabFilter ) ) {
 			newUrlParams.category = tabFilter.key;
 			newUrlParams.filter = filterWithoutSubjects;
@@ -337,15 +369,88 @@ class ThemeShowcase extends Component {
 		this.scrollToSearchInput();
 	};
 
-	allThemes = ( { themeProps } ) => {
-		const { isJetpackSite, children } = this.props;
-		if ( isJetpackSite ) {
-			return children;
+	onDesignYourOwnClick = () => {
+		const { isLoggedIn } = this.props;
+
+		recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_top_button_click', {
+			is_logged_in: isLoggedIn,
+		} );
+
+		this.onDesignYourOwnCallback();
+	};
+
+	onDesignYourOwnCallback = () => {
+		const { isLoggedIn, siteCount, siteId } = this.props;
+
+		if ( shouldSelectSite( { isLoggedIn, siteCount, siteId } ) ) {
+			this.setState( { isDesignThemeModalVisible: true } );
+		} else {
+			this.redirectToSiteAssembler();
+		}
+	};
+
+	redirectToSiteAssembler = ( selectedSite = this.props.site ) => {
+		const { isLoggedIn, siteEditorUrl } = this.props;
+		const shouldGoToAssemblerStep = isAssemblerSupported();
+
+		const destinationUrl = getSiteAssemblerUrl( {
+			isLoggedIn,
+			selectedSite,
+			shouldGoToAssemblerStep,
+			siteEditorUrl,
+		} );
+
+		window.location.assign( destinationUrl );
+	};
+
+	shouldShowCollections = () => {
+		const { category, search, filter, isCollectionView, tier } = this.props;
+
+		if ( this.props.isJetpackSite && ! this.props.isAtomicSite ) {
+			return false;
 		}
 
 		return (
+			! ( category || search || filter || isCollectionView ) &&
+			tier === '' &&
+			this.isThemeDiscoveryEnabled()
+		);
+	};
+
+	allThemes = ( { themeProps } ) => {
+		const { filter, isCollectionView, tier } = this.props;
+
+		// In Collection View of pricing tiers (e.g. Partner themes), prevent requesting only recommended themes.
+		const themesSelectionProps = {
+			...themeProps,
+			...( isCollectionView && tier && ! filter && { tabFilter: '' } ),
+		};
+
+		const themeCollection = THEME_COLLECTIONS.partner;
+
+		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themeProps } />
+				<ThemesSelection
+					{ ...themesSelectionProps }
+					onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+				>
+					{ this.shouldShowCollections() && (
+						<>
+							<ShowcaseThemeCollection
+								{ ...themeCollection }
+								getOptions={ this.getThemeOptions }
+								getScreenshotUrl={ this.getScreenshotUrl }
+								getActionLabel={ this.getActionLabel }
+								onSeeAll={ () =>
+									this.onCollectionSeeAll( {
+										tier: themeCollection.query.tier,
+										filter: themeCollection.query.filter,
+									} )
+								}
+							/>
+						</>
+					) }
+				</ThemesSelection>
 			</div>
 		);
 	};
@@ -405,29 +510,49 @@ class ThemeShowcase extends Component {
 		return upsellBanner;
 	};
 
+	renderSiteAssemblerSelectorModal = () => {
+		const { isDesignThemeModalVisible, isSiteSelectorModalVisible } = this.state;
+
+		return (
+			<>
+				<ThemeSiteSelectorModal
+					isOpen={ isSiteSelectorModalVisible }
+					navigateOnClose={ false }
+					onClose={ ( args ) => {
+						if ( args?.siteSlug ) {
+							this.redirectToSiteAssembler( { slug: args.siteSlug } );
+						}
+
+						this.setState( { isSiteSelectorModalVisible: false } );
+					} }
+				/>
+				<ThemeDesignYourOwnModal
+					isOpen={ isDesignThemeModalVisible }
+					onClose={ () => {
+						this.setState( { isDesignThemeModalVisible: false } );
+					} }
+					onCreateNewSite={ () => {
+						this.redirectToSiteAssembler();
+					} }
+					onSelectSite={ () => {
+						this.setState( { isDesignThemeModalVisible: false, isSiteSelectorModalVisible: true } );
+					} }
+				/>
+			</>
+		);
+	};
+
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.getSelectedTabFilter().key;
 
-		const showCollections =
-			this.props.tier === '' &&
-			( this.props.isLoggedIn
-				? config.isEnabled( 'themes/discovery-lits' )
-				: config.isEnabled( 'themes/discovery-lots' ) );
-
 		switch ( tabKey ) {
 			case staticFilters.MYTHEMES?.key:
-				return <ThemesSelection { ...themeProps } />;
-			case staticFilters.RECOMMENDED.key:
-				if ( showCollections ) {
-					return (
-						<ThemeCollectionsLayout
-							getOptions={ this.getThemeOptions }
-							getScreenshotUrl={ this.getScreenshotUrl }
-							getActionLabel={ this.getActionLabel }
-							onTierSelect={ ( tier ) => this.onTierSelect( { value: tier } ) }
-						/>
-					);
-				}
+				return (
+					<ThemesSelection
+						{ ...themeProps }
+						onDesignYourOwnClick={ this.onDesignYourOwnCallback }
+					/>
+				);
 			default:
 				return this.allThemes( { themeProps } );
 		}
@@ -455,6 +580,17 @@ class ThemeShowcase extends Component {
 		);
 	};
 
+	onCollectionSeeAll = ( { filter = '', tier = '' } ) => {
+		const url = this.constructUrl( {
+			isCollectionView: true,
+			filter,
+			tier,
+		} );
+
+		page( url );
+		window.scrollTo( { top: 0 } );
+	};
+
 	render() {
 		const {
 			siteId,
@@ -468,7 +604,11 @@ class ThemeShowcase extends Component {
 			filterString,
 			isMultisite,
 			premiumThemesEnabled,
+			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
+			isSiteWooExpress,
+			isCollectionView,
+			lastNonEditorRoute,
 		} = this.props;
 		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
@@ -498,13 +638,18 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: this.getThemeOptions,
+			source: this.props.category !== staticFilters.MYTHEMES.key ? 'wpcom' : null,
 		};
 
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
+		const classnames = classNames( 'theme-showcase', {
+			'is-collection-view': isCollectionView,
+		} );
+
 		return (
-			<div className="theme-showcase">
+			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
@@ -515,52 +660,91 @@ class ThemeShowcase extends Component {
 					filter={ this.props.filter }
 					tier={ this.props.tier }
 					vertical={ this.props.vertical }
+					isCollectionView={ isCollectionView }
+					noIndex={ isCollectionView }
+					onPatternAssemblerButtonClick={ this.onDesignYourOwnClick }
+					isSiteWooExpressOrEcomFreeTrial={ isSiteWooExpressOrEcomFreeTrial }
+					isSiteECommerceFreeTrial={ isSiteECommerceFreeTrial }
 				/>
+				{ this.renderSiteAssemblerSelectorModal() }
+				{ isLoggedIn && (
+					<ThemeShowcaseSurvey
+						survey={ SurveyType.MARCH_2024 }
+						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
+					/>
+				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
-					<div className="themes__controls">
-						<div className="theme__search">
-							<div className="theme__search-input">
-								{ isSearchV2 ? (
-									<SearchThemesV2
-										query={ featureStringFilter + search }
-										onSearch={ this.doSearch }
-									/>
-								) : (
-									<SearchThemes
-										query={ filterString + search }
-										onSearch={ this.doSearch }
-										recordTracksEvent={ this.recordSearchThemesTracksEvent }
-									/>
+					{ ! isCollectionView && (
+						<div className="themes__controls">
+							<div className="theme__search">
+								<div className="theme__search-input">
+									{ isSearchV2 ? (
+										<SearchThemesV2
+											query={ featureStringFilter + search }
+											onSearch={ this.doSearch }
+										/>
+									) : (
+										<SearchThemes
+											query={ filterString + search }
+											onSearch={ this.doSearch }
+											recordTracksEvent={ this.recordSearchThemesTracksEvent }
+										/>
+									) }
+								</div>
+								{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+									<>
+										<SelectDropdown
+											className="section-nav-tabs__dropdown"
+											onSelect={ this.onTierSelectFilter }
+											selectedText={ translate( 'View: %s', {
+												args: getOptionLabel( tiers, tier ) || '',
+											} ) }
+											options={ tiers }
+											initialSelected={ tier }
+										></SelectDropdown>
+									</>
 								) }
 							</div>
-							{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-								<SelectDropdown
-									className="section-nav-tabs__dropdown"
-									onSelect={ this.onTierSelectFilter }
-									selectedText={ translate( 'View: %s', {
-										args: getOptionLabel( tiers, tier ) || '',
-									} ) }
-									options={ tiers }
-									initialSelected={ tier }
-								></SelectDropdown>
-							) }
+							<div
+								className={ classNames( 'themes__filters', {
+									'is-woo-express': isSiteWooExpress,
+								} ) }
+							>
+								{ tabFilters && ! isSiteECommerceFreeTrial && (
+									<ThemesToolbarGroup
+										items={ Object.values( tabFilters ) }
+										selectedKey={ this.getSelectedTabFilter().key }
+										onSelect={ ( key ) =>
+											this.onFilterClick(
+												Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+											)
+										}
+									/>
+								) }
+								{ ! isLoggedIn && tabFilters && (
+									<PatternAssemblerButton onClick={ this.onDesignYourOwnClick } />
+								) }
+							</div>
 						</div>
-						{ tabFilters && ! isSiteWooExpressOrEcomFreeTrial && (
-							<ThemesToolbarGroup
-								items={ Object.values( tabFilters ) }
-								selectedKey={ this.getSelectedTabFilter().key }
-								onSelect={ ( key ) =>
-									this.onFilterClick(
-										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-									)
-								}
-							/>
-						) }
-					</div>
+					) }
+					{ isCollectionView && (
+						<ThemeCollectionViewHeader
+							backUrl={ this.constructUrl( {
+								isCollectionView: false,
+								tier: '',
+								filter: '',
+								search: '',
+								category: this.getDefaultStaticFilter().key,
+							} ) }
+							filter={ this.props.filter }
+							tier={ this.props.tier }
+							isLoggedIn={ isLoggedIn }
+						/>
+					) }
 					<div className="themes__showcase">
 						{ ! isSiteWooExpressOrEcomFreeTrial && this.renderBanner() }
 						{ this.renderThemes( themeProps ) }
@@ -583,7 +767,10 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
 		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
+		site: getSite( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
+		siteCount: getCurrentUserSiteCount( state ),
+		siteEditorUrl: getSiteEditorUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
@@ -598,6 +785,8 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
 		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
+		lastNonEditorRoute: getLastNonEditorRoute( state ),
+		themeTiers: getThemeTiers( state ),
 	};
 };
 

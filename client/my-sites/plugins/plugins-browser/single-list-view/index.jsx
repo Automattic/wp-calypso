@@ -21,7 +21,6 @@ function isNotBlocked( plugin ) {
 
 /**
  * Returns a boolean indicating if a plugin is already installed or not
- *
  * @param plugin plugin object to be tested
  * @param installedPlugins list of installed plugins aggregated by plugin slug
  * @returns Boolean weather a plugin is not installed on not

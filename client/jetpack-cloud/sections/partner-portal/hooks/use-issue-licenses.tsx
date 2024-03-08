@@ -7,6 +7,11 @@ const NO_OP = () => {
 	/* Do nothing */
 };
 
+export type IssueLicenseRequest = {
+	slug: string;
+	quantity: number;
+};
+
 export type FulfilledIssueLicenseResult = APILicense & {
 	status: 'fulfilled';
 	slug: string;
@@ -41,13 +46,16 @@ const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 		},
 	} );
 
-	const issueLicenses = ( productSlugs: string[] ): Promise< IssueLicenseResult[] > => {
-		const requests: Promise< IssueLicenseResult >[] = productSlugs.map( ( slug ) =>
-			mutateAsync( { product: slug } )
-				.then(
-					( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
-				)
-				.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
+	const issueLicenses = (
+		selectedLicenses: IssueLicenseRequest[]
+	): Promise< IssueLicenseResult[] > => {
+		const requests: Promise< IssueLicenseResult >[] = selectedLicenses.map(
+			( { slug, quantity } ) =>
+				mutateAsync( { product: slug, quantity } )
+					.then(
+						( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
+					)
+					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
 		);
 
 		return Promise.all( requests );

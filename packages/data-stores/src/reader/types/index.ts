@@ -43,6 +43,7 @@ export type SiteSubscriptionDeliveryMethods = {
 	};
 	notification?: {
 		send_posts: boolean;
+		send_comments?: boolean;
 	};
 };
 
@@ -69,8 +70,11 @@ export type SiteSubscriptionsResponseItem = {
 	meta: SiteSubscriptionMeta;
 	is_wpforteams_site: boolean;
 	is_paid_subscription: boolean;
-	isDeleted: boolean;
+	is_gift: boolean;
+	gift_id: number;
 	is_rss: boolean;
+	isDeleted: boolean;
+	resubscribed: boolean;
 };
 
 export type SiteSubscriptionPage = {
@@ -99,6 +103,17 @@ export type PostSubscription = {
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
+	notification: {
+		send_comments: boolean;
+	};
+};
+
+export type PostSubscriptionsResult = {
+	pageParams: [];
+	pages: {
+		comment_subscriptions: PostSubscription[];
+		total_comment_subscriptions_count: number;
+	}[];
 };
 
 export type PendingSiteSubscription = {
@@ -151,6 +166,7 @@ export type SiteSubscriptionDetails< DateT = Date > = {
 };
 
 export type SiteSubscriptionPaymentDetails = {
+	is_gift: boolean;
 	ID: string;
 	site_id: string;
 	status: string;

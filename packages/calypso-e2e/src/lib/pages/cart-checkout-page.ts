@@ -19,6 +19,7 @@ const selectors = {
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
+	editPaymentStep: 'button[aria-label="Edit the payment method"]',
 	removeCouponButton: ( coupon: string ) =>
 		`button[aria-label="Remove Coupon: ${ coupon } from cart"]`,
 	saveOrderButton: 'button[aria-label="Save your order"]',
@@ -60,12 +61,12 @@ const selectors = {
 	couponCodeInput: `input[id="order-review-coupon"]`,
 	couponCodeApplyButton: `button:text("Apply")`,
 	disabledButton: 'button[disabled]:has-text("Processing")',
-	paymentButton: `button.checkout-button`,
+	paymentButton: `.checkout-submit-button button`,
 	totalAmount:
 		envVariables.VIEWPORT_NAME === 'mobile'
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
-	purchaseButton: `button.checkout-button:has-text("Pay")`,
+	purchaseButton: `.checkout-submit-button button:has-text("Pay")`,
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
@@ -105,7 +106,8 @@ export class CartCheckoutPage {
 	 * Validates that the card payment input fields are visible.
 	 */
 	async validatePaymentForm(): Promise< void > {
-		await this.page.waitForSelector( selectors.cardholderName );
+		const cardholderNameLocator = this.page.locator( selectors.cardholderName );
+		await cardholderNameLocator.waitFor( { state: 'visible', timeout: 20 * 1000 } );
 	}
 	/**
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
@@ -258,9 +260,24 @@ export class CartCheckoutPage {
 	 * @param {string} cardHolderName Name of the card holder associated with the payment method.
 	 */
 	async selectSavedCard( cardHolderName: string ): Promise< void > {
-		const selector = this.page.locator( selectors.existingCreditCard( cardHolderName ) ).first();
+		// If the account has a saved card, the payment method step may
+		// automatically collapse with the first saved card automatically
+		// selected. So in order to select a different card, we need to click
+		// the "Edit" button on the payment method step. There are cases where
+		// the step will not be collapsed, however, so this will only trigger
+		// if the edit button is visible.
+		const cardSelector = this.page
+			.locator( selectors.existingCreditCard( cardHolderName ) )
+			.first();
+		const editPaymentButton = this.page.locator( selectors.editPaymentStep );
 
-		await selector.click();
+		await cardSelector.or( editPaymentButton ).first().waitFor( { state: 'visible' } );
+
+		if ( await editPaymentButton.isVisible() ) {
+			await editPaymentButton.click();
+		}
+
+		await cardSelector.click();
 	}
 
 	/**

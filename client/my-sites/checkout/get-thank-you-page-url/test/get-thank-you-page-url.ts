@@ -1307,9 +1307,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: samplePurchaseId,
 			} );
 
-			expect( url ).toBe(
-				`/checkout/offer-professional-email/foo.bar/${ samplePurchaseId }/no-site`
-			);
+			expect( url ).toBe( `/checkout/thank-you/no-site/${ samplePurchaseId }` );
 		} );
 
 		it( 'Is not displayed if cart is missing', () => {
@@ -1807,7 +1805,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 'invalid receipt ID' as any,
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
 
 			expect( url ).toBe(
 				addQueryArgs(

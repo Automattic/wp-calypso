@@ -7,20 +7,21 @@ import type { DomainData } from './use-site-domains-query';
 // related to a domain.
 export type PartialDomainData = Pick<
 	DomainData,
-	| 'domain'
+	| 'auto_renewing'
 	| 'blog_id'
-	| 'type'
-	| 'is_wpcom_staging_domain'
-	| 'has_registration'
-	| 'registration_date'
-	| 'expiry'
-	| 'wpcom_domain'
-	| 'current_user_is_owner'
 	| 'current_user_can_add_email'
-	| 'google_apps_subscription'
-	| 'titan_mail_subscription'
+	| 'current_user_is_owner'
+	| 'domain'
 	| 'email_forwards_count'
+	| 'expiry'
+	| 'google_apps_subscription'
+	| 'has_registration'
+	| 'is_wpcom_staging_domain'
+	| 'registration_date'
+	| 'titan_mail_subscription'
 	| 'tld_maintenance_end_time'
+	| 'type'
+	| 'wpcom_domain'
 >;
 
 export interface AllDomainsQueryFnData {
@@ -31,12 +32,17 @@ export interface AllDomainsQueryArgs {
 	no_wpcom?: boolean;
 }
 
+export const getAllDomainsQueryKey = ( queryArgs: AllDomainsQueryArgs = {} ) => [
+	'all-domains',
+	queryArgs,
+];
+
 export function useAllDomainsQuery< TError = unknown, TData = AllDomainsQueryFnData >(
 	queryArgs: AllDomainsQueryArgs = {},
-	options: UseQueryOptions< AllDomainsQueryFnData, TError, TData > = {}
+	options: Omit< UseQueryOptions< AllDomainsQueryFnData, TError, TData >, 'queryKey' > = {}
 ) {
-	return useQuery( {
-		queryKey: [ 'all-domains', queryArgs ],
+	return useQuery< AllDomainsQueryFnData, TError, TData >( {
+		queryKey: getAllDomainsQueryKey( queryArgs ),
 		queryFn: () =>
 			wpcomRequest< AllDomainsQueryFnData >( {
 				path: addQueryArgs( '/all-domains', queryArgs ),

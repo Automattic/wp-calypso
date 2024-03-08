@@ -15,7 +15,6 @@ const finalErrorStatuses = [ 400, 401, 403, 409 ];
 
 /**
  * Checks whether a mailbox name/domain i.e. email address is available for creation.
- *
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param queryOptions Optional options to pass to the underlying query engine
@@ -24,7 +23,7 @@ const finalErrorStatuses = [ 400, 401, 403, 409 ];
 export const useGetTitanMailboxAvailability = (
 	domainName: string,
 	mailboxName: string,
-	queryOptions: UseQueryOptions< any, any > = {}
+	queryOptions: Omit< UseQueryOptions< any, any >, 'queryKey' > = {}
 ) => {
 	return useQuery< any, any >( {
 		queryKey: getCacheKey( domainName, mailboxName ),

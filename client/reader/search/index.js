@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
-import page from 'page';
 import {
 	makeLayout,
 	redirectInvalidLanguage,
-	redirectLoggedInUrl,
+	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -29,7 +29,7 @@ export default function () {
 
 	page(
 		[ '/read/search', `/${ langParam }/read/search` ],
-		redirectLoggedInUrl,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		fetchTrendingTagsIfLoggedOut,
 		updateLastRoute,

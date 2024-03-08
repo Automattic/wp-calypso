@@ -32,14 +32,14 @@ export const useAddSSHKeyMutation = (
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
-			await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
+			await queryClient.invalidateQueries( { queryKey: SSH_KEY_QUERY_KEY } );
 			options.onSuccess?.( ...args );
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const addSSHKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { addSSHKey, isLoading };
+	return { addSSHKey, isPending };
 };

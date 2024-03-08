@@ -21,6 +21,11 @@ jest.mock(
 	() => 'span'
 );
 
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table-row/index',
+	() => () => <tr />
+);
+
 describe( '<SiteContent>', () => {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()

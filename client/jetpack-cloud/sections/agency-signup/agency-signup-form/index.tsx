@@ -1,12 +1,13 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import formatApiPartner from 'calypso/jetpack-cloud/sections/partner-portal/lib/format-api-partner';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { dashboardPath, overviewPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -26,6 +27,10 @@ export default function AgencySignupForm() {
 	const partner = useSelector( getCurrentPartner );
 	const hasFetched = useSelector( hasFetchedPartner );
 	const notificationId = 'partner-portal-agency-signup-form';
+	const queryParams = new URLSearchParams( window.location.search );
+	const refQueryParam = queryParams.get( 'ref' );
+
+	const referrer = refQueryParam === 'agencies-lp' ? 'agencies-lp' : 'manage-lp';
 
 	const createPartner = useCreatePartnerMutation( {
 		onSuccess: ( partner ) => {
@@ -55,31 +60,51 @@ export default function AgencySignupForm() {
 					contact_person: payload.contactPerson,
 					company_website: payload.companyWebsite,
 					company_type: payload.companyType,
+					managed_sites: payload.managedSites,
+					partner_program_opt_in: payload.partnerProgramOptIn,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					referrer: payload.referrer,
 				} )
 			);
 		},
 		[ notificationId, partner?.id, createPartner.mutate, dispatch ]
 	);
 
-	// Redirect the user if they are already a partner or the form was submitted successfully.
+	// Redirect the user to the dashboard if they are already a partner,
+	// or the overview page if the form was submitted successfully,
+	// or the issue licenses page if coming via the /manage/pricing page.
+	const source = useRef( queryParams.get( 'source' ) );
+	const bundleSize = useRef( queryParams.get( 'bundle_size' ) );
+	const products = useRef( queryParams.get( 'products' ) );
 	useEffect( () => {
-		if ( partner ) {
+		if ( createPartner.isSuccess ) {
+			if ( source.current === 'manage-pricing-page' ) {
+				const path = `/partner-portal/issue-license?products=${ products.current }&bundle_size=${ bundleSize.current }&source=manage-pricing-page`;
+				page.redirect( path );
+			} else {
+				page.redirect( overviewPath() );
+			}
+		} else if ( partner ) {
 			page.redirect( dashboardPath() );
 		}
 	} );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_agency_signup_start' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_agency_signup_start', {
+				form_referrer_source: referrer,
+			} )
+		);
 	}, [] );
 
 	return (
 		<Card className="agency-signup-form">
+			<QueryJetpackPartnerPortalPartner />
 			<svg
 				className="agency-signup-form__logo"
 				width="32"
@@ -97,7 +122,7 @@ export default function AgencySignupForm() {
 			</svg>
 
 			<CardHeading className="agency-signup-form__heading">
-				{ translate( 'Sign up as an Agency' ) }
+				{ translate( 'Sign up for Jetpack Manage' ) }
 			</CardHeading>
 
 			<h2 className="agency-signup-form__subheading">
@@ -109,9 +134,11 @@ export default function AgencySignupForm() {
 			{ hasFetched && ! partner && (
 				<CompanyDetailsForm
 					includeTermsOfService={ true }
-					isLoading={ createPartner.isLoading }
+					isLoading={ createPartner.isPending }
 					onSubmit={ onSubmit }
 					submitLabel={ translate( 'Continue' ) }
+					showSignupFields={ true }
+					referrer={ referrer }
 				/>
 			) }
 		</Card>

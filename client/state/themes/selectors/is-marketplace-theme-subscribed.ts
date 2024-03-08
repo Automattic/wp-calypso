@@ -4,7 +4,6 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 /**
  * Checks if the site has a subscription to the theme.
- *
  * @param {Object} state global state
  * @param {string} themeId theme id
  * @param {number} siteId site id

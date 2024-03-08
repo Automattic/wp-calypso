@@ -5,7 +5,6 @@ import type { SiteId, URL } from 'calypso/types';
 
 /**
  * Fetches migration enabled information for a specific target site and source site.
- *
  * @param targetSiteId - The ID of the target site.
  * @param sourceSite - The ID or URL of the source site.
  * @param enabled - Optional flag to enable/disable the query. Default is true.
@@ -34,6 +33,7 @@ export const useMigrationEnabledInfoQuery = (
 		},
 		enabled: !! ( enabled && targetSiteId && sourceSite ),
 		retry: false,
+		refetchOnWindowFocus: false,
 		select( data ) {
 			return {
 				...data,

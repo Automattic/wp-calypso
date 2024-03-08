@@ -2,6 +2,7 @@
 @import "@automattic/typography/styles/woo-commerce";
 
 .woo {
+	$woo-purple-40: #966ccf;
 	$woo-purple-50: #7f54b3;
 	$woo-purple-60: #674399;
 	$woo-purple-70: #533582;
@@ -18,7 +19,7 @@
 	$gray-60: #50575e;
 	$gray-50: #646970;
 
-	background: #fdfdfd;
+	background: #fff;
 	min-height: 100%;
 
 	* {
@@ -63,17 +64,21 @@
 	}
 
 	a,
-	a:visited,
-	a:hover,
-	.wp-login__links a:hover,
-	.wp-login__links button:hover,
-	.button:not(.social-buttons__button) {
+	.wp-login__links a,
+	.wp-login__links button,
+	.button:not(.social-buttons__button),
+	.magic-login__footer a {
 		font-size: $woo-font-size-base;
 		line-height: 28px;
 		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
 		letter-spacing: 0;
+
+		&:hover,
+		&:visited {
+			color: $gray-50;
+		}
 	}
 
 	.button:not(.social-buttons__button) {
@@ -86,12 +91,21 @@
 	}
 
 	.button.is-primary,
-	.button.is-primary[disabled],
-	.login .button.is-primary {
-		background: $woo-purple-60;
+	.login .button.is-primary,
+	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+		background-color: $woo-purple-60;
 		border: none;
 		color: #fff;
 		width: 100%;
+
+		&.is-busy {
+			background-image: none;
+		}
+
+		&:hover {
+			background-color: $woo-purple-40;
+			color: #fff;
+		}
 
 		&:disabled {
 			background-color: var(--studio-gray-0);
@@ -101,6 +115,58 @@
 
 	button {
 		background-color: initial;
+	}
+
+	.login__form-user-exists-notice.notice {
+		border-radius: 8px; // stylelint-disable-line scales/radii
+		overflow: auto;
+		padding: 16px 20px;
+		background-color: #f6f7f7;
+
+		.notice__icon-wrapper {
+			background-color: #f6f7f7;
+			color: #2c3338;
+			width: auto;
+			padding: 0;
+			align-items: flex-start;
+		}
+
+		.notice__dismiss {
+			padding: 0;
+			background-color: #f6f7f7;
+			color: #a7aaad;
+		}
+
+		.notice__content {
+			padding: 0 16px;
+			background-color: #f6f7f7;
+			color: #2c3338;
+		}
+
+		.notice__text {
+			color: #2c3338;
+			font-size: rem(14px);
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px; /* 142.857% */
+			letter-spacing: -0.24px;
+
+
+			a,
+			a:visited, {
+				color: $woo-purple-60;
+				font-size: rem(14px);
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.24px;
+				text-decoration: none;
+			}
+
+			a:hover {
+				color: $woo-purple-40;
+			}
+		}
 	}
 
 	.masterbar__progress-bar {
@@ -266,6 +332,10 @@
 			font-weight: 400;
 			font-size: 1rem;
 			text-decoration: none;
+
+			&:hover {
+				color: $woo-purple-40;
+			}
 		}
 
 		@media screen and ( max-width: 660px ) {
@@ -278,24 +348,20 @@
 		margin-top: 25px;
 	}
 
-	.login__social-buttons {
+	.auth-form__social-buttons {
 		align-items: center;
 
 		@media screen and ( max-width: 660px ) {
 			align-items: flex-start;
 		}
 
-		.login__social-buttons-container {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.social-buttons__button {
+		button.social-buttons__button.button {
 			border: 0;
 			text-align: left;
 			padding-bottom: 0;
 			padding-left: 0;
 			padding-right: 0;
+			width: 196px;
 
 			svg {
 				border: 1px solid var(--studio-gray-10);
@@ -422,6 +488,16 @@
 		max-width: 472px;
 		margin: 54px auto 0;
 		height: unset;
+		min-height: 238px;
+
+		~ .auth-form__separator {
+			margin: -10px auto;
+			max-width: 472px;
+		}
+
+		~ .card.auth-form__social.is-login {
+			max-width: 472px;
+		}
 
 		.continue-as-user__gravatar-link {
 			pointer-events: auto;
@@ -512,26 +588,25 @@
 		display: none;
 	}
 
-	.login__social,
+	.auth-form__separator::before,
+	.auth-form__separator::after {
+		border-block-start: $woo-form-divider-border;
+	}
+
+	.auth-form__separator + .auth-form__social.card {
+		clip-path: unset; // unset the rule applied in ./client/blocks/authentication/form-divider/style.scss
+		max-width: 100%;
+	}
+
+	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
-		border-top: $woo-form-divider-border;
 		padding-top: 40px;
 		padding-bottom: 40px;
 		text-align: center;
 
 		@media screen and ( max-width: 660px ) {
 			padding-top: 28px;
-		}
-	}
-
-	.two-factor-authentication__actions.card {
-		.button {
-			border: 1px solid #c3c4c7;
-			color: var(--color-gray-100);
-			font-weight: 500;
-			line-height: 20px;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		}
 	}
 
@@ -564,16 +639,56 @@
 		display: none;
 	}
 
-	.login__divider span {
+	.signup-form {
+		padding-top: 32px;
+
+		.auth-form__separator {
+			width: 100%;
+			margin-left: 0;
+			margin-right: 0;
+
+			@media ( min-width: 782px ) {
+				width: 100%;
+			}
+
+			&::before,
+			&::after {
+				position: absolute;
+				border-inline-start: 0;
+				border-block-start: $woo-form-divider-border;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
+			}
+
+			&::after {
+				left: 58%;
+			}
+		}
+	}
+
+	.signup-form,
+	.login {
+		.auth-form__separator-text {
+			background: #fff;
+			padding: 0 27px !important;
+		}
+	}
+
+	.auth-form__separator .auth-form__separator-text {
 		padding: 0 27px;
-		background-color: #fdfdfd;
+		background: #fff;
 	}
 
 	.wp-login__footer--oauth {
 		display: none;
 	}
 
-	.login-form__social-buttons-tos {
+	.app-promo.magic-link-app-promo {
+		padding: 24px;
+	}
+
+	.auth-form__social-buttons-tos {
 		margin-top: 24px;
 		font-size: $woo-font-size-small;
 		line-height: 18px;
@@ -649,10 +764,6 @@
 		}
 	}
 
-	.signup-form {
-		padding-top: 32px;
-	}
-
 	&.is-section-signup::before,
 	&.is-section-signup .layout__primary::before {
 		display: none;
@@ -673,10 +784,10 @@
 		color: var(--color-primary);
 	}
 
-	.signup-form__social {
+	.auth-form__social {
 		max-width: 100%;
-		border-top: 1px solid #e6e6e6;
-		padding: 44px 0 14px;
+		padding: 40px 0 14px;
+		border-top: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -698,7 +809,7 @@
 			padding: 0;
 		}
 
-		.signup-form__social-buttons-tos {
+		.auth-form__social-buttons-tos {
 			text-align: left;
 			color: $gray-50;
 
@@ -708,7 +819,7 @@
 		}
 	}
 
-	.signup-form__social-buttons button {
+	.auth-form__social-buttons button {
 		text-align: start;
 		box-shadow: none;
 		border: 0;
@@ -781,6 +892,7 @@
 				}
 			}
 		}
+
 		.login__form-userdata label.form-label {
 			line-height: 16px;
 		}
@@ -885,10 +997,6 @@
 			}
 		}
 
-		.two-factor-authentication__actions.card {
-			padding-top: 36px;
-		}
-
 		div.login__two-factor-footer {
 			margin-top: 16px;
 			p {
@@ -911,7 +1019,7 @@
 			font-weight: 600;
 		}
 
-		.login-form__social-buttons-tos {
+		.auth-form__social-buttons-tos {
 			text-align: center;
 			line-height: 16px;
 
@@ -939,6 +1047,10 @@
 
 		.signup-form {
 			padding-top: 24px;
+		}
+
+		button.social-buttons__button.button {
+			width: 100%;
 		}
 
 		// Log in link on signup page

@@ -3,7 +3,6 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 /**
  * Returns whether an element has touched/crossed the viewport's upper boundary,
  * plus or minus a given vertical offset.
- *
  * @param offsetY A vertical offset (in pixels) to add or subtract
  * 		  when determining if the observed element has crossed
  * 		  the viewport's upper boundary

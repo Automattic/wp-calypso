@@ -1,8 +1,8 @@
+import { SegmentedControl } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { intervals } from './constants';
 
 import './intervals.scss';

@@ -11,6 +11,7 @@ interface TimeFrameProps {
 	discountedPriceDuration?: number;
 	formattedOriginalPrice?: string;
 	isDiscounted?: boolean;
+	finalPrice?: number;
 }
 
 interface RegularTimeFrameProps {
@@ -29,6 +30,10 @@ interface PartialDiscountTimeFrameProps {
 
 interface A11yProps {
 	forScreenReader?: boolean;
+}
+
+interface YearlyFreeTrialMonthTimeFrameProps extends A11yProps {
+	formattedOriginalPrice: string;
 }
 
 const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
@@ -156,7 +161,25 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 
 const OneYearDiscountTimeFrame: React.FC< A11yProps > = ( { forScreenReader } ) => {
 	const translate = useTranslate();
-	const text = translate( 'per month for the first year, billed yearly' );
+	const text = translate( 'per month for the first year, then billed yearly' );
+
+	if ( forScreenReader ) {
+		return <>{ text }</>;
+	}
+
+	return <span className="display-price__billing-time-frame">{ text }</span>;
+};
+
+const YearlyFreeTrialMonthTimeFrame: React.FC< YearlyFreeTrialMonthTimeFrameProps > = ( {
+	formattedOriginalPrice,
+	forScreenReader,
+} ) => {
+	const translate = useTranslate();
+	const text = translate( 'for the first month, then %(original_price)s /month, billed yearly', {
+		args: {
+			original_price: formattedOriginalPrice,
+		},
+	} );
 
 	if ( forScreenReader ) {
 		return <>{ text }</>;
@@ -172,6 +195,7 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 	formattedOriginalPrice,
 	forScreenReader,
 	isDiscounted,
+	finalPrice,
 } ) => {
 	const moment = useLocalizedMoment();
 	const productExpiryDate =
@@ -184,6 +208,15 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 	// `1 === discountedPriceDuration` condition taken from client/my-sites/plans/jetpack-plans/product-lightbox/payment-plan.tsx:56
 	if ( isDiscounted ) {
 		if ( 1 === discountedPriceDuration && formattedOriginalPrice ) {
+			if ( finalPrice === 0 && formattedOriginalPrice ) {
+				return (
+					<YearlyFreeTrialMonthTimeFrame
+						forScreenReader={ forScreenReader }
+						formattedOriginalPrice={ formattedOriginalPrice }
+					/>
+				);
+			}
+
 			return (
 				<PartialDiscountTimeFrame
 					billingTerm={ billingTerm }

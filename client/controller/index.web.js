@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import {
 	getLanguage,
 	getLanguageSlugs,
@@ -6,7 +7,6 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -22,6 +22,8 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { render, hydrate } from './web-util.js';
 
@@ -44,6 +46,7 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
 	) : (
@@ -79,6 +82,7 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * For logged in users with bootstrap (production), ReactDOM.hydrate().
  * Otherwise (development), ReactDOM.render().
  * See: https://wp.me/pd2qbF-P#comment-20
+ *
  * @param context - Middleware context
  */
 function smartHydrate( context ) {
@@ -92,6 +96,7 @@ function smartHydrate( context ) {
 
 /**
  * Isomorphic routing helper, client side
+ *
  * @param { string } route - A route path
  * @param {...Function} middlewares - Middleware to be invoked for route
  *
@@ -165,6 +170,7 @@ export function redirectLoggedOut( context, next ) {
 /**
  * Middleware to redirect logged out users to create an account.
  * Designed for use in situations where no site is selected, such as the reader.
+ *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -180,7 +186,28 @@ export function redirectLoggedOutToSignup( context, next ) {
 }
 
 /**
- * Removes the locale param from the path and redirects logged-in users to it.
+ * Middleware to redirect a user if they don't have the appropriate capability.
+ *
+ * @param   {string}   capability Capability to check
+ * @returns {Function}            Middleware function
+ */
+export function redirectIfCurrentUserCannot( capability ) {
+	return ( context, next ) => {
+		const state = context.store.getState();
+		const site = getSelectedSite( state );
+		const currentUserCan = canCurrentUser( state, site?.ID, capability );
+
+		if ( site && ! currentUserCan ) {
+			return page.redirect( `/home/${ site.slug }` );
+		}
+
+		next();
+	};
+}
+
+/**
+ * Removes the locale parameter from the path, and redirects logged-in users to it.
+ *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -197,6 +224,25 @@ export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
 	next();
 }
 
+/**
+ * Removes the locale parameter from the beginning of the path, and redirects logged-in users to it.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export const redirectWithoutLocaleParamInFrontIfLoggedIn = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
+
+		if ( pathWithoutLocale !== context.path ) {
+			return page.redirect( pathWithoutLocale );
+		}
+	}
+
+	next();
+};
+
 export const notFound = ( context, next ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	context.primary = (
@@ -209,15 +255,5 @@ export const notFound = ( context, next ) => {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-	next();
-};
-
-export const redirectLoggedInUrl = ( context, next ) => {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( context.path );
-		if ( pathWithoutLocale !== context.path ) {
-			return page.redirect( pathWithoutLocale );
-		}
-	}
 	next();
 };

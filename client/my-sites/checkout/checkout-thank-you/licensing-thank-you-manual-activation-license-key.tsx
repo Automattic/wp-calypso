@@ -25,7 +25,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 
-	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+	const isProductListFetching = useSelector( getIsProductListFetching );
 
 	return (
 		<>

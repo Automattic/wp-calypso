@@ -5,10 +5,6 @@ body.is-section-mailboxes.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }
 
-body.is-section-mailboxes .layout.is-section-mailboxes > .layout__content {
-	padding-top: 120px;
-}
-
 .mailbox-selection-list__loader-error-container {
 	align-items: center;
 	box-sizing: border-box;

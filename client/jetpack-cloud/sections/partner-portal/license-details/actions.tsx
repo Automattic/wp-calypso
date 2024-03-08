@@ -3,7 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import useLicenseDownloadUrlMutation from 'calypso/components/data/query-jetpack-partner-portal-licenses/use-license-download-url-mutation';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
-import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseRole,
+	LicenseState,
+	LicenseType,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -16,6 +20,7 @@ interface Props {
 	licenseState: LicenseState;
 	licenseType: LicenseType;
 	hasDownloads: boolean;
+	isChildLicense?: boolean;
 }
 
 export default function LicenseDetailsActions( {
@@ -25,6 +30,7 @@ export default function LicenseDetailsActions( {
 	licenseState,
 	licenseType,
 	hasDownloads,
+	isChildLicense,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -61,7 +67,7 @@ export default function LicenseDetailsActions( {
 				licenseType === LicenseType.Partner && (
 					<Button
 						compact
-						{ ...( downloadUrl.isLoading ? { busy: true } : {} ) }
+						{ ...( downloadUrl.isPending ? { busy: true } : {} ) }
 						onClick={ download }
 					>
 						{ translate( 'Download' ) }
@@ -80,11 +86,14 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
-			{ licenseState !== LicenseState.Revoked && licenseType === LicenseType.Partner && (
-				<Button compact onClick={ openRevokeDialog } scary>
-					{ translate( 'Revoke' ) }
-				</Button>
-			) }
+			{ ( isChildLicense
+				? licenseState === LicenseState.Attached
+				: licenseState !== LicenseState.Revoked ) &&
+				licenseType === LicenseType.Partner && (
+					<Button compact onClick={ openRevokeDialog } scary>
+						{ translate( 'Revoke' ) }
+					</Button>
+				) }
 
 			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
 				<Button
@@ -103,6 +112,7 @@ export default function LicenseDetailsActions( {
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
+					licenseRole={ isChildLicense ? LicenseRole.Child : LicenseRole.Single }
 				/>
 			) }
 		</div>

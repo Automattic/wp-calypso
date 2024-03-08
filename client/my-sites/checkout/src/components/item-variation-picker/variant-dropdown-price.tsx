@@ -1,94 +1,21 @@
-import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
+import {
+	Discount,
+	DoNotPayThis,
+	IntroPricing,
+	IntroPricingText,
+	Label,
+	Price,
+	PriceTextContainer,
+	Variant,
+} from './styles';
 import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
-
-const Discount = styled.span`
-	color: ${ ( props ) => props.theme.colors.discount };
-	margin-right: 8px;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-
-	.item-variant-option--selected & {
-		color: #b8e6bf;
-	}
-
-	@media ( max-width: 660px ) {
-		width: 100%;
-	}
-`;
-
-const DoNotPayThis = styled.del`
-	text-decoration: line-through;
-	margin-right: 8px;
-	color: #646970;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-
-	.item-variant-option--selected & {
-		color: #fff;
-	}
-`;
-
-const Price = styled.span`
-	display: inline-flex;
-	justify-content: right;
-	color: #646970;
-	.item-variant-option--selected & {
-		color: #fff;
-	}
-`;
-
-const Variant = styled.div`
-	align-items: center;
-	display: flex;
-	font-size: 14px;
-	font-weight: 400;
-	justify-content: space-between;
-	line-height: 20px;
-	width: 100%;
-	column-gap: 20px;
-
-	.item-variant-option--selected & {
-		color: #fff;
-	}
-`;
-
-const Label = styled.span`
-	display: flex;
-	white-space: nowrap;
-	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
-	@media ( max-width: 480px ) {
-		flex-direction: column;
-	}
-`;
-
-const IntroPricing = styled.span`
-	display: flex;
-	flex-direction: column;
-	font-size: 0.8rem;
-`;
-
-const IntroPricingText = styled.span`
-	display: block;
-	text-align: right;
-	margin-bottom: 0rem;
-`;
-
-const PriceTextContainer = styled.span`
-	text-align: right;
-`;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
 	const translate = useTranslate();
@@ -108,7 +35,6 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const isMobile = useMobileBreakpoint();
-	const isJetpack = isJetpackPlan( variant ) || isJetpackProduct( variant );
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
@@ -135,6 +61,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
 	const translatedIntroOfferDetails = () => {
 		const args = {
@@ -237,24 +164,24 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const hasDiscount = discountPercentage > 0;
 	// Display the discount percentage if it's not an introductory offer
 	// or if it's a Jetpack 2 or 3-year plan
-	const canDisplayDiscountPercentage = ! isIntroductoryOffer || ( isJetpack && introCount > 1 );
+	const canDisplayDiscountPercentage = ! isIntroductoryOffer;
 
 	return (
-		<Variant>
-			<Label>
+		<Variant shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
+			<Label shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ variant.variantLabel }
-				{ hasDiscount && ! isJetpack && isMobile && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
+				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
-			<PriceTextContainer>
+			<PriceTextContainer shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ hasDiscount && ! isIntroductoryOffer && ! isJetpack && (
+				{ ! shouldUseCheckoutV2 && hasDiscount && ! isIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				{ ! shouldUseCheckoutV2 && (
+					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				) }
 				<IntroPricing>
 					<IntroPricingText>
 						{ isIntroductoryOffer && translatedIntroOfferDetails() }

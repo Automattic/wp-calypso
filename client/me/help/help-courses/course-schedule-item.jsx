@@ -1,3 +1,4 @@
+import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -36,7 +37,9 @@ export default localize( ( props ) => {
 					</Button>
 				) : (
 					<div className="help-courses__course-schedule-item-businessplan-button">
-						{ translate( 'Only on Business Plan' ) }
+						{ translate( 'Only on %(planName)s plan', {
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() },
+						} ) }
 					</div>
 				) }
 			</div>

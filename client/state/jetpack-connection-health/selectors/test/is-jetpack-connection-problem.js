@@ -4,7 +4,7 @@ describe( 'isJetpackConnectionProblem()', () => {
 	test( 'should return true if the site may have Jetpack connection problem', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {
-				123456: { jetpack_connection_problem: true },
+				123456: { connectionHealth: { jetpack_connection_problem: true } },
 			},
 		};
 		const siteId = 123456;
@@ -15,7 +15,7 @@ describe( 'isJetpackConnectionProblem()', () => {
 	test( 'should return false if the site is not marked as one that can have Jetpack connection problem', () => {
 		const stateIn = {
 			jetpackConnectionHealth: {
-				123456: { jetpack_connection_problem: false },
+				123456: { connectionHealth: { jetpack_connection_problem: false } },
 			},
 		};
 		const siteId = 123456;
@@ -25,10 +25,10 @@ describe( 'isJetpackConnectionProblem()', () => {
 
 	test( 'should return false if the site Jetpack connection problem is unknown', () => {
 		const stateIn = {
-			jetpackConnectionHealth: {},
+			jetpackConnectionHealth: { connectionHealth: {} },
 		};
 		const siteId = 77777;
 		const output = isJetpackConnectionProblem( stateIn, siteId );
-		expect( output ).toBe( null );
+		expect( output ).toBe( false );
 	} );
 } );

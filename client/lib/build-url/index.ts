@@ -1,7 +1,6 @@
 /**
  * Given an absolute or relative URL and search terms, returns a relative URL including
  * the search query parameter and preserving existing parameters.
- *
  * @param  uri    URL or path to modify
  * @param  search Search terms
  * @returns        Path including search terms

@@ -28,11 +28,11 @@ const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase()
 
 describe(
 	DataHelper.createSuiteTitle(
-		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Premium'
+		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Explorer'
 	),
 	function () {
 		const blogName = DataHelper.getBlogName();
-		const planName = 'Premium';
+		const planName = 'Explorer';
 		const publishedPosts: PostResponse[] = [];
 		let testMediaFile: TestFile;
 		let siteCreatedFlag: boolean;
@@ -136,7 +136,7 @@ describe(
 
 			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.validateActivePlan( 'Premium' );
+				await plansPage.validateActivePlan( planName );
 			} );
 		} );
 

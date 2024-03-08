@@ -1,3 +1,4 @@
+export const ACCOUNT_FLOW = 'account';
 export const AI_ASSEMBLER_FLOW = 'ai-assembler';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
@@ -21,6 +22,7 @@ export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'import-focused';
+export const SITE_MIGRATION_FLOW = 'site-migration';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -29,16 +31,14 @@ export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
+export const ASSEMBLER_FIRST_FLOW = 'assembler-first';
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 export const DOMAIN_TRANSFER = 'domain-transfer';
 export const GOOGLE_TRANSFER = 'google-transfer';
-export const ONBOARDING_PM_FLOW = 'onboarding-media';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
+export const REBLOGGING_FLOW = 'reblogging';
 
-export const isOnboardingPMFlow = ( flowName: string | null | undefined ) => {
-	return Boolean( flowName && flowName === ONBOARDING_PM_FLOW );
-};
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
 	return Boolean(
 		flowName &&
@@ -119,6 +119,10 @@ export const isWooExpressFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WOOEXPRESS_FLOW ].includes( flowName ) );
 };
 
+export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
+};
+
 export const isBuildFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ BUILD_FLOW ].includes( flowName ) );
 };
@@ -148,9 +152,17 @@ export const isDomainUpsellFlow = ( flowName: string | null ) => {
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW, AI_ASSEMBLER_FLOW ];
+	const SITE_ASSEMBLER_FLOWS = [
+		WITH_THEME_ASSEMBLER_FLOW,
+		AI_ASSEMBLER_FLOW,
+		ASSEMBLER_FIRST_FLOW,
+	];
 
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
+};
+
+export const isWithThemeAssemblerFlow = ( flowName: string | null ) => {
+	return !! flowName && WITH_THEME_ASSEMBLER_FLOW === flowName;
 };
 
 export const isWithThemeFlow = ( flowName: string | null ) => {

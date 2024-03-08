@@ -37,15 +37,17 @@ export const useUpdateSSHKeyMutation = (
 			),
 		...options,
 		onSuccess: async ( ...args ) => {
-			await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
-			await queryClient.invalidateQueries( [ USE_ATOMIC_SSH_KEYS_QUERY_KEY ] );
+			await queryClient.invalidateQueries( { queryKey: SSH_KEY_QUERY_KEY } );
+			await queryClient.invalidateQueries( {
+				queryKey: [ USE_ATOMIC_SSH_KEYS_QUERY_KEY ],
+			} );
 			options.onSuccess?.( ...args );
 		},
 	} );
 
-	const { mutate, isLoading } = mutation;
+	const { mutate, isPending } = mutation;
 
 	const updateSSHKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return { updateSSHKey, isLoading };
+	return { updateSSHKey, isPending };
 };

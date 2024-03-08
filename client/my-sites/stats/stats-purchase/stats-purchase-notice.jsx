@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import {
 	StatsBenefitsCommercial,
 	StatsBenefitsPersonal,

@@ -20,6 +20,7 @@ export type SiteSubscriptionDetailsProps = {
 };
 
 export type PaymentPlan = {
+	is_gift: boolean;
 	id: string;
 	renewalPrice: string;
 	renewalDate: string;

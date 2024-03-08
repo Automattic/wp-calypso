@@ -1,16 +1,15 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormLabel, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormSelect from 'calypso/components/forms/form-select';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { ChooseUserLoadingPlaceholder } from './choose-user-loading-placeholder';
-import { User, useAdministrators } from './use-administrators';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import useUsersQuery from 'calypso/data/users/use-users-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
+import type { UsersQuery } from '@automattic/data-stores';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -36,35 +35,9 @@ const ErrorText = styled.p( {
 	fontSize: '100%',
 } );
 
-const AdministratorsExplanation = styled( FormSettingExplanation )( {
-	a: {
-		color: 'var(--studio-gray-50)',
-		textDecoration: 'underline',
-		'&:hover': {
-			color: 'var(--studio-gray-80)',
-		},
-	},
+const FieldExplanation = styled.p( {
+	color: 'var(--studio-gray-50)',
 } );
-
-function NoAdministrators( { href, siteSlug }: { href: string; siteSlug: string } ) {
-	const translate = useTranslate();
-	return (
-		<>
-			<p>
-				{ translate(
-					'To transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to another user, first add them as an administrator of the site.',
-					{
-						args: { siteSlug },
-						components: { strong: <Strong /> },
-					}
-				) }
-			</p>
-			<ButtonStyled primary type="submit" href={ href }>
-				{ translate( 'Manage team members' ) }
-			</ButtonStyled>
-		</>
-	);
-}
 
 const SiteOwnerTransferEligibility = ( {
 	siteId,
@@ -73,19 +46,28 @@ const SiteOwnerTransferEligibility = ( {
 }: {
 	siteId: number;
 	siteSlug: string;
-	onNewUserOwnerSubmit: ( user: User ) => void;
+	onNewUserOwnerSubmit: ( user: string ) => void;
 } ) => {
 	const translate = useTranslate();
-	const [ tempSiteOwner, setTempSiteOwner ] = useState< User >();
+	const [ tempSiteOwner, setTempSiteOwner ] = useState< string >( '' );
 	const [ siteTransferEligibilityError, setSiteTransferEligibilityError ] = useState( '' );
+	const usersQuery = useUsersQuery( siteId, {
+		search: `*${ tempSiteOwner }*`,
+		search_columns: [ 'display_name', 'user_login', 'user_email' ],
+		include_viewers: false,
+	} ) as unknown as UsersQuery;
+	const usersFound = ( usersQuery?.data?.users?.length ?? 0 ) > 0;
 
-	const { checkSiteTransferEligibility, isLoading: isCheckingSiteTransferEligibility } =
+	const { checkSiteTransferEligibility, isPending: isCheckingSiteTransferEligibility } =
 		useCheckSiteTransferEligibility( siteId, {
 			onMutate: () => {
 				setSiteTransferEligibilityError( '' );
 			},
 			onError: ( e ) => {
 				setSiteTransferEligibilityError( e.message );
+				recordTracksEvent( 'calypso_site_owner_transfer_eligibility_error', {
+					message: e.message,
+				} );
 			},
 			onSuccess: () => {
 				if ( ! tempSiteOwner ) {
@@ -100,29 +82,29 @@ const SiteOwnerTransferEligibility = ( {
 		if ( ! tempSiteOwner ) {
 			return;
 		}
-		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner.email } );
+
+		recordTracksEvent( 'calypso_site_owner_transfer_eligibility_submit', {
+			temp_site_owner: tempSiteOwner,
+		} );
+		checkSiteTransferEligibility( { newSiteOwner: tempSiteOwner } );
 	};
 
-	const addUsersHref = '/people/team/' + siteSlug;
-	const currentUser = useSelector( getCurrentUser );
-	const { administrators, isLoading } = useAdministrators( {
-		siteId,
-		excludeUserEmails: [ currentUser?.email as string ],
-	} );
-
-	if ( isLoading ) {
-		return <ChooseUserLoadingPlaceholder />;
+	function onUserClick( userLogin: string ) {
+		onRecipientChange( userLogin );
+		checkSiteTransferEligibility( { newSiteOwner: userLogin } );
 	}
 
-	if ( ! administrators || administrators.length === 0 ) {
-		return <NoAdministrators href={ addUsersHref } siteSlug={ siteSlug } />;
+	function onRecipientChange( recipient: string ) {
+		const value = recipient.trim();
+		setTempSiteOwner( value );
 	}
+	const recipientError = false;
 
 	return (
 		<form onSubmit={ handleFormSubmit }>
 			<FormText>
 				{ translate(
-					'Please, select the administrator you want to transfer ownership of {{strong}}%(siteSlug)s{{/strong}} to:',
+					"Ready to transfer {{strong}}%(siteSlug)s{{/strong}} and its associated purchases? Simply enter the new owner's email or WordPress.com username below, or choose an existing user to start the transfer process.",
 					{
 						args: { siteSlug },
 						components: { strong: <Strong /> },
@@ -131,38 +113,42 @@ const SiteOwnerTransferEligibility = ( {
 			</FormText>
 
 			<FormFieldset>
-				<FormLabel>{ translate( 'Administrator' ) }</FormLabel>
-				<FormSelect
-					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) => {
-						const user = administrators.find( ( user ) => user.email === event.target.value );
-						setTempSiteOwner( user );
-					} }
-					value={ tempSiteOwner?.email }
-				>
-					<option value="">{ translate( 'Select administrator' ) }</option>
-					{ administrators.map( ( user ) => (
-						<option key={ user.ID } value={ user.email }>
-							{ `${ user.login } (${ user.email })` }
-						</option>
-					) ) }
-				</FormSelect>
+				<FormLabel>{ translate( 'Email or WordPress.com username' ) }</FormLabel>
+				<FormTextInput
+					id="recipient"
+					name="recipient"
+					value={ tempSiteOwner }
+					isError={ recipientError }
+					placeholder="@"
+					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onRecipientChange( e.target.value ) }
+				/>
+				{ recipientError && (
+					<div className="form-validation-icon">
+						<Icon icon={ check } />
+					</div>
+				) }
 				{ siteTransferEligibilityError && (
 					<Error>
 						<Gridicon icon="notice-outline" size={ 16 } />
 						<ErrorText>{ siteTransferEligibilityError }</ErrorText>
 					</Error>
 				) }
-				<AdministratorsExplanation>
-					{ translate(
-						'If you don’t see the new owner in the list, {{linkToUsers}} add them as an administrator.{{/linkToUsers}}',
-						{
-							components: {
-								linkToUsers: <a href={ addUsersHref } />,
-							},
-						}
-					) }
-				</AdministratorsExplanation>
 			</FormFieldset>
+			{ ! usersFound && (
+				<FieldExplanation>
+					{ translate(
+						"If the new owner isn't on WordPress.com yet, we'll guide them through a simple sign-up process."
+					) }
+				</FieldExplanation>
+			) }
+
+			{ tempSiteOwner && usersFound && (
+				<TeamMembersSiteTransfer
+					search={ tempSiteOwner }
+					usersQuery={ usersQuery }
+					onClick={ ( userLogin: string ) => onUserClick( userLogin ) }
+				/>
+			) }
 
 			<ButtonStyled
 				busy={ isCheckingSiteTransferEligibility }

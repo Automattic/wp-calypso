@@ -1,12 +1,15 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { PropsOf } from '@emotion/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import {
 	mockGetCartEndpointWith,
 	fetchStripeConfiguration,
+	fetchRazorpayConfiguration,
 	siteId,
 	countryList,
 	mockSetCartEndpointWith,
@@ -28,7 +31,7 @@ export function MockCheckout( {
 	useUndefinedSiteId?: boolean;
 } ) {
 	const reduxStore = createTestReduxStore();
-	const queryClient = new QueryClient();
+	const [ queryClient ] = useState( () => new QueryClient() );
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
@@ -44,12 +47,14 @@ export function MockCheckout( {
 			<QueryClientProvider client={ queryClient }>
 				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CheckoutMain
-							siteId={ useUndefinedSiteId ? undefined : siteId }
-							siteSlug="foo.com"
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
+						<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
+							<CheckoutMain
+								siteId={ useUndefinedSiteId ? undefined : siteId }
+								siteSlug="foo.com"
+								overrideCountryList={ countryList }
+								{ ...additionalProps }
+							/>
+						</RazorpayHookProvider>
 					</StripeHookProvider>
 				</ShoppingCartProvider>
 			</QueryClientProvider>

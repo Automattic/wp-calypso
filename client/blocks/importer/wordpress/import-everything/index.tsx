@@ -1,16 +1,19 @@
-import { ProgressBar } from '@automattic/components';
-import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
+import {
+	MigrationStatus,
+	type MigrationStatusError,
+	type SiteDetails,
+} from '@automattic/data-stores';
+import { Hooray, SubTitle, Title } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import ImportUsers from 'calypso/blocks/importer/wordpress/import-everything/import-users';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
+import AsyncLoad from 'calypso/components/async-load';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -20,12 +23,12 @@ import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/sel
 import { IAppState } from 'calypso/state/types';
 import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
-import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import { MigrationStatus } from '../types';
-import { retrieveMigrateSource, clearMigrateSource } from '../utils';
-import type { SiteDetails } from '@automattic/data-stores';
+import { WPImportOption, type MigrationState } from '../types';
+import { clearMigrateSource, retrieveMigrateSource } from '../utils';
+import MigrationError from './migration-error';
+import MigrationProgress from './migration-progress';
 import type { UrlData } from 'calypso/blocks/import/types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
@@ -35,15 +38,9 @@ interface Props {
 	targetSite: SiteDetails;
 	targetSiteId: number | null;
 	targetSiteSlug: string;
-	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
 	showConfirmDialog: boolean;
 	sourceUrlAnalyzedData?: UrlData | null;
-}
-
-interface State {
-	migrationStatus: string;
-	percent: number | null;
 }
 
 type ExtraParams = {
@@ -51,7 +48,7 @@ type ExtraParams = {
 };
 
 export class ImportEverything extends SectionMigrate {
-	componentDidUpdate( prevProps: any, prevState: State ) {
+	componentDidUpdate( prevProps: any, prevState: MigrationState ) {
 		super.componentDidUpdate( prevProps, prevState );
 		this.recordMigrationStatusChange( prevState );
 	}
@@ -62,7 +59,7 @@ export class ImportEverything extends SectionMigrate {
 		if ( isMigrateFromWp ) {
 			extraParamsArg[ 'skipCta' ] = true;
 		}
-		stepNavigator?.goToCheckoutPage( extraParamsArg );
+		stepNavigator?.goToCheckoutPage?.( WPImportOption.EVERYTHING, extraParamsArg );
 	};
 
 	resetMigration = () => {
@@ -81,7 +78,7 @@ export class ImportEverything extends SectionMigrate {
 			 */
 			this.setState(
 				{
-					migrationStatus: 'inactive',
+					migrationStatus: MigrationStatus.INACTIVE,
 					errorMessage: '',
 				},
 				this.updateFromAPI
@@ -105,7 +102,7 @@ export class ImportEverything extends SectionMigrate {
 		}
 	};
 
-	recordMigrationStatusChange = ( prevState: State ) => {
+	recordMigrationStatusChange = ( prevState: MigrationState ) => {
 		const trackEventProps = {
 			source_site_id: this.props.sourceSiteId,
 			source_site_url: this.props.sourceUrlAnalyzedData?.url,
@@ -142,6 +139,13 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		if (
+			prevState.migrationStatus !== MigrationStatus.DONE_USER &&
+			this.state.migrationStatus === MigrationStatus.DONE_USER
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_users', trackEventProps );
+		}
+
+		if (
 			prevState.migrationStatus !== MigrationStatus.DONE &&
 			this.state.migrationStatus === MigrationStatus.DONE
 		) {
@@ -150,7 +154,11 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	renderLoading() {
-		return <LoadingEllipsis />;
+		return (
+			<div className="import-layout__center">
+				<LoadingEllipsis />
+			</div>
+		);
 	}
 
 	renderMigrationConfirm() {
@@ -168,6 +176,7 @@ export class ImportEverything extends SectionMigrate {
 		if ( targetSite && targetSite.is_wpcom_staging_site ) {
 			return (
 				<NotAuthorized
+					type="target-site-staging"
 					onStartBuilding={ () => {
 						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
 							from: 'target-staging',
@@ -180,160 +189,130 @@ export class ImportEverything extends SectionMigrate {
 		}
 
 		return (
-			<PreMigrationScreen
-				startImport={ this.startMigration }
-				initImportRun={ this.props.initImportRun }
-				isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
-				targetSite={ targetSite }
-				isMigrateFromWp={ isMigrateFromWp }
-				isTrial={ isMigrationTrialSite( this.props.targetSite ) }
-				onContentOnlyClick={ onContentOnlySelection }
-				sourceSite={ sourceSite }
-				onFreeTrialClick={ () => {
-					stepNavigator?.navigate( `trialAcknowledge${ window.location.search }` );
-				} }
-				onNotAuthorizedClick={ () => {
-					recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
-						from: 'pre-migration',
-					} );
-					stepNavigator?.goToDashboardPage();
-				} }
-			/>
-		);
-	}
-
-	renderMigrationProgress() {
-		const { translate, sourceSite, targetSite } = this.props;
-
-		return (
 			<>
-				<Progress>
-					<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-					<Title>
-						{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
-							MigrationStatus.NEW === this.state.migrationStatus ) &&
-							sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
-								'...' }
-						{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-							sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) +
-								'...' }
-					</Title>
-					<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-					<SubTitle>
-						{ translate(
-							"This may take a few minutes. We'll notify you by email when it's done."
-						) }
-					</SubTitle>
-				</Progress>
-				<GettingStartedVideo />
+				<Interval onTick={ this.updateSiteInfo } period={ EVERY_FIVE_SECONDS } />
+				<PreMigrationScreen
+					sourceSite={ sourceSite }
+					targetSite={ targetSite }
+					initImportRun={ this.props.initImportRun }
+					isTrial={ isMigrationTrialSite( this.props.targetSite ) }
+					isMigrateFromWp={ isMigrateFromWp }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
+					startImport={ this.startMigration }
+					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
+					onContentOnlyClick={ onContentOnlySelection }
+				/>
 			</>
 		);
 	}
 
-	renderMigrationProgressSimple() {
-		const { translate } = this.props;
-
+	renderMigrationProgress() {
 		return (
-			<Progress className="onboarding-progress-simple">
-				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-				<Title>{ translate( 'We’re safely migrating all your data' ) }</Title>
-				<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
-				<SubTitle tagName="h3">
-					{ translate(
-						'Feel free to close this window. We’ll email you when your new site is ready.'
-					) }
-				</SubTitle>
-			</Progress>
+			<div className="import-layout__center">
+				<MigrationProgress
+					status={ this.state.migrationStatus as MigrationStatus }
+					fetchStatus={ this.updateFromAPI }
+					// cast to unknown to avoid type error caused by passing state as props from jsx
+					details={ this.state as unknown as MigrationState }
+				/>
+			</div>
 		);
 	}
 
 	renderMigrationComplete() {
 		const { isMigrateFromWp } = this.props;
-		return (
-			<Hooray>
-				{ ! isMigrateFromWp
-					? this.renderDefaultHoorayScreen()
-					: this.renderHoorayScreenWithDomainInfo() }
-			</Hooray>
-		);
+		return ! isMigrateFromWp
+			? this.renderMigrationSuccessScreen()
+			: this.renderHoorayScreenWithDomainInfo();
 	}
 
-	renderMigrationError() {
-		const { translate } = this.props;
-
+	renderMigrationError( status: MigrationStatusError | null = null ) {
+		const { stepNavigator } = this.props;
 		return (
-			<div className={ classnames( 'import__header' ) }>
-				<div className={ classnames( 'import__heading import__heading-center' ) }>
-					<Title>{ translate( 'Import failed' ) }</Title>
-					<SubTitle>
-						{ translate( 'There was an error with your import.' ) }
-						<br />
-						{ translate( 'Please try again soon or contact support for help.' ) }
-					</SubTitle>
-					<div className={ classnames( 'import__buttons-group' ) }>
-						<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
-					</div>
+			<div className="import-layout__center">
+				<div>
+					<MigrationError
+						sourceSiteUrl={ this.props.sourceSite?.URL }
+						targetSiteUrl={ this.props.targetSite.URL }
+						status={ status || this.state.migrationErrorStatus }
+						resetMigration={ this.resetMigration }
+						goToImportCapturePage={ () => stepNavigator?.goToImportCapturePage?.() }
+						goToImportContentOnlyPage={ () => stepNavigator?.goToImportContentOnlyPage?.() }
+					/>
 				</div>
 			</div>
 		);
 	}
 
-	renderDefaultHoorayScreen() {
-		const { translate, stepNavigator } = this.props;
-
+	renderMigrationSuccessScreen() {
+		const { targetSite, recordTracksEvent } = this.props;
 		return (
-			<>
-				<Title>{ translate( 'Hooray!' ) }</Title>
-				<SubTitle>
-					{ translate( 'Congratulations. Your content was successfully imported.' ) }
-				</SubTitle>
-				<DoneButton
-					label={ translate( 'View site' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
+			<div className="import__heading import__heading-center migration-success">
+				<AsyncLoad
+					targetSite={ targetSite }
+					recordTracksEvent={ recordTracksEvent }
+					require="./migration-success"
 				/>
-			</>
+			</div>
 		);
 	}
 
 	renderHoorayScreenWithDomainInfo() {
 		const { translate, stepNavigator, targetSite } = this.props;
 		return (
-			<>
-				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
-				<SubTitle>
-					{ createInterpolateElement(
-						translate(
-							'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
-						),
-						{ br: createElement( 'br' ) }
-					) }
-				</SubTitle>
-				<DomainInfo domain={ targetSite.slug } />
-				<DoneButton
-					className="is-normal-width"
-					label={ translate( 'Update domain name' ) }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
-						stepNavigator?.goToAddDomainPage?.();
-					} }
-				/>
-				<DoneButton
-					className="is-normal-width"
-					label={ translate( 'View your dashboard' ) }
-					isPrimary={ false }
-					onSiteViewClick={ () => {
-						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-						stepNavigator?.goToSiteViewPage?.();
-					} }
-				/>
-			</>
+			<Hooray>
+				<div className="import__heading import__heading-center">
+					<Title>{ translate( "Migration done! You're all set!" ) }</Title>
+					<SubTitle>
+						{ createInterpolateElement(
+							translate(
+								'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
+							),
+							{ br: createElement( 'br' ) }
+						) }
+					</SubTitle>
+					<DomainInfo domain={ targetSite.slug } />
+					<DoneButton
+						className="is-normal-width"
+						label={ translate( 'Update domain name' ) }
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
+							stepNavigator?.goToAddDomainPage?.();
+						} }
+					/>
+					<DoneButton
+						className="is-normal-width"
+						label={ translate( 'View your dashboard' ) }
+						isPrimary={ false }
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+							stepNavigator?.goToSiteViewPage?.();
+						} }
+					/>
+				</div>
+			</Hooray>
+		);
+	}
+
+	renderMigratingUsers() {
+		const { targetSite } = this.props;
+		return (
+			<ImportUsers
+				site={ targetSite }
+				onSubmit={ () =>
+					this.setState( {
+						migrationStatus: 'done-user',
+					} )
+				}
+			/>
 		);
 	}
 
 	render() {
+		if ( this.props.forceError ) {
+			return this.renderMigrationError( this.props.forceError );
+		}
+
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.UNKNOWN:
 				return this.renderLoading();
@@ -343,10 +322,14 @@ export class ImportEverything extends SectionMigrate {
 
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
+			case MigrationStatus.BACKING_UP_QUEUED:
 			case MigrationStatus.RESTORING:
-				return this.renderMigrationProgressSimple();
+				return this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
+				return this.renderMigratingUsers();
+
+			case MigrationStatus.DONE_USER:
 				return this.renderMigrationComplete();
 
 			case MigrationStatus.ERROR:
@@ -361,6 +344,8 @@ export class ImportEverything extends SectionMigrate {
 export const connector = connect(
 	( state: IAppState, ownProps: Partial< Props > ) => {
 		return {
+			// to test different error states, we can pass in a migrationStatus and force an error
+			forceError: get( getCurrentQueryArguments( state ), 'forceError', '' ),
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, ownProps.targetSiteId as number ),
 			isTargetSiteJetpack: !! isJetpackSite( state, ownProps.targetSiteId as number ),
 			isTargetSitePlanCompatible: !! isTargetSitePlanCompatible( ownProps.targetSite ),
@@ -373,7 +358,6 @@ export const connector = connect(
 				ownProps.targetSiteId as number,
 				'import.php'
 			),
-			targetSiteEligibleForProPlan: isEligibleForProPlan( state, ownProps.targetSiteId as number ),
 		};
 	},
 	{

@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import page from 'page';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
 
 /**

@@ -14,7 +14,8 @@ export default function useLicenseActions(
 	siteUrl: string | null,
 	attachedAt: string | null,
 	revokedAt: string | null,
-	licenseType: LicenseType
+	licenseType: LicenseType,
+	isChildLicense?: boolean
 ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -73,9 +74,12 @@ export default function useLicenseActions(
 				onClick: () =>
 					handleClickMenuItem( 'calypso_jetpack_licenses_hosting_configuration_click' ),
 				type: 'revoke',
-				isEnabled: licenseState !== LicenseState.Revoked && licenseType === LicenseType.Partner,
+				isEnabled:
+					( isChildLicense
+						? licenseState === LicenseState.Attached
+						: licenseState !== LicenseState.Revoked ) && licenseType === LicenseType.Partner,
 				className: 'is-destructive',
 			},
 		];
-	}, [ attachedAt, dispatch, licenseType, revokedAt, siteUrl, translate ] );
+	}, [ attachedAt, dispatch, isChildLicense, licenseType, revokedAt, siteUrl, translate ] );
 }

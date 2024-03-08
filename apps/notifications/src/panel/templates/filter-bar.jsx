@@ -17,7 +17,7 @@ export class FilterBar extends Component {
 	};
 
 	render() {
-		const { filterName } = this.props;
+		const { filterName, translate } = this.props;
 
 		const filterItems = Object.keys( Filters )
 			.map( ( name ) => Filters[ name ]() )
@@ -25,15 +25,28 @@ export class FilterBar extends Component {
 
 		return (
 			<div className="wpnc__filter">
-				<ul className="wpnc__filter__segmented-control">
+				<ul
+					className="wpnc__filter--segmented-control"
+					role="tablist"
+					aria-label={ translate( 'Filter notifications' ) }
+				>
 					{ filterItems.map( ( { label, name } ) => (
 						<li
 							key={ name }
 							data-filter-name={ name }
-							className={ classNames( 'wpnc__filter__segmented-control-item', {
+							className={ classNames( 'wpnc__filter--segmented-control-item', {
 								selected: name === filterName,
 							} ) }
 							onClick={ this.selectFilter }
+							onKeyDown={ ( e ) => {
+								if ( e.key === 'Enter' ) {
+									this.selectFilter( e );
+								}
+							} }
+							role="tab"
+							aria-selected={ name === filterName }
+							aria-controls="wpnc__note-list"
+							tabIndex={ 0 }
 						>
 							{ label }
 						</li>

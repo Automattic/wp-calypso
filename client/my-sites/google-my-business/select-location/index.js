@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -79,17 +79,17 @@ class GoogleMyBusinessSelectLocation extends Component {
 			<Main className="gmb-select-location" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/select-location/:site"
-					title="Google My Business > Select Location"
+					title="Google Business Profile > Select Location"
 				/>
 
-				<DocumentHead title={ translate( 'Google My Business' ) } />
+				<DocumentHead title={ translate( 'Google Business Profile' ) } />
 
 				<QueryKeyringServices />
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections />
 
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
+					{ translate( 'Google Business Profile' ) }
 				</HeaderCake>
 
 				<CompactCard>

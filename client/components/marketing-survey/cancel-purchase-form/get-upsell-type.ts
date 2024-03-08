@@ -34,7 +34,6 @@ export type UpsellType =
 
 /**
  * Get a relevant upsell nudge for the chosen reason if exists.
- *
  * @param {string} reason The chosen reason for cancellation
  * @param {UpsellOptions} opts The options for the upsell nudge
  * @returns {UpsellType} The upsell nudge type

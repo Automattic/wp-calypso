@@ -1,12 +1,13 @@
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import SearchCard from 'calypso/components/search-card';
 import UrlSearch from 'calypso/lib/url-search';
 import { filterFollowsByIsFollowed, filterFollowsByQuery } from 'calypso/reader/follow-helpers';
-import FollowingManageSearchFollowed from 'calypso/reader/following-manage/search-followed';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
@@ -94,13 +95,34 @@ export class ReaderListFollowedSites extends Component {
 
 		return (
 			<>
-				<h2>
-					{ translate( 'Subscriptions' ) }{ ' ' }
-					<a href="/read/subscriptions">{ translate( 'Manage' ) }</a>
-				</h2>
+				{ ! isMobile() ? (
+					<h2>
+						{ translate( 'Subscriptions' ) }{ ' ' }
+						<a href="/read/subscriptions">{ translate( 'Manage' ) }</a>
+					</h2>
+				) : null }
 				{ sites.length >= searchThreshold && (
-					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
+					<SearchCard
+						compact
+						pinned={ false }
+						className="following-manage__search-followed"
+						additionalClasses="following-manage__search-followed-input"
+						placeholder={ translate( 'Search…' ) }
+						onSearch={ this.searchEvent }
+						initialValue={ query }
+						delaySearch
+						delayTimeout={ 100 }
+						hideOpenIcon
+						disableAutocorrect
+					/>
 				) }
+
+				{ isMobile() ? (
+					<h2>
+						<a href="/read/subscriptions">{ translate( 'Manage your subscriptions' ) }</a>
+					</h2>
+				) : null }
+
 				<ul>
 					{ this.renderSites( sitesToShow ) }
 					{ ! allSitesLoaded && (

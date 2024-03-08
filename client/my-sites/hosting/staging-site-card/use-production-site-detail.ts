@@ -9,8 +9,14 @@ export interface ProductionSite {
 	url: string;
 }
 
-export const useProductionSiteDetail = ( siteId: number, options: UseQueryOptions ) => {
-	return useQuery< ProductionSite, unknown, ProductionSite >( {
+type ProductionSiteOptions = Pick< UseQueryOptions, 'enabled' >;
+
+interface ErrorResponse extends Error {
+	code?: string;
+}
+
+export const useProductionSiteDetail = ( siteId: number, options: ProductionSiteOptions ) => {
+	return useQuery< ProductionSite, ErrorResponse, ProductionSite >( {
 		queryKey: [ USE_PRODUCTION_SITE_DETAIL_QUERY_KEY, siteId ],
 		queryFn: () =>
 			wp.req.get( {
@@ -18,13 +24,9 @@ export const useProductionSiteDetail = ( siteId: number, options: UseQueryOption
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId && ( options.enabled ?? true ),
-		select: ( data ) => {
-			return data;
-		},
 		meta: {
 			persist: false,
 		},
 		staleTime: 10 * 1000,
-		onError: options.onError,
 	} );
 };

@@ -3,8 +3,8 @@ import { Page } from 'playwright';
 /**
  * Represents the free user signup flow at setup/free/freeSetup.
  *
- * @see {@link https://wordpress.com/setup/free/freeSetup}
- * @see {@link paYE8P-2bD-p2}
+ * @see https://wordpress.com/setup/free/freeSetup
+ * @see paYE8P-2bD-p2
  */
 export class FreeSignupFlow {
 	private page: Page;

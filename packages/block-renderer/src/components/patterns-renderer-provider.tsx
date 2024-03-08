@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, PropsWithChildren } from 'react';
 import useRenderedPatterns from '../hooks/use-rendered-patterns';
 import PatternsRendererContext from './patterns-renderer-context';
 import type { SiteInfo } from '../types';
@@ -6,22 +6,36 @@ import type { SiteInfo } from '../types';
 interface Props {
 	siteId: number | string;
 	stylesheet?: string;
-	patternIds: string[];
-	children: JSX.Element;
-	siteInfo: SiteInfo;
+	patternIdsByCategory: Record< string, string[] >;
+	siteInfo?: SiteInfo;
+	shouldShufflePosts: boolean;
 }
 
 const PatternsRendererProvider = ( {
 	siteId,
 	stylesheet = '',
-	patternIds,
+	patternIdsByCategory,
 	children,
 	siteInfo = {},
-}: Props ) => {
-	const renderedPatterns = useRenderedPatterns( siteId, stylesheet, patternIds, siteInfo );
+	shouldShufflePosts,
+}: PropsWithChildren< Props > ) => {
+	const renderedPatterns = useRenderedPatterns(
+		siteId,
+		stylesheet,
+		patternIdsByCategory,
+		siteInfo
+	);
+
+	const contextValue = useMemo(
+		() => ( {
+			renderedPatterns,
+			shouldShufflePosts,
+		} ),
+		[ renderedPatterns, shouldShufflePosts ]
+	);
 
 	return (
-		<PatternsRendererContext.Provider value={ renderedPatterns }>
+		<PatternsRendererContext.Provider value={ contextValue }>
 			{ children }
 		</PatternsRendererContext.Provider>
 	);

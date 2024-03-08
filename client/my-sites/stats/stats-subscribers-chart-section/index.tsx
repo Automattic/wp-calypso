@@ -7,6 +7,7 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
+import { hideFractionNumber } from './chart-utils';
 import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
@@ -40,7 +41,10 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	// Note that the incoming data is ordered ascending (newest to oldest)
 	// but uPlot expects descending in its deafult configuration.
 	const x: number[] = data.map( ( point ) => Number( new Date( point.period ) ) / 1000 ).reverse();
-	const y: number[] = data.map( ( point ) => Number( point.subscribers ) ).reverse();
+	// Reserve null values for points with no data.
+	const y: Array< number | null > = data
+		.map( ( point ) => ( point.subscribers === null ? null : Number( point.subscribers ) ) )
+		.reverse();
 
 	return [ x, y ];
 }
@@ -143,7 +147,16 @@ export default function SubscribersChartSection( {
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isLoading && chartData.length !== 0 && (
-				<UplotChart data={ chartData } legendContainer={ legendRef } period={ period } />
+				<UplotChart
+					data={ chartData }
+					legendContainer={ legendRef }
+					period={ period }
+					// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
+					mainColor={ isOdysseyStats ? '#069e08' : undefined }
+					fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
+					fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+					yAxisFilter={ hideFractionNumber }
+				/>
 			) }
 		</div>
 	);

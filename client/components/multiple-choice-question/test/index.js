@@ -8,6 +8,7 @@ describe( 'MultipleChoiceQuestion', () => {
 		const tree = renderer
 			.create(
 				<MultipleChoiceQuestion
+					name="test-question"
 					question="Test Question One"
 					answers={ [
 						{ id: 'test-answer-1', answerText: 'Test Answer One', doNotShuffle: true },

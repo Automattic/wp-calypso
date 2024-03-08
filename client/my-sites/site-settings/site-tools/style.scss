@@ -48,6 +48,11 @@
 	color: inherit;
 }
 
+.site-tools__link:focus {
+	box-shadow: 0 0 0 2px var(--color-primary-light);
+	z-index: 1;
+}
+
 .site-tools__option-marker {
 	flex: 0 0 auto;
 	padding-left: 24px;

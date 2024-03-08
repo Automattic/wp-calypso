@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { createElement } from 'react';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';

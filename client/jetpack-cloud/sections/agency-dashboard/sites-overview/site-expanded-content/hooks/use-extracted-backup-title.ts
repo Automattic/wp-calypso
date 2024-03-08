@@ -20,7 +20,7 @@ const useExtractedBackupTitle = ( backup: Backup | null ) => {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const backupText = backup?.activityDescription[ 0 ]?.children[ 0 ]?.text;
+		const backupText = backup?.activityDescription?.[ 0 ]?.children?.[ 0 ]?.text;
 
 		if ( ! backupText ) {
 			return backup?.activityTitle;

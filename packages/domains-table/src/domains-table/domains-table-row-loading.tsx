@@ -2,12 +2,14 @@ import { useDomainsTable } from './domains-table';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
 
 export default function DomainsTableRowLoading() {
-	const { domainsTableColumns } = useDomainsTable();
+	const { canSelectAnyDomains, domainsTableColumns } = useDomainsTable();
 	return (
 		<tr>
-			<td className="domains-table-row-loading-placeholder-checkbox-column">
-				<DomainsTablePlaceholder delayMS={ 50 } />
-			</td>
+			{ canSelectAnyDomains && (
+				<td className="domains-table-row-loading-placeholder-checkbox-column">
+					<DomainsTablePlaceholder delayMS={ 50 } />
+				</td>
+			) }
 			<td className="domains-table-row-loading-placeholder-domain-column">
 				<DomainsTablePlaceholder delayMS={ 50 } />
 			</td>

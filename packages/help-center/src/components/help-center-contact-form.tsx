@@ -7,6 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { getOdieStorage } from '@automattic/odie-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -29,7 +30,7 @@ import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
-import { useChatStatus, useContactFormTitle, useChatWidget, useZendeskMessaging } from '../hooks';
+import { useChatStatus, useContactFormTitle, useChatWidget } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SearchResult } from '../types';
@@ -82,19 +83,24 @@ const getSupportedLanguages = ( supportType: string, locale: string ) => {
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
-export const HelpCenterContactForm = () => {
+type HelpCenterContactFormProps = {
+	onSubmit?: () => void;
+};
+
+export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
 	const sectionName = useSelector( getSectionName );
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
+	const { onSubmit } = props;
 	const overflow = params.get( 'overflow' ) === 'true';
+	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
 	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
-	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
-	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
+	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
+	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
@@ -114,7 +120,7 @@ export const HelpCenterContactForm = () => {
 		};
 	}, [] );
 
-	const { setSite, resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
+	const { resetStore, setUserDeclaredSite, setShowMessagingChat, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
 
 	const {
@@ -123,9 +129,8 @@ export const HelpCenterContactForm = () => {
 		isEligibleForChat,
 		isLoading: isLoadingChatStatus,
 	} = useChatStatus();
-	useZendeskMessaging(
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
 		'zendesk_support_chat_key',
-		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
 
@@ -187,7 +192,9 @@ export const HelpCenterContactForm = () => {
 	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
 	const enableGPTResponse =
-		config.isEnabled( 'help/gpt-response' ) && ! ( params.get( 'disable-gpt' ) === 'true' );
+		config.isEnabled( 'help/gpt-response' ) &&
+		! ( params.get( 'disable-gpt' ) === 'true' ) &&
+		! wapuuFlow;
 
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
@@ -236,9 +243,7 @@ export const HelpCenterContactForm = () => {
 			section: sectionName,
 		} );
 
-		const savedCurrentSite = currentSite;
 		resetStore();
-		setSite( savedCurrentSite );
 
 		navigate( '/' );
 	}
@@ -261,7 +266,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingSearchResults ) {
+		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -270,7 +275,7 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
-		if ( ! showingGPTResponse && enableGPTResponse ) {
+		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow ) {
 			params.set( 'show-gpt', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -279,11 +284,23 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 
+		// if the user was chatting with Wapuu, we need to disable GPT (no more AI)
+		if ( wapuuFlow ) {
+			params.set( 'disable-gpt', 'true' );
+			params.set( 'show-gpt', 'false' );
+
+			if ( onSubmit ) {
+				onSubmit();
+			}
+		}
+
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
+		const wapuuChatId = getOdieStorage( 'last_chat_id' );
+		const aiChatId = wapuuFlow ? wapuuChatId ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {
 			case 'CHAT':
@@ -309,9 +326,21 @@ export const HelpCenterContactForm = () => {
 						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
 						initialChatMessage += gptResponse.response;
 					}
-					openChatWidget( initialChatMessage, supportSite.URL, () =>
-						setHasSubmittingError( true )
-					);
+
+					if ( wapuuFlow ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += wapuuChatId
+							? `<strong>Wapuu chat reference: ${ wapuuChatId }</strong>:<br />`
+							: '<strong>Wapuu chat reference is not available</strong>:<br />';
+						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
+					}
+
+					openChatWidget( {
+						aiChatId: aiChatId,
+						message: initialChatMessage,
+						siteUrl: supportSite.URL,
+						onError: () => setHasSubmittingError( true ),
+					} );
 					break;
 				}
 				break;
@@ -330,6 +359,12 @@ export const HelpCenterContactForm = () => {
 							}`
 						);
 					}
+
+					if ( params.get( 'source-command-palette' ) === 'true' ) {
+						ticketMeta.push(
+							`From Hosting Command Palette: Please post this user feedback to #dotcom-yolo on Slack.`
+						);
+					}
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {
@@ -340,6 +375,8 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
+						ai_chat_id: aiChatId,
+						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
@@ -349,12 +386,16 @@ export const HelpCenterContactForm = () => {
 								section: sectionName,
 							} );
 							navigate( '/success' );
+
 							resetStore();
+
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
-								queryClient.invalidateQueries( [ 'help-support-history', 'ticket', email ] );
+								queryClient.invalidateQueries( {
+									queryKey: [ 'help-support-history', 'ticket', email ],
+								} );
 							}, 30000 );
 						} )
 						.catch( () => {

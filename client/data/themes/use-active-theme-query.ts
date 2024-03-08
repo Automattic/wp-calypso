@@ -11,6 +11,7 @@ export type ActiveTheme = {
 	is_block_theme: boolean;
 	template: string;
 	theme_supports: ThemeSupports;
+	stylesheet: string;
 };
 
 export const useActiveThemeQuery = (

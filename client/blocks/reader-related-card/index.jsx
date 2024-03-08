@@ -7,13 +7,11 @@ import { connect } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import Gravatar from 'calypso/components/gravatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
-import FollowButton from 'calypso/reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
@@ -53,13 +51,16 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource, onFollowT
 					</span>
 				) }
 			</div>
-			<FollowButton
-				siteUrl={ post.site_URL }
+			<ReaderPostOptionsMenu
+				showFollow={ true }
+				showConversationFollow={ true }
+				showVisitPost={ true }
+				showEditPost={ false }
+				showReportSite={ true }
+				showReportPost={ true }
+				openSuggestedFollows={ onFollowToggle }
 				followSource={ followSource }
-				railcar={ post.railcar }
-				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-				onFollowToggle={ onFollowToggle }
+				post={ post }
 			/>
 		</div>
 	);

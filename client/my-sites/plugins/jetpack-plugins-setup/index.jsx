@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { CompactCard, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { filter, get, range } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';

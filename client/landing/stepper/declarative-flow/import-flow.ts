@@ -9,7 +9,7 @@ import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/inter
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import CreateSite from './internals/steps-repository/create-site';
 import DesignSetup from './internals/steps-repository/design-setup';
 import ImportStep from './internals/steps-repository/import';
 import ImportList from './internals/steps-repository/import-list';
@@ -26,15 +26,15 @@ import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import MigrationHandler from './internals/steps-repository/migration-handler';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
 import TrialAcknowledge from './internals/steps-repository/trial-acknowledge';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
+	isSignupFlow: true,
 
 	useSteps() {
 		return [
@@ -50,9 +50,9 @@ const importFlow: Flow = {
 			{ slug: 'importerSquarespace', component: ImporterSquarespace },
 			{ slug: 'importerWordpress', component: ImporterWordpress },
 			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'pattern-assembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'createSite', component: CreateSite },
 			{ slug: 'migrationHandler', component: MigrationHandler },
 			{ slug: 'trialAcknowledge', component: TrialAcknowledge },
 			{ slug: 'sitePicker', component: SitePickerStep },
@@ -62,7 +62,7 @@ const importFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 		const urlQueryParams = useQuery();
 		const fromParam = urlQueryParams.get( 'from' );
@@ -76,11 +76,6 @@ const importFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
 			[]
 		);
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -102,11 +97,11 @@ const importFlow: Flow = {
 			if ( providedDependencies?.status === 'inactive' ) {
 				// This means they haven't kick off the migration before, so we send them to select/create a new site
 				if ( ! providedDependencies?.targetBlogId ) {
-					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
+					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'createSite' );
 				}
 				// For some reason, the admin role is mismatch, we want to select/create a new site for them as well
 				if ( providedDependencies?.isAdminOnTarget === false ) {
-					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'siteCreationStep' );
+					return userHasSite ? navigate( 'sitePicker' ) : navigate( 'createSite' );
 				}
 			}
 			// For those who hasn't paid or in the middle of the migration process, we sent them to the importerWordPress step
@@ -117,14 +112,21 @@ const importFlow: Flow = {
 
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			switch ( _currentStep ) {
+				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
-							providedDependencies?.platform as ImporterMainPlatform
-						) !== -1
+						[
+							'blogroll',
+							'ghost',
+							'tumblr',
+							'livejournal',
+							'movabletype',
+							'xanga',
+							'substack',
+						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -138,8 +140,7 @@ const importFlow: Flow = {
 				case 'importerWix':
 				case 'importerBlogger':
 				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress': {
+				case 'importerSquarespace': {
 					if ( providedDependencies?.type === 'redirect' ) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -147,19 +148,34 @@ const importFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 				}
 
+				case 'importerWordpress': {
+					if ( providedDependencies?.type === 'redirect' ) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					switch ( providedDependencies?.action ) {
+						case 'verify-email':
+							return navigate( `verifyEmail?${ urlQueryParams.toString() }` );
+						case 'checkout':
+							return exitFlow( providedDependencies?.checkoutUrl as string );
+						default:
+							return navigate( providedDependencies?.url as string );
+					}
+				}
+
 				case 'designSetup': {
 					const { selectedDesign: _selectedDesign } = providedDependencies;
 					if ( isAssemblerDesign( _selectedDesign as Design ) && isAssemblerSupported() ) {
-						return navigate( 'patternAssembler' );
+						return navigate( 'pattern-assembler' );
 					}
 
 					return navigate( 'processing' );
 				}
 
-				case 'patternAssembler':
+				case 'pattern-assembler':
 					return navigate( 'processing' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -208,7 +224,7 @@ const importFlow: Flow = {
 					return navigate( providedDependencies?.url as string );
 
 				case 'verifyEmail':
-					return navigate( `trialAcknowledge?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker': {
 					switch ( providedDependencies?.action ) {
@@ -227,10 +243,12 @@ const importFlow: Flow = {
 
 						case 'select-site': {
 							const selectedSite = providedDependencies.site as SiteExcerptData;
+							const skipStoringTempTargetSite = urlQueryParams.get( 'skipStoringTempTargetSite' );
 
 							if ( selectedSite && migrationStatus ) {
 								// Store temporary target blog id to source site option
-								selectedSite &&
+								! skipStoringTempTargetSite &&
+									selectedSite &&
 									migrationStatus?.source_blog_id &&
 									addTempSiteToSourceOption( selectedSite.ID, migrationStatus.source_blog_id );
 
@@ -242,7 +260,7 @@ const importFlow: Flow = {
 						}
 
 						case 'create-site':
-							return navigate( 'siteCreationStep' );
+							return navigate( 'createSite' );
 
 						default:
 							return navigate( `migrationHandler` );
@@ -263,21 +281,27 @@ const importFlow: Flow = {
 						return navigate( path );
 					}
 
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+					return navigate( `importList?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWordpress':
+					if ( urlQueryParams.get( 'option' ) === 'content' ) {
+						return navigate( `importList?siteSlug=${ siteSlugParam }` );
+					} else if ( isMigrateFromWp && fromParam ) {
+						return navigate( `sitePicker?from=${ fromParam }` );
+					}
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
+
+				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-				case 'importerWix':
-				case 'importerBlogger':
-				case 'importerMedium':
-				case 'importerSquarespace':
-				case 'importerWordpress':
 				case 'designSetup':
-					if ( isMigrateFromWp && fromParam ) {
-						return navigate( `sitePicker?from=${ fromParam }` );
-					}
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'verifyEmail':

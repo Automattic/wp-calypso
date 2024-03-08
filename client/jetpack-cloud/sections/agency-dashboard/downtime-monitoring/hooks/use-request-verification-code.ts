@@ -5,7 +5,7 @@ import type { RequestVerificationCodeParams } from '../../sites-overview/types';
 export default function useRequestVerificationCode(): {
 	mutate: ( params: RequestVerificationCodeParams ) => void;
 	isError: boolean;
-	isLoading: boolean;
+	isPending: boolean;
 	isSuccess: boolean;
 	isVerified: boolean;
 	data: any;

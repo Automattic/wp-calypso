@@ -1,16 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { onEnterOnboarding } from '../flow-actions';
 
 const noop = () => {};
 
-const getUserSocialStepOrFallback = () => {
-	if ( isEnabled( 'signup/social-first' ) ) {
-		return 'user-social';
-	}
-
-	return 'user';
-};
+const getUserSocialStepOrFallback = () =>
+	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -32,7 +28,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'user-hosting' ],
+			steps: [ userSocialStep ],
 			destination: getHostingFlowDestination,
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
 			lastModified: '2023-07-18',
@@ -54,11 +50,13 @@ export function generateFlows( {
 		},
 		{
 			name: 'business',
-			steps: [ userSocialStep, 'domains', 'plans-business' ],
+			steps: [ userSocialStep, 'domains', 'plans-business', 'storage-addon' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon', 'storage' ],
+			optionalDependenciesInQuery: [ 'coupon', 'storage' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -68,6 +66,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -77,6 +77,8 @@ export function generateFlows( {
 			description: 'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -113,8 +115,8 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'theme' ],
-			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
+			providesDependenciesInQuery: [ 'theme', 'intervalType' ],
+			optionalDependenciesInQuery: [ 'theme_type', 'style_variation', 'intervalType' ],
 			hideProgressIndicator: true,
 		},
 		{
@@ -139,13 +141,16 @@ export function generateFlows( {
 		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
-				? [ userSocialStep, 'domains', 'emails', 'plans' ]
-				: [ userSocialStep, 'domains', 'plans' ],
+				? [ userSocialStep, 'new-user-survey', 'domains', 'emails', 'plans' ]
+				: [ userSocialStep, 'new-user-survey', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
+			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -172,24 +177,26 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans-pm' ],
+			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
-			lastModified: '2023-07-18',
+			lastModified: '2023-12-16',
 			showRecaptcha: true,
-		},
-		{
-			name: 'onboarding-media',
-			steps: [ userSocialStep ],
-			destination: getRedirectDestination,
-			description:
-				'The intermittent user step for the GF foundation version of the paid media flow.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
+			props: {
+				plans: {
+					/**
+					 * This intent is geared towards customizations related to the paid media flow
+					 * Current customizations are as follows
+					 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
+					 */
+					intent: 'plans-paid-media',
+					isCustomDomainAllowedOnFreePlan: true,
+				},
+			},
 		},
 		{
 			name: 'import',
@@ -460,12 +467,11 @@ export function generateFlows( {
 				'courses',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-10-14',
+			lastModified: '2024-01-08',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			get pageTitle() {
@@ -488,9 +494,10 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2023-10-11',
+			lastModified: '2024-02-09',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
+			enablePresales: true,
 		},
 		{
 			name: 'do-it-for-me-store',
@@ -506,9 +513,10 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'The BBE store flow',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2023-10-11',
+			lastModified: '2024-02-09',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
+			enablePresales: true,
 		},
 		{
 			name: 'website-design-services',
@@ -517,7 +525,8 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2022-05-02',
+			lastModified: '2024-02-09',
+			enablePresales: true,
 		},
 
 		{

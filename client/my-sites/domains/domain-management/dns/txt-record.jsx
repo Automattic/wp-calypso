@@ -1,11 +1,10 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -24,9 +23,9 @@ class TxtRecord extends Component {
 
 		if ( value?.length === 0 ) {
 			return translate( 'TXT records may not be empty' );
-		} else if ( value?.length > 255 ) {
+		} else if ( value?.length > 2048 ) {
 			return translate(
-				'TXT records may not exceed 255 characters. {{supportLink}}Learn more{{/supportLink}}.',
+				'TXT records may not exceed 2048 characters. {{supportLink}}Learn more{{/supportLink}}.',
 				{
 					components: {
 						supportLink: (

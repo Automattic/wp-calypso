@@ -16,7 +16,6 @@ import ActivityLogBanner from './index';
  * The chosen comparison date is older than
  * WordPress so no backups should already
  * exist prior to that date 😉
- *
  * @param {number} ts timestamp in 's' or 'ms'
  * @returns {number} timestamp in 'ms'
  */

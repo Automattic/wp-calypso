@@ -1,4 +1,4 @@
-import { Badge, Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Badge, Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -11,7 +11,6 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import Accordion from 'calypso/components/domains/accordion';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -22,7 +21,6 @@ import useDomainForwardingQuery, {
 } from 'calypso/data/domains/forwarding/use-domain-forwarding-query';
 import useUpdateDomainForwardingMutation from 'calypso/data/domains/forwarding/use-update-domain-forwarding-mutation';
 import { withoutHttp } from 'calypso/lib/url';
-import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -36,7 +34,13 @@ const noticeOptions = {
 	id: `domain-forwarding-notification`,
 };
 
-export default function DomainForwardingCard( { domain }: { domain: ResponseDomain } ) {
+export default function DomainForwardingCard( {
+	domain,
+	areAllWpcomNameServers,
+}: {
+	domain: ResponseDomain;
+	areAllWpcomNameServers: boolean;
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
@@ -138,7 +142,7 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 		// By default, the interface already opens with domain forwarding addition
 		if ( data?.length === 0 ) {
 			setEditingId( -1 );
-			setSourceType( isPrimaryDomain ? 'subdomain' : 'domain' );
+			setSourceType( isPrimaryDomain || ! pointsToWpcom ? 'subdomain' : 'domain' );
 		}
 	}, [ isLoading, data ] );
 
@@ -274,39 +278,25 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	};
 
 	const renderNotice = () => {
-		if ( pointsToWpcom ) {
+		// We don't want to show the notice if we are already showing the notice for the nameservers
+		if ( ! areAllWpcomNameServers || pointsToWpcom ) {
 			return null;
 		}
 
-		const newNoticeText =
-			'To enable domain forwarding please "restore default A records." {{a}}Learn more{{/a}}.';
-
-		let noticeText;
-		if ( hasTranslation( newNoticeText ) || isEnglishLocale ) {
-			noticeText = translate(
-				'To enable domain forwarding please "restore default A records." {{a}}Learn more{{/a}}.',
-				{
-					components: {
-						a: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/domains/custom-dns/#default-records'
-								) }
-							/>
-						),
-					},
-				}
-			);
-		} else {
-			noticeText = translate(
-				'Connect your domain to WordPress.com to enable domain forwarding. {{a}}Learn more{{/a}}.',
-				{
-					components: {
-						a: <a href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
-					},
-				}
-			);
-		}
+		const noticeText = translate(
+			'You can only forward subdomains. To forward a domain please "restore default A records." {{a}}Learn more{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/domains/custom-dns/#default-records'
+							) }
+						/>
+					),
+				},
+			}
+		);
 
 		return (
 			<div className="domain-forwarding-card-notice">
@@ -386,7 +376,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 
 	const FormViewRow = ( { child: child }: { child: DomainForwardingObject } ) => (
 		<FormFieldset
-			disabled={ ! pointsToWpcom }
 			className="domain-forwarding-card__fields"
 			key={ `view-${ child.domain_redirect_id }` }
 		>
@@ -434,7 +423,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 	const FormRowEdditable = ( { child }: { child: DomainForwardingObject } ) => (
 		<>
 			<FormFieldset
-				disabled={ ! pointsToWpcom }
 				className="domain-forwarding-card__fields"
 				key={ `edit-${ child.domain_redirect_id }` }
 			>
@@ -442,7 +430,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 				<div
 					className={ classNames( 'forwards-from', {
 						'has-subdomain-selector':
-							sourceType === 'domain' || ! checkIfIsThereMainDomainForwarding(),
+							sourceType === 'domain' ||
+							( ! checkIfIsThereMainDomainForwarding() && pointsToWpcom ),
 					} ) }
 				>
 					<FormTextInputWithAffixes
@@ -455,7 +444,8 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						maxLength={ 1000 }
 						prefix={
 							( ( child.subdomain === '' && child.domain_redirect_id !== 0 ) ||
-								! checkIfIsThereMainDomainForwarding() ) && (
+								! checkIfIsThereMainDomainForwarding() ) &&
+							pointsToWpcom && (
 								<FormSelect
 									name="redirect_type"
 									value={ sourceType }
@@ -507,7 +497,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					<p className="accordion__title">{ translate( 'Redirect type' ) }</p>
 					<p className="accordion__subtitle">{ translate( 'Select the HTTP redirect type' ) }</p>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="redirect_type"
 							value="0"
@@ -522,7 +511,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						{ translate( 'Enables quick propagation of changes to your forwarding address.' ) }
 					</FormSettingExplanation>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="redirect_type"
 							value="0"
@@ -546,7 +534,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						) }
 					</p>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="path_forwarding"
 							value="0"
@@ -562,7 +549,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 						{ ` -> ${ targetUrl.replace( /^\/|\/$/g, '' ) }` }
 					</FormSettingExplanation>
 					<FormLabel>
-						{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 						<FormRadio
 							name="path_forwarding"
 							value="0"
@@ -591,7 +577,6 @@ export default function DomainForwardingCard( { domain }: { domain: ResponseDoma
 					<FormButton
 						onClick={ handleSubmit }
 						disabled={
-							! pointsToWpcom ||
 							! isValidUrl ||
 							isLoading ||
 							( forwarding && ! redirectHasChanged( child ) ) ||

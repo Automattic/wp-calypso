@@ -202,3 +202,67 @@ button {
 		}
 	}
 }
+
+.card.license-preview__card.license-preview__card--child-license {
+	padding: 16px 32px;
+	background-color: #fafafa;
+}
+
+.button.is-borderless.license-bundle-dropdown__button {
+	text-overflow: clip;
+	padding: 4px;
+	max-height: 24px;
+	&:hover,
+	&:focus {
+		background: var(--color-sidebar-menu-hover-background);
+		color: var(--color-text);
+		fill: var(--color-text);
+	}
+}
+
+.license-bundle-dropdown__popover-menu {
+	font-size: rem(14px);
+	font-weight: 400;
+	border-radius: 2px;
+
+	.popover__arrow {
+		display: none;
+	}
+
+	.popover__menu {
+		padding: 8px 4px;
+	}
+
+	.popover__menu-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		background: var(--color-sidebar-menu-hover-background);
+		color: var(--color-text);
+		fill: var(--color-text);
+
+		.gridicon {
+			fill: var(--color-text);
+		}
+	}
+
+	.popover__menu-item .gridicon {
+		margin: 0;
+	}
+}
+
+.popover__menu-item.license-bundle-dropdown__popover-menu-item-revoke {
+	&,
+	&:hover,
+	&:focus {
+		color: var(--studio-red-50);
+
+		.gridicon {
+			fill: var(--studio-red-50);
+		}
+	}
+}

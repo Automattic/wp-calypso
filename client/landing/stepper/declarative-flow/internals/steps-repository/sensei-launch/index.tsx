@@ -1,3 +1,4 @@
+import { setThemeOnSite } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,11 +12,11 @@ import {
 	getSelectedPlugins,
 	saveSelectedPurposesAsSenseiSiteSettings,
 } from '../sensei-purpose/purposes';
+import { setAdminInterfaceStyle, wait } from './launch-completion-tasks';
 import { useAtomicSiteChecklist } from './use-atomic-site-checklist';
 import { useAtomicSitePlugins } from './use-atomic-site-plugins';
-import { useSubSteps, wait } from './use-sub-steps';
+import { useSubSteps } from './use-sub-steps';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
@@ -60,6 +61,16 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 				await wait( 5000 );
 				return isSenseiIncluded();
 			},
+			async function switchToDefaultAdminPanelView() {
+				await setAdminInterfaceStyle( siteId, 'wp-admin' );
+				return true;
+			},
+			async function refreshThemeOnAtomic() {
+				await wait( 1200 );
+				await setThemeOnSite( siteId.toString(), 'pub/twentytwentytwo' );
+				await setThemeOnSite( siteId.toString(), 'pub/course' );
+				return true;
+			},
 			async function done() {
 				setTimeout( () => submit?.(), 1000 );
 				return true;
@@ -87,7 +98,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	return (
 		<>
 			<DocumentHead title={ progress.title } />
-			<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
+			<SenseiStepContainer stepName="senseiLaunch" recordTracksEvent={ recordTracksEvent }>
 				<SenseiStepProgress progress={ progress } />
 			</SenseiStepContainer>
 		</>

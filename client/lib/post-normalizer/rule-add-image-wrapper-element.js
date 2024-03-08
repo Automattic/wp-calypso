@@ -80,6 +80,11 @@ export default function addImageWrapperElement( post, dom ) {
 
 	const images = dom.querySelectorAll( 'img[src]' );
 	forEach( images, ( image ) => {
+		if ( image.classList.contains( 'wp-smiley' ) ) {
+			// filter images that have the class wp-smiley
+			// these are emoji images and should not be wrapped
+			return;
+		}
 		// Add container wrapper for img elements
 		const parent = image.parentNode;
 		const imageWrapper = document.createElement( 'div' );

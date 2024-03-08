@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: jest.fn(),
+	...jest.requireActual( 'i18n-calypso' ),
+	useRtl: jest.fn(),
+	localize: ( x ) => x,
+	translate: ( x ) => x,
+	useTranslate: jest.fn( () => ( text ) => text ),
 } ) );
 jest.mock( '../bulk-actions-header', () => jest.fn() );
 jest.mock( '../plugins-list', () => jest.fn() );

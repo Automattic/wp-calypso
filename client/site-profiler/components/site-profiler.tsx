@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useDomainAnalyzerQuery } from 'calypso/data/site-profiler/use-domain-analyzer-query';

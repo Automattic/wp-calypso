@@ -1,0 +1,107 @@
+// Rules in this file inspired by:
+// client/components/jetpack/profile-dropdown/style.scss
+
+.jetpack-cloud-sidebar__profile-dropdown {
+	position: relative;
+}
+
+.jetpack-cloud-sidebar__profile-dropdown-button {
+	position: relative;
+	z-index: 1;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	height: 100%;
+
+	cursor: pointer;
+}
+
+html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
+	box-shadow: inset 0 0 0 2px var(--color-primary-light);
+}
+
+.jetpack-cloud-sidebar__profile-dropdown-menu {
+	// Required for older browsers
+	&[hidden] {
+		display: none;
+	}
+
+	position: absolute;
+	// 4px below the bottom of the icon
+	top: calc(100% + 4px);
+
+	// Float the dropdown to the left on small screens,
+	// and to the right on larger screens
+	right: 0;
+	@include breakpoint-deprecated( ">660px" ) {
+		right: initial;
+	}
+
+	// The menu should render "on top" of the profile picture & site switcher
+	z-index: 20;
+
+	width: 220px;
+	margin: 0;
+	padding: 8px;
+
+	background: var(--color-surface);
+	border: 1px solid var(--studio-gray-0);
+	border-radius: 2px;
+	box-shadow:
+		0 4px 6px rgba(var(--studio-gray-100-rgb), 0.1),
+		0 1px 2px rgba(var(--studio-gray-100-rgb), 0.1);
+	list-style-type: none;
+
+	font-size: $font-body-small;
+}
+
+.jetpack-cloud-sidebar__profile-dropdown-menu-item {
+	padding: 1px 0;
+	border-radius: 4px;
+
+	&:hover,
+	&:focus {
+		background: var(--color-sidebar-menu-hover-background);
+	}
+
+	a,
+	a:visited,
+	a:hover,
+	a:focus {
+		display: block;
+		width: 100%;
+		height: 100%;
+
+		color: var(--color-text);
+	}
+
+	.button {
+		width: 100%;
+		height: 100%;
+		text-align: start;
+	}
+
+	a,
+	.button {
+		&.is-borderless {
+			display: block;
+			padding-inline: 8px;
+		}
+	}
+}
+
+a.jetpack-cloud-sidebar__external-link {
+	display: inline-flex;
+
+	&:hover,
+	&:focus {
+		display: inline-flex;
+	}
+
+	svg {
+		position: absolute;
+		right: 16px;
+	}
+}

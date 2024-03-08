@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -60,7 +60,6 @@ class MediaLibraryUploadButton extends Component {
 	 * of type `file`. This is a non-standard use of the `accept` attribute,
 	 * but is supported in Internet Explorer and Chrome browsers. Further input
 	 * validation will occur when attempting to upload the file.
-	 *
 	 * @returns {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {

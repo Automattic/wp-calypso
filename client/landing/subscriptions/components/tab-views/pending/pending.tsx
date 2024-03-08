@@ -1,9 +1,12 @@
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useTranslate } from 'i18n-calypso';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { PendingPostList, PendingSiteList } from '../../pending-list';
 import TabView from '../tab-view';
 
 const Pending = () => {
+	const translate = useTranslate();
+
 	const {
 		data: { pendingSites, totalCount: totalPendingSitesCount = 0 },
 		isLoading: isLoadingPendingSites,
@@ -16,12 +19,11 @@ const Pending = () => {
 		error: errorPendingPosts,
 	} = SubscriptionManager.usePendingPostSubscriptionsQuery();
 
-	// todo: translate when we have agreed on the error message
 	let errorMessage;
 	if ( errorPendingSites ) {
-		errorMessage = 'An error occurred while fetching your site subscriptions.';
+		errorMessage = translate( 'An error occurred while fetching your site subscriptions.' );
 	} else if ( errorPendingPosts ) {
-		errorMessage = 'An error occurred while fetching your post subscriptions.';
+		errorMessage = translate( 'An error occurred while fetching your post subscriptions.' );
 	}
 
 	if (
@@ -30,8 +32,11 @@ const Pending = () => {
 		! totalPendingSitesCount &&
 		! totalPendingPostsCount
 	) {
-		// todo: translate when we have agreed on the empty view message
-		return <Notice type={ NoticeType.Warning }>No pending subscriptions were found.</Notice>;
+		return (
+			<Notice type={ NoticeType.Success }>
+				{ translate( 'All set! No pending subscriptions.' ) }
+			</Notice>
+		);
 	}
 
 	return (

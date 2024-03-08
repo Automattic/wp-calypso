@@ -4,7 +4,6 @@ import { ReactNode, ReactElement, isValidElement } from 'react';
  * Return the string equivalent of a React node. This is helpful when formatted text is used as
  * both tag and attribute content. In the latter case, HTML must be stripped. In the example
  * below, `translate` returns a React node.
- *
  * @example
  * // returns Backup Daily
  * reactNodeToString( translate( 'Backup {{em}}Daily{{/em}}', { components: { em: <em/> } } ) )

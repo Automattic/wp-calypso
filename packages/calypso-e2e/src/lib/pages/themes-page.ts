@@ -1,4 +1,5 @@
 import { ElementHandle, Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Curent theme
@@ -16,10 +17,6 @@ const selectors = {
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
 	searchInput: '.themes__content input.search__input',
-
-	// Theme card
-	popoverButton: '.theme__more-button',
-	popoverMenuItem: '.popover__menu-item',
 };
 
 /**
@@ -95,22 +92,6 @@ export class ThemesPage {
 	}
 
 	/**
-	 * Given a target theme and action, click on the popover item of the action on the theme.
-	 *
-	 * @param {ElementHandle} selectedTheme Reference to the target theme.
-	 * @param {string} action Action to be called from the popover.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async clickPopoverItem(
-		selectedTheme: ElementHandle,
-		action: 'Demo site' | 'Activate' | 'Info' | 'Support'
-	): Promise< void > {
-		const popoverButton = await selectedTheme.waitForSelector( selectors.popoverButton );
-		await popoverButton.click();
-		await this.page.click( `${ selectors.popoverMenuItem }:text("${ action }")` );
-	}
-
-	/**
 	 * Given a target theme, hover over the card in the theme gallery and perform a click.
 	 *
 	 * @param {ElementHandle} selectedTheme Reference to the target theme.
@@ -133,5 +114,25 @@ export class ThemesPage {
 	 */
 	async validateCurrentTheme( expectedTheme: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.currentTheme( expectedTheme ) );
+	}
+
+	/**
+	 * Visit the Theme showcase page.
+	 *
+	 * @param siteSlug
+	 */
+	async visitShowcase( siteSlug: string | null = null ) {
+		const targetUrl = `themes/${ siteSlug ?? '' }`;
+
+		// We are getting a pending status for https://wordpress.com/cspreport intermittently
+		// which causes the login to hang on networkidle when running the tests locally.
+		// This fulfill's the route request with status 200.
+		// See https://github.com/Automattic/wp-calypso/issues/69294
+		await this.page.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
+		await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 }

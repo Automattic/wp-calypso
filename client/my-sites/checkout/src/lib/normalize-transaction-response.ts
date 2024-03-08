@@ -1,29 +1,51 @@
-import { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import {
+	WPCOMTransactionEndpointResponse,
+	WPCOMTransactionEndpointResponseFailed,
+} from '@automattic/wpcom-checkout';
 
-export interface FailedResponse {
-	success: false;
-}
-
-const emptyResponse: FailedResponse = {
+const emptyResponse: WPCOMTransactionEndpointResponseFailed = {
 	success: false,
+	purchases: {},
+	failed_purchases: {},
+	receipt_id: 0,
+	order_id: '',
+	is_gift_purchase: false,
+	display_price: '',
+	price_integer: 0,
+	price_float: 0,
+	currency: 'USD',
 };
 
 export default function normalizeTransactionResponse(
 	response: unknown
-): WPCOMTransactionEndpointResponse | FailedResponse {
+): WPCOMTransactionEndpointResponse {
 	if ( ! response ) {
 		return emptyResponse;
 	}
-	const transactionResponse = response as WPCOMTransactionEndpointResponse;
-	if (
-		( 'message' in transactionResponse && transactionResponse.message ) ||
-		transactionResponse.order_id ||
-		( 'receipt_id' in transactionResponse && transactionResponse.receipt_id ) ||
-		( 'purchases' in transactionResponse && transactionResponse.purchases ) ||
-		( 'failed_purchases' in transactionResponse && transactionResponse.failed_purchases ) ||
-		transactionResponse.redirect_url
-	) {
-		return transactionResponse;
+	if ( isTransactionResponseValid( response ) ) {
+		return response;
 	}
 	return emptyResponse;
+}
+
+function isTransactionResponseValid(
+	response: unknown
+): response is WPCOMTransactionEndpointResponse {
+	const transactionResponse = response as WPCOMTransactionEndpointResponse;
+	if ( 'redirect_url' in transactionResponse ) {
+		return true;
+	}
+	if ( 'order_id' in transactionResponse ) {
+		return true;
+	}
+	if ( 'message' in transactionResponse ) {
+		return true;
+	}
+	if ( 'receipt_id' in transactionResponse && 'success' in transactionResponse ) {
+		return true;
+	}
+	if ( 'failed_purchases' in transactionResponse && 'success' in transactionResponse ) {
+		return true;
+	}
+	return false;
 }

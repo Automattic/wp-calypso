@@ -22,6 +22,7 @@ import { useMemo } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { convertErrorToString } from '../lib/analytics';
+import { useCheckoutV2 } from './use-checkout-v2';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
@@ -89,7 +90,7 @@ export function useGetProductVariants(
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
-
+	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 	const variants = product?.product_variants ?? fallbackVariants;
 	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );
@@ -102,7 +103,7 @@ export function useGetProductVariants(
 					const term = getBillingTermForMonths( variant.bill_period_in_months );
 					const introductoryTerms = variant.introductory_offer_terms;
 					return {
-						variantLabel: getTermText( term, translate ),
+						variantLabel: getTermText( term, translate, shouldUseCheckoutV2 ),
 						productSlug: variant.product_slug,
 						productId: variant.product_id,
 						priceInteger: variant.price_integer,
@@ -136,7 +137,7 @@ export function useGetProductVariants(
 			.filter( isValueTruthy );
 
 		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
-	}, [ translate, variants, filterCallbackMemoized ] );
+	}, [ variants, translate, shouldUseCheckoutV2, filterCallbackMemoized ] );
 
 	return filteredVariants;
 }
@@ -151,40 +152,66 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 	return 0;
 }
 
-function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
+function getTermText(
+	term: string,
+	translate: ReturnType< typeof useTranslate >,
+	shouldUseCheckoutV2: boolean
+): string {
 	switch ( term ) {
 		case TERM_DECENNIALLY:
-			return String( translate( 'Ten years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Ten years' ) : translate( 'Billed every ten years' )
+			);
 
 		case TERM_NOVENNIALLY:
-			return String( translate( 'Nine years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Nine years' ) : translate( 'Billed every nine years' )
+			);
 
 		case TERM_OCTENNIALLY:
-			return String( translate( 'Eight years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Eight years' ) : translate( 'Billed every eight years' )
+			);
 
 		case TERM_SEPTENNIALLY:
-			return String( translate( 'Seven years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Seven years' ) : translate( 'Billed every seven years' )
+			);
 
 		case TERM_SEXENNIALLY:
-			return String( translate( 'Six years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Six years' ) : translate( 'Billed every six years' )
+			);
 
 		case TERM_QUINQUENNIALLY:
-			return String( translate( 'Five years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Five years' ) : translate( 'Billed every five years' )
+			);
 
 		case TERM_QUADRENNIALLY:
-			return String( translate( 'Four years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Four years' ) : translate( 'Billed every four years' )
+			);
 
 		case TERM_TRIENNIALLY:
-			return String( translate( 'Three years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Three years' ) : translate( 'Billed every three years' )
+			);
 
 		case TERM_BIENNIALLY:
-			return String( translate( 'Two years' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'Two years' ) : translate( 'Billed every two years' )
+			);
 
 		case TERM_ANNUALLY:
-			return String( translate( 'One year' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'One year' ) : translate( 'Billed every year' )
+			);
 
 		case TERM_MONTHLY:
-			return String( translate( 'One month' ) );
+			return String(
+				! shouldUseCheckoutV2 ? translate( 'One month' ) : translate( 'Billed every month' )
+			);
 
 		default:
 			return '';

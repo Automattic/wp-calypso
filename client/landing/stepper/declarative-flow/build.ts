@@ -1,12 +1,9 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { useFlowProgress, BUILD_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { BUILD_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
-import wpcom from 'calypso/lib/wp';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
 import Processing from './internals/steps-repository/processing-step';
@@ -15,8 +12,9 @@ import { Flow, ProvidedDependencies } from './internals/types';
 const build: Flow = {
 	name: BUILD_FLOW,
 	get title() {
-		return translate( 'WordPress' );
+		return 'WordPress';
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
@@ -26,23 +24,10 @@ const build: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
@@ -69,10 +54,12 @@ const build: Flow = {
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'build',
+						siteId,
+						siteSlug,
+					} );
+					return;
 				default:
 					return navigate( 'freeSetup' );
 			}

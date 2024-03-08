@@ -1,18 +1,29 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
-import { successNotice } from 'calypso/state/notices/actions';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
-import { useSubscribersQuery } from '../../queries';
+import {
+	useSubscriberCountQuery,
+	useSubscriberDetailsQuery,
+	useSubscribersQuery,
+} from '../../queries';
+import { migrateSubscribers } from './migrate-subscribers-query';
 
 type SubscribersPageProviderProps = {
 	siteId: number | null;
 	filterOption: SubscribersFilterBy;
 	pageNumber: number;
+	timestamp: number;
 	searchTerm: string;
 	sortTerm: SubscribersSortBy;
 	filterOptionChanged: ( option: SubscribersFilterBy ) => void;
@@ -37,10 +48,14 @@ type SubscribersPageContextProps = {
 	filterOption: SubscribersFilterBy;
 	setFilterOption: ( option: SubscribersFilterBy ) => void;
 	showAddSubscribersModal: boolean;
+	showMigrateSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
 	addSubscribersCallback: () => void;
+	migrateSubscribersCallback: ( sourceSiteId: number, targetSiteId: number ) => void;
+	closeAllModals: typeof closeAllModals;
 	siteId: number | null;
 	isLoading: boolean;
+	pages?: number;
 };
 
 const SubscribersPageContext = createContext< SubscribersPageContextProps | undefined >(
@@ -49,12 +64,17 @@ const SubscribersPageContext = createContext< SubscribersPageContextProps | unde
 
 const DEFAULT_PER_PAGE = 10;
 
+function closeAllModals() {
+	window.location.hash = '';
+}
+
 export const SubscribersPageProvider = ( {
 	children,
 	siteId,
 	filterOption = SubscribersFilterBy.All,
 	pageNumber,
 	searchTerm,
+	timestamp,
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	filterOptionChanged,
 	pageChanged,
@@ -63,8 +83,26 @@ export const SubscribersPageProvider = ( {
 }: SubscribersPageProviderProps ) => {
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
+	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
 	const { hasManySubscribers } = useManySubsSite( siteId );
+
+	useEffect( () => {
+		const handleHashChange = () => {
+			// Open "add subscribers" via URL hash
+			setShowMigrateSubscribersModal( window.location.hash === '#migrate-subscribers' );
+		};
+
+		// Listen to the hashchange event
+		window.addEventListener( 'hashchange', handleHashChange );
+
+		// Make it work on load as well
+		handleHashChange();
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
+	}, [] );
 
 	const subscriberType =
 		filterOption === SubscribersFilterBy.All && hasManySubscribers
@@ -80,8 +118,19 @@ export const SubscribersPageProvider = ( {
 		siteId,
 		sortTerm,
 		filterOption: subscriberType,
+		timestamp,
 	} );
-	const grandTotal = subscribersQueryResult.data?.total || 0;
+	const pages = subscribersQueryResult.data?.pages || 0;
+
+	// Current user is not included in the subscribers list, so we need to remove from the total
+	const { data: subscribersTotals } = useSubscriberCountQuery( siteId );
+	const userId = useSelector( getCurrentUserId ) ?? undefined;
+	const { data: isCurrentUserSubscribed } = useSubscriberDetailsQuery( siteId, undefined, userId );
+
+	const grandTotal =
+		isCurrentUserSubscribed && subscribersTotals?.email_subscribers
+			? subscribersTotals.email_subscribers - 1
+			: subscribersTotals?.email_subscribers ?? 0;
 
 	const { pageChangeCallback } = usePagination(
 		pageNumber,
@@ -89,8 +138,21 @@ export const SubscribersPageProvider = ( {
 		subscribersQueryResult.isFetching
 	);
 
+	const queryClient = useQueryClient();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const completeImportSubscribersTask = async () => {
+		if ( selectedSiteSlug ) {
+			await updateLaunchpadSettings( selectedSiteSlug, {
+				checklist_statuses: { import_subscribers: true },
+			} );
+		}
+		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
+	};
+
 	const addSubscribersCallback = () => {
 		setShowAddSubscribersModal( false );
+		completeImportSubscribersTask();
+
 		dispatch(
 			successNotice(
 				translate(
@@ -101,6 +163,38 @@ export const SubscribersPageProvider = ( {
 				}
 			)
 		);
+	};
+
+	const migrateSubscribersCallback = async ( sourceSiteId: number, targetSiteId: number ) => {
+		closeAllModals();
+		try {
+			const response = await migrateSubscribers( sourceSiteId, targetSiteId );
+			if ( response.success ) {
+				completeImportSubscribersTask();
+				dispatch(
+					successNotice(
+						translate(
+							'Your follower migration has been queued. You will receive an email to indicate when it starts and finishes.'
+						),
+						{
+							duration: 8000,
+						}
+					)
+				);
+			} else {
+				dispatch(
+					errorNotice( response.message, {
+						duration: 5000,
+					} )
+				);
+			}
+		} catch {
+			dispatch(
+				errorNotice( translate( 'An unknown error has occurred. Please try again in a second.' ), {
+					duration: 5000,
+				} )
+			);
+		}
 	};
 
 	const handleSearch = useCallback( ( term: string ) => {
@@ -138,10 +232,14 @@ export const SubscribersPageProvider = ( {
 				filterOption,
 				setFilterOption: filterOptionChanged,
 				showAddSubscribersModal,
+				showMigrateSubscribersModal,
 				setShowAddSubscribersModal,
+				closeAllModals,
 				addSubscribersCallback,
+				migrateSubscribersCallback,
 				siteId,
 				isLoading: subscribersQueryResult.isLoading,
+				pages,
 			} }
 		>
 			{ children }

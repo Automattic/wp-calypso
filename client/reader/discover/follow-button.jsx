@@ -21,12 +21,12 @@ class DiscoverFollowButton extends Component {
 			return null;
 		}
 
-		const followLabel = this.props.translate( 'Follow %(siteName)s', {
+		const followLabel = this.props.translate( 'Subscribe to %(siteName)s', {
 			args: {
 				siteName: this.props.siteName,
 			},
 		} );
-		const followingLabel = this.props.translate( 'Following %(siteName)s', {
+		const followingLabel = this.props.translate( 'Subscribed to %(siteName)s', {
 			args: {
 				siteName: this.props.siteName,
 			},

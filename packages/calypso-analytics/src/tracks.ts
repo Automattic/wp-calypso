@@ -7,6 +7,7 @@ import { getPageViewParams } from './page-view-params';
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
+import getTrackingPrefs from './utils/get-tracking-prefs';
 
 declare global {
 	interface Window {
@@ -41,7 +42,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?67' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -125,7 +126,6 @@ export const analyticsEvents: EventEmitter = new EventEmitter();
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
- *
  * @returns The Tracks anonymous user id
  */
 export function getTracksAnonymousUserId(): string {
@@ -174,8 +174,28 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
+/**
+ * For tracking users between our products, generally passing the id via a request parameter.
+ *
+ * Use 'anon' for userIdType for anonymous users.
+ */
+export function signalUserFromAnotherProduct( userId: string, userIdType: string ): any {
+	debug( 'Tracks signalUserFromAnotherProduct.', userId, userIdType );
+	pushEventToTracksQueue( [ 'signalAliasUserGeneral', userId, userIdType ] );
+}
+
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
+
+	const trackingPrefs = getTrackingPrefs();
+	if ( ! trackingPrefs?.buckets.analytics ) {
+		debug(
+			'Analytics has been disabled - Ignoring event "%s" with actual props %o',
+			eventName,
+			eventProperties
+		);
+		return;
+	}
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		if (

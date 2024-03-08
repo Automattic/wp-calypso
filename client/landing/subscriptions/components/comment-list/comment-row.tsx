@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { memo, useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import TimeSince from 'calypso/components/time-since';
+import { useRecordCommentNotificationsToggle } from 'calypso/landing/subscriptions/tracks';
 import { CommentSettings } from '../settings';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
@@ -26,11 +27,28 @@ const CommentRow = ( {
 	style,
 	is_wpforteams_site,
 	is_paid_subscription,
+	notification = { send_comments: false },
 }: CommentRowProps ) => {
 	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
-	const { mutate: unsubscribe, isLoading: unsubscribing } =
+
+	const { mutate: notifyMeOfNewComments, isPending: notifyingMeOfNewComments } =
+		SubscriptionManager.usePostNotifyMeOfNewCommentsMutation();
+
+	const { mutate: unsubscribe, isPending: unsubscribing } =
 		SubscriptionManager.usePostUnsubscribeMutation();
+
+	const recordCommentNotificationsToggle = useRecordCommentNotificationsToggle();
+
+	const handleNotifyMeOfNewCommentsChange = ( value: boolean ) => {
+		notifyMeOfNewComments( {
+			subscriptionId: id,
+			sendComments: value,
+		} );
+
+		recordCommentNotificationsToggle( value, { blog_id, post_id } );
+	};
+
 	return (
 		<div style={ style } ref={ forwardedRef } className="row-wrapper">
 			<div className="row" role="row">
@@ -69,6 +87,9 @@ const CommentRow = ( {
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings
+						notifyMeOfNewComments={ notification?.send_comments ?? false }
+						onNotifyMeOfNewCommentsChange={ handleNotifyMeOfNewCommentsChange }
+						updatingNotifyMeOfNewComments={ notifyingMeOfNewComments }
 						onUnsubscribe={ () => unsubscribe( { post_id, blog_id, id } ) }
 						unsubscribing={ unsubscribing }
 					/>

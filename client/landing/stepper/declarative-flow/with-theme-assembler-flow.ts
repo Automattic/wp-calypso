@@ -1,6 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
-import { DEFAULT_ASSEMBLER_DESIGN } from '@automattic/design-picker';
-import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { getAssemblerDesign } from '@automattic/design-picker';
+import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,9 +9,7 @@ import { getTheme } from 'calypso/state/themes/selectors';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import ErrorStep from './internals/steps-repository/error-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import ProcessingStep from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -20,13 +18,14 @@ const SiteIntent = Onboard.SiteIntent;
 
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
+	isSignupFlow: false,
 	useSideEffect() {
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
 		);
 		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
-		const selectedTheme = DEFAULT_ASSEMBLER_DESIGN.slug;
+		const selectedTheme = getAssemblerDesign().slug;
 		const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedTheme ) );
 
 		// We have to query theme for the Jetpack site.
@@ -55,15 +54,7 @@ const withThemeAssemblerFlow: Flow = {
 	},
 
 	useSteps() {
-		return [
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
-			{
-				slug: 'celebration-step',
-				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
-			},
-		];
+		return [ STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR, STEPS.CELEBRATION ];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -72,9 +63,7 @@ const withThemeAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
-		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const siteSlug = useSiteSlug();
 
 		const exitFlow = ( to: string ) => {
@@ -105,7 +94,7 @@ const withThemeAssemblerFlow: Flow = {
 					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 				}
 
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return navigate( 'processing' );
 				}
 
@@ -117,7 +106,7 @@ const withThemeAssemblerFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStep ) {
-				case 'patternAssembler': {
+				case 'pattern-assembler': {
 					return window.location.assign( `/themes/${ siteSlug }` );
 				}
 			}

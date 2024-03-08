@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -6,8 +7,25 @@
 	flex-direction: column;
 
 	.header {
+		$sale-banner-height: 3.5rem;
+
 		margin-bottom: 36px;
 		margin-top: 8.5rem;
+
+		&.has-sale-banner {
+			$mobile-offset: 6rem;
+
+			margin-top: 8.5rem + $sale-banner-height;
+
+			// tablets
+			@media ( max-width: 900px ) {
+				margin-top: 8.5rem + $sale-banner-height + math.div($mobile-offset, 3);
+			}
+			// mobiles
+			@media ( max-width: 560px ) {
+				margin-top: 8.5rem + $sale-banner-height + $mobile-offset;
+			}
+		}
 	}
 
 	.header .formatted-header {
@@ -40,6 +58,11 @@
 }
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing
+.jetpack-product-store
+.header
+.header__main-title
+.formatted-header__title,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing
 .jetpack-product-store
 .header
 .header__main-title
@@ -148,6 +171,9 @@
 			text-decoration: none;
 
 			.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing & {
+				background: var(--studio-gray-5);
+			}
+			.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing & {
 				background: var(--studio-gray-5);
 			}
 		}

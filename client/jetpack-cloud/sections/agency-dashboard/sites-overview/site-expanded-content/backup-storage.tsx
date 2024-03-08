@@ -8,6 +8,7 @@ import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateOffsetForSite from 'calypso/lib/jetpack/hooks/use-date-offset-for-site';
 import { urlToSlug } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ExpandedCard from './expanded-card';
 import useDashboardAddRemoveLicense from './hooks/use-dashboard-add-remove-license';
@@ -67,7 +68,8 @@ const BackupStorageContent = ( {
 
 	// Show plugin name only if it is a activity from a plugin
 	const pluginName =
-		backup?.activityName.startsWith( 'plugin__' ) && backup.activityDescription[ 0 ]?.children[ 0 ];
+		backup?.activityName.startsWith( 'plugin__' ) &&
+		backup.activityDescription?.[ 0 ]?.children?.[ 0 ];
 
 	const showLoader = isLoading || ! backup;
 	const extractedBackupTitle = useExtractedBackupTitle( backup );
@@ -119,6 +121,9 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 	} = site;
 
 	const translate = useTranslate();
+
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const hasBackupError = BACKUP_ERROR_STATUSES.includes( backupStatus );
 
@@ -179,6 +184,11 @@ export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 				emptyContent={ translate( 'Backup not supported on multisite' ) }
 			/>
 		);
+	}
+
+	// If the user cannot issue licenses, and doesn't already have one, we have nothing to show
+	if ( ! isLicenseSelected && ! partnerCanIssueLicense ) {
+		return null;
 	}
 
 	return (

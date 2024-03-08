@@ -29,11 +29,6 @@ export type IsCompleteCallback = () => boolean | Promise< boolean >;
 
 export type StepCompleteCallback = () => Promise< boolean >;
 
-export interface OrderSummaryData {
-	className: string;
-	summaryContent: React.ReactNode;
-}
-
 export interface PaymentMethodSubmitButtonProps {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
@@ -47,44 +42,29 @@ export interface PaymentMethod {
 	inactiveContent?: React.ReactNode;
 	submitButton: ReactElement< PaymentMethodSubmitButtonProps >;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
+	hasRequiredFields?: boolean;
+	isInitiallyDisabled?: boolean;
 }
 
 export type ExternalPaymentMethod = Partial< PaymentMethod >;
 
-export interface LineItem {
-	id: string;
-	type: string;
-	label: string;
-	sublabel?: string;
-	amount: LineItemAmount;
+export interface FormAndTransactionStatus {
+	formStatus: FormStatus;
+	transactionStatus: TransactionStatusState;
 }
-
-export type ExternalLineItem = Partial< LineItem >;
-
-export interface TotalValidatedLineItem extends ExternalLineItem {
-	label: LineItem[ 'label' ];
-	amount: LineItem[ 'amount' ];
-}
-
-export interface LineItemAmount {
-	currency: string;
-	value: number;
-	displayValue: string;
-}
-
-export type ExternalLineItemAmount = Partial< LineItemAmount >;
 
 export enum FormStatus {
 	LOADING = 'loading',
 	READY = 'ready',
 	SUBMITTING = 'submitting',
 	VALIDATING = 'validating',
-	COMPLETE = 'complete',
 }
 
 export interface FormStatusState {
 	formStatus: FormStatus;
 }
+
+export type FormAndTransactionStatusAction = FormStatusAction | TransactionStatusAction;
 
 export type FormStatusAction = ReactStandardAction< 'FORM_STATUS_CHANGE', FormStatus >;
 
@@ -93,10 +73,11 @@ export interface FormStatusController extends FormStatusState {
 	setFormLoading: () => void;
 	setFormValidating: () => void;
 	setFormSubmitting: () => void;
-	setFormComplete: () => void;
 }
 
 export type FormStatusSetter = ( newStatus: FormStatus ) => void;
+
+export type FormAndTransactionStatusManager = FormStatusManager & TransactionStatusManager;
 
 export type FormStatusManager = {
 	formStatus: FormStatus;
@@ -126,8 +107,6 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 
 export interface CheckoutProviderProps {
 	theme?: ThemeType;
-	total?: LineItem;
-	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
 	onPaymentComplete?: PaymentEventCallback;
 	onPaymentRedirect?: PaymentEventCallback;
@@ -168,7 +147,6 @@ export type StepChangedEventArguments = {
 };
 
 export type PaymentEventCallbackArguments = {
-	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 };
 
@@ -186,16 +164,11 @@ export type PaymentProcessorRedirect = {
 	type: PaymentProcessorResponseType.REDIRECT;
 	payload: string | undefined;
 };
-export type PaymentProcessorManual = {
-	type: PaymentProcessorResponseType.MANUAL;
-	payload: unknown;
-};
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorError
 	| PaymentProcessorSuccess
-	| PaymentProcessorRedirect
-	| PaymentProcessorManual;
+	| PaymentProcessorRedirect;
 
 export type PaymentProcessorSubmitData = unknown;
 
@@ -206,7 +179,6 @@ export type PaymentProcessorFunction = (
 export enum PaymentProcessorResponseType {
 	SUCCESS = 'SUCCESS',
 	REDIRECT = 'REDIRECT',
-	MANUAL = 'MANUAL',
 	ERROR = 'ERROR',
 }
 
@@ -265,7 +237,10 @@ export type TransactionStatusPayload =
 	| TransactionStatusPayloadRedirecting
 	| TransactionStatusPayloadError;
 
-export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
+export type TransactionStatusAction = ReactStandardAction<
+	'TRANSACTION_STATUS_CHANGE',
+	TransactionStatusPayload
+>;
 
 export interface TransactionStatusManager extends TransactionStatusState {
 	resetTransaction: ResetTransaction;
@@ -288,17 +263,6 @@ export type SetTransactionComplete = ( response: PaymentProcessorResponseData ) 
 export type SetTransactionError = ( message: string ) => void;
 
 export type ResetTransaction = () => void;
-
-export interface LineItemsState {
-	items: LineItem[];
-	total: LineItem;
-}
-
-export interface LineItemsProviderProps {
-	items: LineItem[];
-	total: LineItem;
-	children?: React.ReactNode;
-}
 
 export type StepIdMap = Record< string, number >;
 

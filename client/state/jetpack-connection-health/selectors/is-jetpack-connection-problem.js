@@ -3,24 +3,22 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import 'calypso/state/jetpack-connection-health/init';
+import getJetpackConnectionHealth from './get-jetpack-connection-health';
 
 /**
  * Returns true if the current site has possible Jetpack connection problem
  * @param  {Object}  state         Global state tree
  * @param  {?number}  siteId        Site ID
- * @returns {?boolean}             Whether the current site can have connection problem
+ * @returns {boolean}             Whether the current site can have connection problem
  */
 export default function isJetpackConnectionProblem( state, siteId ) {
-	if ( ! siteId ) {
-		return null;
-	}
-	const connection_data = state.jetpackConnectionHealth?.[ siteId ];
+	const connectionHealth = getJetpackConnectionHealth( state, siteId );
 
-	if ( ! connection_data ) {
-		return null;
+	if ( connectionHealth?.jetpack_connection_problem === undefined ) {
+		return false;
 	}
 
-	return connection_data.jetpack_connection_problem;
+	return connectionHealth.jetpack_connection_problem;
 }
 
 /**
@@ -70,7 +68,7 @@ export const useIsJetpackConnectionProblem = ( siteId ) => {
  * React HOC to check if the current site has possible Jetpack connection problem.
  */
 export const withJetpackConnectionProblem = ( Wrapped ) => ( props ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const isPossibleConnectionProblem = useIsJetpackConnectionProblem( siteId );
 	return (
 		<Wrapped { ...props } isPossibleJetpackConnectionProblem={ isPossibleConnectionProblem } />

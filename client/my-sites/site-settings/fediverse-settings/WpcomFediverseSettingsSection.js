@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -42,17 +42,42 @@ const DomainUpsellCard = ( { siteId } ) => {
 	);
 };
 
-const DomainPendingWarning = ( { siteId } ) => {
+const hasNewDomain = ( domains ) => {
+	const now = new Date();
+	const oneHour = 60 * 60 * 1000;
+	let newDomain = false;
+	domains.forEach( ( domain ) => {
+		if ( domain.isWPCOMDomain ) {
+			return;
+		}
+		const registrationDate = new Date( domain.registrationDate );
+		const hourAgo = new Date( now.getTime() - oneHour );
+		if ( registrationDate >= hourAgo && registrationDate <= now ) {
+			newDomain = true;
+		}
+	} );
+	return newDomain;
+};
+
+const DomainPendingWarning = ( { siteId, domains } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 	const translate = useTranslate();
-	const message = translate(
-		'Wait until your new domain activates before sharing your profile. {{link}}Check your domain’s status{{/link}}.',
-		{
-			components: {
-				link: <a href={ `/domains/manage/${ domain }` } />,
-			},
-		}
-	);
+	const hasNew = hasNewDomain( domains );
+	const translateArgs = {
+		components: {
+			link: <a href={ `/domains/manage/${ domain }` } />,
+		},
+	};
+	const message = hasNew
+		? translate(
+				'Wait until your new domain activates before sharing your profile. {{link}}Check your domain’s status{{/link}}.',
+				translateArgs
+		  )
+		: translate(
+				'You’ve added a domain, but it’s not primary. To make it primary, {{link}}manage your domains{{/link}}.',
+				translateArgs
+		  );
+
 	return (
 		<Notice
 			status="is-warning"
@@ -76,6 +101,7 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 	const recordClick = () => {
 		recordTracksEvent( 'calypso_activitypub_business_plan_upsell_click' );
 	};
+	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	if ( isBusinessPlan ) {
 		// show a card that links to the plugin page to install the ActivityPub plugin
 		return (
@@ -95,11 +121,13 @@ const BusinessPlanUpsellCard = ( { siteId } ) => {
 		<Card className="site-settings__card">
 			<p>
 				{ translate(
-					'Take your fediverse presence to the next level! The Business plan unlocks per-author profiles, fine-grained controls, and more, with the ActivityPub plugin.'
+					// Translators: %(planName)s is the name of a plan, eg "Business" or "Creator"
+					'Take your fediverse presence to the next level! The %(planName)s plan unlocks per-author profiles, fine-grained controls, and more, with the ActivityPub plugin.',
+					{ args: { planName } }
 				) }
 			</p>
 			<Button primary href={ linkUrl } onClick={ recordClick }>
-				{ translate( 'Upgrade to Business' ) }
+				{ translate( 'Upgrade to %(planName)s', { args: { planName } } ) }
 			</Button>
 		</Card>
 	);
@@ -133,7 +161,7 @@ const EnabledSettingsSection = ( { data, siteId } ) => {
 						'Anyone in the fediverse (eg Mastodon) can follow your site with this identifier:'
 					) }
 				</p>
-				{ isDomainPending && <DomainPendingWarning siteId={ siteId } /> }
+				{ isDomainPending && <DomainPendingWarning siteId={ siteId } domains={ domains } /> }
 				<p>
 					<ClipboardButtonInput value={ blogIdentifier } />
 				</p>

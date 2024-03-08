@@ -1,10 +1,11 @@
-import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
-import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { type UserSelect } from '@automattic/data-stores';
+import { LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import wpcom from 'calypso/lib/wp';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -23,6 +24,7 @@ const linkInBio: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
@@ -37,8 +39,8 @@ const linkInBio: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -60,8 +62,6 @@ const linkInBio: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
@@ -69,24 +69,12 @@ const linkInBio: Flow = {
 			[]
 		);
 
-		setStepProgress( flowProgress );
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: 'Link in Bio',
+			pageTitle: translate( 'Link in Bio' ),
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -111,9 +99,9 @@ const linkInBio: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':
@@ -158,10 +146,12 @@ const linkInBio: Flow = {
 		const goNext = async () => {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'link-in-bio',
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'intro' );

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getCurrencyObject } from '@automattic/format-currency';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
 import moment from 'moment';
@@ -97,11 +98,15 @@ export const getCampaignStatus = ( status?: string ) => {
 	}
 };
 
+const calculateDurationDays = ( start: Date, end: Date ) => {
+	const diffTime = Math.abs( end.getTime() - start.getTime() );
+	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+};
+
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
 	const dateStart = new Date( start_date );
 	const dateEnd = new Date( end_date );
-	const diffTime = Math.abs( dateEnd.getTime() - dateStart.getTime() );
-	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+	return calculateDurationDays( dateStart, dateEnd );
 };
 
 export const getCampaignDurationFormatted = ( start_date?: string, end_date?: string ) => {
@@ -123,6 +128,21 @@ export const getCampaignDurationFormatted = ( start_date?: string, end_date?: st
 	}
 
 	return durationFormatted;
+};
+
+export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) => {
+	if ( ! start_date || ! end_date ) {
+		return 0;
+	}
+
+	const now = new Date();
+	const dateStart = new Date( start_date );
+	let dateEnd = new Date( end_date );
+	if ( dateEnd.getTime() > now.getTime() ) {
+		dateEnd = now;
+	}
+
+	return calculateDurationDays( dateStart, dateEnd );
 };
 
 export const getCampaignBudgetData = (
@@ -149,10 +169,10 @@ export const getCampaignBudgetData = (
 	};
 };
 
-export const formatCents = ( amount: number ) => {
+export const formatCents = ( amount: number, decimals?: number ) => {
 	return amount.toLocaleString( undefined, {
 		useGrouping: true,
-		minimumFractionDigits: amount % 1 !== 0 ? 2 : 0,
+		minimumFractionDigits: decimals ?? ( amount % 1 !== 0 ? 2 : 0 ),
 		maximumFractionDigits: 2,
 	} );
 };
@@ -222,7 +242,6 @@ export const getPagedBlazeSearchData = (
 
 /**
  * Update the path by adding the advertising section URL prefix
- *
  * @param {string} path partial URL
  * @returns pathname concatenated with the advertising configured path prefix
  */
@@ -231,7 +250,7 @@ export function getAdvertisingDashboardPath( path: string ) {
 	return `${ pathPrefix }${ path }`;
 }
 
-export const getShortDateString = ( date: string ) => {
+export const getShortDateString = ( date: string, withTime: boolean = false ) => {
 	const timestamp = moment( Date.parse( date ) );
 	const now = moment();
 
@@ -243,6 +262,16 @@ export const getShortDateString = ( date: string ) => {
 	const dateDiff = Math.abs( now.diff( timestamp, 'days' ) );
 	if ( dateDiff < 7 ) {
 		return timestamp.fromNow();
+	}
+
+	if ( withTime ) {
+		const format = timestamp.isSame( now, 'year' )
+			? // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`). Wrap text [] to be displayed as is, for example `DD [de] MMM` will be formatted as `05 de sep.`. HH:mm refers to 24-hour time format (e.g. `18:00`).
+			  _x( 'MMM DD, HH:mm', 'short date format' )
+			: // translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `DD`` refers to 2-digit day of month (e.g. `05`), `YYYY` refers to the full year format (e.g. `2023`). Wrap text [] to be displayed as is, for example `DD [de] MMM [de] YYYY` will be formatted as `05 de sep. de 2023`. HH:mm refers to 24-hour time format (e.g. `18:00`).
+			  _x( 'MMM DD, YYYY HH:mm', 'short date with year format' );
+
+		return moment( date ).format( format );
 	}
 
 	const format = timestamp.isSame( now, 'year' )
@@ -259,4 +288,12 @@ export const getLongDateString = ( date: string ) => {
 	// translators: "ll" refers to date (eg. 21 Apr) & "LT" refers to time (eg. 18:00) - "at" is translated
 	const sameElse: string = __( 'll [at] LT' ) ?? 'll [at] LT';
 	return timestamp.calendar( null, { sameElse } );
+};
+
+export const formatAmount = ( amount: number, currencyCode: string ) => {
+	if ( ! amount ) {
+		return undefined;
+	}
+	const money = getCurrencyObject( amount, currencyCode, { stripZeros: false } );
+	return `${ money.symbol }${ money.integer }${ money.fraction }`;
 };

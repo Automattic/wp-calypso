@@ -1,0 +1,114 @@
+/* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
+@import "calypso/assets/stylesheets/shared/_loading";
+@import "@automattic/onboarding/styles/mixins";
+
+.sites-checker-step {
+	padding: 1em;
+	max-width: 540px;
+	text-align: center;
+	margin: 16vh auto 0;
+
+	&__progress-step {
+		@include onboarding-font-recoleta;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.625rem;
+		line-height: 40px;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+	}
+}
+
+.sites-checker-step__step-wrapper {
+	.step-wrapper__content {
+		padding: 1em;
+		max-width: 540px;
+		text-align: center;
+		margin: 32vh auto;
+	}
+}
+
+.import-focused .step-container__content,
+.site-setup.processing .step-container__content {
+	width: 100%;
+}
+
+.sites-checker-step__subtitle {
+	font-size: 1rem;
+	line-height: 21px;
+	letter-spacing: -0.02em;
+	color: var(--studio-gray-50);
+	margin-top: 24px;
+}
+
+// Processing Copy Site Styles
+.copy-site.processing-copy {
+	.sites-checker-step {
+		margin: 5vh auto 0;
+		max-width: 660px;
+	}
+
+	.sites-checker-step__progress-step {
+		font-size: 3rem;
+		margin-bottom: 24px;
+	}
+
+	.sites-checker-step__progress-bar {
+		max-width: 540px;
+		margin: 0 auto;
+	}
+}
+
+.processing {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
+			fill: var(--color-text);
+			stroke: none;
+			transform-origin: 0 0;
+		}
+	}
+
+}
+
+.is-videopress-tv-stepper,
+.is-videopress-tv-purchase-stepper {
+	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+
+	.sites-checker-step__progress-step {
+		font-family: inherit;
+		font-size: rem(38px); //typography-exception
+		font-weight: 700;
+		letter-spacing: -0.02em;
+	}
+}
+
+.is-videopress-stepper.is-sites-checker-step,
+.is-videopress-tv-stepper,
+.is-videopress-tv-purchase-stepper {
+	padding: 0;
+	color: #fff;
+
+	.sites-checker-step__content {
+		background-color: #fff3;
+		border-radius: 4px;
+		.loading-bar {
+			background-color: #fff3;
+			&::before {
+				background-color: #ffe61c;
+			}
+		}
+	}
+
+	@include break-medium {
+		background-size: auto 50%, auto 50%;
+	}
+
+	@include break-large {
+		background-position-y: 50%, 100%;
+		background-position-x: 0, 100%;
+	}
+}
+

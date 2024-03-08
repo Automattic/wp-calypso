@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';

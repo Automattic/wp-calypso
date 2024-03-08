@@ -1,5 +1,4 @@
 // @ts-expect-error Missing definition
-// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalBlockPatternsList as BlockPatternsList } from '@wordpress/block-editor';
 import { BaseControl } from '@wordpress/components';
 import { withInstanceId, useAsyncList } from '@wordpress/compose';

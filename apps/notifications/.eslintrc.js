@@ -10,4 +10,17 @@ module.exports = {
 			...nodeConfig,
 		},
 	],
+	rules: {
+		'no-restricted-imports': [
+			0,
+			{
+				paths: [
+					{
+						name: 'redux',
+						importNames: [ 'combineReducers' ],
+					},
+				],
+			},
+		],
+	},
 };

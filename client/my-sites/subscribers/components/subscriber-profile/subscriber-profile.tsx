@@ -1,5 +1,6 @@
 import './style.scss';
 import { ExternalLink } from '@wordpress/components';
+import Gravatar from 'calypso/components/gravatar';
 
 type SubscriberProfileProps = {
 	avatar: string;
@@ -22,7 +23,11 @@ const SubscriberProfile = ( {
 	// recordSubscriberClicked( 'title', { } ); & recordSubscriberClicked( 'icon', { } );
 	return (
 		<div className={ `subscriber-profile ${ compact ? 'subscriber-profile--compact' : '' }` }>
-			<img src={ avatar } className="subscriber-profile__user-image" alt="Profile pic" />
+			<Gravatar
+				className="subscriber-profile__user-image"
+				user={ { avatar_URL: avatar, name: displayName } }
+				size={ 40 }
+			/>
 			<div className="subscriber-profile__user-details">
 				{ url ? (
 					<ExternalLink className="subscriber-profile__name" href={ url }>

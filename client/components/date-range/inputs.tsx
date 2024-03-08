@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
@@ -37,7 +37,6 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input focus events with fixed arguments
 	 * for consistency via partial application
-	 *
 	 * @param  startOrEnd one of "Start" or "End"
 	 * @returns the partially applied function ready to receive event data
 	 */
@@ -52,7 +51,6 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input blur events with fixed arguments
 	 * for consistency via partial application
-	 *
 	 * @param  startOrEnd one of "Start" or "End"
 	 * @returns the partially applied function ready to receive event data
 	 */
@@ -67,7 +65,6 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input change events with fixed arguments
 	 * for consistency via partial application
-	 *
 	 * @param  startOrEnd one of "Start" or "End"
 	 * @returns the partially applied function ready to receive event data
 	 */

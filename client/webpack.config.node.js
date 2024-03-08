@@ -159,6 +159,7 @@ const webpackConfig = {
 			} ),
 		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
+			'typeof window': JSON.stringify( 'undefined' ),
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),

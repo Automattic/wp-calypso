@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,7 +14,7 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:giropay-payment-method' );
@@ -72,14 +71,21 @@ function useCustomerName() {
 	return customerName;
 }
 
-export function createGiropayMethod( { store }: { store: GiropayStore } ): PaymentMethod {
+export function createGiropayMethod( {
+	store,
+	submitButtonContent,
+}: {
+	store: GiropayStore;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'giropay',
+		hasRequiredFields: true,
 		paymentProcessorId: 'giropay',
 		label: <GiropayLabel />,
 		activeContent: <GiropayFields />,
 		inactiveContent: <GiropaySummary />,
-		submitButton: <GiropayPayButton store={ store } />,
+		submitButton: <GiropayPayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		getAriaLabel: () => 'Giropay',
 	};
 }
@@ -142,12 +148,13 @@ function GiropayPayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: GiropayStore;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useCustomerName();
 
@@ -175,21 +182,9 @@ function GiropayPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isFormValid( store: GiropayStore ): boolean {

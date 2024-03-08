@@ -12,4 +12,10 @@ export {
 	withSitesListSorting,
 } from './use-sites-list-sorting';
 export type { SitesSortOptions, SitesSortKey, SitesSortOrder } from './use-sites-list-sorting';
+export {
+	SITE_EXCERPT_COMPUTED_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+	SITE_EXCERPT_REQUEST_FIELDS,
+} from './site-excerpt-constants';
+export type { SiteExcerptData, SiteExcerptNetworkData } from './site-excerpt-types';
 export { getSiteLaunchStatus, useSiteLaunchStatusLabel } from './site-status';

@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';

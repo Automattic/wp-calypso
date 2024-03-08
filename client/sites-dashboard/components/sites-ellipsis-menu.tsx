@@ -1,7 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	getPlan,
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
+	PLAN_BUSINESS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -15,21 +17,21 @@ import {
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
-import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { useIsGitHubDeploymentsAvailableQuery } from '../../my-sites/github-deployments/use-is-feature-available';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -40,10 +42,12 @@ import {
 	isNotAtomicJetpack,
 	isP2Site,
 } from '../utils';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
+	isWpAdminInterface: boolean;
+	wpAdminUrl: string;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 	onClick?: () => void;
@@ -95,7 +99,7 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
-const SiteMonitoringItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const SiteMonitoringItem = ( { site, isWpAdminInterface, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -103,12 +107,17 @@ const SiteMonitoringItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ getSiteMonitoringUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_monitoring_click' ) }
 		>
-			{ __( 'Site monitoring' ) }
+			{ isWpAdminInterface ? __( 'Monitoring' ) : __( 'Site monitoring' ) }
 		</MenuItemLink>
 	);
 };
 
-const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const ManagePluginsItem = ( {
+	site,
+	isWpAdminInterface,
+	wpAdminUrl,
+	recordTracks,
+}: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasManagePluginsFeature =
 		useSelector( ( state ) => siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS ) ) ||
@@ -116,8 +125,12 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	// If the site can't manage plugins then go to the main plugins page instead
 	// because it shows an upsell message.
 	const [ href, label ] = hasManagePluginsFeature
-		? [ getManagePluginsUrl( site.slug ), __( 'Manage plugins' ) ]
+		? [
+				isWpAdminInterface ? `${ wpAdminUrl }plugins.php` : getManagePluginsUrl( site.slug ),
+				__( 'Manage plugins' ),
+		  ]
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
+	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	return (
 		<MenuItemLink
@@ -127,7 +140,16 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature ? __( 'Requires a Business Plan' ) : undefined }
+			info={
+				! hasManagePluginsFeature
+					? sprintf(
+							/* translators: %s - the plan's product name, such as Creator or Explorer. */ __(
+								'Requires a %s Plan'
+							),
+							upsellPlanName
+					  )
+					: undefined
+			}
 		>
 			{ label }
 		</MenuItemLink>
@@ -229,7 +251,7 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Visit WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
+			{ __( 'WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
 		</MenuItemLink>
 	);
 };
@@ -263,9 +285,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
-
-	useQueryReaderTeams();
-	const isA12n = useSelector( ( state ) => isAutomatticTeamMember( getReaderTeams( state ) ) );
+	const { data: githubDeploymentsFeature } = useIsGitHubDeploymentsAvailableQuery( {
+		siteId: site.ID,
+	} );
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
@@ -286,9 +308,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
-				condition: isEnabled( 'github-integration-i1' ) && isA12n,
+				condition: githubDeploymentsFeature?.available,
 				label: __( 'Deploy from GitHub' ),
-				href: `/hosting-config/${ siteSlug }#connect-github`,
+				href: `/github-deployments/${ siteSlug }`,
 				sectionName: 'connect_github',
 			},
 			{
@@ -301,8 +323,13 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},
+			{
+				label: __( 'Admin interface style' ),
+				href: `/hosting-config/${ siteSlug }#admin-interface-style`,
+				sectionName: 'admin-interface-style',
+			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, hasStagingSitesFeature, isA12n ] );
+	}, [ __, siteSlug, hasStagingSitesFeature, githubDeploymentsFeature ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
@@ -313,6 +340,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offset: -8,
 	} );
+	const upsellPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -327,8 +355,18 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink info={ displayUpsell ? __( 'Requires a Business Plan' ) : undefined }>
-				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+			<MenuItemLink
+				info={
+					displayUpsell
+						? sprintf(
+								/* translators: %s - the plan's product name, such as Creator or Explorer. */
+								__( 'Requires a %s Plan' ),
+								upsellPlanName
+						  )
+						: undefined
+				}
+			>
+				{ __( 'Hosting' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...submenuProps.submenu }
@@ -343,8 +381,12 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 								product_slug: site.plan?.product_slug,
 							} }
 						/>
-						{ __(
-							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+						{ sprintf(
+							/* translators: %s - the plan's product name, such as Creator or Explorer. */
+							__(
+								'Upgrade to the %s Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+							),
+							upsellPlanName
 						) }
 						<Button
 							compact
@@ -391,8 +433,19 @@ export const SitesEllipsisMenu = ( {
 	function recordTracks( eventName: string, extraProps = {} ) {
 		dispatch( recordTracksEvent( eventName, extraProps ) );
 	}
+
+	const wpAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.ID ) ?? '' );
+	const adminInterface = useSelector( ( state ) =>
+		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
+	);
+
+	const isWpAdminInterface =
+		isEnabled( 'layout/dotcom-nav-redesign' ) && adminInterface === 'wp-admin';
+
 	const props: SitesMenuItemProps = {
 		site,
+		isWpAdminInterface,
+		wpAdminUrl,
 		recordTracks,
 	};
 
@@ -420,7 +473,11 @@ export const SitesEllipsisMenu = ( {
 						<CopySiteItem { ...props } onClick={ startSiteCopy } />
 					) }
 					<MenuItemLink
-						href={ `/settings/performance/${ site.slug }` }
+						href={
+							isWpAdminInterface
+								? `${ wpAdminUrl }options-general.php?page=page-optimize`
+								: `/settings/performance/${ site.slug }`
+						}
 						onClick={ () =>
 							recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
 						}

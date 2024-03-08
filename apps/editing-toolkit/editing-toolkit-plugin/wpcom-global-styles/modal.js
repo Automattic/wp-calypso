@@ -1,10 +1,11 @@
 /* global wpcomGlobalStyles */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getPlan, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import React from 'react';
 import image from './image.svg';
 import { useCanvas } from './use-canvas';
@@ -61,9 +62,14 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
-	const description = __(
-		"Change all of your site's fonts, colors and more. Available on the Premium plan.",
-		'full-site-editing'
+	const planName = getPlan( PLAN_PREMIUM ).getTitle();
+	const description = sprintf(
+		/* translators: %s is the short-form Premium plan name */
+		__(
+			"Change all of your site's fonts, colors and more. Available on the %s plan.",
+			'full-site-editing'
+		),
+		planName
 	);
 
 	return (

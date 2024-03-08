@@ -1,9 +1,8 @@
-import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpMailboxPath } from 'calypso/my-sites/email/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
@@ -125,7 +124,7 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
-				title: translate( 'Try the Jetpack app' ),
+				title: translate( 'Get the mobile app' ),
 				subtitle: translate( 'Put your site in your pocket' ),
 				icon: (
 					<AnimatedIcon
@@ -200,13 +199,14 @@ export const getTask = (
 				: translate(
 						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				  );
-			const descriptionOnCompleted = createInterpolateElement(
-				/* translators: pressing <Link> will redirect user to Settings -> Privacy where they can change the site visibilidty */
-				translate(
-					'Your site is already live. You can change your site visibility in <Link>privacy options</Link> at any time.'
-				),
+			const descriptionOnCompleted = translate(
+				'Your site is already live. You can change your site visibility in {{link}}privacy options{{/link}} at any time.',
 				{
-					Link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+					components: {
+						link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+					},
+					comment:
+						'pressing <Link> will redirect the user to Settings -> Privacy where they can change the site visibility',
 				}
 			);
 
@@ -294,7 +294,7 @@ export const getTask = (
 				),
 				actionText: translate( 'Set up mailbox' ),
 				isSkippable: false,
-				actionUrl: emailManagementTitanSetUpMailbox( siteSlug, task.domain ),
+				actionUrl: getTitanSetUpMailboxPath( siteSlug, task.domain ),
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED:

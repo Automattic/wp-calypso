@@ -1,6 +1,5 @@
 # NavigationHeader (TSX)
 
-Note: This will eventually replace FixedNavigationHeader.
 This component displays a header with a breadcrumb.
 It can also include children items which will be positioned to the far right.
 
@@ -26,3 +25,6 @@ function render() {
 - `className` (`string`) - A class name for the wrapped component (optional)
 - `children` (`nodes`) – Any children elements which are being rendered to the far right (optional)
 - `compactBreadcrumb` (`boolean`) - Displays only the previous item URL reading "Back" in the breadcrumb (optional)
+- `title` (`string`) - Title of the header (optional)
+- `subtitle` (`string`) - Subtitle of the header (optional)
+- `screenReader` (`string`) - Used for screen readers and it's hidden on the view (optional)

@@ -1,33 +1,41 @@
+import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
-import page from 'page';
 import { createElement } from 'react';
+import { PluginsUpdateManager } from 'calypso/blocks/plugins-update-manager';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import { navigation } from 'calypso/my-sites/controller';
+import { navigation, sites } from 'calypso/my-sites/controller';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
+import { UNLISTED_PLUGINS } from './constants';
 import PlanSetup from './jetpack-plugins-setup';
 import { MailPoetUpgradePage } from './mailpoet-upgrade';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
+import PluginNotFound from './plugin-not-found';
 import PluginBrowser from './plugins-browser';
 import { RelatedPluginsPage } from './related-plugins-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	// Render single plugin component
-	context.primary = createElement( PluginDetails, {
-		path: context.path,
-		pluginSlug,
-		siteUrl,
-	} );
+	if ( UNLISTED_PLUGINS.includes( pluginSlug ) ) {
+		// Render empty view
+		context.primary = createElement( PluginNotFound );
+	} else {
+		// Render single plugin component
+		context.primary = createElement( PluginDetails, {
+			path: context.path,
+			pluginSlug,
+			siteUrl,
+		} );
+	}
 }
 
 function renderPluginList( context, basePath ) {
@@ -101,6 +109,49 @@ export function plugins( context, next ) {
 
 	context.params.pluginFilter = filter;
 	renderPluginList( context, basePath );
+	next();
+}
+
+export function updatesManager( context, next ) {
+	const siteSlug = context?.params?.site_slug;
+	const scheduleId = context?.params?.schedule_id;
+
+	if ( ! siteSlug ) {
+		sites( context, next );
+		return;
+	}
+
+	switch ( context.params.action ) {
+		case 'create':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				context: 'create',
+				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
+
+		case 'edit':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				scheduleId,
+				context: 'edit',
+				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
+
+		case 'list':
+		default:
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				context: 'list',
+				onCreateNewSchedule: () =>
+					page.redirect( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onEditSchedule: ( id ) =>
+					page.redirect( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
+			} );
+			break;
+	}
+
 	next();
 }
 

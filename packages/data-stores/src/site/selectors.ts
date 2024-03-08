@@ -15,7 +15,6 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
  * Get a site matched by id. This selector has a matching
  * resolver that uses the `siteId` parameter to fetch an existing site. If the
  * site cannot be found, invalidate the resolution cache.
- *
  * @param state {State}		state object
  * @param siteId {number}	id of the site to look up
  */
@@ -159,21 +158,6 @@ export const requiresUpgrade: ( state: State, siteId: number | null ) => boolean
 
 export function isJetpackSite( state: State, siteId?: number ): boolean {
 	return Boolean( siteId && ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.jetpack );
-}
-
-export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
-	if ( ! siteId ) {
-		return false;
-	}
-
-	if (
-		( isJetpackSite( state, siteId ) && ! isSiteAtomic( state, siteId ) ) ||
-		isSiteWPForTeams( state, siteId )
-	) {
-		return false;
-	}
-
-	return true;
 }
 
 export const getBundledPluginSlug = ( state: State, siteSlug: string ) =>

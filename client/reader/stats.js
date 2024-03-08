@@ -52,7 +52,7 @@ function getLocation( path ) {
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		const sort = searchParams.get( 'sort' );
-		return `topic_page:${ sort || 'relevance' }`;
+		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
 	}
 	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
@@ -98,6 +98,9 @@ function getLocation( path ) {
 	}
 	if ( path.indexOf( '/read/conversations' ) === 0 ) {
 		return 'conversations';
+	}
+	if ( path.indexOf( '/home' ) === 0 ) {
+		return 'home';
 	}
 	return 'unknown';
 }
@@ -211,17 +214,13 @@ export function getTracksPropertiesForPost( post = {} ) {
 	};
 }
 
-export function recordRailcar( eventName, railcar, eventProperties ) {
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
 	recordTracksRailcarInteract(
 		eventName,
 		railcar,
 		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
 	);
-}
-
-export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
-	recordTrack( eventName, eventProperties );
-	recordRailcar( eventName, railcar, eventProperties );
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {

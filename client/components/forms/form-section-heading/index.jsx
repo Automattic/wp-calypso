@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import './style.scss';
 /**
  * Render a form section heading
- *
  * @param {Object} props Component props
  * @param {string=} props.className optional extra CSS class(es) to be added to the component
  * @param {import('react').ReactNode=} props.children react element props that must contain some children

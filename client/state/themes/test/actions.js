@@ -25,6 +25,7 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
+	THEME_TIERS_UPDATE,
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
@@ -60,7 +61,7 @@ import {
 	addExternalManagedThemeToCart,
 	livePreview,
 	redirectToLivePreview,
-	installAndLivePreview,
+	updateThemeTiers,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
 
@@ -193,6 +194,23 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThemes()', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
+
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
@@ -209,7 +227,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', async () => {
-				await requestThemes( 'wpcom' )( spy );
+				await requestThemes( 'wpcom' )( spy, getState );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
@@ -239,7 +257,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 77203074 )( spy );
+				requestThemes( 77203074 )( spy, getState );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
@@ -249,7 +267,28 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fail action when request fails', () => {
-				return requestThemes( 1916284 )( spy ).then( () => {
+				const jetpackGetState = () => ( {
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager(),
+						},
+					},
+					sites: {
+						items: {
+							1916284: {
+								options: { is_wpcom_atomic: false, jetpack_connection_active_plugins: [ 'foo' ] },
+							},
+						},
+					},
+					productsList: {
+						items: {},
+					},
+					purchases: {
+						data: {},
+					},
+				} );
+
+				return requestThemes( 1916284 )( spy, jetpackGetState ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: THEMES_REQUEST_FAILURE,
 						siteId: 1916284,
@@ -282,7 +321,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wporg' )( spy );
+				requestThemes( 'wporg' )( spy, getState );
 
 				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
@@ -705,6 +744,23 @@ describe( 'actions', () => {
 			},
 		];
 
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
+
 		const successfulParameters = {
 			themes: [ 'storefront', 'twentysixteen' ],
 			action: 'update',
@@ -773,7 +829,7 @@ describe( 'actions', () => {
 				siteId: 2211667,
 			} );
 
-			spy.mock.calls[ 2 ][ 0 ]( spy );
+			spy.mock.calls[ 2 ][ 0 ]( spy, getState );
 
 			expect( spy.mock.calls[ 3 ][ 0 ].type ).toEqual( THEMES_REQUEST );
 		} );
@@ -1420,6 +1476,7 @@ describe( 'actions', () => {
 		);
 		const livePreviewStartAction = {
 			type: 'LIVE_PREVIEW_START',
+			themeId: 'pendant',
 			meta: {
 				analytics: [
 					{
@@ -1430,6 +1487,7 @@ describe( 'actions', () => {
 								site_id: 2211667,
 								source: 'detail',
 								theme: 'pendant',
+								theme_style: 'pendant',
 								theme_type: 'free',
 							},
 							service: 'tracks',
@@ -1462,17 +1520,15 @@ describe( 'actions', () => {
 			test( 'should redirect users to the Live Preview', () => {
 				return new Promise( ( done ) => {
 					livePreview(
-						'pendant',
 						2211667,
+						'pendant',
 						'detail'
 					)( dispatch, state ).then( () => {
 						expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
 						expect( dispatch ).toHaveBeenCalledWith(
 							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 						);
-						expect( dispatch ).not.toHaveBeenCalledWith(
-							installAndLivePreview( 'pendant', 2211667 )
-						);
+						expect( dispatch ).not.toHaveBeenCalledWith( installTheme( 'pendant', 2211667 ) );
 						done();
 					} );
 				} );
@@ -1508,17 +1564,15 @@ describe( 'actions', () => {
 				test( 'should redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
 						livePreview(
-							'pendant',
 							2211667,
+							'pendant',
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
 							expect( dispatch ).toHaveBeenCalledWith(
 								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
-							expect( dispatch ).not.toHaveBeenCalledWith(
-								installAndLivePreview( 'pendant', 2211667 )
-							);
+							expect( dispatch ).not.toHaveBeenCalledWith( installTheme( 'pendant', 2211667 ) );
 							done();
 						} );
 					} );
@@ -1535,13 +1589,16 @@ describe( 'actions', () => {
 				test( 'should install the theme and then redirect users to the Live Preview', () => {
 					return new Promise( ( done ) => {
 						livePreview(
-							'pendant',
 							2211667,
+							'pendant',
 							'detail'
 						)( dispatch, state ).then( () => {
 							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
 							expect( dispatch ).toHaveBeenCalledWith(
-								expect.toMatchFunction( installAndLivePreview( 'pendant', 2211667 ) )
+								expect.toMatchFunction( installTheme( 'pendant', 2211667 ) )
+							);
+							expect( dispatch ).toHaveBeenCalledWith(
+								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
 							done();
 						} );
@@ -1698,6 +1755,21 @@ describe( 'actions', () => {
 					themeId: 'solarone',
 					error: expect.objectContaining( { message: 'Unknown theme' } ),
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#updateThemeTiers()', () => {
+		test( 'without a tiers param, should return an action with an empty object tiers property', () => {
+			expect( updateThemeTiers() ).toEqual( {
+				type: THEME_TIERS_UPDATE,
+				tiers: {},
+			} );
+		} );
+		test( 'with a tiers param, should return an action with a tiers property containing the same value', () => {
+			expect( updateThemeTiers( { free: {} } ) ).toEqual( {
+				type: THEME_TIERS_UPDATE,
+				tiers: { free: {} },
 			} );
 		} );
 	} );

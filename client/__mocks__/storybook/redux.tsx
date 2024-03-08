@@ -4,7 +4,6 @@ import configureStore from 'redux-mock-store';
 
 /**
  * Store mock for DocumentHead.
- *
  * @see https://github.com/Automattic/wp-calypso/blob/2186d1580ada4812c72eaa1fe799f90efa0b9642/client/components/data/document-head/index.jsx#L17
  */
 export const documentHeadStoreMock = {

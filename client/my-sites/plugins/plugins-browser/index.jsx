@@ -10,6 +10,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -97,6 +98,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.menu || __( 'Plugins' );
 
+	usePresalesChat( 'wpcom', ! isLoggedIn );
+
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
 		if ( search ) {
@@ -133,7 +136,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
 	return (
-		<MainComponent wideLayout isLoggedOut={ ! isLoggedIn }>
+		<MainComponent fullWidthLayout isLoggedOut={ ! isLoggedIn }>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />

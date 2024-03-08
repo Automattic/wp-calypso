@@ -17,7 +17,7 @@ import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteSelect } from '@automattic/data-stores';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface SiteCopyOptions {
@@ -59,7 +59,7 @@ export const useSiteCopy = (
 	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
 	options: SiteCopyOptions = { enabled: true }
 ) => {
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const hasCopySiteFeature = useSafeSiteHasFeature(
 		site?.ID,
 		WPCOM_FEATURES_COPY_SITE,
@@ -82,7 +82,7 @@ export const useSiteCopy = (
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 
-	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const purchases = useSelector( getUserPurchases );
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 

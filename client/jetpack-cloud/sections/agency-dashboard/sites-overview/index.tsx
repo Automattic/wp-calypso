@@ -1,10 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Button, Count } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -22,9 +23,12 @@ import {
 	checkIfJetpackSiteGotDisconnected,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
+	getSelectedSiteLicenses,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import { serializeQueryStringProducts } from '../../partner-portal/lib/querystring-products';
 import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import DashboardBanners from './dashboard-banners';
@@ -35,11 +39,14 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import useDashboardShowLargeScreen from './site-content/hooks/use-dashboard-show-large-screen';
 import SiteContentHeader from './site-content-header';
+import SiteNotifications from './site-notifications';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
+
+const QUERY_PARAM_PROVISIONING = 'provisioning';
 
 export default function SitesOverview() {
 	const translate = useTranslate();
@@ -54,9 +61,14 @@ export default function SitesOverview() {
 	const showLargeScreen = useDashboardShowLargeScreen( siteTableRef, containerRef );
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const selectedLicensesCount = selectedLicenses?.length;
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
+	const selectedLicensesCount = isStreamlinedPurchasesEnabled
+		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
+		: selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -125,7 +137,26 @@ export default function SitesOverview() {
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
 
-	const pageTitle = translate( 'Dashboard' );
+	useEffect( () => {
+		if ( isError ) {
+			dispatch(
+				errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ), {
+					id: 'dashboard-sites-fetch-failure',
+					duration: 5000,
+				} )
+			);
+		}
+	}, [ isError, translate, dispatch ] );
+
+	useEffect( () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			return () => {
+				dispatch( resetSite() );
+			};
+		}
+	}, [ isStreamlinedPurchasesEnabled, dispatch ] );
+
+	const pageTitle = translate( 'Sites' );
 
 	const basePath = '/dashboard';
 
@@ -172,7 +203,7 @@ export default function SitesOverview() {
 
 	const selectedTab = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 	const hasAppliedFilter = !! search || filter?.issueTypes?.length > 0;
-	const showEmptyState = ! isLoading && ! isError && ! data?.total;
+	const showEmptyState = ! isLoading && ! isError && data?.sites?.length === 0;
 
 	let emptyState;
 	if ( showEmptyState ) {
@@ -187,16 +218,33 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
+	const selectedProducts = selectedLicenses?.map( ( type: string ) => ( {
+		slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
+		quantity: 1,
+	} ) );
+
+	const serializedLicenses = serializeQueryStringProducts( selectedProducts );
+
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			product_slug: selectedLicenses
-				?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-				// If multiple products are selected, pass them as a comma-separated list.
-				.join( ',' ),
+			products: serializedLicenses,
 			source: 'dashboard',
 		} );
-	}, [ selectedLicensesSiteId, selectedLicenses ] );
+	}, [ selectedLicensesSiteId, serializedLicenses ] );
+
+	const handleIssueLicenses = () => {
+		if ( isStreamlinedPurchasesEnabled ) {
+			// TODO: Show a modal with the selected licenses and a button to issue them.
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+				site_id: selectedLicensesSiteId,
+				products: serializedLicenses,
+			} )
+		);
+	};
 
 	const renderIssueLicenseButton = () => {
 		return (
@@ -211,26 +259,24 @@ export default function SitesOverview() {
 				<Button
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
-					href={ issueLicenseRedirectUrl }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
-								site_id: selectedLicensesSiteId,
-								products: selectedLicenses
-									?.map( ( type: string ) => DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ] )
-									// If multiple products are selected, pass them as a comma-separated list.
-									.join( ',' ),
-							} )
-						)
-					}
+					href={ isStreamlinedPurchasesEnabled ? undefined : issueLicenseRedirectUrl }
+					onClick={ handleIssueLicenses }
 				>
-					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
-						context: 'button label',
-						count: selectedLicensesCount,
-						args: {
-							numLicenses: selectedLicensesCount,
-						},
-					} ) }
+					{ isStreamlinedPurchasesEnabled
+						? translate( 'Review %(numLicenses)d license', 'Review %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } )
+						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+								context: 'button label',
+								count: selectedLicensesCount,
+								args: {
+									numLicenses: selectedLicensesCount,
+								},
+						  } ) }
 				</Button>
 			</div>
 		);
@@ -244,23 +290,32 @@ export default function SitesOverview() {
 	const [ hasDismissedProvisioningNotice, setHasDismissedProvisioningNotice ] =
 		useState< boolean >( false );
 	const isProvisioningSite =
-		'true' === getQueryArg( window.location.href, 'provisioning' ) ||
+		'true' === getQueryArg( window.location.href, QUERY_PARAM_PROVISIONING ) ||
 		( ! isLoadingProvisioningBlogIds && Number( provisioningBlogIds?.length ) > 0 );
+
+	const onDismissProvisioningNotice = () => {
+		setHasDismissedProvisioningNotice( true );
+
+		// Delete query param 'provisioning' from the URL.
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.href, QUERY_PARAM_PROVISIONING )
+		);
+	};
 
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
+			<SiteNotifications />
 			<div className="sites-overview__container">
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<DashboardBanners />
 
 						{ isProvisioningSite && ! hasDismissedProvisioningNotice && (
-							<Notice
-								status="is-info"
-								onDismissClick={ () => setHasDismissedProvisioningNotice( true ) }
-							>
+							<Notice status="is-info" onDismissClick={ onDismissProvisioningNotice }>
 								{ translate(
 									"We're setting up your new WordPress.com site and will notify you once it's ready, which should only take a few minutes."
 								) }
@@ -269,7 +324,7 @@ export default function SitesOverview() {
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<SiteContentHeader
 							content={
-								// render content only on large screens, The buttons for small scren have their own section
+								// render content only on large screens, The buttons for small screen have their own section
 								isLargeScreen &&
 								( selectedLicensesCount > 0 ? (
 									renderIssueLicenseButton()

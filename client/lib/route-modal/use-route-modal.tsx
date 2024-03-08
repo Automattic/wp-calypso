@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
-import page from 'page';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -18,7 +18,6 @@ export interface RouteModalData {
 
 /**
  * React hook providing utils to control opening and closing modal via query string.
- *
  * @param queryKey The key from the query string to control the modal.
  * @param targetValue If specified, the modal shows only when the value from the query string equals to it.
  */

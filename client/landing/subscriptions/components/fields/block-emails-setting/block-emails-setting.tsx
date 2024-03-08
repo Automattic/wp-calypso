@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEventHandler } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import './style.scss';
 
 export type BlockEmailsSettingProps = {

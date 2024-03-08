@@ -18,7 +18,7 @@ export default class AppleIcon extends PureComponent {
 
 		return (
 			<svg
-				className={ classNames( 'social-icons social-icons__google', {
+				className={ classNames( 'social-icons social-icons__mail', {
 					'social-icons--enabled': ! isDisabled,
 					'social-icons--disabled': !! isDisabled,
 				} ) }

@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -7,11 +7,10 @@ import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
@@ -224,7 +223,6 @@ class Media extends Component {
 	 * Start the process to delete media items.
 	 * `callback` is an optional parameter which will execute once the confirm dialog is accepted.
 	 * It's used especially when the item is attempting to be removed using the item detail dialog.
-	 *
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
@@ -366,18 +364,16 @@ class Media extends Component {
 
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
-				<ScreenOptionsTab wpAdminPath="upload.php" />
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				<DocumentHead title={ translate( 'Media' ) } />
-				<FormattedHeader
-					brandFont
-					className="media__page-heading"
-					headerText={ translate( 'Media' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="upload.php?preferred-view=classic"
+					title={ translate( 'Media' ) }
+					subtitle={ translate(
 						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -385,9 +381,8 @@ class Media extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
+
 				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
 					<Notice
 						showDismiss={ false }

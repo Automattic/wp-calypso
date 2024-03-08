@@ -1,4 +1,8 @@
-export type GoToStep = ( stepName: string, stepSectionName?: string, flowName?: string ) => void;
+export type GoToStep = (
+	stepName: string,
+	stepSectionName?: string,
+	params?: { fromUrl: string }
+) => void;
 export type GoToNextStep = () => void;
 export type RecordTracksEvent = ( name: string, properties: { [ key: string ]: string } ) => void;
 export type UrlData = {
@@ -57,7 +61,8 @@ export type ImporterPlatformOther =
 	| 'livejournal'
 	| 'movabletype'
 	| 'tumblr'
-	| 'xanga';
+	| 'xanga'
+	| 'substack';
 export type ImporterPlatformExtra = 'godaddy-central';
 export type ImporterPlatform =
 	| ImporterMainPlatform

@@ -1,0 +1,77 @@
+
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints.scss";
+
+.patterns-header {
+	background: #1d2327;
+	padding: 0 26px;
+
+	.patterns-header__inner {
+		padding: 105px 0 64px 84px;
+		background-image: url(./images/background@3x.png);
+		background-repeat: no-repeat;
+		background-position: bottom right 84px;
+		background-size: auto 100%;
+		color: var(--studio-white);
+
+		h1 {
+			font-family: $font-recoleta;
+			font-size: rem(70px);
+			line-height: 1;
+			letter-spacing: 0.2px;
+			width: 600px;
+			padding-bottom: 24px;
+		}
+
+		.patterns-header__description {
+			font-family: $font-sf-pro-display;
+			font-size: rem(18px);
+			letter-spacing: 0.4px;
+			line-height: 1.4;
+			width: 450px;
+			padding-bottom: 32px;
+		}
+
+		.patterns-header__search-input {
+			border-radius: 4px;
+			width: 450px;
+			height: 56px;
+			overflow: hidden;
+			margin-bottom: 0;
+
+			input[type="search"] {
+				font-family: $font-sf-pro-text;
+				letter-spacing: -0.32px;
+
+				&::placeholder {
+					color: #01283d;
+				}
+			}
+		}
+	}
+
+	@media ( max-width: $break-wide ) {
+		padding: 0 24px;
+
+		.patterns-header__inner {
+			padding: 90px 0 24px;
+			background: none;
+
+			h1 {
+				width: auto;
+				font-size: rem(50px);
+				line-height: 1.15;
+			}
+
+			.patterns-header__description {
+				width: auto;
+				padding-bottom: 24px;
+			}
+
+			.patterns-header__search-input {
+				width: auto;
+				height: 52px;
+			}
+		}
+	}
+}

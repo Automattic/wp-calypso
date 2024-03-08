@@ -3,7 +3,9 @@ import { useMemo } from 'react';
 import {
 	AllowedStatusTypes as AllowedStatusType,
 	AllowedTypes as AllowedRowType,
+	SiteData,
 } from '../../types';
+import useIsMultisiteSupported from './use-is-multisite-supported';
 
 type TooltipGetter = Partial<
 	Record< AllowedStatusType, ( translate: typeof RawTranslateFn ) => TranslateResult >
@@ -47,16 +49,27 @@ const ALL_TOOLTIPS: Partial< Record< AllowedRowType, TooltipGetter > > = {
 	boost,
 };
 
-const useTooltip = (
-	type: AllowedRowType,
-	status: AllowedStatusType
-): TranslateResult | undefined => {
+const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | undefined => {
+	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
+	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
+	const isMultisiteSupported = useIsMultisiteSupported( rows?.site?.value, type );
+
+	const isAtomicSite = rows?.site?.value?.is_atomic;
+
 	const translate = useTranslate();
 
-	return useMemo(
-		() => ALL_TOOLTIPS[ type ]?.[ status ]?.( translate ),
-		[ status, translate, type ]
-	);
+	return useMemo( () => {
+		const row = rows[ type ];
+		if ( ! isMultisiteSupported ) {
+			return translate( 'Not supported on multisite' );
+		}
+
+		if ( isAtomicSite && ( type === 'site' || type === 'monitor' ) ) {
+			return translate( 'Monitoring is managed by WordPress.com' );
+		}
+
+		return ALL_TOOLTIPS[ type ]?.[ row?.status ]?.( translate );
+	}, [ isAtomicSite, isMultisiteSupported, rows, translate, type ] );
 };
 
 export default useTooltip;

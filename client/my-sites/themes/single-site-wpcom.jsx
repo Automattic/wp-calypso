@@ -1,12 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
+	WPCOM_PREMIUM_PLANS,
 	PLAN_BUSINESS,
-	FEATURE_PREMIUM_THEMES_V2,
+	PLAN_ECOMMERCE,
+	getPlan,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -21,68 +20,45 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
-		props;
-
-	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
-	const upsellUrl = `/plans/${ siteSlug }`;
-	let upsellBanner = null;
-	if ( displayUpsellBanner ) {
-		if ( isEnabled( 'themes/premium' ) ) {
-			if ( [ PLAN_PERSONAL, PLAN_FREE ].includes( currentPlan.productSlug ) ) {
-				upsellBanner = (
-					<UpsellNudge
-						className="themes__showcase-banner"
-						event="calypso_themes_list_premium_themes"
-						feature={ FEATURE_PREMIUM_THEMES_V2 }
-						plan={ PLAN_PREMIUM }
-						title={ translate( 'Unlock premium themes with our Premium and Business plans!' ) }
-						callToAction={ translate( 'Upgrade now' ) }
-						showIcon={ true }
-					/>
-				);
-			}
-
-			if ( currentPlan.productSlug === PLAN_PREMIUM ) {
-				upsellBanner = (
-					<UpsellNudge
-						className="themes__showcase-banner"
-						event="calypso_themes_list_install_themes"
-						feature={ FEATURE_UPLOAD_THEMES }
-						plan={ PLAN_BUSINESS }
-						title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-						callToAction={ translate( 'Upgrade now' ) }
-						showIcon={ true }
-					/>
-				);
-			}
-		} else {
-			upsellBanner = (
-				<UpsellNudge
-					className="themes__showcase-banner"
-					event="calypso_themes_list_install_themes"
-					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-					callToAction={ translate( 'Upgrade now' ) }
-					showIcon={ true }
-				/>
-			);
-		}
+const getUpgradeBannerForPlan = ( planSlug ) => {
+	if ( WPCOM_PREMIUM_PLANS.includes( planSlug ) ) {
+		return (
+			<UpsellNudge
+				className="themes__showcase-banner"
+				event="calypso_themes_list_install_themes"
+				feature={ FEATURE_UPLOAD_THEMES }
+				plan={ PLAN_BUSINESS }
+				title={
+					/* translators: %(planName1)s and %(planName2)s the short-hand version of the Business and Commerce plan names */
+					translate( 'Upload your own themes with our %(planName1)s and %(planName2)s plans!', {
+						args: {
+							planName1: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+							planName2: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+						},
+					} )
+				}
+				callToAction={ translate( 'Upgrade now' ) }
+				showIcon={ true }
+			/>
+		);
 	}
+};
 
+const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
+	const { currentPlan, currentThemeId, siteId, siteSlug } = props;
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<QueryActiveTheme siteId={ siteId } />
-			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
+			{ siteId && <QueryActiveTheme siteId={ siteId } /> }
+			{ siteId && currentThemeId && (
+				<QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } />
+			) }
 
 			<ThemeShowcase
 				{ ...props }
-				upsellUrl={ upsellUrl }
-				upsellBanner={ upsellBanner }
+				upsellUrl={ `/plans/${ siteSlug }` }
+				upsellBanner={ getUpgradeBannerForPlan( currentPlan?.productSlug ) }
 				siteId={ siteId }
 			/>
 		</Main>

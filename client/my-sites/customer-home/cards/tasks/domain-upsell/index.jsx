@@ -4,12 +4,12 @@ import {
 	getIntervalTypeForTerm,
 	domainProductSlugs,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useHasEnTranslation, useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
@@ -191,16 +191,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			  )
 			: cardSubtitleFreePlansCopy;
 
-	const domainNameSVG = (
-		<svg viewBox="0 0 40 18" id="map">
-			<text x="-115" y="15">
-				{ domainSuggestionName.length > 34
-					? `${ domainSuggestionName.slice( 0, 32 ) }...`
-					: domainSuggestionName }
-			</text>
-		</svg>
-	);
-
 	return (
 		<Task
 			customClass="task__domain-upsell"
@@ -214,9 +204,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
 			illustrationAlwaysShow={ true }
-			illustrationHeader={ domainSuggestionName ? domainNameSVG : null }
-			badgeText={ domainSuggestionName }
-			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
 	);

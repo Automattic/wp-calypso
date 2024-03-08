@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import page from 'page';
 import {
 	transferDomainError,
 	useMyDomainInputMode as inputMode,

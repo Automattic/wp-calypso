@@ -2,10 +2,11 @@
 import {
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
-	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
+	privateApis as blockEditorPrivateApis,
 } from '@wordpress/block-editor';
-import { useResizeObserver, useRefEffect } from '@wordpress/compose';
-import React, { useMemo, useState, useContext, ReactNode } from 'react';
+import { useResizeObserver, useRefEffect, useMergeRefs } from '@wordpress/compose';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import React, { useMemo, useState, useContext, CSSProperties, ReactNode } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
 import loadScripts from '../utils/load-scripts';
@@ -14,11 +15,17 @@ import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
+	'@wordpress/block-editor'
+);
+
+const { getDuotoneFilter } = unlock( blockEditorPrivateApis );
+
 interface BlockRendererContainerProps {
 	children: ReactNode;
 	styles?: RenderedStyle[];
 	scripts?: string;
-	inlineCss?: string;
 	viewportWidth?: number;
 	maxHeight?: 'none' | number;
 	minHeight?: number;
@@ -32,7 +39,6 @@ const ScaledBlockRendererContainer = ( {
 	children,
 	styles: customStyles,
 	scripts: customScripts,
-	inlineCss = '',
 	viewportWidth = 1200,
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
@@ -58,12 +64,8 @@ const ScaledBlockRendererContainer = ( {
 			// Ignore svgs since the current version of EditorStyles doesn't support it
 			.filter( ( style: RenderedStyle ) => style.__unstableType !== 'svgs' );
 
-		if ( ! inlineCss ) {
-			return mergedStyles;
-		}
-
-		return [ ...mergedStyles, { css: inlineCss } ];
-	}, [ styles, customStyles, inlineCss ] );
+		return mergedStyles;
+	}, [ styles, customStyles ] );
 
 	const scripts = useMemo( () => {
 		return [ assets?.scripts, customScripts ].filter( Boolean ).join( '' );
@@ -87,7 +89,9 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.boxSizing = 'border-box';
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
+	}, [] );
 
+	const contentAssetsRef = useRefEffect< HTMLBodyElement >( ( bodyElement ) => {
 		// Load scripts and styles manually to avoid a flash of unstyled content.
 		Promise.all( [
 			loadStyles( bodyElement, styleAssets ),
@@ -101,17 +105,19 @@ const ScaledBlockRendererContainer = ( {
 	return (
 		<div
 			className="scaled-block-renderer"
-			style={ {
-				transform: `scale(${ scale })`,
-				height: scaledHeight,
-				maxHeight:
-					maxHeight && maxHeight !== 'none' && contentHeight > maxHeight
-						? maxHeight * scale
-						: undefined,
-			} }
+			style={
+				{
+					'--scaled-block-renderer-scale': scale,
+					height: scaledHeight,
+					maxHeight:
+						maxHeight && maxHeight !== 'none' && contentHeight > maxHeight
+							? maxHeight * scale
+							: undefined,
+				} as CSSProperties
+			}
 		>
 			<Iframe
-				contentRef={ contentRef }
+				contentRef={ useMergeRefs( [ contentRef, contentAssetsRef ] ) }
 				aria-hidden
 				tabIndex={ -1 }
 				loading="lazy"
@@ -132,7 +138,13 @@ const ScaledBlockRendererContainer = ( {
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
 					svgFilters.map( ( preset ) => (
-						<PresetDuotoneFilter preset={ preset } key={ preset.slug } />
+						<div
+							key={ preset.slug }
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ {
+								__html: getDuotoneFilter( `wp-duotone-${ preset.slug }`, preset.colors ),
+							} }
+						/>
 					) )
 				}
 				{ children }

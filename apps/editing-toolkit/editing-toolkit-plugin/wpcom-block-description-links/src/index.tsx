@@ -2,9 +2,9 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { JSXElementConstructor, ReactElement } from 'react';
-import blockLinks, {
-	blockLinksWithVariations,
-	childrenBlockLinksWithDifferentUrl,
+import blockInfoMapping, {
+	blockInfoWithVariations,
+	childrenBlockInfoWithDifferentUrl,
 } from './block-links-map';
 import DescriptionSupportLink from './inline-support-link';
 
@@ -17,12 +17,13 @@ declare global {
 const createLocalizedDescriptionWithLearnMore = (
 	title: string,
 	description: string | ReactElement< string | JSXElementConstructor< any > >,
-	url: string
+	url: string,
+	postId: number
 ) => {
 	const localizedUrl = localizeUrl( url, window.wpcomBlockDescriptionLinksLocale );
 	return createInterpolateElement( '<InlineSupportLink />', {
 		InlineSupportLink: (
-			<DescriptionSupportLink title={ String( title ) } url={ localizedUrl }>
+			<DescriptionSupportLink title={ String( title ) } url={ localizedUrl } postId={ postId }>
 				{ description }
 			</DescriptionSupportLink>
 		),
@@ -61,21 +62,26 @@ const addBlockSupportLinks = (
 
 	processedBlocks[ name ] = true;
 
-	const additonalDesc = childrenBlockLinksWithDifferentUrl[ name ] || blockLinks[ blockName ];
+	const additonalDescLink =
+		childrenBlockInfoWithDifferentUrl[ name ]?.link || blockInfoMapping[ blockName ]?.link;
+
+	const additionalDescPostId =
+		childrenBlockInfoWithDifferentUrl[ name ]?.postId || blockInfoMapping[ blockName ]?.postId;
 
 	/**
 	 * Some elements are children, but have their own url for Learn More, and we want to show those.
 	 */
-	if ( additonalDesc ) {
+	if ( additonalDescLink && additionalDescPostId ) {
 		settings.description = createLocalizedDescriptionWithLearnMore(
 			String( settings.title ),
 			settings.description,
-			additonalDesc
+			additonalDescLink,
+			additionalDescPostId
 		);
 	}
 
 	if (
-		blockLinksWithVariations[ name ] &&
+		blockInfoWithVariations[ name ] &&
 		settings.variations &&
 		Array.isArray( settings.variations )
 	) {
@@ -85,7 +91,8 @@ const addBlockSupportLinks = (
 				name: string;
 				description: string | ReactElement< string | JSXElementConstructor< any > >;
 			} ) => {
-				const link = blockLinksWithVariations[ name ][ variation.name ];
+				const link = blockInfoWithVariations[ name ][ variation.name ]?.link;
+				const postId = blockInfoWithVariations[ name ][ variation.name ]?.postId;
 
 				if ( ! link ) {
 					return variation;
@@ -94,7 +101,8 @@ const addBlockSupportLinks = (
 				variation.description = createLocalizedDescriptionWithLearnMore(
 					variation.title,
 					variation.description,
-					link
+					link,
+					postId
 				);
 
 				return variation;

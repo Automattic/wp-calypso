@@ -1,3 +1,4 @@
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useState } from 'react';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
@@ -9,7 +10,11 @@ import CelebrateLaunchModal from '../../components/celebrate-launch-modal';
 import CustomerHomeLaunchpad from '.';
 import type { AppState } from 'calypso/types';
 
-const LaunchpadPreLaunch = (): JSX.Element => {
+type LaunchpadPreLaunchProps = {
+	checklistSlug?: string;
+};
+
+const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId ) || '';
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 	const checklistSlug = site?.options?.site_intent ?? '';
@@ -34,13 +39,23 @@ const LaunchpadPreLaunch = (): JSX.Element => {
 		}
 	};
 
-	const siteLaunched = () => {
+	const onSiteLaunched = () => {
 		setCelebrateLaunchModalIsOpenWrapper( true );
+		// currently the action to update site_launch status on atomic doesn't fire
+		// this is a workaround until that is fixed
+		if ( site?.is_wpcom_atomic ) {
+			updateLaunchpadSettings( siteId, {
+				checklist_statuses: { site_launched: true },
+			} );
+		}
 	};
 
 	return (
 		<>
-			<CustomerHomeLaunchpad checklistSlug={ checklistSlug } extraActions={ { siteLaunched } } />
+			<CustomerHomeLaunchpad
+				checklistSlug={ props.checklistSlug ?? checklistSlug }
+				onSiteLaunched={ onSiteLaunched }
+			/>
 			{ celebrateLaunchModalIsOpen && (
 				<CelebrateLaunchModal
 					setModalIsOpen={ setCelebrateLaunchModalIsOpenWrapper }

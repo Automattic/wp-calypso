@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -6,13 +5,12 @@ import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { BillingHistoryContent } from 'calypso/me/purchases/billing-history/main';
 import {
 	ReceiptBody,
@@ -20,7 +18,7 @@ import {
 	ReceiptTitle,
 } from 'calypso/me/purchases/billing-history/receipt';
 import titles from 'calypso/me/purchases/titles';
-import { convertErrorToString } from 'calypso/my-sites/checkout/src/lib/analytics';
+import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -36,23 +34,14 @@ import './style.scss';
 function useLogBillingHistoryError( message: string ) {
 	return useCallback(
 		( error: Error ) => {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message,
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-				extra: {
-					env: config( 'env_id' ),
-					type: 'site_level_billing_history',
-					message: convertErrorToString( error ),
-				},
-			} );
+			logStashLoadErrorEvent( 'site_level_billing_history', error, { message } );
 		},
 		[ message ]
 	);
 }
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 	const logBillingHistoryError = useLogBillingHistoryError(
 		'site level billing history load error'
@@ -68,11 +57,9 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
 			<QueryBillingTransactions />
 			{ ! isJetpackCloud() && (
-				<FormattedHeader
-					brandFont
-					className="billing-history__page-heading"
-					headerText={ titles.sectionTitle }
-					subHeaderText={ translate(
+				<NavigationHeader
+					title={ titles.sectionTitle }
+					subtitle={ translate(
 						'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -80,7 +67,6 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 							},
 						}
 					) }
-					align="left"
 				/>
 			) }
 			<PurchasesNavigation section="billingHistory" siteSlug={ siteSlug } />
@@ -132,12 +118,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				title="Billing History > Receipt"
 			/>
 			<QueryBillingTransaction transactionId={ receiptId } />
-			<FormattedHeader
-				brandFont
-				className="billing-history__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			<NavigationHeader title={ titles.sectionTitle } />
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }

@@ -32,7 +32,6 @@ export function getSlugInTerm( slug: string | null, term: Duration ): string | n
 
 /**
  * Get the yearly version of a product slug, or return null if one doesn't exist.
- *
  * @param {string} monthlySlug a monthly term product slug
  * @returns {string} a yearly term product slug
  */

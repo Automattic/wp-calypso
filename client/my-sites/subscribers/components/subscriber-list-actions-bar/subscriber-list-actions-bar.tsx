@@ -1,7 +1,7 @@
+import { SelectDropdown } from '@automattic/components';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Option, SortControls } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
@@ -47,17 +47,21 @@ const ListActionsBar = () => {
 				defaultValue={ searchTerm }
 			/>
 
-			<SelectDropdown
-				className="subscribers__filter-control"
-				options={ filterOptions }
-				onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) => {
-					setFilterOption( selectedOption.value );
-					pageChangeCallback( 1 );
-				} }
-				selectedText={ selectedText }
-				initialSelected={ filterOption }
-			/>
+			{ /* TODO: with too many subscribers, we're showing filter to split list between the types of users for performance reasons. */ }
+			{ hasManySubscribers && (
+				<SelectDropdown
+					className="subscribers__filter-control"
+					options={ filterOptions }
+					onSelect={ ( selectedOption: Option< SubscribersFilterBy > ) => {
+						setFilterOption( selectedOption.value );
+						pageChangeCallback( 1 );
+					} }
+					selectedText={ selectedText }
+					initialSelected={ filterOption }
+				/>
+			) }
 
+			{ /* TODO: with too many subscribers, we're hiding sorting for performance reasons. */ }
 			{ ! hasManySubscribers && (
 				<SortControls
 					options={ sortOptions }

@@ -1,10 +1,10 @@
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';

@@ -26,6 +26,38 @@ export const TERMS_LIST = < const >[
 	TERM_CENTENNIALLY,
 ];
 
+export type UrlFriendlyTermType =
+	| 'monthly'
+	| 'yearly'
+	| '2yearly'
+	| '3yearly'
+	| '4yearly'
+	| '5yearly'
+	| '6yearly'
+	| '7yearly'
+	| '8yearly'
+	| '9yearly'
+	| '10yearly'
+	| '100yearly';
+
+export const URL_FRIENDLY_TERMS_MAPPING: Record<
+	UrlFriendlyTermType,
+	( typeof TERMS_LIST )[ number ]
+> = {
+	monthly: TERM_MONTHLY,
+	yearly: TERM_ANNUALLY,
+	'2yearly': TERM_BIENNIALLY,
+	'3yearly': TERM_TRIENNIALLY,
+	'4yearly': TERM_QUADRENNIALLY,
+	'5yearly': TERM_QUINQUENNIALLY,
+	'6yearly': TERM_SEXENNIALLY,
+	'7yearly': TERM_SEPTENNIALLY,
+	'8yearly': TERM_OCTENNIALLY,
+	'9yearly': TERM_NOVENNIALLY,
+	'10yearly': TERM_DECENNIALLY,
+	'100yearly': TERM_CENTENNIALLY,
+};
+
 export const PLAN_MONTHLY_PERIOD = 31;
 export const PLAN_ANNUAL_PERIOD = 365;
 export const PLAN_BIENNIAL_PERIOD = 730;
@@ -37,7 +69,7 @@ export const PLAN_SEPTENNIAL_PERIOD = 2555;
 export const PLAN_OCTENNIAL_PERIOD = 2920;
 export const PLAN_NOVENNIAL_PERIOD = 3285;
 export const PLAN_DECENNIAL_PERIOD = 3650;
-export const PLAN_CENTENNIAL_PERIOD = 35000;
+export const PLAN_CENTENNIAL_PERIOD = 36500;
 
 export const PERIOD_LIST = < const >[
 	PLAN_MONTHLY_PERIOD,

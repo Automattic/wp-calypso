@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -6,7 +6,6 @@ import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -139,6 +138,7 @@ class ActivityLogItem extends Component {
 		const {
 			activity: {
 				activityTitle,
+				activityDescription,
 				actorAvatarUrl,
 				actorName,
 				actorRole,
@@ -146,9 +146,27 @@ class ActivityLogItem extends Component {
 				activityMedia,
 				isBreakpointActive: isDesktop,
 			},
+			moment,
+			translate,
 		} = this.props;
 
 		const rewindAction = this.renderRewindAction();
+
+		const renderPublishedDate = () => {
+			const published = activityDescription?.[ 0 ]?.published;
+
+			if ( published ) {
+				const publishedFormattedDate = moment( published ).format( 'll' );
+				return (
+					<span className="activity-card__activity-post-published-date">
+						{ ' · ' }
+						{ translate( 'Published:' ) } { publishedFormattedDate }
+					</span>
+				);
+			}
+
+			return null;
+		};
 
 		return (
 			<div className="activity-log-item__card-header">
@@ -174,7 +192,10 @@ class ActivityLogItem extends Component {
 								rewindIsActive={ this.props.rewindIsActive }
 							/>
 						</div>
-						<div className="activity-log-item__description-summary">{ activityTitle }</div>
+						<div className="activity-log-item__description-summary">
+							{ activityTitle }
+							{ renderPublishedDate() }
+						</div>
 					</div>
 					{ rewindAction && (
 						<div className="activity-log-item__description-actions">{ rewindAction }</div>
@@ -283,7 +304,6 @@ class ActivityLogItem extends Component {
 
 	/**
 	 * Displays a button to take users to enter credentials.
-	 *
 	 * @returns {Object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {

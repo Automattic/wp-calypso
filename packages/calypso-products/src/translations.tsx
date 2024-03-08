@@ -1,5 +1,5 @@
-import { translate, useTranslate } from 'i18n-calypso';
-import { createElement, useCallback, useMemo } from 'react';
+import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -81,147 +81,102 @@ import {
 	PRODUCT_WOOCOMMERCE_PRODUCT_ADD_ONS,
 	PRODUCT_WOOCOMMERCE_MINMAX_QUANTITIES,
 	PRODUCT_WOOCOMMERCE_AUTOMATEWOO,
+	PRODUCT_JETPACK_CREATOR_BI_YEARLY,
+	PRODUCT_JETPACK_CREATOR_YEARLY,
+	PRODUCT_JETPACK_CREATOR_MONTHLY,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
-// Translatable strings
 export const getJetpackProductsShortNames = (): Record< string, TranslateResult > => {
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
-			components: {
-				em: createElement( 'em' ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
-			components: {
-				em: createElement( 'em' ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
-			'VaultPress Backup {{em}}Real-time{{/em}}',
-			{
-				components: {
-					em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-				},
-			}
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
+			<>
+				VaultPress Backup <em>Daily</em>
+			</>
 		),
-		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'VaultPress Backup' ),
-		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: translate( 'Boost' ),
-		[ PRODUCT_JETPACK_BOOST ]: translate( 'Boost' ),
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: translate( 'Boost' ),
-		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
-		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH_FREE ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
-		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-			components: {
-				s: <span style={ { whiteSpace: 'nowrap' } } />,
-			},
-		} ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-			components: {
-				s: <span style={ { whiteSpace: 'nowrap' } } />,
-			},
-		} ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-			components: {
-				s: <span style={ { whiteSpace: 'nowrap' } } />,
-			},
-		} ),
-		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Social', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
-			context: 'Jetpack product name',
-		} ),
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: translate( 'Stats', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_AI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: translate( 'AI', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
+			<>
+				VaultPress Backup <em>Daily</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
+			<>
+				VaultPress Backup <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
+			<>
+				VaultPress Backup <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: 'VaultPress Backup',
+		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: 'Boost',
+		[ PRODUCT_JETPACK_BOOST ]: 'Boost',
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: 'Boost',
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: (
+			<>
+				Scan <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: (
+			<>
+				Scan <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: 'Scan',
+		[ PRODUCT_JETPACK_SCAN ]: 'Scan',
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: 'Scan',
+		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: 'Search',
+		[ PRODUCT_JETPACK_SEARCH ]: 'Search',
+		[ PRODUCT_JETPACK_SEARCH_FREE ]: 'Search',
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: 'Search',
+		[ PRODUCT_WPCOM_SEARCH ]: 'Search',
+		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: 'Search',
+		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: (
+			<>
+				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: (
+			<>
+				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: (
+			<>
+				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+			</>
+		),
+		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: 'VideoPress',
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: 'VideoPress',
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: 'VideoPress',
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: 'Social',
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: 'Social',
+		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: 'Stats',
+		[ PRODUCT_JETPACK_STATS_YEARLY ]: 'Stats',
+		[ PRODUCT_JETPACK_STATS_MONTHLY ]: 'Stats',
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: 'AI',
+		[ PRODUCT_JETPACK_AI_YEARLY ]: 'AI',
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: 'AI',
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: 'Creator',
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: 'Creator',
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: 'Creator',
 	};
 };
 
 export const getJetpackProductsDisplayNames = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
-		components: {
-			em: <em />,
-		},
-	} );
-	const backupRealtime = (
-		<>
-			{ translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em style={ { whiteSpace: 'nowrap' } } />,
-				},
-			} ) }
-		</>
-	);
-	const backup = translate( 'VaultPress Backup' );
-	const search = translate( 'Site Search', { context: 'Jetpack product name' } );
-	const stats = translate( 'Stats (Personal)', { context: 'Jetpack product name' } );
-	const statsFree = translate( 'Stats (Free)', { context: 'Jetpack product name' } );
-	const statsCommercial = translate( 'Stats', { context: 'Jetpack product name' } );
-	const scan = translate( 'Scan' );
-	const scanRealtime = (
-		<>
-			{ translate( 'Scan {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em style={ { whiteSpace: 'nowrap' } } />,
-				},
-			} ) }
-		</>
-	);
-	const videoPress = translate( 'VideoPress' );
-	const aiAssistant = translate( 'AI', { context: 'Jetpack product name' } );
-	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
-		components: {
-			s: <span style={ { whiteSpace: 'nowrap' } } />,
-		},
-	} );
-	const boost = translate( 'Boost', { context: 'Jetpack product name' } );
-	const socialBasic = translate( 'Social', { context: 'Jetpack product name' } );
-	const socialAdvanced = translate( 'Social', { context: 'Jetpack product name' } );
-
+	const vaultPressBackupName = getJetpackProductsShortNames()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ];
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
 			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
@@ -256,67 +211,24 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 
 	//Backup Add-on products
-	const backupAddon10gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text10gb },
+	const backupAddon10gb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text10gb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon100gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text100gb },
+	const backupAddon100gb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text100gb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon1tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text1tb },
+	const backupAddon1tb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text1tb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon3tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text3tb },
+	const backupAddon3tb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text3tb, pluginName: vaultPressBackupName },
 	} );
-	const backupAddon5tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
-		args: { storageAmount: text5tb },
+	const backupAddon5tb = translate( '%(pluginName)s Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text5tb, pluginName: vaultPressBackupName },
 	} );
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boost,
-		[ PRODUCT_JETPACK_BOOST ]: boost,
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
-		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: search,
-		[ PRODUCT_JETPACK_SEARCH ]: search,
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_WPCOM_SEARCH ]: search,
-		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: statsCommercial,
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: statsCommercial,
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: statsCommercial,
-		[ PRODUCT_JETPACK_STATS_PWYW_YEARLY ]: stats,
-		[ PRODUCT_JETPACK_STATS_FREE ]: statsFree,
-		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scan,
-		[ PRODUCT_JETPACK_SCAN ]: scan,
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
-		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
-		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
-		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPress,
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
-		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpam,
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: socialBasic,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasic,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasic,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: socialAdvanced,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvanced,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvanced,
+		...getJetpackProductsShortNames(),
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
@@ -327,77 +239,6 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: backupAddon1tb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY ]: backupAddon3tb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY ]: backupAddon5tb,
-	};
-};
-
-export const getJetpackProductsCallToAction = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'Get VaultPress Backup {{em}}Daily{{/em}}', {
-		components: {
-			em: <em />,
-		},
-	} );
-	const backupRealtime = (
-		<>
-			{ translate( 'Get VaultPress Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em style={ { whiteSpace: 'nowrap' } } />,
-				},
-			} ) }
-		</>
-	);
-	const backup = translate( 'Get VaultPress Backup' );
-	const search = translate( 'Get Site Search' );
-	const scan = translate( 'Get Scan' );
-	const videoPress = translate( 'Get VideoPress' );
-	const antiSpam = translate( 'Get Akismet {{s}}Anti-spam{{/s}}', {
-		components: {
-			s: <span style={ { whiteSpace: 'nowrap' } } />,
-		},
-	} );
-	const boost = translate( 'Get Boost' );
-	const aiAssistant = translate( 'Get AI' );
-	const social = translate( 'Get Social' );
-	const stats = translate( 'Get Stats' );
-
-	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistant,
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
-		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_BI_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backup,
-		[ PRODUCT_JETPACK_BOOST_BI_YEARLY ]: boost,
-		[ PRODUCT_JETPACK_BOOST ]: boost,
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
-		[ PRODUCT_JETPACK_SEARCH_BI_YEARLY ]: search,
-		[ PRODUCT_JETPACK_SEARCH ]: search,
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ PRODUCT_JETPACK_SCAN ]: scan,
-		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: scan,
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
-		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPress,
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
-		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpam,
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_BI_YEARLY ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_BI_YEARLY ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: social,
-		[ PRODUCT_JETPACK_STATS_BI_YEARLY ]: stats,
-		[ PRODUCT_JETPACK_STATS_YEARLY ]: stats,
-		[ PRODUCT_JETPACK_STATS_MONTHLY ]: stats,
 	};
 };
 
@@ -416,6 +257,12 @@ export const getJetpackProductsTaglines = (): Record<
 	);
 	const aiAssistantOwnedTagLine = translate(
 		'Your site is equipped with our intuitive and powerful AI.'
+	);
+	const creatorTagLine = translate(
+		'Craft stunning content, boost your subscriber base, and monetize your online presence.'
+	);
+	const creatorOwnedTagLine = translate(
+		'You have tools to create, grow, and monetize your audience.'
 	);
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
 	const statsTagline = translate(
@@ -450,6 +297,18 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: {
 			default: aiAssistantTagLine,
 			owned: aiAssistantOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: {
+			default: creatorTagLine,
+			owned: creatorOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: {
+			default: creatorTagLine,
+			owned: creatorOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: {
+			default: creatorTagLine,
+			owned: creatorOwnedTagLine,
 		},
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
@@ -582,9 +441,7 @@ export const getJetpackProductDisclaimers = (
 
 	/* Checks if any slugs of featues on the current Product match a set of slugs provided to this function. This determines whether or not to show the disclaimer based on whether the features the disclaimer is for is present */
 	const doesProductHaveCompatibleSlug = ( slugsToCheckFor: string[] ) => {
-		const combinedFeatureSlugs = featureSlugs.concat( slugsToCheckFor );
-
-		return new Set( combinedFeatureSlugs ).size !== combinedFeatureSlugs.length;
+		return slugsToCheckFor.some( ( slug ) => featureSlugs.includes( slug ) );
 	};
 
 	const getLink = () => {
@@ -620,6 +477,9 @@ export const getJetpackProductDisclaimers = (
 		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupDisclaimer,
 		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_COMPLETE_BI_YEARLY ]: backupDisclaimer,
+		[ PLAN_JETPACK_COMPLETE ]: backupDisclaimer,
+		[ PLAN_JETPACK_COMPLETE_MONTHLY ]: backupDisclaimer,
 		[ PRODUCT_JETPACK_MONITOR_YEARLY ]: monitorDisclaimer,
 		[ PRODUCT_JETPACK_MONITOR_MONTHLY ]: monitorDisclaimer,
 	};
@@ -638,6 +498,9 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	// TODO: may need copy update
 	const aiAssistantDescription = translate(
 		'Experience the ease of crafting content with intuitive and powerful AI.'
+	);
+	const creatorDescription = translate(
+		'Craft stunning content, boost your subscriber base, and monetize your online presence.'
 	);
 	const boostDescription = translate(
 		"One-click optimizations that supercharge your WordPress site's performance and improve web vitals scores for better SEO."
@@ -677,6 +540,9 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantDescription,
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantDescription,
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creatorDescription,
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creatorDescription,
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creatorDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeDescription,
@@ -736,6 +602,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const aiAssistantShortDescription = translate(
 		'Experience the ease of crafting content with intuitive and powerful AI.'
 	);
+	const creatorShortDescription = translate( 'Create, grow, and monetize your audience.' );
 	const boostShortDescription = translate(
 		'Speed up your site and improve SEO - no developer required.'
 	);
@@ -759,6 +626,9 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantShortDescription,
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantShortDescription,
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creatorShortDescription,
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creatorShortDescription,
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creatorShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
@@ -809,6 +679,9 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	const videoPressFeaturedText = translate(
 		'Own your content. High-quality, ad-free video built specifically for WordPress.'
 	);
+	const creatorFeaturedText = translate(
+		'Craft stunning content, boost your subscriber base, and monetize your online presence.'
+	);
 	const antiSpamFeaturedText = translate(
 		'Stop spam in comments and forms. Save time through automation and get rid of annoying CAPTCHAs.'
 	);
@@ -841,6 +714,9 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantFeaturedText,
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantFeaturedText,
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creatorFeaturedText,
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creatorFeaturedText,
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creatorFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
@@ -892,6 +768,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const antiSpamLightboxDescription = translate(
 		'Automatically clear spam from your comments and forms.'
 	);
+	const creatorLightboxDescription = translate(
+		'Craft stunning content, boost your subscriber base, and monetize your online presence.'
+	);
 	const scanLightboxDescription = translate(
 		'Keep your site or store ahead of security threats with our WAF and automated malware scanning, including one-click fixes.'
 	);
@@ -940,6 +819,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantLightboxDescription,
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantLightboxDescription,
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creatorLightboxDescription,
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creatorLightboxDescription,
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creatorLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
@@ -1006,8 +888,8 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
-	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive *' );
+	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive *', {
 		components: {
 			strong: <strong />,
 		},
@@ -1055,6 +937,15 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Video and story blocks' ),
 		translate( 'Unlimited logins for team members' ),
 	];
+	const creatorIncludesInfo = [
+		translate( '40+ Jetpack blocks' ),
+		translate( 'Display ads with WordAds' ),
+		translate( 'Pay with PayPal' ),
+		translate( 'Paid content gating' ),
+		translate( 'Paywall access' ),
+		translate( 'Newsletter' ),
+		translate( 'Priority support' ),
+	];
 	const antiSpamIncludesInfo = [
 		translate( 'Comment and form spam protection' ),
 		translate( '10K API calls per month' ),
@@ -1074,25 +965,73 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
+
+	const boostPremiumFeatureComponents = {
+		div: <div className="premium-feature" />,
+		strong: <span className="premium-feature-title" />,
+		badge: <span style={ { display: 'none' } } className="premium-feature-badge" />,
+	};
+
 	const boostIncludesInfo = [
-		translate( '{{strong}}Automated critical CSS (Premium){{/strong}}', {
-			components: {
-				strong: <strong />,
-			},
+		translate(
+			'{{div}}{{strong}}Automated critical CSS generation{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Reduce image sizes with Image Guide{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Historical site performance chart{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate(
+			'{{div}}{{strong}}Additional image quality control options{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}',
+			{
+				components: boostPremiumFeatureComponents,
+			}
+		),
+		translate( '{{div}}{{strong}}Priority support{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}', {
+			components: boostPremiumFeatureComponents,
 		} ),
 		translate( 'Site performance scores' ),
 		translate( 'One-click optimization' ),
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
-		translate( 'Image Guide to discover and fix large images on your site' ),
 	];
+
+	// Intl.ListFormat is not available in Mac OS Safari before Big Sur, so we
+	// provide a fallback.
+	const socialNetworksForSharing = [
+		translate( 'Facebook' ),
+		translate( 'Instagram' ),
+		translate( 'LinkedIn' ),
+		translate( 'Mastodon' ),
+		translate( 'Tumblr' ),
+		translate( 'Nextdoor' ),
+	];
+	let socialNetworksList = socialNetworksForSharing.join( ', ' );
+	if ( 'ListFormat' in Intl ) {
+		const listFormatter = new Intl.ListFormat( getLocaleSlug() || 'en' );
+		socialNetworksList = listFormatter.format( socialNetworksForSharing );
+	}
+
 	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
+		translate( 'Share to %(socialNetworksList)s', {
+			args: { socialNetworksList },
+			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
+		} ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -1100,21 +1039,25 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Facebook, Instagram, LinkedIn, Mastodon & Tumblr' ),
+		translate( 'Share to %(socialNetworksList)s', {
+			args: { socialNetworksList },
+			comment: 'Comma separated list of social networks like "Facebook, Mastodon and Tumblr".',
+		} ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Image generator' ),
 	];
 	const statsCommercialIncludesInfo = [
 		translate( 'Real-time data on visitors' ),
-		translate( 'Traffic stats and trends for post and pages' ),
+		translate( 'Traffic stats and trends for posts and pages' ),
 		translate( 'Detailed statistics about links leading to your site' ),
-		translate( 'GDPR compliant' ),
+		translate( 'GDPR compliance' ),
 		translate( 'Access to upcoming advanced features' ),
 		translate( 'Priority support' ),
 		translate( 'Commercial use' ),
 	];
 	const aiAssistantIncludesInfo = [
+		translate( '100 monthly requests (upgradeable)' ),
 		translate( 'Prompt-based content generation' ),
 		translate( 'Text, table, and list generation' ),
 		translate( 'Adaptive tone adjustment' ),
@@ -1235,6 +1178,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressIncludesInfo,
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creatorIncludesInfo,
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creatorIncludesInfo,
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creatorIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: antiSpamIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamIncludesInfo,
@@ -1366,6 +1312,14 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
+	const creatorBenefits = [
+		translate( 'Quickly create content that stands out' ),
+		translate( 'Grow your subscribers with simple subscribe forms' ),
+		translate( 'Create content for paid subscribers' ),
+		translate( 'Sell access to premium content' ),
+		translate( 'Easily accept tips and donations' ),
+	];
+
 	// WooCommerce Extensions benefits
 	const woocommerceBookingsBenefits = [
 		translate(
@@ -1441,6 +1395,9 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantBenefits,
+		[ PRODUCT_JETPACK_CREATOR_MONTHLY ]: creatorBenefits,
+		[ PRODUCT_JETPACK_CREATOR_YEARLY ]: creatorBenefits,
+		[ PRODUCT_JETPACK_CREATOR_BI_YEARLY ]: creatorBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,
@@ -1520,7 +1477,7 @@ export const getJetpackProductsFAQs = (
 
 	const backupFAQs: Array< FAQ > = [
 		{
-			id: 'backup-storage-limits',
+			id: 'backup-storage-limits-lightbox',
 			question: translate( 'How do backup storage limits work?' ),
 			answer: translate(
 				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',

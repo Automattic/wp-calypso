@@ -8,6 +8,7 @@ import 'calypso/state/data-layer/wpcom/auth/send-login-email';
  * @param {string} email - email to send to
  * @param {Object} options object:
  * @param {string} options.redirectTo - url to redirect to after login
+ * @param {string} options.blogId - id of blog when in process of subscribing
  * @param {boolean} options.loginFormFlow - if true, dispatches actions associated with passwordless login
  * @param {boolean} options.requestLoginEmailFormFlow - if true, dispatches actions associated with email me login
  * @param {boolean} options.isMobileAppLogin - if true, will send an email that allows login to the native apps
@@ -20,6 +21,7 @@ export const sendEmailLogin = (
 	email,
 	{
 		redirectTo,
+		blogId,
 		showGlobalNotices = false,
 		loginFormFlow = false,
 		requestLoginEmailFormFlow = false,
@@ -37,6 +39,7 @@ export const sendEmailLogin = (
 		locale,
 		lang_id,
 		redirect_to: redirectTo,
+		blog_id: blogId,
 		isMobileAppLogin,
 		showGlobalNotices,
 		loginFormFlow,

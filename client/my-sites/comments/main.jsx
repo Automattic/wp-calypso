@@ -4,18 +4,19 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import CommentList from './comment-list';
+import CommentTips, { COMMENTS_TIPS_DISMISSED_PREFERENCE } from './comment-tips';
 import { NEWEST_FIRST } from './constants';
 
 import './style.scss';
@@ -40,9 +41,12 @@ export class CommentsManagement extends Component {
 
 	state = {
 		order: NEWEST_FIRST,
+		filterUnreplied: false,
 	};
 
 	setOrder = ( order ) => () => this.setState( { order } );
+
+	setFilterUnreplied = ( filterUnreplied ) => () => this.setState( { filterUnreplied } );
 
 	render() {
 		const {
@@ -58,23 +62,23 @@ export class CommentsManagement extends Component {
 			siteFragment,
 			status,
 			translate,
+			hideModerationTips,
 		} = this.props;
-		const { order } = this.state;
+		const { filterUnreplied, order } = this.state;
 
 		return (
 			<Main className="comments" wideLayout>
-				<ScreenOptionsTab wpAdminPath="edit-comments.php" />
 				<PageViewTracker path={ analyticsPath } title="Comments" />
 				{ isJetpack && isPossibleJetpackConnectionProblem && (
 					<JetpackConnectionHealthBanner siteId={ siteId } />
 				) }
 				<DocumentHead title={ translate( 'Comments' ) } />
 				{ ! showPermissionError && (
-					<FormattedHeader
-						brandFont
-						className="comments__page-heading"
-						headerText={ translate( 'Comments' ) }
-						subHeaderText={ translate(
+					<NavigationHeader
+						screenOptionsTab="edit-comments.php"
+						navigationItems={ [] }
+						title={ translate( 'Comments' ) }
+						subtitle={ translate(
 							'View, reply to, and manage all the comments across your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
@@ -82,8 +86,6 @@ export class CommentsManagement extends Component {
 								},
 							}
 						) }
-						align="left"
-						hasScreenOptions
 					/>
 				) }
 				{ showPermissionError && (
@@ -98,17 +100,22 @@ export class CommentsManagement extends Component {
 					/>
 				) }
 				{ showCommentList && (
-					<CommentList
-						key={ `${ siteId }-${ status }` }
-						changePage={ changePage }
-						order={ order }
-						page={ page }
-						postId={ postId }
-						setOrder={ this.setOrder }
-						siteId={ siteId }
-						siteFragment={ siteFragment }
-						status={ status }
-					/>
+					<>
+						{ ! hideModerationTips && <CommentTips /> }
+						<CommentList
+							key={ `${ siteId }-${ status }` }
+							changePage={ changePage }
+							filterUnreplied={ filterUnreplied }
+							order={ order }
+							page={ page }
+							postId={ postId }
+							setFilterUnreplied={ this.setFilterUnreplied }
+							setOrder={ this.setOrder }
+							siteId={ siteId }
+							siteFragment={ siteFragment }
+							status={ status }
+						/>
+					</>
 				) }
 			</Main>
 		);
@@ -127,6 +134,7 @@ const mapStateToProps = ( state, { siteFragment } ) => {
 		siteId,
 		showCommentList,
 		showPermissionError,
+		hideModerationTips: getPreference( state, COMMENTS_TIPS_DISMISSED_PREFERENCE ),
 	};
 };
 

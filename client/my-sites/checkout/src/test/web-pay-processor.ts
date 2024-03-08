@@ -65,14 +65,14 @@ describe( 'webPayProcessor', () => {
 
 	it( 'throws an error if there is no stripe object', async () => {
 		const submitData = { paymentPartner: 'stripe' };
-		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrow(
 			/requires stripe and none was provided/
 		);
 	} );
 
 	it( 'throws an error if there is no stripeConfiguration object', async () => {
 		const submitData = { paymentPartner: 'stripe', stripe };
-		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrowError(
+		await expect( webPayProcessor( 'apple-pay', submitData, options ) ).rejects.toThrow(
 			/requires stripeConfiguration and none was provided/
 		);
 	} );

@@ -27,7 +27,7 @@ export default function DefaultTemplate( {
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
 				horizontal
-				target="_blank"
+				target={ CTA.target }
 				showIcon={ true }
 				forceDisplay
 			/>

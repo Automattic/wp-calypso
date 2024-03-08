@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { once, defer } from 'lodash';
-import page from 'page';
 import {
 	ROUTE_SET,
 	SELECTED_SITE_SET,
@@ -63,8 +63,7 @@ const handler = async ( dispatch, action, getState ) => {
 		case SELECTED_SITE_SET:
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
-			const { fetchAutomatedTransferStatusForSelectedSite } = await import(
-				/* webpackChunkName: "automated-transfer-state-middleware" */
+			const { fetchAutomatedTransferStatusForSelectedSite } = await asyncRequire(
 				'calypso/state/lib/automated-transfer-middleware'
 			);
 			fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );

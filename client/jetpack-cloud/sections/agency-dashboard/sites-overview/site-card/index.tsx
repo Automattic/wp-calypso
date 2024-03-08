@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon, Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -7,6 +8,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getSelectedLicenses,
+	getSelectedSiteLicenses,
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -16,6 +18,7 @@ import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
 import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
+import { SiteHostInfo } from '../site-status-content/site-host-info';
 import type { SiteData, SiteColumns, AllowedTypes } from '../types';
 
 import './style.scss';
@@ -36,9 +39,9 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const blogId = rows.site.value.blog_id;
 	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
 
-	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
-	const isSiteConnected = rows.site.value.is_connected;
+	const isSiteConnected = data?.connected ?? true;
 
 	const handleSetExpandedColumn = ( column: AllowedTypes ) => {
 		recordEvent( 'expandable_block_column_toggled', {
@@ -78,15 +81,19 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const siteUrl = site.value.url;
 	const isFavorite = rows.isFavorite;
 
+	const isStreamlinedPurchasesEnabled = isEnabled( 'jetpack/streamline-license-purchases' );
+
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
+	const selectedSiteLicenses = useSelector( getSelectedSiteLicenses );
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
 
 	// We should disable the license selection for all sites, but the active one.
-	const shouldDisableLicenseSelection =
-		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
+	const shouldDisableLicenseSelection = isStreamlinedPurchasesEnabled
+		? selectedSiteLicenses?.length
+		: selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
 	return (
 		<Card
@@ -169,6 +176,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 								);
 							}
 						} ) }
+					<SiteHostInfo site={ rows.site.value } />
 					<div className="site-card__expanded-content-list site-card__content-list-no-error">
 						<SitePhpVersion phpVersion={ rows.site.value.php_version_num } />
 					</div>

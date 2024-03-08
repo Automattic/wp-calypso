@@ -9,6 +9,7 @@ import {
 	getLastThemeQuery,
 	getThemeType,
 	prependThemeFilterKeys,
+	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -57,6 +58,7 @@ export function themeActivated(
 			search_taxonomies,
 			style_variation_slug: styleVariationSlug || '',
 			theme_type: getThemeType( getState(), themeId ),
+			theme_tier: getThemeTierForTheme( getState(), themeId )?.slug,
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 

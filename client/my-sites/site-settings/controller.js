@@ -1,10 +1,12 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
+import WpcomSiteTools from 'calypso/my-sites/site-settings/wpcom-site-tools';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import wasBusinessTrialSite from 'calypso/state/selectors/was-business-trial-site';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
@@ -14,7 +16,9 @@ import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
+import { AcceptSiteTransfer } from './site-owner-transfer/accept-site-transfer';
 import SiteOwnerTransfer from './site-owner-transfer/site-owner-transfer';
+import SiteTransferred from './site-owner-transfer/site-transferred';
 import StartOver from './start-over';
 
 function canDeleteSite( state, siteId ) {
@@ -22,6 +26,10 @@ function canDeleteSite( state, siteId ) {
 
 	if ( ! siteId || ! canManageOptions ) {
 		// Current user doesn't have manage options to delete the site
+		return false;
+	}
+
+	if ( isSiteWpcomStaging( state, siteId ) ) {
 		return false;
 	}
 
@@ -58,6 +66,11 @@ export function redirectIfCantStartSiteOwnerTransfer( context, next ) {
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
+	next();
+}
+
+export function wpcomSiteTools( context, next ) {
+	context.primary = <WpcomSiteTools />;
 	next();
 }
 
@@ -103,6 +116,23 @@ export function manageConnection( context, next ) {
 
 export function startSiteOwnerTransfer( context, next ) {
 	context.primary = <SiteOwnerTransfer />;
+	next();
+}
+
+export function renderSiteTransferredScreen( context, next ) {
+	context.primary = <SiteTransferred />;
+	next();
+}
+
+export function acceptSiteTransfer( context, next ) {
+	context.primary = (
+		<AcceptSiteTransfer
+			siteId={ context.params.site_id }
+			inviteKey={ context.params.invitation_key }
+			redirectTo={ context.query.nextStep }
+			dispatch={ context.store.dispatch }
+		/>
+	);
 	next();
 }
 

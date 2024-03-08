@@ -38,6 +38,9 @@
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
+		.spinner {
+			width: 100%;
+		}
 	}
 
 	.search-component .search-component__icon-navigation {
@@ -145,17 +148,16 @@
 		}
 
 		.domains__domain-cart-rows {
-			.domains__domain-cart-row {
-				padding-bottom: 6px;
-				padding-top: 6px;
-			}
-
 			.domains__domain-cart-row > div {
 				display: flex;
 				justify-content: space-between;
+				padding-top: 6px;
+				column-gap: 10px;
 			}
 			.domains__domain-cart-row > div:nth-child(2) {
 				display: block;
+				padding-bottom: 6px;
+				padding-top: 0;
 			}
 
 			.savings-message {
@@ -167,19 +169,11 @@
 			}
 
 			.domains__domain-cart-domain {
-				display: flex;
-				align-items: center;
 				color: var(--studio-gray-50);
 				font-size: $font-body-small;
-
+				overflow: auto;
 				span {
-					overflow: hidden;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-				}
-
-				&.limit-width {
-					width: 35%;
+					overflow-wrap: anywhere;
 				}
 			}
 
@@ -198,8 +192,7 @@
 
 				del {
 					font-size: 0.75rem;
-					margin-right: 7px;
-					margin-left: 7px;
+					margin-right: 10px;
 				}
 			}
 
@@ -303,22 +296,18 @@ body.is-section-signup.is-white-signup {
 			display: none;
 
 			@include break-large {
-				width: 30vw;
 				margin-top: 0;
 				flex-direction: column;
 				display: flex;
-			}
-
-			@include break-wide {
-				width: 350px;
 			}
 		}
 
 		.register-domain-step .domains__domain-side-content-container {
 			display: flex;
 
-			@include break-small {
+			@include break-medium {
 				flex-direction: row;
+				justify-content: center;
 
 				.domains__domain-side-content {
 					padding-top: 0;
@@ -346,15 +335,21 @@ body.is-section-signup.is-white-signup {
 			margin: 0;
 
 			@include break-small {
+				width: 80%;
+				margin: 0 auto;
+			}
+
+			@include break-medium {
+				width: 290px;
 				margin: 0 20px;
 			}
 
 			@include break-large {
-				margin: 0 20px 0 40px;
+				margin: 0 0 0 40px;
 				padding: 40px 0;
 			}
 
-			@include break-wide {
+			@include break-huge {
 				margin: 0 0 0 60px;
 			}
 

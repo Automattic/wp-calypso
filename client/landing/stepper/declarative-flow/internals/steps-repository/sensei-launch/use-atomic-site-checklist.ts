@@ -10,9 +10,7 @@ import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 export function useAtomicSiteChecklist() {
 	const dispatch = useRootDispatch();
 	const siteId = useSite()?.ID || '';
-	const { siteChecklist } = useSelector( ( state ) => ( {
-		siteChecklist: getSiteChecklist( state, Number( siteId ) ),
-	} ) );
+	const siteChecklist = useSelector( ( state ) => getSiteChecklist( state, Number( siteId ) ) );
 
 	const requestChecklist = useCallback(
 		() => dispatch( requestSiteChecklist( siteId.toString() ) ),

@@ -1,5 +1,4 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { includes } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
@@ -109,7 +108,10 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
 			const settings = state[ siteId ];
-			if ( ! settings || ! includes( mediaIds, settings.site_icon ) ) {
+			if (
+				! settings ||
+				! ( Array.isArray( mediaIds ) && mediaIds.includes( settings.site_icon ) )
+			) {
 				return state;
 			}
 

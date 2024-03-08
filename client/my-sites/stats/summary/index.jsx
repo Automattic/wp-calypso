@@ -1,4 +1,5 @@
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
@@ -6,18 +7,21 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
 import AllTimeNav from '../stats-module/all-time-nav';
+import StatsModuleUTM from '../stats-module-utm';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
+import StatsUpsellModal from '../stats-upsell-modal';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
@@ -146,7 +150,8 @@ class StatsSummary extends Component {
 							<UpsellNudge
 								title={ translate( 'Add Google Analytics' ) }
 								description={ translate(
-									'Upgrade to a Premium Plan for Google Analytics integration.'
+									'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
+									{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 								) }
 								event="googleAnalytics-stats-countries"
 								feature={ FEATURE_GOOGLE_ANALYTICS }
@@ -321,13 +326,33 @@ class StatsSummary extends Component {
 				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
+			case 'utm': {
+				title = translate( 'UTM insights' );
+				backLabel = localizedTabNames.traffic;
+				backLink = `/stats/traffic/`;
+				path = 'utm';
+				statType = 'statsUTM';
+				summaryView = isEnabled( 'stats/utm-module' ) ? (
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleUTM
+							siteId={ siteId }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+						/>
+					</>
+				) : (
+					<div>This path is not available.</div>
+				);
+				break;
+			}
 		}
 
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
-		// Set up for FixedNavigationHeader.
 		const domain = this.props.siteSlug;
 		if ( domain?.length > 0 ) {
 			backLink += domain;
@@ -340,12 +365,13 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<FixedNavigationHeader navigationItems={ navigationItems } />
+				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -353,9 +379,11 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
+		upsellModalView,
 	};
 } )( localize( StatsSummary ) );

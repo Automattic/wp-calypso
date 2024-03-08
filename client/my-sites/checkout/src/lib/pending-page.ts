@@ -1,5 +1,11 @@
-import page from 'page';
-import { SUCCESS, ERROR, FAILURE, UNKNOWN } from 'calypso/state/order-transactions/constants';
+import page from '@automattic/calypso-router';
+import {
+	SUCCESS,
+	ERROR,
+	FAILURE,
+	PROCESSING,
+	ASYNC_PENDING,
+} from 'calypso/state/order-transactions/constants';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
@@ -24,6 +30,7 @@ export interface RedirectInstructions {
 }
 
 export interface RedirectForTransactionStatusArgs {
+	isLoadingOrder: boolean;
 	error?: Error | null;
 	transaction?: OrderTransaction | null;
 	orderId?: number;
@@ -241,6 +248,8 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 
 	const allowedHostsForRedirect = [
 		'wordpress.com',
+		'wpcalypso.wordpress.com',
+		'horizon.wordpress.com',
 		'calypso.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
@@ -267,6 +276,11 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 			) {
 				return false;
 			}
+			return true;
+		}
+
+		// Return true for *.calypso.live urls.
+		if ( /^([a-zA-Z0-9-]+\.)?calypso\.live$/.test( hostname ) ) {
 			return true;
 		}
 
@@ -332,6 +346,7 @@ function getDefaultSuccessUrl(
  * response. These flags can be used to notify the user.
  */
 export function getRedirectFromPendingPage( {
+	isLoadingOrder,
 	error,
 	transaction,
 	orderId,
@@ -341,8 +356,8 @@ export function getRedirectFromPendingPage( {
 	saasRedirectUrl,
 	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
-	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
-	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
+	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/checkout/no-site';
+	const errorUrl = `/checkout/failed-purchases`;
 
 	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
 	// we can redirect user immediately to vendor application.
@@ -352,9 +367,16 @@ export function getRedirectFromPendingPage( {
 		};
 	}
 
-	// If there is a receipt ID, then the order must already be complete. In
-	// that case, we can redirect immediately.
-	if ( receiptId ) {
+	// We can't make any other decisions until we've loaded the order because
+	// we need that to know how to proceed.
+	if ( isLoadingOrder ) {
+		return undefined;
+	}
+
+	// If there is a receipt ID and the order is not loading and does not exist
+	// (eg: for free purchases which do not use Orders), then the order must
+	// already be complete. In that case, we can redirect immediately.
+	if ( receiptId && ! isLoadingOrder && ! transaction ) {
 		return {
 			url: filterAllowedRedirect(
 				interpolateReceiptId(
@@ -373,59 +395,64 @@ export function getRedirectFromPendingPage( {
 	// existing behavior and send the user to a generic thank-you page,
 	// assuming that the purchase was successful. This goes to the URL path
 	// `/checkout/thank-you/:site/:receiptId` but without a real receiptId.
-	if ( ! orderId && ! transaction ) {
+	if ( ! orderId && ! transaction && ! receiptId ) {
 		return {
 			url: getDefaultSuccessUrl( siteSlug, undefined ),
 		};
 	}
 
-	if ( transaction ) {
-		const { processingStatus } = transaction;
-
+	if ( transaction?.processingStatus === SUCCESS ) {
 		// If the order is complete, we can redirect to the final page.
-		if ( SUCCESS === processingStatus ) {
-			const { receiptId: transactionReceiptId } = transaction;
+		const { receiptId: transactionReceiptId } = transaction;
 
-			return {
-				url: filterAllowedRedirect(
-					interpolateReceiptId(
-						redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
-						transactionReceiptId
-					),
-					siteSlug || fromSiteSlug,
-					getDefaultSuccessUrl( siteSlug, transactionReceiptId )
+		return {
+			url: filterAllowedRedirect(
+				interpolateReceiptId(
+					redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
+					transactionReceiptId
 				),
-			};
-		}
-
-		// If the processing status indicates that there was something wrong, it
-		// could be because the user has cancelled the payment, or because the
-		// payment failed after being authorized. Redirect users back to the
-		// checkout page so they can try again.
-		if ( ERROR === processingStatus || FAILURE === processingStatus ) {
-			return {
-				url: defaultFailUrl,
-				isError: true,
-			};
-		}
-
-		// The API has responded a status string that we don't expect somehow.
-		// Redirect users back to the plan page so that they won't be stuck here.
-		if ( UNKNOWN === processingStatus ) {
-			return {
-				url: planRoute,
-				isUnknown: true,
-			};
-		}
+				siteSlug || fromSiteSlug,
+				getDefaultSuccessUrl( siteSlug, transactionReceiptId )
+			),
+		};
 	}
 
-	// A HTTP error occured; we will send the user back to checkout.
-	if ( error ) {
+	// If the processing status indicates that there was something wrong,
+	// it could be because the user has cancelled the payment, or because
+	// the payment failed after being authorized. Redirect users back to
+	// the checkout page so they can try again on a failure or to a
+	// dedicated error page on an error.
+	if ( transaction?.processingStatus === ERROR ) {
 		return {
-			url: defaultFailUrl,
+			url: errorUrl,
+			isError: true,
+		};
+	}
+	if ( transaction?.processingStatus === FAILURE ) {
+		return {
+			url: checkoutUrl,
 			isError: true,
 		};
 	}
 
-	return undefined;
+	if (
+		transaction?.processingStatus === PROCESSING ||
+		transaction?.processingStatus === ASYNC_PENDING
+	) {
+		return undefined;
+	}
+
+	// A HTTP or other unknown error occured; we will send the user back to
+	// checkout.
+	if ( error ) {
+		return {
+			url: checkoutUrl,
+			isError: true,
+		};
+	}
+
+	return {
+		url: checkoutUrl,
+		isUnknown: true,
+	};
 }

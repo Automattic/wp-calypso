@@ -23,6 +23,7 @@ class GSuiteCancellationSurvey extends Component {
 
 		return (
 			<MultipleChoiceQuestion
+				name="gsuite-cancellation-survey-question"
 				answers={ [
 					{
 						id: 'too-expensive',

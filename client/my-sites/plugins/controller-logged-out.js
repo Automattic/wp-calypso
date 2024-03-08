@@ -64,7 +64,10 @@ const prefetchProductList = ( queryClient, store ) => {
 	const type = 'all';
 
 	return queryClient
-		.fetchQuery( [ 'products-list', type ], () => wpcom.req.get( '/products', { type } ) )
+		.fetchQuery( {
+			queryKey: [ 'products-list', type ],
+			queryFn: () => wpcom.req.get( '/products', { type } ),
+		} )
 		.then( ( productsList ) => {
 			return store.dispatch( receiveProductsList( productsList, type ) );
 		} );
@@ -187,7 +190,7 @@ export async function fetchPlugin( context, next ) {
 
 	const dataOrError = await prefetchTimebox(
 		[
-			// We need to have the product list before prefetchPlugin so it can determin where to fetch from.
+			// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
 			prefetchProductList( queryClient, store ).then( () =>
 				prefetchPlugin( queryClient, store, options )
 			),

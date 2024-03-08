@@ -478,7 +478,7 @@ module.exports = {
 		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
-			'error',
+			'warn',
 			{
 				'@wordpress/block-editor': [
 					'__experimentalBlock',
@@ -499,6 +499,7 @@ module.exports = {
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',
 					'__experimentalNavigatorBackButton',
+					'__experimentalNavigatorToParentButton',
 					'__experimentalNavigatorButton',
 					'__experimentalNavigatorProvider',
 					'__experimentalNavigatorScreen',

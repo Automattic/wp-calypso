@@ -2,9 +2,11 @@ import { withStorageKey } from '@automattic/state-utils';
 import {
 	SITE_SYNC_STATUS_SET as SET_STATUS,
 	SITE_SYNC_STATUS_REQUEST as REQUEST_STATUS,
-	SITE_SYNC_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+	SITE_SYNC_FAILURE as REQUEST_STATUS_FAILURE,
 	SITE_SYNC_IS_SYNCING_IN_PROGRESS as IS_SYNCING_IN_PROGRESS,
-	SITE_SYNC_SITE_TYPE,
+	SITE_SYNC_TARGET_SITE,
+	SITE_SYNC_SOURCE_SITE,
+	SITE_SYNC_LAST_RESTORE_ID,
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -32,7 +34,16 @@ export const status = withPersistence( ( state = null, action ) => {
 	}
 } );
 
-export const syncingSiteType = withPersistence( ( state = null, action ) => {
+export const lastRestoreId = withPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case SITE_SYNC_LAST_RESTORE_ID:
+			return action.lastRestoreId || state;
+		default:
+			return state;
+	}
+} );
+
+export const syncingTargetSite = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case IS_SYNCING_IN_PROGRESS: {
 			if ( action.isSyncingInProgress === false ) {
@@ -40,8 +51,26 @@ export const syncingSiteType = withPersistence( ( state = null, action ) => {
 			}
 			return state;
 		}
-		case SITE_SYNC_SITE_TYPE: {
-			return action.siteType || null;
+		case SITE_SYNC_TARGET_SITE: {
+			return action.targetSite || null;
+		}
+		case REQUEST_STATUS_FAILURE:
+			return null;
+		default:
+			return state;
+	}
+} );
+
+export const syncingSourceSite = withPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case IS_SYNCING_IN_PROGRESS: {
+			if ( action.isSyncingInProgress === false ) {
+				return null;
+			}
+			return state;
+		}
+		case SITE_SYNC_SOURCE_SITE: {
+			return action.sourceSite || null;
 		}
 		case REQUEST_STATUS_FAILURE:
 			return null;
@@ -79,7 +108,12 @@ export const isSyncingInProgress = ( state = false, action ) => {
 		case IS_SYNCING_IN_PROGRESS:
 			return action.isSyncingInProgress || false;
 		case SET_STATUS:
-			return ( action.status && action.status !== SiteSyncStatus.COMPLETED ) || false;
+			return (
+				( action.status &&
+					action.status !== SiteSyncStatus.COMPLETED &&
+					action.status !== SiteSyncStatus.ALLOW_RETRY ) ||
+				false
+			);
 		case REQUEST_STATUS_FAILURE:
 			return false;
 		default:
@@ -112,6 +146,9 @@ export const progress = withPersistence( ( state = 0, action ) => {
 				case SiteSyncStatus.COMPLETED:
 					newStatus = Math.max( newStatus, SiteSyncStatusProgress.COMPLETED );
 					break;
+				case SiteSyncStatus.ALLOW_RETRY:
+					newStatus = Math.max( newStatus, SiteSyncStatusProgress.ALLOW_RETRY );
+					break;
 				case SiteSyncStatus.FAILED:
 					newStatus = SiteSyncStatusProgress.FAILED;
 					break;
@@ -132,7 +169,9 @@ export const siteReducer = combineReducers( {
 	fetchingStatus,
 	progress,
 	isSyncingInProgress,
-	syncingSiteType,
+	syncingTargetSite,
+	syncingSourceSite,
+	lastRestoreId,
 	error,
 } );
 

@@ -1,20 +1,21 @@
 import {
 	FEATURE_INSTALL_THEMES,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 } from '@automattic/calypso-products';
-import { compact, property, snakeCase } from 'lodash';
-import { default as pageRouter } from 'page';
+import pageRouter from '@automattic/calypso-router';
+import { compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
+import { getThemeShowcaseEventRecorder } from 'calypso/my-sites/themes/events/theme-showcase-tracks';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -26,7 +27,9 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
+	getIsLivePreviewStarted,
 	getThemeType,
+	getThemeTierForTheme,
 } from 'calypso/state/themes/selectors';
 import { getThemeHiddenFilters } from 'calypso/state/themes/selectors/get-theme-hidden-filters';
 import { addOptionsToGetUrl, trackClick, interlaceThemes } from './helpers';
@@ -38,6 +41,7 @@ class ThemesSelection extends Component {
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
+		resetPage: PropTypes.func,
 		listLabel: PropTypes.string,
 		onScreenshotClick: PropTypes.func,
 		query: PropTypes.object.isRequired,
@@ -51,6 +55,7 @@ class ThemesSelection extends Component {
 		getThemeDetailsUrl: PropTypes.func,
 		getThemeType: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
+		isThemeLivePreviewStarted: PropTypes.func,
 		isLastPage: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		isThemeActive: PropTypes.func,
@@ -58,6 +63,12 @@ class ThemesSelection extends Component {
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		forceWpOrgSearch: PropTypes.bool,
+		onDesignYourOwnClick: PropTypes.func,
+		themeShowcaseEventRecorder: PropTypes.shape( {
+			recordThemeClick: PropTypes.func,
+			recordThemeStyleVariationClick: PropTypes.func,
+		} ),
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -66,6 +77,10 @@ class ThemesSelection extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isRequesting || this.props.isLastPage ) {
+			return;
+		}
+
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
 		const { query } = this.props;
 		if ( ! query.search && ! query.filter && ! query.tier ) {
@@ -73,31 +88,11 @@ class ThemesSelection extends Component {
 		}
 	}
 
-	recordSearchResultsClick = (
-		themeId,
-		resultsRank,
-		action,
-		variation = '@theme',
-		isActiveTheme = false
-	) => {
-		const { query, filterString, themes } = this.props;
-		const search_taxonomies = filterString;
-		const search_term = search_taxonomies + ( query.search || '' );
-
-		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_click', {
-			search_term: search_term || null,
-			search_taxonomies,
-			theme: themeId,
-			is_active_theme: isActiveTheme,
-			style_variation: variation,
-			results_rank: resultsRank + 1,
-			results: themes.map( property( 'id' ) ).join(),
-			page_number: query.page,
-			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
-			action: snakeCase( action ),
-			theme_type: this.props.getThemeType( themeId ),
-		} );
-	};
+	componentDidUpdate( nextProps ) {
+		if ( nextProps.query.number !== this.props.query.number ) {
+			this.props.resetPage();
+		}
+	}
 
 	trackScrollPage() {
 		this.props.recordTracksEvent( 'calypso_themeshowcase_scroll' );
@@ -111,63 +106,32 @@ class ThemesSelection extends Component {
 
 	onScreenshotClick = ( themeId, resultsRank ) => {
 		trackClick( 'theme', 'screenshot' );
-		this.recordSearchResultsClick(
+
+		this.props.themeShowcaseEventRecorder.recordThemeClick(
 			themeId,
 			resultsRank,
-			'screenshot_info',
-			'@theme',
-			this.props.isThemeActive( themeId )
+			'screenshot_info'
 		);
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
 	onStyleVariationClick = ( themeId, resultsRank, variation ) => {
-		const { query, filterString } = this.props;
-		const search_taxonomies = filterString;
-		const search_term = search_taxonomies + ( query.search || '' );
-		if ( ! this.props.isThemeActive( themeId ) ) {
-			this.recordSearchResultsClick( themeId, resultsRank, 'style_variation', variation?.slug );
-		}
+		const {
+			themeShowcaseEventRecorder: {
+				recordThemeClick,
+				recordThemeStyleVariationClick,
+				recordThemesStyleVariationMoreClick,
+			},
+		} = this.props;
 
-		const tracksProps = {
-			search_term: search_term || null,
-			search_taxonomies,
-			theme: themeId,
-			results_rank: resultsRank + 1,
-			page_number: query.page,
-			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
-			theme_type: this.props.getThemeType( themeId ),
-		};
+		recordThemeClick( themeId, resultsRank, 'style_variation', variation?.slug );
 
 		if ( variation ) {
-			this.props.recordTracksEvent( 'calypso_themeshowcase_theme_style_variation_click', {
-				...tracksProps,
-				style_variation: variation.slug,
-			} );
+			recordThemeStyleVariationClick( themeId, resultsRank, '', variation.slug );
 		} else {
-			this.props.recordTracksEvent(
-				'calypso_themeshowcase_theme_style_variation_more_click',
-				tracksProps
-			);
-
+			recordThemesStyleVariationMoreClick( themeId, resultsRank );
 			pageRouter( this.props.getThemeDetailsUrl( themeId ) );
 		}
-	};
-
-	onMoreButtonItemClick = ( themeId, resultsRank, key ) => {
-		const { query, filterString } = this.props;
-		const search_taxonomies = filterString;
-		const search_term = search_taxonomies + ( query.search || '' );
-
-		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_more_button_item_click', {
-			search_term: search_term || null,
-			search_taxonomies,
-			theme: themeId,
-			action: key,
-			results_rank: resultsRank + 1,
-			page_number: query.page,
-			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
-		} );
 	};
 
 	fetchNextPage = ( options ) => {
@@ -186,10 +150,14 @@ class ThemesSelection extends Component {
 	getOptions = ( themeId, styleVariation, context ) => {
 		let options = this.props.getOptions( themeId, styleVariation );
 
-		const { tabFilter } = this.props;
-		const wrappedActivateAction = ( action ) => {
+		const { tabFilter, tier } = this.props;
+		const wrappedActivateOrLivePreviewAction = ( action ) => {
 			return ( t ) => {
-				this.props.setThemePreviewOptions( themeId, null, null, { styleVariation, tabFilter } );
+				this.props.setThemePreviewOptions( themeId, null, null, {
+					styleVariation,
+					tabFilter,
+					tierFilter: tier,
+				} );
 				return action( t, context );
 			};
 		};
@@ -203,7 +171,7 @@ class ThemesSelection extends Component {
 			}
 
 			return ( t ) => {
-				if ( ! this.props.isLoggedIn ) {
+				if ( ! this.props.isLoggedIn || ! this.props.siteId ) {
 					defaultOption = options.signup;
 					secondaryOption = null;
 				} else if ( this.props.isThemeActive( themeId ) ) {
@@ -233,10 +201,17 @@ class ThemesSelection extends Component {
 		if ( options ) {
 			options = addOptionsToGetUrl( options, {
 				tabFilter,
+				tierFilter: tier,
 				styleVariationSlug: styleVariation?.slug,
 			} );
 			if ( options.activate ) {
-				options.activate.action = wrappedActivateAction( options.activate.action );
+				options.activate.action = wrappedActivateOrLivePreviewAction( options.activate.action );
+			}
+
+			if ( options.livePreview ) {
+				options.livePreview.action = wrappedActivateOrLivePreviewAction(
+					options.livePreview.action
+				);
 			}
 
 			if ( options.preview ) {
@@ -261,6 +236,8 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			onDesignYourOwnClick,
+			tier,
 		} = this.props;
 
 		const interlacedThemes = interlaceThemes( themes, wpOrgThemes, query.search, isLastPage );
@@ -275,8 +252,8 @@ class ThemesSelection extends Component {
 					themes={ interlacedThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
-					onMoreButtonClick={ this.recordSearchResultsClick }
-					onMoreButtonItemClick={ this.onMoreButtonItemClick }
+					onMoreButtonClick={ this.props.themeShowcaseEventRecorder.recordThemeClick }
+					onMoreButtonItemClick={ this.props.themeShowcaseEventRecorder.recordThemeClick }
 					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
 					onStyleVariationClick={ this.onStyleVariationClick }
@@ -285,13 +262,18 @@ class ThemesSelection extends Component {
 					isActive={ this.props.isThemeActive }
 					getPrice={ this.props.getPremiumThemePrice }
 					isInstalling={ this.props.isInstallingTheme }
+					isLivePreviewStarted={ this.props.isThemeLivePreviewStarted }
 					loading={ isRequesting }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
+					onDesignYourOwnClick={ onDesignYourOwnClick }
 					siteId={ siteId }
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }
-				/>
+					tier={ tier }
+				>
+					{ this.props.children }
+				</ThemesList>
 				<SearchThemesTracks
 					query={ query }
 					interlacedThemes={ interlacedThemes }
@@ -312,6 +294,10 @@ function bindIsInstallingTheme( state, siteId ) {
 	return ( themeId ) => isInstallingTheme( state, themeId, siteId );
 }
 
+function bindIsThemeLivePreviewStarted( state ) {
+	return ( themeId ) => getIsLivePreviewStarted( state, themeId );
+}
+
 function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
@@ -324,6 +310,10 @@ function bindGetThemeType( state ) {
 	return ( themeId ) => getThemeType( state, themeId );
 }
 
+function bindGetThemeTierForTheme( state ) {
+	return ( themeId ) => getThemeTierForTheme( state, themeId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -331,14 +321,13 @@ export const ConnectedThemesSelection = connect(
 		state,
 		{ filter, page, search, tier, vertical, siteId, source, forceWpOrgSearch, tabFilter }
 	) => {
-		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const hiddenFilters = getThemeHiddenFilters( state, siteId );
+		const hiddenFilters = getThemeHiddenFilters( state, siteId, tabFilter );
 		const hasUnlimitedPremiumThemes = siteHasFeature(
 			state,
 			siteId,
-			WPCOM_FEATURES_PREMIUM_THEMES
+			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
 		);
 		const canInstallThemes = siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES );
 
@@ -346,7 +335,7 @@ export const ConnectedThemesSelection = connect(
 		if ( source === 'wpcom' || source === 'wporg' ) {
 			sourceSiteId = source;
 		} else {
-			sourceSiteId = siteId && isJetpack ? siteId : 'wpcom';
+			sourceSiteId = siteId ? siteId : 'wpcom';
 		}
 
 		if ( isAtomic && ! hasUnlimitedPremiumThemes ) {
@@ -394,6 +383,19 @@ export const ConnectedThemesSelection = connect(
 			? getThemesForQueryIgnoringPage( state, 'wporg', wpOrgQuery ) || []
 			: [];
 
+		const boundIsThemeActive = bindIsThemeActive( state, siteId );
+		const boundGetThemeType = bindGetThemeType( state );
+		const boundGetThemeTierForTheme = bindGetThemeTierForTheme( state );
+		const filterString = prependThemeFilterKeys( state, query.filter );
+		const themeShowcaseEventRecorder = getThemeShowcaseEventRecorder(
+			query,
+			themes,
+			filterString,
+			boundGetThemeType,
+			boundGetThemeTierForTheme,
+			boundIsThemeActive
+		);
+
 		return {
 			query,
 			source: sourceSiteId,
@@ -406,8 +408,9 @@ export const ConnectedThemesSelection = connect(
 				( shouldFetchWpOrgThemes && isRequestingThemesForQuery( state, 'wporg', wpOrgQuery ) ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
-			isThemeActive: bindIsThemeActive( state, siteId ),
+			isThemeActive: boundIsThemeActive,
 			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
+			isThemeLivePreviewStarted: bindIsThemeLivePreviewStarted( state ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree
 			// (used by the `isPremiumThemeAvailable` selector). That data is provided by the `<QuerySitePurchases />`
 			// and `<QuerySitePlans />` components, respectively. At the time of implementation, neither of them
@@ -415,9 +418,10 @@ export const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
-			getThemeType: bindGetThemeType( state ),
-			filterString: prependThemeFilterKeys( state, query.filter ),
+			getThemeType: boundGetThemeType,
+			filterString: filterString,
 			shouldFetchWpOrgThemes,
+			themeShowcaseEventRecorder,
 			wpOrgQuery,
 			wpOrgThemes,
 		};
@@ -462,7 +466,10 @@ class ThemesSelectionWithPage extends React.Component {
 				{ ...this.props }
 				page={ this.state.page }
 				incrementPage={ this.incrementPage }
-			/>
+				resetPage={ this.resetPage }
+			>
+				{ this.props.children }
+			</ConnectedThemesSelection>
 		);
 	}
 }

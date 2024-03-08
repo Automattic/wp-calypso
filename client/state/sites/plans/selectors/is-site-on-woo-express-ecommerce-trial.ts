@@ -16,7 +16,6 @@ import type { AppState } from 'calypso/types';
 /**
  * Checks whether the current site is on a Woo Express, paid Ecommerce,
  * or Ecommerce free trial plan.
- *
  * @param {AppState} state Global state tree
  * @param {number} siteId - Site ID
  * @returns {boolean} Returns true if the site matches the criteria

@@ -15,6 +15,7 @@ const DomainTransferInfoCard = ( { domain, selectedSite }: DomainInfoCardProps )
 		! domain.currentUserIsOwner ||
 		domain.isRedeemable ||
 		domain.pendingRegistration ||
+		domain.pendingRegistrationAtRegistry ||
 		domain.isMoveToNewSitePending ||
 		typesUnableToTransfer.includes( domain.type ) ||
 		domain.aftermarketAuction

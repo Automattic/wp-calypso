@@ -5,9 +5,15 @@ interface Props {
 	flow: string;
 	siteSlug?: string;
 	isFirstPostPublished?: boolean;
+	isLaunched?: boolean;
 }
 
-const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false }: Props ) => {
+const useCelebrationData = ( {
+	flow,
+	siteSlug = '',
+	isFirstPostPublished = false,
+	isLaunched = false,
+}: Props ) => {
 	const translate = useTranslate();
 	const isStartWritingFlowOrFirstPostPublished = isStartWritingFlow( flow ) || isFirstPostPublished;
 	const defaultCelebrationData = {
@@ -25,7 +31,7 @@ const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false
 		return {
 			...defaultCelebrationData,
 			title: translate( 'Your site’s ready!' ),
-			subTitle: translate( 'Now it’s time to edit your content' ),
+			subTitle: isLaunched ? '' : translate( 'Now it’s time to edit your content' ),
 			primaryCtaName: 'Edit your content',
 			primaryCtaText: translate( 'Edit your content' ),
 			primaryCtaLink: `/site-editor/${ siteSlug }?${ siteEditorParams }`,

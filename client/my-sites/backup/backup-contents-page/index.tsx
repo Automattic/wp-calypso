@@ -4,6 +4,7 @@ import { arrowLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import ActionButtons from 'calypso/components/jetpack/daily-backup-status/action-buttons';
 import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-success.svg';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
@@ -42,6 +43,7 @@ const BackupContentsPage: FunctionComponent< OwnProps > = ( { rewindId, siteId }
 
 	return (
 		<>
+			<QuerySiteCredentials siteId={ siteId } />
 			<Main className="backup-contents-page">
 				<DocumentHead title={ translate( 'Backup contents' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }

@@ -137,7 +137,6 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
  * converting property names from snake_case to camelCase, and omitting any
  * properties in the payload that are undefined. If the payload is null or
  * undefined, it returns an empty object.
- *
  * @param {BackupPathInfoResponse} payload - The object to convert.
  * @returns {FileBrowserItemInfo} The converted object.
  */
@@ -181,9 +180,8 @@ export const parseBackupPathInfo = ( payload: BackupPathInfoResponse ): FileBrow
  * The function starts with the byte unit and progressively divides the size by 1024,
  * shifting to the next unit each time, until the size is below 1024 or the unit is TB.
  * The size is rounded to the specified number of decimal places.
- *
  * @param {number} bytes - The size in bytes to convert.
- * @param {number} [decimals=1] - The number of decimal places to round the size to. Default is 1.
+ * @param {number} [decimals] - The number of decimal places to round the size to. Default is 1.
  * @returns {Object} An object containing the size in the new unit, and the unit itself.
  */
 export const convertBytes = (
@@ -210,7 +208,6 @@ export const convertBytes = (
  * using window.btoa on such characters without UTF-8 encoding can lead to incorrect results, as btoa is designed
  * for ASCII strings. By first encoding to UTF-8, we ensure a consistent and accurate Base64 representation for
  * a wide range of texts.
- *
  * @param {string} text - The text string to be encoded, potentially including non-ASCII characters.
  * @returns {string} The Base64 encoded representation of the input text.
  */

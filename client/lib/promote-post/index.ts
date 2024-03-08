@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { initSentry, captureException } from '@automattic/calypso-sentry';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
@@ -57,16 +58,18 @@ declare global {
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
 				source?: string;
+				isRunningInWooBlaze?: boolean;
 				isRunningInJetpack?: boolean;
 				jetpackXhrParams?: {
 					apiRoot: string;
 					headerNonce: string;
 				};
-				isV2?: boolean;
+				jetpackVersion?: string;
 				hotjarSiteSettings?: object;
 				recordDSPEvent?: ( name: string, props?: any ) => void;
 				options?: object;
 			} ) => void;
+			cleanup: () => void;
 			strings: any;
 		};
 	}
@@ -98,6 +101,7 @@ export async function loadDSPWidgetJS(): Promise< boolean > {
 		return true;
 	} catch ( error ) {
 		debug( 'loadDSPWidgetJS: [Load Error] the script failed to load: ', error );
+		captureException( error );
 		return false;
 	}
 }
@@ -115,7 +119,10 @@ const getWidgetOptions = () => {
 };
 
 export const getDSPOrigin = () => {
-	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+	// We need to check for Woo first, because Woo Blaze is also running in Jetpack (At least in this iteration)
+	if ( config.isEnabled( 'is_running_in_woo_site' ) ) {
+		return 'wc-blaze-plugin';
+	} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 		return 'jetpack';
 	} else if ( isWpMobileApp() ) {
 		return 'wp-mobile-app';
@@ -138,9 +145,13 @@ export async function showDSP(
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
-	isV2?: boolean,
+	jetpackVersion?: string,
 	dispatch?: Dispatch
-) {
+): Promise< boolean > {
+	// Increase Sentry sample rate to 100% for DSP widget
+	await initSentry( { sampleRate: 1.0 } );
+
+	// Loading the DSP widget JS assets
 	await loadDSPWidgetJS();
 
 	return new Promise( ( resolve, reject ) => {
@@ -154,6 +165,8 @@ export async function showDSP(
 
 		try {
 			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+			const isRunningInWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
+			const isMobileApp = isWpMobileApp() || isWcMobileApp();
 
 			window.BlazePress.render( {
 				siteSlug: siteSlug,
@@ -177,9 +190,10 @@ export async function showDSP(
 				urn: postId && postId !== '0' ? `urn:wpcom:post:${ siteId }:${ postId || 0 }` : '',
 				setShowCancelButton: setShowCancelButton,
 				setShowTopBar: setShowTopBar,
-				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
-				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
+				uploadImageLabel: isMobileApp ? __( 'Tap to add image' ) : undefined,
+				showGetStartedMessage: ! isMobileApp, // Don't show the GetStartedMessage in the mobile app.
 				source: source,
+				isRunningInWooBlaze,
 				isRunningInJetpack,
 				jetpackXhrParams: isRunningInJetpack
 					? {
@@ -187,7 +201,7 @@ export async function showDSP(
 							headerNonce: config( 'nonce' ),
 					  }
 					: undefined,
-				isV2,
+				jetpackVersion,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
 				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
 				options: getWidgetOptions(),
@@ -196,6 +210,7 @@ export async function showDSP(
 			debug( 'showDSP: [Widget started]' );
 		} catch ( error ) {
 			debug( 'showDSP: [Widget start error] the widget render method execution failed: ', error );
+			captureException( error );
 
 			dispatch?.(
 				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin: getDSPOrigin() } )
@@ -205,9 +220,14 @@ export async function showDSP(
 	} );
 }
 
+export async function cleanupDSP() {
+	if ( window.BlazePress ) {
+		window.BlazePress.cleanup?.();
+	}
+}
+
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
- *
  * @param {string} entryPoint - A slug describing the entry point.
  */
 export function recordDSPEntryPoint( entryPoint: string ) {
@@ -224,7 +244,6 @@ export function recordDSPEntryPoint( entryPoint: string ) {
 
 /**
  * Gets the recordTrack function to be used in the DSP widget
- *
  * @param {Dispatch} dispatch - Redux disptach function
  */
 export function getRecordDSPEventHandler( dispatch: Dispatch ) {
@@ -301,7 +320,6 @@ export enum PromoteWidgetStatus {
 
 /**
  * Hook to verify if we should enable the promote widget.
- *
  * @returns bool
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {

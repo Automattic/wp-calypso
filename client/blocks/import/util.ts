@@ -28,6 +28,7 @@ const platformMap: { [ key in ImporterPlatform ]: string } = {
 	livejournal: 'LiveJournal',
 	movabletype: 'Movable Type & TypePad',
 	xanga: 'Xanga',
+	substack: 'Substack',
 	unknown: 'Unknown',
 };
 

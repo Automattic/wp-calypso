@@ -1,12 +1,12 @@
+import page from '@automattic/calypso-router';
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes, find, flatMap } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import formState from 'calypso/lib/form-state';
@@ -17,6 +17,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
+import AliasRecord from './alias-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
 import SrvRecord from './srv-record';
@@ -49,6 +50,18 @@ class DnsAddNew extends React.Component {
 				),
 				initialFields: {
 					name: '',
+					ttl: 3600,
+					data: '',
+				},
+			},
+			{
+				component: AliasRecord,
+				types: [ 'ALIAS' ],
+				description: translate(
+					'An ALIAS record is a non-standard DNS record that is used to direct your domain to the target domain. The IP address of the target is resolved on the DNS server.'
+				),
+				initialFields: {
+					name: '@',
 					ttl: 3600,
 					data: '',
 				},
@@ -233,10 +246,12 @@ class DnsAddNew extends React.Component {
 	onChange = ( event ) => {
 		const { name, value } = event.target;
 		const skipNormalization = name === 'data' && this.state.type === 'TXT';
+		// Strip zero width spaces from the value
+		const filteredValue = value.replace( /\u200B/g, '' );
 
 		this.formStateController.handleFieldChange( {
 			name,
-			value: skipNormalization ? value : value.trim().toLowerCase(),
+			value: skipNormalization ? filteredValue : filteredValue.trim().toLowerCase(),
 		} );
 	};
 

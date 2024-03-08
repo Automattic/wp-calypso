@@ -181,6 +181,13 @@ $section-border: solid 1px var(--color-neutral-5);
 		border-radius: 50%;
 	}
 
+	// if it's the child of .mastodon class, set border radius to ::before to 30%
+	.mastodon & {
+		&::before {
+			border-radius: 30%;
+		}
+	}
+
 	.google_plus & {
 		top: 11px;
 
@@ -244,6 +251,14 @@ $section-border: solid 1px var(--color-neutral-5);
 
 	.social-logo.google-plus {
 		color: var(--color-google-plus);
+	}
+
+	.social-logo.nextdoor {
+		color: var(--color-nextdoor);
+	}
+
+	.social-logo.mastodon {
+		color: var(--color-mastodon);
 	}
 
 	.social-logo.linkedin {

@@ -1,3 +1,4 @@
+import { SegmentedControl } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import DatePicker from '../stats-date-picker';
 import StatsPeriodHeader from '../stats-period-header';

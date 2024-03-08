@@ -55,8 +55,10 @@ class ReaderPostCardAdapter extends Component {
 				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 				streamKey={ this.props.streamKey }
 			>
-				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
-				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
+				<div ref={ this.props.postRef }>
+					{ feedId && <QueryReaderFeed feedId={ feedId } /> }
+					{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
+				</div>
 			</ReaderPostCard>
 		);
 	}

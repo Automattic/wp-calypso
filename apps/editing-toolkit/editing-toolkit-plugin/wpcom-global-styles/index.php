@@ -62,6 +62,12 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
+	// Do not limit Global Styles when live previewing a Premium theme without a Premium plan or higher
+	// because the live preview already shows an upgrade notice, and we avoid duplication.
+	if ( wpcom_global_styles_is_previewing_premium_theme_without_premium_plan( $blog_id ) ) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -481,13 +487,19 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 				</div>
 				<div class="launch-bar-global-styles-message">
 					<?php
+					$support_url = function_exists( 'localized_wpcom_url' )
+						? localized_wpcom_url( 'https://wordpress.com/support/using-styles/' )
+						// phpcs:ignore WPCOM.I18nRules.LocalizedUrl.UnlocalizedUrl
+						: 'https://wordpress.com/support/using-styles/';
+
 					$message = sprintf(
-						/* translators: %s - documentation URL. */
+						/* translators: %1$s - documentation URL, %2$s - the name of the required plan */
 						__(
-							'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to the Premium plan or higher.',
+							'Your site includes <a href="%1$s" target="_blank">premium styles</a> that are only visible to visitors after upgrading to the %2$s plan or higher.',
 							'full-site-editing'
 						),
-						'https://wordpress.com/support/using-styles/'
+						$support_url,
+						get_store_product( WPCOM_VALUE_BUNDLE )->product_name
 					);
 					echo sprintf(
 						wp_kses(
@@ -516,12 +528,12 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					<svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M5.8125 5.6875C5.8125 4.75552 6.56802 4 7.5 4C8.43198 4 9.1875 4.75552 9.1875 5.6875C9.1875 6.55621 8.53108 7.2716 7.6872 7.36473C7.58427 7.37609 7.5 7.45895 7.5 7.5625V8.5M7.5 9.25V10.375M13.5 7C13.5 10.3137 10.8137 13 7.5 13C4.18629 13 1.5 10.3137 1.5 7C1.5 3.68629 4.18629 1 7.5 1C10.8137 1 13.5 3.68629 13.5 7Z" stroke="#1E1E1E" stroke-width="1.5"/>
 					</svg>
-					<?php echo esc_html__( 'Remove custom styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Remove premium styles', 'full-site-editing' ); ?>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M18.2 17c0 .7-.6 1.2-1.2 1.2H7c-.7 0-1.2-.6-1.2-1.2V7c0-.7.6-1.2 1.2-1.2h3.2V4.2H7C5.5 4.2 4.2 5.5 4.2 7v10c0 1.5 1.2 2.8 2.8 2.8h10c1.5 0 2.8-1.2 2.8-2.8v-3.6h-1.5V17zM14.9 3v1.5h3.7l-6.4 6.4 1.1 1.1 6.4-6.4v3.7h1.5V3h-6.3z"></path></svg>
 				</a>
 				<a class="launch-bar-global-styles-preview" href="<?php echo esc_url( $preview_location ); ?>">
 					<label><input type="checkbox" <?php echo wpcom_is_previewing_global_styles() ? 'checked' : ''; ?>><span></span></label>
-					<?php echo esc_html__( 'Preview custom styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Preview premium styles', 'full-site-editing' ); ?>
 				</a>
 			</div>
 			<a class="launch-bar-global-styles-toggle" href="#">
@@ -625,4 +637,29 @@ function wpcom_site_has_global_styles_feature( $blog_id = 0 ) {
 	}
 
 	return false;
+}
+
+/**
+ * Checks whether the site has access to the Global Styles feature when the editor is live previewing a Premium theme without a Premium plan or higher.
+ *
+ * @param int $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has access to Global Styles when live previewing.
+ */
+function wpcom_global_styles_is_previewing_premium_theme_without_premium_plan( $blog_id ) {
+	if ( ! isset( $_GET['wp_theme_preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Not live previewing.
+		return false;
+	}
+	$wp_theme_preview = sanitize_text_field( wp_unslash( $_GET['wp_theme_preview'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+	$is_previewing_premium_theme = str_starts_with( $wp_theme_preview, 'premium/' );
+	if ( ! $is_previewing_premium_theme ) {
+		// Not a premium theme.
+		return false;
+	}
+
+	// Check for a Premium plan or higher by checking if can use global styles.
+	$has_premium_plan_or_higher = wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id );
+
+	return ! $has_premium_plan_or_higher;
 }

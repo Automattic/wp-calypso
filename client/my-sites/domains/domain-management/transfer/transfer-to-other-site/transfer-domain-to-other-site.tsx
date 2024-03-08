@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -121,7 +121,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(
-			"Connect {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
+			"Attach {{strong}}%(domainName)s{{/strong}} to a site you're an administrator of:",
 			translateArgs
 		);
 	}
@@ -173,7 +173,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				href: domainManagementEdit( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
-				label: translate( 'Connect' ),
+				label: translate( 'Attach' ),
 				href: domainManagementTransfer( selectedSite?.slug, selectedDomainName, currentRoute ),
 			},
 			{
@@ -218,7 +218,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( domain?.pendingRegistration ) {
+		if ( domain?.pendingRegistration || domain?.pendingRegistrationAtRegistry ) {
 			return (
 				<TransferUnavailableNotice
 					message={ translate(

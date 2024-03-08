@@ -1,11 +1,10 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, SegmentedControl } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormRange from 'calypso/components/forms/range';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { SCALE_CHOICES, SCALE_TOUCH_GRID } from 'calypso/lib/media/constants';
 import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 
@@ -15,14 +14,12 @@ import { setPreference, savePreference } from 'calypso/state/preferences/actions
 
 /**
  * Number of steps on the rendered input range
- *
  * @type {number}
  */
 const SLIDER_STEPS = 100;
 
 /**
  * Scale size for small viewports grid option (3 items per row).
- *
  * @type {number}
  */
 

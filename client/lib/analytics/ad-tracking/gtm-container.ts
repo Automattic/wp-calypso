@@ -17,7 +17,6 @@ declare global {
 /**
  * Loads the GTM script with the Woo container ID, if the user has consented to tracking,
  * and tracking is allowed by the current environment.
- *
  * @returns Promise<void>
  */
 export const loadGTMContainer = async ( gtmTag: string ): Promise< void > => {
@@ -32,7 +31,6 @@ export const loadGTMContainer = async ( gtmTag: string ): Promise< void > => {
 
 /**
  * Initializes the GTM container.
- *
  * @returns Promise<void>
  */
 export const initGTMContainer = async (): Promise< void > => {

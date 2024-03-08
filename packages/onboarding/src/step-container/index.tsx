@@ -39,7 +39,6 @@ interface Props {
 	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
-	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 	showHeaderJetpackPowered?: boolean;
 	showJetpackPowered?: boolean;

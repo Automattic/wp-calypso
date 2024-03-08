@@ -4,6 +4,7 @@ import { withImporterWrapper } from '../importer';
 import './style.scss';
 
 const Importer = withImporterWrapper( MediumImporter );
+
 const ImporterMedium: Step = function ( props ) {
 	return <Importer importer="medium" { ...props } />;
 };

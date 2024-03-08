@@ -104,10 +104,10 @@ class FeedHeader extends Component {
 						{ ! wideDisplay && followerCount && (
 							<div className="reader-feed-header__follow-count">
 								{ ' ' }
-								{ translate( '%s follower', '%s followers', {
+								{ translate( '%s subscriber', '%s subscribers', {
 									count: followerCount,
 									args: [ this.props.numberFormat( followerCount ) ],
-									comment: '%s is the number of followers. For example: "12,000,000"',
+									comment: '%s is the number of subscribers. For example: "12,000,000"',
 								} ) }
 							</div>
 						) }

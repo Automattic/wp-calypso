@@ -96,14 +96,14 @@ export class PublishedPostPage {
 		await this.anchor.getByRole( 'button', { name: 'Subscribe' } ).click();
 
 		// The popup dialog is in its own iframe.
-		const iframe = this.page.frameLocator( 'iframe[id="TB_iframeContent"]' );
+		const iframe = this.page.frameLocator( 'iframe[id="memberships-modal-iframe"]' );
 
 		// This handler is required because if the site owner has set up any
 		// paid plans, the modal will first show a list of plans the user
 		// can choose from.
 		// However, we don't know for sure whether a site owner has set up any
 		// newsletter plans.
-		const continueButton = iframe.getByRole( 'button', { name: 'Continue', exact: true } );
+		const continueButton = iframe.getByRole( 'button', { name: 'Got it', exact: true } );
 		const freeTrialLink = iframe.getByRole( 'link', {
 			name: 'Free - Get a glimpse of the newsletter',
 		} );

@@ -47,7 +47,6 @@ version = "2023.05"
 project {
 
 	vcsRoot(WpCalypso)
-	subProject(_self.projects.DesktopApp)
 	subProject(_self.projects.WPComPlugins)
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
@@ -79,16 +78,19 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_SECRETS_ENCRYPTION_KEY_JUN_27_23", "credentialsJSON:7f7a0165-754f-4a52-93ef-c97852cd83e0", display = ParameterDisplay.HIDDEN)
 		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_29_23", "credentialsJSON:f29ecb29-687d-4411-8769-cc7b44edc0c5", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_DEC_1_23" , "credentialsJSON:1d6bc37e-2243-4fcb-b202-f7cc35e748da", display = ParameterDisplay.HIDDEN)
 		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_AUG_29_23%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_DEC_1_23%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY", "credentialsJSON:782b4bde-b73d-4326-9970-5a79251bdf07", display = ParameterDisplay.HIDDEN)
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
+
+		// TeamCity Rich Notificaion App.
+		password("TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN", "credentialsJSON:1ade13b3-4f88-4b2a-a71a-9c6f95698d00", display=ParameterDisplay.HIDDEN)
 
 		// Values related to the WPCOM VCS
 		password("WPCOM_JETPACK_PLUGIN_PATH", "credentialsJSON:db955a02-2a79-4167-a823-ac4840fd71d7", display = ParameterDisplay.HIDDEN)
@@ -160,7 +162,7 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
 				""".trimIndent()
-				commandArgs = "--no-cache --target base"
+				commandArgs = "--no-cache --target base --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -391,4 +393,3 @@ object WpCalypso : GitVcsRoot({
 		uploadedKey = "matticbot"
 	}
 })
-

@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+
 .layout__content {
 	overflow: visible;
 }
@@ -18,6 +19,20 @@
 
 	&.main {
 		max-width: 960px;
+	}
+
+	// Design i2 overrides
+	&.is-redesign-v2 {
+		--color-accent: var(--studio-blue-50);
+		--color-accent-60: var(--studio-blue-60);
+
+		&.main {
+			max-width: 750px;
+			padding: 0 24px 0;
+			display: flex;
+			flex-direction: column;
+			text-align: initial;
+		}
 	}
 }
 
@@ -874,7 +889,7 @@ main.akismet-checkout-thank-you {
 
 	.akismet-checkout-thank-you__card {
 		box-shadow: 0 0 40px 0 #00000014;
-
+		margin-top: var(--masterbar-checkout-height);
 		padding: 2rem;
 		margin-bottom: 0;
 
@@ -884,6 +899,10 @@ main.akismet-checkout-thank-you {
 			background-position: bottom;
 
 			padding: 5rem;
+		}
+
+		@include break-large {
+			margin-top: calc(var(--masterbar-checkout-height) + 24px);
 		}
 	}
 
@@ -982,4 +1001,10 @@ main.akismet-checkout-thank-you {
 
 .jetpack-instruction-list__item .gridicon {
 	margin-bottom: -3px;
+}
+
+.failed-purchases-page {
+	padding-top: 72px;
+	background: #fff;
+	height: calc(100vh - 72px);
 }

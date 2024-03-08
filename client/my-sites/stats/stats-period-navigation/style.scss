@@ -1,5 +1,6 @@
 .stats-period-navigation {
 	display: flex;
+	flex-flow: row wrap;
 	justify-content: space-between;
 	align-items: center;
 	margin: 1.5em 0;
@@ -21,4 +22,32 @@
 		font-size: $font-body-small;
 		line-height: 16px;
 	}
+
+	.stats-period-navigation__date-control {
+		display: flex;
+		flex-flow: column nowrap;
+		margin-left: auto;
+
+		.stats-period-navigation__period-control {
+			display: flex;
+			justify-content: flex-end;
+
+			padding-top: 16px;
+
+			.stats-navigation-arrows {
+				margin-left: 24px;
+				margin-right: 24px;
+			}
+		}
+	}
+
+	.chart__legend {
+		margin-bottom: initial;
+	}
+}
+
+.stats-period-navigation.stats-period-navigation__is-with-new-date-control {
+	padding: 0;
+	align-items: flex-start;
+	row-gap: 8px;
 }

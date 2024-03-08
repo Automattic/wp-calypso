@@ -15,7 +15,7 @@ import {
 import { PageBodyBottomContainer } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { SitesGrid } from 'calypso/sites-dashboard/components/sites-grid';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SitesDashboardSitesList = createSitesListComponent();
 
@@ -87,7 +87,6 @@ const SitePicker = function SitePicker( props: Props ) {
 										isLoading={ isLoading }
 										sites={ paginatedSites }
 										siteSelectorMode={ true }
-										showLinkInBioBanner={ false }
 										onSiteSelectBtnClick={ onSelectSite }
 									/>
 									{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (

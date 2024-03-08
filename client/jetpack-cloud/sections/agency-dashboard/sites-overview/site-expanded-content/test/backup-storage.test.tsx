@@ -38,6 +38,13 @@ describe( 'BackupStorage component', () => {
 			},
 		},
 		siteSettings: { items: {} },
+		partnerPortal: {
+			partner: {
+				current: {
+					can_issue_licenses: true,
+				},
+			},
+		},
 	};
 
 	const mockTrackEvent = jest.fn();

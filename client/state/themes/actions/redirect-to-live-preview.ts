@@ -4,7 +4,9 @@ import { AppState } from 'calypso/types';
 
 export function redirectToLivePreview( themeId: string, siteId: number ) {
 	return ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
-		const url = getLivePreviewUrl( getState(), themeId, siteId );
+		const url = getLivePreviewUrl( getState(), themeId, siteId, {
+			wpcomBackUrl: window.location.href,
+		} );
 		if ( url ) {
 			window.location.href = url;
 		}

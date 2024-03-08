@@ -51,6 +51,7 @@ export type ResponseDomain = {
 	aftermarketAuctionEnd: string | null;
 	aftermarketAuctionStart: string | null;
 	aRecordsRequiredForMapping?: Array< string >;
+	authCodeRequired: boolean;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
 	beginTransferUntilDate: string;
@@ -88,6 +89,7 @@ export type ResponseDomain = {
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean | null;
 	isLocked: boolean;
+	isMappedToAtomicSite: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
 	isPendingWhoisUpdate: boolean;

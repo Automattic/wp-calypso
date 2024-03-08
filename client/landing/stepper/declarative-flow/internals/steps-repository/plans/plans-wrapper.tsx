@@ -1,7 +1,7 @@
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
-	DOMAIN_UPSELL_FLOW,
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
 	isNewsletterFlow,
@@ -12,18 +12,17 @@ import {
 	isDomainUpsellFlow,
 	DESIGN_FIRST_FLOW,
 	isBlogOnboardingFlow,
-	isOnboardingPMFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
-import QueryPlans from 'calypso/components/data/query-plans';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useNavigate, useLocation } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -31,17 +30,19 @@ import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlanSlug } from 'calypso/state/plans/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
-import type { PlansIntent } from 'calypso/my-sites/plans-grid/hooks/npm-ready/data-store/use-grid-plans';
+import type { OnboardSelect } from '@automattic/data-stores';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
 
 interface Props {
 	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
-	onSubmit: ( pickedPlan: MinimalRequestCartProduct | null ) => void;
-	plansLoaded: boolean;
+	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
+	selectedSiteId: number | null;
+	setSelectedSiteId: ( siteId: number ) => void;
 }
 
 function getPlansIntent( flowName: string | null ): PlansIntent | null {
@@ -74,26 +75,56 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
-	const { flowName } = props;
+	const { flowName, selectedSiteId, setSelectedSiteId } = props;
 
-	const { setPlanCartItem, setDomain, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setDomain, setDomainCartItem, setProductCartItems } =
+		useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
+	const siteId = site?.ID;
+
+	useEffect( () => {
+		if ( ! selectedSiteId && siteId ) {
+			setSelectedSiteId( siteId );
+		}
+	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
+
+	const [ planIntervalPath, setPlanIntervalPath ] = useState< string >( '' );
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const stepName = 'plans';
-	const isReskinned = true;
 	const customerType = 'personal';
-	const isInVerticalScrollingPlansExperiment = true;
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = flowName === DOMAIN_UPSELL_FLOW ? false : true;
+	const isInSignup = isDomainUpsellFlow( flowName ) ? false : true;
 	const plansIntent = getPlansIntent( flowName );
 	const hideFreePlan = plansIntent
 		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
 		: reduxHideFreePlan;
 
-	const onSelectPlan = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+	useLayoutEffect( () => {
+		// Plan intervals are changed by parsing query params. Updating query params
+		// with react-router, however, rerenders the whole page. The effect is that,
+		// whenever a new plan interval is selected, the viewport is reset to the top
+		// of the page. Because of this, we manually restore scroll position here.
+		// Ideally we'd switch to using react-router <ScrollRestoration> whenever stepper
+		// flows are refactored to use a data router
+		document.documentElement.scrollTop = location.state?.scrollTop || 0;
+	}, [ location.state?.scrollTop, planIntervalPath ] );
+
+	const onPlanIntervalUpdate = ( path: string ) => {
+		setPlanIntervalPath( path );
+
+		navigate( path, {
+			preventScrollReset: true,
+			replace: true,
+			state: { scrollTop: document.documentElement.scrollTop },
+		} );
+	};
+
+	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
 		const planCartItem = getPlanCartItem( cartItems );
 		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
@@ -106,6 +137,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
+		const cartItemForStorageAddOn = cartItems?.find(
+			( items ) => items.product_slug === PRODUCT_1GB_SPACE
+		);
+
+		cartItemForStorageAddOn && setProductCartItems( [ cartItemForStorageAddOn ] );
 		setPlanCartItem( planCartItem );
 		props.onSubmit?.( planCartItem );
 	};
@@ -115,53 +151,41 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const handleFreePlanButtonClick = () => {
-		onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+		onUpgradeClick( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 		props.onSubmit( null );
-	};
-
-	const renderLoading = () => {
-		return (
-			<div className="plans__loading">
-				<LoadingEllipsis className="active" />
-			</div>
-		);
 	};
 
 	const removePaidDomain = () => {
 		setDomainCartItem( null );
 	};
 
-	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: DomainSuggestion ) => {
+	const setSiteUrlAsFreeDomainSuggestion = ( freeDomainSuggestion: { domain_name: string } ) => {
 		setDomain( freeDomainSuggestion );
 	};
 
 	const plansFeaturesList = () => {
-		if ( ! props.plansLoaded ) {
-			return renderLoading();
-		}
-
 		return (
 			<div>
 				<PlansFeaturesMain
-					isPlansInsideStepper={ true }
 					siteId={ site?.ID }
-					showBiennialToggle={ isOnboardingPMFlow( flowName ) }
+					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ isInSignup }
 					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
-					onUpgradeClick={ onSelectPlan }
+					onUpgradeClick={ onUpgradeClick }
 					paidDomainName={ getPaidDomainName() }
 					customerType={ customerType }
 					plansWithScroll={ isDesktop }
 					flowName={ flowName }
-					isReskinned={ isReskinned }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
+					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
+					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
+					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				/>
-				{ props.shouldIncludeFAQ && <PlanFAQ /> }
 			</div>
 		);
 	};
@@ -171,7 +195,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'The right plan for the right project' );
 		}
 
-		if ( flowName === DOMAIN_UPSELL_FLOW || isOnboardingPMFlow( flowName ) ) {
+		if ( isDomainUpsellFlow( flowName ) ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
@@ -199,8 +223,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			isBlogOnboardingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
 			isLinkInBioFlow( flowName ) ||
-			isDomainUpsellFlow( flowName ) ||
-			isOnboardingPMFlow( flowName )
+			isDomainUpsellFlow( flowName )
 		) {
 			return;
 		}
@@ -245,7 +268,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const classes = classNames( 'plans-step', {
-		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
 		'is-wide-layout': false,
 		'is-extra-wide-layout': true,
@@ -253,14 +275,18 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	return (
 		<div className="stepper-plans">
-			<QueryPlans />
 			<div className={ classes }>{ plansFeaturesSelection() }</div>
 		</div>
 	);
 };
 
-export default connect( ( state ) => {
-	return {
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-	};
-} )( localize( PlansWrapper ) );
+export default connect(
+	( state ) => {
+		return {
+			selectedSiteId: getSelectedSiteId( state ),
+		};
+	},
+	{
+		setSelectedSiteId: setSelectedSiteId,
+	}
+)( localize( PlansWrapper ) );

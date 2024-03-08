@@ -1,31 +1,31 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import { canDoMagicLogin, getLoginLinkPageUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
+	isA4AOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 
 export class LoginLinks extends Component {
 	static propTypes = {
@@ -41,6 +41,8 @@ export class LoginLinks extends Component {
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
 		isGravPoweredClient: PropTypes.bool,
+		getLostPasswordLink: PropTypes.func.isRequired,
+		renderSignUpLink: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -88,7 +90,9 @@ export class LoginLinks extends Component {
 	handleMagicLoginLinkClick = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
+		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click', {
+			origin: 'login-links',
+		} );
 		this.props.resetMagicLoginRequestForm();
 
 		// Add typed email address as a query param
@@ -101,31 +105,8 @@ export class LoginLinks extends Component {
 		page( pathname + search );
 	};
 
-	recordResetPasswordLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-	};
-
 	recordSignUpLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
-	};
-
-	getLoginLinkPageUrl = () => {
-		// The email address from the URL (if present) is added to the login
-		// parameters in this.handleMagicLoginLinkClick(). But it's left out
-		// here deliberately, to ensure that if someone copies this link to
-		// paste somewhere else, their email address isn't included in it.
-		const loginParameters = {
-			locale: this.props.locale,
-			twoFactorAuthType: 'link',
-			signupUrl: this.props.query?.signup_url,
-			oauth2ClientId: this.props.oauth2ClientId,
-		};
-
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		}
-
-		return login( loginParameters );
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', { origin: 'login-links' } );
 	};
 
 	getLoginLinkText = () => {
@@ -140,6 +121,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			isA4AOAuth2Client( this.props.oauth2Client ) ||
 			this.props.isWhiteLogin ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
@@ -224,7 +206,14 @@ export class LoginLinks extends Component {
 	}
 
 	renderMagicLoginLink() {
-		if ( ! config.isEnabled( 'login/magic-login' ) || this.props.twoFactorAuthType ) {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.wccomFrom,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
 			return null;
 		}
 
@@ -232,18 +221,12 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
-		// jetpack cloud cannot have users being sent to WordPress.com
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
-			return null;
-		}
-
-		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
-		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom ) {
-			return null;
-		}
-		if ( this.props.isJetpackWooCommerceFlow ) {
-			return null;
-		}
+		const loginLink = getLoginLinkPageUrl(
+			this.props.locale,
+			this.props.currentRoute,
+			this.props.query?.signup_url,
+			this.props.oauth2Client?.id
+		);
 
 		return (
 			<a
@@ -254,7 +237,7 @@ export class LoginLinks extends Component {
 				// A simpler solution would have been to add rel=external or
 				// rel=download, but it would have been semantically wrong.
 				ref={ this.loginLinkRef }
-				href={ this.getLoginLinkPageUrl() }
+				href={ loginLink }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
@@ -289,87 +272,6 @@ export class LoginLinks extends Component {
 		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
 	}
 
-	renderResetPasswordLink() {
-		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
-			return null;
-		}
-
-		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
-
-		// If we got here coming from Jetpack Cloud login page, we want to go back
-		// to it after we finish the process
-		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
-			const currentUrl = new URL( window.location.href );
-			currentUrl.searchParams.append( 'lostpassword_flow', true );
-			const queryArgs = {
-				redirect_to: currentUrl.toString(),
-
-				// This parameter tells WPCOM that we are coming from Jetpack.com,
-				// so it can present the user a Lost password page that works in
-				// the context of Jetpack.com.
-				client_id: this.props.oauth2Client.id,
-			};
-			lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
-		}
-
-		return (
-			<a
-				href={ lostPasswordUrl }
-				key="lost-password-link"
-				onClick={ this.recordResetPasswordLinkClick }
-				rel="external"
-			>
-				{ this.props.translate( 'Lost your password?' ) }
-			</a>
-		);
-	}
-
-	renderSignUpLink() {
-		// Taken from client/layout/masterbar/logged-out.jsx
-		const {
-			currentRoute,
-			isP2Login,
-			locale,
-			oauth2Client,
-			pathname,
-			query,
-			translate,
-			usernameOrEmail,
-		} = this.props;
-
-		// use '?signup_url' if explicitly passed as URL query param
-		const signupUrl = this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
-
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
-			return null;
-		}
-
-		if ( isP2Login && query?.redirect_to ) {
-			const urlParts = getUrlParts( query.redirect_to );
-			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
-				return null;
-			}
-		}
-
-		return (
-			<a
-				href={ addQueryArgs(
-					{
-						user_email: usernameOrEmail,
-					},
-					signupUrl
-				) }
-				key="sign-up-link"
-				onClick={ this.recordSignUpLinkClick }
-				rel="external"
-			>
-				{ translate( 'Create a new account' ) }
-			</a>
-		);
-	}
-
 	render() {
 		return (
 			<div
@@ -377,12 +279,12 @@ export class LoginLinks extends Component {
 					'has-2fa-links': this.props.twoFactorAuthType,
 				} ) }
 			>
-				{ this.renderSignUpLink() }
+				{ this.props.renderSignUpLink() }
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderQrCodeLoginLink() }
-				{ this.renderResetPasswordLink() }
+				{ this.props.getLostPasswordLink() }
 				{ ! config.isEnabled( 'desktop' ) && this.renderBackLink() }
 			</div>
 		);
@@ -393,10 +295,9 @@ export default connect(
 	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		oauth2Client: getCurrentOAuth2Client( state ),
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
-		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
+		wccomFrom: getWccomFrom( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{

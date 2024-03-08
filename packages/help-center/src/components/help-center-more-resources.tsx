@@ -7,11 +7,11 @@ import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import { Icon, captureVideo, desktop, formatListNumbered, video, external } from '@wordpress/icons';
+import { Icon, captureVideo, formatListNumbered, external, institution } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -29,17 +29,13 @@ type CoreDataPlaceholder = {
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
-
-	const { isBusinessOrEcomPlanUser } = useSelector( ( state ) => {
-		const purchases = getUserPurchases( state );
-		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
-		return {
-			isBusinessOrEcomPlanUser: !! (
-				purchaseSlugs &&
-				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
-			),
-		};
-	} );
+	const purchases = useSelector( getUserPurchases );
+	const siteId = useSelector( getSelectedSiteId );
+	const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
+	const isBusinessOrEcomPlanUser = !! (
+		purchaseSlugs &&
+		( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
+	);
 
 	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
 		( select ) => ( {
@@ -71,14 +67,14 @@ export const HelpCenterMoreResources = () => {
 		} );
 	};
 
-	const trackWebinairsButtonClick = () => {
+	const trackLearnButtonClick = ( resourceType: string ) => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
-		trackMoreResourcesButtonClick( 'webinairs' );
+		trackMoreResourcesButtonClick( resourceType );
 	};
 
 	const handleWhatsNewClick = () => {
@@ -98,14 +94,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support' ) }
 							rel="noreferrer"
 							target="_blank"
-							className="inline-help__video"
-							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
+							className="inline-help__format-list-numbered"
+							onClick={ () => trackMoreResourcesButtonClick( 'support-documentation' ) }
 						>
-							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Video Tutorials', __i18n_text_domain__ ) }</span>
+							<Icon icon={ formatListNumbered } size={ 24 } />
+							<span>{ __( 'Support Guides', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -116,7 +112,7 @@ export const HelpCenterMoreResources = () => {
 							href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 							rel="noreferrer"
 							target="_blank"
-							onClick={ trackWebinairsButtonClick }
+							onClick={ () => trackLearnButtonClick( 'webinairs' ) }
 							className="inline-help__capture-video"
 						>
 							<Icon icon={ captureVideo } size={ 24 } />
@@ -128,29 +124,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href="https://wordpress.com/learn/"
+							href={ localizeUrl( 'https://wordpress.com/courses/' ) }
 							rel="noreferrer"
 							target="_blank"
-							className="inline-help__desktop"
-							onClick={ () => trackMoreResourcesButtonClick( 'starting-guide' ) }
+							onClick={ () => trackLearnButtonClick( 'courses' ) }
+							className="inline-help__institution"
 						>
-							<Icon icon={ desktop } size={ 24 } />
-							<span>{ __( 'Starting Guide', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/support' ) }
-							rel="noreferrer"
-							target="_blank"
-							className="inline-help__format-list-numbered"
-							onClick={ () => trackMoreResourcesButtonClick( 'support-documentation' ) }
-						>
-							<Icon icon={ formatListNumbered } size={ 24 } />
-							<span>{ __( 'Support Documentation', __i18n_text_domain__ ) }</span>
+							<Icon icon={ institution } size={ 24 } />
+							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -163,7 +144,7 @@ export const HelpCenterMoreResources = () => {
 							className="inline-help__new-releases"
 						>
 							<Icon icon={ <NewReleases /> } size={ 24 } />
-							<span>{ __( "What's new", __i18n_text_domain__ ) }</span>
+							<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
 							{ showWhatsNewDot && (
 								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
 							) }
@@ -171,7 +152,12 @@ export const HelpCenterMoreResources = () => {
 					</div>
 				</li>
 			</ul>
-			{ showGuide && <WhatsNewGuide onClose={ () => setShowGuide( false ) } /> }
+			{ showGuide && (
+				<WhatsNewGuide
+					onClose={ () => setShowGuide( false ) }
+					siteId={ siteId?.toString() || '' }
+				/>
+			) }
 		</>
 	);
 };

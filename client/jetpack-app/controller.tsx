@@ -1,9 +1,8 @@
-import page from 'page';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import JetpackAppEmptyContent from './empty';
 import JetpackAppPlans from './plans/main';
+import type { Callback } from '@automattic/calypso-router';
 
-export function jetpackAppPlans( context: PageJS.Context, next: () => void ) {
+export const jetpackAppPlans: Callback = ( context, next ) => {
 	context.primary = (
 		<JetpackAppPlans
 			paidDomainName={ context.query.paid_domain_name }
@@ -12,17 +11,9 @@ export function jetpackAppPlans( context: PageJS.Context, next: () => void ) {
 	);
 
 	next();
-}
+};
 
-export function redirectIfNotJetpackApp( _context: PageJS.Context, next: () => void ) {
-	if ( ! isWpMobileApp() ) {
-		page.redirect( '/' );
-	} else {
-		next();
-	}
-}
-
-export function pageNotFound( context: PageJS.Context, next: () => void ) {
+export const pageNotFound: Callback = ( context, next ) => {
 	context.primary = <JetpackAppEmptyContent />;
 	next();
-}
+};

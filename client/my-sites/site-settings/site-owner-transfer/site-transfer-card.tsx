@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import ActionPanel from 'calypso/components/action-panel';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 const ActionPanelStyled = styled( ActionPanel )( {
@@ -28,19 +28,19 @@ export function SiteTransferCard( {
 	const translate = useTranslate();
 	return (
 		<Main>
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Site Transfer' ) }
-				subHeaderText={ translate(
-					'Transfer your site to another WordPress.com user. {{a}}Learn more.{{/a}}',
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Site Transfer' ) }
+				subtitle={ translate(
+					'Transfer this site to a new or existing site member with just a few clicks. {{a}}Learn more.{{/a}}',
 					{
 						components: {
 							a: <InlineSupportLink supportContext="site-transfer" showIcon={ false } />,
 						},
 					}
 				) }
-				align="left"
 			/>
+
 			<PageViewTracker
 				path="/settings/start-site-transfer/:site"
 				title="Settings > Start Site Transfer"

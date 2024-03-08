@@ -1,11 +1,12 @@
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
@@ -32,6 +33,7 @@ import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
+import { FailedPurchasePage } from './checkout-thank-you/failed-purchase-page';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
@@ -46,6 +48,12 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
+export function checkoutFailedPurchases( context, next ) {
+	context.primary = <FailedPurchasePage />;
+
+	next();
+}
+
 export function checkoutJetpackSiteless( context, next ) {
 	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';
 	/**
@@ -54,7 +62,6 @@ export function checkoutJetpackSiteless( context, next ) {
 	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
 	 * site slug present when the site is in context (ie- when site is connected and user is
 	 * logged in).
-	 *
 	 * @type {string|undefined}
 	 */
 	const fromSiteSlug = context.query?.from_site_slug;
@@ -69,6 +76,10 @@ export function checkoutJetpackSiteless( context, next ) {
 
 export function checkoutAkismetSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'akismet' } );
+}
+
+export function checkoutMarketplaceSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
 }
 
 function sitelessCheckout( context, next, extraProps ) {
@@ -233,10 +244,11 @@ export function checkout( context, next ) {
 
 export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getProductSlugFromContext( context );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const upgradeFrom = getQueryArgs()?.upgrade_from;
 
-	if ( isJetpackLegacyItem( product ) ) {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+	if ( isJetpackLegacyItem( product ) && ! isJetpackLegacyTermUpgrade( product, upgradeFrom ) ) {
 		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
 
 		page(
@@ -276,7 +288,6 @@ export function checkoutPending( context, next ) {
 	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
 	 * site slug present when the site is in context (ie- when site is connected and user is
 	 * logged in).
-	 *
 	 * @type {string|undefined}
 	 */
 	const fromSiteSlug = context.query?.from_site_slug;
@@ -580,6 +591,7 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		'WC',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

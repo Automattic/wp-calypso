@@ -4,10 +4,9 @@ import { get } from 'lodash';
 import { connect } from 'react-redux';
 import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -18,14 +17,14 @@ const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 
 	return (
 		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
-			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>
-			<FormattedHeader
-				brandFont
-				headerText={ labels.name }
-				subHeaderText={ translate(
+			<NavigationHeader
+				screenOptionsTab={ `edit-tags.php?taxonomy=${ taxonomy }` }
+				navigationItems={ [] }
+				title={ labels.name }
+				subtitle={ translate(
 					'Create, edit, and manage the %(taxonomy)s on your site. {{learnMoreLink/}}',
 					{
 						args: { taxonomy: taxonomyName },
@@ -40,8 +39,6 @@ const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 						},
 					}
 				) }
-				align="left"
-				hasScreenOptions
 			/>
 			<TaxonomyManager taxonomy={ taxonomy } postType={ postType } />
 		</Main>

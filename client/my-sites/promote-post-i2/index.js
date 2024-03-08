@@ -1,8 +1,10 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
-import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import { navigation, redirectToPrimary, sites, siteSelection } from 'calypso/my-sites/controller';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	promoteWidget,
 	promotedPosts,
@@ -18,14 +20,28 @@ export const redirectToPrimarySite = ( context, next ) => {
 		return next();
 	}
 
-	const state = context.store.getState();
-	const primarySiteSlug = getPrimarySiteSlug( state );
-	if ( primarySiteSlug !== null ) {
-		page( `${ context.pathname }/${ primarySiteSlug }` );
-	} else {
-		siteSelection( context, next );
-		page( getAdvertisingDashboardPath( '' ) );
+	const { getState, dispatch } = context.store;
+	const primarySiteId = getPrimarySiteId( getState() );
+	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+
+	if ( primarySiteSlug ) {
+		redirectToPrimary( context, primarySiteSlug );
+		return;
 	}
+
+	// Fetch the primary site by ID and then try to determine its slug again.
+	dispatch( requestSite( primarySiteId ) )
+		.catch( () => null )
+		.then( () => {
+			const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
+			if ( freshPrimarySiteSlug ) {
+				redirectToPrimary( context, freshPrimarySiteSlug );
+				return;
+			}
+
+			// no redirection happened, proceed to showing the sites list
+			next();
+		} );
 };
 
 const promotePage = ( url, controller ) => {
@@ -44,6 +60,7 @@ export default () => {
 	page(
 		getAdvertisingDashboardPath( '/' ),
 		redirectToPrimarySite,
+		siteSelection,
 		sites,
 		makeLayout,
 		clientRender

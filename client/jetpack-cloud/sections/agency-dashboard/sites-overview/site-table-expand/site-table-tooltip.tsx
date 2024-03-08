@@ -1,6 +1,6 @@
+import { Tooltip } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { forwardRef } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 interface Props {
 	siteId: number;

@@ -4,19 +4,9 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import { KEY_PRODUCTS } from './constants';
 import type { Props } from '.';
 
-const useProducts = () => {
-	const { products } = useSelector( ( state ) => {
-		const query = getCurrentQueryArguments( state ) || {};
-		return {
-			products: query[ KEY_PRODUCTS ],
-		};
-	} );
-
-	return products;
-};
-
 const AsyncCheckoutModal = ( props: Props ) => {
-	const products = useProducts();
+	const queryArguments = useSelector( getCurrentQueryArguments );
+	const products = queryArguments?.[ KEY_PRODUCTS ];
 
 	if ( ! products ) {
 		return null;

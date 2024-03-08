@@ -4,9 +4,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DisconnectJetpack from 'calypso/blocks/disconnect-jetpack';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import NavigationHeader from 'calypso/components/navigation-header';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
@@ -71,12 +71,14 @@ class ConfirmDisconnection extends Component {
 		return (
 			<Main className="disconnect-site__confirm">
 				<DocumentHead title={ translate( 'Site Settings' ) } />
-				<FormattedHeader
-					headerText={ translate( 'Confirm Disconnection' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Confirm Disconnection' ) }
+					subtitle={ translate(
 						'Confirm that you want to disconnect your site from WordPress.com.'
 					) }
 				/>
+
 				<DisconnectJetpack
 					disconnectHref={ disconnectHref ?? '/stats' }
 					isBroken={ false }

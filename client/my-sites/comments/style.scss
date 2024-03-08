@@ -9,10 +9,8 @@
 		}
 
 		.comment-navigation__open-bulk {
-			padding-top: 9px;
-			position: absolute;
-			right: 0;
-			top: 0;
+			justify-content: center;
+			padding-top: 0;
 		}
 	}
 }
@@ -71,6 +69,14 @@
 		.gridicon {
 			top: 4px;
 		}
+	}
+}
+
+.comment-navigation__unreplied-comments.form-fieldset {
+	margin: 12px;
+
+	.form-label {
+		margin: 0;
 	}
 }
 
@@ -148,5 +154,29 @@
 	}
 	100% {
 		opacity: 1;
+	}
+}
+
+.comments-tips__action-panel {
+	position: relative;
+	.action-panel__figure {
+		margin-bottom: 0;
+		width: auto;
+	}
+	ul {
+		color: var(--color-neutral-70);
+		line-height: 24px;
+	}
+	.comments-tips__dismiss-button {
+		position: absolute;
+		top: 0;
+		right: 0;
+		padding: 8px;
+		margin: 8px 12px 8px 8px;
+
+		.gridicon {
+			height: 24px;
+			width: 24px;
+		}
 	}
 }

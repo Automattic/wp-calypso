@@ -68,7 +68,7 @@ export default function SiteDowntimeMonitoringUpgradeBanner() {
 			className="site-downtime-monitoring-upgrade-banner"
 			title={ translate( 'Your uptime, our priority: enhanced Downtime Monitoring' ) }
 			description={ translate(
-				'Maximise uptime with our swift 1-minute interval alerts, now supporting multi-emails and SMS notifications.'
+				'Maximize uptime with our swift 1-minute interval alerts, now supporting multi-emails and SMS notifications.'
 			) }
 			disableCircle
 			horizontal

@@ -1,9 +1,10 @@
-import { updateLaunchpadSettings, type UserSelect } from '@automattic/data-stores';
-import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { type UserSelect } from '@automattic/data-stores';
+import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import wpcom from 'calypso/lib/wp';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -12,16 +13,16 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import CreateSite from './internals/steps-repository/create-site';
 import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
 import LaunchPad from './internals/steps-repository/launchpad';
 import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
 import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const linkInBio: Flow = {
@@ -29,13 +30,14 @@ const linkInBio: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'patterns', component: DesignCarousel },
 			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
 			{ slug: 'plans', component: PlansStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'createSite', component: CreateSite },
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
 		];
@@ -43,8 +45,6 @@ const linkInBio: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect(
@@ -52,24 +52,12 @@ const linkInBio: Flow = {
 			[]
 		);
 
-		setStepProgress( flowProgress );
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }/patterns`,
-			pageTitle: 'Link%20in%20Bio',
+			pageTitle: translate( 'Link in Bio' ),
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -92,9 +80,9 @@ const linkInBio: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':
@@ -138,10 +126,12 @@ const linkInBio: Flow = {
 		const goNext = async () => {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: 'link-in-bio-tld',
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'intro' );

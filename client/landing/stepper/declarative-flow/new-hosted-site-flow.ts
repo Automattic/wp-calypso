@@ -1,4 +1,4 @@
-import { PLAN_HOSTING_TRIAL_MONTHLY, isFreeHostingTrial } from '@automattic/calypso-products';
+import { isFreeHostingTrial } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -8,30 +8,29 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import { useSelector } from 'calypso/state';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
+import type { UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
+	isSignupFlow: true,
 	useSteps() {
 		return [
-			{
-				slug: 'options',
-				asyncComponent: () => import( './internals/steps-repository/site-options' ),
-			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'trialAcknowledge',
 				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -40,31 +39,12 @@ const hosting: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setStepProgress, setSiteTitle, setPlanCartItem, setSiteGeoAffinity } =
-			useDispatch( ONBOARD_STORE );
-		const { siteGeoAffinity, planCartItem } = useSelect(
-			( select ) => ( {
-				siteGeoAffinity: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteGeoAffinity(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-			} ),
-			[]
-		);
-
-		const flowProgress = useSiteSetupFlowProgress( _currentStepSlug, 'host' );
-
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
-
+		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const flowName = this.name;
 
 		const goBack = () => {
-			if ( _currentStepSlug === 'options' ) {
-				return window.location.assign( '/sites?hosting-flow=true' );
-			}
-
 			if ( _currentStepSlug === 'plans' ) {
-				navigate( 'options' );
+				return window.location.assign( '/sites?hosting-flow=true' );
 			}
 			if ( _currentStepSlug === 'trialAcknowledge' ) {
 				navigate( 'plans' );
@@ -75,58 +55,33 @@ const hosting: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
-				case 'options': {
-					setSiteTitle( providedDependencies.siteTitle );
-					setSiteGeoAffinity( providedDependencies.siteGeoAffinity );
-
-					setPlanCartItem( {
-						product_slug: planCartItem?.product_slug,
-						extra: { geo_affinity: providedDependencies.siteGeoAffinity },
-					} );
-
-					return navigate( 'plans' );
-				}
-
 				case 'plans': {
 					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
 						.product_slug;
 
 					setPlanCartItem( {
 						product_slug: productSlug,
-						extra: { geo_affinity: siteGeoAffinity },
 					} );
 
 					if ( isFreeHostingTrial( productSlug ) ) {
 						return navigate( 'trialAcknowledge' );
 					}
 
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 				}
 
 				case 'trialAcknowledge': {
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 				}
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {
-					// Purchasing these plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const goingAtomic =
-						planCartItem?.product_slug &&
-						[
-							'business-bundle',
-							'business-bundle-monthly',
-							'ecommerce-bundle',
-							'ecommerce-bundle-monthly',
-							PLAN_HOSTING_TRIAL_MONTHLY,
-						].includes( planCartItem.product_slug );
-
-					const destination = goingAtomic
-						? addQueryArgs( '/setup/transferring-hosted-site', {
-								siteId: providedDependencies.siteId,
-						  } )
-						: '/home/' + providedDependencies.siteSlug;
+					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
+					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
+						siteId: providedDependencies.siteId,
+					} );
 
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
@@ -155,17 +110,31 @@ const hosting: Flow = {
 	},
 	useSideEffect( currentStepSlug ) {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
+		const query = useQuery();
+		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 
 		useLayoutEffect( () => {
+			const queryParams = Object.fromEntries( query );
+
+			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
+
 			if ( ! userIsLoggedIn ) {
-				window.location.assign( '/start/hosting' );
+				window.location.assign(
+					addQueryArgs( '/start/hosting', {
+						...queryParams,
+						flow: 'new-hosted-site',
+					} )
+				);
 			}
-		}, [ userIsLoggedIn ] );
+
+			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
+				window.location.assign( urlWithQueryParams );
+			}
+		}, [ userIsLoggedIn, isEligible, currentStepSlug, query ] );
 
 		useEffect(
 			() => {
@@ -173,7 +142,7 @@ const hosting: Flow = {
 					resetOnboardStore();
 				}
 			},
-			// We only need to reset the store when the flow is mounted.
+			// We only need to reset the store and/or check the `campaign` param when the flow is mounted.
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			[]
 		);

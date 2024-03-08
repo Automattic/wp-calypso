@@ -70,6 +70,7 @@ cached-requests.json
 /packages/*/dist/
 /build-tools/dist/
 /apps/*/.cache/
+/packages/*/.cache/
 /desktop/.cache/
 /apps/*/release-files/
 /apps/**/*/build_meta.json

@@ -3,14 +3,18 @@
  */
 import { SiteDetails } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import getSiteCredentialsRequestStatus from 'calypso/state/selectors/get-site-credentials-request-status';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import PreMigration from '../index';
 
 const user = {
@@ -45,6 +49,11 @@ jest.mock( 'react-router-dom', () => ( {
 
 jest.mock( 'calypso/blocks/importer/hooks/use-site-can-migrate' );
 jest.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials' );
+jest.mock( 'calypso/data/plans/use-check-eligibility-migration-trial-plan' );
+jest.mock( 'calypso/state/user-settings/selectors' );
+jest.mock( 'calypso/state/selectors/get-user-setting' );
+jest.mock( 'calypso/state/selectors/get-site-credentials-request-status' );
 
 function renderPreMigrationScreen( props?: any ) {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -82,13 +91,21 @@ describe( 'PreMigration', () => {
 		// @ts-ignore
 		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: true,
+			isInitFetchingDone: true,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useCheckEligibilityMigrationTrialPlan.mockReturnValue( {
+			blog_id: 777712,
+			eligible: false,
 		} );
 
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
 			targetSite: targetSite,
 			isTargetSitePlanCompatible: false,
 			isMigrateFromWp: true,
@@ -97,10 +114,10 @@ describe( 'PreMigration', () => {
 
 		expect( screen.getByText( 'Upgrade your plan' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Upgrade and migrate' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Use the content-only import option' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'free content-only import option' ) ).toBeInTheDocument();
 
 		// Click on "Use the content-only import option"
-		const button = screen.getByText( 'Use the content-only import option' );
+		const button = screen.getByText( 'free content-only import option' );
 		fireEvent.click( button );
 		expect( onContentOnlyClick ).toHaveBeenCalled();
 	} );
@@ -108,17 +125,25 @@ describe( 'PreMigration', () => {
 	test( 'should show "Move to wordpress.com" plugin update', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSiteMigrateInfo.mockImplementationOnce( () => ( {
+		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: false,
+			isInitFetchingDone: true,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useCheckEligibilityMigrationTrialPlan.mockImplementationOnce( () => ( {
+			blog_id: 777712,
+			eligible: true,
 		} ) );
 
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
 			targetSite: targetSite,
-			isTargetSitePlanCompatible: false,
+			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: true,
 			onContentOnlyClick,
 		} );
@@ -130,17 +155,25 @@ describe( 'PreMigration', () => {
 	test( 'should show "Jetpack" plugin update', () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		useSiteMigrateInfo.mockImplementationOnce( () => ( {
+		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: false,
-		} ) );
+			isInitFetchingDone: true,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useCheckEligibilityMigrationTrialPlan.mockReturnValue( {
+			blog_id: 777712,
+			eligible: false,
+		} );
 
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite as SiteDetails,
 			targetSite: targetSite,
-			isTargetSitePlanCompatible: false,
+			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: false,
 			onContentOnlyClick,
 		} );
@@ -155,24 +188,32 @@ describe( 'PreMigration', () => {
 		// @ts-ignore
 		useSiteMigrateInfo.mockReturnValue( {
 			sourceSiteId: 777712,
-			sourceSite: sourceSite as SiteDetails,
 			fetchMigrationEnabledStatus: jest.fn(),
 			isFetchingData: false,
 			siteCanMigrate: true,
+			isInitFetchingDone: true,
 		} );
 
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getSiteCredentialsRequestStatus.mockReturnValue( 'success' );
+
 		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
 			targetSite: targetSite,
 			isTargetSitePlanCompatible: true,
 			isMigrateFromWp: true,
 			onContentOnlyClick,
-			sourceSite: sourceSite,
 		} );
+
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		isRequestingSiteCredentials.mockReturnValue( false );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		isFetchingUserSettings.mockReturnValue( false );
 
-		expect( screen.getByText( 'You are ready to migrate' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Your site is ready for its brand new home' ) ).toBeInTheDocument();
 
 		const provideCredentialsBtn = screen.getByText( 'Provide the server credentials' );
 		expect( provideCredentialsBtn ).toBeInTheDocument();
@@ -187,7 +228,7 @@ describe( 'PreMigration', () => {
 		fireEvent.click( provideCredentialsBtn );
 		expect( screen.getByText( 'Do you need help locating your credentials?' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Start migration' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Skip credentials (slower setup)' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Skip credentials' ) ).toBeInTheDocument();
 
 		const hostAddressInput = document.getElementById( 'host-address' ) as HTMLInputElement;
 		expect( hostAddressInput.value ).toBe( sourceSite.slug );
@@ -198,5 +239,52 @@ describe( 'PreMigration', () => {
 		expect(
 			screen.getByText( 'Please make sure all fields are filled in correctly before proceeding.' )
 		).toBeInTheDocument();
+	} );
+
+	test( 'should show credential form screen for developer account', async () => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		useSiteMigrateInfo.mockReturnValue( {
+			sourceSiteId: 777712,
+			fetchMigrationEnabledStatus: jest.fn(),
+			isFetchingData: false,
+			siteCanMigrate: true,
+			isInitFetchingDone: true,
+		} );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getSiteCredentialsRequestStatus.mockReturnValue( 'success' );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		getUserSetting.mockImplementation( ( state, settings ) => {
+			if ( settings === 'is_dev_account' ) {
+				return true;
+			}
+			return false;
+		} );
+
+		renderPreMigrationScreen( {
+			sourceSite: sourceSite,
+			targetSite: targetSite,
+			isTargetSitePlanCompatible: true,
+			isMigrateFromWp: true,
+			onContentOnlyClick,
+		} );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		isRequestingSiteCredentials.mockReturnValue( false );
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		isFetchingUserSettings.mockReturnValue( false );
+
+		await waitFor( () => {
+			expect(
+				screen.getByText( 'Do you need help locating your credentials?' )
+			).toBeInTheDocument();
+			expect( screen.getByText( 'Start migration' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Skip credentials' ) ).toBeInTheDocument();
+		} );
 	} );
 } );

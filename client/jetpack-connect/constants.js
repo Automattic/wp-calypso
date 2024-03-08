@@ -26,3 +26,4 @@ export const JETPACK_COUPON_PRESET_MAPPING = {
 	RDCA: 'jetpack_backup_daily',
 	HMOA: 'jetpack_backup_daily',
 };
+export const JPC_JETPACK_MANAGE_PATH = 'https://cloud.jetpack.com/dashboard';

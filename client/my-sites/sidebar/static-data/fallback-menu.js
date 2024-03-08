@@ -39,6 +39,7 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAddOns = false,
 	showSiteMonitoring = false,
+	showGithubDeployments = false,
 } = {} ) {
 	let mailboxes = [];
 	if ( shouldShowMailboxes ) {
@@ -448,14 +449,14 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'users.php',
 					slug: 'users-all-people',
-					title: translate( 'All People' ),
+					title: translate( 'All Users' ),
 					type: 'submenu-item',
 					url: `/people/team/${ siteDomain }`,
 				},
 				{
 					parent: 'users.php',
 					slug: 'users-add-new',
-					title: translate( 'Add New', { context: 'user' } ),
+					title: translate( 'Add New User', { context: 'user' } ),
 					type: 'submenu-item',
 					url: `/people/new/${ siteDomain }`,
 				},
@@ -499,7 +500,7 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'tools.php',
 					slug: 'tools-earn',
-					title: translate( 'Earn' ),
+					title: translate( 'Monetize' ),
 					type: 'menu-item',
 					url: `/earn/${ siteDomain }`,
 				},
@@ -517,6 +518,17 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
+				...( showGithubDeployments
+					? [
+							{
+								parent: 'tools.php',
+								slug: 'tools-github-deployments',
+								title: translate( 'GitHub Deployments' ),
+								type: 'submenu-item',
+								url: `/github-deployments/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
 				...( showSiteMonitoring
 					? [
 							{

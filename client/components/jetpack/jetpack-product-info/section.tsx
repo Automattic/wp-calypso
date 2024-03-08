@@ -1,6 +1,6 @@
+import { FoldableCard } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { FunctionComponent, ReactNode, useLayoutEffect, useRef, useState } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 
 // `title` is required, except if the section is always expanded
 type Props = (

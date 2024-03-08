@@ -10,7 +10,6 @@ import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
  * Checks whether the upgrade product is valid for upsell tracking.
  * There may be more conditions, for now it's just checking whether
  * it's any ecommerce plan.
- *
  * @param product ResponseCartProduct
  * @returns { boolean }
  */
@@ -23,7 +22,6 @@ export const isValidWooExpressUpsell = ( product: ResponseCartProduct ): boolean
  * If both are true, we'll return true. A valid upgrade assumes that the site currently (pre upgrade)
  * has a Woo Experss trial, and that the upgrade is to a valid ecommerce plan as defined by the return
  * value of `isEcommerce`.
- *
  * @param cart ResponseCart
  * @param sitePlanSlug SiteDetails
  * @returns { boolean }

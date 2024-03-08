@@ -45,8 +45,9 @@ declare module 'calypso/components/embed-container' {
 declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
 	const useSupportArticleAlternatesQuery: (
 		blogId: number,
-		postId: number
-	) => { isInitialLoading: boolean; data?: { blog_id: number; page_id: number } };
+		postId: number,
+		locale: string
+	) => { isInitialLoading: boolean; data?: { blog_id: number; page_id: number; locale: string } };
 	export default useSupportArticleAlternatesQuery;
 }
 
@@ -71,6 +72,7 @@ declare module 'calypso/state/ui/selectors' {
 declare module 'calypso/state/sites/selectors' {
 	export const getSite: ( state: unknown, siteId: number ) => { is_wpcom_atomic: boolean };
 	export const getIsSimpleSite: ( state: unknown ) => boolean;
+	export const isJetpackSite: ( state: unknown, siteId: number ) => boolean | null;
 }
 
 declare module 'calypso/state/sites/selectors/is-simple-site' {
@@ -102,6 +104,63 @@ declare module 'calypso/state/current-user/selectors' {
 }
 declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUserId: ( state: unknown ) => string;
+}
+
+declare module 'calypso/state/current-user/selectors' {
+	export const getCurrentUser: ( state: unknown ) => { display_name: string };
+}
+
+declare module 'calypso/components/ellipsis-menu' {
+	const EllipsisMenu: FC< {
+		popoverClassName?: string;
+		position?: string;
+		children: React.ReactNode;
+	} >;
+
+	export default EllipsisMenu;
+}
+
+declare module 'calypso/components/popover-menu/item' {
+	const PopoverMenuItem: FC< {
+		className?: string;
+		onClick: ( event: React.MouseEvent< HTMLButtonElement > ) => void;
+		children: React.ReactNode;
+	} >;
+
+	export default PopoverMenuItem;
+}
+
+declare module 'calypso/components/popover-menu' {
+	const EllipsisMenu: FC< {
+		popoverClassName?: string;
+		position?: string;
+		children: React.ReactNode;
+	} >;
+
+	export default EllipsisMenu;
+}
+
+declare module 'calypso/components/gravatar' {
+	const Gravatar: FC< {
+		user?: { display_name: string };
+		size?: number;
+		alt?: string;
+	} >;
+
+	export default Gravatar;
+}
+
+declare module 'calypso/components/textarea-autosize' {
+	const TextareaAutosize: FC< {
+		placeholder: string;
+		className: string;
+		rows: number;
+		value: string;
+		onChange: ( event: React.ChangeEvent< HTMLTextAreaElement > ) => void;
+		onKeyPress: ( event: KeyboardEvent< HTMLTextAreaElement > ) => Promise< void >;
+	} >;
+
+	export default TextareaAutosize;
 }
 
 declare module 'calypso/state/selectors/get-admin-help-results' {

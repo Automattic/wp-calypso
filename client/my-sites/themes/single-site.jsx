@@ -1,6 +1,5 @@
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Main from 'calypso/components/main';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,13 +12,6 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	const getScreenshotOption = ( themeId ) => {
 		return activeTheme === themeId ? 'customize' : 'info';
 	};
-
-	// If we've only just switched from single to multi-site, there's a chance
-	// this component is still being rendered with site unset, so we need to guard
-	// against that case.
-	if ( ! siteId ) {
-		return <Main fullWidthLayout className="themes" />;
-	}
 
 	if ( isJetpack ) {
 		return (
@@ -41,10 +33,11 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			{ ...props }
 			origin="wpcom"
 			siteId={ siteId }
-			defaultOption="activate"
-			secondaryOption="tryandcustomize"
+			defaultOption={ siteId ? 'activate' : 'signup' }
+			secondaryOption={ siteId ? 'tryandcustomize' : undefined }
 			source="showcase"
 			getScreenshotOption={ getScreenshotOption }
+			showUploadButton={ !! siteId }
 		/>
 	);
 };

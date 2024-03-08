@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';

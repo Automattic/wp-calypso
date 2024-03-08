@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { login } from 'calypso/lib/paths';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';

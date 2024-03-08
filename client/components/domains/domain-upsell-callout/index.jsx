@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { globe, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -19,12 +19,12 @@ import './style.scss';
 
 const DomainUpsellCallout = ( { trackEvent } ) => {
 	const dispatch = useDispatch();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const trackEventView = `calypso_${ trackEvent }_view`;
 	const trackEventClick = `calypso_${ trackEvent }_click`;
 	const trackEventDismiss = `calypso_${ trackEvent }_dismiss`;
 	const dismissPreference = `${ trackEvent }-${ site?.ID }`;
-	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site?.ID ) );
 	const siteDomainsLength = useMemo(
 		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,

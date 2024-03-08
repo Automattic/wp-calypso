@@ -177,7 +177,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 	/**
 	 * Used to determine if at least one plugin is in at least one of the provided plugin states.
-	 *
 	 * @param  pluginStates States to check against.
 	 * @returns              True if at least one plugin is in at least one of the given states, false otherwise.
 	 */
@@ -197,7 +196,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Used to determine if at least one plugin is in an error state.
 	 * Potential errors we consider here could be recoverable or not.
 	 * What we don't consider errors are the `NON_ERROR_STATES` above.
-	 *
 	 * @returns Whether there are currently any installation errors.
 	 */
 	installationHasErrors(): boolean {
@@ -211,7 +209,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 	/**
 	 * Used to determine if at least one plugin is in an error state
 	 * that we could potentially recover from by just waiting.
-	 *
 	 * @returns Whether there are currently any recoverable errors.
 	 */
 	installationHasRecoverableErrors(): boolean {
@@ -224,7 +221,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 	 * Will be true if both conditions are matched:
 	 * - We haven't retried too many times (limit is `MAX_RETRIES`).
 	 * - We currently have recoverable errors.
-	 *
 	 * @returns Whether to trigger a request to refetch installation status.
 	 */
 	shouldRefetchInstallationStatus(): boolean {
@@ -233,7 +229,6 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 	/**
 	 * A helper to refresh the page, which essentially will restart the installation process.
-	 *
 	 * @returns {undefined} Eslint requires this silly return tag. @TODO get rid of this.
 	 */
 	refreshPage = (): void => void window.location.reload();

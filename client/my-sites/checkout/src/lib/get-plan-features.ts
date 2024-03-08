@@ -9,9 +9,9 @@ import {
 	isWpComPremiumPlan,
 	isStarterPlan,
 	is100YearPlan,
-	FEATURE_FREE_DOMAIN,
 	Feature,
 	applyTestFiltersToPlansList,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -42,17 +42,21 @@ export default function getPlanFeatures(
 			return [];
 		}
 
-		const featureList: Feature[] = planObject?.getCheckoutFeatures?.() || [];
+		const features: Feature[] = planObject?.getCheckoutFeatures?.() || [];
 		const annualPlanOnlyFeatures = planObject?.getAnnualPlansOnlyFeatures?.() || [];
 
-		return (
-			featureList
-				// Exclude annual plan only features if the current plan is a monthly plan
-				?.filter( ( feature ) => ! isMonthlyPlan || ! annualPlanOnlyFeatures.includes( feature ) )
-				// Show the free domain feature if `showFreeDomainFeature` is true
-				?.filter( ( feature ) => feature !== FEATURE_FREE_DOMAIN || showFreeDomainFeature )
-				?.map( ( feature ) => String( FEATURES_LIST[ feature ].getTitle() ) )
-		);
+		const featureList = features
+			// Exclude annual plan only features if the current plan is a monthly plan
+			.filter( ( feature ) => ! isMonthlyPlan || ! annualPlanOnlyFeatures.includes( feature ) )
+			// Show the free domain feature if `showFreeDomainFeature` is true
+			.filter( ( feature ) => feature !== FEATURE_CUSTOM_DOMAIN || showFreeDomainFeature )
+			.map( ( feature ) => String( FEATURES_LIST[ feature ].getTitle() ) );
+
+		// If the new feature list is available, return it.
+		// Else fallback to the previous list of features.
+		if ( featureList.length ) {
+			return featureList;
+		}
 	}
 
 	const emailSupport = String( translate( 'Customer support via email' ) );

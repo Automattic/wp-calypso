@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import { AutoSizer, List } from '@automattic/react-virtualized';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -18,7 +19,6 @@ import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryTerms from 'calypso/components/data/query-terms';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import PodcastIndicator from 'calypso/components/podcast-indicator';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

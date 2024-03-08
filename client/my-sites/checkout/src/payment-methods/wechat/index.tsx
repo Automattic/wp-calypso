@@ -1,11 +1,5 @@
-import {
-	Button,
-	FormStatus,
-	useTotal,
-	useFormStatus,
-	useTransactionStatus,
-	PaymentProcessorResponseType,
-} from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -13,19 +7,14 @@ import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
-import type {
-	LineItem,
-	PaymentMethod,
-	PaymentMethodSubmitButtonProps,
-} from '@automattic/composite-checkout';
+import type { PaymentMethod, PaymentMethodSubmitButtonProps } from '@automattic/composite-checkout';
 import type {
 	PaymentMethodStore,
 	StoreSelectors,
@@ -39,11 +28,6 @@ const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' )
 
 type NounsInStore = 'customerName';
 type WeChatStore = PaymentMethodStore< NounsInStore >;
-
-interface WeChatStripeResponse {
-	order_id: number;
-	redirect_url: string;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -77,19 +61,14 @@ export function createWeChatPaymentMethodStore(): WeChatStore {
 	} );
 }
 
-export function createWeChatMethod( {
-	store,
-	siteSlug,
-}: {
-	store: WeChatStore;
-	siteSlug?: string;
-} ): PaymentMethod {
+export function createWeChatMethod( { store }: { store: WeChatStore } ): PaymentMethod {
 	return {
 		id: 'wechat',
+		hasRequiredFields: true,
 		paymentProcessorId: 'wechat',
 		label: <WeChatLabel />,
 		activeContent: <WeChatFields />,
-		submitButton: <WeChatPayButton store={ store } siteSlug={ siteSlug } />,
+		submitButton: <WeChatPayButton store={ store } />,
 		inactiveContent: <WeChatSummary />,
 		getAriaLabel: () => 'WeChat Pay',
 	};
@@ -121,26 +100,6 @@ const WeChatField = styled( Field )`
 
 	:first-of-type {
 		margin-top: 0;
-	}
-`;
-
-const WeChatPaymentQRcode = styled( WeChatPaymentQRcodeUnstyled )`
-	background-color: #fff;
-	margin: -24px;
-	padding: 24px;
-
-	& .checkout__wechat-qrcode {
-		text-align: center;
-		margin-bottom: 12px;
-	}
-
-	& .checkout__wechat-qrcode-redirect {
-		color: var( --color-text-subtle );
-		border-top: 1px solid var( --color-neutral-10 );
-		border-bottom: 1px solid var( --color-neutral-10 );
-		font-size: small;
-		margin: 12px;
-		padding: 15px 0;
 	}
 `;
 
@@ -176,39 +135,16 @@ function WeChatPayButton( {
 	disabled,
 	onClick,
 	store,
-	siteSlug,
 }: PaymentMethodSubmitButtonProps & {
 	store: WeChatStore;
-	siteSlug?: string;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const { resetTransaction } = useTransactionStatus();
 	const customerName = useSelect(
 		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
 		[]
 	);
 	const cartKey = useCartKey();
-	const { responseCart: cart } = useShoppingCart( cartKey );
-	const [ stripeResponseWithCode, setStripeResponseWithCode ] =
-		useState< null | WeChatStripeResponse >( null );
-
-	useScrollQRCodeIntoView( !! stripeResponseWithCode );
-
-	if ( stripeResponseWithCode ) {
-		return (
-			<WeChatPaymentQRcode
-				orderId={ stripeResponseWithCode.order_id }
-				cart={ cart }
-				redirectUrl={ stripeResponseWithCode.redirect_url }
-				slug={ siteSlug }
-				reset={ () => {
-					resetTransaction();
-					setStripeResponseWithCode( null );
-				} }
-			/>
-		);
-	}
+	const { responseCart } = useShoppingCart( cartKey );
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -227,10 +163,6 @@ function WeChatPayButton( {
 					debug( 'submitting wechat payment' );
 					onClick( {
 						name: customerName?.value,
-					} ).then( ( processorResponse ) => {
-						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {
-							setStripeResponseWithCode( processorResponse.payload as WeChatStripeResponse );
-						}
 					} );
 				}
 			} }
@@ -238,7 +170,14 @@ function WeChatPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			/>
+			<div className="we-chat-modal-target" />
 		</Button>
 	);
 }
@@ -248,7 +187,7 @@ function ButtonContents( {
 	total,
 }: {
 	formStatus: FormStatus;
-	total: LineItem;
+	total: string;
 } ): JSX.Element {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
@@ -256,7 +195,7 @@ function ButtonContents( {
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
+		return <>{ sprintf( __( 'Pay %s' ), total ) }</>;
 	}
 	return <>{ __( 'Please wait…' ) }</>;
 }
@@ -305,12 +244,4 @@ function WeChatLogo() {
 			/>
 		</svg>
 	);
-}
-
-function useScrollQRCodeIntoView( shouldScroll: boolean ): void {
-	useEffect( () => {
-		if ( shouldScroll && typeof window === 'object' ) {
-			window.document.querySelector( '.checkout__wechat-qrcode' )?.scrollIntoView?.();
-		}
-	}, [ shouldScroll ] );
 }

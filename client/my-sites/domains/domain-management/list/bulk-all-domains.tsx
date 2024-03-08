@@ -1,12 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { DomainsTable, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
-import { UsePresalesChat } from 'calypso/components/data/domain-management';
+import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector } from 'calypso/state';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader from '../components/domain-header';
@@ -32,7 +30,6 @@ interface BulkAllDomainsProps {
 export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
-	const { sendNudge } = useOdieAssistantContext();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
 	const item = {
@@ -65,6 +62,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<Main>
+				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
@@ -72,27 +70,8 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					isLoadingDomains={ isLoading }
 					domains={ domains }
 					isAllSitesView
-					shouldDisplayContactInfoBulkAction={ isEnabled(
-						'domains/bulk-actions-contact-info-editing'
-					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
-					onDomainAction={ ( action, domain ) => {
-						if ( action === 'manage-dns-settings' ) {
-							sendNudge( {
-								nudge: 'dns-settings',
-								initialMessage: translate(
-									'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
-									{
-										args: {
-											domain: domain.name,
-										},
-									}
-								) as string,
-								context: { domain: domain.domain },
-							} );
-						}
-					} }
 					fetchAllDomains={ fetchAllDomains }
 					fetchSite={ fetchSite }
 					fetchSiteDomains={ fetchSiteDomains }
@@ -101,7 +80,6 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					deleteBulkActionStatus={ deleteBulkActionStatus }
 				/>
 			</Main>
-			<UsePresalesChat />
 		</>
 	);
 }

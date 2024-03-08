@@ -87,15 +87,7 @@ function getWebpackConfig(
 		},
 		optimization: {
 			minimize: ! isDevelopment,
-			minimizer: Minify( {
-				parallel: workerCount,
-				extractComments: false,
-				terserOptions: {
-					ecma: 5,
-					safari10: true,
-					mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
-				},
-			} ),
+			minimizer: Minify(),
 		},
 		module: {
 			strictExportPresence: true,
@@ -133,6 +125,7 @@ function getWebpackConfig(
 		node: false,
 		plugins: [
 			new webpack.DefinePlugin( {
+				'typeof window': JSON.stringify( 'object' ),
 				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
 				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 					!! process.env.FORCE_REDUCED_MOTION || false

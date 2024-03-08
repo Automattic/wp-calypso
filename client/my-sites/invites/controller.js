@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { navigate } from 'calypso/lib/navigate';

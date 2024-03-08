@@ -68,7 +68,7 @@ export function receiveFollow( action, response ) {
 export function followError( action, response ) {
 	const actions = [
 		errorNotice(
-			translate( 'Sorry, there was a problem following %(url)s. Please try again.', {
+			translate( 'Sorry, there was a problem subscribing %(url)s. Please try again.', {
 				args: { url: action.payload.feedUrl },
 			} ),
 			{ duration: 5000 }

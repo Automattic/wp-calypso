@@ -1,8 +1,8 @@
+import { SegmentedControl } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 type DeliveryFrequencyOptionProps = {
 	children: React.ReactNode;

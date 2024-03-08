@@ -1,8 +1,8 @@
+import { FoldableCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
 import SpinnerButton from 'calypso/components/spinner-button';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import { withAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';

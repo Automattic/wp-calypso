@@ -1,6 +1,6 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
@@ -16,7 +16,11 @@ export const BlogPagesSetting = ( { value = 10, onChange, disabled }: BlogPagesS
 	const translate = useTranslate();
 	return (
 		<FormFieldset>
-			<FormLabel id={ `${ BLOG_PAGES_OPTION }-label` } htmlFor={ BLOG_PAGES_OPTION }>
+			<FormLabel
+				id={ `${ BLOG_PAGES_OPTION }-label` }
+				htmlFor={ BLOG_PAGES_OPTION }
+				className="reduce-margin-bottom-fix"
+			>
 				{ translate( 'Blog pages' ) }
 			</FormLabel>
 			<div>

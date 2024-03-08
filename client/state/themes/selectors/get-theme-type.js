@@ -2,7 +2,7 @@ import {
 	FREE_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
 import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
@@ -25,7 +25,7 @@ export function getThemeType( state, themeId ) {
 	}
 
 	if ( doesThemeBundleSoftwareSet( state, themeId ) ) {
-		return WOOCOMMERCE_THEME;
+		return BUNDLED_THEME;
 	}
 
 	if ( isThemePremium( state, themeId ) ) {

@@ -1,12 +1,13 @@
 import {
 	WPCOM_DIFM_LITE,
 	getPlan,
-	PLAN_PREMIUM,
 	isBusiness,
 	isPremium,
 	isEcommerce,
 	isPro,
 	getDIFMTieredPriceDetails,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -14,16 +15,20 @@ import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug, getProductCost } from 'calypso/state/products-list/selectors';
+import {
+	getProductBySlug,
+	getProductCost,
+	getProductCurrencyCode,
+} from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -72,6 +77,7 @@ const ImageSection = styled.div`
 // @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component
 const Header = styled( FormattedHeader )`
 	.formatted-header__title {
+		font-size: 2.25rem;
 		line-height: 3rem;
 	}
 `;
@@ -114,6 +120,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		svg {
 			margin-inline-end: 0;
 			margin-inline-start: auto;
+			flex-shrink: 0;
 		}
 		.foldable-faq__question-text {
 			padding-inline-start: 0;
@@ -134,6 +141,11 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 			}
 		}
 	}
+	&:not( .is-expanded ) .foldable-faq__question:focus {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus )
+			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+		outline: 3px solid transparent;
+	}
 	.foldable-faq__answer {
 		padding: 0 16px 0 24px;
 		border: 0;
@@ -142,8 +154,36 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 
 const CTASectionWrapper = styled.div`
 	display: flex;
-	gap: 32px;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 18px;
 	margin: 2rem 0;
+	.components-button.is-primary {
+		border-radius: 4px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		justify-content: center;
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var( --color-accent-60 );
+			outline-offset: 2px;
+		}
+	}
+	.components-button.is-secondary {
+		box-shadow: inset 0 0 0 1px var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		outline: 1px solid transparent;
+		white-space: nowrap;
+		color: var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		background: transparent;
+		border: none;
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var( --color-accent-60 );
+			outline-offset: 2px;
+		}
+	}
 `;
 
 const StepContainer = styled.div`
@@ -196,6 +236,19 @@ const Description = styled.div`
 	font-size: 0.875rem;
 `;
 
+const hasHigherPlan = ( currentPlan: string, plan: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS ) => {
+	const planMatchers =
+		plan === PLAN_PREMIUM
+			? [ isPremium, isBusiness, isEcommerce, isPro ]
+			: [ isBusiness, isEcommerce, isPro ];
+
+	return planMatchers.some( ( planMatcher ) =>
+		planMatcher( {
+			productSlug: currentPlan,
+		} )
+	);
+};
+
 const Step = ( {
 	index,
 	title,
@@ -220,28 +273,41 @@ const Step = ( {
 };
 
 export default function DIFMLanding( {
-	onSubmit,
+	showNewOrExistingSiteChoice,
+	onPrimarySubmit,
+	onSecondarySubmit,
 	siteId,
+	isStoreFlow,
 }: {
-	onSubmit: () => void;
-	onSkip?: () => void;
-	isInOnboarding: boolean;
+	onPrimarySubmit: () => void;
+	onSecondarySubmit?: () => void;
+	showNewOrExistingSiteChoice: boolean;
 	siteId?: number | null;
+	isStoreFlow: boolean;
 } ) {
 	const translate = useTranslate();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
 
-	const planObject = getPlan( PLAN_PREMIUM );
+	const planSlug = isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM;
+	const planObject = getPlan( planSlug );
 	const planTitle = planObject?.getTitle();
-	const planCostInteger = useSelector( ( state ) => getProductCost( state, PLAN_PREMIUM ) );
+	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
+	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
+	const planStorageString = planStorageSlug ? FEATURES_LIST[ planStorageSlug ]?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
 	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
 
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const hasPriceDataLoaded = productCost && extraPageCost && planCostInteger && currencyCode;
+	// This is used in a FAQ item.
+	const businessPlanCostInteger = useSelector( ( state ) =>
+		getProductCost( state, PLAN_BUSINESS )
+	);
+
+	const currencyCode = useSelector( ( state ) => getProductCurrencyCode( state, WPCOM_DIFM_LITE ) );
+	const hasPriceDataLoaded =
+		productCost && extraPageCost && planCostInteger && businessPlanCostInteger && currencyCode;
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
@@ -256,6 +322,10 @@ export default function DIFMLanding( {
 				stripZeros: true,
 				isSmallestUnit: true,
 		  } )
+		: '';
+
+	const businessPlanCost = hasPriceDataLoaded
+		? formatCurrency( businessPlanCostInteger, currencyCode, { stripZeros: true } )
 		: '';
 
 	const faqHeader = useRef( null );
@@ -273,29 +343,33 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
-	const headerText = translate(
-		'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
-		{
-			components: {
-				PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-				sup: <sup />,
-			},
-			args: {
-				displayCost,
-			},
-		}
-	);
+	const headerTextTranslateArgs = {
+		components: {
+			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
+			sup: <sup />,
+			br: <br />,
+		},
+		args: {
+			displayCost,
+			days: 4,
+		},
+	};
+	const headerText = isStoreFlow
+		? translate(
+				'Let us build your store{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				headerTextTranslateArgs
+		  )
+		: translate(
+				'Let us build your site{{br}}{{/br}}in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				headerTextTranslateArgs
+		  );
 
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
-	const hasPremiumOrHigherPlan = currentPlan?.product_slug
-		? [ isPremium, isBusiness, isEcommerce, isPro ].some( ( planMatcher ) =>
-				planMatcher( {
-					productSlug: currentPlan.product_slug,
-				} )
-		  )
+	const hasCurrentPlanOrHigherPlan = currentPlan?.product_slug
+		? hasHigherPlan( currentPlan.product_slug, planSlug )
 		: false;
 
-	const subHeaderText = hasPremiumOrHigherPlan
+	const subHeaderText = hasCurrentPlanOrHigherPlan
 		? translate(
 				'{{sup}}*{{/sup}}One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 				{
@@ -326,7 +400,12 @@ export default function DIFMLanding( {
 			<Wrapper>
 				<ContentSection>
 					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
-					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
+					<Header
+						brandFont
+						align="left"
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+					/>
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
@@ -354,7 +433,11 @@ export default function DIFMLanding( {
 						<Step
 							index={ translate( '4' ) }
 							title={ translate( 'Submit content for your new website' ) }
-							description={ translate( 'Content can be edited later with the WordPress editor.' ) }
+							description={
+								isStoreFlow
+									? translate( 'Products can be added later with the WordPress editor.' )
+									: translate( 'Content can be edited later with the WordPress editor.' )
+							}
 						/>
 					</VerticalStepProgress>
 					<p>
@@ -367,12 +450,28 @@ export default function DIFMLanding( {
 							}
 						) }
 					</p>
-					<CTASectionWrapper>
-						<NextButton onClick={ onSubmit }>{ translate( 'Get started' ) }</NextButton>
-					</CTASectionWrapper>
+					{ showNewOrExistingSiteChoice ? (
+						<CTASectionWrapper>
+							<NextButton onClick={ onPrimarySubmit }>
+								{ translate( 'Use an existing site' ) }
+							</NextButton>
+							<span>{ translate( 'or' ) }</span>
+							<NextButton onClick={ onSecondarySubmit } variant="secondary">
+								{ translate( 'Start a new site' ) }
+							</NextButton>
+						</CTASectionWrapper>
+					) : (
+						<CTASectionWrapper>
+							<NextButton onClick={ onPrimarySubmit }>{ translate( 'Get started' ) }</NextButton>
+						</CTASectionWrapper>
+					) }
 				</ContentSection>
 				<ImageSection>
-					<AsyncLoad require="./site-build-showcase" placeholder={ <LoadingEllipsis /> } />
+					<AsyncLoad
+						require="./site-build-showcase"
+						placeholder={ <LoadingEllipsis /> }
+						isStoreFlow={ isStoreFlow }
+					/>
 				</ImageSection>
 			</Wrapper>
 
@@ -408,17 +507,32 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, 13 GB of storage, a free domain for one year, and live chat support.',
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
 									{
 										args: {
 											displayCost,
 											planTitle: planTitle ?? '',
 											planCost,
+											storage: planStorageString,
 										},
 									}
 								) }
 							</p>
 						</FoldableFAQ>
+						{ isStoreFlow && (
+							<FoldableFAQ
+								id="faq-2-1"
+								question={ translate( 'What does my store setup include?' ) }
+							>
+								<p>
+									{ translate(
+										'Your purchase includes the setup of the WooCommerce shop landing page, cart, checkout, and my account pages, along with additional pages you choose while signing up. ' +
+											'Please note, individual product setup, payments, taxes, shipping, and other WooCommerce extensions or settings are not included. ' +
+											'You can set these up later, support is happy to help if you have questions.'
+									) }
+								</p>
+							</FoldableFAQ>
+						) }
 						<FoldableFAQ
 							id="faq-3"
 							question={ translate( 'Can I purchase additional pages if I need more than five?' ) }
@@ -471,7 +585,10 @@ export default function DIFMLanding( {
 							<p>
 								{ translate(
 									'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
-										'Furthermore, our Premium plan offers live chat and priority email support if you need assistance.'
+										'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
+									{
+										args: [ planTitle || '' ],
+									}
 								) }
 							</p>
 						</FoldableFAQ>
@@ -493,6 +610,31 @@ export default function DIFMLanding( {
 								) }
 							</p>
 						</FoldableFAQ>
+						{ ! isStoreFlow && (
+							<FoldableFAQ id="faq-10" question={ translate( 'Can I have a store set up?' ) }>
+								<>
+									<p>
+										{ translate(
+											'We offer an ecommerce store setup option which includes setup of the WooCommerce shop landing page, cart, checkout, and my account pages, along with additional pages you choose while signing up. ' +
+												'Please note, individual product setup, payments, taxes, shipping, and other WooCommerce extensions or settings are not included. You can set these up later, support is happy to help if you have questions. ' +
+												'An additional purchase of the %(businessPlanName)s plan, costing %(businessPlanCost)s, is required for a store site.',
+											{
+												args: {
+													businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
+													businessPlanCost,
+												},
+											}
+										) }
+									</p>
+									<Button
+										variant="primary"
+										onClick={ () => ( window.location.href = '/start/do-it-for-me-store' ) }
+									>
+										{ translate( 'Get started' ) }
+									</Button>
+								</>
+							</FoldableFAQ>
+						) }
 					</>
 				) }
 			</FAQSection>

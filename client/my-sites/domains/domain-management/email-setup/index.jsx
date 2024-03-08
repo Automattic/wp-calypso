@@ -1,8 +1,8 @@
+import { FoldableCard } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';

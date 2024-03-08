@@ -5,7 +5,6 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	FREE_FLOW,
 	COPY_SITE_FLOW,
-	ONBOARDING_PM_FLOW,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 } from '../utils/flows';
@@ -87,7 +86,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		storeProfiler: 1,
 		designCarousel: 2,
 		domains: 3,
-		siteCreationStep: 4,
+		createSite: 4,
 		processing: 4,
 		waitForAtomic: 4,
 		checkPlan: 4,
@@ -95,19 +94,10 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 	[ COPY_SITE_FLOW ]: {
 		domains: 0,
-		'site-creation-step': 1,
+		'create-site': 1,
 		processing: 2,
 		'automated-copy': 3,
 		'processing-copy': 3,
-	},
-	[ ONBOARDING_PM_FLOW ]: {
-		user: 0,
-		domains: 1,
-		plans: 2,
-		siteCreationStep: 3,
-		processing: 4,
-		/** Phantom step that is outside stepper */
-		checkout: 5,
 	},
 };
 

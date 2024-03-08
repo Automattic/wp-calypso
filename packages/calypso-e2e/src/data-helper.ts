@@ -340,7 +340,6 @@ export function getMag16Locales(): string[] {
 		'pt-br',
 		'de',
 		'fr',
-		'he',
 		'ja',
 		'it',
 		'nl',
@@ -350,8 +349,9 @@ export function getMag16Locales(): string[] {
 		'zh-cn',
 		'zh-tw',
 		'ko',
-		'ar',
 		'sv',
+		'ar',
+		'he',
 	];
 }
 

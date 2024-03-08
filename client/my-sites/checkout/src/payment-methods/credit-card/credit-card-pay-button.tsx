@@ -1,20 +1,19 @@
 import { useStripe } from '@automattic/calypso-stripe';
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
-import { styled } from '@automattic/wpcom-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
-import MaterialIcon from 'calypso/components/material-icon';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { logStashEvent } from '../../lib/analytics';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
-import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
@@ -24,16 +23,15 @@ export default function CreditCardPayButton( {
 	onClick,
 	store,
 	shouldUseEbanx,
-	activeButtonText = undefined,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: CardStoreType;
 	shouldUseEbanx?: boolean;
-	activeButtonText?: ReactNode;
+	submitButtonContent: ReactNode;
 } ) {
 	const { __ } = useI18n();
-	const total = useTotal();
 	const { stripeConfiguration, stripe } = useStripe();
 	const fields: CardFieldState = useSelect(
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
@@ -58,7 +56,7 @@ export default function CreditCardPayButton( {
 			reduxDispatch( errorNotice( displayFieldsError ) );
 			setDisplayFieldsError( '' );
 		}
-	}, [ displayFieldsError ] );
+	}, [ displayFieldsError, reduxDispatch ] );
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
 	// this prop yet.
@@ -75,6 +73,27 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
+						if ( ! cardNumberElement ) {
+							// This should never happen because they won't get
+							// to this point if the credit card fields are not
+							// filled-in (see isCreditCardFormValid) but it
+							// seems to happen so let's tell the user
+							// something.
+							setDisplayFieldsError(
+								__(
+									'Something seems to be wrong with the credit card form. Please try again or contact support for help.'
+								)
+							);
+							reduxDispatch(
+								recordTracksEvent( 'calypso_checkout_card_missing_element', {
+									error: 'No card number element found on page when submtting form.',
+								} )
+							);
+							logStashEvent( 'calypso_checkout_card_missing_element', {
+								error: 'No card number element found on page when submtting form.',
+							} );
+							return;
+						}
 						onClick( {
 							stripe,
 							name: cardholderName?.value,
@@ -120,66 +139,9 @@ export default function CreditCardPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents
-				formStatus={ formStatus }
-				total={ total }
-				activeButtonText={ activeButtonText }
-			/>
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-const CreditCardPayButtonWrapper = styled[ 'span' ]`
-	display: inline-flex;
-	align-items: flex-end;
-`;
-
-const StyledMaterialIcon = styled( MaterialIcon )`
-	fill: ${ ( { theme } ) => theme.colors.surface };
-	margin-right: 0.7em;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 0.7em;
-	}
-`;
-
-function ButtonContents( {
-	formStatus,
-	total,
-	activeButtonText,
-}: {
-	formStatus: FormStatus;
-	total: LineItem;
-	activeButtonText?: ReactNode;
-} ) {
-	const { __ } = useI18n();
-	const isPurchaseFree = total.amount.value === 0;
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY && isPurchaseFree ) {
-		const defaultText = (
-			<CreditCardPayButtonWrapper>{ __( 'Complete Checkout' ) }</CreditCardPayButtonWrapper>
-		);
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ activeButtonText || defaultText }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		const defaultText = (
-			<CreditCardPayButtonWrapper>
-				<StyledMaterialIcon icon="credit_card" />
-				{ sprintf(
-					/* translators: %s is the total to be paid in localized currency */
-					__( 'Pay %s now' ),
-					total.amount.displayValue
-				) }
-			</CreditCardPayButtonWrapper>
-		);
-
-		return <>{ activeButtonText || defaultText } </>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isCreditCardFormValid(

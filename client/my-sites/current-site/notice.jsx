@@ -155,7 +155,7 @@ export class SiteNotice extends Component {
 	}
 
 	daysRemaining( { endsAt } ) {
-		return Math.ceil( moment( endsAt ).diff( moment(), 'days', true ) );
+		return Math.floor( moment( endsAt ).diff( moment(), 'days', true ) );
 	}
 
 	render() {

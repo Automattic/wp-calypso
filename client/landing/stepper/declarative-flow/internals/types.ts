@@ -1,3 +1,4 @@
+import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 
 /**
@@ -14,14 +15,12 @@ export type NavigationControls = {
 
 	/**
 	 * Call this function if you want to go to the proceed down the flow.
-	 *
 	 * @deprecated Avoid this method. Use submit() instead.
 	 */
 	goNext?: () => void;
 
 	/**
 	 * Call this function if you want to jump to a certain step.
-	 *
 	 * @deprecated Avoid this method. Use submit() instead.
 	 * If you need to skip forward several screens in
 	 * a stepper flow, handle that logic in submit().
@@ -103,6 +102,11 @@ export type Flow = {
 	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
+	/**
+	 * Required flag to indicate if the flow is a signup flow.
+	 */
+	isSignupFlow: boolean;
+	useSignupStartEventProps?: () => Record< string, string | number >;
 	useSteps: UseStepsHook;
 	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
@@ -120,7 +124,7 @@ export type StepProps = {
 	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
 	 */
 	variantSlug?: string;
-	data?: Record< string, unknown >;
+	data?: StepperInternal.State[ 'stepData' ];
 	children?: React.ReactNode;
 };
 
@@ -141,6 +145,7 @@ export type AssertConditionResult = {
 
 export interface Plugin {
 	slug: string;
+	active: boolean;
 }
 
 export interface PluginsResponse {

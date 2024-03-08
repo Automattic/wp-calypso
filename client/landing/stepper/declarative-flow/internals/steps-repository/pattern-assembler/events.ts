@@ -13,6 +13,7 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	 */
 	MAIN_ITEM_SELECT: 'calypso_signup_pattern_assembler_main_item_select',
 	BACK_CLICK: 'calypso_signup_pattern_assembler_back_click',
+	PAGE_FINAL_SELECT: 'calypso_signup_pattern_assembler_page_final_select',
 	PATTERN_FINAL_SELECT: 'calypso_signup_pattern_assembler_pattern_final_select',
 	CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
 
@@ -23,12 +24,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	SCREEN_FONTS_PREVIEW_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_preview_click',
 	CONTINUE_TO_EDITOR_CLICK: 'calypso_signup_pattern_assembler_continue_click',
 	CONTINUE_MISCLICK: 'calypso_signup_pattern_assembler_continue_misclick',
-
-	/**
-	 * Screen Activation
-	 */
-	SCREEN_ACTIVATION_ACTIVATE_CLICK:
-		'calypso_signup_pattern_assembler_screen_activation_activate_click',
 
 	/**
 	 * Screen Confirmation
@@ -43,6 +38,14 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 		'calypso_signup_pattern_assembler_screen_upsell_checkout_button_click',
 	SCREEN_UPSELL_UPGRADE_LATER_BUTTON_CLICK:
 		'calypso_signup_pattern_assembler_screen_upsell_upgrade_later_button_click',
+
+	/*
+	 * Screen Pages
+	 */
+	SCREEN_PAGES_PAGE_ADD: 'calypso_signup_pattern_assembler_screen_pages_page_add',
+	SCREEN_PAGES_PAGE_REMOVE: 'calypso_signup_pattern_assembler_screen_pages_page_remove',
+	SCREEN_PAGES_PAGE_PREVIEW_CLICK:
+		'calypso_signup_pattern_assembler_screen_pages_page_preview_click',
 
 	/**
 	 * Pattern Panels
@@ -64,6 +67,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	/**
 	 * Large Preview
 	 */
-	LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_large_preview_add_header_button_click',
+	LARGE_PREVIEW_ZOOM_OUT_SCALE_CHANGE:
+		'calypso_signup_pattern_assembler_large_preview_zoom_out_scale_change',
 } as const;

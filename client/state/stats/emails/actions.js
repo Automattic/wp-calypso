@@ -72,6 +72,7 @@ function emailStatsAlltimeTransform( stats ) {
 		rate: {
 			opens_rate: stats.opens_rate,
 			total_opens: stats.total_opens,
+			unique_opens: stats.unique_opens,
 			total_sends: stats.total_sends,
 			total_clicks: stats.total_clicks,
 			clicks_rate: stats.clicks_rate,

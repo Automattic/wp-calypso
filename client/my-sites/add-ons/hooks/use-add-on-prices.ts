@@ -1,35 +1,35 @@
+import { ProductsList } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { useMemo } from '@wordpress/element';
-import { useSelector } from 'calypso/state';
-import { getProductCurrencyCode, getProductBySlug } from 'calypso/state/products-list/selectors';
 
-const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
-	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
-	const currencyCode = useSelector( ( state ) => getProductCurrencyCode( state, productSlug ) );
+const useAddOnPrices = ( productSlug: ProductsList.StoreProductSlug, quantity?: number ) => {
+	const productsList = ProductsList.useProducts();
+	const product = productsList.data?.[ productSlug ];
 
 	return useMemo( () => {
-		let cost = product?.cost_smallest_unit;
-		if ( ! cost || ! currencyCode ) {
+		let cost = product?.costSmallestUnit;
+
+		if ( ! cost || ! product?.currencyCode ) {
 			return null;
 		}
 
 		// Finds the applicable tiered price for the quantity.
 		const priceTier =
 			quantity &&
-			product?.price_tier_list.find( ( tier ) => {
-				if ( quantity >= tier.minimum_units && quantity <= ( tier.maximum_units ?? 0 ) ) {
+			product?.priceTierList.find( ( tier ) => {
+				if ( quantity >= tier.minimumUnits && quantity <= ( tier.maximumUnits ?? 0 ) ) {
 					return tier;
 				}
 			} );
 
 		if ( priceTier ) {
-			cost = priceTier?.maximum_price;
+			cost = priceTier?.maximumPrice;
 		}
 
 		let monthlyPrice = cost / 12;
 		let yearlyPrice = cost;
 
-		if ( product?.product_term === 'month' ) {
+		if ( product?.term === 'month' ) {
 			monthlyPrice = cost;
 			yearlyPrice = cost * 12;
 		}
@@ -37,16 +37,16 @@ const useAddOnPrices = ( productSlug: string, quantity?: number ) => {
 		return {
 			monthlyPrice,
 			yearlyPrice,
-			formattedMonthlyPrice: formatCurrency( monthlyPrice, currencyCode, {
+			formattedMonthlyPrice: formatCurrency( monthlyPrice, product?.currencyCode, {
 				stripZeros: true,
 				isSmallestUnit: true,
 			} ),
-			formattedYearlyPrice: formatCurrency( yearlyPrice, currencyCode, {
+			formattedYearlyPrice: formatCurrency( yearlyPrice, product?.currencyCode, {
 				stripZeros: true,
 				isSmallestUnit: true,
 			} ),
 		};
-	}, [ product, currencyCode, quantity ] );
+	}, [ product, quantity ] );
 };
 
 export default useAddOnPrices;

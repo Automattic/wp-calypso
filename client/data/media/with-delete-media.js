@@ -37,7 +37,9 @@ export const withDeleteMedia = createHigherOrderComponent(
 				}
 
 				if ( promises.some( ( p ) => p.status === 'fulfilled' ) ) {
-					queryClient.invalidateQueries( [ 'media-storage', siteId ] );
+					queryClient.invalidateQueries( {
+						queryKey: [ 'media-storage', siteId ],
+					} );
 				}
 			},
 			[ mutateAsync, dispatch, queryClient, translate ]

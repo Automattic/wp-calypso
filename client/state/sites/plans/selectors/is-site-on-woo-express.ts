@@ -10,7 +10,6 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Checks whether the current site is on a Woo Express plan.
- *
  * @param {AppState} state Global state tree
  * @param {number} siteId - Site ID
  * @returns {boolean} Returns true if the site is on a Woo Express plan

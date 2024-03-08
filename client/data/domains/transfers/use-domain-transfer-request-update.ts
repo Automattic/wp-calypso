@@ -20,7 +20,9 @@ export default function useDomainTransferRequestUpdate(
 			} ),
 		...queryOptions,
 		onSuccess() {
-			queryClient.invalidateQueries( domainTransferRequestQueryKey( siteSlug, domainName ) );
+			queryClient.invalidateQueries( {
+				queryKey: domainTransferRequestQueryKey( siteSlug, domainName ),
+			} );
 			queryOptions.onSuccess?.();
 		},
 	} );

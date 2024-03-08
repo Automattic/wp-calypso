@@ -9,8 +9,9 @@ main.activity-log-v2 {
 		}
 	}
 
-	.filterbar .filterbar__wrap.card {
-		display: flex;
+	.filterbar {
+		margin-left: 0;
+		margin-right: 0;
 	}
 
 	.activity-card-list__date-group-date {
@@ -54,4 +55,8 @@ main.activity-log-v2 {
 	width: 168px;
 	white-space: normal;
 	text-align: left;
+}
+
+.activity-log-v2__clone-button {
+	white-space: nowrap;
 }

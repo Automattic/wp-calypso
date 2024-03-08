@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -15,15 +16,13 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 	return (
 		<Main className="disconnect-site__down-flow">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
-			<FormattedHeader
-				headerText={ translate(
-					'Your site, {{strong}}%(siteName)s{{/strong}}, cannot be accessed',
-					{
-						args: { siteName: site.name },
-						components: { strong: <strong /> },
-					}
-				) }
-				subHeaderText={ translate(
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ translate( 'Your site, {{strong}}%(siteName)s{{/strong}}, cannot be accessed', {
+					args: { siteName: site.name },
+					components: { strong: <strong /> },
+				} ) }
+				subtitle={ translate(
 					'Jetpack wasn’t able to connect to {{strong}}%(siteSlug)s{{/strong}}.{{br/}}Let’s figure out why — there are a few things to try.',
 					{
 						args: { siteSlug: site.slug },
@@ -34,6 +33,7 @@ function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) 
 					}
 				) }
 			/>
+
 			<div className="disconnect-site__actions">
 				<CompactCard
 					onClick={ () => tracks( 'calypso_jetpack_site_indicator_disconnect_confirm' ) }

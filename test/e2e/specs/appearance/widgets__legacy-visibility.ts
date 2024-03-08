@@ -55,8 +55,8 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC || envVariables.VIEWPORT_NAME === 'm
 		// Skipped for mobile due to https://github.com/Automattic/wp-calypso/issues/59960
 		it( 'Insert a Legacy Widget', async function () {
 			await page.getByRole( 'button', { name: 'Add block' } ).click();
-			await page.fill( 'input[placeholder="Search"]', 'Top Posts and Pages' );
-			await page.click( 'button.editor-block-list-item-legacy-widget\\/top-posts' );
+			await page.fill( 'input[placeholder="Search"]', 'Authors' );
+			await page.click( 'button.editor-block-list-item-legacy-widget\\/authors' );
 		} );
 
 		it( 'Visibility options are shown for the Legacy Widget', async function () {

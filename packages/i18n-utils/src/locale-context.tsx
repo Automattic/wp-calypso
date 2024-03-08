@@ -18,7 +18,6 @@ export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) =>
 
 /**
  * Returns locale slug
- *
  * @param {string} locale locale to be converted e.g. "en_US".
  * @returns locale string e.g. "en"
  */
@@ -49,7 +48,6 @@ function getWpI18nLocaleSlug(): string | undefined {
  * React hook providing the current locale slug. If `<LocaleProvider>` hasn't
  * been defined in the component tree then it will fall back to using the
  * data from `@wordpress/i18n` to determine the current locale slug.
- *
  * @example
  *
  * import { useLocale } from '@automattic/i18n-utils';
@@ -88,7 +86,6 @@ export function useLocale(): string {
 
 /**
  * HoC providing the current locale slug supplied to `<LocaleProvider>`.
- *
  * @param InnerComponent Component that will receive `locale` as a prop
  * @returns Component enhanced with locale
  * @example
@@ -112,7 +109,6 @@ export const withLocale = createHigherOrderComponent(
 
 /**
  * React hook providing whether the current locale slug belongs to English or not
- *
  * @example
  *
  * import { useIsEnglishLocale } from '@automattic/i18n-utils';

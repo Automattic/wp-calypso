@@ -33,6 +33,7 @@ interface Props {
 	isSmallScreen?: boolean;
 	className?: string;
 	updatePlugin?: ( plugin: PluginComponentProps ) => void;
+	siteCount?: number;
 }
 
 export default function PluginRowFormatter( {
@@ -247,6 +248,7 @@ export default function PluginRowFormatter( {
 					selectedSite={ selectedSite }
 					className={ className }
 					updatePlugin={ updatePlugin }
+					siteCount={ siteCount }
 				/>
 			);
 		case 'install':

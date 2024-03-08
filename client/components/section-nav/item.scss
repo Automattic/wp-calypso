@@ -86,6 +86,12 @@
 		}
 	}
 
+	.notouch .minimal & {
+		&:hover {
+			background-color: transparent;
+		}
+	}
+
 	.notouch .is-selected & {
 		&:hover {
 			color: var(--color-text-inverted);
@@ -116,6 +122,10 @@
 			&:hover {
 				color: var(--color-neutral-70);
 			}
+		}
+
+		.minimal & {
+			color: var(--color-neutral-70);
 		}
 	}
 }
@@ -169,7 +179,7 @@
 
 	.count {
 		background: var(--studio-gray-5);
-		border-radius: 3px; /* stylelint-disable-line scales/radii */ // stylelint-disable-line scales/radii
+		border-radius: 3px;
 		border: none;
 		font-weight: normal;
 	}

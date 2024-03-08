@@ -1,10 +1,12 @@
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
+	PLAN_BUSINESS,
 	TYPE_BUSINESS,
 	findFirstSimilarPlanKey,
+	getPlan,
 } from '@automattic/calypso-products';
-import { Card, Button, FormInputValidation } from '@automattic/components';
+import { Card, Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
@@ -15,7 +17,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -231,7 +232,6 @@ export class SiteSettingsFormSEO extends Component {
 			isSavingSettings,
 		} = this.props;
 		const { slug = '', URL: siteUrl = '' } = selectedSite;
-
 		const {
 			frontPageMetaDescription,
 			showPasteError = false,
@@ -256,7 +256,8 @@ export class SiteSettingsFormSEO extends Component {
 				  }
 				: {
 						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+							'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
+							{ args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() } }
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:

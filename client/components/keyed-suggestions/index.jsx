@@ -147,7 +147,6 @@ class KeyedSuggestions extends Component {
 	/**
 	 * Provides keybord support for suggestings component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
-	 *
 	 * @param  {Object} event  Keybord event
 	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
@@ -206,7 +205,6 @@ class KeyedSuggestions extends Component {
 	 * do not match provided input param. At the end keys that have empty lists are removed.
 	 * showAll parameter if provided sidesteps the matching logic for the key value in showAll
 	 * and passes all filters for that key. For showAll also soome reordering happens - explained in code
-	 *
 	 * @param  {string}  input   text that will be matched against the taxonomies
 	 * @param  {string}  showAll taxonomy for which we want all filters
 	 * @returns {Object}          filtered taxonomy:[ terms ] object

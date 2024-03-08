@@ -9,23 +9,45 @@ const DangerousItemsContainer = styled.div( {
 	marginBottom: '24px',
 	border: '1px solid #D63638',
 	borderRadius: '4px',
+	'.components-toggle-control': {
+		paddingTop: '8px',
+		marginBottom: '0px',
+	},
 } );
 
 const DangerousItemsTitle = styled.p( {
 	fontWeight: 500,
-	marginBottom: '16px',
+	marginBottom: '8px',
 	color: '#D63638',
 } );
 
 const ToggleControlWithHelpMargin = styled( ToggleControl )( {
 	'.components-base-control__help': {
-		marginLeft: '4em',
+		marginLeft: '44px',
 		marginTop: 0,
+	},
+	label: {
+		fontSize: '14px',
 	},
 	marginBottom: '8px !important',
 	'.components-flex': {
 		gap: '8px',
 	},
+} );
+
+const ToggleWithLabelFontSize = styled( ToggleControl )( {
+	label: {
+		fontSize: '14px',
+	},
+	'.components-flex': {
+		gap: '8px',
+	},
+} );
+
+const ItemSubtitle = styled.span( {
+	fontSize: '14px',
+	color: 'var(--color-text-subtle) (#646970)',
+	fontStyle: 'italic',
 } );
 
 export interface CheckboxOptionItem {
@@ -41,11 +63,13 @@ export default function SyncOptionsPanel( {
 	reset,
 	disabled,
 	onChange,
+	isSqlsOptionDisabled,
 }: {
 	items: CheckboxOptionItem[];
 	reset: boolean;
 	disabled: boolean;
 	onChange: ( items: CheckboxOptionItem[] ) => void;
+	isSqlsOptionDisabled: boolean;
 } ) {
 	const initialItemsMap = useMemo(
 		() =>
@@ -121,7 +145,7 @@ export default function SyncOptionsPanel( {
 					<ToggleControlWithHelpMargin
 						key={ item.name }
 						disabled={ disabled }
-						help={ item.subTitle }
+						help={ <ItemSubtitle>{ item.subTitle }</ItemSubtitle> }
 						label={ item.label }
 						checked={ item.checked }
 						onChange={ () => handleCheckChange( item ) }
@@ -133,14 +157,31 @@ export default function SyncOptionsPanel( {
 				{ dangerousItems.map( ( item ) => {
 					return (
 						<div data-testid="danger-zone-checkbox" key={ item.name }>
-							<ToggleControl
-								data-testid="danger-zone-checkbox"
-								disabled={ disabled }
-								help={ item.subTitle }
-								label={ item.label }
-								checked={ item.checked }
-								onChange={ () => handleCheckChange( item ) }
-							/>
+							{ 'sqls' === item.name && isSqlsOptionDisabled ? (
+								<ToggleWithLabelFontSize
+									data-testid="danger-zone-checkbox"
+									disabled={ true }
+									help={
+										<ItemSubtitle>
+											{ translate(
+												'Site database synchronization is disabled because WooCommerce sites are not supported.'
+											) }
+										</ItemSubtitle>
+									}
+									label={ item.label }
+									checked={ item.checked }
+									onChange={ () => handleCheckChange( item ) }
+								/>
+							) : (
+								<ToggleWithLabelFontSize
+									data-testid="danger-zone-checkbox"
+									disabled={ disabled || isSqlsOptionDisabled }
+									help={ <ItemSubtitle>{ item.subTitle }</ItemSubtitle> }
+									label={ item.label }
+									checked={ item.checked }
+									onChange={ () => handleCheckChange( item ) }
+								/>
+							) }
 						</div>
 					);
 				} ) }

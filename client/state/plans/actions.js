@@ -43,8 +43,9 @@ export const plansRequestFailureAction = ( error ) => {
 
 /**
  * Action creator to request WordPress.com plans: REQUEST
- * @returns {Object} action object
+ * @returns {import('redux').AnyAction} Action
  */
-export const requestPlans = () => ( {
+export const requestPlans = ( coupon ) => ( {
 	type: PLANS_REQUEST,
+	coupon,
 } );

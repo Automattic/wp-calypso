@@ -1,7 +1,33 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/styles/search-component";
 @import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
+
+@mixin hover-color {
+	&:hover,
+	&:focus {
+		color: var(--color-text-inverted);
+		background: var(--color-primary);
+
+		.reader-import-button__label,
+		.reader-export-button__label {
+			color: var(--color-text-inverted);
+		}
+
+		svg path[fill],
+		svg path[fill-rule],
+		svg path[fill-opacity] {
+			fill: var(--color-text-inverted);
+		}
+
+		svg path[stroke],
+		svg path[stroke-width],
+		svg path[stroke-opacity] {
+			stroke: var(--color-text-inverted);
+		}
+	}
+}
 
 .site-subscriptions-manager {
 	&.main {
@@ -9,6 +35,14 @@
 		min-height: 100vh;
 		margin: 0 auto;
 		padding: 0 32px;
+
+		@media (max-width: $break-small) {
+			padding: 0 16px;
+
+			.navigation-header {
+				padding: 16px 0;
+			}
+		}
 
 		@extend %search-component-subscriptions-style;
 	}
@@ -54,9 +88,13 @@
 		width: 305px;
 
 		button.components-button {
+			@include hover-color;
+
 			svg {
 				fill: none;
 			}
+
+			padding: 0 15px;
 
 			justify-content: flex-start;
 
@@ -89,4 +127,44 @@ hr.subscriptions__separator {
 	padding: 0;
 	border: none;
 	border-top: 1px solid $studio-gray-5;
+}
+
+.subscriptions-ellipsis-menu__popover.popover.site-subscriptions-manager__import-export-popover .popover__inner,
+.subscriptions-ellipsis-menu__popover.popover.comment-settings-popover .popover__inner {
+	padding: 5px 0 !important;
+}
+
+.subscriptions-ellipsis-menu__popover.popover .popover__inner {
+	padding: 5px 0 14px !important;
+
+	.settings.site-settings {
+		padding: 15px 0 0;
+
+		.setting-item {
+			padding: 0 21px;
+
+			&.email-me-new-comments-toggle {
+				margin-bottom: 16px;
+			}
+		}
+	}
+
+	.site-settings-popover__unsubscribe-button.components-button.has-icon:not(:last-child) {
+		margin-bottom: 16px;
+	}
+
+	.subscriptions__separator {
+		margin: 0 24px 15px;
+		width: auto;
+	}
+
+	& > .components-button,
+	.site-settings-popover__view-feed-button {
+		padding: 0 21px;
+		line-height: 36px;
+		width: 100%;
+
+		@include hover-color;
+
+	}
 }

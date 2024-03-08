@@ -1,18 +1,29 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { englishLocales } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
-import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import {
+	modeType,
+	stepSlug,
+	useMyDomainInputMode,
+} from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
+import {
+	getSelectedDomain,
+	isDomainInGracePeriod,
+	isDomainUpdateable,
+	isSubdomain,
+} from 'calypso/lib/domains';
 import { transferStatus, type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
@@ -24,10 +35,12 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
+import GlueRecordsCard from 'calypso/my-sites/domains/domain-management/settings/cards/glue-records-card';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
+	domainMappingSetup,
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
@@ -35,7 +48,7 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
-import { requestWhois } from 'calypso/state/domains/management/actions';
+import { requestWhois, verifyIcannEmail } from 'calypso/state/domains/management/actions';
 import { getWhoisData } from 'calypso/state/domains/management/selectors';
 import {
 	getByPurchaseId,
@@ -48,6 +61,7 @@ import { IAppState } from 'calypso/state/types';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import ContactVerificationCard from './cards/contact-verification-card';
+import DomainDiagnosticsCard from './cards/domain-diagnostics-card';
 import DomainForwardingCard from './cards/domain-forwarding-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
@@ -76,6 +90,7 @@ const Settings = ( {
 	selectedSite,
 	updateNameservers,
 	whoisData,
+	verifyIcannEmail,
 }: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
@@ -88,7 +103,7 @@ const Settings = ( {
 		}
 	}, [ contactInformation, requestWhois, selectedDomainName ] );
 
-	const hasConnectableSites = useSelector( ( state ) => canAnySiteConnectDomains( state ) );
+	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
 	const renderHeader = () => {
 		const previousPath = domainManagementList(
@@ -318,18 +333,61 @@ const Settings = ( {
 		);
 	};
 
-	const renderDnsRecordsNotice = () => {
-		if (
-			( ! englishLocales.includes( getLocaleSlug() || '' ) &&
-				! i18n.hasTranslation(
-					"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}."
-				) ) ||
-			areAllWpcomNameServers() ||
-			! nameservers ||
-			! nameservers.length
-		) {
+	const renderExternalNameserversNotice = ( noticeType: string ) => {
+		if ( ! domain || areAllWpcomNameServers() || ! nameservers || ! nameservers.length ) {
 			return null;
 		}
+
+		let mappingSetupStep: string =
+			domain.connectionMode === modeType.ADVANCED
+				? stepSlug.ADVANCED_UPDATE
+				: stepSlug.SUGGESTED_UPDATE;
+		if ( isSubdomain( selectedDomainName ) ) {
+			mappingSetupStep =
+				domain.connectionMode === modeType.ADVANCED
+					? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+					: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
+		}
+
+		const dnsRecordsNotice = translate(
+			"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+			{
+				components: {
+					a: (
+						<a
+							href={
+								domain.type === domainTypes.MAPPED
+									? domainMappingSetup( selectedSite.slug, selectedDomainName, mappingSetupStep )
+									: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+											nameservers: true,
+									  } )
+							}
+						/>
+					),
+				},
+			}
+		);
+
+		const domainForwardingNotice = translate(
+			"Your domain is using external name servers so the Domain Forwarding records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
+			{
+				components: {
+					a: (
+						<a
+							href={
+								domain.type === domainTypes.MAPPED
+									? domainMappingSetup( selectedSite.slug, selectedDomainName, mappingSetupStep )
+									: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute, {
+											nameservers: true,
+									  } )
+							}
+						/>
+					),
+				},
+			}
+		);
+
+		const notice = noticeType === 'DNS' ? dnsRecordsNotice : domainForwardingNotice;
 
 		return (
 			<div className="dns-records-card-notice">
@@ -339,25 +397,7 @@ const Settings = ( {
 					className="dns-records-card-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="dns-records-card-notice__message">
-					{ translate(
-						"Your domain is using external name servers so the DNS records you're editing won't be in effect until you switch to use WordPress.com name servers. {{a}}Update your name servers now{{/a}}.",
-						{
-							components: {
-								a: (
-									<a
-										href={ domainManagementEdit(
-											selectedSite.slug,
-											selectedDomainName,
-											currentRoute,
-											{ nameservers: true }
-										) }
-									/>
-								),
-							},
-						}
-					) }
-				</div>
+				<div className="dns-records-card-notice__message">{ notice }</div>
 			</div>
 		);
 	};
@@ -381,7 +421,7 @@ const Settings = ( {
 				>
 					{ domain.canManageDnsRecords ? (
 						<>
-							{ renderDnsRecordsNotice() }
+							{ renderExternalNameserversNotice( 'DNS' ) }
 							<DnsRecords
 								dns={ dns }
 								selectedDomainName={ selectedDomainName }
@@ -424,7 +464,11 @@ const Settings = ( {
 				subtitle={ translate( 'Forward your domain to another' ) }
 				isDisabled={ domain.isMoveToNewSitePending }
 			>
-				<DomainForwardingCard domain={ domain } />
+				{ renderExternalNameserversNotice( 'DOMAIN_FORWARDING' ) }
+				<DomainForwardingCard
+					domain={ domain }
+					areAllWpcomNameServers={ areAllWpcomNameServers() }
+				/>
 			</Accordion>
 		);
 	};
@@ -545,6 +589,13 @@ const Settings = ( {
 		);
 	};
 
+	const renderDiagnosticsSection = () => {
+		if ( ! domain ) {
+			return null;
+		}
+		return <DomainDiagnosticsCard domain={ domain } />;
+	};
+
 	const renderContactVerificationSection = () => {
 		if ( ! domain || ! domain.currentUserCanManage ) {
 			return null;
@@ -578,16 +629,79 @@ const Settings = ( {
 		);
 	};
 
+	const renderUnverifiedEmailNotice = () => {
+		if ( domain?.isPendingIcannVerification ) {
+			return (
+				<Notice
+					text={ translate(
+						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Check your contact information is correct below. '
+					) }
+					icon="cross-circle"
+					showDismiss={ false }
+					status="is-warning"
+				>
+					<NoticeAction onClick={ () => verifyIcannEmail( domain.domain ) }>
+						{ translate( 'Resend Email' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+		return null;
+	};
+
+	const renderPendingRegistrationAtRegistryNotice = () => {
+		return (
+			<Notice
+				text={ translate(
+					'We forwarded the domain registration request to Registro.br (.com.br registry). It may take up to 3 days for the request to be evaluated and accepted.'
+				) }
+				icon="info"
+				showDismiss={ false }
+				status="is-warning"
+			>
+				{ domain?.pendingRegistrationAtRegistryUrl && (
+					<NoticeAction external href={ domain?.pendingRegistrationAtRegistryUrl }>
+						{ translate( 'More info' ) }
+					</NoticeAction>
+				) }
+			</Notice>
+		);
+	};
+
+	const renderDomainGlueRecordsSection = () => {
+		// We can only create glue records for domains registered with us through KS_RAM
+		if (
+			! domain ||
+			domain.type !== domainTypes.REGISTERED ||
+			domain.registrar !== 'KS_RAM' ||
+			! domain.canManageDnsRecords
+		) {
+			return null;
+		}
+
+		return <GlueRecordsCard domain={ domain } />;
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		if ( ! domain ) {
 			return undefined;
 		}
+		if ( domain.pendingRegistrationAtRegistry ) {
+			return (
+				<>
+					{ renderPendingRegistrationAtRegistryNotice() }
+					{ renderDetailsSection() }
+				</>
+			);
+		}
 		return (
 			<>
+				{ renderUnverifiedEmailNotice() }
 				{ renderStatusSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
+				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
@@ -595,6 +709,7 @@ const Settings = ( {
 				{ renderContactInformationSecion() }
 				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
+				{ renderDomainGlueRecordsSection() }
 			</>
 		);
 	};
@@ -621,9 +736,12 @@ const Settings = ( {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite?.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+
 			{ renderHeader() }
+
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);
@@ -650,5 +768,6 @@ export default connect(
 	{
 		requestWhois,
 		recordTracksEvent,
+		verifyIcannEmail,
 	}
 )( withDomainNameservers( Settings ) );

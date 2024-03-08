@@ -37,7 +37,7 @@ const sshKeyDetachFailureNoticeId = 'ssh-key-detach-failure';
 function SshKeyCard( { deleteText, siteId, sshKey, disabled = false }: SshKeyCardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const { detachSshKey, isLoading: isDetaching } = useDetachSshKeyMutation(
+	const { detachSshKey, isPending: isDetaching } = useDetachSshKeyMutation(
 		{ siteId },
 		{
 			onMutate: () => {

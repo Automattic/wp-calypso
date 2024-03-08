@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	DomainData,
 	getSiteDomainsQueryObject,
@@ -18,7 +19,6 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useQueries } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useLayoutEffect, useMemo, useState, createContext, useContext } from 'react';
 import { DomainsTableFilter } from '../domains-table-filters/index';
 import {
@@ -47,12 +47,11 @@ type OnDomainAction = (
 ) => DomainActionDescription | void;
 
 interface BaseDomainsTableProps {
-	domains: PartialDomainData[] | undefined;
+	domains: PartialDomainData[] | DomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
-	shouldDisplayContactInfoBulkAction?: boolean;
 	isLoadingDomains?: boolean;
 
 	// These props allow table users to provide their own fetching functions. This is used for
@@ -117,7 +116,6 @@ type Value = {
 	onDomainAction( ...parameters: Parameters< OnDomainAction > ): void;
 	updatingDomain: DomainsTableUpdatingDomain | null;
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
-	shouldDisplayContactInfoBulkAction: boolean;
 	domainsTableColumns: DomainsTableColumn[];
 	currentUsersOwnsAllSelectedDomains: boolean;
 	currentUserCanBulkUpdateContactInfo: boolean;
@@ -141,7 +139,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		domainStatusPurchaseActions,
 		onDomainAction,
 		userCanSetPrimaryDomains,
-		shouldDisplayContactInfoBulkAction = false,
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
 	} = props;
@@ -305,7 +302,10 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 	const hasSelectedDomains = selectedDomains.size > 0;
 	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
-	const canSelectAnyDomains = selectableDomains.length > 0;
+	const canSelectAnyDomains = isAllSitesView
+		? selectableDomains.length > 0
+		: ( ( domains as unknown as DomainData[] ) ?? [] ).filter( ( domain ) => ! domain.is_subdomain )
+				.length > 1;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
@@ -340,10 +340,15 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	};
 
 	const handleAutoRenew = ( enable: boolean ) => {
-		const domainsToBulkUpdate = ( domains ?? [] )
-			.filter( ( domain ) => selectedDomains.has( getDomainId( domain ) ) )
-			.map( ( domain ) => domain.domain );
-		setAutoRenew( domainsToBulkUpdate, enable );
+		const domainsToBulkUpdate = ( domains ?? [] ).filter( ( domain ) =>
+			selectedDomains.has( getDomainId( domain ) )
+		);
+
+		const domainNames = domainsToBulkUpdate.map( ( domain ) => domain.domain );
+		const blogIds = [ ...new Set( domainsToBulkUpdate.map( ( domain ) => domain.blog_id ) ) ];
+
+		setAutoRenew( domainNames, blogIds, enable );
+
 		handleRestartDomainStatusPolling();
 	};
 
@@ -422,7 +427,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		},
 		updatingDomain,
 		userCanSetPrimaryDomains,
-		shouldDisplayContactInfoBulkAction,
 		domainsTableColumns,
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo,

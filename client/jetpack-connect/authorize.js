@@ -2,8 +2,11 @@ import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
+	getProductFromSlug,
+	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Button, Card, FormLabel, Gridicon, Spinner, JetpackLogo } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -11,10 +14,10 @@ import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -65,7 +68,12 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
+import {
+	JPC_JETPACK_MANAGE_PATH,
+	JPC_PATH_PLANS,
+	JPC_PATH_PLANS_COMPLETE,
+	REMOTE_PATH_AUTH,
+} from './constants';
 import Disclaimer from './disclaimer';
 import { JetpackFeatures } from './features';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
@@ -81,6 +89,7 @@ import {
 	retrieveSource,
 	clearSource,
 } from './persistence-utils';
+import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
@@ -257,6 +266,17 @@ export class JetpackAuthorize extends Component {
 			window.close();
 		}
 
+		const urlParams = new URLSearchParams( window.location.search );
+		const source = urlParams.get( 'source' );
+
+		if ( source === 'jetpack-manage' ) {
+			const urlRedirect = addQueryArgs(
+				{ site_connected: urlToSlug( homeUrl ) },
+				JPC_JETPACK_MANAGE_PATH
+			);
+			navigate( urlRedirect );
+		}
+
 		if ( this.isJetpackPartnerCoupon() ) {
 			// The current implementation of the partner coupon URL is supposed to
 			// just take over the entire flow and send directly to checkout.
@@ -282,7 +302,6 @@ export class JetpackAuthorize extends Component {
 			this.isJetpackUpgradeFlow() ||
 			this.isFromJetpackConnectionManager() ||
 			this.isFromJetpackSocialPlugin() ||
-			this.isFromMyJetpack() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
 			( this.isFromJetpackBackupPlugin() && siteHasBackups )
@@ -295,22 +314,22 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
+			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
+			navigate(
+				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
+				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url
+				// host so that it becomes a relative url.
+				redirectAfterAuth.replace(
+					/^(https?:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
+					''
+				)
+			);
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
 			navigate( `/setup/import-focused/migrationHandler?from=${ urlToSlug( homeUrl ) }` );
-		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
-			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
-			navigate(
-				// The /jetpack/connect/authorize controller requires `redirectAfterAuth` to be a
-				// valid well-formed uri (via validUrl.isWebUri()), so here we are removing the url host so that it is a
-				// relative url.
-				redirectAfterAuth.replace(
-					/^(https:\/\/wordpress\.com|http:\/\/calypso\.localhost:3000)/,
-					''
-				)
-			);
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -704,6 +723,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getButtonText() {
+		// Update getScreenReaderAuthMessage if you change this function.
+		// TODO: extract actual status messages from button labels so getScreenReaderAuthMessage can use them.
 		const { translate } = this.props;
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
@@ -753,6 +774,48 @@ export class JetpackAuthorize extends Component {
 
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
+		}
+	}
+
+	getScreenReaderAuthMessage() {
+		// Copied from getButtonText. Buttons labels have been removed and actual status messages kept.
+		const { translate } = this.props;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { alreadyAuthorized } = this.props.authQuery;
+
+		if ( this.isFromMigrationPlugin() ) {
+			if ( this.props.isFetchingAuthorizationSite ) {
+				return translate( 'Preparing authorization' );
+			}
+
+			return;
+		}
+
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+			return;
+		}
+
+		if ( authorizeError && ! this.retryingAuth ) {
+			return;
+		}
+
+		if ( this.props.isFetchingAuthorizationSite ) {
+			return translate( 'Preparing authorization' );
+		}
+
+		if ( authorizeSuccess && this.redirecting ) {
+			return;
+		}
+
+		if ( authorizeSuccess ) {
+			return translate( 'Finishing up!', {
+				context:
+					'Shown during a jetpack authorization process, while we retrieve the info we need to show the last page',
+			} );
+		}
+
+		if ( isAuthorizing || this.retryingAuth ) {
+			return translate( 'Authorizing your connection' );
 		}
 	}
 
@@ -811,6 +874,46 @@ export class JetpackAuthorize extends Component {
 		}
 
 		return text;
+	}
+
+	getProductActivationText() {
+		if ( ! this.isFromMyJetpackConnectAfterCheckout() ) {
+			return;
+		}
+		const { translate, isAlreadyOnSitesList } = this.props;
+		const { authorizeSuccess } = this.props.authorizationData;
+		const { redirectAfterAuth } = this.props.authQuery;
+
+		const { searchParams } = getUrlParts( redirectAfterAuth );
+		const productSlug = searchParams.get( 'productSlug' );
+		const siteSlug = searchParams.get( 'fromSiteSlug' );
+		const product = getProductFromSlug( productSlug );
+		const productName = getJetpackProductDisplayName( product );
+		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
+
+		if ( authorizeSuccess || isAlreadyOnSitesList ) {
+			return translate(
+				'You purchased {{strong}}%(productName)s{{/strong}}. Now you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+				{
+					args: { productName, siteName },
+					components: {
+						br: <br />,
+						strong: <strong />,
+					},
+				}
+			);
+		}
+
+		return translate(
+			'You purchased {{strong}}%(productName)s{{/strong}}. Once connected, you can activate it on website {{strong}}%(siteName)s{{/strong}}',
+			{
+				args: { productName, siteName },
+				components: {
+					br: <br />,
+					strong: <strong />,
+				},
+			}
+		);
 	}
 
 	isWaitingForConfirmation() {
@@ -949,6 +1052,11 @@ export class JetpackAuthorize extends Component {
 			<Card className="jetpack-connect__logged-in-card">
 				<Gravatar user={ user } size={ gravatarSize } />
 				<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+				{ this.isFromMyJetpackConnectAfterCheckout() && (
+					<p className="jetpack-connect__activate-product-text">
+						{ this.getProductActivationText() }
+					</p>
+				) }
 				{ this.renderNotices() }
 				{ this.renderStateAction() }
 			</Card>
@@ -1144,6 +1252,7 @@ export class JetpackAuthorize extends Component {
 						{ this.renderFooterLinks() }
 					</div>
 				</div>
+				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />
 			</MainWrapper>
 		);
 	}

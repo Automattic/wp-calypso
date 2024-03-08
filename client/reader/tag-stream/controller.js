@@ -29,8 +29,9 @@ export const tagListing = ( context, next ) => {
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
 
-	// default to popular tags unless the user explicitly selects 'date'
-	const streamKey = context.query.sort === 'date' ? 'tag:' + tagSlug : 'tag_popular:' + tagSlug;
+	// default to tags by recency unless the user explicitly selects 'relavance'
+	const streamKey =
+		context.query.sort === 'relevance' ? 'tag_popular:' + tagSlug : 'tag:' + tagSlug;
 
 	const mcKey = 'topic';
 	const startDate = getStartDate( context );

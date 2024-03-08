@@ -10,7 +10,7 @@ const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
 	editorTwitterIframe: `iframe[title="Embedded content from twitter"]`,
-	publishedTwitterIframe: `iframe[title="Twitter Tweet"]`,
+	publishedTwitterIframe: `iframe[title="X Post"]`,
 };
 
 /**

@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

@@ -1,7 +1,6 @@
-import { Popover } from '@automattic/components';
+import { Popover, SegmentedControl } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 
 import './style.scss';

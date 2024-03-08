@@ -1,4 +1,3 @@
-import { current as currentPage } from 'page';
 import {
 	addAddOnsToCart,
 	addPlanToCart,
@@ -8,7 +7,6 @@ import {
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
-	setDesignOnSite,
 	setThemeOnSite,
 	setOptionsOnSite,
 	setStoreFeatures,
@@ -17,13 +15,14 @@ import {
 	launchSiteApi,
 	isPlanFulfilled,
 	isAddOnsFulfilled,
+	maybeAddStorageAddonToCart,
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-	isNewOrExistingSiteFulfilled,
 	createSiteAndAddDIFMToCart,
 	excludeStepIfEmailVerified,
 	submitWebsiteContent,
 	excludeStepIfProfileComplete,
+	excludeSurveyStepIfInactive,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -36,8 +35,6 @@ export default generateSteps( {
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
-	currentPage,
-	setDesignOnSite,
 	setThemeOnSite,
 	setOptionsOnSite,
 	setStoreFeatures,
@@ -46,11 +43,12 @@ export default generateSteps( {
 	launchSiteApi,
 	isPlanFulfilled,
 	isAddOnsFulfilled,
+	maybeAddStorageAddonToCart,
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-	isNewOrExistingSiteFulfilled,
 	createSiteAndAddDIFMToCart,
 	excludeStepIfEmailVerified,
 	excludeStepIfProfileComplete,
 	submitWebsiteContent,
+	excludeSurveyStepIfInactive,
 } );

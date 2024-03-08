@@ -16,7 +16,9 @@ class ReaderPostOptionsMenu extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		feed: PropTypes.object,
+		followSource: PropTypes.string,
 		onBlock: PropTypes.func,
+		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
@@ -33,11 +35,13 @@ class ReaderPostOptionsMenu extends Component {
 			post,
 			site,
 			feed,
+			followSource,
 			teams,
 			translate,
 			position,
 			posts,
 			onBlock,
+			openSuggestedFollows,
 			showVisitPost,
 			showReportPost,
 			showReportSite,
@@ -73,6 +77,8 @@ class ReaderPostOptionsMenu extends Component {
 					showEditPost={ showEditPost }
 					showFollow={ showFollow }
 					showConversationFollow={ showConversationFollow }
+					openSuggestedFollows={ openSuggestedFollows }
+					followSource={ followSource }
 				/>
 			</span>
 		);

@@ -1,16 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
-import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
+import { DomainsTable, ResponseDomain, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useMemo, useState } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
-import { UsePresalesChat } from 'calypso/components/data/domain-management';
+import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useOdieAssistantContext } from 'calypso/odie/context';
 import { useSelector, useDispatch } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -56,7 +54,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		queryFn: () => fetchSiteDomains( site?.ID ),
 	} );
 	const translate = useTranslate();
-	const { sendNudge } = useOdieAssistantContext();
 	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 
@@ -83,10 +80,17 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const [ changeSiteAddressSourceDomain, setChangeSiteAddressSourceDomain ] =
 		useState< ResponseDomain | null >( null );
 
+	// If user has more than 1 domain on more than 1 site, show manage all domains CTA.
+	const { domains: allDomains } = useDomainsTable( fetchAllDomains );
+	const showManageAllDomainsCTA =
+		( allDomains || [] ).length > 1 &&
+		[ ...new Set( ( allDomains || [] ).map( ( domain ) => domain.blog_id ) ) ].length > 1;
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<Main>
+				<DocumentHead title={ translate( 'Domains' ) } />
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
@@ -95,32 +99,10 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					domains={ data?.domains }
 					isAllSitesView={ false }
 					siteSlug={ site?.slug ?? null }
-					shouldDisplayContactInfoBulkAction={ isEnabled(
-						'domains/bulk-actions-contact-info-editing'
-					) }
 					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
 					onDomainAction={ ( action, domain ) => {
-						if ( action === 'manage-dns-settings' ) {
-							return {
-								action: () => {
-									sendNudge( {
-										nudge: 'dns-settings',
-										initialMessage: translate(
-											'I see you want to change your DNS settings for your domain %(domain)s. That’s a complex thing, but I can guide you and help you at any moment.',
-											{
-												args: {
-													domain: domain.name,
-												},
-											}
-										) as string,
-										context: { domain: domain.domain },
-									} );
-								},
-							};
-						}
-
 						if ( action === 'set-primary-address' && site ) {
 							return {
 								message: translate( 'Set domain as the primary site address' ),
@@ -151,7 +133,9 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 									hasNonWpcomDomains={ hasNonWpcomDomains }
 								/>
 							) }
-							<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+							{ showManageAllDomainsCTA && (
+								<ManageAllDomainsCTA shouldDisplaySeparator={ false } />
+							) }
 						</>
 					}
 					fetchAllDomains={ fetchAllDomains }
@@ -163,6 +147,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				/>
 				{ changeSiteAddressSourceDomain && (
 					<SiteAddressChanger
+						hasNonWpcomDomains={ hasNonWpcomDomains }
 						currentDomain={ changeSiteAddressSourceDomain }
 						currentDomainSuffix={ changeSiteAddressSourceDomain.name.match( /\.\w+\.\w+$/ )?.[ 0 ] }
 						isDialogVisible
@@ -171,7 +156,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					/>
 				) }
 			</Main>
-			<UsePresalesChat />
 		</>
 	);
 }

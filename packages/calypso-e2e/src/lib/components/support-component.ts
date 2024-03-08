@@ -58,7 +58,7 @@ export class SupportComponent {
 	/* Results */
 
 	/**
-	 * Returns the numnber of results found under each cateogry.
+	 * Returns the number of results found under each cateogry.
 	 *
 	 * If the category has no results (eg. Show Me Where has no results)
 	 * then the value 0 is returned.
@@ -69,7 +69,7 @@ export class SupportComponent {
 		return {
 			articleCount: await this.anchor
 				.getByLabel( 'Search Results' )
-				.getByRole( 'list', { name: 'Recommended resources' } )
+				.getByRole( 'list', { name: 'Recommended Resources' } )
 				.count(),
 			linkCount: await this.anchor
 				.getByLabel( 'Search Results' )
@@ -85,7 +85,7 @@ export class SupportComponent {
 	 * @param {number} index Locate results based on index. 0-indexed.
 	 */
 	async clickResultByIndex( category: ResultsCategory, index: number ) {
-		const categoryText = category === 'Docs' ? 'Recommended resources' : 'Show me where to';
+		const categoryText = category === 'Docs' ? 'Recommended Resources' : 'Show me where to';
 
 		const locator = this.anchor
 			.getByRole( 'list', { name: categoryText } )

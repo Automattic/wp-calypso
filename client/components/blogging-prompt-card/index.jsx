@@ -2,15 +2,22 @@ import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
+import {
+	useAIBloggingPrompts,
+	mergePromptStreams,
+} from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
-import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
+import {
+	SECTION_BLOGGING_PROMPT,
+	SECTION_BLOGANUARY_BLOGGING_PROMPT,
+} from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import BellOffIcon from './bell-off-icon';
-import LightbulbIcon from './lightbulb-icon';
 import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
@@ -20,11 +27,28 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
-	const maxNumberOfPrompts = 10;
-	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
+	const moment = useLocalizedMoment();
+
+	const maxNumberOfPrompts = isBloganuary() ? 31 : 10;
+	const today = moment().format( '--MM-DD' );
+	const januaryDate = '--01-01';
+	const startDate = isBloganuary() ? januaryDate : today;
+
+	let { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
+	// This will not do a request until we have the `isEnabled( 'calypso/ai-blogging-prompts' )` feature flag enabled.
+	const { data: aiPrompts } = useAIBloggingPrompts( siteId );
+	if ( prompts && aiPrompts && ! isBloganuary() ) {
+		prompts = mergePromptStreams( prompts, aiPrompts );
+	}
+
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
-	if ( prompts === undefined ) {
+	if ( ! index && isBloganuary() ) {
+		// get the offset for the day of the month.
+		index = parseInt( moment().format( 'D' ) ) - 1;
+	}
+
+	if ( ! prompts ) {
 		return null;
 	}
 
@@ -40,15 +64,21 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	};
 
 	const hidePrompts = () => {
-		skipCard( SECTION_BLOGGING_PROMPT );
+		const cardToSkip = isBloganuary()
+			? SECTION_BLOGANUARY_BLOGGING_PROMPT
+			: SECTION_BLOGGING_PROMPT;
+		skipCard( cardToSkip );
 		dispatch(
 			recordTracksEvent( getTracksPrefix() + 'task_skip', {
-				task: SECTION_BLOGGING_PROMPT,
+				task: cardToSkip,
 			} )
 		);
 	};
 
 	const renderMenu = () => {
+		if ( ! showMenu ) {
+			return;
+		}
 		return (
 			<EllipsisMenu
 				className="blogging-prompt__menu"
@@ -57,7 +87,9 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 			>
 				<Button className="popover__menu-item" onClick={ hidePrompts }>
 					<Gridicon icon="not-visible" className="gridicons-not-visible" />
-					{ translate( 'Hide Daily Prompts' ) }
+					{ isBloganuary()
+						? translate( 'Hide Bloganuary Prompt' )
+						: translate( 'Hide Daily Prompts' ) }
 				</Button>
 				<Button className="popover__menu-item" href={ notificationSettingsLink }>
 					<BellOffIcon />
@@ -70,19 +102,12 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	return (
 		<div className="blogging-prompt">
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
-				<CardHeading>
-					<LightbulbIcon />
-					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
-					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
-						{ translate( 'Daily writing prompt' ) }
-					</span>
-					{ showMenu && renderMenu() }
-				</CardHeading>
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
 					tracksPrefix={ getTracksPrefix() }
 					index={ index }
+					menu={ renderMenu() }
 				/>
 			</Card>
 		</div>

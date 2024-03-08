@@ -1,5 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers } from 'calypso/state/utils';
+import couponList from './coupon-list/reducer';
 import earnings from './earnings/reducer';
 import productList from './product-list/reducer';
 import settings from './settings/reducer';
@@ -12,6 +13,7 @@ export interface IMembershipsState {
 	subscribers: any;
 	settings: any;
 	productList: any;
+	couponList: any;
 }
 
 const reducers = {
@@ -20,6 +22,7 @@ const reducers = {
 	subscribers,
 	settings,
 	productList,
+	couponList,
 };
 
 const combinedReducer = combineReducers( reducers );

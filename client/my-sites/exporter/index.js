@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { get } from 'lodash';
-import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, siteSelection, sites } from 'calypso/my-sites/controller';
 import { exportSite } from 'calypso/my-sites/exporter/controller';

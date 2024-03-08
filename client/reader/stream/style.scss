@@ -466,12 +466,12 @@
 
 .reader-stream__recommended-posts-list {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	margin: 0;
 	padding: 0;
 
-	@include breakpoint-deprecated( "<480px" ) {
-		flex-direction: column;
+	@include break-small {
+		flex-direction: row;
 	}
 }
 
@@ -605,6 +605,42 @@
 
 	.stream__list {
 		width: 100%;
+
+		.app-promo {
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+			background-color: transparent;
+
+			.app-promo__qr-code {
+				margin: -10px 0 0;
+				flex-direction: row-reverse;
+			}
+
+			.get-apps__card-text {
+				padding: 0;
+			}
+			.app-promo__qr-code-canvas {
+				margin-left: 16px;
+			}
+
+			.app-promo__title {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			}
+
+			@include break-medium {
+				.app-promo__qr-code {
+					margin: -20px 0 0;
+				}
+
+				.app-promo__qr-code-canvas {
+					margin-top: -10px;
+				}
+
+				.app-promo__title {
+					margin-bottom: 0;
+					margin-right: 110px;
+				}
+			}
+		}
 	}
 }
 
@@ -734,6 +770,20 @@
 		color: var(--color-neutral-100);
 	}
 
+	.reader-tag-sidebar__recent-prompts {
+		h2 {
+			font-size: $font-body;
+			margin-bottom: 14px;
+		}
+		.reader-tag-sidebar__recent-prompt-link {
+			display: block;
+			font-size: $font-body-small;
+			text-decoration: underline;
+			font-weight: 500;
+			color: var(--color-neutral-100);
+			margin-bottom: 12px;
+		}
+	}
 	.reader-tag-sidebar-stats {
 		display: flex;
 		flex-direction: row;
@@ -741,13 +791,14 @@
 		// compensate for line height so that visual margin is 36px;
 		margin-bottom: 29px;
 
+
 		.reader-tag-sidebar-stats__item {
 			display: flex;
 			flex-direction: column;
 		}
 
 		.reader-tag-sidebar-stats__count {
-			font-size: $font-title-medium;
+			font-size: $font-title-small;
 			font-weight: bold;
 			width: 90px;
 		}
@@ -909,4 +960,14 @@
 
 .is-site-stream .stream__two-column .stream__right-column {
 	margin-top: 0;
+}
+
+.following-manage__search-followed {
+	margin-left: 0;
+}
+
+.following-manage__search-followed-input {
+	@include breakpoint-deprecated( ">960px" ) {
+		min-width: 200px;
+	}
 }

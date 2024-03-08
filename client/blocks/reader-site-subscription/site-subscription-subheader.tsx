@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -15,7 +16,7 @@ type SiteSubscriptionSubheaderProps = {
 
 const getHostname = ( url: string ) => {
 	try {
-		return new URL( url ).hostname;
+		return new URL( localizeUrl( url ) ).hostname;
 	} catch ( e ) {
 		return '';
 	}

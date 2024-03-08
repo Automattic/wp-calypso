@@ -1,5 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
+import { translate } from 'i18n-calypso';
 import { getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -17,6 +18,7 @@ import DomainContactInfo from './internals/steps-repository/domain-contact-info'
 
 const domainUserTransfer: Flow = {
 	name: 'domain-user-transfer',
+	isSignupFlow: false,
 	useSteps() {
 		return [ { slug: 'domain-contact-info', component: DomainContactInfo } ];
 	},
@@ -65,7 +67,7 @@ const domainUserTransfer: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: `/setup/${ flowName }?domain=${ domain }`,
-			pageTitle: 'Receive domain',
+			pageTitle: translate( 'Receive domain' ),
 			locale,
 		} );
 

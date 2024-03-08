@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -31,7 +31,7 @@ export function showSelectedPost( { postKey, comments } ) {
 		const isLoggedIn = isUserLoggedIn( getState() );
 
 		if ( ! isLoggedIn ) {
-			return window.open( post.URL, '_blank' );
+			return window.open( post.URL + ( comments ? '#comments' : '' ), '_blank' );
 		}
 
 		if ( isXPost( post ) ) {

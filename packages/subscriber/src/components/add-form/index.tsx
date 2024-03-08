@@ -27,7 +27,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
-	isSiteOnFreePlan?: boolean;
+	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	showTitle?: boolean;
 	showSubtitle?: boolean;
@@ -56,7 +56,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
-		isSiteOnFreePlan,
+		hasSubscriberLimit,
 		flowName,
 		showTitle = true,
 		showSubtitle,
@@ -385,7 +385,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvLabel() {
-		const ariaLabelMsg = isSiteOnFreePlan
+		const ariaLabelMsg = hasSubscriberLimit
 			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
 			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
 
@@ -403,7 +403,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			),
 		};
 
-		const labelText = isSiteOnFreePlan
+		const labelText = hasSubscriberLimit
 			? createInterpolateElement(
 					translate(
 						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>.'

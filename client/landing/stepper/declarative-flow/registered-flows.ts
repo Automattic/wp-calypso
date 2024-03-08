@@ -9,10 +9,11 @@ import {
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	ONBOARDING_PM_FLOW,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
+	REBLOGGING_FLOW,
+	SITE_MIGRATION_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -70,11 +71,20 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'with-theme-assembler': () =>
 		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 
+	'assembler-first': () =>
+		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
+
+	[ AI_ASSEMBLER_FLOW ]: () =>
+		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
+
+	'update-options': () =>
+		import( /* webpackChunkName: "update-options-flow" */ '../declarative-flow/update-options' ),
 
 	'domain-upsell': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/domain-upsell' ),
@@ -105,9 +115,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
 
-	[ ONBOARDING_PM_FLOW ]: () =>
-		import( /* webpackChunkName: "new-hosted-site-flow" */ './onboarding-pm' ),
-
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
 
@@ -122,6 +129,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'domain-user-transfer': () =>
 		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
+
+	[ REBLOGGING_FLOW ]: () =>
+		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
@@ -139,13 +149,15 @@ const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = 
 	  }
 	: {};
 
-const aiAsseblerFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'calypso/ai-assembler'
+const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'onboarding/new-migration-flow'
 )
 	? {
-			[ AI_ASSEMBLER_FLOW ]: () =>
-				import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
+			[ SITE_MIGRATION_FLOW ]: () =>
+				import(
+					/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
+				),
 	  }
 	: {};
 
-export default { ...availableFlows, ...videoPressTvFlows, ...aiAsseblerFlows };
+export default { ...availableFlows, ...videoPressTvFlows, ...siteMigrationFlow };

@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FC, useCallback, useEffect, useState } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -35,19 +35,15 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const [ hasSubmitted, setHasSubmitted ] = useState( false );
 
 	const redirectToOriginal = useSelector( ( state ) => getRedirectToOriginal( state ) || '' );
-	const redirectToSanitized = useSelector( ( state ) => getRedirectToSanitized( state ) );
-	const authError = useSelector( ( state ) => getMagicLoginRequestAuthError( state ) );
-	const isAuthenticated = useSelector( ( state ) =>
-		getMagicLoginRequestedAuthSuccessfully( state )
-	);
+	const redirectToSanitized = useSelector( getRedirectToSanitized );
+	const authError = useSelector( getMagicLoginRequestAuthError );
+	const isAuthenticated = useSelector( getMagicLoginRequestedAuthSuccessfully );
 	const isExpired = useSelector(
 		( state ) => getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE
 	);
-	const isFetching = useSelector( ( state ) => isFetchingMagicLoginAuth( state ) );
-	const twoFactorEnabled = useSelector( ( state ) => isTwoFactorEnabled( state ) );
-	const twoFactorNotificationSent = useSelector( ( state ) =>
-		getTwoFactorNotificationSent( state )
-	);
+	const isFetching = useSelector( isFetchingMagicLoginAuth );
+	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
+	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
 
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {

@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FoldableCard } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,6 @@ import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import ExternalLink from 'calypso/components/external-link';
-import FoldableCard from 'calypso/components/foldable-card';
 import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';

@@ -1,19 +1,15 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { useSelector } from 'calypso/state';
 import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteSlug, getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ReaderSettingsSection from '../reader-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
@@ -21,6 +17,7 @@ import wrapSettingsForm from '../wrap-settings-form';
 export type SubscriptionOptions = {
 	invitation: string;
 	comment_follow: string;
+	welcome: string;
 };
 
 type Fields = {
@@ -94,12 +91,10 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 const connectComponent = connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = siteId && getSiteSlug( state, siteId );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	return {
-		...( siteSlug && { siteSlug } ),
 		...( siteUrl && { siteUrl } ),
 		siteIsJetpack,
 		isAtomic,
@@ -116,7 +111,6 @@ type ReadingSettingsFormProps = {
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	siteIsJetpack: boolean | null;
-	siteSlug?: string;
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -126,18 +120,13 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 		( {
 			fields,
 			onChangeField,
-			handleAutosavingToggle,
 			handleSubmitForm,
 			handleToggle,
-			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
-			siteIsJetpack,
-			siteSlug,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
-			const translate = useTranslate();
 			const disabled = isRequestingSettings || isSavingSettings;
 			return (
 				<form onSubmit={ handleSubmitForm }>
@@ -150,29 +139,6 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
 						updateFields={ updateFields }
-					/>
-
-					{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
-					<SettingsSectionHeader
-						id="newsletter-settings"
-						title={ translate( 'Newsletter settings' ) }
-					/>
-					<Card className="site-settings__card">
-						<em>
-							{ translate( 'Newsletter settings have moved to their {{a}}own page{{/a}}.', {
-								components: {
-									a: <a href={ `/settings/newsletter/${ siteSlug }` } />,
-								},
-							} ) }
-						</em>
-					</Card>
-					<ReaderSettingsSection
-						fields={ fields }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						isAtomic={ isAtomic }
-						siteIsJetpack={ siteIsJetpack }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }
@@ -191,18 +157,21 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 
 const ReadingSettings = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( siteId as number );
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
-			<ScreenOptionsTab wpAdminPath="options-reading.php" />
 			{ isJetpack && isPossibleJetpackConnectionProblem && siteId && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
-			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
+			<NavigationHeader
+				screenOptionsTab="options-reading.php"
+				navigationItems={ [] }
+				title={ translate( 'Reading Settings' ) }
+			/>
 			<ReadingSettingsForm />
 		</Main>
 	);

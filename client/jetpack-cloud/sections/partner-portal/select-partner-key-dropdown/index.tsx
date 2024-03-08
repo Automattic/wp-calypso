@@ -1,6 +1,6 @@
+import { SelectDropdown } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';

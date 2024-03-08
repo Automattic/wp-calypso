@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -16,9 +16,8 @@ import { useSelector } from 'calypso/state';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
-import CustomerSection from './customers';
+import CustomersSection from './customers';
 import Home from './home';
-import MembershipsProductsSection from './memberships/products';
 import MembershipsSection from './memberships/section';
 import ReferAFriendSection from './refer-a-friend';
 import { Query } from './types';
@@ -29,12 +28,19 @@ type EarningsMainProps = {
 	path: string;
 };
 
+type Tab = {
+	title: string;
+	path: string;
+	id: string;
+};
+
 const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
+	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
 
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
@@ -42,7 +48,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
 		supporters: translate( 'Supporters' ),
-		'payments-plans': translate( 'Recurring Payments plans' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -63,6 +68,11 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title: translate( 'Payment Settings' ),
 				path: '/earn/payments' + pathSuffix,
 				id: 'payments',
+			},
+			{
+				title: translate( 'Ads' ),
+				path: '/earn/ads-earnings' + pathSuffix,
+				id: 'ads-earnings',
 			},
 		];
 	};
@@ -113,6 +123,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const isAdSection = ( currentSection: string | undefined ) =>
 		currentSection && currentSection.startsWith( 'ads' );
 
+	const isSingleSupporterSection = ( currentSection: string | undefined ) =>
+		currentSection && currentSection.startsWith( 'supporters' ) && subscriberId;
+
 	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
 			case 'ads-earnings':
@@ -136,11 +149,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				);
 			case 'payments':
 				return <MembershipsSection query={ query } />;
-			case 'payments-plans':
-				return <MembershipsProductsSection />;
 
 			case 'supporters':
-				return <CustomerSection />;
+				return <CustomersSection />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
@@ -163,19 +174,27 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return currentPath;
 	};
 
-	const getEarnSectionNav = () => {
+	const isEarnTabSelected = ( tabItem: Tab ) => {
 		const currentPath = getCurrentPath();
 
+		if ( 'ads-earnings' === tabItem.id ) {
+			return isAdSection( section );
+		}
+
+		return tabItem.path === currentPath;
+	};
+
+	const getEarnSectionNav = () => {
 		return (
 			<div id="earn-navigation">
-				<SectionNav selectedText={ getEarnSelectedText() }>
+				<SectionNav selectedText={ getEarnSelectedText() } variation="minimal">
 					<NavTabs>
 						{ getEarnTabs().map( ( tabItem ) => {
 							return (
 								<NavItem
 									key={ tabItem.id }
 									path={ tabItem.path }
-									selected={ tabItem.path === currentPath }
+									selected={ isEarnTabSelected( tabItem ) }
 								>
 									{ tabItem.title }
 								</NavItem>
@@ -220,23 +239,25 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
 			/>
 			<DocumentHead
-				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Earn' ) }
+				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
-			<FormattedHeader
-				brandFont
-				className="earn__page-header"
-				headerText={ translate( 'Earn' ) }
-				subHeaderText={ translate(
-					'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
-						},
-					}
-				) }
-				align="left"
-			/>
-			{ getEarnSectionNav() }
+			{ ! isSingleSupporterSection( section ) && (
+				<>
+					<NavigationHeader
+						navigationItems={ [] }
+						title={ translate( 'Monetize' ) }
+						subtitle={ translate(
+							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+								},
+							}
+						) }
+					/>
+					{ getEarnSectionNav() }
+				</>
+			) }
 			{ isAdSection( section ) && getAdsHeader() }
 			{ getComponent( section ) }
 		</Main>

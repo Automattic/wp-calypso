@@ -108,10 +108,7 @@ export type ESRelatedPlugin = {
 	slug?: string;
 	name?: string;
 	rating?: number;
-	variations: {
-		monthly: { product_slug?: string; product_id?: number };
-		yearly: { product_slug?: string; product_id?: number };
-	};
+	variations: PluginPeriodVariations;
 };
 
 export type RelatedPlugin = {
@@ -123,12 +120,14 @@ export type RelatedPlugin = {
 	slug?: string;
 	name?: string;
 	rating?: number;
-	variations?: {
-		monthly: { product_slug?: string; product_id?: number };
-		yearly: { product_slug?: string; product_id?: number };
-	};
+	variations?: PluginPeriodVariations;
 };
 
 export type AddPluginUpgrade = {
 	success: true;
+};
+
+export type PluginPeriodVariations = {
+	monthly: { product_slug?: string; product_id?: number };
+	yearly: { product_slug?: string; product_id?: number };
 };

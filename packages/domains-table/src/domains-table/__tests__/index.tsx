@@ -705,7 +705,6 @@ describe( 'column sorting', () => {
 test( 'when current user is the owner, they can bulk update contact info', () => {
 	render(
 		<DomainsTable
-			shouldDisplayContactInfoBulkAction
 			currentUserCanBulkUpdateContactInfo
 			domains={ [ testPartialDomain( { domain: 'example1.com', current_user_is_owner: true } ) ] }
 			isAllSitesView
@@ -722,7 +721,6 @@ test( 'when current user is the owner, they can bulk update contact info', () =>
 test( 'when current user is not the owner, they cannot bulk update contact info', () => {
 	render(
 		<DomainsTable
-			shouldDisplayContactInfoBulkAction
 			currentUserCanBulkUpdateContactInfo
 			domains={ [
 				testPartialDomain( { domain: 'example1.com', current_user_is_owner: false } ),
@@ -744,7 +742,6 @@ test( 'when current user is not the owner, they cannot bulk update contact info'
 test( 'when the current user is not allowed to bulk update the contact info, disable the action', () => {
 	render(
 		<DomainsTable
-			shouldDisplayContactInfoBulkAction
 			currentUserCanBulkUpdateContactInfo={ false }
 			isAllSitesView
 			domains={ [ testPartialDomain( { domain: 'example1.com' } ) ] }

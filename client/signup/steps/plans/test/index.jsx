@@ -1,6 +1,5 @@
 /** @jest-environment jsdom */
 jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="step-wrapper" /> );
-jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 jest.mock( 'calypso/components/data/query-plans', () => 'query-plans' );
 jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
@@ -121,7 +120,7 @@ describe( 'Plans.onSelectPlan', () => {
 	test( 'Should call recordEvent when cartItem is specified', () => {
 		const recordTracksEvent = jest.fn();
 		const comp = new PlansStep( { ...tplProps, recordTracksEvent } );
-		comp.onSelectPlan( getCartItems( { free_trial: false } ) );
+		comp.onSelectPlan( getCartItems( {} ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalled();
 
@@ -130,7 +129,6 @@ describe( 'Plans.onSelectPlan', () => {
 		expect( args[ 0 ] ).toEqual( 'calypso_signup_plan_select' );
 		expect( args[ 1 ] ).toEqual( {
 			product_slug: PLAN_FREE,
-			free_trial: false,
 			from_section: 'Step section name',
 		} );
 	} );

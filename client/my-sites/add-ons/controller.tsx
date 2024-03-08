@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page, { type Callback } from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsMain from './main';
 
-export const addOnsSiteSelectionHeader = ( context: PageJS.Context, next: () => void ) => {
+export const addOnsSiteSelectionHeader: Callback = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
 		return translate( 'Select a site to open {{strong}}Add-Ons{{/strong}}', {
 			components: {
@@ -16,7 +16,7 @@ export const addOnsSiteSelectionHeader = ( context: PageJS.Context, next: () => 
 	next();
 };
 
-export const addOnsManagement = ( context: PageJS.Context, next: () => void ) => {
+export const addOnsManagement: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
@@ -26,12 +26,12 @@ export const addOnsManagement = ( context: PageJS.Context, next: () => void ) =>
 		return null;
 	}
 
-	context.primary = <AddOnsMain context={ context } />;
+	context.primary = <AddOnsMain />;
 
 	next();
 };
 
-export const redirectIfNotEnabled = ( context: PageJS.Context, next: () => void ) => {
+export const redirectIfNotEnabled: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 

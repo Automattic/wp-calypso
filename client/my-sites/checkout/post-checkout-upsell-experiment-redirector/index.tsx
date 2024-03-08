@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useCallback, useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';

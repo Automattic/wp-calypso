@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';

@@ -25,10 +25,10 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	body,
 	badge,
 	actions,
+	variation,
 } ) => {
 	const cta = actions?.cta;
 	const learnMoreLink = actions?.learnMoreLink;
-	const featureIncludedInPlan = actions?.featureIncludedInPlan;
 	const getCtaComponent = () => {
 		if ( ! cta ) {
 			return null;
@@ -36,13 +36,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 		if ( 'component' in cta && cta.component ) {
 			return cta.component;
 		}
-		return (
-			<PromoCardCta
-				cta={ cta }
-				learnMoreLink={ learnMoreLink }
-				featureIncludedInPlan={ featureIncludedInPlan }
-			/>
-		);
+		return <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } />;
 	};
 	const ctaComponent = getCtaComponent();
 	return (
@@ -52,6 +46,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 			image={ image }
 			badge={ badge }
 			icon={ icon }
+			variation={ variation }
 		>
 			<p>{ body }</p>
 			{ ctaComponent }

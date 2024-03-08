@@ -21,7 +21,7 @@ const useRecipe = (
 	recordPreviewStyleVariation: ( design: Design, styleVariation?: StyleVariation ) => void
 ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
-	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
+	const isPreviewingDesign = !! searchParams.get( 'theme' );
 	const { selectedDesign, selectedStyleVariation } = useSelect( ( select ) => {
 		const { getSelectedDesign, getSelectedStyleVariation } = select(
 			ONBOARD_STORE
@@ -53,18 +53,22 @@ const useRecipe = (
 	 * Get the preselect data only when mounting and ignore any changes later.
 	 */
 	const {
-		preselectedTheme,
-		preselectedStyle,
+		preselectedThemeSlug,
+		preselectedStyleSlug,
 		preselectedColorVariationTitle,
 		preselectedFontVariationTitle,
 	} = useMemo(
 		() => ( {
-			preselectedTheme: searchParams.get( 'theme' ),
-			preselectedStyle: searchParams.get( 'style_variation' ),
+			preselectedThemeSlug: searchParams.get( 'theme' ),
+			preselectedStyleSlug: searchParams.get( 'style_variation' ),
 			preselectedColorVariationTitle: searchParams.get( 'color_variation_title' ),
 			preselectedFontVariationTitle: searchParams.get( 'font_variation_title' ),
 		} ),
 		[]
+	);
+
+	const preselectedDesign = allDesigns?.designs?.find(
+		( design ) => ( design.is_virtual ? design.recipe?.slug : design.slug ) === preselectedThemeSlug
 	);
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
@@ -79,17 +83,25 @@ const useRecipe = (
 
 	const handleSelectedDesignChange = ( design?: Design ) => {
 		setSelectedDesign( design );
-		setSearchParams( ( currentSearchParams ) => {
-			if ( design && design.is_virtual && design.recipe?.slug ) {
-				currentSearchParams.set( 'theme', design.recipe?.slug );
-			} else if ( design ) {
-				currentSearchParams.set( 'theme', design.slug );
-			} else {
-				currentSearchParams.delete( 'theme' );
-			}
 
-			return currentSearchParams;
-		} );
+		let theme: string | null = null;
+		if ( design && design.is_virtual && design.recipe?.slug ) {
+			theme = design.recipe?.slug;
+		} else if ( design ) {
+			theme = design.slug;
+		}
+
+		if ( theme !== searchParams.get( 'theme' ) ) {
+			setSearchParams( ( currentSearchParams ) => {
+				if ( theme ) {
+					currentSearchParams.set( 'theme', theme );
+				} else {
+					currentSearchParams.delete( 'theme' );
+				}
+
+				return currentSearchParams;
+			} );
+		}
 	};
 
 	const handleSelectedStyleVariationChange = ( variation?: StyleVariation ) => {
@@ -151,8 +163,6 @@ const useRecipe = (
 
 		handleSelectedDesignChange( design );
 		handleSelectedStyleVariationChange( styleVariation );
-
-		setIsPreviewingDesign( true );
 	};
 
 	const previewDesignVariation = ( variation: StyleVariation ) => {
@@ -166,50 +176,40 @@ const useRecipe = (
 		handleSelectedColorVariationChange( null );
 		handleSelectedFontVariationChange( null );
 		setGlobalStyles( null );
-		setIsPreviewingDesign( false );
 	};
 
 	// Unset the selected design, thus restarting the design picking experience.
 	useEffect( () => {
-		if ( ! preselectedTheme ) {
+		if ( ! preselectedThemeSlug ) {
 			resetPreview();
 		}
-	}, [ preselectedTheme ] );
+	}, [ preselectedThemeSlug ] );
 
 	// Initialize the preselected design and style variations.
 	useEffect( () => {
-		if ( ! allDesigns || ! preselectedTheme ) {
+		if ( ! preselectedDesign ) {
 			return;
 		}
 
-		const requestedDesign = allDesigns.designs.find( ( design ) =>
-			design.is_virtual
-				? design.recipe?.slug === preselectedTheme
-				: design.slug === preselectedTheme
-		);
-		if ( ! requestedDesign ) {
-			pickUnlistedDesign( preselectedTheme );
-			return;
-		}
-
-		if ( preselectedStyle ) {
-			const requestedStyleVariation = requestedDesign.style_variations?.find(
-				( styleVariation ) => styleVariation.slug === preselectedStyle
+		setSelectedDesign( preselectedDesign );
+		if ( preselectedStyleSlug ) {
+			const preselectedStyleVariation = preselectedDesign.style_variations?.find(
+				( styleVariation ) => styleVariation.slug === preselectedStyleSlug
 			);
 
-			setSelectedStyleVariation( requestedStyleVariation );
+			setSelectedStyleVariation( preselectedStyleVariation );
+		}
+	}, [ preselectedDesign, preselectedStyleSlug, setSelectedDesign, setSelectedStyleVariation ] );
+
+	useEffect( () => {
+		if ( ! allDesigns ) {
+			return;
 		}
 
-		setSelectedDesign( requestedDesign );
-		setIsPreviewingDesign( true );
-	}, [
-		preselectedTheme,
-		preselectedStyle,
-		allDesigns,
-		pickUnlistedDesign,
-		setSelectedDesign,
-		setSelectedStyleVariation,
-	] );
+		if ( preselectedThemeSlug && ! preselectedDesign ) {
+			pickUnlistedDesign( preselectedThemeSlug );
+		}
+	}, [ allDesigns, preselectedThemeSlug, preselectedDesign, pickUnlistedDesign ] );
 
 	/**
 	 * Initialize the preselected colors

@@ -4,10 +4,11 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
@@ -22,7 +23,7 @@ import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
 import './trial-current-plan.scss';
 
 const TrialCurrentPlan = () => {
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSite = useSelector( getSelectedSite );
 
 	const translate = useTranslate();
 
@@ -50,7 +51,6 @@ const TrialCurrentPlan = () => {
 
 	/**
 	 * Redirects to the checkout page with Plan on cart.
-	 *
 	 * @param ctaPosition - The position of the CTA that triggered the redirect.
 	 */
 	const goToCheckoutWithPlan = ( ctaPosition: string ) => {
@@ -81,7 +81,7 @@ const TrialCurrentPlan = () => {
 			return <EcommerceTrialIncluded displayAll={ displayAllIncluded } />;
 		}
 
-		return <BusinessTrialIncluded displayAll={ displayAllIncluded } />;
+		return <BusinessTrialIncluded displayAll={ displayAllIncluded } tracksContext="current_plan" />;
 	};
 
 	return (
@@ -100,7 +100,9 @@ const TrialCurrentPlan = () => {
 
 				{ ! displayAllIncluded && (
 					<Button
-						className="trial-current-plan__included-view-all"
+						className={ classnames( 'trial-current-plan__included-view-all', {
+							'is-ecommerce': isEcommerceTrial,
+						} ) }
 						onClick={ viewAllIncludedFeatures }
 					>
 						{ translate( 'View all' ) }

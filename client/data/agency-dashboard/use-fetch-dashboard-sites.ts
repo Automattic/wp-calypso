@@ -1,12 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useTranslate } from 'i18n-calypso';
+import { useQuery } from '@tanstack/react-query';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
 import type {
 	AgencyDashboardFilter,
 	DashboardSortInterface,
-	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
@@ -34,13 +30,24 @@ const useFetchDashboardSites = (
 	searchQuery: string,
 	currentPage: number,
 	filter: AgencyDashboardFilter,
-	sort: DashboardSortInterface
+	sort: DashboardSortInterface,
+	per_page?: number
 ) => {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
+	let query_key = [
+		'jetpack-agency-dashboard-sites',
+		searchQuery,
+		currentPage,
+		filter,
+		sort,
+		per_page,
+	];
+	// If per_page is not provided, we want to remove per_page from the query_key as existing tests don't pass otherwise.
+	if ( ! per_page ) {
+		query_key = [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ];
+	}
+
 	return useQuery( {
-		queryKey: [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ],
+		queryKey: query_key,
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -52,33 +59,17 @@ const useFetchDashboardSites = (
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
+					per_page: per_page ?? 20,
 				}
 			),
 		select: ( data ) => {
 			return {
-				sites: data.sites.map( ( site: Site ) => {
-					// Since the "sites" API includes the "is_connected" property in the cache of the query set by
-					// the "useFetchTestConnection" hook, we are setting it here again since the "sites" API gets called
-					// more often than the "/test-connection" API which will flush the cache set by the
-					// "useFetchTestConnection" hook
-					const data: { connected: boolean } | undefined = queryClient.getQueryData( [
-						'jetpack-agency-test-connection',
-						site.blog_id,
-					] );
-					return {
-						...site,
-						is_connected: data?.hasOwnProperty( 'connected' ) ? data.connected : true,
-					};
-				} ),
+				sites: data.sites,
 				total: data.total,
 				perPage: data.per_page,
 				totalFavorites: data.total_favorites,
 			};
 		},
-		onError: () =>
-			dispatch(
-				errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ) )
-			),
 		enabled: isPartnerOAuthTokenLoaded,
 	} );
 };

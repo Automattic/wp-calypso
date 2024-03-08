@@ -27,7 +27,8 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 				<div className="payment-method-delete-primary-confirmation__card">
 					<p className="payment-method-delete-primary-confirmation__notice">
 						{ translate(
-							'Issuing new licenses will be paused until you add a new primary payment method.'
+							'Issuing new licenses will be paused until you add a new primary payment method. ' +
+								'Additionally, the existing licenses will be revoked at the end of their respective terms.'
 						) }
 					</p>
 				</div>

@@ -22,6 +22,7 @@ const StatsCard = ( {
 	additionalHeaderColumns,
 	toggleControl,
 	headerClassName,
+	overlay,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
 
@@ -76,32 +77,39 @@ const StatsCard = ( {
 	);
 
 	return (
-		<div className={ classNames( className, BASE_CLASS_NAME ) }>
-			{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
-			<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-				{ splitHeader ? splitHeaderNode : simpleHeaderNode }
-				<div
-					className={ classNames( `${ BASE_CLASS_NAME }--body`, {
-						[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
-					} ) }
-				>
-					{ isEmpty ? emptyMessage : children }
+		<div
+			className={ classNames( className, BASE_CLASS_NAME, {
+				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
+			} ) }
+		>
+			<div className={ `${ BASE_CLASS_NAME }__content` }>
+				{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
+				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
+					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
+					<div
+						className={ classNames( `${ BASE_CLASS_NAME }--body`, {
+							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
+						} ) }
+					>
+						{ isEmpty ? emptyMessage : children }
+					</div>
 				</div>
+				{ footerAction && (
+					<a
+						className={ `${ BASE_CLASS_NAME }--footer` }
+						href={ footerAction?.url }
+						aria-label={
+							translate( 'View all %(title)s', {
+								args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
+								comment: '"View all posts & pages", "View all referrers", etc.',
+							} ) as string
+						}
+					>
+						{ footerAction.label || translate( 'View all' ) }
+					</a>
+				) }
 			</div>
-			{ footerAction && (
-				<a
-					className={ `${ BASE_CLASS_NAME }--footer` }
-					href={ footerAction?.url }
-					aria-label={
-						translate( 'View all %(title)s', {
-							args: { title: title.toLocaleLowerCase() },
-							comment: '"View all posts & pages", "View all referrers", etc.',
-						} ) as string
-					}
-				>
-					{ footerAction.label || translate( 'View all' ) }
-				</a>
-			) }
+			{ overlay && <div className={ `${ BASE_CLASS_NAME }__overlay` }>{ overlay }</div> }
 		</div>
 	);
 };

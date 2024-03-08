@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
 import imgFreeDomain from 'calypso/assets/images/cancellation/free-domain.png';
@@ -254,11 +254,12 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 												disabled={ isOpeningChatWidget }
 												onClick={ () => {
 													page( `/domains/manage/${ site.slug }` );
-													openChatWidget(
-														"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+													openChatWidget( {
+														message:
+															"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 															props.cancellationReason,
-														site.URL
-													);
+														siteUrl: site.URL,
+													} );
 												} }
 												variant="link"
 											/>

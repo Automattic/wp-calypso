@@ -38,6 +38,8 @@ To create a flow, you only have to implement `useSteps` and `useStepNavigation`.
 
 There is also an optional `useSideEffect` hook. You can implement this hook to run any side-effects to the flow. You can prefetch information, send track events when something changes, etc...
 
+There is a required `isSignupFlow` flag that _MUST be `true` for signup flows_ (generally where a new site may be created), and should be `false` for other flows. The `isSignupFlow` flag controls whether we'll trigger a `calypso_signup_start` Tracks event when the flow starts. For signup flows, you can also supply additional event props to the `calypso_signup_start` event by implementing the optional `useSignupStartEventProps()` hook on the flow.
+
 ```tsx
 // prettier-ignore
 /**
@@ -113,6 +115,10 @@ This creates a couple of restrictions.
 To maintain the reusability and simplicity of this framework it is important that flow-specific styling changes be made to a `flow` stylesheet or in `global.scss`. Each step should have the basic styling necessary to operate on its own just like a package.
 
 And each step should only get flow-level state from a store (not props).
+
+## Renaming Steps
+
+There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to `getStepOldSlug` in the `FlowRenderer` component. This ensures that tracks events will fire with both the new step slug and the old step slug.
 
 ## State management
 

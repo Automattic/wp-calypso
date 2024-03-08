@@ -3,8 +3,14 @@ import {
 	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS,
+	getPlan,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import {
+	CompactCard,
+	FormInputValidation as FormTextValidation,
+	FormLabel,
+} from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { pick } from 'lodash';
 import { useState, useEffect } from 'react';
@@ -12,7 +18,6 @@ import { connect } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -41,6 +46,7 @@ export function CloudflareAnalyticsSettings( {
 	uniqueEventTracker,
 	showUpgradeNudge,
 	site,
+	premiumPlanName,
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
@@ -115,9 +121,9 @@ export function CloudflareAnalyticsSettings( {
 
 	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
-
-		const nudgeTitle = translate( 'Available with Premium plans or higher' );
-
+		const nudgeTitle = translate( 'Available with %(premiumPlanName)s plans or higher', {
+			args: { premiumPlanName },
+		} );
 		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
 			type: TYPE_PREMIUM,
 		} );
@@ -243,6 +249,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		showUpgradeNudge: ! isAnalyticsEligible,
 		enableForm: isAnalyticsEligible,
+		premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle(),
 	};
 };
 

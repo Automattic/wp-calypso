@@ -67,6 +67,16 @@ export const domainLockStatusType = {
 	UNKNOWN: 'unknown',
 } as const;
 
+export const domainMappingInstructionsMode = {
+	[ modeType.SUGGESTED ]: stepSlug.SUGGESTED_UPDATE,
+	[ modeType.ADVANCED ]: stepSlug.ADVANCED_UPDATE,
+} as const;
+
+export const subdomainMappingInstructionsMode = {
+	[ modeType.SUGGESTED ]: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+	[ modeType.ADVANCED ]: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+} as const;
+
 export const stepsHeading = {
 	get SUGGESTED() {
 		return __( 'Suggested setup' );

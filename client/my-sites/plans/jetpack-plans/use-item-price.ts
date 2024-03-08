@@ -3,6 +3,7 @@ import {
 	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { isNumber } from 'lodash';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import {
@@ -24,7 +25,9 @@ import type { PriceTierEntry } from '@automattic/calypso-products';
 interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
+	originalPriceTotal?: number;
 	discountedPrice?: number;
+	discountedPriceTotal?: number | null;
 	discountedPriceDuration?: number;
 	priceTierList: PriceTierEntry[];
 }
@@ -104,10 +107,14 @@ const useIntroductoryOfferPrices = (
 
 	const isFetching =
 		useSelector( ( state ) => !! isRequestingIntroOffers( state, siteId ?? undefined ) ) || null;
-	const introOfferCost =
-		useSelector(
-			( state ) => product && getIntroOfferPrice( state, product.product_id, siteId ?? 'none' )
-		) || null;
+	const introOfferCost = useSelector( ( state ) => {
+		if ( ! product ) {
+			return null;
+		}
+
+		const introOfferPrice = getIntroOfferPrice( state, product.product_id, siteId ?? 'none' );
+		return isNumber( introOfferPrice ) ? introOfferPrice : null;
+	} );
 
 	return {
 		isFetching,
@@ -155,16 +162,20 @@ const useItemPrice = (
 	}
 
 	let originalPrice = 0;
-	let discountedPrice = undefined;
-	let discountedPriceDuration = undefined;
+	let originalPriceTotal;
+	let discountedPrice;
+	let discountedPriceDuration;
+	let discountedPriceTotal;
 
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( item.term !== TERM_MONTHLY ) {
 			originalPrice = getMonthlyPrice( itemCost ); // monthlyItemCost - See comment above.
-			discountedPrice = introductoryOfferPrices.introOfferCost
+			originalPriceTotal = itemCost;
+			discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
+			discountedPriceTotal = introductoryOfferPrices.introOfferCost;
 
 			// Override Jetpack Social Advanced price by hard-coding it for now
 			if (
@@ -172,9 +183,10 @@ const useItemPrice = (
 					item?.productSlug as ( typeof JETPACK_SOCIAL_ADVANCED_PRODUCTS )[ number ]
 				)
 			) {
-				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
-
-				if ( discountedPrice ) {
+				discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
+					? introductoryOfferPrices.introOfferCost
+					: undefined;
+				if ( isNumber( discountedPrice ) ) {
 					discountedPriceDuration = 1;
 				}
 			}
@@ -197,8 +209,10 @@ const useItemPrice = (
 	return {
 		isFetching,
 		originalPrice,
+		originalPriceTotal,
 		discountedPrice,
 		discountedPriceDuration,
+		discountedPriceTotal,
 		priceTierList,
 	};
 };

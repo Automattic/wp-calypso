@@ -66,6 +66,7 @@ Each payment method is an object with the following properties:
 - `id: string`. A unique id for this instance of this payment method.
 - `paymentProcessorId: string`. The id that will be used to map this payment method to a payment processor function. Unlike the `id`, this does not have to be unique.
 - `label?: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
+- `hasRequiredFields?: boolean`. If the payment method `activeContent` contains fields or other required interactions, this must be true!
 - `activeContent?: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
 - `inactiveContent?: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
 - `submitButton: React.ReactNode`. A component button that is used to submit the payment method. This button should include a click handler that performs the actual payment process. When disabled, it will be provided with the `disabled` prop and must disable the button.
@@ -75,7 +76,7 @@ Within the components inside [CheckoutProvider](#CheckoutProvider), [usePaymentM
 
 When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. For convenience, the `submitButton` will be provided with an `onClick` function prop that will begin the transaction. The `onClick` function takes one argument, an object that contains the data needed by the payment processor function.
 
-The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of four results: [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
+The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of three results: [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
 
 ## API
 
@@ -110,8 +111,6 @@ Renders its `children` prop and acts as a React Context provider. All of checkou
 
 It has the following props.
 
-- `items: object[]`. An array of [line item objects](#line-items) that will be displayed in the form.
-- `total: object`. A [line item object](#line-items) with the final total to be paid.
 - `theme?: object`. A [theme object](#styles-and-themes).
 - `onPaymentComplete?: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id and the transaction response as set by the payment processor function.
 - `onPaymentRedirect?: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for redirect payment methods when payment begins to redirect. Passed the current payment method id and the transaction response as set by the payment processor function.
@@ -126,13 +125,11 @@ It has the following props.
 - `initiallySelectedPaymentMethodId?: string | null`. If set, is used to preselect a payment method on first load or when the `paymentMethods` array changes. Default is `null`, which yields no initial selection. To change the selection in code, see the [`usePaymentMethodId`](#usePaymentMethodId) hook. If a disabled payment method is chosen, it will appear that no payment method is selected.
 - `selectFirstAvailablePaymentMethod?: boolean`. If set and `initiallySelectedPaymentMethodId` is _not_ set, this is used to preselect a payment method on first load or when the `paymentMethods` array changes.
 
-The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
-
 In addition, `CheckoutProvider` monitors the [transaction status](#useTransactionStatus) and will take actions when it changes.
 
 - If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
 - If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be sent to the `onPaymentError` handler.
-- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
+- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the `onPaymentComplete` function will be called.
 - If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will register an error as above if there is no url).
 - If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
@@ -204,7 +201,6 @@ An enum that holds the values of the [form status](#useFormStatus).
 - `.READY`
 - `.SUBMITTING`
 - `.VALIDATING`
-- `.COMPLETE`
 
 ### PaymentMethodStep
 
@@ -216,7 +212,6 @@ An enum that holds the values of the [payment processor function return value's 
 
 - `.SUCCESS` (the payload will be an `unknown` object that is the server response).
 - `.REDIRECT` (the payload will be a `string` that is the redirect URL).
-- `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
 - `.ERROR` (the payload will be a `string` that is the error message).
 
 ### TransactionStatus
@@ -241,10 +236,6 @@ A function to create a `CheckoutStepGroupStore` which can be passed to [Checkout
 
 An action creator function to be used by a [payment processor function](#payment-methods) for a [ERROR](#PaymentProcessorResponseType) response. It takes one string argument and will record the string as the error.
 
-### makeManualResponse
-
-An action creator function to be used by a [payment processor function](#payment-methods) for a [MANUAL](#PaymentProcessorResponseType) response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
-
 ### makeRedirectResponse
 
 An action creator function to be used by a [payment processor function](#payment-methods) for a [REDIRECT](#PaymentProcessorResponseType) response. It takes one string argument and will cause the page to redirect to the URL in that string.
@@ -266,7 +257,6 @@ A React Hook that will return an object with the following properties. Used to r
 - `setFormLoading: () => void`. Function to change the form status to [`.LOADING`](#FormStatus).
 - `setFormValidating: () => void`. Function to change the form status to [`.VALIDATING`](#FormStatus).
 - `setFormSubmitting: () => void`. Function to change the form status to [`.SUBMITTING`](#FormStatus). Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
-- `setFormComplete: () => void`. Function to change the form status to [`.COMPLETE`](#FormStatus). Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
 
 Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 
@@ -301,10 +291,6 @@ A React Hook that will return the `onClick` function passed to each [payment met
 ### useSetStepComplete
 
 A React Hook that will return a function to set a step to "complete". Only works within a step but it does not have to be the targeted step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Continue" button on the specified step; it will call the `isCompleteCallback` prop of the step and only succeed if the callback succeeds. In addition, all previous incomplete steps will be marked as complete in the same way, and the process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all the requested steps were completed and false if any of them failed.
-
-### useTotal
-
-A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
 
 ### useTogglePaymentMethod
 

@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { FoldableCard } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
-import FoldableCard from 'calypso/components/foldable-card';
 import type { AccordionProps } from './types';
 import './style.scss';
 
@@ -13,6 +13,7 @@ const Accordion = ( {
 	isDisabled,
 	expanded = false,
 	onClose,
+	onOpen,
 	className,
 }: AccordionProps ) => {
 	const classes = classNames( {
@@ -49,6 +50,7 @@ const Accordion = ( {
 					</button>
 				}
 				onClose={ onClose }
+				onOpen={ onOpen }
 			>
 				{ children }
 			</FoldableCard>

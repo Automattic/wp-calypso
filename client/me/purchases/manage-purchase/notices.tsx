@@ -9,12 +9,14 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_HOSTING_TRIAL_MONTHLY,
 	is100Year,
+	getPlanPath,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -42,6 +44,7 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	isMonthlyPurchase,
 } from 'calypso/lib/purchases';
+import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -143,7 +146,6 @@ class PurchaseNotice extends Component<
 
 	/**
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
-	 *
 	 * @param  {Object} purchase  The purchase object
 	 * @param  {Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
@@ -307,7 +309,11 @@ class PurchaseNotice extends Component<
 	};
 
 	renderPurchaseExpiringNotice() {
-		const EXCLUDED_PRODUCTS = [ PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_MIGRATION_TRIAL_MONTHLY ];
+		const EXCLUDED_PRODUCTS = [
+			PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			PLAN_MIGRATION_TRIAL_MONTHLY,
+			PLAN_HOSTING_TRIAL_MONTHLY,
+		];
 		const {
 			moment,
 			purchase,
@@ -1059,12 +1065,39 @@ class PurchaseNotice extends Component<
 	renderTrialNotice( productSlug: string ) {
 		const { moment, purchase, selectedSite, translate } = this.props;
 		const onClick = () => {
-			return page( `/plans/${ selectedSite?.slug }` );
+			const selectedSiteSlug = selectedSite?.slug;
+			const isEcommerceTrialMonthly = productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
+			if ( isEcommerceTrialMonthly ) {
+				this.props.recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
+					current_plan_slug: productSlug,
+					to_checkout: false,
+				} );
+
+				return page( `/plans/${ selectedSiteSlug }` );
+			}
+
+			const upgradePlanSlug = getPlan( PLAN_BUSINESS )?.getStoreSlug();
+
+			this.props.recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
+				current_plan_slug: productSlug,
+				to_checkout: true,
+				upgrade_plan_slug: upgradePlanSlug,
+			} );
+
+			const planPath = getPlanPath( upgradePlanSlug ?? '' ) ?? '';
+			const checkoutUrl = getTrialCheckoutUrl( {
+				productSlug: planPath,
+				siteSlug: selectedSiteSlug ?? '',
+			} );
+
+			return page( checkoutUrl );
 		};
+
 		const expiry = moment.utc( purchase.expiryDate );
 		const daysToExpiry = isExpired( purchase )
 			? 0
-			: Math.ceil( expiry.diff( moment().utc(), 'days', true ) );
+			: Math.floor( expiry.diff( moment().utc(), 'days', true ) );
 		const productType =
 			productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
 				? translate( 'ecommerce' )
@@ -1115,7 +1148,8 @@ class PurchaseNotice extends Component<
 
 		if (
 			purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY
+			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			purchase.productSlug === PLAN_HOSTING_TRIAL_MONTHLY
 		) {
 			return this.renderTrialNotice( purchase.productSlug );
 		}

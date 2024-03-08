@@ -34,6 +34,14 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
 							icon={ <Gridicon icon="mail" /> }
 						/>
+						{ counts?.unique_opens ? (
+							<TopCard
+								heading={ translate( 'Unique opens' ) }
+								value={ counts.unique_opens }
+								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_opens' ) }
+								icon={ <Icon icon={ eye } /> }
+							/>
+						) : null }
 						<TopCard
 							heading={ translate( 'Total opens' ) }
 							value={ counts?.total_opens ?? 0 }

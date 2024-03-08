@@ -2,8 +2,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import getActionEventName from './get-action-event-name';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
@@ -14,6 +15,8 @@ export default function useSiteActions(
 ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const siteValue = site?.value;
 
@@ -34,55 +37,65 @@ export default function useSiteActions(
 		const isWPCOMAtomicSiteCreationEnabled =
 			isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && is_atomic;
 
+		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
+
 		return [
 			{
 				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/home/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'set_up_site' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMAtomicSiteCreationEnabled,
+				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Change domain' ),
 				href: `https://wordpress.com/domains/manage/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'change_domain' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMAtomicSiteCreationEnabled,
+				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Hosting configuration' ),
 				href: `https://wordpress.com/hosting-config/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'hosting_configuration' ),
 				isExternalLink: true,
-				isEnabled: isWPCOMAtomicSiteCreationEnabled,
+				isEnabled: isWPCOMAtomicSiteCreationEnabled && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`,
+				href: partnerCanIssueLicense
+					? `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`
+					: undefined,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled: ! siteError,
+				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),
-				href: `/activity-log/${ siteSlug }`,
+				href: is_atomic
+					? `https://wordpress.com/activity-log/${ siteSlug }`
+					: `/activity-log/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'view_activity' ),
-				isExternalLink: false,
-				isEnabled: ! siteError,
+				isExternalLink: is_atomic,
+				isEnabled: ! siteError && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Copy this site' ),
-				href: `/backup/${ siteSlug }/clone`,
+				href: is_atomic
+					? `https://wordpress.com/backup/${ siteSlug }/clone`
+					: `/backup/${ siteSlug }/clone`,
 				onClick: () => handleClickMenuItem( 'clone_site' ),
-				isExternalLink: false,
-				isEnabled: has_backup,
+				isExternalLink: is_atomic,
+				isEnabled: has_backup && ! isUrlOnly,
 			},
 			{
 				name: translate( 'Site settings' ),
-				href: `/settings/${ siteSlug }`,
+				href: is_atomic
+					? `https://wordpress.com/settings/general/${ siteSlug }`
+					: `/settings/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'site_settings' ),
-				isExternalLink: false,
-				isEnabled: has_backup,
+				isExternalLink: is_atomic,
+				isEnabled: has_backup && ! isUrlOnly,
 			},
 			{
 				name: translate( 'View site' ),
@@ -96,8 +109,8 @@ export default function useSiteActions(
 				href: `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard`,
 				onClick: () => handleClickMenuItem( 'visit_wp_admin' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: true && ! isUrlOnly,
 			},
 		];
-	}, [ dispatch, isLargeScreen, siteError, siteValue, translate ] );
+	}, [ dispatch, isLargeScreen, partnerCanIssueLicense, siteError, siteValue, translate ] );
 }

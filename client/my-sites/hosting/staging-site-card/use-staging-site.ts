@@ -10,7 +10,9 @@ export interface StagingSite {
 	user_has_permission: boolean;
 }
 
-export const useStagingSite = ( siteId: number, options: UseQueryOptions ) => {
+type StagingSiteOptions = Pick< UseQueryOptions, 'enabled' >;
+
+export const useStagingSite = ( siteId: number, options: StagingSiteOptions ) => {
 	return useQuery< Array< StagingSite >, unknown, Array< StagingSite > >( {
 		queryKey: [ USE_STAGING_SITE_QUERY_KEY, siteId ],
 		queryFn: () =>
@@ -19,13 +21,9 @@ export const useStagingSite = ( siteId: number, options: UseQueryOptions ) => {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		enabled: !! siteId && ( options.enabled ?? true ),
-		select: ( data ) => {
-			return data;
-		},
 		meta: {
 			persist: false,
 		},
 		staleTime: 10 * 1000,
-		onError: options.onError,
 	} );
 };

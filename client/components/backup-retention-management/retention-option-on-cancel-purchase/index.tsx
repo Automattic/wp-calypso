@@ -1,8 +1,8 @@
 import { camelOrSnakeSlug } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { productHasBackups } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import ExternalLink from 'calypso/components/external-link';
 import HasRetentionCapabilitiesSwitch from 'calypso/jetpack-cloud/sections/settings/has-retention-capabilities-switch';

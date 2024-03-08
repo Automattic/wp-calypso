@@ -8,7 +8,9 @@ function useUpdateSiteMonitorSettingsMutation( siteId, queryOptions = {} ) {
 		mutationFn: ( { settings } ) => wp.req.post( `/jetpack-blogs/${ siteId }`, settings ),
 		...queryOptions,
 		onSuccess( ...args ) {
-			queryClient.invalidateQueries( [ 'site-monitor-settings', siteId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'site-monitor-settings', siteId ],
+			} );
 			queryOptions.onSuccess?.( ...args );
 		},
 	} );

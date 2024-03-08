@@ -53,15 +53,16 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 
+// NOTE: We reverted some of these changes, but in the future, we will need to avoid
+// using the readonly cache again if we generate the cache image inline on trunk.
+//
 // Readonly cache prevents writing to the cache directory, which is good for performance.
 // However, on trunk (and when generating cache images), we want to write to the cache
 // so that we can then update the cache to use in subsequent builds. While this costs
 // a minute in the current build, an updated cache saves 2 minutes in many future builds.
 // Note that in local builds, IS_DEFAULT_BRANCH is not set, in which case we should also write to the cache.
 const shouldUseReadonlyCache = ! (
-	process.env.IS_DEFAULT_BRANCH === 'true' ||
-	process.env.GENERATE_CACHE_IMAGE === 'true' ||
-	process.env.IS_DEFAULT_BRANCH === undefined
+	process.env.GENERATE_CACHE_IMAGE === 'true' || process.env.IS_DEFAULT_BRANCH === undefined
 );
 
 const shouldProfile = process.env.PROFILE === 'true';
@@ -208,14 +209,7 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify( {
-			parallel: workerCount,
-			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
-			terserOptions: {
-				compress: true,
-				mangle: true,
-			},
-		} ),
+		minimizer: Minify(),
 	},
 	module: {
 		strictExportPresence: true,
@@ -301,6 +295,7 @@ const webpackConfig = {
 	node: false,
 	plugins: [
 		new webpack.DefinePlugin( {
+			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),

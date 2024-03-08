@@ -41,7 +41,6 @@ export class ConfigApi extends Function {
 	init( configKey = 'configData' ) {
 		/**
 		 * Manages config flags for various deployment builds
-		 *
 		 * @module config/index
 		 */
 		if ( 'undefined' === typeof window ) {

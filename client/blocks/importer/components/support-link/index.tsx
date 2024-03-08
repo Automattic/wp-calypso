@@ -4,11 +4,12 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import type { Importer } from 'calypso/blocks/importer/types';
 
 interface Props {
+	text?: string;
 	importer: Importer;
 	supportLinkModal?: boolean;
 }
 const SupportLink: React.FunctionComponent< Props > = ( props ) => {
-	const { importer, supportLinkModal } = props;
+	const { text, importer, supportLinkModal } = props;
 
 	return (
 		<InlineSupportLink
@@ -16,7 +17,7 @@ const SupportLink: React.FunctionComponent< Props > = ( props ) => {
 			supportContext={ `importers-${ importer }` }
 			showSupportModal={ supportLinkModal }
 		>
-			{ translate( 'Need help exporting your content?' ) }
+			{ text || translate( 'Need help exporting your content?' ) }
 		</InlineSupportLink>
 	);
 };

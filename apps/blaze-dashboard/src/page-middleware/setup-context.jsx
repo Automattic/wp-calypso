@@ -1,12 +1,11 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
-import page from 'page';
 
 const debug = debugFactory( 'calypso' );
 
 export const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	page( '*', ( context, next ) => {
-		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.path );
 		const path = parsed.pathname + parsed.search || null;
 

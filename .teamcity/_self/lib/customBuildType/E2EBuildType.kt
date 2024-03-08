@@ -2,6 +2,7 @@ package _self.lib.customBuildType
 
 import Settings
 import _self.bashNodeScript
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.AbsoluteId
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
@@ -93,7 +94,6 @@ open class E2EBuildType(
 		params {
 			param("env.NODE_CONFIG_ENV", "test")
 			param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-			param("env.TEAMCITY_VERSION", "2021")
 			param("env.HEADLESS", "true")
 			param("env.LOCALE", "en")
 			param("env.DEBUG", "")
@@ -101,6 +101,12 @@ open class E2EBuildType(
 		}
 
 		steps {
+			// IMPORTANT! This step MUST match what the docker image does. If trunk
+			// is merged when building the docker image, it must also be merged
+			// to run the tests, or they may not be compatible. See the "mergeTrunk"
+			// step in BuildDockerImage in WebApp.kt.
+			mergeTrunk( skipIfConflict = true )
+
 			bashNodeScript {
 				name = "Prepare environment"
 				scriptContent = """

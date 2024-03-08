@@ -5,7 +5,6 @@ import * as React from 'react';
  *
  * Source:
  * https://github.com/reakit/reakit/blob/HEAD/packages/reakit-utils/src/useUpdateEffect.ts
- *
  * @param effect The effect.
  * @param deps Dependencies of the effect.
  */

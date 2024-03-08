@@ -7,7 +7,7 @@ const useUserLicenseBySubscriptionQuery = (
 	subscriptionId: number
 ): UseQueryResult< UserLicense > => {
 	const queryKey = [ 'user-license', subscriptionId ];
-	return useQuery< UserLicenseApi, unknown, UserLicense >( {
+	return useQuery< UserLicenseApi, Error, UserLicense >( {
 		queryKey,
 		queryFn: async () =>
 			wpcom.req.get( {

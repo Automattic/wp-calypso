@@ -1,8 +1,3 @@
-/* @wordpress/components Form toggles use the color scheme's background color */
-.components-form-toggle.is-checked .components-form-toggle__track {
-	background-color: var(--color-primary);
-}
-
 .components-form-toggle {
 	input[type="checkbox"] {
 		cursor: pointer;

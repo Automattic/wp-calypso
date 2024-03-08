@@ -7,12 +7,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { resendInvite } from 'calypso/state/invites/actions';
-import {
-	isRequestingInviteResend,
-	didInviteResendSucceed,
-	didInviteDeletionSucceed,
-} from 'calypso/state/invites/selectors';
+import { didInviteDeletionSucceed } from 'calypso/state/invites/selectors';
 
 import './style.scss';
 
@@ -22,14 +17,11 @@ class PeopleListItem extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 		invite: PropTypes.object,
-		showStatus: PropTypes.bool,
 		clickableItem: PropTypes.bool,
-		RevokeClearBtn: PropTypes.elementType,
 	};
 
 	static defaultProps = {
 		clickableItem: true,
-		RevokeClearBtn: null,
 	};
 
 	navigateToUser = () => {
@@ -92,61 +84,9 @@ class PeopleListItem extends PureComponent {
 		}
 	};
 
-	onResend = ( event ) => {
-		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
-
-		// Prevents navigation to invite-details screen and onClick event.
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( requestingResend || resendSuccess ) {
-			return null;
-		}
-
-		this.props.resendInvite( siteId, inviteKey );
-	};
-
-	renderInviteStatus = () => {
-		const { type, invite, translate, requestingResend, resendSuccess, RevokeClearBtn } = this.props;
-		const { isPending } = invite;
-		const className = classNames( 'people-list-item__invite-status', {
-			'is-pending': isPending,
-			'is-invite-details': type === 'invite-details',
-		} );
-		const btnResendClassName = classNames( 'people-list-item__invite-resend', {
-			'is-success': resendSuccess,
-		} );
-		const btnRevokeClassName = classNames( 'people-list-item__invite-revoke' );
-
-		return (
-			<div className={ className }>
-				{ isPending && (
-					<Button
-						className={ btnResendClassName }
-						onClick={ this.onResend }
-						busy={ requestingResend }
-					>
-						{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
-					</Button>
-				) }
-
-				<RevokeClearBtn className={ btnRevokeClassName } />
-			</div>
-		);
-	};
-
 	render() {
-		const {
-			className,
-			invite,
-			onRemove,
-			siteId,
-			translate,
-			type,
-			user,
-			inviteWasDeleted,
-			showStatus,
-		} = this.props;
+		const { className, invite, onRemove, siteId, translate, type, user, inviteWasDeleted } =
+			this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -187,8 +127,6 @@ class PeopleListItem extends PureComponent {
 					/>
 				</div>
 
-				{ isInvite && showStatus && this.renderInviteStatus() }
-
 				{ onRemove && (
 					<div className="people-list-item__actions">
 						<Button
@@ -218,12 +156,10 @@ export default connect(
 		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
 
 		return {
-			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
-			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
 			siteId,
 			inviteKey,
 			inviteWasDeleted,
 		};
 	},
-	{ resendInvite, recordGoogleEvent }
+	{ recordGoogleEvent }
 )( localize( PeopleListItem ) );

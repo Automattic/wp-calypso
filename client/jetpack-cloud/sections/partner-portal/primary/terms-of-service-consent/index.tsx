@@ -1,10 +1,9 @@
-import { Button, Card, Gridicon, Spinner } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import Main from 'calypso/components/main';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -100,7 +99,7 @@ export default function TermsOfServiceConsent() {
 							className="terms-of-service-consent__proceed"
 							onClick={ agreeToTOS }
 							disabled={ ! checkedTOS }
-							busy={ consent.isLoading }
+							busy={ consent.isPending }
 							primary
 						>
 							{ translate( 'Proceed' ) }

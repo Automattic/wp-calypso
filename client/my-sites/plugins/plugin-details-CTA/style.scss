@@ -137,6 +137,15 @@
 	font-size: $font-body;
 	height: 40px;
 
+	@include breakpoint-deprecated( "<1280px" ) {
+		font-size: $font-body-small;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		font-size: $font-body;
+	}
+
+
 	.plugin-details-cta__installed-text-quantity {
 		color: var(--studio-green-50);
 	}

@@ -1,10 +1,10 @@
 import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
-import { initializeAnalytics, getGenericSuperPropsGetter } from '@automattic/calypso-analytics';
+import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
-import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
+import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -17,6 +17,7 @@ import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import getSuperProps from 'calypso/lib/analytics/super-props';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -25,11 +26,11 @@ import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { FlowRenderer } from './declarative-flow/internals';
+import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
-import { useQuery } from './hooks/use-query';
-import { ONBOARD_STORE, USER_STORE } from './stores';
+import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
@@ -55,20 +56,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	flow,
 } ) => {
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
-	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
-
-	const recurType = useQuery().get( 'recur' );
-
-	if ( flow.name === ECOMMERCE_FLOW ) {
-		const isValidRecurType =
-			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
-		if ( isValidRecurType ) {
-			setEcommerceFlowRecurType( recurType );
-		} else {
-			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
-		}
-	}
-
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;
@@ -89,7 +76,9 @@ window.AppBoot = async () => {
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-	addHotJarScript();
+
+	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
+	flowNameFromPathName === IMPORT_HOSTED_SITE_FLOW && addHotJarScript();
 
 	// Add accessible-focus listener.
 	accessibleFocus();
@@ -99,14 +88,13 @@ window.AppBoot = async () => {
 
 	const queryClient = await createQueryClient( userId );
 
-	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
-
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
 
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
@@ -129,6 +117,7 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
+					<AsyncHelpCenter />
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

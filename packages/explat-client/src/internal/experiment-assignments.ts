@@ -3,7 +3,6 @@ import type { ExperimentAssignment } from '../types';
 
 /**
  * Check if an ExperimentAssignment is still alive (as in the TTL).
- *
  * @param experimentAssignment The experiment assignment to check
  */
 export function isAlive( experimentAssignment: ExperimentAssignment ): boolean {
@@ -24,7 +23,6 @@ export const minimumTtl = 60;
 /**
  * A fallback ExperimentAssignment we return when we can't retrieve one.
  * As it is used in fallback situations, this function must never throw.
- *
  * @param experimentName The name of the experiment
  * @param ttl The time-to-live for the ExperimentAssignment, defaults to 60s
  */

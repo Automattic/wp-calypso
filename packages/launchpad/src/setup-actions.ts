@@ -12,6 +12,9 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'manage_subscribers',
 	'connect_social_media',
 	'drive_traffic',
+	'site_monitoring_page',
+	'front_page_updated',
+	'post_sharing_enabled',
 ];
 
 export const setUpActionsForTasks = ( {
@@ -19,22 +22,12 @@ export const setUpActionsForTasks = ( {
 	tasks,
 	tracksData,
 	extraActions,
+	eventHandlers,
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
-	const { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, siteLaunched, setActiveChecklist } = extraActions;
-
-	//Record click events for tasks
-	const recordTaskClickTracksEvent = ( task: Task ) => {
-		recordTracksEvent( 'calypso_launchpad_task_clicked', {
-			checklist_slug: checklistSlug,
-			checklist_completed: tasklistCompleted,
-			task_id: task.id,
-			is_completed: task.completed,
-			context: launchpadContext,
-			order: task.order,
-		} );
-	};
+	const { recordTracksEvent, checklistSlug, launchpadContext } = tracksData;
+	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
+	const { onSiteLaunched, onTaskClick } = eventHandlers || {};
 
 	// Add actions to the tasks.
 	return tasks.map( ( task: Task ) => {
@@ -125,7 +118,7 @@ export const setUpActionsForTasks = ( {
 							apiVersion: '1.1',
 							method: 'post',
 						} );
-						siteLaunched?.();
+						onSiteLaunched?.();
 					};
 					useCalypsoPath = false;
 					break;
@@ -147,10 +140,10 @@ export const setUpActionsForTasks = ( {
 		}
 
 		const actionDispatch = () => {
-			recordTaskClickTracksEvent( task );
-			if ( siteSlug && setActiveChecklist ) {
+			if ( siteSlug && setActiveChecklist && config.isEnabled( 'launchpad/navigator' ) ) {
 				setActiveChecklist( siteSlug, checklistSlug );
 			}
+			onTaskClick?.( task );
 			action?.();
 		};
 

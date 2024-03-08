@@ -57,7 +57,6 @@ export interface Props {
 
 	/**
 	 * Callback that will be invoked when a domain is selected.
-	 *
 	 * @param domainSuggestion The selected domain.
 	 */
 	onDomainSelect: ( domainSuggestion: DomainSuggestion ) => void;

@@ -1,0 +1,22 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.content-sidebar {
+	&__right-sidebar {
+
+		> *:not(:first-child) {
+			margin-top: 40px;
+		}
+
+		.foldable-card__expand {
+			width: 24px;
+		}
+
+		.contact-support-button {
+			width: 100%;
+			font-weight: 500;
+			color: var(--studio-gray-100);
+			border-color: var(--studio-gray-10);
+		}
+	}
+}

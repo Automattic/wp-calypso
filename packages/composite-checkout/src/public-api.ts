@@ -16,7 +16,6 @@ import {
 } from './components/checkout-steps';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
-import { useTotal } from './lib/line-items';
 import {
 	usePaymentMethod,
 	usePaymentMethodId,
@@ -27,10 +26,10 @@ import {
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
-	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
+	isErrorResponse,
 } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
 import { useTransactionStatus } from './lib/transaction-status';
@@ -53,7 +52,7 @@ export {
 	checkoutTheme,
 	createCheckoutStepGroupStore,
 	makeErrorResponse,
-	makeManualResponse,
+	isErrorResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
 	useAllPaymentMethods,
@@ -68,6 +67,5 @@ export {
 	useProcessPayment,
 	useSetStepComplete,
 	useTogglePaymentMethod,
-	useTotal,
 	useTransactionStatus,
 };

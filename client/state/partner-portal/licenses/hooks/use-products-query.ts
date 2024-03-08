@@ -1,16 +1,22 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import selectAlphabeticallySortedProductOptions from 'calypso/jetpack-cloud/sections/partner-portal/lib/select-alphabetically-sorted-product-options';
-import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { errorNotice } from '../../../notices/actions';
 
-function queryProducts(): Promise< APIProductFamily[] > {
-	return wpcomJpl.req
+function queryProducts( isPublicFacing: boolean ): Promise< APIProductFamily[] > {
+	const productsAPIPath = isPublicFacing
+		? '/jetpack-licensing/public/manage-pricing'
+		: '/jetpack-licensing/partner/product-families';
+	const requestObject = isPublicFacing ? wpcom.req : wpcomJpl.req;
+	return requestObject
 		.get( {
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/partner/product-families',
+			path: productsAPIPath,
 		} )
 		.then( ( data: APIProductFamily[] ) => {
 			const exclude = [
@@ -45,15 +51,29 @@ function queryProducts(): Promise< APIProductFamily[] > {
 		} );
 }
 
-export default function useProductsQuery(): UseQueryResult< APIProductFamilyProduct[], unknown > {
+export function usePublicProductsQuery(): UseQueryResult< APIProductFamilyProduct[], unknown > {
+	return useProductsQuery( true );
+}
+
+export default function useProductsQuery(
+	isPublicFacing = false
+): UseQueryResult< APIProductFamilyProduct[], unknown > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
-	return useQuery( {
-		queryKey: [ 'partner-portal', 'licenses', 'products' ],
-		queryFn: queryProducts,
+	const query = useQuery( {
+		queryKey: [ 'partner-portal', 'licenses', 'products', isPublicFacing ],
+		queryFn: () => queryProducts( isPublicFacing ),
 		select: selectAlphabeticallySortedProductOptions,
-		onError: () => {
+		enabled: isPublicFacing || isPartnerOAuthTokenLoaded,
+		refetchOnWindowFocus: false,
+	} );
+
+	const { isError } = query;
+
+	useEffect( () => {
+		if ( isError ) {
 			dispatch(
 				errorNotice(
 					translate(
@@ -64,6 +84,8 @@ export default function useProductsQuery(): UseQueryResult< APIProductFamilyProd
 					}
 				)
 			);
-		},
-	} );
+		}
+	}, [ dispatch, translate, isError ] );
+
+	return query;
 }

@@ -105,9 +105,11 @@ const UserMenu: FC = () => {
 					'is-logged-in': isLoggedIn,
 				} ) }
 			>
-				<MenuButton isMenuOpen={ isMenuOpen } user={ user } toggleUserMenu={ toggleUserMenu } />
 				{ isLoggedIn ? (
-					<Profile isMenuOpen={ isMenuOpen } user={ user } toggleUserMenu={ toggleUserMenu } />
+					<>
+						<MenuButton isMenuOpen={ isMenuOpen } user={ user } toggleUserMenu={ toggleUserMenu } />
+						<Profile isMenuOpen={ isMenuOpen } user={ user } toggleUserMenu={ toggleUserMenu } />
+					</>
 				) : (
 					<a className="header__action-link js-login" href={ localizeUrl( '/login/', locale ) }>
 						{ translate( 'Log in' ) }

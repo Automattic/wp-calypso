@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import {
 	getContextResults,
@@ -17,8 +18,8 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
+import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,6 +32,7 @@ import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results'
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
@@ -43,6 +45,11 @@ interface SearchResultsSectionProps {
 
 const noop = () => {
 	return;
+};
+
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
 };
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -91,6 +98,7 @@ interface HelpSearchResultsProps {
 	placeholderLines: number;
 	openAdminInNewTab: boolean;
 	location: string;
+	currentRoute?: string;
 }
 
 function HelpSearchResults( {
@@ -101,16 +109,12 @@ function HelpSearchResults( {
 	placeholderLines,
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
+	currentRoute,
 }: HelpSearchResultsProps ) {
 	const dispatch = useDispatch();
-
-	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
-		return {
-			hasPurchases: hasCancelableUserPurchases( state ),
-			sectionName: getSectionName( state ),
-			adminResults: getAdminHelpResults( state, searchQuery, 3 ),
-		};
-	} );
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const sectionName = useSelector( getSectionName );
+	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );
@@ -118,6 +122,8 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
+	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -125,10 +131,12 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
+	const routeToQueryMapping = useContextBasedSearchMapping( currentRoute );
+
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery,
+		debouncedQuery || routeToQueryMapping,
 		locale,
 		{},
 		sectionName
@@ -224,6 +232,12 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
+		const DeveloperResourceIndicator = () => {
+			return (
+				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
+			);
+		};
+
 		return (
 			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
@@ -241,7 +255,11 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							<LinkIcon />
+							{ isResultFromDeveloperWordpress( result.link ) ? (
+								<DeveloperResourceIndicator />
+							) : (
+								<LinkIcon />
+							) }
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 							<Icon
 								width={ 20 }
@@ -291,13 +309,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: __( 'Recommended resources', __i18n_text_domain__ ),
+				title: __( 'Recommended Resources', __i18n_text_domain__ ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? __( 'Recommended resources', __i18n_text_domain__ ) : '',
+				title: ! searchQuery.length ? __( 'Recommended Resources', __i18n_text_domain__ ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},

@@ -9,12 +9,17 @@ const request = () => ( dispatch, getState ) => {
 	}
 };
 
-export default function QueryPreferences() {
+export function useQueryPreferences() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
 		dispatch( request() );
 	}, [ dispatch ] );
 
+	return null;
+}
+
+export default function QueryPreferences() {
+	useQueryPreferences();
 	return null;
 }

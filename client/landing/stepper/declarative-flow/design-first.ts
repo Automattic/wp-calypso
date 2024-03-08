@@ -1,9 +1,10 @@
-import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -14,23 +15,35 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { freeSiteAddressType } from 'calypso/lib/domains/constants';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { requestSiteAddressChange } from 'calypso/state/site-address-change/actions';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useSiteData } from '../hooks/use-site-data';
 import { useLoginUrl } from '../utils/path';
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
-	title: 'Blog',
+	get title() {
+		return translate( 'Blog' );
+	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{
-				slug: 'site-creation-step',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'check-sites',
+				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
+			},
+			{
+				slug: 'new-or-existing-site',
+				asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
+			},
+			{
+				slug: 'site-picker',
+				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
+			},
+			{
+				slug: 'create-site',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -38,7 +51,7 @@ const designFirst: Flow = {
 			},
 			{
 				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
+				asyncComponent: () => import( './internals/steps-repository/domains' ),
 			},
 			{
 				slug: 'use-my-domain',
@@ -66,16 +79,9 @@ const designFirst: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const siteSlug = useSiteSlug();
-		const siteId = useSiteIdParam();
-
 		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 		const { setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const state = useSelect(
-			( select ) => select( ONBOARD_STORE ) as OnboardSelect,
-			[]
-		).getState();
-		const site = useSite();
+		const { site, siteSlug, siteId } = useSiteData();
 
 		// This flow clear the site_intent when flow is completed.
 		// We need to check if the site is launched and if so, clear the site_intent to avoid errors.
@@ -91,18 +97,60 @@ const designFirst: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 
 			switch ( currentStep ) {
-				case 'site-creation-step':
+				case 'check-sites':
+					// Check for unlaunched sites
+					if ( providedDependencies?.filteredSitesCount === 0 ) {
+						// No unlaunched sites, redirect to new site creation step
+						return navigate( 'create-site' );
+					}
+					// With unlaunched sites, continue to new-or-existing-site step
+					return navigate( 'new-or-existing-site' );
+				case 'new-or-existing-site':
+					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
+						return navigate( 'create-site' );
+					}
+					return navigate( 'site-picker' );
+				case 'site-picker': {
+					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
+						setSelectedSite( providedDependencies?.siteId );
+						await Promise.all( [
+							setIntentOnSite( providedDependencies?.siteSlug, DESIGN_FIRST_FLOW ),
+							saveSiteSettings( providedDependencies?.siteId, {
+								launchpad_screen: 'full',
+							} ),
+						] );
+
+						return window.location.assign(
+							addQueryArgs( `/setup/update-design/designSetup`, {
+								siteSlug: providedDependencies?.siteSlug,
+								flowToReturnTo: DESIGN_FIRST_FLOW,
+								theme: getQueryArg( window.location.href, 'theme' ),
+								style_variation: getQueryArg( window.location.href, 'style_variation' ),
+							} )
+						);
+					}
+					return navigate( 'launchpad' );
+				}
+				case 'create-site':
 					return navigate( 'processing' );
 				case 'processing': {
 					// If we just created a new site.
 					const siteSlug = providedDependencies?.siteSlug;
-					if ( ! providedDependencies?.blogLaunched && siteSlug ) {
+					if ( ! providedDependencies?.isLaunched && siteSlug ) {
 						const siteId = providedDependencies?.siteId;
 						setSelectedSite( siteId );
 						setIntentOnSite( siteSlug, DESIGN_FIRST_FLOW );
 						saveSiteSettings( siteId, {
 							launchpad_screen: 'full',
 						} );
+
+						if ( providedDependencies?.hasSetPreselectedTheme ) {
+							updateLaunchpadSettings( siteSlug as string, {
+								checklist_statuses: { design_completed: true },
+							} );
+
+							return navigate( `launchpad?siteSlug=${ siteSlug }` );
+						}
 
 						return window.location.assign(
 							addQueryArgs( `/setup/update-design/designSetup`, {
@@ -115,7 +163,7 @@ const designFirst: Flow = {
 					}
 
 					// If the user's site has just been launched.
-					if ( providedDependencies?.blogLaunched && siteSlug ) {
+					if ( providedDependencies?.isLaunched && siteSlug ) {
 						await Promise.all( [
 							// We set launchpad_screen to off because users can choose to
 							// complete the first_post_published checklist task or not.
@@ -134,56 +182,34 @@ const designFirst: Flow = {
 					return navigate( 'launchpad' );
 				}
 				case 'domains':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
 
 					if ( providedDependencies?.freeDomain ) {
-						const freeDomainSuffix = '.wordpress.com';
-						const newDomainName = String( providedDependencies?.domainName ).replace(
-							freeDomainSuffix,
-							''
-						);
-
-						if ( providedDependencies?.domainName ) {
-							await requestSiteAddressChange(
-								site?.ID,
-								newDomainName,
-								'wordpress.com',
-								siteSlug,
-								freeSiteAddressType.BLOG,
-								true,
-								false
-							)( dispatch, state );
-						}
-
-						const currentSiteSlug = String( providedDependencies?.domainName ?? siteSlug );
-
-						return window.location.assign(
-							`/setup/design-first/launchpad?siteSlug=${ currentSiteSlug }`
-						);
+						return window.location.assign( `/setup/design-first/launchpad?siteId=${ site?.ID }` );
 					}
 
 					return navigate( 'plans' );
 				case 'use-my-domain':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
 					return navigate( 'plans' );
 				case 'plans':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					return navigate( 'launchpad' );
 				case 'setup-blog':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
+					if ( siteId ) {
+						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { setup_blog: true },
 						} );
 					}
@@ -200,10 +226,12 @@ const designFirst: Flow = {
 		const goNext = async () => {
 			switch ( currentStep ) {
 				case 'launchpad':
-					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, { launchpad_screen: 'skipped' } );
-					}
-					return window.location.assign( `/home/${ siteId ?? siteSlug }` );
+					skipLaunchpad( {
+						checklistSlug: site?.options?.site_intent,
+						siteId,
+						siteSlug,
+					} );
+					return;
 			}
 		};
 
@@ -215,15 +243,11 @@ const designFirst: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const currentPath = window.location.pathname;
-		const isSiteCreationStep =
+		const isCreateSite =
 			currentPath.endsWith( 'setup/design-first' ) ||
 			currentPath.endsWith( 'setup/design-first/' ) ||
-			currentPath.includes( 'setup/design-first/site-creation-step' );
+			currentPath.includes( 'setup/design-first/check-sites' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
-
-		// Allow to create a new site if people are from the Theme Showcase or they don't have a site
-		const shouldCreateNewSite =
-			getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' || ! userAlreadyHasSites;
 
 		// There is a race condition where useLocale is reporting english,
 		// despite there being a locale in the URL so we need to look it up manually.
@@ -238,22 +262,23 @@ const designFirst: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: flowName,
 			redirectTo: window.location.href.replace( window.location.origin, '' ),
-			pageTitle: 'Pick a design',
+			pageTitle: translate( 'Pick a design' ),
 			locale,
 		} );
 
 		// Despite sending a CHECKING state, this function gets called again with the
-		// /setup/design-first/site-creation-step route which has no locale in the path so we need to
+		// /setup/design-first/create-site route which has no locale in the path so we need to
 		// redirect off of the first render.
-		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/site-creation-step/<locale> urls.
+		// This effects both /setup/design-first/<locale> starting points and /setup/design-first/create-site/<locale> urls.
 		// The double call also hapens on urls without locale.
 		useEffect( () => {
 			if ( ! isLoggedIn ) {
 				redirect( logInUrl );
-			} else if ( isSiteCreationStep && ! shouldCreateNewSite ) {
-				// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
-				// This prevents a bunch of sites being created accidentally.
-				redirect( `/themes` );
+			} else if (
+				isCreateSite &&
+				( ! userAlreadyHasSites || getQueryArg( window.location.href, 'ref' ) === 'calypshowcase' )
+			) {
+				redirect( `/setup/design-first/create-site${ window.location.search }` );
 			}
 		}, [] );
 
@@ -261,13 +286,13 @@ const designFirst: Flow = {
 
 		if ( ! isLoggedIn ) {
 			result = {
-				state: AssertConditionState.CHECKING,
+				state: AssertConditionState.FAILURE,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( isSiteCreationStep && ! shouldCreateNewSite ) {
+		} else if ( isCreateSite && ! userAlreadyHasSites ) {
 			result = {
 				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires no preexisting sites`,
+				message: `${ flowName } with no preexisting sites`,
 			};
 		}
 

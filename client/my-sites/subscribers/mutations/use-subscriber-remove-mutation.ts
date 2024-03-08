@@ -6,24 +6,27 @@ import {
 	getSubscriberDetailsType,
 	getSubscribersCacheKey,
 } from '../helpers';
+import useManySubsSite from '../hooks/use-many-subs-site';
 import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber, SubscriberListArgs } from '../types';
 
 const useSubscriberRemoveMutation = (
-	siteId: number | undefined | null,
+	siteId: number | null,
 	args: SubscriberListArgs,
 	invalidateDetailsCache = false
 ) => {
 	const { currentPage, perPage = DEFAULT_PER_PAGE, filterOption, searchTerm, sortTerm } = args;
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
+	const { hasManySubscribers } = useManySubsSite( siteId );
 	const subscribersCacheKey = getSubscribersCacheKey(
 		siteId,
 		currentPage,
 		perPage,
-		filterOption,
 		searchTerm,
-		sortTerm
+		sortTerm,
+		filterOption,
+		hasManySubscribers
 	);
 
 	return useMutation( {
@@ -60,7 +63,7 @@ const useSubscriberRemoveMutation = (
 			return true;
 		},
 		onMutate: async ( subscriber ) => {
-			await queryClient.cancelQueries( subscribersCacheKey );
+			await queryClient.cancelQueries( { queryKey: subscribersCacheKey } );
 			let page = currentPage;
 
 			const previousData =
@@ -94,9 +97,10 @@ const useSubscriberRemoveMutation = (
 								siteId,
 								page + 1,
 								perPage,
-								filterOption,
 								searchTerm,
-								sortTerm
+								sortTerm,
+								filterOption,
+								hasManySubscribers
 							)
 						);
 						if ( nextPageQueryData && nextPageQueryData.subscribers.length ) {
@@ -125,7 +129,7 @@ const useSubscriberRemoveMutation = (
 					getSubscriberDetailsType( subscriber.user_id )
 				);
 
-				await queryClient.cancelQueries( cacheKey );
+				await queryClient.cancelQueries( { queryKey: cacheKey } );
 
 				previousDetailsData = queryClient.getQueryData< Subscriber >( cacheKey );
 			}
@@ -139,7 +143,15 @@ const useSubscriberRemoveMutation = (
 			if ( context?.previousPages ) {
 				context.previousPages?.forEach( ( previousSubscribers, page ) => {
 					queryClient.setQueryData(
-						getSubscribersCacheKey( siteId, page, perPage, filterOption, searchTerm, sortTerm ),
+						getSubscribersCacheKey(
+							siteId,
+							page,
+							perPage,
+							searchTerm,
+							sortTerm,
+							filterOption,
+							hasManySubscribers
+						),
 						previousSubscribers
 					);
 				} );
@@ -164,7 +176,7 @@ const useSubscriberRemoveMutation = (
 			} );
 		},
 		onSettled: ( data, error, subscriber ) => {
-			queryClient.invalidateQueries( subscribersCacheKey );
+			queryClient.invalidateQueries( { queryKey: subscribersCacheKey } );
 
 			if ( invalidateDetailsCache ) {
 				const detailsCacheKey = getSubscriberDetailsCacheKey(
@@ -174,7 +186,7 @@ const useSubscriberRemoveMutation = (
 					getSubscriberDetailsType( subscriber.user_id )
 				);
 
-				queryClient.invalidateQueries( detailsCacheKey );
+				queryClient.invalidateQueries( { queryKey: detailsCacheKey } );
 			}
 		},
 	} );

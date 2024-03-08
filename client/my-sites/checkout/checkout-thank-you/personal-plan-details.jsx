@@ -1,4 +1,9 @@
-import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import {
+	isPersonal,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	getPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -37,7 +42,8 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
 					'With your plan, all WordPress.com advertising has been removed from your site. ' +
-						'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+						'You can upgrade to a %(businessPlanName)s plan to also remove the WordPress.com footer credit.',
+					{ args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() } }
 				) }
 			/>
 		</div>

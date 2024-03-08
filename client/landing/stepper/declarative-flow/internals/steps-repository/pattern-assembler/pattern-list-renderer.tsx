@@ -3,6 +3,7 @@ import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/co
 import classnames from 'classnames';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT, PLACEHOLDER_HEIGHT } from './constants';
 import { encodePatternId, isPriorityPattern } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -14,8 +15,8 @@ interface PatternListItemProps {
 	isShown: boolean;
 	isSelected?: boolean;
 	composite?: Record< string, unknown >;
+	transformPatternHtml?: ( patternHtml: string ) => string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
-	isNewSite: boolean;
 }
 
 interface PatternListRendererProps {
@@ -25,14 +26,10 @@ interface PatternListRendererProps {
 	selectedPatterns?: Pattern[];
 	activeClassName: string;
 	composite?: Record< string, unknown >;
+	transformPatternHtml?: ( patternHtml: string ) => string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	isShowMorePatterns?: boolean;
-	isNewSite: boolean;
 }
-
-const DEFAULT_VIEWPORT_WIDTH = 1060;
-const DEFAULT_VIEWPORT_HEIGHT = 500;
-const PLACEHOLDER_HEIGHT = 100;
 
 const PatternListItem = ( {
 	pattern,
@@ -41,11 +38,11 @@ const PatternListItem = ( {
 	isShown,
 	isSelected,
 	composite,
+	transformPatternHtml,
 	onSelect,
-	isNewSite,
 }: PatternListItemProps ) => {
 	const ref = useRef< HTMLButtonElement >();
-	const { ref: inViewRef, inView: inViewOnce } = useInView( {
+	const { ref: inViewRef } = useInView( {
 		triggerOnce: true,
 	} );
 
@@ -66,7 +63,7 @@ const PatternListItem = ( {
 	}, [ isShown, isFirst, ref ] );
 
 	return (
-		<Tooltip text={ pattern.title } inline>
+		<Tooltip text={ pattern.title }>
 			<CompositeItem
 				{ ...composite }
 				role="option"
@@ -78,14 +75,14 @@ const PatternListItem = ( {
 				aria-current={ isSelected }
 				onClick={ () => onSelect( pattern ) }
 			>
-				{ isShown && inViewOnce ? (
+				{ isShown ? (
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
 						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
 						viewportHeight={ DEFAULT_VIEWPORT_HEIGHT }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						shouldShufflePosts={ isNewSite }
+						transformHtml={ transformPatternHtml }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
@@ -102,9 +99,9 @@ const PatternListRenderer = ( {
 	selectedPatterns,
 	activeClassName,
 	composite,
+	transformPatternHtml,
 	onSelect,
 	isShowMorePatterns,
-	isNewSite,
 }: PatternListRendererProps ) => {
 	const filterPriorityPatterns = ( pattern: Pattern ) =>
 		isShowMorePatterns || isPriorityPattern( pattern );
@@ -124,8 +121,8 @@ const PatternListRenderer = ( {
 					isShown={ shownPatterns.includes( pattern ) }
 					isSelected={ pattern.ID === selectedPattern?.ID }
 					composite={ composite }
+					transformPatternHtml={ transformPatternHtml }
 					onSelect={ onSelect }
-					isNewSite={ isNewSite }
 				/>
 			) ) }
 		</>

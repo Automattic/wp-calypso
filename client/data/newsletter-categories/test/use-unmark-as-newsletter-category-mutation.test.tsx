@@ -73,7 +73,9 @@ describe( 'useUnmarkAsNewsletterCategoryMutation', () => {
 			await result.current.mutateAsync( categoryId );
 		} );
 
-		expect( invalidateQueriesSpy ).toHaveBeenCalledWith( [ 'newsletter-categories', 123 ] );
+		expect( invalidateQueriesSpy ).toHaveBeenCalledWith( {
+			queryKey: [ 'newsletter-categories', 123 ],
+		} );
 	} );
 
 	it( 'should throw an error when ID is missing', async () => {

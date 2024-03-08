@@ -28,6 +28,7 @@ import {
 } from './constants';
 
 export { getPlanSlugForTermVariant } from './get-plan-term-variant';
+export { getPlanMultipleTermsVariantSlugs } from './get-plan-multiple-terms-variant-slugs';
 
 export function isBestValue( plan: string ): boolean {
 	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );

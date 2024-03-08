@@ -1,12 +1,13 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { addLocaleToPath, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AppPromo from 'calypso/blocks/app-promo';
 import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -15,6 +16,7 @@ import {
 	isGravatarOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import {
@@ -131,9 +133,25 @@ class MagicLogin extends Component {
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo } = this.props;
 
-		if ( showCheckYourEmail || this.props.query?.client_id ) {
+		if ( isWoo ) {
+			return null;
+		}
+
+		if ( showCheckYourEmail ) {
+			return (
+				<AppPromo
+					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
+					campaign="calypso-login-link-check-email"
+					className="magic-link-app-promo"
+					iconSize={ 32 }
+					hasQRCode={ true }
+					hasGetAppButton={ false }
+				/>
+			);
+		}
+		if ( this.props.query?.client_id ) {
 			return null;
 		}
 
@@ -148,12 +166,21 @@ class MagicLogin extends Component {
 		};
 
 		return (
-			<div className="magic-login__footer">
-				<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ translate( 'Enter a password instead' ) }
-				</a>
-			</div>
+			<>
+				<div className="magic-login__footer">
+					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
+						{ translate( 'Enter a password instead' ) }
+					</a>
+				</div>
+				<AppPromo
+					title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
+					campaign="calypso-login-link"
+					className="magic-link-app-promo"
+					iconSize={ 32 }
+					hasQRCode={ true }
+					hasGetAppButton={ false }
+				/>
+			</>
 		);
 	}
 
@@ -168,6 +195,10 @@ class MagicLogin extends Component {
 	}
 
 	renderGutenboardingLogo() {
+		if ( this.props.isWoo ) {
+			return null;
+		}
+
 		return (
 			<div className="magic-login__gutenboarding-wordpress-logo">
 				<svg
@@ -333,11 +364,11 @@ class MagicLogin extends Component {
 			<div className="grav-powered-magic-login__tos">
 				{ isGravatarOAuth2Client( oauth2Client )
 					? translate(
-							`By clicking “Send me login link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
+							`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating {{wpAccountLink}}a WordPress.com account{{/wpAccountLink}} if you don't already have one.`,
 							textOptions
 					  )
 					: translate(
-							`By clicking “Send me login link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
+							`By clicking “Send me sign in link“, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, have read our {{privacyLink}}Privacy Policy{{/privacyLink}}, and understand that you're creating a Gravatar account if you don't already have one.`,
 							textOptions
 					  ) }
 			</div>
@@ -365,7 +396,7 @@ class MagicLogin extends Component {
 						headerText={ translate( 'Sign in with your email' ) }
 						hideSubHeaderText
 						inputPlaceholder={ translate( 'Enter your email address' ) }
-						submitButtonLabel={ translate( 'Send me login link' ) }
+						submitButtonLabel={ translate( 'Send me sign in link' ) }
 						tosComponent={ this.renderGravPoweredMagicLoginTos() }
 						onSendEmailLogin={ ( usernameOrEmail ) => this.setState( { usernameOrEmail } ) }
 						createAccountForNewUser
@@ -486,6 +517,7 @@ const mapState = ( state ) => ( {
 		getCurrentQueryArguments( state ).email_address ||
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
+	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 } );
 
 const mapDispatch = {

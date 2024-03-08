@@ -25,7 +25,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], isLargeScreen );
 
-	const { blog_id: siteId, url: siteUrl } = site;
+	const { blog_id: siteId, url: siteUrl, is_atomic, url_with_scheme } = site;
 
 	// queryKey is needed to optimistically update the site list
 	const queryKey = useMemo(
@@ -57,6 +57,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	return (
 		<LicenseInfoModal
+			className="site-boost-column__upgrade-modal"
 			currentLicenseInfo="boost"
 			label={
 				upgradeOnly
@@ -66,6 +67,11 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			onClose={ onClose }
 			siteId={ siteId }
 			onCtaClick={ handlePurchaseBoost }
+			isCTAExternalLink={ is_atomic }
+			ctaHref={
+				is_atomic ? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard` : undefined
+			}
+			showPaymentPlan={ ! is_atomic }
 			extraAsideContent={
 				<>
 					{ ! upgradeOnly && (

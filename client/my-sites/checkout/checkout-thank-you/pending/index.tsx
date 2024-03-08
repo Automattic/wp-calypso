@@ -1,27 +1,26 @@
-import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
+import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import { useEffect, useRef } from 'react';
-import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
+import React, { useState, useEffect, useRef } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
+import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
-import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
-import { convertErrorToString } from '../../src/lib/analytics';
+import usePurchaseOrder from '../../src/hooks/use-purchase-order';
+import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
@@ -84,7 +83,7 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
-	useRedirectOnTransactionSuccess( {
+	const { headingText } = useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
 		siteSlug,
@@ -94,7 +93,6 @@ function CheckoutPending( {
 
 	return (
 		<Main className="checkout-thank-you__pending">
-			{ orderId && <QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } /> }
 			<PageViewTracker
 				path={
 					siteSlug
@@ -104,18 +102,15 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<PendingContent />
+			<PendingContent heading={ headingText } />
 		</Main>
 	);
 }
 
-function PendingContent() {
-	const translate = useTranslate();
+function PendingContent( { heading }: { heading: React.ReactNode } ) {
 	return (
 		<div className="pending-content__wrapper">
-			<div className="pending-content__title">
-				{ translate( "Almost there – we're currently finalizing your order." ) }
-			</div>
+			<div className="pending-content__title">{ heading }</div>
 			<LoadingEllipsis />
 		</div>
 	);
@@ -131,6 +126,23 @@ function performRedirect( url: string ): void {
 		return;
 	}
 	window.location.href = url;
+}
+
+// If the current page is in the pop-up, notify to the opener and delay the redirection.
+// Otherwise, do the redirection immediately.
+function notifyAndPerformRedirect(
+	siteSlug: string | undefined,
+	{ isError, isUnknown, url }: RedirectInstructions
+): void {
+	if (
+		siteSlug &&
+		sendMessageToOpener( siteSlug, isError || isUnknown ? 'checkoutFailed' : 'checkoutCompleted' )
+	) {
+		window.setTimeout( () => performRedirect( url ), 3000 );
+		return;
+	}
+
+	performRedirect( url );
 }
 
 function getSaaSProductRedirectUrl( receipt: ReceiptState ) {
@@ -164,11 +176,11 @@ function useRedirectOnTransactionSuccess( {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
-} ): void {
+} ): { headingText: React.ReactNode } {
 	const translate = useTranslate();
-	const transaction: OrderTransaction | null = useSelector( ( state ) =>
-		orderId ? getOrderTransaction( state, orderId ) : null
-	);
+
+	const { isLoading: isLoadingOrder, order: transaction } = usePurchaseOrder( orderId, 5000 );
+
 	const transactionReceiptId = isTransactionSuccessful( transaction )
 		? transaction.receiptId
 		: undefined;
@@ -187,6 +199,19 @@ function useRedirectOnTransactionSuccess( {
 	const productName = firstPurchase?.productName ?? '';
 	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
 	const saasRedirectUrl = getSaaSProductRedirectUrl( receipt );
+
+	const { searchParams } = getUrlParts( redirectTo || '/' );
+	const isConnectAfterCheckoutFlow =
+		searchParams.size &&
+		searchParams.get( 'from' ) === 'connect-after-checkout' &&
+		searchParams.get( 'connect_url_redirect' ) === 'true';
+
+	const defaultPendingText = translate( "Almost there – we're currently finalizing your order." );
+	const connectingJetpackText = translate(
+		"Transaction finalized – we're now connecting Jetpack."
+	);
+
+	const [ headingText, setHeadingText ] = useState( defaultPendingText );
 
 	// Fetch receipt data once we have a receipt Id.
 	const didFetchReceipt = useRef( false );
@@ -222,6 +247,7 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		const redirectInstructions = getRedirectFromPendingPage( {
+			isLoadingOrder,
 			error,
 			transaction,
 			orderId,
@@ -237,6 +263,9 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		didRedirect.current = true;
+		if ( isConnectAfterCheckoutFlow ) {
+			setHeadingText( connectingJetpackText );
+		}
 		triggerPostRedirectNotices( {
 			redirectInstructions,
 			isRenewal,
@@ -245,8 +274,13 @@ function useRedirectOnTransactionSuccess( {
 			translate,
 			reduxDispatch,
 		} );
-		performRedirect( redirectInstructions.url );
+
+		notifyAndPerformRedirect( siteSlug, redirectInstructions );
 	}, [
+		isLoadingOrder,
+		saasRedirectUrl,
+		isConnectAfterCheckoutFlow,
+		connectingJetpackText,
 		error,
 		finalReceiptId,
 		isReceiptLoaded,
@@ -263,10 +297,12 @@ function useRedirectOnTransactionSuccess( {
 		willAutoRenew,
 		fromSiteSlug,
 	] );
+
+	return { headingText };
 }
 
 function isTransactionSuccessful(
-	transaction: OrderTransaction | null
+	transaction: OrderTransaction | null | undefined
 ): transaction is OrderTransactionSuccess {
 	return transaction?.processingStatus === SUCCESS;
 }
@@ -369,16 +405,7 @@ function displayRenewalSuccessNotice( {
 }
 
 const logCheckoutError = ( error: Error ) => {
-	logToLogstash( {
-		feature: 'calypso_client',
-		message: 'checkout pending load error',
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			type: 'checkout_pending',
-			message: convertErrorToString( error ),
-		},
-	} );
+	logStashLoadErrorEvent( 'checkout_pending', error );
 };
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {

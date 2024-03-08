@@ -1,0 +1,11 @@
+@mixin a8c-clear-fix {
+	&::after {
+		content: ".";
+		display: block;
+		height: 0;
+		width: 0;
+		clear: both;
+		visibility: hidden;
+		overflow: hidden;
+	}
+}

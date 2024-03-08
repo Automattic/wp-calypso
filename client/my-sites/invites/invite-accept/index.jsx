@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import Debug from 'debug';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
@@ -38,6 +38,10 @@ class InviteAccept extends Component {
 
 	componentDidMount() {
 		this.mounted = true;
+
+		recordTracksEvent( 'calypso_invite_accept_load_page', {
+			logged_in: !! this.props.user,
+		} );
 
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {

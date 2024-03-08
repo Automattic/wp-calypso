@@ -1,21 +1,25 @@
-import { Badge, Button, Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
-import { Task } from '../types';
+import type { Task } from '../types';
+import type { FC, Key } from 'react';
 
 import './style.scss';
 
-const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
+interface Props {
+	key?: Key;
+	task: Task;
+	isPrimaryAction?: boolean;
+	onClick?: () => void;
+}
+
+const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, onClick } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, subtitle, actionDispatch } = task;
+	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badge_text;
-
-	const handlePrimaryAction = () => {
-		localStorage.removeItem( 'launchpad_siteSlug' );
-		actionDispatch && actionDispatch();
-	};
 
 	// Display task counter if task is incomplete and has the count properties;
 	const shouldDisplayTaskCounter =
@@ -28,6 +32,13 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	// when clicking on the task list items.
 	const buttonHref = task.useCalypsoPath && task.calypso_path ? task.calypso_path : undefined;
 
+	// The Button component does not accept the `disabled` and `href` props together.
+	// This code will only add href property if the disabled variable is false.
+	const buttonProps = {
+		disabled,
+		...( disabled ? {} : { href: buttonHref } ),
+	};
+	const onClickHandler = onClick || actionDispatch;
 	return (
 		<li
 			className={ classnames( 'checklist-item__task', {
@@ -40,20 +51,18 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 			{ isPrimaryAction ? (
 				<Button
 					className="checklist-item__checklist-primary-button"
-					disabled={ disabled }
 					data-task={ id }
-					href={ buttonHref }
-					onClick={ handlePrimaryAction }
+					onClick={ onClickHandler }
+					{ ...buttonProps }
 				>
 					{ title }
 				</Button>
 			) : (
 				<Button
 					className="checklist-item__task-content"
-					disabled={ disabled }
 					data-task={ id }
-					href={ buttonHref }
-					onClick={ actionDispatch }
+					onClick={ onClickHandler }
+					{ ...buttonProps }
 				>
 					{ completed && (
 						// show checkmark for completed tasks regardless if they are disabled or kept active
@@ -88,7 +97,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	);
 };
 
-ChecklistItem.Placeholder = () => {
+export const Placeholder: FC = () => {
 	return (
 		<div className="checklist-item__task-content is-placeholder">
 			<div className="checklist-item__content">

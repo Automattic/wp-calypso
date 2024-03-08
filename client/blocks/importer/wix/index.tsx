@@ -45,19 +45,12 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Effects
 	 */
-	useEffect( handleImporterReadiness, [] );
 	useEffect( handleRunFlagChange, [ run ] );
 	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function handleImporterReadiness() {
-		if ( ! checkIsImporterReady() ) {
-			stepNavigator?.goToImportCapturePage?.();
-		}
-	}
-
 	function handleJobStateTransition() {
 		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
@@ -97,8 +90,9 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
-	function checkIsImporterReady() {
-		return job || run;
+	function onTryAgainClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {
@@ -136,15 +130,10 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
+			<div className={ classnames( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
+						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {

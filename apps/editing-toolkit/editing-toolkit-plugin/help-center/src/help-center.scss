@@ -48,12 +48,16 @@
 	}
 }
 
+body.is-nav-unification {
+	#wpadminbar #wp-toolbar #wp-admin-bar-help-center {
+		margin-right: 5px;
+	}
+}
+
 #wpadminbar #wp-toolbar {
 	#wp-admin-bar-help-center {
-		position: relative;
 		padding: 0;
 		width: 36px;
-		right: 5px;
 		display: none;
 
 		@include breakpoint-deprecated( ">960px" ) {
@@ -66,11 +70,13 @@
 
 		svg {
 			position: absolute;
+			height: 20px;
+			width: 20px;
 			top: 0;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			padding: 4px 6px;
+			padding: 6px 8px;
 		}
 
 		&.unseen-notification {

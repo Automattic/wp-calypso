@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { getSiteFragment } from 'calypso/lib/route';
 import MarketplaceThankYou from 'calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you';
 import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketplace-domain-upsell';
@@ -24,7 +24,7 @@ export function renderThemesInstallPage( context, next ) {
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	const { plugins, themes, onboarding } = context.query;
+	const { plugins, themes, continueWithPluginBundle, onboarding, styleVariation } = context.query;
 	const pluginSlugs = plugins ? plugins.split( ',' ) : [];
 	const themeSlugs = themes ? themes.split( ',' ) : [];
 
@@ -33,6 +33,8 @@ export function renderMarketplaceThankYou( context, next ) {
 			pluginSlugs={ pluginSlugs }
 			themeSlugs={ themeSlugs }
 			isOnboardingFlow={ onboarding !== undefined }
+			styleVariationSlug={ styleVariation }
+			continueWithPluginBundle={ continueWithPluginBundle }
 		/>
 	);
 	next();

@@ -4,11 +4,18 @@ $theme-sheet-content-max-width: 1462px;
 $button-border: 4px;
 
 .is-section-theme {
+	// overwrite notices z-index so they are visible on top of the theme preview
+	.global-notices {
+		// This should be - z-index: z-index("root", ".is-section-theme .global-notices")
+		// but the @automattic/onboarding/styles/mixins import overwrites the z-index function on client/assets/stylesheets/shared/functions/_z-index.scss
+		z-index: 100201;
+	}
+
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: var(--studio-white);
 	}
 
-	.layout:not(.has-no-sidebar) .layout__content {
+	.layout.is-logged-in .layout__content {
 		overflow: clip;
 		padding-top: var(--masterbar-height);
 
@@ -220,6 +227,12 @@ $button-border: 4px;
 		display: flex;
 		font-size: $font-title-large;
 		line-height: 1;
+	}
+
+	.theme__sheet-main-info-type {
+		flex-basis: unset;
+		font-family: $sans;
+		margin-left: 8px;
 	}
 
 	.theme__sheet-main-info-tag {
@@ -504,10 +517,12 @@ $button-border: 4px;
 }
 
 .theme__sheet-content {
-	box-shadow: none;
-	font-size: 1rem;
-	min-height: auto;
-	padding: 0;
+	&.card {
+		box-shadow: none;
+		font-size: 1rem;
+		min-height: auto;
+		padding: 0;
+	}
 
 	div {
 		width: auto !important; // override inline style in content markup
@@ -834,5 +849,11 @@ $button-border: 4px;
 		width: 100%;
 		margin: 0;
 		text-decoration: none;
+	}
+}
+.theme__sheet-reviews-summary {
+
+	@include breakpoint-deprecated( "<960px" ) {
+		padding-left: 1.5rem;
 	}
 }

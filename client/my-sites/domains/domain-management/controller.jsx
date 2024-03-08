@@ -1,11 +1,10 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
+import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
 import DomainManagementData from 'calypso/components/data/domain-management';
-import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
 	domainManagementAllEditSelectedContactInfo,
 	domainManagementEditSelectedContactInfo,
-	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
 	domainManagementDnsEditRecord,
@@ -25,7 +24,7 @@ import {
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DomainManagement from '.';
 
@@ -64,7 +63,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -81,7 +79,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -98,25 +95,10 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Settings }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>
-		);
-		next();
-	},
-
-	domainManagementContactsPrivacy( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementContactsPrivacy( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Contacts"
-				component={ DomainManagement.ContactsPrivacy }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();
@@ -129,7 +111,6 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
-				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
@@ -180,7 +161,7 @@ export default {
 	},
 
 	domainManagementEmailRedirect( pageContext ) {
-		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
+		page.redirect( getEmailManagementPath( pageContext.params.site, pageContext.params.domain ) );
 	},
 
 	domainManagementDns( pageContext, next ) {

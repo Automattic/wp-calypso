@@ -29,6 +29,10 @@ export default function SidebarItem( props ) {
 		}
 	};
 
+	const handleNavigate = ( event ) => {
+		props.onNavigate?.( event, props.link );
+	};
+
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
@@ -45,7 +49,7 @@ export default function SidebarItem( props ) {
 		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
 			<a
 				className="sidebar__menu-link"
-				onClick={ props.onNavigate }
+				onClick={ handleNavigate }
 				href={ props.link }
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
@@ -77,7 +81,9 @@ export default function SidebarItem( props ) {
 						</Badge>
 					) }
 				</span>
-				{ showAsExternal && ! sidebarIsCollapsed && <Gridicon icon="external" size={ 24 } /> }
+				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
+					<Gridicon icon="external" size={ 24 } />
+				) }
 				{ props.children }
 			</a>
 		</li>
@@ -98,6 +104,7 @@ SidebarItem.propTypes = {
 	preloadSectionName: PropTypes.string,
 	forceExternalLink: PropTypes.bool,
 	forceInternalLink: PropTypes.bool,
+	forceShowExternalIcon: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,

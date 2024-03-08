@@ -1,15 +1,14 @@
-import config from '@automattic/calypso-config';
-import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
-import i18n, { localize } from 'i18n-calypso';
+import { PLAN_PREMIUM, WPCOM_FEATURES_NO_ADVERTS, getPlan } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -34,6 +33,7 @@ export const Sharing = ( {
 	isVip,
 	siteSlug,
 	translate,
+	premiumPlanName,
 } ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 	let filters = [];
@@ -124,25 +124,20 @@ export const Sharing = ( {
 	}
 
 	const selected = find( filters, { route: pathname } );
-	const shouldShowNudge =
-		i18n.hasTranslation( 'No ads with WordPress.com Premium' ) ||
-		config( 'english_locales' ).includes( i18n.getLocaleSlug() );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
 			<DocumentHead title={ titleHeader } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			<FormattedHeader
-				brandFont
-				className="marketing__page-heading"
-				headerText={ titleHeader }
-				subHeaderText={
+			<NavigationHeader
+				navigationItems={ [] }
+				title={ titleHeader }
+				subtitle={
 					selected?.description ??
 					translate(
 						'Explore tools to build your audience, market your site, and engage your visitors.'
 					)
 				}
-				align="left"
 			/>
 			{ filters.length > 0 && (
 				<SectionNav selectedText={ selected?.title ?? '' }>
@@ -155,12 +150,14 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && ! isJetpack && shouldShowNudge && (
+			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No ads with WordPress.com Premium' ) }
+					title={ translate( 'No ads with WordPress.com %(premiumPlanName)s', {
+						args: { premiumPlanName },
+					} ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
@@ -189,6 +186,7 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle();
 
 	return {
 		isP2Hub: isSiteP2Hub( state, siteId ),
@@ -200,5 +198,6 @@ export default connect( ( state ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		isJetpack: isJetpack,
+		premiumPlanName,
 	};
 } )( localize( Sharing ) );

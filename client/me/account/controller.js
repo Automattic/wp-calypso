@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import i18n, { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import AccountComponent, { noticeId as meSettingsNoticeId } from 'calypso/me/account/main';
 import { successNotice } from 'calypso/state/notices/actions';

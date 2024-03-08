@@ -238,7 +238,8 @@ function getSiteCartProducts( {
 
 export function useCartForDIFM(
 	selectedPages: string[],
-	isStoreFlow: boolean
+	isStoreFlow: boolean,
+	isExistingSite: boolean
 ): {
 	items: CartItem[];
 	total: string | null;
@@ -258,8 +259,7 @@ export function useCartForDIFM(
 	const activePlanScheme = useSelector( ( state ) =>
 		getProductBySlug( state, isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM )
 	);
-	const { newOrExistingSiteChoice, siteId, siteSlug } = signupDependencies;
-	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
+	const { siteId, siteSlug } = signupDependencies;
 	const isProductsLoading = useSelector( isProductsListFetching );
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -280,16 +280,20 @@ export function useCartForDIFM(
 		if ( difmLiteProduct ) {
 			return {
 				...difmLiteProduct,
-				extra: buildDIFMCartExtrasObject( {
-					...signupDependencies,
-					selectedPageTitles: selectedPages,
-					isStoreFlow,
-				} ),
+				extra: buildDIFMCartExtrasObject(
+					{
+						...signupDependencies,
+						selectedPageTitles: selectedPages,
+						isStoreFlow,
+					},
+					siteSlug,
+					'use-cart-for-difm'
+				),
 				quantity: selectedPages.length,
 			};
 		}
 		return null;
-	}, [ difmLiteProduct, signupDependencies, selectedPages, isStoreFlow ] );
+	}, [ difmLiteProduct, signupDependencies, selectedPages, isStoreFlow, siteSlug ] );
 
 	// [Effect] Loads required initial data
 	useEffect( () => {

@@ -1,10 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
@@ -19,7 +18,7 @@ import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
 import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
-import type { UsersQuery } from '../team-members/types';
+import type { UsersQuery } from '@automattic/data-stores';
 
 interface Props {
 	filter: string;
@@ -28,7 +27,7 @@ interface Props {
 function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID as number );
 	const pendingInvites = useSelector( ( state ) =>
@@ -55,15 +54,14 @@ function SubscribersTeam( props: Props ) {
 
 	return (
 		<Main>
-			<ScreenOptionsTab wpAdminPath="users.php" />
 			{ isJetpack && isPossibleJetpackConnectionProblem && site?.ID && (
 				<JetpackConnectionHealthBanner siteId={ site.ID } />
 			) }
-			<FormattedHeader
-				brandFont
-				className="people__page-heading"
-				headerText={ translate( 'Users' ) }
-				subHeaderText={ translate(
+			<NavigationHeader
+				screenOptionsTab="users.php"
+				navigationItems={ [] }
+				title={ translate( 'Users' ) }
+				subtitle={ translate(
 					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
 					{
 						components: {
@@ -76,8 +74,6 @@ function SubscribersTeam( props: Props ) {
 						},
 					}
 				) }
-				align="left"
-				hasScreenOptions
 			/>
 			<div>
 				<SectionNav>

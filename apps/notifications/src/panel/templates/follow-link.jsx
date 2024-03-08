@@ -58,8 +58,8 @@ export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } 
 
 	const icon = isFollowing ? 'reader-following' : 'reader-follow';
 	const linkText = isFollowing
-		? translate( 'Following', { context: 'you are following' } )
-		: translate( 'Follow', { context: 'verb: imperative' } );
+		? translate( 'Subscribed', { context: 'you are subscribing' } )
+		: translate( 'Subscribe', { context: 'verb: imperative' } );
 
 	return (
 		<button className="follow-link" onClick={ toggleFollowStatus }>

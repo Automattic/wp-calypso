@@ -31,6 +31,7 @@ const ToolbarExample = () => (
 			<ToolbarButton icon={ formatItalic } label="Italic" />
 			<ToolbarButton icon={ link } label="Link" />
 			<ToolbarGroup
+				title="More"
 				isCollapsed
 				controls={ [
 					{ icon: code, title: 'Inline code' },
@@ -43,6 +44,7 @@ const ToolbarExample = () => (
 			/>
 		</ToolbarGroup>
 		<ToolbarGroup
+			title="Alignment"
 			isCollapsed
 			controls={ [
 				{

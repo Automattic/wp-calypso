@@ -1,7 +1,8 @@
+import config from '@automattic/calypso-config';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
-	WOOCOMMERCE_THEME,
+	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 	isAssemblerSupported,
 } from '@automattic/design-picker';
@@ -25,7 +26,16 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
-			...( [ 'domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+			...( dependencies.coupon && { coupon: dependencies.coupon } ),
+			...( [ 'domain' ].includes( flowName ) && {
+				isDomainOnly: 1,
+				checkoutBackUrl:
+					config( 'env' ) === 'production'
+						? `https://${ config( 'hostname' ) }/start/domain/domain-only`
+						: `${ config( 'protocol' ) ? config( 'protocol' ) : 'https' }://${ config(
+								'hostname'
+						  ) }${ config( 'port' ) ? ':' + config( 'port' ) : '' }/start/domain/domain-only`,
+			} ),
 		},
 		checkoutURL
 	);
@@ -102,7 +112,9 @@ function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designT
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
-	return getThankYouNoSiteDestination();
+	// `getThankYouPageUrl` appends a receipt ID to this slug even if it doesn't contain the
+	// `:receipt_id` placeholder
+	return '/checkout/thank-you/no-site';
 }
 
 function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
@@ -110,10 +122,6 @@ function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
 		{ siteId },
 		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
 	);
-}
-
-function getThankYouNoSiteDestination() {
-	return `/checkout/thank-you/no-site`;
 }
 
 function getChecklistThemeDestination( {
@@ -160,11 +168,11 @@ function getWithThemeDestination( {
 	themeParameter,
 	styleVariation,
 	themeType,
-	cartItem,
+	cartItems,
 } ) {
 	if (
-		! cartItem &&
-		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, WOOCOMMERCE_THEME ].includes( themeType )
+		! cartItems &&
+		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
 	) {
 		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
 	}
@@ -173,7 +181,11 @@ function getWithThemeDestination( {
 		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
 	}
 
-	const style = styleVariation ? `&style=${ styleVariation }` : '';
+	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
+
+	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, BUNDLED_THEME ].includes( themeType ) ) {
+		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
+	}
 
 	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
@@ -225,13 +237,13 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 }
 
 function getHostingFlowDestination() {
-	const queryArgs = getQueryArgs();
+	const { flow, ...queryArgs } = getQueryArgs();
 
-	if ( queryArgs.flow === 'new-hosted-site' ) {
-		return '/setup/new-hosted-site';
+	if ( flow === 'new-hosted-site' ) {
+		return addQueryArgs( queryArgs, '/setup/new-hosted-site' );
 	}
 
-	if ( queryArgs.flow === 'import-hosted-site' ) {
+	if ( flow === 'import-hosted-site' ) {
 		return '/setup/import-hosted-site';
 	}
 
@@ -278,6 +290,14 @@ function removeP2DetailsStepFromFlow( flow ) {
 }
 
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
+	// Check for site slug before heading to checkout.
+	// Sometimes, previous visits to the signup flow will have cart items leftovers.
+	// In this case, redirecting to checkout would be incorrect, and it would redirect to /checkout/undefined.
+	// If a flow wants us to go to checkout, it will have `siteSlug` set.
+	if ( ! dependencies.siteSlug ) {
+		return destination;
+	}
+
 	if ( dependenciesContainCartItem( dependencies ) ) {
 		return getCheckoutUrl( dependencies, localeSlug, flowName );
 	}

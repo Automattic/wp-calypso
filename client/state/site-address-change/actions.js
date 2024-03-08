@@ -1,6 +1,5 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
-import page from 'page';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import {
@@ -108,7 +107,8 @@ export const requestSiteAddressChange =
 		oldDomain,
 		siteType,
 		discard = true,
-		requireVerifiedEmail = true
+		requireVerifiedEmail = true,
+		skipRedirection = false
 	) =>
 	async ( dispatch, getState ) => {
 		dispatch( {
@@ -146,7 +146,7 @@ export const requestSiteAddressChange =
 				}
 			);
 
-			const newSlug = get( data, 'new_slug' );
+			const newSlug = data?.new_slug;
 
 			if ( newSlug ) {
 				dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
@@ -175,7 +175,10 @@ export const requestSiteAddressChange =
 				const siteSlug = getSiteSlug( getState(), siteId );
 				// new name of the `*.wordpress.com` domain that we just changed
 				const newDomain = newSlug + '.' + domain;
-				page( domainManagementEdit( siteSlug, newDomain ) );
+
+				if ( ! skipRedirection ) {
+					page( domainManagementEdit( siteSlug, newDomain ) );
+				}
 			}
 		} catch ( error ) {
 			dispatch(

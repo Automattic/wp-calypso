@@ -248,12 +248,12 @@ function getAtomicVariationInMixedRun() {
 		'ecomm-plan',
 	];
 	// The goal here is controlled randomness to include multiple variations within a single run.
-	// By using the current two hour time window and the test file name hash, we can get a
-	// lot of variation throughout the day while also ensuring the same variation is used on a failed retry.
-	const currentTwoHourWindow = new Date().getHours() % 12;
+	// By using the current day of the month and the test file name hash, we can get a
+	// lot of variation throughout the week while also ensuring the same variation is used on a failed retry.
+	const currentDayOfMonth = new Date().getDate();
 	const currentTestFileName = global.testFileName || '';
 	const fileHash = hashTestFileName( currentTestFileName );
-	const variationIndex = ( currentTwoHourWindow + fileHash ) % allVariations.length;
+	const variationIndex = ( currentDayOfMonth + fileHash ) % allVariations.length;
 	return allVariations[ variationIndex ];
 }
 

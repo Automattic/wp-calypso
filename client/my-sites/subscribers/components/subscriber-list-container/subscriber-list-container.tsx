@@ -1,45 +1,84 @@
-import { numberFormat, translate } from 'i18n-calypso';
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { getLocaleSlug, translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { NoSearchResults } from 'calypso/my-sites/subscribers/components/no-search-results';
+import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { SubscriberList } from 'calypso/my-sites/subscribers/components/subscriber-list';
 import { SubscriberListActionsBar } from 'calypso/my-sites/subscribers/components/subscriber-list-actions-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
+import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { useRecordSearch } from '../../tracks';
 import { GrowYourAudience } from '../grow-your-audience';
 import './style.scss';
 
 type SubscriberListContainerProps = {
+	siteId: number | null;
 	onClickView: ( subscriber: Subscriber ) => void;
 	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriberListContainer = ( {
+	siteId,
 	onClickView,
 	onClickUnsubscribe,
+	onGiftSubscription,
 }: SubscriberListContainerProps ) => {
-	const { grandTotal, total, perPage, page, pageChangeCallback, searchTerm, isLoading } =
-		useSubscribersPage();
+	const {
+		grandTotal,
+		total,
+		perPage,
+		page,
+		pageChangeCallback,
+		searchTerm,
+		isLoading,
+		subscribers,
+		pages,
+	} = useSubscribersPage();
 	useRecordSearch();
+
+	const isSimple = useSelector( isSimpleSite );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
+
+	useEffect( () => {
+		if ( ! isLoading && subscribers.length === 0 && page > 1 ) {
+			pageChangeCallback( pages ?? 0 );
+		}
+	}, [ isLoading, subscribers, page, pageChangeCallback, pages ] );
 
 	return (
 		<section className="subscriber-list-container">
-			<div className="subscriber-list-container__header">
-				<span className="subscriber-list-container__title">
-					{ translate( 'Total', {
-						context: 'Total number of subscribers',
-					} ) }
-				</span>{ ' ' }
-				<span
-					className={ `subscriber-list-container__subscriber-count ${
-						isLoading ? 'loading-placeholder' : ''
-					}` }
-				>
-					{ numberFormat( total, 0 ) }
-				</span>
-			</div>
-			<SubscriberListActionsBar />
+			{ Boolean( grandTotal ) && (
+				<>
+					<div className="subscriber-list-container__header">
+						<span className="subscriber-list-container__title">
+							{ translate( 'Total', {
+								context: 'Total number of subscribers',
+							} ) }
+						</span>{ ' ' }
+						<span
+							className={ `subscriber-list-container__subscriber-count ${
+								isLoading ? 'loading-placeholder' : ''
+							}` }
+							title={
+								total > 1000
+									? formatNumber( total, getLocaleSlug() || undefined, { notation: 'standard' } )
+									: undefined
+							}
+						>
+							{ formatNumber( total, getLocaleSlug() || undefined ) }
+						</span>
+					</div>
+
+					{ ( total > 3 || searchTerm ) && <SubscriberListActionsBar /> }
+				</>
+			) }
 			{ isLoading &&
 				new Array( 10 ).fill( null ).map( ( _, index ) => (
 					<div key={ index } data-ignored={ _ }>
@@ -52,7 +91,11 @@ const SubscriberListContainer = ( {
 			{ ! isLoading && Boolean( grandTotal ) && (
 				<>
 					{ Boolean( total ) && (
-						<SubscriberList onView={ onClickView } onUnsubscribe={ onClickUnsubscribe } />
+						<SubscriberList
+							onView={ onClickView }
+							onGiftSubscription={ onGiftSubscription }
+							onUnsubscribe={ onClickUnsubscribe }
+						/>
 					) }
 					{ ! total && <NoSearchResults searchTerm={ searchTerm } /> }
 
@@ -67,7 +110,7 @@ const SubscriberListContainer = ( {
 					<GrowYourAudience />
 				</>
 			) }
-			{ ! isLoading && ! grandTotal && <EmptyListView /> }
+			{ ! isLoading && ! grandTotal && ! searchTerm && <EmptyComponent /> }
 		</section>
 	);
 };

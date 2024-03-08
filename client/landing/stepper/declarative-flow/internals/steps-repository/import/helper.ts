@@ -13,33 +13,28 @@ import { BASE_ROUTE } from './config';
 export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
-	platform: ImporterPlatform,
-	isAtomicSite: boolean | null
+	platform: ImporterPlatform
 ) {
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
-	// Escape WordPress, has two sub-flows "Import everything" and "Content only"
-	// firstly show import type chooser screen and then decide about importer url
-	if ( isAtomicSite && platform !== 'wordpress' ) {
-		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
-	} else if (
-		[ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ].some( ( targetPlatform ) => {
-			return (
-				platform === targetPlatform && isEnabled( `onboarding/import-from-${ targetPlatform }` )
-			);
-		} )
-	) {
-		importerUrl = getWpComOnboardingUrl( targetSlug, platform, encodedFromSite );
+	const productImporters = [ 'blogger', 'medium', 'substack', 'squarespace', 'wix', 'wordpress' ];
 
-		if ( platform === 'wordpress' && ! fromSite && isAtomicSite ) {
-			importerUrl = getWpOrgImporterUrl( targetSlug, platform );
-		} else if ( platform === 'wordpress' && ! fromSite ) {
+	if ( productImporters.includes( platform ) ) {
+		importerUrl = isEnabled( `onboarding/import-from-${ platform }` )
+			? getWpComOnboardingUrl( targetSlug, platform, encodedFromSite )
+			: getImporterUrl( targetSlug, platform, encodedFromSite );
+
+		if ( platform === 'wordpress' && ! fromSite ) {
 			importerUrl = addQueryArgs( importerUrl, {
 				option: WPImportOption.CONTENT_ONLY,
 			} );
+		} else if ( platform === 'wix' && fromSite ) {
+			importerUrl = addQueryArgs( importerUrl, {
+				run: true,
+			} );
 		}
 	} else {
-		importerUrl = getImporterUrl( targetSlug, platform, encodedFromSite );
+		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
 	}
 
 	return importerUrl;
@@ -49,14 +44,19 @@ export function getFinalImporterUrl(
  * Stepper's redirection handlers
  */
 export function generateStepPath( stepName: string, stepSectionName?: string ) {
-	if ( stepName === 'intent' ) {
-		return 'goals';
-	} else if ( stepName === 'capture' ) {
-		return BASE_ROUTE;
+	switch ( stepName ) {
+		case 'intent':
+		case 'goals':
+			return 'goals';
+
+		case 'capture':
+			return BASE_ROUTE;
+
+		default: {
+			const routes = [ BASE_ROUTE, stepName, stepSectionName ];
+			const path = routes.join( '_' );
+
+			return camelCase( path ) as string;
+		}
 	}
-
-	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
-	const path = routes.join( '_' );
-
-	return camelCase( path ) as string;
 }

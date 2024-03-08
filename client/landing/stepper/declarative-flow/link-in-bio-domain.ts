@@ -1,9 +1,9 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
-import { useFlowProgress, LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { domainMapping } from 'calypso/lib/cart-values/cart-items';
-import wpcom from 'calypso/lib/wp';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -28,6 +28,7 @@ const linkInBioDomain: Flow = {
 	get title() {
 		return translate( 'Link in Bio' );
 	},
+	isSignupFlow: true,
 	variantSlug: LINK_IN_BIO_DOMAIN_FLOW,
 	useAssertConditions: () => {
 		const { domain } = useDomainParams();
@@ -54,8 +55,8 @@ const linkInBioDomain: Flow = {
 				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
 			},
 			{
-				slug: 'siteCreationStep',
-				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
 			},
 			{
 				slug: 'processing',
@@ -66,28 +67,14 @@ const linkInBioDomain: Flow = {
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const variantSlug = this.variantSlug;
-		const { setStepProgress, setHideFreePlan, setDomainCartItem, setPlanCartItem } =
-			useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName, variantSlug } );
+		const { setHideFreePlan, setDomainCartItem, setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const { domain, provider } = useDomainParams();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 
-		setStepProgress( flowProgress );
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStepSlug,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStepSlug );
 
 		const redirectTo = encodeURIComponent(
 			`/setup/${ variantSlug }/patterns?domain=${ domain }&provider=${ provider }`
@@ -95,7 +82,7 @@ const linkInBioDomain: Flow = {
 		const logInUrl = useLoginUrl( {
 			variationName: variantSlug,
 			redirectTo: redirectTo,
-			pageTitle: 'Link%20in%20Bio',
+			pageTitle: translate( 'Link in Bio' ),
 		} );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -125,10 +112,10 @@ const linkInBioDomain: Flow = {
 							product_slug: PLAN_PERSONAL,
 						} );
 					}
-					return navigate( 'siteCreationStep' );
+					return navigate( 'createSite' );
 				}
 
-				case 'siteCreationStep':
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing': {

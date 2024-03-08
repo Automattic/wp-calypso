@@ -28,6 +28,7 @@ import {
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { GoogleAnalyticsForm } from '../analytics/form-google-analytics';
 import GoogleAnalyticsJetpackForm from '../analytics/form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from '../analytics/form-google-analytics-simple';
 
@@ -57,6 +58,21 @@ describe( 'GoogleAnalyticsForm basic tests', () => {
 		} );
 	} );
 
+	test( 'base form should return null when ga module not available in a jetpack site', () => {
+		const gaFormProps = {
+			...props,
+			site: {
+				...props.site,
+				slug: 'test-site',
+			},
+			siteIsJetpack: true,
+			isAtomic: true,
+			isGoogleAnalyticsEligible: true,
+			isJetpackModuleAvailable: false,
+		};
+		render( <GoogleAnalyticsForm { ...gaFormProps } /> );
+		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeNull();
+	} );
 	test( 'simple form should not blow up and have proper CSS class', () => {
 		render( <GoogleAnalyticsSimpleForm { ...props } /> );
 		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();

@@ -72,7 +72,7 @@ Here we'll import the `page` module, the My Sites controller and our own control
 
 ```javascript
 import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { helloWorld } from './controller';

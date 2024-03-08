@@ -20,9 +20,9 @@ const Subscribers: Step = function ( { navigation } ) {
 		submit?.();
 	};
 
-	const isSiteOnFreePlan = !! site?.plan?.is_free;
+	const hasSubscriberLimit = !! site?.plan?.is_free;
 
-	const subtitleText = isSiteOnFreePlan
+	const subtitleText = hasSubscriberLimit
 		? translate(
 				'Bring up to 100 subscribers for free — or add some individually — to start spreading the news.'
 		  )
@@ -47,7 +47,7 @@ const Subscribers: Step = function ( { navigation } ) {
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
-							isSiteOnFreePlan={ isSiteOnFreePlan }
+							hasSubscriberLimit={ hasSubscriberLimit }
 							flowName="onboarding_subscribers"
 							submitBtnName={ submitButtonText }
 							onImportFinished={ handleSubmit }

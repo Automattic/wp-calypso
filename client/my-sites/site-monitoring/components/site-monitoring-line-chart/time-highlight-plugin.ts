@@ -2,7 +2,6 @@ import uPlot from 'uplot';
 
 /**
  * Definition of the column highlight plugin.
- *
  * @returns {Object} The uPlot plugin object with hooks.
  */
 export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
@@ -11,7 +10,6 @@ export function timeHighlightPlugin( timeSlot: number | 'auto' = 86400 ) {
 
 	/**
 	 * Initialize the plugin
-	 *
 	 * @param {uPlot} u - The uPlot instance.
 	 */
 	function init( u: uPlot ) {

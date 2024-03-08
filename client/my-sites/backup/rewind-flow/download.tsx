@@ -80,7 +80,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	);
 
 	const isDownloadInfoRequestComplete = downloadInfoRequest?.hasLoaded;
-	const isOtherDownloadInfo = downloadRewindId !== rewindId || requestedBackup !== downloadId;
+	const isOtherDownloadInfo =
+		downloadRewindId !== rewindId || ( downloadId !== 0 && requestedBackup !== downloadId );
 	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
 	const isDownloadURLNotReady = downloadUrl === undefined || downloadUrl === '';
 

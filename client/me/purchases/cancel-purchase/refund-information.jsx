@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import {
 	getName,

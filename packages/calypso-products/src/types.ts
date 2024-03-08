@@ -1,32 +1,39 @@
-import { PriceTierEntry } from './get-price-tier-for-units';
-import type {
-	GROUP_JETPACK,
-	GROUP_WPCOM,
-	WPCOM_PRODUCTS,
-	WPCOM_PLANS,
-	WPCOM_STORAGE_ADD_ONS,
-	PLAN_JETPACK_FREE,
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_LEGACY_PLANS,
-	JETPACK_RESET_PLANS,
-	TERMS_LIST,
-	PERIOD_LIST,
-	JETPACK_PRODUCT_CATEGORIES,
-	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	FEATURE_GROUP_PERFORMANCE_BOOSTERS,
-	FEATURE_GROUP_HIGH_AVAILABILITY,
-	FEATURE_GROUP_DEVELOPER_TOOLS,
-	FEATURE_GROUP_SECURITY_AND_SAFETY,
-	FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
-	FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
-	FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
-	FEATURE_GROUP_YOUR_STORE,
-	FEATURE_GROUP_PRODUCTS,
-	FEATURE_GROUP_PAYMENTS,
-	FEATURE_GROUP_MARKETING_EMAIL,
-	FEATURE_GROUP_SHIPPING,
-	WOOCOMMERCE_PRODUCTS,
+import {
+	type GROUP_JETPACK,
+	type GROUP_WPCOM,
+	type GROUP_P2,
+	type WPCOM_PRODUCTS,
+	type WPCOM_PLANS,
+	type PLAN_JETPACK_FREE,
+	type JETPACK_PRODUCTS_LIST,
+	type JETPACK_LEGACY_PLANS,
+	type JETPACK_MONTHLY_LEGACY_PLANS,
+	type JETPACK_YEARLY_LEGACY_PLANS,
+	type JETPACK_RESET_PLANS,
+	type TERMS_LIST,
+	type PERIOD_LIST,
+	type JETPACK_PRODUCT_CATEGORIES,
+	type FEATURE_GROUP_ESSENTIAL_FEATURES,
+	type FEATURE_GROUP_PERFORMANCE_BOOSTERS,
+	type FEATURE_GROUP_HIGH_AVAILABILITY,
+	type FEATURE_GROUP_DEVELOPER_TOOLS,
+	type FEATURE_GROUP_SECURITY_AND_SAFETY,
+	type FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
+	type FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
+	type FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
+	type FEATURE_GROUP_YOUR_STORE,
+	type FEATURE_GROUP_PRODUCTS,
+	type FEATURE_GROUP_PAYMENTS,
+	type FEATURE_GROUP_MARKETING_EMAIL,
+	type FEATURE_GROUP_SHIPPING,
+	type WOOCOMMERCE_PRODUCTS,
+	type TYPES_LIST,
+	type WPCOM_SPACE_UPGRADE_PRODUCTS,
+	type WPCOM_OTHER_PRODUCTS,
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
 } from './constants';
+import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement, MemoExoticComponent } from 'react';
 
@@ -34,11 +41,11 @@ export type Feature = string;
 
 export type FeatureObject = {
 	getSlug: () => string;
-	getTitle: ( domainName?: string ) => TranslateResult;
+	getTitle: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( domainName?: string ) => TranslateResult;
+	getDescription?: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;
@@ -53,21 +60,42 @@ export type FeatureList = {
 	[ key: string ]: FeatureObject;
 };
 
-// WPCom
+/**
+ * WPCOM
+ */
+
+/**
+ * !WARNING! The following type is suspicious, how there is a reference to an Add-On slug that
+ * links to a defined feature slug. Add-Ons have been defined to refer internally to a set of
+ * features via their `featuresSlugs` prop. So `WPCOM_STORAGE_ADD_ONS` being a list of feature slugs
+ * used to individually refer to actual Add-Ons is likely a mistake.
+ */
+const WPCOM_STORAGE_ADD_ONS = < const >[
+	FEATURE_50GB_STORAGE_ADD_ON,
+	FEATURE_100GB_STORAGE_ADD_ON,
+];
+
 export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
 export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 export type WPComStorageAddOnSlug = ( typeof WPCOM_STORAGE_ADD_ONS )[ number ];
+// WPCOM Space Upgrade Products
+// - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+export type WPComSpaceUpgradeProductSlug = ( typeof WPCOM_SPACE_UPGRADE_PRODUCTS )[ number ];
+
+// WPCOM Other Products
+// - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 
 export interface WPComPlan extends Plan {
 	getAudience?: () => TranslateResult;
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: () => string;
-	getNewsletterTagLine?: () => string;
-	getLinkInBioTagLine?: () => string;
-	getBlogOnboardingTagLine?: () => string;
+	getPlanTagline?: () => TranslateResult;
+	getNewsletterTagLine?: () => TranslateResult;
+	getLinkInBioTagLine?: () => TranslateResult;
+	getBlogOnboardingTagLine?: () => TranslateResult;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -85,6 +113,8 @@ export interface WPComPlan extends Plan {
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
+	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
+	getSenseiHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -99,9 +129,13 @@ export type IncompleteWPcomPlan = Partial< WPComPlan > &
 		'group' | 'type' | 'getTitle' | 'getDescription' | 'getPlanCancellationDescription'
 	>;
 
-// Jetpack
+/**
+ * Jetpack
+ */
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
 export type JetpackLegacyPlanSlug = ( typeof JETPACK_LEGACY_PLANS )[ number ];
+export type JetpackYearlyLegacyPlanSlug = ( typeof JETPACK_YEARLY_LEGACY_PLANS )[ number ];
+export type JetpackMonthlyLegacyPlanSlug = ( typeof JETPACK_MONTHLY_LEGACY_PLANS )[ number ];
 export type JetpackResetPlanSlug = ( typeof JETPACK_RESET_PLANS )[ number ];
 export type JetpackPlanSlug =
 	| typeof PLAN_JETPACK_FREE
@@ -111,7 +145,9 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
-// WooCommerce
+/**
+ * WooCommerce
+ */
 export type WooCommerceProductSlug = ( typeof WOOCOMMERCE_PRODUCTS )[ number ];
 
 export type SelectorProductFeaturesItem = {
@@ -158,6 +194,7 @@ export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ numb
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug | WooCommerceProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
+export type PlanType = ( typeof TYPES_LIST )[ number ];
 export type PurchasableItemSlug = WPComPurchasableItemSlug | JetpackPurchasableItemSlug;
 
 export interface Product {
@@ -223,8 +260,8 @@ export type StorageOption = {
 };
 
 export type Plan = BillingTerm & {
-	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
-	type: string;
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK | typeof GROUP_P2;
+	type: PlanType;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
 

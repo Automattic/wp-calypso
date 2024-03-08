@@ -3,6 +3,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	getPlan,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -300,7 +302,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 									<>
 										{ price ? (
 											<>
-												{ price + ' ' }
+												{ price }
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (
@@ -374,7 +376,9 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 							primary
 							onClick={ () => {} }
 						>
-							{ translate( 'Upgrade to Business' ) }
+							{ translate( 'Upgrade to %(planName)s', {
+								args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							} ) }
 						</Button>
 					</div>
 				) }
@@ -405,6 +409,10 @@ function PrimaryButton( {
 	);
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 
+	//only show free trial button for free plugins to logged out users
+	const { monthly, yearly } = plugin?.variations ?? {};
+	const shouldStartFreeTrial = ! monthly?.product_id && ! yearly?.product_id;
+
 	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -425,6 +433,7 @@ function PrimaryButton( {
 		return (
 			<GetStartedButton
 				onClick={ onClick }
+				startFreeTrial={ shouldStartFreeTrial }
 				plugin={ plugin }
 				isMarketplaceProduct={ isMarketplaceProduct }
 			/>
@@ -453,18 +462,20 @@ function PrimaryButton( {
 	);
 }
 
-function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
+function GetStartedButton( { onClick, plugin, isMarketplaceProduct, startFreeTrial = false } ) {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
 	const billingPeriod = useSelector( getBillingInterval );
-
+	const buttonText = startFreeTrial
+		? translate( 'Start your free trial' )
+		: translate( 'Get started' );
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
 			plugin: plugin.slug,
 			billing_period: isMarketplaceProduct ? billingPeriod : '',
 		},
-		'/start/with-plugin'
+		startFreeTrial ? 'start/hosting' : '/start/with-plugin'
 	);
 	return (
 		<Button
@@ -474,7 +485,7 @@ function GetStartedButton( { onClick, plugin, isMarketplaceProduct } ) {
 			onClick={ onClick }
 			href={ startUrl }
 		>
-			{ translate( 'Get started' ) }
+			{ buttonText }
 		</Button>
 	);
 }
@@ -528,7 +539,15 @@ function FreePrice( { shouldUpgrade } ) {
 		<>
 			{ translate( 'Free' ) }
 			{ ( ! isLoggedIn || ! selectedSite || shouldUpgrade ) && (
-				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
+				<span className="plugin-details-cta__notice">
+					{ translate(
+						// Translators: %(planName)s is the name of a plan (e.g. Creator or Business)
+						'on %(planName)s plan',
+						{
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						}
+					) }
+				</span>
 			) }
 		</>
 	);

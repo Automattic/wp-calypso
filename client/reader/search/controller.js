@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { stringify } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
 import {

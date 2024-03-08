@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import FeaturedAsset from './featured-asset';
@@ -8,6 +9,8 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 		post.canonical_media?.mediaType === 'video'
 			? () => expandCard( { postKey, post, site } )
 			: null;
+
+	const [ hasExcerpt, setHasExcerpt ] = useState( true );
 
 	return (
 		<div className="reader-post-card__post">
@@ -19,7 +22,12 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 						</a>
 					</h2>
 				</AutoDirection>
-				<ReaderExcerpt post={ post } />
+				<ReaderExcerpt
+					post={ post }
+					hasExcerpt={ hasExcerpt }
+					showExcerpt={ true }
+					setHasExcerpt={ setHasExcerpt }
+				/>
 			</div>
 			<FeaturedAsset
 				post={ post }
@@ -27,6 +35,8 @@ const StandardPost = ( { post, children, expandCard, postKey, isExpanded, site }
 				postUrl={ post.URL }
 				onVideoThumbnailClick={ onVideoThumbnailClick }
 				isVideoExpanded={ isExpanded }
+				isCompactPost={ false }
+				hasExcerpt={ hasExcerpt }
 			/>
 			<div className="reader-post-card__post-details">{ children }</div>
 		</div>

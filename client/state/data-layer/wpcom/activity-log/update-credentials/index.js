@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import page from 'page';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import {
 	JETPACK_CREDENTIALS_UPDATE,

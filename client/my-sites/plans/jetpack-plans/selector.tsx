@@ -49,8 +49,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlugState = useSelector( getSelectedSiteSlug ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
@@ -99,7 +99,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		}
 	}, [ legacyPlan, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
-	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
+	const { unlinked, purchasetoken, purchaseNonce, site, currency: currencyCode } = urlQueryArgs;
 	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
 	useEffect( () => {
 		if ( canDoSiteOnlyCheckout ) {
@@ -214,8 +214,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					/>
 				</CalypsoShoppingCartProvider>
 
-				<QueryProductsList type="jetpack" />
-				<QueryIntroOffers siteId={ siteId ?? 'none' } />
+				<QueryProductsList type="jetpack" currency={ currencyCode ?? undefined } />
+				<QueryIntroOffers siteId={ siteId ?? 'none' } currency={ currencyCode ?? undefined } />
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ siteId && <QuerySites siteId={ siteId } /> }

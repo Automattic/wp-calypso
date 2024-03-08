@@ -1,9 +1,10 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useMemo } from 'react';
-import Tooltip from 'calypso/components/tooltip';
+import { useSelector } from 'calypso/state';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { jetpackBoostDesktopIcon, jetpackBoostMobileIcon } from '../../icons';
 import { getBoostRating, getBoostRatingClass } from '../lib/boost';
 import BoostLicenseInfoModal from '../site-status-content/site-boost-column/boost-license-info-modal';
@@ -19,6 +20,9 @@ interface Props {
 
 export default function BoostSitePerformance( { site, trackEvent, hasError }: Props ) {
 	const translate = useTranslate();
+
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -36,7 +40,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		has_pending_boost_one_time_score: hasPendingScore,
 	} = site;
 
-	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
+	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData ?? {};
 
 	const components = {
 		strong: <strong></strong>,
@@ -94,6 +98,10 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 			},
 		];
 	}, [ isAtomicSite, hasBoost, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
+
+	if ( ! isEnabled && ! partnerCanIssueLicense ) {
+		return null;
+	}
 
 	return (
 		<>

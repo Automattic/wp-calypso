@@ -5,7 +5,10 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
 	isDomainTransfer,
+	isDomainMapping,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-backup.svg';
 import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
@@ -14,13 +17,16 @@ import JetpackSocialPluginImage from 'calypso/assets/images/jetpack/jetpack-plug
 import JetpackVideopressPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-videopress.svg';
 import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 const buildKeyValuePairByProductSlugs = (
 	productSlugs: ReadonlyArray< string >,
 	value: string
 ) => {
-	return productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} );
+	return productSlugs
+		? productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} )
+		: {};
 };
 
 const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
@@ -29,6 +35,7 @@ const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, 'jetpack-social' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SEARCH_PRODUCTS, 'jetpack-search' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_VIDEOPRESS_PRODUCTS, 'jetpack-videopress' ),
+	...buildKeyValuePairByProductSlugs( JETPACK_SCAN_PRODUCTS, 'jetpack-protect' ),
 };
 
 const JETPACK_PLUGIN_IMAGE_MAP: Record< string, string > = {
@@ -93,3 +100,49 @@ export function getDomainManagementUrl(
 export function isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
 	return purchases?.length > 0 && purchases?.every( isDomainTransfer );
 }
+
+export function isDomainOnly( purchases: ReceiptPurchase[] ): boolean {
+	return (
+		purchases?.length > 0 &&
+		purchases?.every(
+			( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
+		)
+	);
+}
+
+export type FindPredicate = (
+	product: ( WithSnakeCaseSlug | WithCamelCaseSlug ) & {
+		is_domain_registration?: boolean;
+		isDomainRegistration?: boolean;
+		meta: string;
+	}
+) => boolean;
+
+export function getDomainPurchaseTypeAndPredicate(
+	purchases: ReceiptPurchase[]
+): [ string, FindPredicate ] {
+	const hasDomainMapping = purchases.some( isDomainMapping );
+
+	if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
+		return [ 'REGISTRATION', isDomainRegistration ];
+	}
+
+	if ( hasDomainMapping ) {
+		return [ 'MAPPING', isDomainMapping ];
+	}
+
+	return [ 'TRANSFER', isDomainTransfer ];
+}
+
+export const getDomainPurchase = ( purchases: ReceiptPurchase[] ) =>
+	purchases.find(
+		( purchase ) =>
+			isDomainMapping( purchase ) ||
+			isDomainTransfer( purchase ) ||
+			isDomainRegistration( purchase )
+	);
+
+export const getWPORGPluginSlugMap = () => WPORG_PLUGIN_SLUG_MAP;
+
+export const isTitanWithoutMailboxes = ( selectedFeature: string ) =>
+	selectedFeature === 'email-license';

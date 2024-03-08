@@ -1,8 +1,7 @@
-import config from '@automattic/calypso-config';
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map, includes, get } from 'lodash';
-import { getTagsFromStreamKey } from 'calypso/reader/discover/helper';
+import { buildDiscoverStreamKey, getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -30,7 +29,6 @@ const noop = () => {};
  * `following`
  * `site:1234`
  * `search:a:value` ( prefix is `search`, suffix is `a:value` )
- *
  * @param  {string} streamKey The stream ID to break apart
  * @returns {string}          The stream ID suffix
  */
@@ -208,17 +206,13 @@ const streamApis = {
 	discover: {
 		path: ( { streamKey } ) => {
 			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
-				if ( config.isEnabled( 'reader/discover-stream' ) ) {
-					return '/read/streams/discover';
-				}
-
-				return '/read/tags/cards';
+				return '/read/streams/discover';
 			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
 				return '/read/tags/posts';
 			} else if ( streamKeySuffix( streamKey ).includes( 'firstposts' ) ) {
 				return '/read/streams/first-posts';
 			}
-			return `/read/tags/${ streamKeySuffix( streamKey ) }/cards`;
+			return `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`;
 		},
 		dateProperty: 'date',
 		query: ( extras, { streamKey } ) =>
@@ -229,6 +223,8 @@ const streamApis = {
 				tag_recs_per_card: 5,
 				site_recs_per_card: 5,
 				age_based_decay: 0.5,
+				// Default order is by date (latest) unless we're on the recommended tab which shows popular instead.
+				orderBy: streamKeySuffix( streamKey ).includes( 'recommended' ) ? 'popular' : 'date',
 			} ),
 		apiNamespace: 'wpcom/v2',
 	},
@@ -302,10 +298,11 @@ const streamApis = {
 	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
+		apiNamespace: 'wpcom/v2',
 		dateProperty: 'date',
 	},
 	tag_popular: {
-		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/cards`,
+		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
 		apiNamespace: 'wpcom/v2',
 		query: ( extras, { streamKey } ) =>
 			getQueryString( {
@@ -326,7 +323,6 @@ const streamApis = {
 
 /**
  * Request a page for the given stream
- *
  * @param  {Object}   action   Action being handled
  * @returns {Object | undefined} http action for data-layer to dispatch
  */
@@ -373,7 +369,9 @@ export function requestPage( action ) {
 
 function get_page_handle( streamType, action, data ) {
 	const { date_range, meta, next_page, next_page_handle } = data;
-	if ( includes( streamType, 'rec' ) ) {
+	if ( next_page_handle ) {
+		return { page_handle: next_page_handle };
+	} else if ( includes( streamType, 'rec' ) ) {
 		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
 		return { offset };
 	} else if ( next_page || ( meta && meta.next_page ) ) {
@@ -385,8 +383,6 @@ function get_page_handle( streamType, action, data ) {
 		// and offsets must be used
 		const { after } = date_range;
 		return { before: after };
-	} else if ( next_page_handle ) {
-		return { page_handle: next_page_handle };
 	}
 	return null;
 }
@@ -445,7 +441,17 @@ export function handlePage( action, data ) {
 				receiveRecommendedSites( { seed: 'discover-new-sites', sites: streamNewSites } )
 			);
 		}
-		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
+
+		// The first request when going to wordpress.com/discover does not include tags in the streamKey
+		// because it is still waiting for the user's interests to be fetched.
+		// Given that the user interests will be retrieved in the response from /read/streams/discover we
+		// use that values to generate a correct streamKey and prevent doing a new request when the user
+		// interests are finally fetched. More context here: paYKcK-3zo-p2#comment-2528.
+		let newStreamKey = streamKey;
+		if ( streamKey === 'discover:recommended' && data.user_interests ) {
+			newStreamKey = buildDiscoverStreamKey( 'recommended', data.user_interests );
+		}
+		actions.push( receivePage( { streamKey: newStreamKey, query, streamItems, pageHandle, gap } ) );
 	}
 
 	return actions;

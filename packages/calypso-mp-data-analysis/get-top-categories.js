@@ -1,8 +1,6 @@
-// eslint-disable-next-line import/no-nodejs-modules
-const { get } = require( 'axios' );
-const { parse } = require( 'csv-parse/sync' );
-const { stringify } = require( 'csv-stringify/sync' );
-const fs = require( 'fs-extra' );
+import { parse } from 'csv-parse/sync';
+import { stringify } from 'csv-stringify/sync';
+import fs from 'fs-extra';
 
 // empty translation becaue laziness
 const __ = ( name ) => name;
@@ -166,90 +164,87 @@ const getLocale = ( lang ) => {
 	return lang.replace( '-', '_' );
 };
 
-const getTopTagsAndCategories = async () => {
-	const tagsCountMap = {};
-	const csvFileContent = await fs.readFile( './top-100-searches.csv', {
-		encoding: 'utf-8',
-	} );
-	const records = parse( csvFileContent, {
-		columns: true,
-		skip_empty_lines: true,
-	} );
+const tagsCountMap = {};
+const csvFileContent = await fs.readFile( './top-100-searches.csv', {
+	encoding: 'utf-8',
+} );
+const records = parse( csvFileContent, {
+	columns: true,
+	skip_empty_lines: true,
+} );
 
-	for ( const record of records ) {
-		const { data: wporgData } = await get( 'https://api.wordpress.org/plugins/info/1.2/', {
-			params: {
+for ( const record of records ) {
+	const wporgResponse = await fetch(
+		'https://api.wordpress.org/plugins/info/1.2?' +
+			new URLSearchParams( {
 				action: 'query_plugins',
 				'request[page]': 1,
 				'request[per_page]': 24,
 				'request[search]': record.search_term,
 				'request[locale]': getLocale( record.language ),
-			},
-		} );
-
-		const { data: wpcomData } = await get(
-			'https://public-api.wordpress.com/wpcom/v2/marketplace/products',
-			{
-				params: {
-					type: 'all',
-					_envelope: 1,
-					q: record.search_term,
-				},
-			}
-		);
-
-		const wpcomPlugins = Object.values( wpcomData.body.results );
-		const wporgPlugins = Object.values( wporgData.plugins );
-
-		const plugins = [ ...wpcomPlugins, ...wporgPlugins ].slice( 0, 6 ); // show top 6 plugins
-
-		// eslint-disable-next-line no-console
-		console.log(
-			`fetched plugins for ${ record.search_term }: locale - ${ getLocale(
-				record.language
-			) } results - wpcom: ${ wpcomPlugins.length } | wporg: ${ wporgPlugins.length }`
-		);
-
-		plugins.forEach( ( plugin ) => {
-			Object.keys( plugin.tags || {} ).forEach( ( tag ) => {
-				tagsCountMap[ tag ] = tagsCountMap[ tag ]
-					? tagsCountMap[ tag ] + parseInt( record.count )
-					: parseInt( record.count );
-			} );
-		} );
-	}
-
-	const topTags = Object.keys( tagsCountMap )
-		.map( ( tag ) => ( {
-			tag: tag,
-			count: tagsCountMap[ tag ],
-		} ) )
-		.sort( ( a, b ) => a.count - b.count )
-		.reverse();
-
-	await fs.outputFile(
-		'results/top-tags.csv',
-		stringify( topTags, { columns: [ { key: 'tag' }, { key: 'count' } ], header: true } )
+			} )
 	);
 
-	const topCategories = Object.values( categories )
-		.map( ( category ) => {
-			const count = category.tags.reduce( ( acc, categoryTag ) => {
-				return acc + ( topTags.find( ( { tag } ) => tag === categoryTag )?.count ?? 0 );
-			}, 0 );
-
-			return {
-				category: category.slug,
-				count,
-			};
-		} )
-		.sort( ( a, b ) => a.count - b.count )
-		.reverse();
-
-	await fs.outputFile(
-		'results/top-categories.csv',
-		stringify( topCategories, { columns: [ { key: 'category' }, { key: 'count' } ], header: true } )
+	const wpcomResponse = await fetch(
+		'https://public-api.wordpress.com/wpcom/v2/marketplace/products?' +
+			new URLSearchParams( {
+				type: 'all',
+				_envelope: 1,
+				q: record.search_term,
+			} )
 	);
-};
 
-getTopTagsAndCategories();
+	const wporgData = await wporgResponse.json();
+	const wpcomData = await wpcomResponse.json();
+
+	const wpcomPlugins = Object.values( wpcomData.body.results );
+	const wporgPlugins = Object.values( wporgData.plugins );
+
+	const plugins = [ ...wpcomPlugins, ...wporgPlugins ].slice( 0, 6 ); // show top 6 plugins
+
+	console.log(
+		`fetched plugins for ${ record.search_term }: locale - ${ getLocale(
+			record.language
+		) } results - wpcom: ${ wpcomPlugins.length } | wporg: ${ wporgPlugins.length }`
+	);
+
+	plugins.forEach( ( plugin ) => {
+		Object.keys( plugin.tags || {} ).forEach( ( tag ) => {
+			tagsCountMap[ tag ] = tagsCountMap[ tag ]
+				? tagsCountMap[ tag ] + parseInt( record.count )
+				: parseInt( record.count );
+		} );
+	} );
+}
+
+const topTags = Object.keys( tagsCountMap )
+	.map( ( tag ) => ( {
+		tag: tag,
+		count: tagsCountMap[ tag ],
+	} ) )
+	.sort( ( a, b ) => a.count - b.count )
+	.reverse();
+
+await fs.outputFile(
+	'results/top-tags.csv',
+	stringify( topTags, { columns: [ { key: 'tag' }, { key: 'count' } ], header: true } )
+);
+
+const topCategories = Object.values( categories )
+	.map( ( category ) => {
+		const count = category.tags.reduce( ( acc, categoryTag ) => {
+			return acc + ( topTags.find( ( { tag } ) => tag === categoryTag )?.count ?? 0 );
+		}, 0 );
+
+		return {
+			category: category.slug,
+			count,
+		};
+	} )
+	.sort( ( a, b ) => a.count - b.count )
+	.reverse();
+
+await fs.outputFile(
+	'results/top-categories.csv',
+	stringify( topCategories, { columns: [ { key: 'category' }, { key: 'count' } ], header: true } )
+);

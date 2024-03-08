@@ -36,11 +36,42 @@ const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...pr
 	return <span { ...props }></span>;
 };
 
-export const HelpCenterContactPage: FC = () => {
+type ContactOption = 'chat' | 'forum' | 'email';
+const generateContactOnClickEvent = (
+	contactOption: ContactOption,
+	contactOptionEventName?: string
+): ( () => void ) => {
+	return () => {
+		if ( contactOptionEventName ) {
+			recordTracksEvent( contactOptionEventName, {
+				location: 'help-center',
+				contact_option: contactOption,
+			} );
+		}
+	};
+};
+
+/**
+ * This component is used to render the contact page in the help center.
+ * It will render the contact options based on the user's eligibility.
+ * @param hideHeaders - Whether to hide the headers or not (mainly used for embedding the contact page)
+ * @param onClick - Callback to be called when the user clicks on a contact option
+ * @param trackEventName - The name of the event to be tracked when the user clicks on a contact option
+ *
+ * Note: onClick and trackEventName should be both defined, in order to track the event and perform the callback.
+ */
+type HelpCenterContactPageProps = {
+	hideHeaders?: boolean;
+	onClick?: () => void;
+	trackEventName?: string;
+};
+
+export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
+	hideHeaders = false,
+	trackEventName,
+} ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
-	const isWapuuEnabled = config.isEnabled( 'wapuu' );
-
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,
@@ -107,12 +138,11 @@ export const HelpCenterContactPage: FC = () => {
 		return __( 'Email', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
-	const forumtHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Public Forums (English)' ) ) {
-			return __( 'Public Forums', __i18n_text_domain__ );
+	const forumHeaderText = useMemo( () => {
+		if ( isDefaultLocale( locale ) ) {
+			return __( 'Community forums', __i18n_text_domain__ );
 		}
-
-		return __( 'Public Forums (English)', __i18n_text_domain__ );
+		return __( 'Community forums (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
@@ -123,22 +153,52 @@ export const HelpCenterContactPage: FC = () => {
 		);
 	}
 
+	// Create URLSearchParams for forum
+	const forumUrlSearchParams = new URLSearchParams( {
+		mode: 'FORUM',
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const forumUrl = `/contact-form?${ forumUrlSearchParams.toString() }`;
+
+	// Create URLSearchParams for chat
+	const chatUrlSearchParams = new URLSearchParams( {
+		mode: 'CHAT',
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const chatUrl = `/contact-form?${ chatUrlSearchParams.toString() }`;
+
+	// Create URLSearchParams for email
+	const emailUrlSearchParams = new URLSearchParams( {
+		mode: 'EMAIL',
+		// Set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
+		overflow: ( renderChat.eligible && renderChat.state !== 'AVAILABLE' ).toString(),
+		wapuuFlow: hideHeaders.toString(),
+	} );
+	const emailUrl = `/contact-form?${ emailUrlSearchParams.toString() }`;
+
+	const contactOptionsEventMap: Record< ContactOption, () => void > = {
+		chat: generateContactOnClickEvent( 'chat', trackEventName ),
+		forum: generateContactOnClickEvent( 'forum', trackEventName ),
+		email: generateContactOnClickEvent( 'email', trackEventName ),
+	};
+
 	return (
 		<div className="help-center-contact-page">
-			<BackButton />
+			{ ! hideHeaders && <BackButton /> }
 			<div className="help-center-contact-page__content">
-				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				{ ! hideHeaders && (
+					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
-				{ /* Easter */ }
 				<GMClosureNotice
-					displayAt="2023-04-03 00:00Z"
-					closesAt="2023-04-09 00:00Z"
-					reopensAt="2023-04-10 07:00Z"
+					displayAt="2023-12-26 00:00Z"
+					closesAt="2023-12-31 00:00Z"
+					reopensAt="2024-01-02 07:00Z"
 					enabled={ renderChat.render }
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to="/contact-form?mode=FORUM">
+					<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
 						<div
 							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
 							role="button"
@@ -148,8 +208,10 @@ export const HelpCenterContactPage: FC = () => {
 								<Icon icon={ <Forum /> } />
 							</div>
 							<div>
-								<h2>{ forumtHeaderText }</h2>
-								<p>{ __( 'Ask our WordPress.com community', __i18n_text_domain__ ) }</p>
+								<h2>{ forumHeaderText }</h2>
+								<p>
+									{ __( 'Your question and any answers will be public', __i18n_text_domain__ ) }
+								</p>
 							</div>
 						</div>
 					</Link>
@@ -158,7 +220,8 @@ export const HelpCenterContactPage: FC = () => {
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
 							<ConditionalLink
 								active={ renderChat.state === 'AVAILABLE' }
-								to="/contact-form?mode=CHAT"
+								to={ chatUrl }
+								onClick={ contactOptionsEventMap[ 'chat' ] }
 							>
 								<div
 									className={ classnames( 'help-center-contact-page__box', 'chat', {
@@ -184,12 +247,7 @@ export const HelpCenterContactPage: FC = () => {
 					) }
 
 					{ renderEmail.render && (
-						<Link
-							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
-							to={ `/contact-form?mode=EMAIL&overflow=${ (
-								renderChat.eligible && renderChat.state !== 'AVAILABLE'
-							).toString() }` }
-						>
+						<Link to={ emailUrl } onClick={ contactOptionsEventMap[ 'email' ] }>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"
@@ -201,23 +259,6 @@ export const HelpCenterContactPage: FC = () => {
 								<div>
 									<h2>{ emailHeaderText }</h2>
 									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
-								</div>
-							</div>
-						</Link>
-					) }
-					{ isWapuuEnabled && (
-						<Link to="/odie">
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'odie' ) }
-								role="button"
-								tabIndex={ 0 }
-							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ comment } />
-								</div>
-								<div>
-									<h2>{ __( 'Wapuu', __i18n_text_domain__ ) }</h2>
-									<p>{ __( 'Get an immediate reply using a trained AI', __i18n_text_domain__ ) }</p>
 								</div>
 							</div>
 						</Link>

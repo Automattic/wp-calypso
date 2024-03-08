@@ -10,12 +10,12 @@ type FireOptions = {
 	scalar?: number;
 };
 
-function fireConfetti() {
+function fireConfetti( colors: string[] ) {
 	const count = 60;
 	const scale = 2;
 	const defaults = {
 		origin: { y: 0.4 },
-		colors: COLORS,
+		colors,
 		scalar: scale,
 		spread: 180,
 		gravity: 6,
@@ -29,7 +29,7 @@ function fireConfetti() {
 				spread: scale * opts.spread,
 				scalar: opts.scalar ? scale * opts.scalar : scale,
 				// counter react-modal very high z index, always render the confetti on top
-				zIndex: 100000,
+				zIndex: 1000000,
 			} )
 		);
 	}
@@ -58,12 +58,12 @@ function fireConfetti() {
 	} );
 }
 
-const ConfettiAnimation = ( { trigger = true, delay = 0 } ) => {
+const ConfettiAnimation = ( { trigger = true, delay = 0, colors = COLORS } ) => {
 	useEffect( () => {
 		if ( trigger ) {
-			setTimeout( () => fireConfetti(), delay );
+			setTimeout( () => fireConfetti( colors ), delay );
 		}
-	}, [ trigger, delay ] );
+	}, [ trigger, delay, colors ] );
 
 	return null;
 };

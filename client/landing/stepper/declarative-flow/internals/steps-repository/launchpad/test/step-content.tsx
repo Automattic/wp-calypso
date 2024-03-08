@@ -70,6 +70,12 @@ jest.mock( '@wordpress/data', () => {
 								product_slug: 'mydomain.com',
 							},
 						],
+						getProductCartItems: () => [
+							{
+								product_slug: 'wordpress_com_1gb_space_addon_yearly',
+								volume: 50,
+							},
+						],
 						getSelectedDomain: () => ( {
 							is_free: false,
 							product_slug: 'mydomain.com',

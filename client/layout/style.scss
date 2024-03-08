@@ -73,9 +73,13 @@ body.is-focus-sites {
 		margin: 0;
 	}
 
+	.is-section-themes.has-no-sidebar.is-logged-in & {
+		padding: 79px 32px 32px;
+	}
+
 	.is-section-theme & {
 		.sites.main {
-			padding-top: 79px;
+			padding-top: calc(79px - var(--masterbar-height));
 		}
 	}
 
@@ -98,6 +102,10 @@ body.is-focus-sites {
 		.is-section-themes.has-no-sidebar & {
 			padding: 0;
 			margin: 0;
+		}
+
+		.is-section-themes.has-no-sidebar.is-logged-in & {
+			padding: 47px 0 0;
 		}
 
 		.is-section-preview & {
@@ -310,9 +318,8 @@ body.is-mobile-app-view {
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content .layout__secondary {
-	@media only screen and ( max-width: 782px ) {
+	@media only screen and ( max-width: 781px ) {
 		transform: translateX(-100%);
-		padding: 71px 24px 24px;
 	}
 }
 
@@ -363,6 +370,7 @@ body.is-mobile-app-view {
 // This is done since most has-no-masterbar section have their own padding set already that we don't want to overwrite
 .layout.has-no-masterbar.is-group-me,
 .layout.has-no-masterbar.is-group-sites,
+.layout.has-no-masterbar.is-group-sites-dashboard,
 .layout.has-no-masterbar.is-section-reader {
 	--masterbar-height: 0;
 

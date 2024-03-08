@@ -7,7 +7,6 @@ import type { JetpackPurchasableItemSlug } from './types';
 
 /**
  * Check if a Jetpack item (product or plan) is superseding another one. Based on yearly variants.
- *
  * @param supersedingItem Item potentially superseding the other one
  * @param supersededItem Item potentially superseded by the other one
  * @returns True if the first item is superseding the second one

@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import page from '@automattic/calypso-router';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';

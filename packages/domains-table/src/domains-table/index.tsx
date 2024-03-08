@@ -1,3 +1,4 @@
+import { DomainData } from '@automattic/data-stores';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { ReactNode } from 'react';
@@ -19,11 +20,20 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 
 	const state = useGenerateDomainsTableState( allProps );
 
+	const { isAllSitesView, domains } = props;
+
+	const showDomainsToolbar =
+		isAllSitesView ||
+		( ! isAllSitesView &&
+			( ( domains as unknown as DomainData[] ) ?? [] ).filter(
+				( domain ) => ! domain?.is_subdomain
+			).length > 1 );
+
 	return (
 		<DomainsTableStateContext.Provider value={ state }>
 			<div className="domains-table">
 				<DomainsTableBulkUpdateNotice />
-				<DomainsTableToolbar />
+				{ showDomainsToolbar && <DomainsTableToolbar /> }
 				{ isMobile ? (
 					<DomainsTableMobileCards />
 				) : (

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
+import useCredentialsIntroMessage from '../use-credentials-intro-message';
 import type { SiteId } from 'calypso/types';
 import './style.scss';
 
@@ -57,17 +58,12 @@ const HostSelection: FunctionComponent = () => {
 		);
 	};
 
+	const introMessage = useCredentialsIntroMessage( siteId );
+
 	return (
 		<div className="host-selection">
 			<div className="host-selection__header">
-				<div className="host-selection__notice">
-					{ translate(
-						'In order to restore your site, should something go wrong, you’ll need to provide your website’s {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-				</div>
+				<div className="host-selection__notice">{ introMessage }</div>
 				<h3>
 					{ translate( 'Select your website host for %(siteSlug)s', {
 						args: {

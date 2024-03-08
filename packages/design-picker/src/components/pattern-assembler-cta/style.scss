@@ -24,7 +24,7 @@
 		padding: 64px;
 	}
 
-	@include break-xlarge {
+	@include break-wide {
 		flex-direction: row-reverse;
 		padding: 96px 64px;
 	}
@@ -38,9 +38,10 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		flex-shrink: 0;
 		gap: 24px;
 
-		@include break-xlarge {
+		@include break-wide {
 			align-items: flex-start;
 		}
 
@@ -116,30 +117,31 @@
 	}
 
 	.pattern-assembler-cta__button {
+		background-color: #010101;
+		border-color: #010101;
 		border-radius: 4px;
 		letter-spacing: -0.15px;
 		line-height: 20px;
 		padding: 10px 24px;
+
+		&:hover,
+		&:focus {
+			background-color: #333;
+			border-color: #333;
+		}
 	}
 
 	.pattern-assembler-cta__image-wrapper {
-		flex-grow: 1;
-
-		@include break-wide {
-			flex-grow: 0;
-			margin-right: 96px;
-		}
-
-		@media ( min-width: 1600px ) {
-			margin: 0;
-		}
+		padding-left: 35px;
+		text-align: right;
 	}
 
 	.pattern-assembler-cta__image {
-		width: 200px;
+		max-width: 405px;
+		width: 100%;
 
 		@include break-wide {
-			width: 272px;
+			min-width: 380px;
 		}
 	}
 }

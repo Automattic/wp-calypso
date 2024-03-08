@@ -2,7 +2,7 @@ import { useSelect } from '@wordpress/data';
 import { register as registerUserStore } from '../../user';
 import type { UserSelect } from '../../user';
 
-const USER_STORE = registerUserStore( { client_id: '', client_secret: '' } );
+const USER_STORE = registerUserStore();
 
 const useIsLoggedIn = () => {
 	const currentUser = useSelect(

@@ -1,0 +1,21 @@
+.stats-card-upsell {
+	width: 100%;
+	height: 100%;
+	font-size: $font-body-small;
+	.stats-card-upsell__content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		padding: 25px;
+	}
+
+	.stats-card-upsell__text {
+		margin-bottom: 10px;
+		text-wrap: balance;
+		color: var(--studio-gray-80);
+		text-align: center;
+	}
+}
+

@@ -23,7 +23,7 @@ export default function SubscriptionsModuleBanner() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 	const siteJetpackSettings = useSelector( ( state ) => {
 		if ( ! siteId ) {

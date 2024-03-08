@@ -7,15 +7,16 @@ import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
 import { ShouldShowFirstPostPublishedModalProvider } from '../../dotcom-fse/lib/first-post-published-modal/should-show-first-post-published-modal-context';
 import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
 import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
+import { BloggingPromptsModal } from './blogging-prompts-modal';
 import DraftPostModal from './draft-post-modal';
 import FirstPostPublishedModal from './first-post-published-modal';
-import LivePreviewModal from './live-preview-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import PostPublishedSharingModal from './sharing-modal';
@@ -32,7 +33,7 @@ import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 let unlock;
 try {
 	unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-		'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+		'I know using unstable features means my theme or plugin will inevitably break in the next version of WordPress.',
 		'@wordpress/edit-site'
 	).unlock;
 } catch ( error ) {
@@ -82,7 +83,9 @@ function WelcomeTour() {
 		}
 	}, [ fetchWelcomeGuideStatus, isLoaded ] );
 
-	if ( ! show || isNewPageLayoutModalOpen ) {
+	const filteredShow = applyFilters( 'a8c.WpcomBlockEditorWelcomeTour.show', show );
+
+	if ( ! filteredShow || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 
@@ -126,7 +129,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 					<SellerCelebrationModal />
 					<PurchaseNotice />
 					<VideoPressCelebrationModal />
-					<LivePreviewModal />
+					<BloggingPromptsModal />
 				</ShouldShowFirstPostPublishedModalProvider>
 			</HasSeenVideoCelebrationModalProvider>
 		</HasSeenSellerCelebrationModalProvider>

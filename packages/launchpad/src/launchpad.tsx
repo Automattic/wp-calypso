@@ -1,44 +1,94 @@
-import { useLaunchpad } from '@automattic/data-stores';
-import { useRef, useMemo } from 'react';
-import Checklist from './checklist';
-import type { Task } from './types';
-import type { UseLaunchpadOptions } from '@automattic/data-stores';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import {
+	LaunchpadNavigator,
+	Site,
+	type SiteSelect,
+	sortLaunchpadTasksByCompletionStatus,
+	useSortedLaunchpadTasks,
+} from '@automattic/data-stores';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useState } from 'react';
+import { ShareSiteModal } from './action-components';
+import LaunchpadInternal from './launchpad-internal';
+import { setUpActionsForTasks } from './setup-actions';
+import type { EventHandlers, Task } from './types';
 
-export interface LaunchpadProps {
+export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
+
+type LaunchpadProps = {
 	siteSlug: string | null;
-	checklistSlug?: string | 0 | null | undefined;
-	makeLastTaskPrimaryAction?: boolean;
-	taskFilter?: ( tasks: Task[] ) => Task[];
-	useLaunchpadOptions?: UseLaunchpadOptions;
-}
+	checklistSlug: string;
+	launchpadContext: string;
+	onSiteLaunched?: () => void;
+	onTaskClick?: EventHandlers[ 'onTaskClick' ];
+	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
+};
 
 const Launchpad = ( {
 	siteSlug,
 	checklistSlug,
-	taskFilter,
-	makeLastTaskPrimaryAction,
-	useLaunchpadOptions = {},
+	launchpadContext,
+	onSiteLaunched,
+	onTaskClick,
+	onPostFilterTasks,
 }: LaunchpadProps ) => {
-	const launchpadData = useLaunchpad( siteSlug || '', checklistSlug, useLaunchpadOptions );
-	const { isFetchedAfterMount, data } = launchpadData;
-	const tasks = useRef< Task[] >( [] );
+	const {
+		data: { checklist },
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
-	useMemo( () => {
-		const originalTasks = data.checklist || [];
-		tasks.current = taskFilter ? taskFilter( originalTasks ) : originalTasks;
-	}, [ data, taskFilter ] );
+	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
+
+	const tracksData = { recordTracksEvent, checklistSlug, tasklistCompleted, launchpadContext };
+
+	const site = useSelect(
+		( select ) => {
+			return siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug ) : null;
+		},
+		[ siteSlug ]
+	);
+	const [ shareSiteModalIsOpen, setShareSiteModalIsOpen ] = useState( false );
+
+	const taskFilter = ( tasks: Task[] ) => {
+		const baseTasks = setUpActionsForTasks( {
+			tasks,
+			siteSlug,
+			tracksData,
+			extraActions: {
+				setActiveChecklist,
+				setShareSiteModalIsOpen,
+			},
+			eventHandlers: {
+				onSiteLaunched,
+				onTaskClick,
+			},
+		} );
+
+		if ( onPostFilterTasks ) {
+			return onPostFilterTasks( baseTasks );
+		}
+
+		return baseTasks;
+	};
+
+	const launchpadOptions = {
+		onSuccess: sortLaunchpadTasksByCompletionStatus,
+	};
 
 	return (
-		<div className="launchpad__checklist-wrapper">
-			{ isFetchedAfterMount ? (
-				<Checklist
-					tasks={ tasks.current }
-					makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }
-				/>
-			) : (
-				<Checklist.Placeholder />
+		<>
+			{ shareSiteModalIsOpen && site && (
+				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
 			) }
-		</div>
+			<LaunchpadInternal
+				site={ site }
+				siteSlug={ siteSlug }
+				checklistSlug={ checklistSlug }
+				taskFilter={ taskFilter }
+				useLaunchpadOptions={ launchpadOptions }
+				launchpadContext={ launchpadContext }
+			/>
+		</>
 	);
 };
 

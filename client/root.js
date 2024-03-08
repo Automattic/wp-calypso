@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import globalPageInstance from 'page';
+import globalPageInstance from '@automattic/calypso-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -88,8 +88,8 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
 	if ( ! primarySiteSlug ) {
-		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
-		return '/read';
+		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
+		return '/sites';
 	}
 
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
@@ -98,5 +98,5 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		return `/home/${ primarySiteSlug }`;
 	}
 
-	return `/stats/${ primarySiteSlug }`;
+	return `/stats/day/${ primarySiteSlug }`;
 }

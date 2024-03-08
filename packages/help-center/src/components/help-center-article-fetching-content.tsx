@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
@@ -14,7 +15,8 @@ import './help-center-article-content.scss';
 const getPostKey = ( blogId: number, postId: number ) => ( { blogId, postId } );
 
 const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => {
-	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
+	const locale = useLocale();
+	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId, locale );
 	if ( supportArticleAlternates.isInitialLoading ) {
 		return null;
 	}

@@ -1,3 +1,4 @@
+import { SimplifiedSegmentedControl } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
@@ -5,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -14,7 +14,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SUPPORT_URL } from '../const';
+import { INSIGHTS_SUPPORT_URL } from '../const';
 import StatsErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModuleContent from '../stats-module/content-text';
@@ -139,7 +139,7 @@ class StatsComments extends Component {
 						{
 							comment: '{{link}} links to support documentation.',
 							components: {
-								link: <a href={ localizeUrl( `${ SUPPORT_URL }#:~:text=Comments:` ) } />,
+								link: <a href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#:~:text=Comments:` ) } />,
 							},
 							context: 'Stats: Info box label when the Comments module is empty',
 						}

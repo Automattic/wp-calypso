@@ -4,7 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { UrlData, GoToStep, RecordTracksEvent, ImporterPlatform } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
@@ -12,8 +12,6 @@ import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const trackEventName = 'calypso_signup_step_start';
 const trackEventParams = {
@@ -34,7 +32,7 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
-	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
 	const recordReadyScreenEvent = () => {
 		recordTracksEvent( trackEventName, {
@@ -56,44 +54,43 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 		} );
 	};
 
-	useEffect( recordReadyScreenEvent, [] );
-	useEffect( recordImportGuideEvent, [ isModalDetailsOpen ] );
+	useEffect( () => recordReadyScreenEvent(), [ urlData.platform ] );
+	useEffect( () => recordImportGuideEvent(), [ isModalDetailsOpen ] );
 
 	return (
 		<>
-			<div className="import__header">
-				<div className="import__heading import__heading-center">
-					<Title>{ __( 'Your content is ready for its brand new home' ) }</Title>
-					<SubTitle>
-						{ createInterpolateElement(
-							sprintf(
-								/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
-								__(
-									'It looks like <strong>%(website)s</strong> is built with %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
-								),
-								{
-									website: convertToFriendlyWebsiteName( urlData.url ),
-									platform: convertPlatformName( urlData.platform ),
-								}
+			<div className="import__heading import__heading-center">
+				<Title>{ __( 'Your content is ready for its brand new home' ) }</Title>
+				<SubTitle>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: the website could be any domain (eg: "yourname.com") that is built with a platform (eg: Wix, Squarespace, Blogger, etc.) */
+							__(
+								'It looks like <strong>%(website)s</strong> is built with %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 							),
-							{ strong: createElement( 'strong' ) }
-						) }
-					</SubTitle>
+							{
+								website: convertToFriendlyWebsiteName( urlData.url ),
+								platform: convertPlatformName( urlData.platform ),
+							}
+						),
+						{ strong: createElement( 'strong' ) }
+					) }
+				</SubTitle>
 
-					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToImporterPage( urlData.platform ) }>
-							{ __( 'Import your content' ) }
-						</NextButton>
-						{ coveredPlatforms.includes( urlData.platform ) && (
-							<div>
-								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
-									{ __( 'What can be imported?' ) }
-								</BackButton>
-							</div>
-						) }
-					</div>
+				<div className="import__buttons-group">
+					<NextButton onClick={ () => goToImporterPage( urlData.platform ) }>
+						{ __( 'Import your content' ) }
+					</NextButton>
+					{ coveredPlatforms.includes( urlData.platform ) && (
+						<div>
+							<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+								{ __( 'What can be imported?' ) }
+							</BackButton>
+						</div>
+					) }
 				</div>
 			</div>
+
 			<div className="import__content">
 				<ImportPreview website={ urlData.url } />
 			</div>
@@ -144,12 +141,12 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 		goToStep( 'capture' );
 	};
 
-	const onStartBuildingBtnClick = () => {
+	const onBackToGoalsBtnClick = () => {
 		// clean up the import goal
 		const goalSet = new Set( goals );
 		goalSet.delete( Onboard.SiteGoal.Import );
 		setGoals( Array.from( goalSet ) );
-		goToStep( 'intent', '', 'setup-site' );
+		goToStep( 'goals' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -157,7 +154,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( "Your existing content can't be imported" ) }</Title>
 					<SubTitle>
 						{ __(
@@ -166,7 +163,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ onBackToGoalsBtnClick }>{ __( 'Back to goals' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
@@ -215,7 +212,7 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Your content is ready for its new home' ) }</Title>
 					<SubTitle>
 						{ sprintf(
@@ -299,14 +296,14 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		goToStep( 'capture' );
 	};
 
-	const onStartBuildingBtnClick = () => {
+	const onBackToGoalsBtnClick = () => {
 		// event tracking
 		recordStartBuildingEvent();
 		// clean up the import goal
 		const goalSet = new Set( goals );
 		goalSet.delete( Onboard.SiteGoal.Import );
 		setGoals( Array.from( goalSet ) );
-		goToStep( 'intent', '', 'setup-site' );
+		goToStep( 'goals' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -314,7 +311,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	return (
 		<div className="import-layout__center">
 			<div className="import__header">
-				<div className="import__heading  import__heading-center">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Your site is already on WordPress.com' ) }</Title>
 					<SubTitle>
 						{ createInterpolateElement(
@@ -332,7 +329,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
+						<NextButton onClick={ onBackToGoalsBtnClick }>{ __( 'Back to goals' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>

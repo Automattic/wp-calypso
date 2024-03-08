@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -16,7 +17,8 @@ import './content.scss';
 const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
 const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
-	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
+	const locale = useLocale();
+	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId, locale );
 	if ( supportArticleAlternates.isInitialLoading ) {
 		return null;
 	}

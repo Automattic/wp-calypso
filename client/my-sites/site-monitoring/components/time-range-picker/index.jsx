@@ -1,7 +1,7 @@
+import { SegmentedControl } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 import './style.scss';
 

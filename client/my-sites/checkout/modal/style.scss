@@ -21,6 +21,13 @@ body.has-checkout-modal {
 		transform: none;
 		width: 100%;
 		height: 100%;
+		overflow: auto;
+	}
+
+	.components-modal__content {
+		padding: 0;
+		margin: 0;
+		overflow: unset;
 	}
 
 	.components-modal__header {

@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { debounce } from 'lodash';
-import page from 'page';
 import { stringify } from 'qs';
 import { createElement } from 'react';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';

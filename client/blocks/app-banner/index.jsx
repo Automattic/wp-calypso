@@ -228,7 +228,6 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 /**
  * Returns the universal link that then gets used to send the user to the correct editor.
  * If the app is installed otherwise they will end up on the new site creaton flow after creating an account.
- *
  * @param {string} currentRoute
  * @returns string
  */

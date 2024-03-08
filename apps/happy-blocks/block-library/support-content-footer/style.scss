@@ -35,7 +35,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		display: flex;
 		margin-bottom: 2rem;
 		font-size: 1.25rem;
-		height: 202px;
 
 		.support-content-cta-left {
 			flex: 1;
@@ -54,11 +53,15 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		}
 
 		.support-content-cta-right {
-			text-align: right;
+			display: flex;
+			justify-content: flex-end;
 			flex: 1;
 
 			img {
 				height: 100%;
+				max-height: 202px;
+				// To prevent any white space around the image.
+				display: block;
 			}
 
 			figure {
@@ -143,39 +146,33 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			}
 		}
 
-		.support-content-subscribe form {
+		.support-content-subscribe .subscribe-shortcode-wrapper {
 			display: flex;
-			align-items: flex-start;
+			justify-content: space-between;
+			flex-grow: 1;
+			border-radius: 4px;
+			border: 1px solid #dcdcde;
+			font-size: 1rem;
+			padding: 8px;
+			width: 100%;
+			min-height: 40px;
+			margin: 8px 0;
+			gap: 10px;
 
-			p {
-				margin: 0;
-			}
-
-			.support-content-subscribe-email {
-				flex-grow: 1;
-				border-radius: 4px;
-				border: 1px solid #dcdcde;
-				font-size: 1rem;
-				padding: 16px;
-				width: 100%;
-				height: 40px;
-			}
-
-			button.support-content-subscribe-submit {
-				background-color: var(--color-primary);
-				border-radius: 4px !important;
-				border: none;
-				color: var(--color-primary-0);
+			.wpcom-guides-learn-button {
 				cursor: pointer;
-				font-size: 0.875rem;
-				line-height: 20px;
-				margin: 0;
-				margin-left: 10px;
-				padding: 10px 24px;
-				height: 40px;
 
-				&:hover {
-					opacity: 0.9;
+				&.busy {
+					color: #7f8389;
+				}
+			}
+
+			@media screen and (max-width: 782px) {
+				flex-direction: column;
+				align-items: flex-start;
+
+				.wpcom-guides-learn-button {
+					margin-top: 8px;
 				}
 			}
 		}

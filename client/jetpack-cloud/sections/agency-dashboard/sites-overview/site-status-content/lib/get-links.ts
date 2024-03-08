@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -23,7 +23,19 @@ const getLinks = (
 
 	const siteUrlWithMultiSiteSupport = urlToSlug( siteUrl );
 
+	const isWPCOMAtomicSiteCreationEnabled = isEnabled(
+		'jetpack/pro-dashboard-wpcom-atomic-hosting'
+	);
+
 	switch ( type ) {
+		case 'site': {
+			link =
+				isWPCOMAtomicSiteCreationEnabled && isAtomicSite
+					? `https://wordpress.com/home/${ urlToSlug( siteUrl ) }`
+					: `/activity-log/${ urlToSlug( siteUrl ) }`;
+			isExternalLink = isWPCOMAtomicSiteCreationEnabled && isAtomicSite;
+			break;
+		}
 		case 'backup': {
 			if ( status !== 'inactive' ) {
 				link = isAtomicSite
@@ -51,10 +63,10 @@ const getLinks = (
 			break;
 		}
 		case 'plugin': {
-			link = `https://wordpress.com/plugins/updates/${ siteUrlWithMultiSiteSupport }`;
+			link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
 			isExternalLink = true;
 			// FIXME: Remove this condition when we enable plugin management in production
-			if ( config.isEnabled( 'jetpack/plugin-management' ) ) {
+			if ( config.isEnabled( 'jetpack/plugin-management' ) && ! isAtomicSite ) {
 				link =
 					status === 'warning'
 						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`

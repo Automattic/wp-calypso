@@ -84,8 +84,8 @@ describe( 'getTermDuration', () => {
 	test( 'should 1095 for triennial term', () => {
 		expect( getTermDuration( TERM_TRIENNIALLY ) ).toBe( 1095 );
 	} );
-	test( 'Should return 35000 for centennial term', () => {
-		expect( getTermDuration( TERM_CENTENNIALLY ) ).toBe( 35000 );
+	test( 'Should return 36500 for centennial term', () => {
+		expect( getTermDuration( TERM_CENTENNIALLY ) ).toBe( 36500 );
 	} );
 	test( 'should return undefined for unknown term', () => {
 		expect( getTermDuration( 'fake' ) ).toBeUndefined();

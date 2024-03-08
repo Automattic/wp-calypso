@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import StepProgress from 'calypso/components/step-progress';
@@ -13,7 +13,6 @@ import {
 	deleteCredentials,
 	updateCredentials,
 	testCredentials,
-	markCredentialsAsInvalid,
 } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsTestStatus from 'calypso/state/selectors/get-jetpack-credentials-test-status';
@@ -115,14 +114,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	useEffect( () => {
 		if ( hasCredentials ) {
 			dispatch( testCredentials( siteId, role ) );
-		} else {
-			dispatch( markCredentialsAsInvalid( siteId, role ) );
 		}
-	}, [ dispatch, hasCredentials, isAlternate, role, siteId ] );
+	}, [ dispatch, hasCredentials, role, siteId ] );
 
 	useEffect(
 		function () {
-			if ( 'pending' !== credentialsTestStatus ) {
+			// If we're not testing credentials, we're done loading
+			if ( 'pending' !== credentialsTestStatus || ! hasCredentials ) {
 				setTestCredentialsLoading( false );
 			}
 
@@ -134,7 +132,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				setTestCredentialsResult( false );
 			}
 		},
-		[ credentialsTestStatus ]
+		[ credentialsTestStatus, hasCredentials ]
 	);
 
 	const statusState = useMemo( (): StatusState => {
@@ -271,6 +269,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 			credentials.host = host;
 		}
 
+		if ( formState.save_as_staging ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_save_staging' )
+			);
+		}
+
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
 		dispatch( updateCredentials( siteId, credentials, true, false ) );
 	}, [ formHasErrors, dispatch, siteId, formState, formMode ] );
@@ -305,7 +309,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				</Button>
 			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
-				{ isAlternate
+				{ isAlternate && ! formState.save_as_staging
 					? translate( 'Confirm credentials' )
 					: translate( 'Test and save credentials' ) }
 			</Button>

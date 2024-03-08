@@ -39,11 +39,10 @@
 	}
 
 	.badge {
-		margin-left: 0;
 		border-radius: 4px;
 		font-size: 0.75rem;
 		font-weight: 500;
-		margin-right: 4px;
+		margin: 2px 4px 0 0;
 
 		&.badge--warning {
 			background-color: var(--color-warning-10);
@@ -173,6 +172,7 @@
 	display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
+	align-items: flex-start;
 
 	@include break-mobile {
 		flex-direction: row;
@@ -180,7 +180,7 @@
 
 	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( ">480px" ) {
-			max-width: 50%;
+			max-width: 55%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
@@ -196,15 +196,11 @@
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
-		display: flex;
-	}
-
-	.badge {
-		align-self: center;
 	}
 
 	.domain-registration-suggestion__hsts-tooltip {
-		display: flex;
+		display: inline;
+		vertical-align: middle;
 		align-items: center;
 		justify-content: center;
 		margin-left: 4px;
@@ -222,15 +218,19 @@
 	word-break: break-all;
 
 	@include breakpoint-deprecated( ">480px" ) {
-		align-self: center;
 		padding-right: 2em;
 	}
+}
+
+.domain-registration-suggestion__domain-title-tld {
+	word-break: normal;
 }
 
 .domain-suggestion__price-container,
 .domain-suggestion__action-container {
 	flex: 0 0 auto;
 	width: 100%;
+	height: 40px;
 
 	@include break-mobile {
 		width: auto;
@@ -248,16 +248,20 @@
 .button.domain-suggestion__action {
 	width: 100%;
 	height: 40px;
-	min-width: 66px;
+	min-width: 130px;
 	text-align: center;
-	margin-top: 16px;
 	padding: 0.25em 3em;
-	transition: all 0.1s linear;
+	margin-top: 10px;
+
+	&:focus {
+		box-shadow: none !important;
+		border-color: #c3c4c7 !important;
+	}
 
 	@include break-mobile {
 		width: auto;
 		flex: 1 0 auto;
-		margin-left: 1em;
+		margin-left: 28px;
 		margin-top: 0;
 	}
 
@@ -273,9 +277,24 @@
 
 	&.is-borderless {
 		color: var(--color-primary);
-		margin-top: 0;
 		padding: 0;
+		display: flex;
+		align-items: center;
+
+		&:focus {
+			box-shadow: none !important;
+			border-color: transparent !important;
+		}
+
+		/* Checkmark for selected domains */
+		svg {
+			height: 20px;
+			top: 0;
+			left: -2px;
+			margin-right: 4px;
+		}
 	}
+
 }
 
 .domain-suggestion__chevron {
@@ -309,7 +328,6 @@
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
-		align-self: center;
 	}
 }
 
@@ -321,7 +339,6 @@ body.is-section-signup.is-white-signup {
 
 	.domain-registration-suggestion__badges {
 		margin-left: 0;
-		margin-top: 0;
 		margin-bottom: 10px;
 
 		.badge {
@@ -332,8 +349,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			align-self: baseline;
-			margin-left: 12px;
 			margin-bottom: 0;
 			flex: 1;
 		}
@@ -347,7 +362,9 @@ body.is-section-signup.is-white-signup {
 		flex-direction: column;
 		box-shadow: none;
 
-		@include break-mobile {
+		margin: 0;
+
+		@include break-small {
 			margin: 0 20px;
 			flex-direction: row;
 		}
@@ -362,12 +379,19 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
-			margin-right: 40px;
 		}
 
 		.domain-product-price__free-text {
-			color: var(--color-neutral-60);
-			font-size: $font-body;
+			font-size: $font-body-small;
+			color: var(--studio-green-60);
+		}
+
+		.domain-product-price__free-price {
+			font-weight: initial;
+
+			@include break-mobile {
+				font-weight: 500;
+			}
 		}
 
 		.domain-product-price__price {
@@ -388,6 +412,7 @@ body.is-section-signup.is-white-signup {
 
 		.domain-registration-suggestion__title {
 			font-size: 0.875rem;
+			margin-right: 12px;
 
 			@include break-mobile {
 				font-size: 1rem;
@@ -400,18 +425,7 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
-		}
-
-		& .domain-product-price__free-price {
-			font-size: $font-body-small;
-			font-weight: initial;
-			color: var(--studio-green-60);
-			line-height: 20px;
-			letter-spacing: 0.2px;
-
-			@include break-mobile {
-				font-weight: 500;
-			}
+			white-space: nowrap;
 		}
 
 		&:not(.featured-domain-suggestion) {
@@ -431,6 +445,14 @@ body.is-section-signup.is-white-signup {
 
 				.domain-registration-suggestion__domain-title-tld {
 					font-weight: 500;
+				}
+			}
+
+			.domain-product-price {
+				width: unset;
+
+				@include break-small {
+					max-width: 180px;
 				}
 			}
 

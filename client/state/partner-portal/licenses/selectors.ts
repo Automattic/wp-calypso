@@ -32,7 +32,6 @@ export function hasFetchedLicenseCounts( state: PartnerPortalStore ): boolean {
 
 /**
  * Returns the product IDs of the assigned plan (bundle) & all the products to a particular site in an array.
- *
  * @param state
  * @param siteId
  * @returns {Array} An array of products and plan IDs.
@@ -57,7 +56,6 @@ export function getAssignedPlanAndProductIDsForSite(
 
 /**
  * Returns if the site has purchased standalone product licenses (not bundles) for the given site ID.
- *
  * @param state
  * @param siteId
  * @returns {boolean} True if the site has standalone products only.

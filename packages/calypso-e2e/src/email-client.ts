@@ -1,5 +1,6 @@
 import MailosaurClient from 'mailosaur';
 import { SecretsManager } from './secrets';
+import { envVariables } from '.';
 import type { Message, Link } from 'mailosaur/lib/models';
 
 /**
@@ -122,6 +123,33 @@ export class EmailClient {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Specialized method to return human-friendly magic login link.
+	 *
+	 * Also performs normalization of the link.
+	 * (eg. target calypso.live if run from that environment.)
+	 *
+	 * @param {Message} message Representing the message.
+	 * @returns {URL} URL object for the magic link.
+	 * @throws {Error} IF the message did not have any links.
+	 */
+	getMagicLink( message: Message ): URL {
+		const link = message.text?.links?.pop();
+
+		if ( ! link ) {
+			throw new Error( 'Message did not contain text links. ' );
+		}
+
+		const magicLinkURL = new URL( link?.href as string );
+		const baseURL = new URL( envVariables.CALYPSO_BASE_URL );
+
+		// Returns a new URL object with normalized magic link.
+		// Useful when running tests against environments other than the default
+		// CALYPSO_BASE_URL.
+		// Example: https://wordpress.com -> https://container-something.calypso.live.
+		return new URL( magicLinkURL.pathname + magicLinkURL.search, baseURL.origin );
 	}
 
 	/**

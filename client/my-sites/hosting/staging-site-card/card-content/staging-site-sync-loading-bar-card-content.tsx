@@ -20,7 +20,7 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 }: CardContentProps ) => {
 	const translate = useTranslate();
 	const siteOwnerId = useSelector( ( state ) => getSelectedSite( state )?.site_owner );
-	const currentUserId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const currentUserId = useSelector( getCurrentUserId );
 	const isOwner = siteOwnerId === currentUserId;
 
 	const message = isOwner

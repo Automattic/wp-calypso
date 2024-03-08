@@ -1,12 +1,13 @@
+import { FormLabel } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const MultipleChoiceAnswer = ( {
 	disabled,
 	answer: { id, answerText, textInput, textInputPrompt, children },
+	name,
 	isSelected,
 	onAnswerChange,
 	selectedAnswerText,
@@ -20,6 +21,7 @@ const MultipleChoiceAnswer = ( {
 				onChange={ () => {
 					onAnswerChange( id, textResponse );
 				} }
+				name={ name }
 				checked={ isSelected }
 				disabled={ disabled }
 				label={ answerText }
@@ -57,6 +59,7 @@ MultipleChoiceAnswer.propTypes = {
 		children: PropTypes.object,
 	} ).isRequired,
 	selectedAnswerText: PropTypes.string,
+	name: PropTypes.string.isRequired,
 };
 
 MultipleChoiceAnswer.defaultProps = {

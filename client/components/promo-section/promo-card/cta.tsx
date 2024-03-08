@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -17,6 +17,7 @@ interface CtaAction {
 export interface CtaButton {
 	text: string | TranslateResult;
 	action: URL | ClickCallback | CtaAction;
+	isPrimary?: boolean;
 	component?: JSX.Element;
 	disabled?: boolean;
 	busy?: boolean;
@@ -25,11 +26,6 @@ export interface CtaButton {
 export interface Props {
 	cta: CtaButton;
 	learnMoreLink?: CtaAction | null;
-	/**
-	 * Displays "Included in your current plan" if true or "Not included in your current plan" if false.
-	 * Ignored if undefined or if `learnMoreLink` is set.
-	 */
-	featureIncludedInPlan?: boolean;
 	isPrimary?: boolean;
 }
 
@@ -59,19 +55,14 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 	}
 
 	return {
-		className: 'promo-card__cta-button',
+		className: `promo-card__cta-button ${ button.isPrimary && 'is-primary' }`,
 		primary: isPrimary,
 		disabled: button.disabled ? true : false,
 		busy: button.busy ? true : false,
 		...actionProps,
 	};
 }
-const PromoCardCta: FunctionComponent< Props > = ( {
-	cta,
-	learnMoreLink,
-	featureIncludedInPlan,
-	isPrimary,
-} ) => {
+const PromoCardCta: FunctionComponent< Props > = ( { cta, learnMoreLink, isPrimary } ) => {
 	const ctaBtnProps = ( button: CtaButton ) => buttonProps( button, true === isPrimary );
 	const translate = useTranslate();
 	let learnMore = null;
@@ -89,23 +80,6 @@ const PromoCardCta: FunctionComponent< Props > = ( {
 			  };
 	}
 
-	const getAvailabilityNotice = () => {
-		if ( featureIncludedInPlan === undefined ) {
-			return null;
-		}
-		return featureIncludedInPlan ? (
-			<div className="promo-card__availability">
-				<Gridicon icon="checkmark" className="promo-card__checkmark" size={ 18 } />
-				<span>{ translate( 'Included in your plan' ) }</span>
-			</div>
-		) : (
-			<div className="promo-card__availability">
-				<Gridicon icon="cross-small" className="promo-card__cross" size={ 18 } />
-				<span>{ translate( 'Not included in your current plan' ) }</span>
-			</div>
-		);
-	};
-
 	return (
 		<ActionPanelCta>
 			<Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>
@@ -114,7 +88,6 @@ const PromoCardCta: FunctionComponent< Props > = ( {
 					{ learnMoreLink?.label || translate( 'Learn more' ) }
 				</Button>
 			) }
-			{ ! learnMore && getAvailabilityNotice() }
 		</ActionPanelCta>
 	);
 };

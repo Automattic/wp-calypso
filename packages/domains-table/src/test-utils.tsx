@@ -9,7 +9,7 @@ export function renderWithProvider(
 ): RenderResult {
 	const queryClient = new QueryClient();
 
-	const Wrapper = ( { children }: { children: React.ReactElement } ) => {
+	const Wrapper = ( { children }: { children: React.ReactNode } ) => {
 		if ( renderOptions.wrapper ) {
 			children = <renderOptions.wrapper>{ children }</renderOptions.wrapper>;
 		}
@@ -54,6 +54,7 @@ export function testDomain(
 		},
 		email_forwards_count: 0,
 		tld_maintenance_end_time: 0,
+		auto_renewing: false,
 	};
 
 	const partialOnlyDefaults = Object.entries( defaults ).filter( ( [ key ] ) =>
@@ -153,6 +154,8 @@ export function testDomain(
 		must_remove_privacy_before_contact_update: false,
 		registry_expiry_date: '',
 		subdomain_part: '',
+		auth_code_required: true,
+		is_mapped_to_atomic_site: false,
 		...defaults,
 	};
 

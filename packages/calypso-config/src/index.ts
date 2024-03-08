@@ -12,7 +12,6 @@ declare global {
 
 /**
  * Manages config flags for various deployment builds
- *
  * @module config/index
  */
 if ( 'undefined' === typeof window ) {
@@ -76,7 +75,13 @@ function applyFlags( flagsString: string, modificationMethod: string ) {
 	} );
 }
 
-const flagEnvironments = [ 'wpcalypso', 'horizon', 'stage', 'jetpack-cloud-stage' ];
+const flagEnvironments = [
+	'wpcalypso',
+	'horizon',
+	'stage',
+	'jetpack-cloud-stage',
+	'a8c-for-agencies-stage',
+];
 
 if (
 	process.env.NODE_ENV === 'development' ||

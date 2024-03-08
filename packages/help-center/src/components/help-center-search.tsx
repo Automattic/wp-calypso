@@ -16,10 +16,14 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
-import { Survey } from './help-center-survey/help-center-survey';
 import type { SiteSelect } from '@automattic/data-stores';
 
-export const HelpCenterSearch = () => {
+type HelpCenterSearchProps = {
+	onSearchChange?: ( query: string ) => void;
+	currentRoute?: string;
+};
+
+export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSearchProps ) => {
 	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -37,11 +41,12 @@ export const HelpCenterSearch = () => {
 			setSearchQuery( query );
 			setSubject( subject );
 			setMessage( query );
+			onSearchChange?.( query );
 		},
-		[ setSearchQuery, setSubject, setMessage ]
+		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
 		[ siteId ]
@@ -105,13 +110,13 @@ export const HelpCenterSearch = () => {
 				isVisible
 				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 			/>
-			{ ! HelpCenterLaunchpad() && <Survey /> }
 			<HelpCenterSearchResults
 				onSelect={ redirectToArticle }
 				searchQuery={ searchQuery || '' }
 				openAdminInNewTab
 				placeholderLines={ 4 }
 				location="help-center"
+				currentRoute={ currentRoute }
 			/>
 			{ ! searchQuery && <HelpCenterMoreResources /> }
 		</div>

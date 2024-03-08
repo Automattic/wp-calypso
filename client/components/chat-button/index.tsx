@@ -5,6 +5,7 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import type { MessagingGroup } from '@automattic/help-center/src/hooks/use-messaging-availability';
+import type { ZendeskConfigName } from '@automattic/help-center/src/hooks/use-zendesk-messaging';
 import type { FC } from 'react';
 
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
@@ -19,6 +20,7 @@ type Props = {
 	primary?: boolean;
 	siteUrl?: string;
 	children?: React.ReactNode;
+	withHelpCenter?: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -35,6 +37,18 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
 	}
 }
 
+function getConfigNameForIntent( chatIntent: ChatIntent ): ZendeskConfigName {
+	switch ( chatIntent ) {
+		case 'PRESALES':
+			return 'zendesk_presales_chat_key';
+
+		case 'PRECANCELLATION':
+		case 'SUPPORT':
+		default:
+			return 'zendesk_support_chat_key';
+	}
+}
+
 const ChatButton: FC< Props > = ( {
 	borderless = true,
 	chatIntent = 'SUPPORT',
@@ -45,6 +59,7 @@ const ChatButton: FC< Props > = ( {
 	onError,
 	primary = false,
 	siteUrl,
+	withHelpCenter = true,
 } ) => {
 	const { __ } = useI18n();
 
@@ -59,7 +74,7 @@ const ChatButton: FC< Props > = ( {
 	} = useChatStatus( messagingGroup );
 	const { setShowHelpCenter, setInitialRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	function shouldShowChatButton() {
+	function shouldShowChatButton(): boolean {
 		if ( isEligibleForChat && hasActiveChats ) {
 			return true;
 		}
@@ -80,16 +95,27 @@ const ChatButton: FC< Props > = ( {
 				break;
 		}
 
-		if ( isEligibleForChat && isChatAvailable ) {
+		if ( isEligibleForChat && isChatAvailable && ( canConnectToZendesk || withHelpCenter ) ) {
 			return true;
 		}
+
+		return false;
 	}
 
-	const { isOpeningChatWidget, openChatWidget } = useChatWidget();
+	const configName = getConfigNameForIntent( chatIntent );
+	const { isOpeningChatWidget, openChatWidget } = useChatWidget(
+		configName,
+		shouldShowChatButton()
+	);
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {
-			openChatWidget( initialMessage, siteUrl, onError, onClick );
+			openChatWidget( {
+				message: initialMessage,
+				siteUrl,
+				onError,
+				onSuccess: onClick,
+			} );
 		} else {
 			setInitialRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );

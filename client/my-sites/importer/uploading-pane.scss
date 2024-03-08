@@ -58,6 +58,15 @@
 	&.importer-upload-failure {
 		color: var(--color-error);
 	}
+
+	.importer-upload-warning {
+		color: var(--studio-gray-90);
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
 }
 
 .importer__upload-progress {

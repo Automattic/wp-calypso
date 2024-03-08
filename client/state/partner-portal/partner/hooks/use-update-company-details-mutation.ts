@@ -12,6 +12,7 @@ function updateCompanyDetails( details: CompanyDetailsPayload ): Promise< APIPar
 			contact_person: details.contactPerson,
 			company_website: details.companyWebsite,
 			company_type: details.companyType,
+			managed_sites: details.managedSites,
 			city: details.city,
 			line1: details.line1,
 			line2: details.line2,

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import { get, truncate } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
@@ -101,11 +100,14 @@ export function deleteInvite( siteId, inviteId ) {
 const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState ) => {
 	for ( const inviteId of inviteIds ) {
 		const invite = getInviteForSite( getState(), siteId, inviteId );
+		const invitee = ( invite.user.email || invite.user.login ) ?? '';
 		dispatch(
 			errorNotice(
-				translate( 'An error occurred while deleting the invite for %s.', {
-					args: truncate( invite.user.email || invite.user.login, { length: 20 } ),
-				} )
+				invitee.length > 20
+					? translate( 'An error occurred while deleting the invite for %s….', {
+							args: invitee.slice( 0, 20 ),
+					  } )
+					: translate( 'An error occurred while deleting the invite for %s.', { args: invitee } )
 			)
 		);
 	}
@@ -187,8 +189,8 @@ export function createAccount( userData, invite ) {
 		result
 			.then( () => {
 				recordTracksEvent( 'calypso_invite_account_created', {
-					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
-					inviter_blog_id: get( invite, 'site.ID', false ),
+					is_p2_site: invite.site?.is_wpforteams_site ?? false,
+					inviter_blog_id: invite.site?.ID ?? false,
 				} );
 			} )
 			.catch( ( error ) => {

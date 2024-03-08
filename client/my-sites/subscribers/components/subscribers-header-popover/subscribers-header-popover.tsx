@@ -29,6 +29,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 	const { grandTotal } = useSubscribersPage();
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
+	const migrationUrl = '#migrate-subscribers';
 
 	const onDownloadCsvClick = () => {
 		dispatch(
@@ -74,7 +75,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 					</PopoverMenuItem>
 				) }
 				{ hasMultipleSites && (
-					<PopoverMenuItem href={ `https://wordpress.com/manage/${ siteId }` }>
+					<PopoverMenuItem href={ migrationUrl }>
 						{ translate( 'Migrate subscribers from another WordPress.com site' ) }
 					</PopoverMenuItem>
 				) }

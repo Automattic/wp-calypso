@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, FoldableCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryMediaExport from 'calypso/components/data/query-media-export';
-import FoldableCard from 'calypso/components/foldable-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

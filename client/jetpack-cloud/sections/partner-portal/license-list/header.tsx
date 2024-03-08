@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { PropsWithChildren, useCallback, useContext } from 'react';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';

@@ -5,7 +5,6 @@ interface Clearable {
 /**
  * Wraps a function in a utility method that remembers the last invocation's
  * arguments and results, and returns the latter if the former match.
- *
  * @param fn The function to be wrapped.
  * @returns The wrapped function.
  */
@@ -40,7 +39,6 @@ export default function memoizeLast< T extends ( ...args: any[] ) => any >( fn: 
  * Since it only accepts functions without arguments, it effectively guarantees
  * that the provided function will only be run once, as the check for whether
  * the arguments have not changed will always pass.
- *
  * @param fn The function to be wrapped.
  * @returns The wrapped function.
  */

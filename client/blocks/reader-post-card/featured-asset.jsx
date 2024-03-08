@@ -10,6 +10,7 @@ const FeaturedAsset = ( {
 	onVideoThumbnailClick,
 	isVideoExpanded,
 	isCompactPost,
+	hasExcerpt,
 } ) => {
 	if ( ! canonicalMedia ) {
 		return null;
@@ -24,6 +25,7 @@ const FeaturedAsset = ( {
 				onThumbnailClick={ onVideoThumbnailClick }
 				isExpanded={ isVideoExpanded }
 				isCompactPost={ isCompactPost }
+				hasExcerpt={ hasExcerpt }
 			/>
 		);
 	}
@@ -34,6 +36,7 @@ const FeaturedAsset = ( {
 			postUrl={ postUrl }
 			canonicalMedia={ canonicalMedia }
 			isCompactPost={ isCompactPost }
+			hasExcerpt={ hasExcerpt }
 		/>
 	);
 };
@@ -45,6 +48,7 @@ FeaturedAsset.propTypes = {
 	allowVideoPlaying: PropTypes.bool,
 	onVideoThumbnailClick: PropTypes.func,
 	isVideoExpanded: PropTypes.bool,
+	hasExcerpt: PropTypes.bool,
 };
 
 FeaturedAsset.defaultProps = {

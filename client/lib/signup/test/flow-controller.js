@@ -17,6 +17,11 @@ jest.mock( 'calypso/signup/config/flows-pure', () =>
 );
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/lib/logstash', () => {
+	return {
+		logToLogstash: jest.fn(),
+	};
+} );
 
 function createSignupStore( initialState ) {
 	return createStore(

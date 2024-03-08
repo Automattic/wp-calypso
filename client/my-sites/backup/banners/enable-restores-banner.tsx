@@ -11,7 +11,7 @@ import '../style.scss';
 const EnableRestoresBanner: FunctionComponent = () => {
 	const translate = useTranslate();
 
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlug = useSelector( getSelectedSiteSlug ) || '';
 
 	return (
 		<Banner

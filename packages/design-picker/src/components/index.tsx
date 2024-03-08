@@ -9,13 +9,11 @@ import classnames from 'classnames';
 import { noop } from 'lodash';
 import { useMemo } from 'react';
 import {
-	getAvailableDesigns,
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
-	excludeFseDesigns,
 } from '../utils';
 import BadgeContainer from './badge-container';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
@@ -296,7 +294,7 @@ export interface DesignPickerProps {
 	onSelect: ( design: Design ) => void;
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
-	designs?: Design[];
+	designs: Design[];
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
@@ -322,10 +320,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	onSelect,
 	onPreview,
 	onUpgrade,
-	designs = getAvailableDesigns( {
-		featuredDesignsFilter: ( design ) =>
-			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
-	} ).featured,
+	designs,
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',

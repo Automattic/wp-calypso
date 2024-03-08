@@ -1,4 +1,9 @@
-import { findFirstSimilarPlanKey, TYPE_PREMIUM } from '@automattic/calypso-products';
+import {
+	findFirstSimilarPlanKey,
+	TYPE_PREMIUM,
+	PLAN_PREMIUM,
+	getPlan,
+} from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -36,7 +41,13 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 			list={ featureList }
 			plan={ planSlug }
 			showIcon
-			title={ translate( 'Upgrade to a Premium Plan!' ) }
+			title={
+				/* translators: %(planName)s is the short-hand version of the Personal plan name */
+				translate( 'Upgrade to a %(planName)s Plan!', {
+					args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
+				} )
+			}
+			event="post_share_plan_upgrade_nudge"
 		/>
 	);
 };

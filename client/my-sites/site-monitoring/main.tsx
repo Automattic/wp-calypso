@@ -1,10 +1,12 @@
-import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
+import { isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteMonitoringTabPanel } from './components/site-monitoring-tab-panel';
 import { LogsTab } from './logs-tab';
 import { MetricsTab } from './metrics-tab';
@@ -12,9 +14,19 @@ import { SiteMonitoringTab } from './site-monitoring-filter-params';
 
 import './style.scss';
 
-export function SiteMetrics( { tab = 'metrics' }: { tab: SiteMonitoringTab } ) {
-	const { __ } = useI18n();
-	const titleHeader = __( 'Site Monitoring' );
+interface SiteMetricsProps {
+	tab: SiteMonitoringTab;
+}
+
+export function SiteMetrics( { tab = 'metrics' }: SiteMetricsProps ) {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
+
+	const titleHeader = isGlobalSiteViewEnabled
+		? translate( 'Monitoring' )
+		: translate( 'Site Monitoring' );
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>

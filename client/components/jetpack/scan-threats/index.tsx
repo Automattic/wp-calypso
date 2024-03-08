@@ -1,7 +1,6 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FoldableCard } from '@automattic/components';
 import { numberFormat, translate } from 'i18n-calypso';
 import * as React from 'react';
-import FoldableCard from 'calypso/components/foldable-card';
 import InfoPopover from 'calypso/components/info-popover';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';

@@ -8,6 +8,7 @@ interface ThemeStyleVariationsProps {
 	selectedVariation: StyleVariation;
 	variations: StyleVariation[];
 	splitDefaultVariation: boolean;
+	needsUpgrade: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 }
 
@@ -16,6 +17,7 @@ const ThemeStyleVariations = ( {
 	selectedVariation,
 	variations,
 	splitDefaultVariation,
+	needsUpgrade,
 	onClick,
 }: ThemeStyleVariationsProps ) => {
 	return (
@@ -31,6 +33,7 @@ const ThemeStyleVariations = ( {
 					splitDefaultVariation={ splitDefaultVariation }
 					displayFreeLabel={ splitDefaultVariation }
 					showOnlyHoverViewDefaultVariation={ false }
+					needsUpgrade={ needsUpgrade }
 					onSelect={ onClick }
 				/>
 			</div>

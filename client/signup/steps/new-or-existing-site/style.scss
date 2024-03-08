@@ -2,6 +2,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.signup__step.is-new-or-existing-site .step-wrapper.is-wide-layout {
+	margin-top: 6vh;
+	max-width: 1224px;
+}
+
 .new-or-existing-site__placeholder {
 	padding: 0 20px;
 	animation: pulse-light 800ms ease-in-out infinite;

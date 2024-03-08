@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'calypso/state';
 import { clearBillingTransactionError } from 'calypso/state/billing-transactions/individual-transactions/actions';

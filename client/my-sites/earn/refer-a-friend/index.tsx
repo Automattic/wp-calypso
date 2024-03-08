@@ -19,7 +19,7 @@ import './style.scss';
 const ReferAFriendSection = () => {
 	const translate = useTranslate();
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
 

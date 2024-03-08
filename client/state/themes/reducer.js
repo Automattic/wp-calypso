@@ -47,6 +47,7 @@ import {
 	THEMES_LOADING_CART,
 	THEME_START_ACTIVATION_SYNC,
 	THEME_STOP_ACTIVATION_SYNC,
+	THEME_TIERS_UPDATE,
 } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -653,17 +654,19 @@ export function startActivationSync( state = {}, { type, siteId, themeId } ) {
 	return state;
 }
 
-export function livePreview( state = {}, { type } ) {
+export function livePreview( state = {}, { type, themeId } ) {
 	switch ( type ) {
 		case LIVE_PREVIEW_START:
 			return {
 				...state,
 				started: true,
+				themeId,
 			};
 		case LIVE_PREVIEW_END:
 			return {
 				...state,
 				started: false,
+				themeId: undefined,
 			};
 	}
 
@@ -696,6 +699,9 @@ export const themeHasAtomicTransferDialog = ( state = null, action ) => {
 	return state;
 };
 
+export const themeTiers = ( state = {}, action ) =>
+	THEME_TIERS_UPDATE === action.type ? action.tiers : state;
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -723,6 +729,7 @@ const combinedReducer = combineReducers( {
 	startActivationSync,
 	themeHasAtomicTransferDialog,
 	livePreview,
+	themeTiers,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

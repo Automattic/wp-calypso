@@ -27,7 +27,6 @@ const MONTHLY_PLAN_BILLING_PERIOD = 31;
 /**
  * Calculates the monthly price of a plan
  * Annual plans are only priced yearly
- *
  * @param plan the plan object
  */
 function getMonthlyPrice( plan: PricedAPIPlan ) {
@@ -36,7 +35,6 @@ function getMonthlyPrice( plan: PricedAPIPlan ) {
 
 /**
  * Calculates the yearly price of a monthly plan
- *
  * @param plan the plan object
  */
 function getAnnualPrice( plan: PricedAPIPlan ) {
@@ -46,7 +44,6 @@ function getAnnualPrice( plan: PricedAPIPlan ) {
 /**
  * Formats the plan price according to 'format-currency' package rules
  * We use this for consistency in prices formats across monthly and annual plans
- *
  * @param plan the plan object
  */
 function getFormattedPrice( plan: PricedAPIPlan ) {

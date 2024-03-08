@@ -18,8 +18,6 @@ const domainRegistrationThankYouProps = ( {
 	email,
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
-	shouldDisplayVerifyEmailStep,
-	onResendEmailVerificationClick,
 	selectedSiteSlug,
 	siteIntent,
 	launchpadScreen,
@@ -49,23 +47,7 @@ const domainRegistrationThankYouProps = ( {
 		true
 	);
 
-	const confirmEmailStep = {
-		stepKey: 'domain_registration_whats_next_confirm-email',
-		stepTitle: translate( 'Confirm email address' ),
-		stepDescription:
-			domains.length > 1
-				? translate( 'You must confirm your email address to avoid your domains being suspended.' )
-				: translate(
-						'You must confirm your email address to avoid your domain getting suspended.'
-				  ),
-		stepCta: (
-			<FullWidthButton onClick={ onResendEmailVerificationClick } busy={ false } disabled={ false }>
-				{ translate( 'Resend email' ) }
-			</FullWidthButton>
-		),
-	};
-
-	const createSiteStep = {
+	const createSite = {
 		stepKey: 'domain_registration_whats_next_create-site',
 		stepTitle: translate( 'Add a site' ),
 		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
@@ -131,9 +113,8 @@ const domainRegistrationThankYouProps = ( {
 				nextSteps: launchpadNextSteps
 					? [ launchpadNextSteps ]
 					: [
-							...( shouldDisplayVerifyEmailStep ? [ confirmEmailStep ] : [] ),
 							...( professionalEmail ? [ professionalEmail ] : [] ),
-							...( isDomainOnly && selectedSiteId ? [ createSiteStep ] : [] ),
+							...( isDomainOnly && selectedSiteId ? [ createSite ] : [] ),
 							...( isActivityPubEnabled ? [ fediverseSettingsStep ] : [ viewDomainsStep ] ),
 					  ],
 			},

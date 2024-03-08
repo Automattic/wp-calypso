@@ -4,9 +4,7 @@
 	background: var(--color-neutral-0);
 	display: flex;
 	flex-direction: row;
-	min-height: 48px;
-	margin-top: 24px;
-	padding: 0 14px 14px;
+	padding: 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 0;
@@ -14,12 +12,14 @@
 		margin-top: 0;
 	}
 
-	&.has-description {
-		padding-bottom: 18px;
-	}
-
 	&:hover {
 		cursor: default;
+	}
+
+	// Main layout already has mx
+	.navigation-header {
+		margin: 0 auto;
+		padding: 0 0 16px 0;
 	}
 }
 
@@ -137,11 +137,6 @@
 	margin-left: auto;
 
 	.list-stream__header-action-icon .gridicon {
-		fill: var(--color-neutral-light);
-		margin: auto;
-		position: relative;
-		bottom: 0;
-		top: 12px;
-		right: -6px;
+		fill: var(--color-neutral-dark);
 	}
 }

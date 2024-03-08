@@ -9,43 +9,49 @@
 		margin-right: 8px;
 	}
 
+	&.bluesky {
+		.sharing-service__logo {
+			color: var(--color-bluesky);
+		}
+	}
+
 	&.facebook {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-facebook);
 		}
 	}
 
 	&.twitter {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-twitter);
 		}
 	}
 
 	&.google_plus {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-google-plus);
 		}
 	}
 
 	&.linkedin {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-linkedin);
 		}
 	}
 
+	&.threads {
+		.sharing-service__logo {
+			color: var(--color-threads);
+		}
+	}
+
 	&.tumblr {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-tumblr);
 		}
 	}
 
 	&.instagram-basic-display {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-instagram);
 		}
@@ -58,9 +64,18 @@
 	}
 
 	&.mastodon {
-		h2,
 		.sharing-service__logo {
 			color: var(--color-mastodon);
+		}
+	}
+	&.nextdoor {
+		.sharing-service__logo {
+			color: var(--color-nextdoor);
+			// This is to fix the logo being too big
+			// Other icons seems to have 8px of padding
+			// so, we'll decrease the width (40px) by 2 and add 6px of padding
+			width: 38px;
+			padding-inline: 6px;
 		}
 	}
 
@@ -174,6 +189,10 @@
 		img {
 			vertical-align: top;
 		}
+	}
+
+	.nextdoor .service-example__screenshot {
+		border: none;
 	}
 
 	.service-example__screenshot-label {
@@ -294,19 +313,17 @@
 		background: $color;
 	}
 
-	.sharing-service.#{ $name } .sharing-service__name {
-		color: $color;
-	}
-
 	.sharing-connection__account-avatar.is-fallback.#{ $name } {
 		background-color: $color;
 		color: var(--color-neutral-0);
 	}
 }
 
+@include sharing-service( "bluesky", var( --color-bluesky ) );
 @include sharing-service( "facebook", var( --color-facebook ) );
 @include sharing-service( "twitter", var( --color-twitter ) );
 @include sharing-service( "google_plus", var( --color-google-plus ) );
+@include sharing-service( "threads", var( --color-threads ) );
 @include sharing-service( "tumblr", var( --color-tumblr ) );
 @include sharing-service( "linkedin", var( --color-linkedin ) );
 @include sharing-service( "instagram-basic-display", var( --color-instagram ) );
@@ -639,11 +656,20 @@
 }
 
 .sharing-buttons-preview__reblog-like {
+	display: flex;
 	margin: 14px 0;
 }
 
+.sharing-buttons-preview__like-container {
+	display: flex;
+	align-items: center;
+}
+
+.sharing-buttons-preview__like-icon {
+	fill: var(--color-neutral-80);
+}
+
 .sharing-buttons-preview__reblog-like .sharing-buttons-preview-button {
-	margin-bottom: 3px;
 	margin-top: 0;
 }
 
@@ -655,32 +681,41 @@
 	&::before {
 		display: none;
 	}
+}
+
+.sharing-buttons-preview__like-container .sharing-buttons-preview__like {
+	display: flex !important;
+	padding-left: 5px;
+	padding-top: 3px;
 
 	&:hover {
-		color: #777;
+		.sharing-buttons-preview__like-icon {
+			fill: var(--studio-blue-50);
+		}
 	}
 }
 
-.sharing-buttons-preview__reblog .gridicon,
-.sharing-buttons-preview__like .gridicon {
+.sharing-buttons-preview__reblog .gridicon {
 	vertical-align: top;
 	margin: 3px 4px 0 0;
-	fill: var(--color-accent);
 }
 
 .sharing-buttons-preview__fake-user {
-	display: inline-block;
-	height: 32px;
-	width: 32px;
-	line-height: 1;
-	vertical-align: top;
-	position: relative;
-	top: -1px;
+	height: 29px;
+	width: 29px;
+}
+
+.sharing-buttons-preview__fake-user img {
+	height: 26px;
+	width: 26px;
+	border-radius: 50%;
+	border: solid 1.5px #fff;
 }
 
 .sharing-buttons-preview__fake-like {
-	color: var(--color-neutral-40);
+	color: var(--color-neutral-80);
 	font-size: $font-body-extra-small;
+	margin-left: 8px;
 }
 
 .sharing-buttons-preview .sortable-list__navigation {
@@ -950,6 +985,7 @@
 	}
 }
 
+@include sharing-button-service( "bluesky", var( --color-bluesky ) );
 @include sharing-button-service( "facebook", var( --color-facebook ) );
 @include sharing-button-service( "twitter", var( --color-twitter ) );
 @include sharing-button-service( "press-this", var( --color-wordpress-com ) );
@@ -957,6 +993,7 @@
 @include sharing-button-service( "instagram-basic-display", var( --color-instagram ) );
 @include sharing-button-service( "linkedin", var( --color-linkedin ) );
 @include sharing-button-service( "stumbleupon", var( --color-stumbleupon ) );
+@include sharing-button-service( "threads", var( --color-threads ) );
 @include sharing-button-service( "tumblr", var( --color-tumblr ) );
 @include sharing-button-service( "reddit", var( --color-reddit ) );
 @include sharing-button-service( "pinterest", var( --color-pinterest ) );

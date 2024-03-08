@@ -11,15 +11,16 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 
 .woocommerce {
 	.main {
-		padding-top: 72px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-top: 35px;
-		}
-
 		@media ( max-width: 660px ) {
 			padding-left: 15px;
 			padding-right: 15px;
+		}
+	}
+
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+			margin-bottom: 0;
 		}
 	}
 

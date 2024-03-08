@@ -1,5 +1,6 @@
 import { type } from 'calypso/lib/domains/constants';
 
 export const filterOutWpcomDomains = ( domains ) => {
-	return domains.filter( ( domain ) => domain.type !== type.WPCOM );
+	// domain.type might be lowercase, but type.WPCOM is uppercase
+	return domains.filter( ( domain ) => domain.type.toUpperCase() !== type.WPCOM );
 };

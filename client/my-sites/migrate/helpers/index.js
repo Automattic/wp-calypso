@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 
 /**
  * Redirects the page to a target `url`.

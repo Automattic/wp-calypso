@@ -84,7 +84,6 @@ class MasterbarItemNotifications extends Component {
 	 * and the locally-stored cache of that value to
 	 * determine what state the notifications indicator
 	 * should be in: on, off, or animate-to-on
-	 *
 	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
 	setNotesIndicator = ( currentUnseenCount ) => {

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	ReloadSetupIntentId,
 	StripeHookProvider,
@@ -12,7 +13,6 @@ import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
@@ -36,8 +36,10 @@ import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/p
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
+import useIssueLicenses from '../../hooks/use-issue-licenses';
 import Layout from '../../layout';
 import LayoutHeader from '../../layout/header';
+import { parseQueryStringProducts } from '../../lib/querystring-products';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -71,12 +73,15 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	const returnQueryArg = ( getQueryArg( window.location.href, 'return' ) ?? '' ).toString();
 	const products = ( getQueryArg( window.location.href, 'products' ) ?? '' ).toString();
+	const product = ( getQueryArg( window.location.href, 'product' ) ?? '' ).toString();
 	const siteId = ( getQueryArg( window.location.href, 'site_id' ) ?? '' ).toString();
 
 	const source = useMemo(
 		() => ( getQueryArg( window.location.href, 'source' ) || '' ).toString(),
 		[]
 	);
+
+	const isSiteCreationFlow = source === 'create-site' && !! product;
 
 	const dispatch = useDispatch();
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
@@ -111,6 +116,8 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 			}
 		);
 
+	const { issueLicenses } = useIssueLicenses();
+
 	useReturnUrl( ! paymentMethodRequired );
 
 	const onGoToPaymentMethods = () => {
@@ -136,11 +143,14 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 
 	const showSuccessMessage = useCallback(
 		( message: TranslateResult ) => {
-			reduxDispatch(
-				successNotice( message, { isPersistent: true, displayOnNextPage: true, duration: 5000 } )
-			);
+			// We do not want to show overlapping notice with site creation notice.
+			if ( ! isSiteCreationFlow ) {
+				reduxDispatch(
+					successNotice( message, { isPersistent: true, displayOnNextPage: true, duration: 5000 } )
+				);
+			}
 		},
-		[ reduxDispatch ]
+		[ isSiteCreationFlow, reduxDispatch ]
 	);
 
 	const successCallback = useCallback( () => {
@@ -149,7 +159,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		// assign the license after adding a payment method.
 		//
 		// product - will make sure there will be a license issuing for that product
-		if ( returnQueryArg || products ) {
+		//
+		// isSiteCreationFlow - will make sure there will be site creation
+		if ( returnQueryArg || products || isSiteCreationFlow ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -159,10 +171,17 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ returnQueryArg, products, reduxDispatch ] );
+	}, [ returnQueryArg, products, isSiteCreationFlow, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( paymentMethodRequired ) {
+			return;
+		}
+
+		// If this is a site creation flow, we will need to resume on the creation of site.
+		if ( isSiteCreationFlow ) {
+			issueLicenses( [ { slug: product, quantity: 1 } ] );
+			page( `/dashboard?provisioning=true` );
 			return;
 		}
 
@@ -176,7 +195,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 			} )
 		);
 
-		const itemsToIssue = products.split( ',' );
+		const itemsToIssue = parseQueryStringProducts( products );
 		issueAndAssignLicenses( itemsToIssue );
 		// Do not update the dependency array with products since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
@@ -198,6 +217,10 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	const elements = useElements();
 
 	const getPreviousPageLink = () => {
+		if ( isSiteCreationFlow ) {
+			return partnerPortalBasePath( '/create-site' );
+		}
+
 		if ( products ) {
 			return addQueryArgs(
 				{
@@ -280,8 +303,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 								>
 									{ translate( 'Go back' ) }
 								</Button>
-
-								<CheckoutFormSubmit />
+								<span className="payment-method-add__submit-button">
+									<CheckoutFormSubmit />
+								</span>
 							</div>
 						</div>
 						<div className="payment-method-add__image">

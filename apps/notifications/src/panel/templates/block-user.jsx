@@ -29,15 +29,14 @@ export class UserBlock extends Component {
 	 * Specifically here for showing when a comment was made.
 	 *
 	 * If within the past five days, a relative time
-	 *   e.g. "23 sec. ago", "15 min. ago", "4 hrs. ago", "1 day ago"
+	 * e.g. "23 sec. ago", "15 min. ago", "4 hrs. ago", "1 day ago"
 	 *
 	 * If older than five days, absolute date
-	 *   e.g. "30 Apr 2015"
+	 * e.g. "30 Apr 2015"
 	 *
 	 * If anything goes wrong, ISO date
-	 *   e.g. "2020-12-20"
+	 * e.g. "2020-12-20"
 	 * Localized dates are always better, but ISO dates should be broadly recognizable.
-	 *
 	 * @param {string} timestamp - Timestamp in Date.parse()'able format
 	 * @returns {string} - Timestamp formatted for display or '' if input invalid
 	 */

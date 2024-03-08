@@ -23,7 +23,6 @@ type MutationContext = {
 
 /**
  * Deletes a mailbox from a Professional Email (Titan) account
- *
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param mutationOptions Mutation options passed on to `useMutation`
@@ -48,7 +47,7 @@ export function useRemoveTitanMailboxMutation(
 
 	// Setup actions to happen before the mutation
 	mutationOptions.onMutate = async () => {
-		await queryClient.cancelQueries( queryKey );
+		await queryClient.cancelQueries( { queryKey } );
 
 		const previousNumberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
@@ -62,7 +61,7 @@ export function useRemoveTitanMailboxMutation(
 		suppliedOnSettled?.( data, error, variables, context );
 
 		// Always invalidate attendant queries
-		queryClient.invalidateQueries( queryKey ).then( () => {
+		queryClient.invalidateQueries( { queryKey } ).then( () => {
 			const numberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
 			// Determine if we already have updated data, since the removal job is not synchronous
@@ -71,7 +70,7 @@ export function useRemoveTitanMailboxMutation(
 			}
 
 			setTimeout( () => {
-				queryClient.invalidateQueries( queryKey );
+				queryClient.invalidateQueries( { queryKey } );
 			}, invalidationDelayTimeout );
 		} );
 	};

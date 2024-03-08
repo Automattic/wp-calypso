@@ -97,7 +97,7 @@ h3 {
 	background-color: var(--studio-white);
 	padding: 0 3px;
 	border: 1px solid #eee;
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-radius: 3px;
 	height: 20px;
 	line-height: 20px;
 	text-align: center;

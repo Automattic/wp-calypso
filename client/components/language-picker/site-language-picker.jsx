@@ -23,8 +23,8 @@ import LanguagePicker from './index';
  * Some of the languages we add may not be supported by calypso.
  */
 const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const selectedSite = useSelector( getSelectedSite );
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const wpVersion = selectedSite?.options?.software_version;
 

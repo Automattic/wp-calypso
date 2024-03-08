@@ -1,6 +1,6 @@
 import config, { isCalypsoLive } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { includes, isEmpty } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import validUrl from 'valid-url';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -163,7 +163,7 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 	}
 
 	if ( type === 'remote_auth' ) {
-		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
+		urlRedirect = addQueryArgs( queryArgs, addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
 		navigate( urlRedirect );
 	}
 

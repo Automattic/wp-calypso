@@ -3,7 +3,6 @@ import { useDispatch } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ErrorStep from './internals/steps-repository/error-step';
@@ -14,6 +13,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 const transferringHostedSite: Flow = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
+	isSignupFlow: false,
 
 	useSteps() {
 		return [
@@ -29,11 +29,7 @@ const transferringHostedSite: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const dispatch = useReduxDispatch();
-
-		const flowProgress = useSiteSetupFlowProgress( currentStep, '' );
-		setStepProgress( flowProgress );
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );

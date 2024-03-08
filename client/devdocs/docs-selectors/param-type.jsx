@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 /**
  * Matches an expression type
- *
  * @type {RegExp}
  */
 const REGEXP_EXPRESSION_TYPE = /(.*)Type$/;

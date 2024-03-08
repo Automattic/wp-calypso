@@ -8,20 +8,19 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -34,6 +33,7 @@ const noop = () => {};
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
+		secondaryCallToAction: PropTypes.string,
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
@@ -44,6 +44,7 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
+		secondaryEvent: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
@@ -58,6 +59,7 @@ export class Banner extends Component {
 		] ),
 		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
+		secondaryOnClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
@@ -77,6 +79,7 @@ export class Banner extends Component {
 		displayAsLink: PropTypes.bool,
 		showLinkIcon: PropTypes.bool,
 		extraContent: PropTypes.node,
+		isBusy: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -90,6 +93,7 @@ export class Banner extends Component {
 		jetpack: false,
 		isAtomic: false,
 		onClick: noop,
+		secondaryOnClick: noop,
 		onDismiss: noop,
 		primaryButton: true,
 		showIcon: true,
@@ -97,6 +101,7 @@ export class Banner extends Component {
 		tracksClickName: 'calypso_banner_cta_click',
 		tracksDismissName: 'calypso_banner_dismiss',
 		isSiteWPForTeams: false,
+		isBusy: false,
 	};
 
 	getHref() {
@@ -136,6 +141,28 @@ export class Banner extends Component {
 		onClick( e );
 	};
 
+	handleSecondaryClick = ( e ) => {
+		const {
+			secondaryEvent,
+			secondaryOnClick,
+			feature,
+			compact,
+			tracksClickName,
+			tracksClickProperties,
+		} = this.props;
+
+		if ( secondaryEvent && tracksClickName ) {
+			this.props.recordTracksEvent?.( tracksClickName, {
+				cta_name: secondaryEvent,
+				cta_feature: feature,
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
+			} );
+		}
+
+		secondaryOnClick( e );
+	};
+
 	handleDismiss = ( e ) => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
@@ -168,6 +195,8 @@ export class Banner extends Component {
 		let iconComponent;
 		if ( iconPath ) {
 			iconComponent = <img src={ iconPath } alt="" />;
+		} else if ( isValidElement( icon ) ) {
+			iconComponent = icon;
 		} else {
 			iconComponent = <Gridicon icon={ icon || 'star' } size={ isMobile() ? 24 : 18 } />;
 		}
@@ -176,7 +205,7 @@ export class Banner extends Component {
 			<div className="banner__icons">
 				<div className="banner__icon">{ iconComponent }</div>
 				{ ! disableCircle && <div className="banner__icon-circle">{ iconComponent }</div> }
-				{ disableCircle && iconPath && (
+				{ disableCircle && iconComponent && (
 					<div className="banner__icon-no-circle">{ iconComponent }</div>
 				) }
 			</div>
@@ -209,7 +238,9 @@ export class Banner extends Component {
 	getContent() {
 		const {
 			callToAction,
+			secondaryCallToAction,
 			forceHref,
+			secondaryHref,
 			description,
 			event,
 			feature,
@@ -224,6 +255,7 @@ export class Banner extends Component {
 			tracksImpressionName,
 			tracksImpressionProperties,
 			extraContent,
+			isBusy,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -271,7 +303,12 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact={ compactButton } primary={ primaryButton } target={ target }>
+								<Button
+									compact={ compactButton }
+									primary={ primaryButton }
+									target={ target }
+									busy={ isBusy }
+								>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
@@ -281,10 +318,22 @@ export class Banner extends Component {
 									onClick={ this.handleClick }
 									primary={ primaryButton }
 									target={ target }
+									busy={ isBusy }
 								>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
+
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ preventWidows( secondaryCallToAction ) }
+							</Button>
+						) }
 					</div>
 				) }
 			</div>

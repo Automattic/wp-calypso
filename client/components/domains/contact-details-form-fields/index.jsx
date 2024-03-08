@@ -1,3 +1,4 @@
+import { FormLabel } from '@automattic/components';
 import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
@@ -12,7 +13,6 @@ import QueryDomainCountries from 'calypso/components/data/query-countries/domain
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';

@@ -7,6 +7,7 @@ export { default as useRecordSiteIconClicked } from './use-record-site-icon-clic
 export { default as useRecordSiteTitleClicked } from './use-record-site-title-clicked';
 export { default as useRecordSiteUrlClicked } from './use-record-site-url-clicked';
 export { default as useRecordCommentEmailsToggle } from './use-record-comment-emails-toggle';
+export { default as useRecordCommentNotificationsToggle } from './use-record-comment-notifications-toggle';
 export { default as useRecordNotificationsToggle } from './use-record-notifications-toggle';
 export { default as useRecordPostEmailsSetFrequency } from './use-record-post-emails-set-frequency';
 export { default as useRecordPostEmailsToggle } from './use-record-post-emails-toggle';

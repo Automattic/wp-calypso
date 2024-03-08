@@ -3,11 +3,6 @@ import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
-
-	// Task card (topmost card)
-	taskHeadingMessage: ( message: string ) =>
-		`.primary__customer-home-location-content :text("${ message }")`,
-
 	domainUpsellCard: `.domain-upsell__card`,
 	domainUpsellSuggestedDomain: `.domain-upsell__card .domain-upsell-illustration`,
 	domainUpsellBuyDomain: ( message: string ) =>
@@ -121,6 +116,6 @@ export class MyHomePage {
 	 * @param {string} message Partial or fully matching text to search.
 	 */
 	async validateTaskHeadingMessage( message: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.taskHeadingMessage( message ) );
+		await this.page.getByRole( 'heading', { name: message } ).waitFor();
 	}
 }

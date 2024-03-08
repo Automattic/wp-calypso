@@ -2,88 +2,25 @@
 
 This document will cover how to use icons in Calypso, as well as how to create icons for the native apps, favicons, and bookmark touch icons.
 
-## Gridicons
+## @wordpress/icons
 
-![Gridicons Preview](https://dotcombrand.files.wordpress.com/2018/05/gridicons-preview.png)
+As of January 2024, there has been a shift in the approach to icons within Calypso. While Gridicons have served us well in the past, the WordPress community is increasingly adopting [@wordpress/icons](https://www.npmjs.com/package/@wordpress/icons) for [a more standardized and cohesive experience across WordPress interfaces](https://github.com/WordPress/gutenberg/issues/20284).
 
-[Gridicons](https://github.com/automattic/gridicons) is the icon set designed for Calypso. There's a gallery with all the available icons at <https://automattic.github.io/gridicons/>.
+`@wordpress/icons` are designed to align with WordPress's overall design language and provide a consistent user experience. You can browse the icons docs and examples at <https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library>.
 
-Gridicons are born with a 24px base grid. Strokes are 2px thick and icons are solid. If an icon is hollow, it generally means the "inactive" version of that icon. For example an outline bookmark icon becomes solid once clicked.
-
-Calypso has a specific `Gridicon` component that should be used instead of the one included in the `gridicons` package, since it offers better loading performance.
-You should not use `gridicons/dist/...`, as that will load a legacy gridicon and cause duplication in the bundles.
+For existing implementations using Gridicons or Material Icons, plan for a gradual migration to `@wordpress/icons`. If you are an Automattician, please refer to p7H4VZ-4JT-p2.
 
 ### Usage
 
-Import the iconset and decide at run-time which icon to use:
+```js
+import { Icon, check } from '@wordpress/icons';
 
-```
-import { Gridicon } from '@automattic/components';
-
-render() {
-  return <Gridicon icon="add-image" />;
-}
+<Icon icon={ check } />;
 ```
 
-**Props**
+### Contributing to Icon Sets
 
-- `icon`: String - the icon name. This is ignored when importing icons individually.
-- `size`: Number - (default: 24) set the size of the icon.
-- `onClick`: Function - (optional) if you need a click callback.
-
-Though Gridicons are vector graphics and theoretically infinitely scalable, in practice we have to work within the limitations of antialiasing so icons stay crisp. Since Gridicons are designed for 24px, they look perfect at that size. That's why by default, this is the size you should be using.
-
-If you need to use icons that are _larger_ than 24px, other perfect sizes are 2x duplicates, such as 48px. You can use 36px as well but this will require the use of an additional `offset-adjust` feature we're working on at the moment.
-
-Same thing if you need _smaller_ than 24px icons. At this size, gridicons will look blurry, so you should **avoid this if at all possible**. 18px icons will not do for main navigation, for example.
-
-### The `offset-adjust` Hack
-
-Some icons at 18 and 36px size needs an extra feature in order to look crisp. The code looks like this:
-
-```
-.offset-adjust {
-    transform: translate(.5px, .5px);
-}
-```
-
-What this basically does is nudge the pixels up and to the left by half a pixel. In the case of 36px icons (1.5 \* 24) what it means is that icons can be **perfectly crisp**. In the case of 18px icons, it means icons will be **crisper**, though not perfect. Just trust me on the math.
-
-The tricky part is that not all icons need this `offset-adjust` hack, only some icons do. A list of icons that need adjustment is kept in the `gridicons` package and used by the Gridicon component at run-time, to determine which icons to adjust and when to do so.
-
-### Do's and Don'ts
-
-- Do use Gridicons at 24px or 48px
-- Do use Gridicons at 36px if you add the `offset-adjust` hack on a per-icon basis
-- Only use 18px Gridicons if you really must, and don't use it in main navigation
-- Don't use Noticons or Dashicons (we want to phase them out)
-
-## Social Logos
-
-We have a `SocialLogo` component available for use in Calypso. Each logo was pulled from the official branding resource of each service. Branding guidelines were adhered to as much as possible.
-
-The icon grid is based on Gridicons and adheres to the same rules (see above). [View the repository on GitHub](https://github.com/Automattic/social-logos) for more information.
-
-### Usage
-
-There is a Calypso component for Social Logos, which is implemented differently from the legacy version in the `social-logos` package.
-Please be sure to use the Calypso component, as it provides better loading performance.
-
-Import the iconset and decide at run-time which icon to use:
-
-```
-import SocialLogo from 'components/social-logo';
-//...
-render() {
-    return <SocialLogo icon="twitter" size={ 48 } />;
-}
-```
-
-**Props**
-
-- `icon`: String - the icon name.
-- `size`: Number - (default: 24) set the size of the icon.
-- `onClick`: Function - (optional) if you need a click callback.
+Contributions to `@wordpress/icons` are encouraged, as they benefit both WordPress.com and the open-source community. If you have suggestions or new icons to add, please refer to [the contribution guidelines on the Gutenberg repo](https://github.com/WordPress/gutenberg#contribute-to-gutenberg). If you are an Automattician, you can check PuPv3-aHW-p2 and puPv3-8Mr-p2 out.
 
 ## App icons
 

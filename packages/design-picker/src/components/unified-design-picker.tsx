@@ -6,14 +6,16 @@ import classnames from 'classnames';
 import photon from 'photon';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG, DEFAULT_ASSEMBLER_DESIGN } from '../constants';
+import { SHOW_ALL_SLUG } from '../constants';
 import {
+	getAssemblerDesign,
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
 	isDefaultGlobalStylesVariationSlug,
 	filterDesignsByCategory,
 } from '../utils';
+import { isLockedStyleVariation } from '../utils/is-locked-style-variation';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PatternAssemblerCta, { usePatternAssemblerCtaData } from './pattern-assembler-cta';
 import ThemeCard from './theme-card';
@@ -77,7 +79,6 @@ interface TrackDesignViewProps {
  * that MUST be used as the `ref` prop on a `div` element.
  * The hook ensures that we generate theme display Tracks events when the user views
  * the underlying `div` element.
- *
  * @param { TrackDesignViewProps } designDetails Details around the design and current context.
  * @returns { Function } A callback ref that MUST be used on a div element for tracking.
  */
@@ -121,6 +122,7 @@ const useTrackDesignView = ( {
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
 					design_type: design.design_type,
+					...( design?.design_tier && { design_tier: design.design_tier } ),
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
@@ -172,8 +174,11 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
 
-	const isLockedStyleVariation =
-		( ! design.is_premium && shouldLimitGlobalStyles && ! isDefaultVariation ) ?? false;
+	const isLocked = isLockedStyleVariation( {
+		isPremiumTheme: design.is_premium,
+		styleVariationSlug: selectedStyleVariation?.slug,
+		shouldLimitGlobalStyles,
+	} );
 
 	return (
 		<ThemeCard
@@ -189,7 +194,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
-			badge={ getBadge( design.slug, isLockedStyleVariation ) }
+			badge={ getBadge( design.slug, isLocked ) }
 			styleVariations={ style_variations }
 			selectedStyleVariation={ selectedStyleVariation }
 			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
@@ -254,7 +259,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						className={ classnames( 'design-picker__design-your-own-button', {
 							'design-picker__design-your-own-button-without-categories': ! hasCategories,
 						} ) }
-						onClick={ () => onClickDesignYourOwnTopButton( DEFAULT_ASSEMBLER_DESIGN ) }
+						onClick={ () => onClickDesignYourOwnTopButton( getAssemblerDesign() ) }
 					>
 						{ assemblerCtaData.title }
 					</Button>
@@ -269,7 +274,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 					return (
 						<DesignCard
-							key={ index }
+							key={ design.recipe?.slug ?? design.slug ?? index }
 							category={ categorization?.selection }
 							design={ design }
 							locale={ locale }
@@ -281,7 +286,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
-				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( DEFAULT_ASSEMBLER_DESIGN ) } />
+				<PatternAssemblerCta onButtonClick={ () => onDesignYourOwn( getAssemblerDesign() ) } />
 			</div>
 		</div>
 	);

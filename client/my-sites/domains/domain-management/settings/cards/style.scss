@@ -132,7 +132,8 @@
 	}
 }
 
-.domain-forwarding-card__accordion {
+.domain-forwarding-card__accordion,
+.domain-glue-records-card__accordion {
 	color: var(--studio-gray-50);
 	margin-bottom: 0 !important;
 
@@ -425,3 +426,67 @@
 	}
 }
 
+.domain-glue-records-card {
+	.glue-record-data {
+		flex-grow: 1;
+	}
+
+	.glue-records__action-buttons {
+		margin-top: 15px;
+	}
+
+	.is-placeholder {
+		height: 100px;
+		@include placeholder();
+	}
+
+	.edit-glue-record-button {
+		margin-right: 8px;
+	}
+}
+
+.domain-glue-records-card__accordion {
+	.form-text-input-with-affixes__suffix {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.form-label {
+			margin-bottom: 0;
+		}
+	}
+
+	.domain-glue-records-card__error-field {
+		height: 20px;
+	}
+
+	.domain-glue-records-card__fields {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.domain-glue-records-card__fields-row {
+		display: flex;
+		flex-direction: row;
+
+		.label {
+			width: 25%;
+		}
+
+		.value {
+			overflow-wrap: anywhere;
+		}
+	}
+}
+
+.domain-diagnostics-card__accordion {
+	code {
+		display: block;
+		margin-top: 16px;
+		padding: 16px;
+		font-size: $font-body-small;
+		background-color: var(--studio-gray-0);
+	}
+}

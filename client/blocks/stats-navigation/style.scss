@@ -8,7 +8,7 @@
 		align-items: center;
 
 		// Add gap for not open .section-nav on tablet and mobile.
-		@media ( max-width: $break-medium ) {
+		@media ( max-width: $break-small ) {
 			padding-right: 16px;
 		}
 
@@ -107,7 +107,7 @@
 		.section-nav__panel {
 			padding: 0;
 
-			@media ( max-width: $break-medium ) {
+			@media ( max-width: $break-small ) {
 				padding: 0 16px;
 			}
 		}

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { UnsubscribeActionType } from '../components/unsubscribe-modal';
-import { getEarnPaymentsPageUrl } from '../helpers';
 import { useSubscriberRemoveMutation } from '../mutations';
 import { useRecordRemoveModal } from '../tracks';
 import { Subscriber, SubscriberListArgs } from '../types';
 
 const useUnsubscribeModal = (
-	siteId: number | undefined | null,
+	siteId: number | null,
 	args: SubscriberListArgs,
 	detailsView = false,
 	onSuccess?: () => void
@@ -29,7 +29,7 @@ const useUnsubscribeModal = (
 	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
-			window.open( getEarnPaymentsPageUrl( selectedSiteSlug ), '_blank' );
+			navigate( `/earn/supporters/${ selectedSiteSlug ?? '' }` );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
 			mutate( subscriber, {
 				onSuccess: () => {

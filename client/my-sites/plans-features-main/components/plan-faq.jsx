@@ -1,3 +1,10 @@
+import {
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	getPlan,
+} from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -169,8 +176,14 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				onToggle={ onFaqToggle }
 			>
 				{ translate(
-					'Yes! When you subscribe to the WordPress.com Business or eCommerce plans, you’ll be able to ' +
-						'search for and install over 50,000 available plugins in the WordPress repository.'
+					'Yes! When you subscribe to the WordPress.com %(businessPlanName)s or %(ecommercePlanName)s plans, you’ll be able to ' +
+						'search for and install over 50,000 available plugins in the WordPress repository.',
+					{
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
+							ecommercePlanName: getPlan( PLAN_ECOMMERCE ).getTitle(),
+						},
+					}
 				) }
 			</FoldableFAQ>
 			<FoldableFAQ
@@ -180,8 +193,14 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 			>
 				{ translate(
 					'Yes! All plans give you access to our directory of free and premium themes that have been ' +
-						'handpicked and reviewed for quality by our team. With the WordPress.com Business or ' +
-						"eCommerce plan, you can upload and install any theme you'd like."
+						'handpicked and reviewed for quality by our team. With the WordPress.com %(businessPlanName)s or ' +
+						"%(ecommercePlanName)s plan, you can upload and install any theme you'd like.",
+					{
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS ).getTitle(),
+							ecommercePlanName: getPlan( PLAN_ECOMMERCE ).getTitle(),
+						},
+					}
 				) }
 			</FoldableFAQ>
 			<FoldableFAQ
@@ -214,12 +233,16 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 			>
 				{ translate(
 					'We’d love to chat with you! All paid plans include access to one-on-one support from our ' +
-						'team of WordPress experts (we call them Happiness Engineers). The Personal plan includes ' +
-						'email support while the Premium plan and above all include live chat support.{{br /}}{{br /}}' +
+						'team of WordPress experts (we call them Happiness Engineers). The %(personalPlanName)s plan includes ' +
+						'email support while the %(premiumPlanName)s plan and above all include live chat support.{{br /}}{{br /}}' +
 						'If you have pre-purchase questions, we offer live chat on the checkout page. Select the plan ' +
 						'that looks like the best fit for you and click the “Questions? Ask a Happiness Engineer” ' +
 						'link on the next page.',
 					{
+						args: {
+							personalPlanName: getPlan( PLAN_PERSONAL ).getTitle(),
+							premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle(),
+						},
 						components: { br: <br /> },
 					}
 				) }

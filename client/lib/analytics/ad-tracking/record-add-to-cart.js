@@ -46,7 +46,6 @@ export async function recordAddToCart( cartItem ) {
 			'AddToCart',
 			{
 				product_slug: cartItem.product_slug,
-				free_trial: Boolean( cartItem.free_trial ),
 			},
 		];
 		debug( 'recordAddToCart: [Facebook]', params );
@@ -59,7 +58,6 @@ export async function recordAddToCart( cartItem ) {
 			'AddToCart',
 			{
 				product_slug: cartItem.product_slug,
-				free_trial: Boolean( cartItem.free_trial ),
 			},
 		];
 		debug( 'recordAddToCart: [Jetpack]', params );

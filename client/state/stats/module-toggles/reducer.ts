@@ -14,7 +14,6 @@ import type { Reducer, AnyAction } from 'redux';
 
 /**
  * Returns the updated modules settings state after an action has been dispatched.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -39,7 +38,6 @@ export const data = withSchemaValidation(
 
 /**
  * Returns the loading state after an action has been dispatched.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

@@ -12,7 +12,7 @@ function ToggleSitesAsLandingPage() {
 	const useSitesAsLandingPage = useSelector(
 		( state ) => getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage
 	);
-	const isSaving = useSelector( ( state ) => isSavingPreference( state ) );
+	const isSaving = useSelector( isSavingPreference );
 
 	async function handleToggle( isChecked: boolean ) {
 		const preference = { useSitesAsLandingPage: isChecked, updatedAt: Date.now() };

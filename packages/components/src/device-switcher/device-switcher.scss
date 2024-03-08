@@ -14,6 +14,18 @@
 	}
 }
 
+.device-switcher__header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0 10px;
+	box-sizing: border-box;
+
+	.device-switcher__toolbar {
+		margin-bottom: 13px;
+	}
+}
+
 .device-switcher__container--frame-fixed-viewport {
 	.device-switcher__viewport {
 		position: relative;

@@ -20,11 +20,11 @@ import {
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
 } from './constants';
-
-// Ensure setup has run.
-import './setup';
+import { setup } from './setup';
 
 export const loadTrackingScripts = attemptLoad( async () => {
+	setup();
+
 	const scripts = getTrackingScriptsToLoad();
 
 	let hasError = false;
@@ -50,6 +50,8 @@ export const loadTrackingScripts = attemptLoad( async () => {
 
 	// uses JSON.stringify for consistency with recordOrder()
 	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+
+	return scripts;
 } );
 
 function getTrackingScriptsToLoad() {
@@ -103,6 +105,10 @@ function getTrackingScriptsToLoad() {
 
 	if ( mayWeInitTracker( 'googleTagManager' ) && isAkismetCheckout() ) {
 		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.akismetGoogleTagManagerId );
+	}
+
+	if ( mayWeInitTracker( 'googleTagManager' ) && ( isJetpackCloud() || isJetpackCheckout() ) ) {
+		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.jetpackGoogleTagManagerId );
 	}
 
 	if ( mayWeTrackByTracker( 'clarity' ) ) {
@@ -163,24 +169,31 @@ function initLoadedTrackingScripts() {
 //   promise, for the current and all previous callers. That effectively implements a queue.
 function attemptLoad( loader ) {
 	let setLoadResult;
+	let loadResult;
 	let status = 'not-loading';
 
-	const loadResult = new Promise( ( resolve ) => {
-		setLoadResult = resolve;
-	} );
+	function initiateLoad() {
+		loadResult = new Promise( ( resolve ) => {
+			setLoadResult = resolve;
+		} );
 
-	return () => {
-		if ( status === 'not-loading' ) {
-			status = 'loading';
-			loader().then(
-				( result ) => {
-					status = 'loaded';
-					setLoadResult( result );
-				},
-				() => {
-					status = 'not-loading';
-				}
-			);
+		loader().then(
+			( result ) => {
+				status = 'loaded';
+				setLoadResult( result );
+			},
+			() => {
+				status = 'not-loading';
+			}
+		);
+	}
+
+	return ( reload = false ) => {
+		if ( status === 'not-loading' || reload ) {
+			if ( reload ) {
+				status = 'not-loading';
+			}
+			initiateLoad();
 		}
 		return loadResult;
 	};

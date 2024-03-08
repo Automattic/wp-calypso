@@ -1,31 +1,28 @@
+import { ProductsList } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import useAddOnPrices from './use-add-on-prices';
 
-const useAddOnDisplayCost = ( productSlug: string, quantity?: number ) => {
+const useAddOnDisplayCost = ( productSlug: ProductsList.StoreProductSlug, quantity?: number ) => {
 	const translate = useTranslate();
 	const prices = useAddOnPrices( productSlug, quantity );
 	const formattedCost = prices?.formattedMonthlyPrice || '';
+	const productsList = ProductsList.useProducts();
+	const product = productsList.data?.[ productSlug ];
 
-	return useSelector( ( state ) => {
-		const product = getProductBySlug( state, productSlug );
-
-		if ( product?.product_term === 'month' ) {
-			return translate( '%(formattedCost)s/month, billed monthly', {
-				/* Translators: $formattedCost: monthly price formatted with currency */
-				args: {
-					formattedCost,
-				},
-			} );
-		}
-
-		return translate( '%(monthlyCost)s/month, billed yearly', {
-			/* Translators: $montlyCost: monthly price formatted with currency */
+	if ( product?.term === 'month' ) {
+		/* Translators: %(formattedCost)s: monthly price formatted with currency */
+		return translate( '%(formattedCost)s/month, billed monthly', {
 			args: {
-				monthlyCost: formattedCost,
+				formattedCost,
 			},
 		} );
+	}
+
+	/* Translators: %(monthlyCost)s: monthly price formatted with currency */
+	return translate( '%(monthlyCost)s/month, billed yearly', {
+		args: {
+			monthlyCost: formattedCost,
+		},
 	} );
 };
 

@@ -1,26 +1,24 @@
 import config from '@automattic/calypso-config';
-import {
-	HappinessEngineersTray,
-	Gravatar,
-	SpinnerExample as Spinner,
-} from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Gravatar, SpinnerExample as Spinner } from '@automattic/components';
 import Badge from '@automattic/components/src/badge/docs/example';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Count from '@automattic/components/src/count/docs/example';
+import FoldableCard from '@automattic/components/src/foldable-card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
-import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductLogoExample from '@automattic/components/src/logos/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
 import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import SegmentedControl from '@automattic/components/src/segmented-control/docs/example';
 import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
@@ -49,9 +47,7 @@ import FAQ from 'calypso/components/faq/docs/example';
 import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FeatureItem from 'calypso/components/feature-item/docs/example';
 import FilePickers from 'calypso/components/file-picker/docs/example';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/docs/example';
 import FocusableExample from 'calypso/components/focusable/docs/example';
-import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
@@ -62,6 +58,7 @@ import Ranges from 'calypso/components/forms/range/docs/example';
 import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'calypso/components/header-button/docs/example';
 import HeaderCake from 'calypso/components/header-cake';
 import Headers from 'calypso/components/header-cake/docs/example';
@@ -80,6 +77,7 @@ import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
+import NavigationHeader from 'calypso/components/navigation-header/docs/example';
 import Notices from 'calypso/components/notice/docs/example';
 import PaginationExample from 'calypso/components/pagination/docs/example';
 import PaymentLogo from 'calypso/components/payment-logo/docs/example';
@@ -97,7 +95,6 @@ import SearchCard from 'calypso/components/search-card';
 import Section from 'calypso/components/section/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
-import SegmentedControl from 'calypso/components/segmented-control/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
 import SocialLogos from 'calypso/components/social-logo/docs/example';
 import SpinnerButton from 'calypso/components/spinner-button/docs/example';
@@ -115,7 +112,6 @@ import TimeSince from 'calypso/components/time-since/docs/example';
 import Timeline from 'calypso/components/timeline/docs/example';
 import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
-import Tooltip from 'calypso/components/tooltip/docs/example';
 import UserItem from 'calypso/components/user/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
@@ -210,10 +206,6 @@ export default class DesignAssets extends Component {
 					<FeatureGate readmeFilePath="feature-example" />
 					<FeatureItem readmeFilePath="feature-item" />
 					<FilePickers readmeFilePath="file-picker" />
-					<FixedNavigationHeader
-						searchKeywords="breadcrumbs"
-						readmeFilePath="fixed-navigation-header"
-					/>
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
@@ -241,10 +233,10 @@ export default class DesignAssets extends Component {
 					<LineChart readmeFilePath="line-chart" />
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
-					<ListTile readmeFilePath="/packages/components/src/list-tile" />
 					<ProductLogoExample />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
+					<NavigationHeader readmeFilePath="navigation-header" />
 					<Notices readmeFilePath="notice" />
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />

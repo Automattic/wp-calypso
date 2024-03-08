@@ -10,7 +10,7 @@ import {
 	getCurrentSection,
 } from 'calypso/blocks/app-banner/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
@@ -21,7 +21,6 @@ import { AppState } from 'calypso/types';
 
 /**
  * Returns true if the App Banner should be displayed
- *
  * @param {Object} state Global state tree
  * @returns {boolean} True if App Banner is visible
  */
@@ -69,7 +68,7 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 	const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
 	const dismissed = isDismissed( dismissedUntil, currentSection );
 
-	return isMobile() && ! isWpMobileApp() && ! dismissed;
+	return isMobile() && ! isWpMobileApp() && ! isWcMobileApp() && ! dismissed;
 };
 
 export default createSelector( shouldDisplayAppBanner, [

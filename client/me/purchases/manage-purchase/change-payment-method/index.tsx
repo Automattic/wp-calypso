@@ -1,12 +1,13 @@
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
+import page from '@automattic/calypso-router';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
-import page from 'page';
 import { Fragment, useEffect } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import titles from 'calypso/me/purchases/titles';
@@ -117,7 +118,9 @@ export default function ChangePaymentMethodWrapper( props: ChangePaymentMethodPr
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<ChangePaymentMethod { ...props } />
+			<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+				<ChangePaymentMethod { ...props } />
+			</RazorpayHookProvider>
 		</StripeHookProvider>
 	);
 }

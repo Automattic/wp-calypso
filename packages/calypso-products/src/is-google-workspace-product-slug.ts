@@ -5,7 +5,6 @@ import {
 
 /**
  * Determines whether the specified product slug is for Google Workspace Business Starter.
- *
  * @param {string} productSlug - slug of the product
  * @returns {boolean} true if the slug refers to Google Workspace Business Starter, false otherwise
  */

@@ -9,7 +9,9 @@ function useDeleteUserMutation( siteId, queryOptions = {} ) {
 			wp.req.post( `/sites/${ siteId }/users/${ userId }/delete`, variables ),
 		...queryOptions,
 		onSuccess( ...args ) {
-			queryClient.invalidateQueries( [ 'users', siteId ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ 'users', siteId ],
+			} );
 			queryOptions.onSuccess?.( ...args );
 		},
 	} );

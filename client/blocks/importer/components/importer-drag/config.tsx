@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React from 'react';
 import { convertPlatformName } from 'calypso/blocks/import/util';
@@ -12,6 +13,13 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 		},
 		components: {
 			supportLink: <SupportLink importer={ importer } supportLinkModal={ supportLinkModal } />,
+			supportLinkAlt: (
+				<SupportLink
+					text={ translate( 'Learn how to export your content' ) }
+					importer={ importer }
+					supportLinkModal={ supportLinkModal }
+				/>
+			),
 		},
 	};
 	const translateConfig: { [ key: string ]: Partial< ImporterConfig > } = {
@@ -54,16 +62,22 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 		},
 		wordpress: {
 			description: translate(
-				'Import posts, pages, and media from your %(importerName)s export file.',
+				'Import posts, pages, and media from a supported %(importerName)s export file',
 				options
 			),
-			uploadDescription: translate(
-				'A %(importerName)s export is ' +
-					'an XML file with your page and post content, or a zip archive ' +
-					'containing several XML files. ' +
-					'{{supportLink/}}',
-				options
-			),
+			uploadDescription: isEnabled( 'importer/site-backups' )
+				? translate(
+						'We support: WordPress export files in XML & ZIP and Playground ZIP files. ' +
+							'{{supportLinkAlt/}}',
+						options
+				  )
+				: translate(
+						'A %(importerName)s export is ' +
+							'an XML file with your page and post content, or a zip archive ' +
+							'containing several XML files. ' +
+							'{{supportLink/}}',
+						options
+				  ),
 		},
 	};
 	const importerData = importerConfig( {} )[ importer ];

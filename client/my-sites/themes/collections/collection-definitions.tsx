@@ -1,21 +1,23 @@
 import { translate } from 'i18n-calypso';
 
+export type ThemeCollectionDefinition = {
+	query: {
+		collection: string;
+		filter: string;
+		number: number;
+		page: number;
+		search: string;
+		tier: string;
+	};
+	title: string;
+	fullTitle: string;
+	collectionSlug: string;
+	description: string | null;
+	seeAllLink: string;
+};
+
 export const THEME_COLLECTIONS = {
-	premium: {
-		query: {
-			collection: 'recommended',
-			filter: '',
-			number: 10,
-			page: 1,
-			search: '',
-			tier: 'premium',
-		},
-		title: translate( 'Premium Themes' ),
-		collectionSlug: 'premium-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
-		seeAllLink: '/themes/premium',
-	},
-	partner: {
+	marketplace: {
 		query: {
 			collection: 'recommended',
 			filter: '',
@@ -25,8 +27,24 @@ export const THEME_COLLECTIONS = {
 			tier: 'marketplace',
 		},
 		title: translate( 'Partner Themes' ),
+		fullTitle: translate( 'Partner Themes' ),
 		collectionSlug: 'partner-themes',
-		description: <p>Lorem ipsum dolor sit amet</p>,
+		description: translate( 'Professional themes designed and developed by our partners.' ),
 		seeAllLink: '/themes/marketplace',
+	},
+	partner: {
+		query: {
+			collection: 'recommended',
+			filter: '',
+			number: 10,
+			page: 1,
+			search: '',
+			tier: 'partner',
+		},
+		title: translate( 'Partner Themes' ),
+		fullTitle: translate( 'Partner Themes' ),
+		collectionSlug: 'partner-themes',
+		description: translate( 'Professional themes designed and developed by our partners.' ),
+		seeAllLink: '/themes/partner',
 	},
 };

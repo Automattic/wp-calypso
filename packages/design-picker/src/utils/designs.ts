@@ -1,6 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
-import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
+import {
+	ASSEMBLER_V2_DESIGN,
+	DEFAULT_ASSEMBLER_DESIGN,
+	DEFAULT_VIEWPORT_HEIGHT,
+} from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 function encodeParenthesesInText( text: string ) {
@@ -27,12 +32,10 @@ export const getDesignPreviewUrl = (
 		footer_pattern_ids: recipe?.footer_pattern_ids
 			? recipe?.footer_pattern_ids.join( ',' )
 			: undefined,
-		vertical_id: options.vertical_id,
 		language: options.language,
 		viewport_height: ! options.disable_viewport_height
 			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
 			: undefined,
-		source_site: 'patternboilerplates.wordpress.com',
 		...( options.use_screenshot_overrides && {
 			use_screenshot_overrides: options.use_screenshot_overrides,
 		} ),
@@ -64,6 +67,13 @@ export const getDesignPreviewUrl = (
 	}
 
 	return url;
+};
+
+export const getAssemblerDesign = () => {
+	if ( isEnabled( 'pattern-assembler/v2' ) ) {
+		return ASSEMBLER_V2_DESIGN;
+	}
+	return DEFAULT_ASSEMBLER_DESIGN;
 };
 
 export const isAssemblerDesign = ( design?: Design ) => design?.design_type === 'assembler';

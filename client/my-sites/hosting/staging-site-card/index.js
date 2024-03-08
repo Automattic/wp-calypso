@@ -3,7 +3,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { CardContentWrapper } from 'calypso/my-sites/hosting/staging-site-card/card-content/card-content-wrapper';
@@ -14,15 +14,30 @@ import { StagingSiteLoadingErrorCardContent } from 'calypso/my-sites/hosting/sta
 import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import {
+	useGetLockQuery,
+	USE_STAGING_SITE_LOCK_QUERY_KEY,
+} from 'calypso/my-sites/hosting/staging-site-card/use-get-lock-query';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import {
+	transferStates,
+	transferInProgress,
+	transferRevertingInProgress,
+} from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
+import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
+import {
+	getStagingSiteStatus,
+	getIsStagingSiteStatusComplete,
+} from 'calypso/state/staging-site/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { useDeleteStagingSite } from './use-delete-staging-site';
@@ -40,13 +55,15 @@ export const StagingSiteCard = ( {
 	translate,
 	isJetpack,
 	isPossibleJetpackConnectionProblem,
+	dispatch,
 } ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const [ loadingError, setLoadingError ] = useState( false );
 	const [ syncError, setSyncError ] = useState( null );
-	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+	// eslint-disable-next-line no-unused-vars
+	const [ _, setIsErrorValidQuota ] = useState( false );
+	const [ progress, setProgress ] = useState( 0.1 );
+
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
 	const removeAllNotices = () => {
@@ -56,49 +73,119 @@ export const StagingSiteCard = ( {
 		dispatch( removeNotice( stagingSiteDeleteFailureNoticeId ) );
 	};
 
-	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
+	const {
+		data: hasValidQuota,
+		isLoading: isLoadingQuotaValidation,
+		error: isErrorValidQuota,
+	} = useHasValidQuotaQuery( siteId, {
+		enabled: ! disabled,
+	} );
+
+	const {
+		data: stagingSites,
+		isLoading: isLoadingStagingSites,
+		error: loadingError,
+	} = useStagingSite( siteId, {
+		enabled: ! disabled,
+	} );
+
+	useEffect( () => {
+		if ( loadingError ) {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
+					code: loadingError.code,
+				} )
+			);
+		}
+	}, [ dispatch, loadingError ] );
+
+	const stagingSite = useMemo( () => {
+		return stagingSites?.length ? stagingSites[ 0 ] : {};
+	}, [ stagingSites ] );
+
+	const stagingSiteStatus = useSelector( ( state ) => getStagingSiteStatus( state, siteId ) );
+
+	const { addStagingSite, isLoading: isLoadingAddStagingSite } = useAddStagingSiteMutation(
 		siteId,
 		{
-			enabled: ! disabled,
-			onError: () => {
-				setIsErrorValidQuota( true );
+			onMutate: () => {
+				removeAllNotices();
+			},
+			onSuccess: ( response ) => {
+				setProgress( 0.1 );
+				queryClient.invalidateQueries( [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] );
+				dispatch( fetchAutomatedTransferStatus( response.id ) );
+			},
+			onError: ( error ) => {
+				queryClient.invalidateQueries( [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] );
+				setProgress( 0.1 );
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
+						code: error.code,
+					} )
+				);
+				dispatch(
+					errorNotice(
+						// translators: "reason" is why adding the staging site failed.
+						sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
+						{
+							id: stagingSiteAddFailureNoticeId,
+						}
+					)
+				);
 			},
 		}
 	);
 
-	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
+	const {
+		data: lock,
+		isError: isErrorLockQuery,
+		isLoading: isLoadingLockQuery,
+	} = useGetLockQuery( siteId, {
 		enabled: ! disabled,
-		onError: ( error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
-					code: error.code,
-				} )
-			);
-			setLoadingError( error );
+		refetchInterval: () => {
+			return isLoadingAddStagingSite ? 5000 : 0;
 		},
 	} );
 
-	const stagingSite = useMemo( () => {
-		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
-	}, [ stagingSites ] );
-	const hasSiteAccess = ! stagingSite.id || Boolean( stagingSite?.user_has_permission );
+	useEffect( () => {
+		if ( isErrorLockQuery ) {
+			setIsErrorValidQuota( true );
+		}
+	}, [ isErrorLockQuery, siteId ] );
 
-	const showAddStagingSite =
-		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
-	const showManageStagingSite =
-		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length > 0;
+	const hasCompletedInitialLoading =
+		! isLoadingStagingSites && ! isLoadingQuotaValidation && ! isLoadingLockQuery;
 
-	const [ wasCreating, setWasCreating ] = useState( false );
-	const [ progress, setProgress ] = useState( 0.1 );
-	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
-	const { deleteStagingSite, isReverting } = useDeleteStagingSite( {
+	const isStagingSiteTransferComplete = useSelector( ( state ) =>
+		getIsStagingSiteStatusComplete( state, siteId )
+	);
+	const transferStatus = useCheckStagingSiteStatus( stagingSite.id, hasCompletedInitialLoading );
+	const hasSiteAccess =
+		! hasCompletedInitialLoading ||
+		! stagingSite.id ||
+		( Boolean( stagingSite.user_has_permission ) && ! lock );
+
+	const showAddStagingSiteCard = useMemo( () => {
+		return hasCompletedInitialLoading && ! stagingSite.id && isStagingSiteTransferComplete === true;
+	}, [ hasCompletedInitialLoading, isStagingSiteTransferComplete, stagingSite ] );
+
+	const showManageStagingSiteCard = useMemo( () => {
+		return hasCompletedInitialLoading && stagingSite.id && isStagingSiteTransferComplete === true;
+	}, [ hasCompletedInitialLoading, isStagingSiteTransferComplete, stagingSite ] );
+
+	const {
+		deleteStagingSite,
+		isReverting,
+		isLoading: isDeletingLoading,
+	} = useDeleteStagingSite( {
 		siteId,
 		stagingSiteId: stagingSite.id,
-		transferStatus,
 		onMutate: () => {
 			removeAllNotices();
 		},
 		onError: ( error ) => {
+			setProgress( 0.1 );
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure', {
 					code: error.code,
@@ -114,25 +201,63 @@ export const StagingSiteCard = ( {
 				)
 			);
 		},
-		onSuccess: useCallback( () => {
-			dispatch(
-				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
-			);
-		}, [ dispatch, __ ] ),
+		onSuccess: () => {
+			setProgress( 0.1 );
+		},
 	} );
-	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
+
 	useEffect( () => {
-		if ( wasCreating && isStagingSiteTransferComplete ) {
+		if ( stagingSiteStatus === StagingSiteStatus.COMPLETE ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
 			dispatch(
 				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
 			);
 		}
-	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
+	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
+
+	useEffect( () => {
+		//Something went wrong, and we want to set the status to none.
+		// Lock is not there (expired), neither is the staging site.
+		// but the status is still in progress.
+		if (
+			! isLoadingAddStagingSite &&
+			! lock &&
+			! stagingSite.id &&
+			stagingSiteStatus === StagingSiteStatus.INITIATE_TRANSFERRING
+		) {
+			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
+			dispatch(
+				errorNotice( __( 'Could not add staging site. Please try again.' ), {
+					id: stagingSiteAddFailureNoticeId,
+				} )
+			);
+		}
+	}, [
+		__,
+		dispatch,
+		isLoadingAddStagingSite,
+		lock,
+		queryClient,
+		siteId,
+		stagingSite.id,
+		stagingSiteStatus,
+	] );
+
+	useEffect( () => {
+		// If we are done with the transfer, and we have not errored we want to set the action to NONE, and display a success notice.
+		if ( stagingSiteStatus === StagingSiteStatus.REVERTED ) {
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
+			dispatch(
+				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
+			);
+		}
+	}, [ __, dispatch, siteId, stagingSiteStatus ] );
 
 	useEffect( () => {
 		setProgress( ( prevProgress ) => {
-			switch ( transferStatus ) {
+			switch ( stagingSiteStatus ) {
 				case null:
 					return 0.1;
 				case transferStates.RELOCATING_REVERT:
@@ -147,71 +272,138 @@ export const StagingSiteCard = ( {
 					return prevProgress + 0.05;
 			}
 		} );
-	}, [ transferStatus ] );
+	}, [ stagingSiteStatus ] );
 
-	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
-		onMutate: () => {
-			removeAllNotices();
-		},
-		onError: ( error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
-					code: error.code,
-				} )
-			);
-			dispatch(
-				errorNotice(
-					// translators: "reason" is why adding the staging site failed.
-					sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
-					{
-						id: stagingSiteAddFailureNoticeId,
-					}
-				)
-			);
-		},
-	} );
+	const handleNullTransferStatus = useCallback( () => {
+		// When a revert is finished, the status after deletion becomes null, as the API doesn't return any value ( returns an error ) due to the staging site's deletion.
+		// There's a chance that the user will reload the page and the status will not end up being "reverted" as a result of refresh.
+		// More info:
+		if ( stagingSiteStatus === StagingSiteStatus.REVERTING ) {
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.REVERTED ) );
+			return;
+		}
 
-	const isTrasferInProgress =
-		addingStagingSite ||
-		( showManageStagingSite &&
-			! isStagingSiteTransferComplete &&
-			( transferStatus !== null || wasCreating ) );
+		// If we are in the process of adding a staging site, fetching the lock, gives us the status of the transfer
+		// until the automated transfer status is updated.
+		// In case the cache is deleted we want to update the status to be in progress.
+		if ( lock ) {
+			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
+			return;
+		}
+
+		// In case we have just initialized our transfer, do nothing.
+		if ( stagingSiteStatus === StagingSiteStatus.INITIATE_TRANSFERRING ) {
+			return;
+		}
+
+		if ( stagingSite.id && stagingSiteStatus === StagingSiteStatus.INITIATE_REVERTING ) {
+			return;
+		}
+
+		// In any other case, we want to update the status to none.
+		// NOTE: We could easily set the status back to an empty string, and avoid having a none value.
+		// That however makes the status to not being stored in cache in case we had
+		// another value before.
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
+	}, [ dispatch, lock, siteId, stagingSiteStatus, stagingSite.id ] );
+
+	const handleCompleteTransferStatus = useCallback( () => {
+		// automated-transfer returns complete, even after a reload, in case of a transfer.
+		// Because of that, there is a chance that we had initiated a revert, but the automated-transfer will still return complete.
+		// In that case, or when we have already update the status before, or the cache is cleared in the meantime, do nonthing.
+		if (
+			stagingSiteStatus === StagingSiteStatus.UNSET ||
+			stagingSiteStatus === StagingSiteStatus.NONE ||
+			stagingSiteStatus === StagingSiteStatus.INITIATE_REVERTING ||
+			stagingSiteStatus === StagingSiteStatus.COMPLETE
+		) {
+			return;
+		}
+
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.COMPLETE ) );
+	}, [ dispatch, siteId, stagingSiteStatus ] );
 
 	useEffect( () => {
-		// We know that a user has been navigated to an other page and came back if
-		// The transfer status is not in a final state (complete or failure)
-		// the staging site exists
-		// the site is not reverting
-		// the user owns the staging site
-		// and wasCreating that is set up by the add staging site button is false
+		// If anything is still loading, we don't want to do anything.
 		if (
-			! wasCreating &&
-			! isStagingSiteTransferComplete &&
-			stagingSite.id &&
-			transferStatus !== transferStates.REVERTED &&
-			hasSiteAccess &&
-			! isReverting
+			! hasCompletedInitialLoading ||
+			isLoadingAddStagingSite ||
+			isDeletingLoading ||
+			transferStatus === ''
 		) {
-			setWasCreating( true );
+			return;
+		}
+
+		switch ( transferStatus ) {
+			case null:
+				handleNullTransferStatus();
+				break;
+
+			case transferStates.COMPLETE:
+				handleCompleteTransferStatus();
+				break;
+
+			// In case the automated-transfer returns an error, or the request fails, we want to set the status to none.
+			// This make the notices to not be displayed.
+			case transferStates.ERROR:
+			case transferStates.REQUEST_FAILURE:
+				dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
+				break;
+
+			// If the revert is done we want update the staging site status to reverted.(this make notice to be displayed)
+			case transferStates.REVERTED:
+				// If the cache is deleted or we have already setup this before, do nothing.
+				if (
+					stagingSiteStatus === StagingSiteStatus.UNSET ||
+					stagingSiteStatus === StagingSiteStatus.NONE ||
+					stagingSiteStatus === StagingSiteStatus.REVERTED
+				) {
+					return;
+				}
+				dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.REVERTED ) );
+				break;
+
+			default:
+				// If the automated-transfer revert status is in progress update the staging site status to reverting.
+				if ( transferRevertingInProgress.includes( transferStatus ) ) {
+					dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.REVERTING ) );
+					return;
+				}
+				// If the automated-transfer reverting is in progress update the staging site status to transferring.
+				if ( transferInProgress.includes( transferStatus ) ) {
+					dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.TRANSFERRING ) );
+					return;
+				}
+				break;
 		}
 	}, [
-		wasCreating,
-		isStagingSiteTransferComplete,
+		dispatch,
+		handleCompleteTransferStatus,
+		handleNullTransferStatus,
+		hasCompletedInitialLoading,
+		isDeletingLoading,
+		isLoadingAddStagingSite,
+		siteId,
+		stagingSiteStatus,
 		transferStatus,
-		hasSiteAccess,
-		isReverting,
-		stagingSite,
 	] );
 
-	const onAddClick = () => {
+	const onAddClick = useCallback( () => {
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-		setWasCreating( true );
 		setProgress( 0.1 );
 		addStagingSite();
-	};
+	}, [ dispatch, siteId, addStagingSite ] );
+
+	const onDeleteClick = useCallback( () => {
+		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
+		setProgress( 0.1 );
+		deleteStagingSite();
+	}, [ dispatch, siteId, deleteStagingSite ] );
 
 	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_push_success' ) );
 			setSyncError( null );
 		},
 		onError: ( error ) => {
@@ -220,12 +412,13 @@ export const StagingSiteCard = ( {
 					code: error.code,
 				} )
 			);
-			setSyncError( error.message );
+			setSyncError( error.code );
 		},
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_pull_success' ) );
 			setSyncError( null );
 		},
 		onError: ( error ) => {
@@ -234,6 +427,7 @@ export const StagingSiteCard = ( {
 					code: error.code,
 				} )
 			);
+			setSyncError( error.code );
 		},
 	} );
 
@@ -242,16 +436,20 @@ export const StagingSiteCard = ( {
 			<>
 				<StagingSiteLoadingBarCardContent
 					isOwner={ siteOwnerId === currentUserId }
-					isReverting={ isReverting }
+					isReverting={
+						StagingSiteStatus.REVERTING === stagingSiteStatus ||
+						StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
+						isReverting
+					}
 					progress={ progress }
 				/>
 			</>
 		);
-	}, [ progress, siteOwnerId, currentUserId, isReverting ] );
+	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting, progress ] );
 
 	let stagingSiteCardContent;
 
-	if ( ! isLoadingStagingSites && loadingError ) {
+	if ( hasCompletedInitialLoading && loadingError ) {
 		stagingSiteCardContent = (
 			<StagingSiteLoadingErrorCardContent
 				message={ __(
@@ -259,7 +457,7 @@ export const StagingSiteCard = ( {
 				) }
 			/>
 		);
-	} else if ( ! isLoadingQuotaValidation && isErrorValidQuota ) {
+	} else if ( hasCompletedInitialLoading && isErrorValidQuota ) {
 		stagingSiteCardContent = (
 			<StagingSiteLoadingErrorCardContent
 				message={ __(
@@ -267,7 +465,7 @@ export const StagingSiteCard = ( {
 				) }
 			/>
 		);
-	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
+	} else if ( ! hasSiteAccess && transferStatus !== null ) {
 		stagingSiteCardContent = (
 			<StagingSiteLoadingErrorCardContent
 				message={ translate(
@@ -284,14 +482,14 @@ export const StagingSiteCard = ( {
 				testId="staging-sites-access-message"
 			/>
 		);
-	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
+	} else if ( isLoadingAddStagingSite || isReverting || isStagingSiteTransferComplete === false ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
-	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
+	} else if ( showManageStagingSiteCard ) {
 		stagingSiteCardContent = (
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
 				siteId={ siteId }
-				onDeleteClick={ deleteStagingSite }
+				onDeleteClick={ onDeleteClick }
 				onPushClick={ pushToStaging }
 				onPullClick={ pullFromStaging }
 				isButtonDisabled={ disabled || isSyncInProgress }
@@ -299,13 +497,13 @@ export const StagingSiteCard = ( {
 				error={ syncError }
 			/>
 		);
-	} else if ( showAddStagingSite && ! addingStagingSite ) {
+	} else if ( showAddStagingSiteCard ) {
 		stagingSiteCardContent = (
 			<NewStagingSiteCardContent
 				onAddClick={ onAddClick }
 				isButtonDisabled={
 					disabled ||
-					addingStagingSite ||
+					isLoadingAddStagingSite ||
 					isLoadingQuotaValidation ||
 					! hasValidQuota ||
 					isSyncInProgress ||
@@ -314,7 +512,7 @@ export const StagingSiteCard = ( {
 				showQuotaError={ ! hasValidQuota && ! isLoadingQuotaValidation }
 			/>
 		);
-	} else {
+	} else if ( ! hasCompletedInitialLoading ) {
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 

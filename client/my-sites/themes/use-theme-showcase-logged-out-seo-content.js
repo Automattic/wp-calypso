@@ -1,3 +1,9 @@
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	getPlan,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 
@@ -22,7 +28,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			recommended: {
 				all: {
 					title: translate( 'WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your website.' ),
+					header: translate( 'Find the perfect theme for your website' ),
 					description: translate(
 						"Beautiful and responsive WordPress themes. Choose from free and premium options for all types of websites. Then, activate the one that's best for you."
 					),
@@ -37,9 +43,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium WordPress Themes' ),
 					header: translate( 'Find the perfect premium WordPress theme for your blog or website.' ),
-					description: translate(
-						"Browse all premium themes for WordPress.com. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Browse all premium themes for WordPress.com. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner WordPress Themes' ),
@@ -67,9 +82,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Blog WordPress Themes' ),
 					header: translate( 'Choose premium themes for your blog.' ),
-					description: translate(
-						"Enhance your blog with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your blog with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Blog WordPress Themes' ),
@@ -97,9 +121,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Business WordPress Themes' ),
 					header: translate( 'Choose premium themes for your business website.' ),
-					description: translate(
-						"Enhance your business website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your business website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Business WordPress Themes' ),
@@ -127,9 +160,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Portfolio WordPress Themes' ),
 					header: translate( 'Choose premium themes for your portfolio.' ),
-					description: translate(
-						"Enhance your portfolio website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your portfolio website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Portfolio WordPress Themes' ),
@@ -157,9 +199,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Store WordPress Themes' ),
 					header: translate( 'Choose premium themes for your online store.' ),
-					description: translate(
-						"Enhance your online store with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your online store with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Store WordPress Themes' ),
@@ -187,9 +238,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium About Me WordPress Themes' ),
 					header: translate( 'Choose premium themes for your About Me website.' ),
-					description: translate(
-						"Enhance your About Me website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your About Me website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner About Me WordPress Themes' ),
@@ -217,9 +277,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Link in Bio WordPress Themes' ),
 					header: translate( 'Choose premium themes for your link in bio website.' ),
-					description: translate(
-						"Enhance your link in bio website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your link in bio website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Link in Bio WordPress Themes' ),
@@ -247,9 +316,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Newsletter WordPress Themes' ),
 					header: translate( 'Choose premium themes for your site-hosted newsletter.' ),
-					description: translate(
-						"Enhance your newsletter with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your newsletter with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Newsletter WordPress Themes' ),
@@ -277,9 +355,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Entertainment WordPress Themes' ),
 					header: translate( 'Choose premium themes for your entertainment website.' ),
-					description: translate(
-						"Enhance your entertainment website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your entertainment website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Entertainment WordPress Themes' ),
@@ -307,9 +394,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Coming Soon WordPress Themes' ),
 					header: translate( 'Choose premium coming soon themes for your website.' ),
-					description: translate(
-						"Enhance your website with the perfect premium coming soon theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your website with the perfect premium coming soon theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Coming Soon WordPress Themes' ),
@@ -337,9 +433,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Podcast WordPress Themes' ),
 					header: translate( 'Choose premium themes for your podcast website.' ),
-					description: translate(
-						"Enhance your podcast website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your podcast website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Podcast WordPress Themes' ),
@@ -373,9 +478,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					header: translate(
 						"Choose premium themes for your non-profit or community organization's website."
 					),
-					description: translate(
-						"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your non-profit or community organization's website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Community & Non-profit WordPress Themes' ),
@@ -407,9 +521,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Fashion & Beauty WordPress Themes' ),
 					header: translate( 'Choose premium themes for your fashion and beauty website.' ),
-					description: translate(
-						"Enhance your fashion and beauty website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your fashion and beauty website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Fashion & Beauty WordPress Themes' ),
@@ -439,9 +562,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Travel & Lifestyle WordPress Themes' ),
 					header: translate( 'Choose premium themes for your travel and lifestyle website.' ),
-					description: translate(
-						"Enhance your travel and lifestyle website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your travel and lifestyle website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Travel & Lifestyle WordPress Themes' ),
@@ -469,9 +601,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Restaurant WordPress Themes' ),
 					header: translate( 'Choose premium themes for your restaurant website.' ),
-					description: translate(
-						"Enhance your restaurant website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your restaurant website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Restaurant WordPress Themes' ),
@@ -499,9 +640,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Music WordPress Themes' ),
 					header: translate( 'Choose premium themes for your music website.' ),
-					description: translate(
-						"Enhance your music website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your music website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Music WordPress Themes' ),
@@ -529,9 +679,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Magazine WordPress Themes' ),
 					header: translate( 'Choose premium themes for your magazine website.' ),
-					description: translate(
-						"Enhance your magazine website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your magazine website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Magazine WordPress Themes' ),
@@ -559,9 +718,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Education WordPress Themes' ),
 					header: translate( 'Choose premium themes for your education website.' ),
-					description: translate(
-						"Enhance your education website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your education website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Education WordPress Themes' ),
@@ -589,9 +757,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Author & Writer WordPress Themes' ),
 					header: translate( 'Choose premium themes for your author or writer website.' ),
-					description: translate(
-						"Enhance your author or writer website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your author or writer website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Author & Writer WordPress Themes' ),
@@ -621,9 +798,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Health & Wellness WordPress Themes' ),
 					header: translate( 'Choose premium themes for your health and wellness website.' ),
-					description: translate(
-						"Enhance your health and wellness website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your health and wellness website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Health & Wellness WordPress Themes' ),
@@ -651,9 +837,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Real Estate WordPress Themes' ),
 					header: translate( 'Choose premium themes for your real estate website.' ),
-					description: translate(
-						"Enhance your real estate website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your real estate website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Real Estate WordPress Themes' ),
@@ -681,9 +876,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Video WordPress Themes' ),
 					header: translate( 'Choose premium themes for your video website.' ),
-					description: translate(
-						"Enhance your video website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your video website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Video WordPress Themes' ),
@@ -711,9 +915,18 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 				premium: {
 					title: translate( 'Premium Art and Design WordPress Themes' ),
 					header: translate( 'Choose premium themes for your art and design website.' ),
-					description: translate(
-						"Enhance your art and design website with the perfect premium theme. Available on all Premium, Business, and Commerce plans. Activate the one that's right for you."
-					),
+					description:
+						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
+						translate(
+							"Enhance your art and design website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
+							{
+								args: {
+									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
+									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+								},
+							}
+						),
 				},
 				marketplace: {
 					title: translate( 'Partner Art and Design WordPress Themes' ),

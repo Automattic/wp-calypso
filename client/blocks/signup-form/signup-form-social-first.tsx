@@ -24,8 +24,29 @@ interface SignupFormSocialFirst {
 	handleSocialResponse: () => void;
 	isReskinned: boolean;
 	queryArgs: object;
+	userEmail: string;
 	notice: JSX.Element | false;
+	isSocialFirst: boolean;
 }
+
+const options = {
+	tosLink: (
+		<a
+			href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+			onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
+	),
+	privacyLink: (
+		<a
+			href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+			onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
+	),
+};
 
 const SignupFormSocialFirst = ( {
 	goToNextStep,
@@ -39,20 +60,58 @@ const SignupFormSocialFirst = ( {
 	handleSocialResponse,
 	isReskinned,
 	queryArgs,
+	userEmail,
 	notice,
+	isSocialFirst,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWooCoreProfilerFlow = useSelector( isWooCommerceCoreProfilerFlow );
+	const isWoo = isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow;
+	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
-	const { isWoo, isGravatar } = useSelector( ( state ) => {
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+	const renderTermsOfService = () => {
+		let tosText;
 
-		return {
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
-			isGravatar: isGravatarOAuth2Client( oauth2Client ),
-		};
-	} );
+		if ( isWoo ) {
+			tosText = createInterpolateElement(
+				__( 'By continuing, you agree to our <tosLink>Terms of Service</tosLink>.' ),
+				options
+			);
+		} else if ( isGravatar ) {
+			tosText = createInterpolateElement(
+				__(
+					'By entering your email address, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+				),
+				options
+			);
+		} else if ( currentStep === 'initial' ) {
+			tosText = createInterpolateElement(
+				__(
+					'If you continue with Google, Apple or GitHub, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+				),
+				options
+			);
+		}
+
+		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
+	};
+
+	const renderEmailStepTermsOfService = () => {
+		if ( currentStep === 'email' ) {
+			return (
+				<p className="signup-form-social-first__email-tos-link">
+					{ createInterpolateElement(
+						__(
+							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+						),
+						options
+					) }
+				</p>
+			);
+		}
+	};
 
 	const renderContent = () => {
 		if ( currentStep === 'initial' ) {
@@ -67,6 +126,7 @@ const SignupFormSocialFirst = ( {
 						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
 						disableTosText={ true }
 						compact={ true }
+						isSocialFirst={ isSocialFirst }
 					>
 						<Button
 							className="social-buttons__button button"
@@ -97,6 +157,8 @@ const SignupFormSocialFirst = ( {
 						queryArgs={ queryArgs }
 						labelText={ __( 'Your email' ) }
 						submitButtonLabel={ __( 'Continue' ) }
+						userEmail={ userEmail }
+						renderTerms={ renderEmailStepTermsOfService }
 						{ ...gravatarProps }
 					/>
 					<Button
@@ -109,69 +171,6 @@ const SignupFormSocialFirst = ( {
 				</div>
 			);
 		}
-	};
-
-	const renderTermsOfService = () => {
-		const options = {
-			tosLink: (
-				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-					onClick={ () => recordTracksEvent( 'calypso_signup_tos_link_click' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
-			privacyLink: (
-				<a
-					href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-					onClick={ () => recordTracksEvent( 'calypso_signup_privacy_link_click' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
-		};
-
-		if ( isWoo ) {
-			return (
-				<p className="signup-form-social-first__tos-link">
-					{ createInterpolateElement(
-						__( 'By continuing, you agree to our <tosLink>Terms of Service</tosLink>.' ),
-						options
-					) }
-				</p>
-			);
-		} else if ( isGravatar ) {
-			return (
-				<p className="signup-form-social-first__tos-link">
-					{ createInterpolateElement(
-						__(
-							'By entering your email address, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-						),
-						options
-					) }
-				</p>
-			);
-		}
-
-		let tosText;
-
-		if ( currentStep === 'initial' ) {
-			tosText = createInterpolateElement(
-				__(
-					'If you continue with Google or Apple, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-				),
-				options
-			);
-		} else if ( currentStep === 'email' ) {
-			tosText = createInterpolateElement(
-				__(
-					'By creating an account you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-				),
-				options
-			);
-		}
-
-		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
 	};
 
 	return (

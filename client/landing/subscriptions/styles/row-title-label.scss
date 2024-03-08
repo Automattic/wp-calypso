@@ -22,6 +22,12 @@
 	background: $studio-green-50;
 }
 
+%gift-label {
+	@extend %row-title-label;
+	background: $studio-yellow-40;
+	color: $studio-yellow-0;
+}
+
 %rss-label {
 	@extend %row-title-label;
 	color: $studio-gray-0;

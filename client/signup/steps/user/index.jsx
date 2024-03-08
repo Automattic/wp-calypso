@@ -1,14 +1,15 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isNewsletterFlow } from '@automattic/onboarding';
+import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, get } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
@@ -16,15 +17,17 @@ import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/an
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
+	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
-	isJetpackCloudOAuth2Client,
 	isGravatarOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
+import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -33,8 +36,6 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
-	isP2Flow,
-	isVideoPressFlow,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -43,8 +44,11 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+
 import './style.scss';
 
 function getRedirectToAfterLoginUrl( {
@@ -165,7 +169,8 @@ export class UserStep extends Component {
 	}
 
 	getLoginUrl() {
-		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = this.props;
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale, step } = this.props;
+		const emailAddress = step?.form?.email?.value ?? step?.form?.email;
 
 		return login( {
 			isJetpack: 'jetpack-connect' === sectionName,
@@ -176,6 +181,7 @@ export class UserStep extends Component {
 			wccomFrom,
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
+			emailAddress,
 		} );
 	}
 
@@ -195,17 +201,41 @@ export class UserStep extends Component {
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
-				subHeaderText =
-					'cart' === wccomFrom
-						? translate(
-								"You'll need an account to complete your purchase and manage your subscription"
-						  )
-						: translate(
-								"You'll need an account to connect your store and manage your extensions"
-						  );
+				switch ( wccomFrom ) {
+					case 'cart':
+						subHeaderText = translate(
+							"You'll need an account to complete your purchase and manage your subscription"
+						);
+						break;
+					case 'nux':
+						subHeaderText = translate(
+							'All Woo Express stores are powered by WordPress.com. Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							{
+								components: {
+									a: <a href={ loginUrl } />,
+									br: <br />,
+								},
+								comment:
+									'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
+							}
+						);
+						break;
+					default:
+						subHeaderText = translate(
+							'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							{
+								components: {
+									a: <a href={ loginUrl } />,
+									br: <br />,
+								},
+								comment:
+									'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
+							}
+						);
+				}
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					'All Woo Express stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+					'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -268,6 +298,13 @@ export class UserStep extends Component {
 					subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					} );
+				} else if ( isHostingSignupFlow( flowName ) ) {
+					subHeaderText = translate(
+						'The most reliable WordPress platform awaits you. Have an account? {{a}}Log in{{/a}}',
+						{
+							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+						}
+					);
 				} else {
 					subHeaderText = translate(
 						'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -318,7 +355,6 @@ export class UserStep extends Component {
 		} else if ( data.queryArgs.redirect_to ) {
 			dependencies.redirect = data.queryArgs.redirect_to;
 		}
-
 		this.props.submitSignupStep(
 			{
 				flowName,
@@ -378,7 +414,6 @@ export class UserStep extends Component {
 
 	/**
 	 * Handle Social service authentication flow result (OAuth2 or OpenID Connect)
-	 *
 	 * @param {string} service      The name of the social service
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
@@ -400,7 +435,6 @@ export class UserStep extends Component {
 			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
 			window.sessionStorage.removeItem( 'signup_redirect_to' );
 		}
-
 		this.submit( {
 			service,
 			access_token,
@@ -427,7 +461,19 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate, headerText, wccomFrom, isSocialFirst } = this.props;
+		const {
+			flowName,
+			oauth2Client,
+			translate,
+			headerText,
+			wccomFrom,
+			isSocialFirst,
+			userLoggedIn,
+		} = this.props;
+
+		if ( userLoggedIn ) {
+			return translate( 'Is this you?' );
+		}
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			return translate( 'Sign up for Crowdsignal' );
@@ -440,16 +486,27 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( "Let's get started" ) }</h3>
+					<h3>{ translate( 'Create an account' ) }</h3>
 				</div>
 			);
 		}
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
 			return (
-				<div className={ classNames( 'signup-form__jetpack-cloud-wrapper' ) }>
+				<div className={ classNames( 'signup-form__wrapper' ) }>
 					<JetpackLogo full={ false } size={ 60 } />
 					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
+				</div>
+			);
+		}
+
+		if ( isA4AOAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__wrapper' ) }>
+					<A4ALogo size={ 60 } />
+					<h3>
+						{ translate( 'Sign up to Automattic for Agencies with a WordPress.com account.' ) }
+					</h3>
 				</div>
 			);
 		}
@@ -463,7 +520,7 @@ export class UserStep extends Component {
 		}
 
 		const params = new URLSearchParams( window.location.search );
-		if ( isNewsletterFlow( params.get( 'variationName' ) ) ) {
+		if ( isNewsletterFlow( params.get( 'variationName' ) ) || isHostingSignupFlow( flowName ) ) {
 			return translate( 'Let’s get you signed up.' );
 		}
 
@@ -501,11 +558,13 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
+		const isWooPasswordLess = this.props.wooPasswordless;
 		const { oauth2Client, isReskinned } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
-			isNewsletterFlow( this.props?.queryObject?.variationName );
+			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
+			isWooPasswordLess;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -546,6 +605,7 @@ export class UserStep extends Component {
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
+					labelText={ this.props.wooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -671,14 +731,17 @@ export class UserStep extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		oauth2Client: getCurrentOAuth2Client( state ),
-		suggestedUsername: getSuggestedUsername( state ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
-		userLoggedIn: isUserLoggedIn( state ),
-	} ),
+const ConnectedUser = connect(
+	( state ) => {
+		return {
+			oauth2Client: getCurrentOAuth2Client( state ),
+			suggestedUsername: getSuggestedUsername( state ),
+			wccomFrom: getWccomFrom( state ),
+			wooPasswordless: getWooPasswordless( state ),
+			from: get( getCurrentQueryArguments( state ), 'from' ),
+			userLoggedIn: isUserLoggedIn( state ),
+		};
+	},
 	{
 		errorNotice,
 		recordTracksEvent,
@@ -687,3 +750,5 @@ export default connect(
 		submitSignupStep,
 	}
 )( localize( UserStep ) );
+
+export default ConnectedUser;

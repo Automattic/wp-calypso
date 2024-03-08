@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useEffect } from 'react';
 import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form/woo-product-download';
 import {

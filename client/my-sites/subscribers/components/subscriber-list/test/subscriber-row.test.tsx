@@ -3,13 +3,23 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteDetails } from '@automattic/data-stores';
 import { render, fireEvent, screen } from '@testing-library/react';
 import React from 'react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useSubscriptionPlans from '../../../hooks/use-subscription-plans';
 import { SubscriberRow } from '../subscriber-row';
 
 jest.mock( '@automattic/calypso-config' );
+jest.mock( 'calypso/state/ui/selectors' );
+jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( '../../../hooks/use-subscription-plans' );
+
+const mockStore = configureStore();
+const store = mockStore( {} );
 
 describe( 'SubscriberRow', () => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,9 +48,19 @@ describe( 'SubscriberRow', () => {
 	beforeEach( () => {
 		mockUseSubscriptionPlans.mockReturnValue( [ { plan: 'Plan 1' }, { plan: 'Plan 2' } ] );
 		( isEnabled as jest.MockedFunction< typeof isEnabled > ).mockReturnValue( true );
+		( getSelectedSiteId as jest.MockedFunction< typeof getSelectedSiteId > ).mockReturnValue( 42 );
+		( getSelectedSite as jest.MockedFunction< typeof getSelectedSite > ).mockReturnValue( {
+			ID: 42,
+		} as SiteDetails );
 
 		render(
-			<SubscriberRow { ...commonProps } onView={ mockOnView } onUnsubscribe={ mockOnUnsubscribe } />
+			<Provider store={ store }>
+				<SubscriberRow
+					{ ...commonProps }
+					onView={ mockOnView }
+					onUnsubscribe={ mockOnUnsubscribe }
+				/>
+			</Provider>
 		);
 	} );
 
@@ -78,9 +98,9 @@ describe( 'SubscriberRow', () => {
 	it( 'should render the subscriber profile correctly', () => {
 		expect( screen.getByText( commonProps.subscriber.display_name ) ).toBeInTheDocument();
 		expect( screen.getByText( commonProps.subscriber.email_address ) ).toBeInTheDocument();
-		expect( screen.getByAltText( 'Profile pic' ) ).toHaveAttribute(
+		expect( screen.getByRole( 'img' ) ).toHaveAttribute(
 			'src',
-			commonProps.subscriber.avatar
+			'https://i0.wp.com/example.com/avatar.png?resize=96%2C96'
 		);
 	} );
 

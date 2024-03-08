@@ -41,6 +41,7 @@
 			font-size: $font-title-small;
 			font-weight: 500;
 			line-height: 26px;
+			text-wrap: pretty;
 		}
 		button.navigation-link {
 			border-radius: 50%;
@@ -58,6 +59,11 @@
 		margin-top: 24px;
 		width: 100%;
 
+		.blogging-prompt__new-post-link svg {
+			position: relative;
+			top: 4px;
+			margin-right: 4px;
+		}
 		.blogging-prompt__prompt-responses {
 			align-items: center;
 			display: flex;
@@ -87,6 +93,15 @@
 			font-size: $font-body-small;
 			text-decoration-line: underline;
 
+			&:hover {
+				text-decoration-line: none;
+			}
+		}
+		.blogging-prompt__bloganuary-link {
+			color: var(--studio-gray-80);
+			font-size: $font-body-small;
+			text-decoration-line: underline;
+			margin-right: 8px;
 			&:hover {
 				text-decoration-line: none;
 			}

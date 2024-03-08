@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
 import MediaComponent from 'calypso/my-sites/media/main';

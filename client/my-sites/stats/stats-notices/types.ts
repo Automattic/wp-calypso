@@ -1,6 +1,7 @@
 export interface PaidPlanPurchaseSuccessJetpackStatsNoticeProps {
 	onNoticeViewed?: () => void;
 	isOdysseyStats: boolean;
+	isCommercial?: boolean;
 }
 
 export interface StatsNoticeProps {
@@ -17,6 +18,7 @@ export interface StatsNoticeProps {
 	isSiteJetpackNotAtomic?: boolean;
 	statsPurchaseSuccess?: string;
 	isCommercial?: boolean;
+	isCommercialOwned?: boolean;
 }
 
 export interface NoticeBodyProps {

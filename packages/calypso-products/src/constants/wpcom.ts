@@ -1,21 +1,56 @@
 export const GROUP_WPCOM = 'GROUP_WPCOM';
+export const GROUP_P2 = 'GROUP_P2';
 
-// Products
-export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
+/**
+ * WPCOM Search Products
+ */
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
-export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
-export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
-export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
-
 export const WPCOM_SEARCH_PRODUCTS = < const >[
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 ];
 
+/**
+ * WPCOM Space Upgrade Products
+ * - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+ */
+export const PRODUCT_1GB_SPACE_UPGRADE = '1gb_space_upgrade';
+export const PRODUCT_5GB_SPACE_UPGRADE = '5gb_space_upgrade';
+export const PRODUCT_10GB_SPACE_UPGRADE = '10gb_space_upgrade';
+export const PRODUCT_50GB_SPACE_UPGRADE = '50gb_space_upgrade';
+export const PRODUCT_100GB_SPACE_UPGRADE = '100gb_space_upgrade';
+export const WPCOM_SPACE_UPGRADE_PRODUCTS = < const >[
+	PRODUCT_1GB_SPACE_UPGRADE,
+	PRODUCT_5GB_SPACE_UPGRADE,
+	PRODUCT_10GB_SPACE_UPGRADE,
+	PRODUCT_50GB_SPACE_UPGRADE,
+	PRODUCT_100GB_SPACE_UPGRADE,
+];
+
+/**
+ * WPCOM Other Products
+ * - Special products that do not yet map to the exported `PRODUCTS_LIST` in @automattic/calypso-products
+ */
+export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
+export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
+export const PRODUCT_1GB_SPACE = 'wordpress_com_1gb_space_addon_yearly';
+export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
+export const WPCOM_OTHER_PRODUCTS = < const >[
+	PRODUCT_NO_ADS,
+	PRODUCT_WPCOM_UNLIMITED_THEMES,
+	PRODUCT_1GB_SPACE,
+	PRODUCT_WPCOM_CUSTOM_DESIGN,
+];
+
+/**
+ * WPCOM Products / having definitions in `PRODUCTS_LIST` in @automattic/calypso-products
+ */
 export const WPCOM_PRODUCTS = < const >[ ...WPCOM_SEARCH_PRODUCTS ];
 
-// Plans
+/**
+ * Plans
+ */
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';
@@ -54,6 +89,10 @@ export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_PRO_2_YEARS = 'pro-plan-2y';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
+export const PLAN_BLUEHOST_CLOUD = 'bluehost-cloud-bundle'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
+export const PLAN_BLUEHOST_CLOUD_MONTHLY = 'bluehost-cloud-bundle-monthly'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
+export const PLAN_BLUEHOST_CLOUD_2Y = 'bluehost-cloud-bundle-2y'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
+export const PLAN_BLUEHOST_CLOUD_3Y = 'bluehost-cloud-bundle-3y'; // Not a real plan; we show the bluehost section in the landing pages as part of pau2Xa-5rG-p2.
 export const PLAN_MIGRATION_TRIAL_MONTHLY = 'wp_bundle_migration_trial_monthly';
 export const PLAN_HOSTING_TRIAL_MONTHLY = 'wp_bundle_hosting_trial_monthly';
 
@@ -83,6 +122,10 @@ export const WPCOM_PLANS = < const >[
 	PLAN_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
+	PLAN_BLUEHOST_CLOUD,
+	PLAN_BLUEHOST_CLOUD_MONTHLY,
+	PLAN_BLUEHOST_CLOUD_2Y,
+	PLAN_BLUEHOST_CLOUD_3Y,
 	PLAN_CHARGEBACK,
 	PLAN_VIP,
 	PLAN_P2_PLUS,
@@ -122,6 +165,13 @@ export const WOO_EXPRESS_PLANS = < const >[
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
+];
+
+export const WPCOM_PREMIUM_PLANS = < const >[
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
 ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';

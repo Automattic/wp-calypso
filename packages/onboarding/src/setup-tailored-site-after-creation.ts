@@ -1,5 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Onboard, Site, OnboardSelect, SiteActions } from '@automattic/data-stores';
+import {
+	Onboard,
+	Site,
+	OnboardSelect,
+	SiteActions,
+	updateLaunchpadSettings,
+} from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
@@ -127,6 +133,16 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 				// resetOnboardStore();
 			} )
 		);
+
+		if ( isFreeFlow( flowName ) ) {
+			if ( siteTitle || siteDescription || siteLogo ) {
+				promises.push(
+					updateLaunchpadSettings( siteId, {
+						checklist_statuses: { setup_free: true },
+					} )
+				);
+			}
+		}
 
 		return Promise.all( promises );
 	}

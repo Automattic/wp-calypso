@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
@@ -22,12 +22,14 @@ const SEARCH_KEY = 's';
 
 const setUrlQuery = ( key: string, value: string ) => {
 	const path = window.location.pathname + window.location.search;
+	const nextPath = ! value
+		? removeQueryArgs( path, key )
+		: addQueryArgs( path, { [ key ]: value } );
 
-	if ( ! value ) {
-		return page.show( removeQueryArgs( path, key ) );
+	// Only trigger a page show when path has changed.
+	if ( nextPath !== path ) {
+		page.show( nextPath );
 	}
-
-	return page.show( addQueryArgs( path, { [ key ]: value } ) );
 };
 
 const initialUrlQuerySearchTerm = getUrlQuerySearchTerm();

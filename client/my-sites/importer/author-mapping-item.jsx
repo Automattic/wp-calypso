@@ -40,7 +40,10 @@ class ImporterAuthorMapping extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( ! prevProps.users.length && this.props.users.length ) {
+		if (
+			prevProps.hasSingleAuthor !== this.props.hasSingleAuthor ||
+			( ! prevProps.users.length && this.props.users.length )
+		) {
 			this.setAuthor();
 		}
 	}

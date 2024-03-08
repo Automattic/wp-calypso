@@ -5,11 +5,10 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mapPostStatus } from 'calypso/lib/route';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
@@ -96,14 +95,13 @@ class PostsMain extends Component {
 						messagePath="wp:edit-post:admin_notices"
 					/>
 				) }
-				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
-				<FormattedHeader
-					brandFont
-					className="posts__page-heading"
-					headerText={ translate( 'Posts' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="edit.php"
+					navigationItems={ [] }
+					title={ translate( 'Posts' ) }
+					subtitle={ translate(
 						'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
@@ -113,9 +111,8 @@ class PostsMain extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
+
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				<PostTypeList
 					query={ query }

@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { normalizePluginData, mapStarRatingToPercent } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
-import { BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { BASE_STALE_TIME } from 'calypso/state/constants';
 import { ESRelatedPluginsResult, RelatedPlugin } from './types';
 
 const mapESDataToReatedPluginData = (
@@ -46,7 +46,11 @@ const getRelatedPluginsQueryParams = (
 export const useGetRelatedPlugins = (
 	pluginSlug: string,
 	size = 4,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions, 'queryKey' > = {}
 ): UseQueryResult => {
 	return useQuery( {
 		...getRelatedPluginsQueryParams( pluginSlug, size ),

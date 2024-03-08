@@ -53,7 +53,7 @@ import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
  * Specifies the version of WordPress.com REST API.
  */
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '2';
-type EndpointNamespace = 'rest' | 'wpcom';
+type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 
 /**
  * Interface defining the request structure to be sent to the API.
@@ -1283,5 +1283,28 @@ export class RestAPIClient {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Get the active theme for a given site.
+	 *
+	 * @param siteID
+	 */
+	async getActiveTheme( siteID: number ): Promise< string > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		// This is a V2 API call.
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/themes?status=active`, 'wp' ),
+			params
+		);
+
+		return response[ 0 ].stylesheet;
 	}
 }

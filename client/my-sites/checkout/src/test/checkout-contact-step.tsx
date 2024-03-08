@@ -24,9 +24,10 @@ import {
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
+	oneTimePurchase,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
-import type { CartKey } from '@automattic/shopping-cart';
+import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
@@ -39,7 +40,8 @@ jest.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
-	const initialCart = getBasicCart();
+	const siteId = 123456;
+	const initialCart: ResponseCart = { ...getBasicCart(), cart_key: siteId };
 	const defaultPropsForMockCheckout = {
 		initialCart,
 	};
@@ -63,16 +65,28 @@ describe( 'Checkout contact step', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
-	it( 'does not render the contact step when the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+	it( 'does render the contact step when the purchase is free and some items are recurring', async () => {
+		const cartChanges = { total_cost_integer: 0 };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		expect( await screen.findByText( /Enter your (billing|contact) information/ ) ).toBeVisible();
+	} );
+
+	it( 'does not render the contact step when the purchase is free and all items are one-time purchases', async () => {
+		const cartChanges = {
+			total_cost_integer: 0,
+			products: [ oneTimePurchase ],
+		};
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await expect( screen.findByText( /Enter your (billing|contact) information/ ) ).toNeverAppear();
 	} );
 
-	it( 'renders the step after the contact step as active if the purchase is free', async () => {
-		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+	it( 'renders the step after the contact step as active if the purchase is free and all items are one-time purchases', async () => {
+		const cartChanges = {
+			total_cost_integer: 0,
+			products: [ oneTimePurchase ],
+		};
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
-		expect( await screen.findByText( 'Assign a payment method later' ) ).toBeVisible();
+		expect( await screen.findByText( 'Free Purchase' ) ).toBeVisible();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {

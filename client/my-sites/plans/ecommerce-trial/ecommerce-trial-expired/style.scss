@@ -6,6 +6,10 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		--color-surface-backdrop: var(--color-surface);
 	}
 
+	.layout__content {
+		padding-left: 0 !important;
+	}
+
 	.main.is-wide-layout {
 		@media ( max-width: $break-medium ) {
 			padding-left: 1.25rem;
@@ -50,7 +54,7 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 		justify-content: center;
 		margin: auto;
 		max-width: 800px;
-		padding-top: 1.5em;
+		padding: 1.5em;
 
 		@media ( min-width: $break-small ) {
 			flex-direction: row;

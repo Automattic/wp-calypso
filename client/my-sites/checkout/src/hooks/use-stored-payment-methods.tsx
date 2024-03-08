@@ -94,7 +94,9 @@ export function useStoredPaymentMethods( {
 	>( {
 		mutationFn: ( id ) => requestPaymentMethodDeletion( id ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
+			queryClient.invalidateQueries( {
+				queryKey: [ storedPaymentMethodsQueryKey ],
+			} );
 		},
 	} );
 
@@ -128,7 +130,7 @@ export function useStoredPaymentMethods( {
 	return {
 		paymentMethods,
 		isLoading: isLoggedOut ? false : isLoading,
-		isDeleting: mutation.isLoading,
+		isDeleting: mutation.isPending,
 		error: errorMessage,
 		deletePaymentMethod,
 	};

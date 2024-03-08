@@ -95,7 +95,7 @@ function getSiteForPurchase( purchaseForSite ) {
 	};
 }
 
-function createMockReduxStoreForPurchase( purchaseForRedux ) {
+function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} ) {
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
@@ -110,7 +110,7 @@ function createMockReduxStoreForPurchase( purchaseForRedux ) {
 				items: { [ purchaseForRedux.blog_id ]: getSiteForPurchase( purchaseForRedux ) },
 				plans: {},
 				requesting: {},
-				domains: { requesting: {}, items: {} },
+				domains: { requesting: {}, items: domains_items },
 			},
 			plugins: {
 				premium: { plugins: {} },
@@ -199,11 +199,44 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( "does't render renew buttons for domain with pending registration at registry", async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const domainsItems = {
+			212628935: [
+				{
+					name: 'onecooltestsite.com',
+					pendingRegistrationAtRegistry: true,
+				},
+			],
+		};
+		const store = createMockReduxStoreForPurchase(
+			{ ...purchase, meta: 'onecooltestsite.com', is_domain_registration: true },
+			domainsItems
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+		expect( screen.queryByText( /Renew now/ ) ).not.toBeInTheDocument();
+	} );
+
 	test.each(
 		AKISMET_PRODUCTS_LIST.filter(
 			( product ) =>
 				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY &&
-				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY
+				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY &&
+				AKISMET_UPGRADES_PRODUCTS_MAP.hasOwnProperty( product )
 		)
 	)( 'generates the correct upgrade URL for %s', ( product_slug ) => {
 		nock( 'https://public-api.wordpress.com' )

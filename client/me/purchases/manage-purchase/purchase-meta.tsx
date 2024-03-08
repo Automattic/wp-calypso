@@ -29,6 +29,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
+import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaOwner from './purchase-meta-owner';
@@ -81,6 +82,27 @@ export default function PurchaseMeta( {
 			? translate( 'Renewal Price' )
 			: translate( 'Price' );
 
+	// To-do: There isn't currently a way to get the taxName based on the country.
+	// The country is not included in the purchase information envelope
+	// We should add this information so we can utilize useTaxName to retrieve the correct taxName
+	// For now, we are using a fallback tax name
+	const taxName =
+		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax' )
+			? translate( 'tax' )
+			: translate( 'tax (VAT/GST/CT)' );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringAbbreviation = translate( 'excludes %s', {
+		textOnly: true,
+		args: [ taxName ],
+	} );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringTitle = translate( 'Renewal price excludes any applicable %s', {
+		textOnly: true,
+		args: [ taxName ],
+	} );
+
 	return (
 		<>
 			<ul className="manage-purchase__meta">
@@ -91,6 +113,10 @@ export default function PurchaseMeta( {
 						<PurchaseMetaPrice purchase={ purchase } />
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
+					<span>
+						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+					</span>
+					<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
 				</li>
 				<PurchaseMetaExpiration
 					purchase={ purchase }

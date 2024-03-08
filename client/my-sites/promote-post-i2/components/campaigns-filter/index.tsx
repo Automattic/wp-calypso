@@ -1,17 +1,16 @@
-import { useTranslate } from 'i18n-calypso';
+import { SegmentedControl } from '@automattic/components';
 import { useRef } from 'react';
-import SegmentedControl from 'calypso/components/segmented-control';
+import { DropdownOption } from '../search-bar';
 
 export type CampaignsFilterType = '' | 'active' | 'created' | 'finished' | 'rejected';
 
 interface Props {
 	campaignsFilter: CampaignsFilterType;
 	handleChangeFilter: ( type: CampaignsFilterType ) => void;
+	options: DropdownOption[];
 }
 
 export default function CampaignsFilter( props: Props ) {
-	const translate = useTranslate();
-
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
 	const onTabClick = ( key: string ) => {
@@ -22,35 +21,12 @@ export default function CampaignsFilter( props: Props ) {
 		} );
 	};
 
-	const { handleChangeFilter, campaignsFilter } = props;
+	const { handleChangeFilter, campaignsFilter, options } = props;
 
 	const handleChange = ( type: CampaignsFilterType ) => {
 		onTabClick( type );
 		handleChangeFilter( type );
 	};
-
-	const options = [
-		{
-			value: '',
-			label: translate( 'All' ),
-		},
-		{
-			value: 'active',
-			label: translate( 'Active', { context: 'comment status' } ),
-		},
-		{
-			value: 'created',
-			label: translate( 'In moderation', { context: 'comment status' } ),
-		},
-		{
-			value: 'finished',
-			label: translate( 'Completed', { context: 'comment status' } ),
-		},
-		{
-			value: 'rejected',
-			label: translate( 'Rejected', { context: 'comment status' } ),
-		},
-	];
 
 	return (
 		<SegmentedControl compact primary>
