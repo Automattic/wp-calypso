@@ -1,5 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
+import {
+	TermsOfServiceRecord,
+	TermsOfServiceRecordArgsRenewal,
+	useShoppingCart,
+} from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
@@ -10,8 +14,6 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 export default function AdditionalTermsOfServiceInCart() {
 	const translate = useTranslate();
@@ -42,217 +44,6 @@ export default function AdditionalTermsOfServiceInCart() {
 	);
 }
 
-function getMessageForTermsOfServiceRecordPayPal(
-	termsOfServiceRecord: TermsOfServiceRecord,
-	translate: ReturnType< typeof useTranslate >,
-	siteSlug: string | null
-): TranslateResult {
-	const args = termsOfServiceRecord.args;
-	if ( ! args ) {
-		return '';
-	}
-	if ( ! args.email || ! args.product_name || ! args.renewal_price ) {
-		debug(
-			`Malformed terms of service args with code: ${ termsOfServiceRecord.code }`,
-			termsOfServiceRecord
-		);
-		return '';
-	}
-	if (
-		args.subscription_start_date &&
-		args.subscription_expiry_date &&
-		args.subscription_auto_renew_date
-	) {
-		if ( args.is_renewal_price_prorated ) {
-			return translate(
-				'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (PAYPAL %(email)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
-				{
-					args: {
-						startDate: moment( args.subscription_start_date ).format( 'll' ),
-						endDate: moment( args.subscription_expiry_date ).format( 'll' ),
-						renewalDate: moment( args.subscription_auto_renew_date ).format( 'll' ),
-						email: args.email,
-						renewalPrice: args.renewal_price,
-						regularPrice: args.regular_renewal_price,
-						numberOfDays: args.subscription_pre_renew_reminder_days || 7,
-					},
-					components: {
-						updatePaymentMethodLink: (
-							<a
-								href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						manageSubscriptionLink: (
-							<a
-								href={ `/purchases/subscriptions/${ siteSlug }` }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			);
-		}
-		return translate(
-			'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (PAYPAL %(email)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
-			{
-				args: {
-					startDate: moment( args.subscription_start_date ).format( 'll' ),
-					endDate: moment( args.subscription_expiry_date ).format( 'll' ),
-					renewalDate: moment( args.subscription_auto_renew_date ).format( 'll' ),
-					email: args.email,
-					renewalPrice: args.renewal_price,
-					numberOfDays: args.subscription_pre_renew_reminder_days || 7,
-				},
-				components: {
-					updatePaymentMethodLink: (
-						<a
-							href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					manageSubscriptionLink: (
-						<a
-							href={ `/purchases/subscriptions/${ siteSlug }` }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
-	}
-	return translate(
-		'At the end of the promotional period we will begin charging your PayPal account (%(email)s) the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}',
-		{
-			args: {
-				email: args.email,
-				productName: args.product_name,
-				renewalPrice: args.renewal_price,
-			},
-			components: {
-				link: (
-					<a
-						href={ `/purchases/subscriptions/${ siteSlug }` }
-						target="_blank"
-						rel="noopener noreferrer"
-					/>
-				),
-			},
-		}
-	);
-}
-
-function getMessageForTermsOfServiceRecordCard(
-	termsOfServiceRecord: TermsOfServiceRecord,
-	translate: ReturnType< typeof useTranslate >,
-	siteSlug: string | null
-): TranslateResult {
-	const args = termsOfServiceRecord.args;
-	if ( ! args ) {
-		return '';
-	}
-	if ( ! args.card_type || ! args.card_last_4 || ! args.product_name || ! args.renewal_price ) {
-		debug(
-			`Malformed terms of service args with code: ${ termsOfServiceRecord.code }`,
-			termsOfServiceRecord
-		);
-		return '';
-	}
-	if (
-		args.subscription_start_date &&
-		args.subscription_expiry_date &&
-		args.subscription_auto_renew_date
-	) {
-		if ( args.is_renewal_price_prorated ) {
-			return translate(
-				'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will charge your payment method (%(cardType)s ****%(cardLast4)s) for %(renewalPrice)s. All subsequent renewals will be charged for the regular subscription price of %(regularPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
-				{
-					args: {
-						startDate: moment( args.subscription_start_date ).format( 'll' ),
-						endDate: moment( args.subscription_expiry_date ).format( 'll' ),
-						renewalDate: moment( args.subscription_auto_renew_date ).format( 'll' ),
-						cardType: args.card_type,
-						cardLast4: args.card_last_4,
-						renewalPrice: args.renewal_price,
-						regularPrice: args.regular_renewal_price,
-						numberOfDays: args.subscription_pre_renew_reminder_days || 7,
-					},
-					components: {
-						updatePaymentMethodLink: (
-							<a
-								href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						manageSubscriptionLink: (
-							<a
-								href={ `/purchases/subscriptions/${ siteSlug }` }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			);
-		}
-		return translate(
-			'The promotional period for your subscription lasts from %(startDate)s to %(endDate)s. On %(renewalDate)s we will begin charging your payment method (%(cardType)s ****%(cardLast4)s) the regular subscription price of %(renewalPrice)s. You will receive at least one email notice %(numberOfDays)d days before being billed and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription {{/manageSubscriptionLink}} at any time.',
-			{
-				args: {
-					startDate: moment( args.subscription_start_date ).format( 'll' ),
-					endDate: moment( args.subscription_expiry_date ).format( 'll' ),
-					renewalDate: moment( args.subscription_auto_renew_date ).format( 'll' ),
-					cardType: args.card_type,
-					cardLast4: args.card_last_4,
-					renewalPrice: args.renewal_price,
-					numberOfDays: args.subscription_pre_renew_reminder_days || 7,
-				},
-				components: {
-					updatePaymentMethodLink: (
-						<a
-							href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-					manageSubscriptionLink: (
-						<a
-							href={ `/purchases/subscriptions/${ siteSlug }` }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
-		);
-	}
-	return translate(
-		'At the end of the promotional period we will begin charging your %(cardType)s card ending in %(cardLast4)s the normal %(productName)s subscription price of %(renewalPrice)s. You can update the payment method at any time {{link}}here{{/link}}',
-		{
-			args: {
-				cardType: args.card_type,
-				cardLast4: args.card_last_4,
-				productName: args.product_name,
-				renewalPrice: args.renewal_price,
-			},
-			components: {
-				link: (
-					<a
-						href={ `/purchases/subscriptions/${ siteSlug }` }
-						target="_blank"
-						rel="noopener noreferrer"
-					/>
-				),
-			},
-		}
-	);
-}
-
 function getMessageForTermsOfServiceRecordUnknown(
 	termsOfServiceRecord: TermsOfServiceRecord,
 	translate: ReturnType< typeof useTranslate >,
@@ -262,11 +53,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 	if ( ! args ) {
 		return '';
 	}
-	if (
-		args.subscription_start_date &&
-		args.subscription_expiry_date &&
-		args.subscription_auto_renew_date
-	) {
+	if ( doesTermsOfServiceRecordHaveDates( args ) ) {
 		if ( args.is_renewal_price_prorated ) {
 			const proratedRenewalArgs = {
 				args: {
@@ -408,10 +195,6 @@ function getMessageForTermsOfServiceRecord(
 	siteSlug: string | null
 ): TranslateResult {
 	switch ( termsOfServiceRecord.code ) {
-		case 'terms_for_bundled_trial_auto_renewal_paypal':
-			return getMessageForTermsOfServiceRecordPayPal( termsOfServiceRecord, translate, siteSlug );
-		case 'terms_for_bundled_trial_auto_renewal_credit_card':
-			return getMessageForTermsOfServiceRecordCard( termsOfServiceRecord, translate, siteSlug );
 		case 'terms_for_bundled_trial_unknown_payment_method':
 			return getMessageForTermsOfServiceRecordUnknown( termsOfServiceRecord, translate, siteSlug );
 		default:
@@ -421,4 +204,11 @@ function getMessageForTermsOfServiceRecord(
 			);
 			return '';
 	}
+}
+
+function doesTermsOfServiceRecordHaveDates(
+	args: TermsOfServiceRecord[ 'args' ]
+): args is TermsOfServiceRecordArgsRenewal {
+	const argsWithDates = args as TermsOfServiceRecordArgsRenewal;
+	return Boolean( argsWithDates.subscription_expiry_date );
 }
