@@ -75,9 +75,7 @@ export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: Time
 			newDate.getDay() === existingDate.getDay() &&
 			newDate.getHours() === existingDate.getHours()
 		) {
-			error = translate(
-				'Please pick another time for optimal performance, as this slot is already taken.'
-			);
+			error = translate( 'Please choose another time, as this slot is already scheduled.' );
 		}
 	} );
 
