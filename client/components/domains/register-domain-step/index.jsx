@@ -1476,7 +1476,7 @@ class RegisterDomainStep extends Component {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
-		const { REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
+		const { DOMAIN_AVAILABILITY_THROTTLED, REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1509,7 +1509,8 @@ class RegisterDomainStep extends Component {
 
 					const skipAvailabilityErrors =
 						! status ||
-						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions );
+						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions ) ||
+						status === DOMAIN_AVAILABILITY_THROTTLED;
 
 					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
