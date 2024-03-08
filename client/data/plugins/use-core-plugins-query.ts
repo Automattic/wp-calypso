@@ -24,17 +24,28 @@ export type CorePluginsResponse = CorePlugin[];
 
 /**
  * Fetches the plugins for a given site
- * @param siteIdOrSlug The site ID or slug
  */
 export const useCorePluginsQuery = (
 	siteIdOrSlug: SiteId | SiteSlug | undefined,
-	hideManagedPlugins: boolean = false
+	hideManagedPlugins = false,
+	addPluginExtension = false
 ): UseQueryResult< CorePluginsResponse > => {
 	const select = ( plugins: CorePluginsResponse ) => {
-		const decodedPlugins = decodeEntitiesFromPlugins( plugins );
-		return hideManagedPlugins
-			? decodedPlugins.filter( ( plugin ) => ! plugin.is_managed )
-			: decodedPlugins;
+		const ext = '.php';
+		let _plugins = decodeEntitiesFromPlugins( plugins );
+
+		if ( hideManagedPlugins ) {
+			_plugins = _plugins.filter( ( plugin ) => ! plugin.is_managed );
+		}
+
+		if ( addPluginExtension ) {
+			_plugins = _plugins.map( ( plugin ) => ( {
+				...plugin,
+				plugin: plugin.plugin.endsWith( ext ) ? plugin.plugin : `${ plugin.plugin }${ ext }`,
+			} ) );
+		}
+
+		return _plugins;
 	};
 
 	return useQuery< CorePluginsResponse >( {
@@ -52,6 +63,7 @@ export const useCorePluginsQuery = (
 		enabled: !! siteIdOrSlug,
 		retry: false,
 		refetchOnWindowFocus: false,
+		staleTime: 30 * 1000, // 30 seconds
 		select,
 	} );
 };

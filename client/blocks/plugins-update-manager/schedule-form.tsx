@@ -53,7 +53,7 @@ export const ScheduleForm = ( props: Props ) => {
 		data: plugins = [],
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
-	} = useCorePluginsQuery( siteSlug, true );
+	} = useCorePluginsQuery( siteSlug, true, true );
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
