@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { ResponseCart, useShoppingCart } from '@automattic/shopping-cart';
+import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
@@ -59,18 +59,18 @@ const PromoCardV2 = styled.div`
 
 const CheckoutPromoCard: React.FC< {
 	onUpgradeClick: () => void;
-	responseCart: ResponseCart;
+	plan: ResponseCartProduct;
+	domainRegistrationOrTransferInCart: ResponseCartProduct | undefined;
 	currentVariant: WPCOMProductVariant;
 	percentSavings: number;
-} > = ( { onUpgradeClick, responseCart, currentVariant, percentSavings } ) => {
+} > = ( {
+	onUpgradeClick,
+	plan,
+	domainRegistrationOrTransferInCart,
+	currentVariant,
+	percentSavings,
+} ) => {
 	const translate = useTranslate();
-	const plan = responseCart.products.find(
-		( product ) => isPlan( product ) && ! isJetpackPlan( product )
-	);
-
-	const domainRegistrationOrTransferInCart = responseCart.products.find(
-		( product ) => isDomainRegistration( product ) || isDomainTransfer( product )
-	);
 
 	const isMonthly = currentVariant?.termIntervalInMonths === 1;
 	const isYearly = currentVariant?.termIntervalInMonths === 12;
@@ -148,6 +148,10 @@ export function CheckoutSidebarPlanUpsell() {
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
 
+	const domainRegistrationOrTransferInCart = responseCart.products.find(
+		( product ) => isDomainRegistration( product ) || isDomainTransfer( product )
+	);
+
 	const variants = useGetProductVariants( plan );
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
 
@@ -189,7 +193,7 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
-	if ( biennialVariant.productId === plan.product_id ) {
+	if ( biennialVariant.productId === plan?.product_id ) {
 		debug( 'plan in cart is already biennial' );
 		return null;
 	}
@@ -274,7 +278,8 @@ export function CheckoutSidebarPlanUpsell() {
 			{ shouldUseCheckoutV2 ? (
 				<CheckoutPromoCard
 					onUpgradeClick={ onUpgradeClick }
-					responseCart={ responseCart }
+					plan={ plan }
+					domainRegistrationOrTransferInCart={ domainRegistrationOrTransferInCart }
 					currentVariant={ currentVariant }
 					percentSavings={ percentSavings }
 				/>
