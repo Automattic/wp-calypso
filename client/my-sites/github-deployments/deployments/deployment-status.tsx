@@ -25,7 +25,7 @@ function getText( status: DeploymentStatusValue ) {
 		case 'queued':
 			return __( 'Queued' );
 		case 'running':
-			return __( 'Running' );
+			return __( 'Deploying' );
 		case 'success':
 			return __( 'Deployed' );
 		case 'warnings':
