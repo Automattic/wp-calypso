@@ -40,23 +40,6 @@ export const prepareTimestamp = (
 	return event.getTime() / 1000;
 };
 
-/**
- * Validate name
- * - required
- * - max length 120
- */
-export const validateName = ( name: string ) => {
-	let error = '';
-
-	if ( ! name ) {
-		error = translate( 'Please provide a name to this plugin update schedule.' );
-	} else if ( name.length > 120 ) {
-		error = translate( 'Please provide a shorter name.' );
-	}
-
-	return error;
-};
-
 type TimeSlot = {
 	frequency: string;
 	timestamp: number;
