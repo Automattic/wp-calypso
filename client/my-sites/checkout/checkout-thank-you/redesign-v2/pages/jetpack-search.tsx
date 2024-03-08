@@ -37,8 +37,8 @@ export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankY
 			buttonHref: localizeUrl( 'https://wordpress.com/support/category/plugins-and-integrations/' ),
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
-					context: 'plugins-support',
-					type: 'generic-support',
+					context: 'jetpack-search',
+					type: 'plugin-support',
 				} );
 			},
 		},
