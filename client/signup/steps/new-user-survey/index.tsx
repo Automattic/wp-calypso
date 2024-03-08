@@ -78,7 +78,7 @@ function ControlledCheckbox( props: {
 
 function SurveyForm( props: Props ) {
 	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
-		'calypso_signup_onboarding_site_goals_survey'
+		'calypso_signup_onboarding_site_goals_survey_i2'
 	);
 	const variantName = experimentAssignment?.variationName;
 	const isScrambled =

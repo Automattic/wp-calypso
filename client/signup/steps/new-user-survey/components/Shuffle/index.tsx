@@ -39,7 +39,7 @@ type ShuffleProps = {
 	getChildKey: ( child: ReactNode ) => string;
 
 	/**
-	 * A boolean indicating whether the Shuffling of elements is active is active.
+	 * A boolean indicating whether the Shuffling of elements is active.
 	 */
 	isShuffleActive?: boolean;
 };
@@ -83,7 +83,11 @@ const Shuffle = ( props: ShuffleProps ) => {
 	sortedChildrenClone =
 		sortedChildrenClone.map( ( child, i ) => {
 			if ( isValidElement( child ) ) {
-				return React.cloneElement< any >( child, { ...child.props, 'data-testid': i + 1 } );
+				return React.cloneElement< any >( child, {
+					...child.props,
+					'data-testid': i + 1,
+					key: i + 1,
+				} );
 			}
 			return child;
 		} ) ?? [];

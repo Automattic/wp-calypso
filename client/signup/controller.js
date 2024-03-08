@@ -245,7 +245,7 @@ export default {
 		const isOnboardingFlow = flowName === 'onboarding';
 		if ( isOnboardingFlow && ( ! userLoggedIn || ( userLoggedIn && isNewUser ) ) ) {
 			const experiment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_site_goals_survey'
+				'calypso_signup_onboarding_site_goals_survey_i2'
 			);
 			initialContext.isSignupSurveyActive =
 				experiment.variationName === 'treatment' ||
