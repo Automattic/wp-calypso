@@ -152,32 +152,23 @@ function getMessageForTermsOfServiceRecordUnknown(
 		);
 	}
 
-	const defaultRenewalArgs = {
-		args: {
-			productName: args.product_name,
-			renewalPrice: args.renewal_price,
-		},
-		components: {
-			link: (
-				<a
-					href={ `/purchases/subscriptions/${ siteSlug }` }
-					target="_blank"
-					rel="noopener noreferrer"
-				/>
-			),
-		},
-	};
-
-	if ( args.product_meta && args.product_meta !== '' ) {
+	if ( args.product_meta ) {
 		return translate(
 			'At the end of the promotional period your %(productName)s subscription for %(domainName)s will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
 			{
 				args: {
-					...defaultRenewalArgs.args,
+					productName: args.product_name,
+					renewalPrice: args.renewal_price,
 					domainName: args.product_meta,
 				},
 				components: {
-					...defaultRenewalArgs.components,
+					link: (
+						<a
+							href={ `/purchases/subscriptions/${ siteSlug }` }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		);
@@ -185,7 +176,21 @@ function getMessageForTermsOfServiceRecordUnknown(
 
 	return translate(
 		'At the end of the promotional period your %(productName)s subscription will renew at the normal price of %(renewalPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
-		defaultRenewalArgs
+		{
+			args: {
+				productName: args.product_name,
+				renewalPrice: args.renewal_price,
+			},
+			components: {
+				link: (
+					<a
+						href={ `/purchases/subscriptions/${ siteSlug }` }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		}
 	);
 }
 
