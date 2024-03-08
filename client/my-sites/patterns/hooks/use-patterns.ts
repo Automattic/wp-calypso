@@ -17,7 +17,6 @@ export function getPatternsQueryOptions(
 		},
 		staleTime: Infinity,
 		...queryOptions,
-		enabled: !! category,
 	};
 }
 
