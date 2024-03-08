@@ -37,7 +37,7 @@ export const StyledLabel = styled( FormLabel )`
 	}
 `;
 
-export const StyledFormTextInput = styled< any >( FormTextInput )`
+export const StyledFormTextInput = styled( FormTextInput )`
 	&.form-text-input.form-text-input {
 		margin-left: 24px;
 		max-width: 385px;
