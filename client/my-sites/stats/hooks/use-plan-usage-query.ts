@@ -16,6 +16,7 @@ export interface PlanUsage {
 	views_limit: number;
 	over_limit_months: number;
 	current_tier: PriceTierListItemProps;
+	is_internal: boolean;
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
