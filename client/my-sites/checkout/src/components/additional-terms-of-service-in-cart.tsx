@@ -112,7 +112,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 	}
 
 	return translate(
-		'At the end of the promotional period your %(productName)s will renew at the normal price of %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
+		'At the end of the promotional period your %(productName)s will renew for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
 		{
 			args: {
 				productName,
