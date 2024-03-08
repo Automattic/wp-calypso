@@ -50,13 +50,14 @@ export const GitHubConnectionForm = ( {
 	onSubmit,
 }: GitHubConnectionFormProps ) => {
 	const [ submitted, setSubmitted ] = useState( false );
+
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
-
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
 		initialValues.workflowPath
 	);
+
 	const { __ } = useI18n();
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
@@ -98,15 +99,11 @@ export const GitHubConnectionForm = ( {
 	);
 
 	useEffect( () => {
-		if ( repoChecks?.suggested_directory ) {
+		// Only apply path suggestions if creating a new deployment
+		if ( ! deploymentId && repoChecks?.suggested_directory ) {
 			setDestPath( repoChecks.suggested_directory );
-		} else {
-			setDestPath( initialValues.destPath );
 		}
-		setBranch( initialValues.branch );
-		setIsAutoDeploy( initialValues.isAutomated );
-		setWorkflowPath( initialValues.workflowPath );
-	}, [ initialValues, repoChecks ] );
+	}, [ deploymentId, repoChecks ] );
 
 	const displayMissingRepositoryError = submitted && ! repository;
 	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
