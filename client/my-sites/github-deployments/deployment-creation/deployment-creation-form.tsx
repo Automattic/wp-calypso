@@ -114,6 +114,7 @@ export const GitHubDeploymentCreationForm = ( {
 		<>
 			<GitHubConnectionForm
 				installationId={ installation?.external_id }
+				key={ repository?.id ?? 'none' }
 				repository={ repository }
 				initialValues={ initialValues }
 				changeRepository={ () => dispatch( { type: 'open-repository-picker' } ) }
