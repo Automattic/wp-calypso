@@ -1186,13 +1186,15 @@ function JetpackAkismetSaleCouponCallout( { product }: { product: ResponseCartPr
 
 	const interval = product.bill_period === '31' ? 'month' : 'year';
 	const interval_count = interval === 'month' ? 1 : parseInt( product.bill_period ) / 365;
-	const discountText = getIntroductoryOfferIntervalDisplay(
+	const discountText = getIntroductoryOfferIntervalDisplay( {
 		translate,
-		interval,
-		interval_count,
-		false,
-		''
-	);
+		intervalUnit: interval,
+		intervalCount: interval_count,
+		isFreeTrial: false,
+		isPriceIncrease: false,
+		context: '',
+		remainingRenewalsUsingOffer: 0,
+	} );
 
 	return <DiscountCallout>{ discountText }</DiscountCallout>;
 }
