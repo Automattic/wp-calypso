@@ -572,7 +572,6 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
@@ -590,7 +589,12 @@ export class CheckoutThankYou extends Component<
 			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
-				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
+				pageContent = (
+					<PlanOnlyThankYou
+						primaryPurchase={ purchases[ 0 ] }
+						isEmailVerified={ this.props.isEmailVerified }
+					/>
+				);
 			} else if ( wasTitanEmailOnlyProduct ) {
 				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
 
