@@ -9,7 +9,7 @@ import {
 	CardFooter,
 	Icon,
 } from '@wordpress/components';
-import { arrowLeft, warning } from '@wordpress/icons';
+import { arrowLeft, info } from '@wordpress/icons';
 import { useEffect } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
@@ -32,7 +32,7 @@ export const ScheduleCreate = ( props: Props ) => {
 		isEligibleForFeature
 	);
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
+	const { canCreateSchedules, errors } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 
 	const mutationState = useMutationState( {
 		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },
@@ -81,10 +81,10 @@ export const ScheduleCreate = ( props: Props ) => {
 				>
 					Create
 				</Button>
-				{ ! canCreateSchedules && (
+				{ ! canCreateSchedules && errors?.length && (
 					<Text as="p">
-						<Icon className="icon-info" icon={ warning } size={ 16 } />
-						This site is unable to schedule auto-updates for plugins.
+						<Icon className="icon-info" icon={ info } size={ 16 } />
+						{ errors[ 0 ].message }
 					</Text>
 				) }
 			</CardFooter>
