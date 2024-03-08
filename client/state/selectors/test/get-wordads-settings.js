@@ -94,6 +94,7 @@ describe( 'getWordadsSettings()', () => {
 						wordads_ccpa_privacy_policy_url: 'wordads_ccpa_privacy_policy_url-test',
 						wordads_custom_adstxt_enabled: 'wordads_custom_adstxt_enabled-test',
 						wordads_custom_adstxt: 'wordads_custom_adstxt-test',
+						wordads_cmp_enabled: 'wordads_cmp_enabled-test',
 					},
 				},
 			},
@@ -126,5 +127,6 @@ describe( 'getWordadsSettings()', () => {
 			'wordads_custom_adstxt_enabled-test'
 		);
 		expect( output ).toHaveProperty( 'custom_adstxt', 'wordads_custom_adstxt-test' );
+		expect( output ).toHaveProperty( 'cmp_enabled', 'wordads_cmp_enabled-test' );
 	} );
 } );
