@@ -690,20 +690,6 @@ export class CheckoutThankYou extends Component<
 		);
 	}
 
-	getProfessionalEmailPurchaseFromPurchases(
-		purchaseTypePredicate: FindPredicate,
-		purchases: ReceiptPurchase[]
-	) {
-		const titanMailPurchases = purchases.filter(
-			( product ) => isTitanMail( product ) && purchaseTypePredicate( product )
-		);
-		if ( titanMailPurchases.length > 0 ) {
-			return titanMailPurchases[ 0 ];
-		}
-
-		return null;
-	}
-
 	startTransfer = ( event: { preventDefault: () => void } ) => {
 		event.preventDefault();
 
