@@ -9,6 +9,7 @@ import { getDomainPurchaseTypeAndPredicate } from '../../utils';
 import ThankYouDomainProduct from '../products/domain-product';
 import ThankYouPlanProduct from '../products/plan-product';
 import { ThankYouTitanProduct } from '../products/titan-product';
+import getDefaultFooterDetails from './content/get-default-footer-details';
 import getDomainFooterDetails from './content/get-domain-footer-details';
 import getTitanFooterDetails from './content/get-titan-footer-details';
 
@@ -76,9 +77,16 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 		}
 	} );
 
+	if ( footerDetails.length < 2 ) {
+		footerDetails = footerDetails.concat( getDefaultFooterDetails( 'generic' ) );
+	}
+
+	const title =
+		filteredPurchases.length > 1 ? translate( 'Great Choices!' ) : translate( 'Great Choice!' );
+
 	return (
 		<ThankYouV2
-			title={ translate( 'Great Choices!' ) }
+			title={ title }
 			subtitle={ translate( 'All set! Ready to take your site even further?' ) }
 			products={ products }
 			footerDetails={ footerDetails.slice( 0, 2 ) }
