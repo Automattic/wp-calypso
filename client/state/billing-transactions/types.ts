@@ -142,7 +142,7 @@ export interface BillingTransactionItem {
 	 * we began using cost overrides for introductory offers in D134600-code
 	 * (February 2024).
 	 */
-	introductory_offer_terms: IntroductoryOfferTerms;
+	introductory_offer_terms?: IntroductoryOfferTerms;
 
 	currency: string;
 	licensed_quantity: number | null;
