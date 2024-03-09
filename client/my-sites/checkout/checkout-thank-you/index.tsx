@@ -638,7 +638,7 @@ export class CheckoutThankYou extends Component<
 					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
 			} else {
-				pageContent = <GenericThankYou purchases={ purchases } />;
+				pageContent = <GenericThankYou purchases={ purchases } emailAddress={ email } />;
 			}
 
 			if ( pageContent ) {
