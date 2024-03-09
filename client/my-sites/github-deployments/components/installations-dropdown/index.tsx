@@ -1,4 +1,4 @@
-import { Button, SelectDropdown } from '@automattic/components';
+import { SelectDropdown } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	GitHubInstallationData,
@@ -24,43 +24,30 @@ export const GitHubInstallationsDropdown = ( {
 
 	const { isFetching } = useGithubInstallationsQuery();
 
-	if ( installations.length > 0 ) {
-		return (
-			<SelectDropdown
-				className="github-deployments-installations-select"
-				selectedText={ value?.account_name }
-				isLoading={ isFetching }
-			>
-				{ installations.map( ( installation ) => (
-					<SelectDropdown.Item
-						key={ installation.account_name }
-						selected={ value?.account_name === installation.account_name }
-						onClick={ () => onChange( installation ) }
-					>
-						{ installation.account_name }
-					</SelectDropdown.Item>
-				) ) }
-				<SelectDropdown.Separator />
-				<SelectDropdown.Item
-					onClick={ onAddInstallation }
-					key="add"
-					className="github-deployments-installations-select__add-installation"
-				>
-					{ __( 'Add GitHub account' ) }
-				</SelectDropdown.Item>
-			</SelectDropdown>
-		);
-	}
-
 	return (
-		<Button
-			busy={ isFetching }
-			disabled={ isFetching }
-			primary
-			onClick={ onAddInstallation }
-			key="add"
+		<SelectDropdown
+			className="github-deployments-installations-select"
+			selectedText={ value?.account_name || __( 'Select account' ) }
+			isLoading={ isFetching }
+			disabled={ ! installations.length }
 		>
-			{ __( 'Add GitHub account' ) }
-		</Button>
+			{ installations.map( ( installation ) => (
+				<SelectDropdown.Item
+					key={ installation.account_name }
+					selected={ value?.account_name === installation.account_name }
+					onClick={ () => onChange( installation ) }
+				>
+					{ installation.account_name }
+				</SelectDropdown.Item>
+			) ) }
+			<SelectDropdown.Separator />
+			<SelectDropdown.Item
+				onClick={ onAddInstallation }
+				key="add"
+				className="github-deployments-installations-select__add-installation"
+			>
+				{ __( 'Add GitHub account' ) }
+			</SelectDropdown.Item>
+		</SelectDropdown>
 	);
 };
