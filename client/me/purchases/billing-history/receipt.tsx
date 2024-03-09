@@ -293,16 +293,18 @@ function getDiscountReasonForIntroductoryOffer(
 	product: BillingTransactionItem,
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >,
-	allowFreeText: boolean
+	allowFreeText: boolean,
+	isPriceIncrease: boolean
 ): string {
-	return getIntroductoryOfferIntervalDisplay(
+	return getIntroductoryOfferIntervalDisplay( {
 		translate,
-		terms.interval_unit,
-		terms.interval_count,
-		product.amount_integer === 0 && allowFreeText,
-		'checkout',
-		terms.transition_after_renewal_count
-	);
+		intervalUnit: terms.interval_unit,
+		intervalCount: terms.interval_count,
+		isFreeTrial: product.amount_integer === 0 && allowFreeText,
+		isPriceIncrease,
+		context: 'checkout',
+		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+	} );
 }
 
 function makeIntroductoryOfferCostOverrideUnique(
@@ -319,7 +321,8 @@ function makeIntroductoryOfferCostOverrideUnique(
 				product,
 				product.introductory_offer_terms,
 				translate,
-				true
+				true,
+				costOverride.new_price_integer > costOverride.old_price_integer
 			),
 		};
 	}
@@ -385,9 +388,6 @@ function ReceiptItemDiscountIntroductoryOfferDate( { item }: { item: BillingTran
 	) {
 		return null;
 	}
-	const dueDate = item.introductory_offer_terms.subscription_auto_renew_date;
-	const dueAmount = item.introductory_offer_terms.renewal_price_integer;
-	const renewAmount = item.introductory_offer_terms.regular_renewal_price_integer;
 
 	return (
 		<div>
@@ -401,45 +401,8 @@ function ReceiptItemDiscountIntroductoryOfferDate( { item }: { item: BillingTran
 					},
 				} ) }
 			</div>
-			<div>
-				{ translate( 'Amount that will be billed %(dueDate)s: %(price)s', {
-					args: {
-						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
-							dateStyle: 'long',
-						} ),
-						price: formatCurrency( dueAmount, item.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
-			</div>
-			<div>
-				<ReceiptItemRenewalInterval item={ item } />{ ' ' }
-				<span>
-					{ formatCurrency( renewAmount, item.currency, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ) }
-				</span>
-			</div>
 		</div>
 	);
-}
-
-function ReceiptItemRenewalInterval( { item }: { item: BillingTransactionItem } ) {
-	const translate = useTranslate();
-	switch ( item.months_per_renewal_interval ) {
-		case 1:
-			return <span>{ translate( 'Billed every month' ) }</span>;
-		case 12:
-			return <span>{ translate( 'Billed every year' ) }</span>;
-		case 24:
-			return <>{ translate( 'Billed every two years' ) }</>;
-		case 36:
-			return <>{ translate( 'Billed every three years' ) }</>;
-	}
-	return null;
 }
 
 function ReceiptItemDiscounts( {

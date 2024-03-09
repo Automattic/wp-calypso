@@ -580,12 +580,6 @@ export interface IntroductoryOfferTerms {
 	 * months instead of the full year.
 	 */
 	should_prorate_when_offer_ends: boolean;
-
-	subscription_auto_renew_date: string;
-
-	renewal_price_integer: number;
-
-	regular_renewal_price_integer: number;
 }
 
 export interface CartLocation {
