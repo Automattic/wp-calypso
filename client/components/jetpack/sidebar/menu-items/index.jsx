@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
@@ -56,6 +57,19 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					selected={ currentPathMatches( `/activity-log/${ siteSlug }` ) }
 					expandSection={ expandSection }
 				/>
+			) }
+			{ isAdmin && (
+				<SidebarItem
+					tipTarget="posts"
+					customIcon={ showIcons && <Gridicon className="sidebar__menu-icon" icon="pin" /> }
+					label={ translate( 'Posts', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
+					link={ `/posts/${ siteSlug }` }
+					onNavigate={ onNavigate( tracksEventNames.postsClicked ) }
+					selected={ currentPathMatches( `/posts/${ siteSlug }` ) }
+					expandSection={ expandSection }
+				></SidebarItem>
 			) }
 			{ isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem

@@ -58,6 +58,7 @@ export default ( { path } ) => {
 				showIcons={ true }
 				tracksEventNames={ {
 					activityClicked: 'calypso_jetpack_sidebar_activity_clicked',
+					postsClicked: 'calypso_jetpack_sidebar_posts_clicked',
 					backupClicked: 'calypso_jetpack_sidebar_backup_clicked',
 					scanClicked: 'calypso_jetpack_sidebar_scan_clicked',
 					searchClicked: 'calypso_jetpack_sidebar_search_clicked',
