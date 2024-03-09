@@ -11,7 +11,6 @@ import {
 	isDomainTransfer,
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isP2Plus,
 	isPersonal,
@@ -82,7 +81,6 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -104,7 +102,6 @@ import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	getDomainPurchaseTypeAndPredicate,
 	isBulkDomainTransfer,
 	isDomainOnly,
 	isSearch,
@@ -114,7 +111,6 @@ import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
-import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -521,41 +517,24 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, email, domainOnlySiteFlow, receiptId, selectedFeature } = this.props;
+		const { translate, email, receiptId, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! this.props.isSimplified;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
-		let wasDomainProduct = false;
-		let wasGSuiteOrGoogleWorkspace = false;
 		let wasTitanEmailOnlyProduct = false;
-		let wasTitanEmailProduct = false;
-		let wasDomainOnly = false;
 		let wasBulkDomainTransfer = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
-			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
-			wasDomainProduct = purchases.some(
-				( purchase ) =>
-					isDomainMapping( purchase ) ||
-					isDomainTransfer( purchase ) ||
-					isDomainRegistration( purchase )
-			);
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
-			wasDomainOnly =
-				domainOnlySiteFlow &&
-				purchases.every(
-					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
-				);
 			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
 		}
 
@@ -644,7 +623,6 @@ export class CheckoutThankYou extends Component<
 			if ( pageContent ) {
 				const siteId = this.props.selectedSite?.ID;
 				const siteSlug = this.props.selectedSite?.slug;
-
 				return (
 					<Main className="checkout-thank-you is-redesign-v2">
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
@@ -683,32 +661,6 @@ export class CheckoutThankYou extends Component<
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
-			);
-		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
-			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
-			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
-
-			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
-				predicate,
-				purchases
-			);
-
-			const emailFallback = email ? email : this.props.user?.email ?? '';
-			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
-			const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-
-			return (
-				<DomainThankYou
-					domain={ domainName ?? '' }
-					domains={ domains }
-					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
-					hasProfessionalEmail={ wasTitanEmailProduct }
-					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }
-					selectedSiteSlug={ siteSlug ?? '' }
-					isDomainOnly={ this.props.domainOnlySiteFlow }
-					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
-					type={ purchaseType as DomainThankYouType }
-				/>
 			);
 		}
 
