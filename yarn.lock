@@ -364,7 +364,7 @@ __metadata:
     form-data: "npm:^4.0.0"
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
-    nock: "npm:^13.5.3"
+    nock: "npm:^13.5.4"
     node-fetch: "npm:^2.6.7"
     playwright: "npm:^1.37"
     totp-generator: "npm:^0.0.12"
@@ -707,7 +707,7 @@ __metadata:
     fast-json-stable-stringify: "npm:^2.1.0"
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
-    nock: "npm:^13.5.3"
+    nock: "npm:^13.5.4"
     node-fetch: "npm:^2.6.6"
     qs: "npm:^6.9.1"
     redux: "npm:^4.2.1"
@@ -12337,7 +12337,7 @@ __metadata:
     moment: "npm:^2.26.0"
     moment-timezone: "npm:^0.5.40"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
-    nock: "npm:^13.5.3"
+    nock: "npm:^13.5.4"
     path-browserify: "npm:^1.0.1"
     percentage-regex: "npm:^3.0.0"
     phone: "npm:^3.1.17"
@@ -23454,7 +23454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.5.3":
+"nock@npm:^13.5.4":
   version: 13.5.4
   resolution: "nock@npm:13.5.4"
   dependencies:
@@ -32522,7 +32522,7 @@ __metadata:
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
     ncp: "npm:^2.0.0"
-    nock: "npm:^13.5.3"
+    nock: "npm:^13.5.4"
     node-fetch: "npm:^2.6.6"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
