@@ -1,17 +1,5 @@
-import {
-	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isP2Plus,
-	isTitanMail,
-	isWpComPlan,
-} from '@automattic/calypso-products';
+import { isDelayedDomainTransfer } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
-import {
-	getDomainPurchase,
-	isBulkDomainTransfer,
-	isDomainOnly,
-	isSearch,
-	isTitanWithoutMailboxes,
-} from '../utils';
 
 /**
  * Determines whether the current checkout flow renders a redesigned congrats page
@@ -29,40 +17,8 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 
 	const purchases = getPurchases( props );
 
-	if ( isBulkDomainTransfer( purchases ) ) {
-		return true;
-	}
-
-	if ( isDomainOnly( purchases ) ) {
-		return true;
-	}
-
-	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-		return true;
-	}
-
-	if ( isTitanWithoutMailboxes( props.selectedFeature ) && getDomainPurchase( purchases ) ) {
-		return true;
-	}
-
-	if ( purchases.length === 1 ) {
-		const purchase = purchases[ 0 ];
-
-		if ( isWpComPlan( purchase.productSlug ) ) {
-			return true;
-		}
-
-		if ( isP2Plus( purchase ) ) {
-			return true;
-		}
-
-		if ( isTitanMail( purchase ) ) {
-			return true;
-		}
-
-		if ( isSearch( purchase ) ) {
-			return true;
-		}
+	if ( purchases.find( isDelayedDomainTransfer ) ) {
+		return false;
 	}
 
 	return true;
