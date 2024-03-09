@@ -12330,7 +12330,7 @@ __metadata:
     clipboard: "npm:^2.0.6"
     cmdk: "npm:^0.2.0"
     component-closest: "npm:^1.0.1"
-    component-event: "npm:^0.2.0"
+    component-event: "npm:^0.2.1"
     component-file-picker: "npm:^0.2.1"
     component-query: "npm:^0.0.3"
     cookie: "npm:^0.4.1"
@@ -13380,10 +13380,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-event@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "component-event@npm:0.2.0"
-  checksum: f4eec9c232606871a76841d7dea2907e13dc08970800889e6ceaaccf386939bec5d7f9b1aaa9259d585d9108f3448ec18ea4165b8b92cbd00a0b3399468a0772
+"component-event@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "component-event@npm:0.2.1"
+  checksum: f49c8d00dc5d2b5540adfd2b29273191d74654ccd1ce3dda5fd82e33211d85a5b3d40469ee225f7a35ce7687929a98be440b7b8d0c2ac05eee208b5d0f2d9e3b
   languageName: node
   linkType: hard
 
