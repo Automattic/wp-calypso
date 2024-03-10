@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon } from '@automattic/components';
+import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
@@ -299,11 +299,6 @@ import {
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
-	isPersonalPlan,
-	isPremiumPlan,
-	isEcommercePlan,
-	isBusinessPlan,
-	isFreePlan,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
@@ -318,9 +313,12 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	isPersonalPlan,
+	isPremiumPlan,
+	isEcommercePlan,
+	isBusinessPlan,
+	isFreePlan,
 	isWooExpressPlan,
-	ExternalLink,
-	ExternalLinkWithTracking,
 } from './';
 import type { FeatureList } from './types';
 
