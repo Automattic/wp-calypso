@@ -30,7 +30,7 @@ import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -248,10 +248,7 @@ function CheckoutSidebarNudge( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
-	const isPurchaseRenewal = useMemo(
-		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
-		[ responseCart ]
-	);
+	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const domainWithoutPlanInCartOrSite =

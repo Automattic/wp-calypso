@@ -59,13 +59,11 @@ const PromoCardV2 = styled.div`
 
 const CheckoutPromoCard: React.FC< {
 	onUpgradeClick: () => void;
-	plan: ResponseCartProduct;
 	domainRegistrationOrTransferInCart: ResponseCartProduct | undefined;
 	currentVariant: WPCOMProductVariant;
 	percentSavings: number;
 } > = ( {
 	onUpgradeClick,
-	plan,
 	domainRegistrationOrTransferInCart,
 	currentVariant,
 	percentSavings,
@@ -74,30 +72,39 @@ const CheckoutPromoCard: React.FC< {
 
 	const isMonthly = currentVariant?.termIntervalInMonths === 1;
 	const isYearly = currentVariant?.termIntervalInMonths === 12;
-	const isBiennially = currentVariant?.termIntervalInMonths === 24;
-	const isTriennially = currentVariant?.termIntervalInMonths === 36;
 
-	let labelText;
+	const labelText = ( () => {
+		// TODO: After v2 merger, refactor free plan upsell into this section
 
-	// TODO: this currently doesn't work because the !plan guard found in CheckoutSidebarPlanUpsell disallows this to be reached.
-	if ( ! plan && domainRegistrationOrTransferInCart ) {
-		labelText = translate(
-			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-		);
-	}
+		if ( isMonthly ) {
+			if ( domainRegistrationOrTransferInCart ) {
+				return translate(
+					'Save money with longer billing cycles and get %(domainMeta)s free for the first year by {{upgradeLink}}switching to an annual plan.{{/upgradeLink}}',
+					{
+						comment: '"domainMeta" is the domain name and TLD, like "example.com" or "example.org"',
+						args: {
+							domainMeta: domainRegistrationOrTransferInCart.meta,
+						},
+						components: {
+							upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
+						},
+					}
+				);
+			}
 
-	if ( isMonthly ) {
-		labelText = translate(
-			'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-		);
+			return translate(
+				'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+			);
+		}
 
-		if ( domainRegistrationOrTransferInCart ) {
-			labelText = translate(
-				'Save money with longer billing cycles and get %(domainMeta)s free for the first year by {{upgradeLink}}switching to an annual plan.{{/upgradeLink}}',
+		if ( isYearly ) {
+			return translate(
+				"Save up to %(savingsPercentage)s% on longer billing cycles! It's hassle-free and easy on your wallet. {{upgradeLink}}Switch to a two-year plan and save.{{/upgradeLink}}",
 				{
-					comment: '"domainMeta" is the domain name and TLD, like "example.com" or "example.org"',
+					comment:
+						'"savingsPercentage is the savings percentage for the upgrade as a number, like "20" for 20%"',
 					args: {
-						domainMeta: domainRegistrationOrTransferInCart.meta,
+						savingsPercentage: percentSavings,
 					},
 					components: {
 						upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
@@ -105,34 +112,18 @@ const CheckoutPromoCard: React.FC< {
 				}
 			);
 		}
-	}
 
-	if ( isYearly ) {
-		labelText = translate(
-			"Save up to %(savingsPercentage)s% on longer billing cycles! It's hassle-free and easy on your wallet. {{upgradeLink}}Switch to a two-year plan and save.{{/upgradeLink}}",
-			{
-				comment:
-					'"savingsPercentage is the savings percentage for the upgrade as a number, like "20" for 20%"',
-				args: {
-					savingsPercentage: percentSavings,
-				},
-				components: {
-					upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
-				},
-			}
-		);
-	}
-
-	if ( isBiennially || isTriennially ) {
 		return null;
-	}
+	} )();
 
 	return (
-		<PromoCardV2>
-			<div className="checkout-sidebar-plan-upsell__v2-wrapper">
-				<p>{ labelText }</p>
-			</div>
-		</PromoCardV2>
+		labelText && (
+			<PromoCardV2>
+				<div className="checkout-sidebar-plan-upsell__v2-wrapper">
+					<p>{ labelText }</p>
+				</div>
+			</PromoCardV2>
+		)
 	);
 };
 
@@ -278,7 +269,6 @@ export function CheckoutSidebarPlanUpsell() {
 			{ shouldUseCheckoutV2 ? (
 				<CheckoutPromoCard
 					onUpgradeClick={ onUpgradeClick }
-					plan={ plan }
 					domainRegistrationOrTransferInCart={ domainRegistrationOrTransferInCart }
 					currentVariant={ currentVariant }
 					percentSavings={ percentSavings }
