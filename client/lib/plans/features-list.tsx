@@ -1,4 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { MaterialIcon } from '@automattic/components';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
+import i18n from 'i18n-calypso';
+import SupportIcon from './assets/images/support.svg';
+import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -313,23 +319,10 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	isWooExpressPlan,
-} from '@automattic/calypso-products';
-import { MaterialIcon } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
-import i18n from 'i18n-calypso';
-import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
-import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
-import ExternalLink from 'calypso/components/external-link';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
-import type {
-	FeatureObject as FeatureObjectPackaged,
-	FeatureList as FeatureListPackaged,
-} from '@automattic/calypso-products';
-
-export type FeatureObject = FeatureObjectPackaged;
-
-export type FeatureList = FeatureListPackaged;
+	ExternalLink,
+	ExternalLinkWithTracking,
+} from './';
+import type { FeatureList } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
@@ -2740,6 +2733,8 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Sensei Features */
 };
+
+// TODO move to main.ts:
 
 export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
 	if ( ! planFeaturesList ) {
