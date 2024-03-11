@@ -9,8 +9,8 @@ import {
 	CardFooter,
 	Icon,
 } from '@wordpress/components';
-import { arrowLeft, warning } from '@wordpress/icons';
-import { useEffect } from 'react';
+import { arrowLeft, info } from '@wordpress/icons';
+import { useEffect, useState } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
@@ -31,13 +31,16 @@ export const ScheduleCreate = ( props: Props ) => {
 		siteSlug,
 		isEligibleForFeature
 	);
+	const { canCreateSchedules, errors: eligibilityCheckErrors } = useCanCreateSchedules(
+		siteSlug,
+		isEligibleForFeature
+	);
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
-
-	const mutationState = useMutationState( {
-		filters: { mutationKey: [ 'create-update-schedule', siteSlug ] },
+	const pendingMutations = useMutationState( {
+		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ], status: 'pending' },
 	} );
-	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
+	const isBusy = pendingMutations.length > 0;
+	const [ syncError, setSyncError ] = useState( '' );
 
 	useEffect( () => {
 		if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
@@ -51,6 +54,7 @@ export const ScheduleCreate = ( props: Props ) => {
 		} );
 
 		createMonitor();
+		setSyncError( '' );
 
 		return onNavBack && onNavBack();
 	};
@@ -69,7 +73,7 @@ export const ScheduleCreate = ( props: Props ) => {
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
-				<ScheduleForm onSyncSuccess={ onSyncSuccess } />
+				<ScheduleForm onSyncSuccess={ onSyncSuccess } onSyncError={ setSyncError } />
 			</CardBody>
 			<CardFooter>
 				<Button
@@ -81,10 +85,11 @@ export const ScheduleCreate = ( props: Props ) => {
 				>
 					Create
 				</Button>
-				{ ! canCreateSchedules && (
-					<Text as="p">
-						<Icon className="icon-info" icon={ warning } size={ 16 } />
-						This site is unable to schedule auto-updates for plugins.
+				{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
+					<Text as="p" className="validation-msg">
+						<Icon className="icon-info" icon={ info } size={ 16 } />
+						{ ( eligibilityCheckErrors?.length && eligibilityCheckErrors[ 0 ].message ) || '' }
+						{ syncError }
 					</Text>
 				) }
 			</CardFooter>

@@ -9,7 +9,8 @@ import {
 	CardFooter,
 	Icon,
 } from '@wordpress/components';
-import { arrowLeft, warning } from '@wordpress/icons';
+import { arrowLeft, info } from '@wordpress/icons';
+import { useState } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
@@ -30,12 +31,16 @@ export const ScheduleEdit = ( props: Props ) => {
 	);
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
-	const mutationState = useMutationState( {
-		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ] },
+	const pendingMutations = useMutationState( {
+		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ], status: 'pending' },
 	} );
-	const isBusy = mutationState.filter( ( { status } ) => status === 'pending' ).length > 0;
+	const isBusy = pendingMutations.length > 0;
+	const [ syncError, setSyncError ] = useState( '' );
 
-	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
+	const { canCreateSchedules, errors: eligibilityCheckErrors } = useCanCreateSchedules(
+		siteSlug,
+		isEligibleForFeature
+	);
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
@@ -47,6 +52,8 @@ export const ScheduleEdit = ( props: Props ) => {
 		recordTracksEvent( 'calypso_scheduled_updates_edit_schedule', {
 			site_slug: siteSlug,
 		} );
+
+		setSyncError( '' );
 
 		return onNavBack && onNavBack();
 	};
@@ -66,7 +73,11 @@ export const ScheduleEdit = ( props: Props ) => {
 			</CardHeader>
 			<CardBody>
 				{ schedule && (
-					<ScheduleForm scheduleForEdit={ schedule } onSyncSuccess={ onSyncSuccess } />
+					<ScheduleForm
+						scheduleForEdit={ schedule }
+						onSyncSuccess={ onSyncSuccess }
+						onSyncError={ setSyncError }
+					/>
 				) }
 			</CardBody>
 			<CardFooter>
@@ -79,10 +90,11 @@ export const ScheduleEdit = ( props: Props ) => {
 				>
 					Save
 				</Button>
-				{ ! canCreateSchedules && (
-					<Text as="p">
-						<Icon className="icon-info" icon={ warning } size={ 16 } />
-						This site is unable to schedule auto-updates for plugins.
+				{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
+					<Text as="p" className="validation-msg">
+						<Icon className="icon-info" icon={ info } size={ 16 } />
+						{ ( eligibilityCheckErrors?.length && eligibilityCheckErrors[ 0 ].message ) || '' }
+						{ syncError }
 					</Text>
 				) }
 			</CardFooter>

@@ -40,12 +40,13 @@ import './schedule-form.scss';
 interface Props {
 	scheduleForEdit?: ScheduleUpdates;
 	onSyncSuccess?: () => void;
+	onSyncError?: ( error: string ) => void;
 }
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
 	const isEligibleForFeature = useIsEligibleForFeature();
-	const { scheduleForEdit, onSyncSuccess } = props;
+	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
@@ -58,9 +59,11 @@ export const ScheduleForm = ( props: Props ) => {
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
 	} );
 	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
 	} );
 
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
