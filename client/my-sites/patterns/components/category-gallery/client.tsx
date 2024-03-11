@@ -22,7 +22,9 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 	title,
 } ) => {
 	const patternIdsByCategory = {
-		first: categories?.map( ( { previewPattern } ) => `${ previewPattern?.ID }` ) ?? [],
+		page: categories?.map( ( { pagePreviewPattern } ) => `${ pagePreviewPattern?.ID }` ) ?? [],
+		regular:
+			categories?.map( ( { regularPreviewPattern } ) => `${ regularPreviewPattern?.ID }` ) ?? [],
 	};
 
 	return (
@@ -62,7 +64,11 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 									<div className="patterns-category-gallery__item-preview-inner">
 										<PatternPreview
 											isCategoryPreview
-											pattern={ category.previewPattern }
+											pattern={
+												patternType === 'pages'
+													? category.pagePreviewPattern
+													: category.regularPreviewPattern
+											}
 											viewportWidth={ DESKTOP_VIEWPORT_WIDTH }
 										/>
 									</div>

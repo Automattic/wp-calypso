@@ -21,14 +21,16 @@ type CategoryBase = {
 
 export type CategorySnakeCase = CategoryBase & {
 	page_pattern_count: number;
-	preview_pattern: Pattern | null;
+	page_preview_pattern: Pattern | null;
 	regular_cattern_count: number;
+	regular_preview_pattern: Pattern | null;
 };
 
 export type Category = CategoryBase & {
 	pagePatternCount: number;
-	previewPattern: Pattern | null;
+	pagePreviewPattern: Pattern | null;
 	regularPatternCount: number;
+	regularPreviewPattern: Pattern | null;
 };
 
 type CategoryWithCount = Category & {

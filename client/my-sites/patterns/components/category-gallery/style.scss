@@ -54,8 +54,10 @@
 		transition: transform 0.35s ease;
 	}
 
-	.patterns-category-gallery__item:hover .patterns-category-gallery__item-preview-inner {
-		transform: scale(var(--scale)) translateY(0);
+	@media ( hover ) {
+		.patterns-category-gallery__item:hover .patterns-category-gallery__item-preview-inner {
+			transform: scale(var(--scale)) translateY(0);
+		}
 	}
 
 	.patterns-category-gallery__item-name {

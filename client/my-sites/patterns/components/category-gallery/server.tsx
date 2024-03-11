@@ -37,7 +37,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 								} ) }
 							>
 								<div className="patterns-category-gallery__item-preview-inner">
-									<PatternPreviewPlaceholder pattern={ category.previewPattern } />
+									<PatternPreviewPlaceholder pattern={ category.regularPreviewPattern } />
 								</div>
 							</div>
 						</div>
