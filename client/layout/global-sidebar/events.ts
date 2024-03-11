@@ -7,7 +7,7 @@ export const GLOBAL_SIDEBAR_EVENTS = {
 	NOTIFICATION_CLICK: 'calypso_global_sidebar_notification_click',
 
 	/**
-	 * Body
+	 * Main
 	 */
 	MENU_BACK_CLICK: 'calypso_global_sidebar_menu_back_click',
 	MENU_ITEM_CLICK: 'calypso_global_sidebar_menu_item_click',
