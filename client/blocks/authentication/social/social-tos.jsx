@@ -49,7 +49,7 @@ function SocialAuthToS( props ) {
 
 	return getToSComponent(
 		props.translate(
-			'If you continue with Google, Apple, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			'If you continue with Google and Apple, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			toSLinks
 		)
 	);

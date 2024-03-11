@@ -8,6 +8,7 @@ import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
+
 import './continue-as-user.scss';
 
 // Validate redirect URL using the REST endpoint.
