@@ -21,7 +21,7 @@ export const getParamFromUrlOrOauth2Redirect = (
 	}
 
 	try {
-		const queryOauth2Redirect = currentQuery?.oauth2_redirect;
+		const queryOauth2Redirect = currentQuery?.oauth2_redirect || currentQuery?.redirect_to;
 		const oauth2RedirectUrl = new URL( queryOauth2Redirect as string );
 		return oauth2RedirectUrl.searchParams.get( paramName );
 	} catch ( e ) {

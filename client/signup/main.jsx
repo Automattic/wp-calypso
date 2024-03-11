@@ -41,6 +41,7 @@ import {
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { addQueryArgs } from 'calypso/lib/route';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -155,6 +156,17 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
+		if (
+			this.props.isWoo &&
+			! this.props.wooPasswordless &&
+			config.isEnabled( 'woo/passwordless' )
+		) {
+			// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
+			const queryParams = { 'woo-passwordless': 'yes' };
+			const currentPath = window.location.pathname + window.location.search;
+			page.replace( addQueryArgs( queryParams, currentPath ) );
+		}
+
 		let providedDependencies = this.getDependenciesInQuery();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
@@ -972,6 +984,7 @@ export default connect(
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
 			wooPasswordless: getWooPasswordless( state ),
+			isWoo: isWooOAuth2Client( oauth2Client ),
 		};
 	},
 	{
