@@ -93,7 +93,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			<MainComponent wideLayout>
 				<NavigationHeader
 					navigationItems={ [] }
-					title={ translate( 'Plugin updates manager' ) }
+					title={ translate( 'Plugins update scheduler' ) }
 					subtitle={ translate( 'Schedule automatic plugin updates' ) }
 				>
 					{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (

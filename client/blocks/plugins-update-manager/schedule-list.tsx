@@ -133,7 +133,7 @@ export const ScheduleList = ( props: Props ) => {
 							<Text as="p">
 								<Icon className="icon-info" icon={ info } size={ 16 } />
 								{ translate(
-									'The current feature implementation only allows to set up two schedules.'
+									'The current feature implementation allows to set up two schedules.'
 								) }
 							</Text>
 						) }
