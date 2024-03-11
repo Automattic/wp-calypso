@@ -9,7 +9,6 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { Icon, arrowLeft, info } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
@@ -29,9 +28,8 @@ interface Props {
 }
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
 	const isEligibleForFeature = useIsEligibleForFeature();
+	const isMobile = useMobileBreakpoint();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
@@ -86,18 +84,18 @@ export const ScheduleList = ( props: Props ) => {
 				onConfirm={ onRemoveDialogConfirm }
 				onCancel={ closeRemoveConfirm }
 			>
-				{ translate( 'Are you sure you want to delete this schedule?' ) }
+				Are you sure you want to delete this schedule?
 			</ConfirmDialog>
 			<Card className="plugins-update-manager">
 				<CardHeader size="extraSmall">
 					<div className="ch-placeholder">
 						{ onNavBack && (
 							<Button icon={ arrowLeft } onClick={ onNavBack }>
-								{ translate( 'Back' ) }
+								Back
 							</Button>
 						) }
 					</div>
-					<Text>{ translate( 'Schedules' ) }</Text>
+					<Text>Schedules</Text>
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
@@ -132,9 +130,7 @@ export const ScheduleList = ( props: Props ) => {
 						canCreateSchedules && (
 							<Text as="p">
 								<Icon className="icon-info" icon={ info } size={ 16 } />
-								{ translate(
-									'The current feature implementation allows to set up two schedules.'
-								) }
+								The current feature implementation only allows to set up two schedules.
 							</Text>
 						) }
 				</CardBody>
