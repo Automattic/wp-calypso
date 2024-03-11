@@ -1,4 +1,5 @@
 import { isDomainProduct, isPlan, isTitanMail } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
@@ -57,7 +58,17 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 			);
 		}
 
-		return <ThankYouProduct key={ purchase.productSlug } name={ purchase.productName } />;
+		return (
+			<ThankYouProduct
+				key={ purchase.productSlug }
+				name={ purchase.productName }
+				actions={
+					<Button href={ `/purchases/subscriptions/${ siteSlug }` }>
+						{ translate( 'Manage purchase' ) }
+					</Button>
+				}
+			/>
+		);
 	} );
 
 	let footerDetails = [];
