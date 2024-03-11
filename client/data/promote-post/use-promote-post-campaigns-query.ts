@@ -51,6 +51,7 @@ export type CampaignResponse = {
 		total: number;
 		card_name: string;
 	};
+	is_evergreen?: boolean;
 };
 
 const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {

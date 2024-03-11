@@ -115,6 +115,7 @@ export default function CampaignItemDetails( props: Props ) {
 		format,
 		budget_cents,
 		type,
+		is_evergreen = false,
 	} = campaign || {};
 
 	const {
@@ -151,16 +152,37 @@ export default function CampaignItemDetails( props: Props ) {
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const clicksFormatted = clicks_total && clicks_total > 0 ? clicks_total : '-';
-	const totalBudgetFormatted = `$${ formatCents( total_budget || 0, 2 ) }`;
-	const overallSpendingPercentage =
+	const totalBudgetWeekly = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
+	const displayBudget = is_evergreen ? totalBudgetWeekly : total_budget;
+	const totalBudgetFormatted = `$${ formatCents( displayBudget || 0, 2 ) }`;
+
+	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
+	const weeklyBudgetFormatted = `$${ formatCents( weeklyBudget || 0, 2 ) }`;
+	const weeklySpend =
+		total_budget_used && billing_data ? total_budget_used - billing_data?.total : 0;
+	const weeklySpendFormatted = `$${ formatCents( weeklySpend, 2 ) }`;
+
+	const weeklySpendingPercentage =
 		total_budget_used && total_budget
-			? `${ ( ( total_budget_used / total_budget ) * 100 ).toFixed( 0 ) }%`
+			? `${ ( ( weeklySpend / weeklyBudget ) * 100 ).toFixed( 0 ) }%`
 			: '0%';
+	const weeklySpendingPercentageFormatted = weeklySpendingPercentage
+		? /* translators: overallSpendingPercentage is the percentage of the total budget used */
+		  translate( '%(weeklySpendingPercentage)s of weekly budget', {
+				args: { weeklySpendingPercentage },
+		  } )
+		: '';
+
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
-	const durationDateFormatted = getCampaignDurationFormatted( start_date, end_date );
+	const durationDateFormatted = getCampaignDurationFormatted(
+		start_date,
+		end_date,
+		is_evergreen,
+		campaign?.status
+	);
 	const durationFormatted = duration_days
 		? sprintf(
 				/* translators: %s is the duration in days */
@@ -189,28 +211,14 @@ export default function CampaignItemDetails( props: Props ) {
 		: '-';
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
-	const activeDaysFormatted = activeDays
-		? sprintf(
-				/* translators: %s is the duration in days */
-				_n( '%s day', '%s days', activeDays ),
-				formatNumber( activeDays, true )
-		  )
-		: '- ';
-	const daysLeft = duration_days ? duration_days - activeDays : 0;
-	const daysLeftFormatted =
-		status === 'active' && daysLeft
-			? /*translators: %s is the number of days left */
-			  sprintf( _n( '%s left', '%s left', daysLeft ), formatNumber( daysLeft, true ) )
+
+	const budgetRemainingFormatted =
+		total_budget && total_budget_used
+			? `$${ formatCents( ( total_budget - total_budget_used ) / 100, 2 ) }`
 			: '';
 	const overallSpendingFormatted = activeDays
 		? `$${ formatCents( total_budget_used || 0, 2 ) }`
 		: '- ';
-	const overallSpendingPercentageFormatted = activeDays
-		? /* translators: overallSpendingPercentage is the percentage of the total budget used */
-		  translate( '%(overallSpendingPercentage)s of total budget', {
-				args: { overallSpendingPercentage: overallSpendingPercentage },
-		  } )
-		: '';
 
 	const adPreviewLabel =
 		// maybe we will need to edit this condition when we add more templates
@@ -459,44 +467,9 @@ export default function CampaignItemDetails( props: Props ) {
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
 						<div className="campaign-item-details__main-stats-container">
-							<div className="campaign-item-details__main-stats-row">
-								<div>
-									<span className="campaign-item-details__label">{ translate( 'Duration' ) }</span>
-									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
-									</span>
-									<span className="campaign-item-details__details">
-										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
-									</span>
-								</div>
-								<div>
-									<span className="campaign-item-details__label">
-										{ translate( 'Active for' ) }
-									</span>
-									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? activeDaysFormatted : <FlexibleSkeleton /> }
-									</span>
-									<span className="campaign-item-details__details">
-										{ ! isLoading ? daysLeftFormatted : <FlexibleSkeleton /> }
-									</span>
-								</div>
-								<div>
-									<span className="campaign-item-details__label">
-										{ translate( 'Spent so far' ) }
-									</span>
-									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
-									</span>
-									<span className="campaign-item-details__details">
-										{ ! isLoading ? overallSpendingPercentageFormatted : <FlexibleSkeleton /> }
-									</span>
-								</div>
-							</div>
-						</div>
-						{ status !== 'created' && (
-							<div className="campaign-item-details__main-stats-container">
-								<div className="campaign-item-details__main-stats">
-									<div className="campaign-item-details__main-stats-row">
+							{ !! status && ! [ 'created', 'rejected' ].includes( status ) && (
+								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
+									<div className="campaign-item-details__main-stats-row ">
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'Impressions' ) }
@@ -599,15 +572,73 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 									</div>
 								</div>
+							) }
+							<div className="campaign-item-details__main-stats-row">
+								<div>
+									<span className="campaign-item-details__label">
+										{ is_evergreen && status === 'active'
+											? __( 'Duration so far' )
+											: __( 'Duration' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
+								{ is_evergreen ? (
+									<div>
+										<span className="campaign-item-details__label">{ __( 'Weekly spend' ) }</span>
+										<span className="campaign-item-details__text wp-brand-font">
+											{ ! isLoading ? (
+												<>
+													{ weeklySpendFormatted }{ ' ' }
+													<span className="campaign-item-details__details">
+														/ { totalBudgetFormatted }
+													</span>
+												</>
+											) : (
+												<FlexibleSkeleton />
+											) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? weeklySpendingPercentageFormatted : <FlexibleSkeleton /> }
+										</span>
+									</div>
+								) : (
+									<div>
+										<span className="campaign-item-details__label">{ __( 'Budget' ) }</span>
+										<span className="campaign-item-details__text wp-brand-font">
+											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? (
+												`${ budgetRemainingFormatted } remaining`
+											) : (
+												<FlexibleSkeleton />
+											) }
+										</span>
+									</div>
+								) }
+								<div>
+									<span className="campaign-item-details__label">
+										{ translate( 'Overall spending' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
 							</div>
-						) }
+						</div>
+
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
 								<div className="campaign-item-details__secondary-stats-row">
 									<div>
-										<span className="campaign-item-details__label">{ translate( 'Budget' ) }</span>
+										<span className="campaign-item-details__label">{ __( 'Weekly budget' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? weeklyBudgetFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? (
@@ -622,10 +653,18 @@ export default function CampaignItemDetails( props: Props ) {
 									</div>
 									<div>
 										<span className="campaign-item-details__label">
-											{ translate( 'Estimated impressions' ) }
+											{ is_evergreen ? __( 'Weekly impressions' ) : __( 'Estimated impressions' ) }
 										</span>
 										<span className="campaign-item-details__text wp-brand-font">
 											{ ! isLoading ? deliveryEstimateFormatted : <FlexibleSkeleton /> }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? (
+												/* translators: Daily average spend. dailyAverageSpending is the budget */
+												__( 'Impressions are estimated' )
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 									</div>
 								</div>

@@ -109,25 +109,35 @@ export const getCampaignDurationDays = ( start_date: string, end_date: string ) 
 	return calculateDurationDays( dateStart, dateEnd );
 };
 
-export const getCampaignDurationFormatted = ( start_date?: string, end_date?: string ) => {
+export const getCampaignDurationFormatted = (
+	start_date?: string,
+	end_date?: string,
+	is_evergreen = false,
+	status: string = ''
+) => {
 	if ( ! start_date || ! end_date ) {
 		return '-';
 	}
 
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
-	let durationFormatted;
 	if ( campaignDays === 0 ) {
-		durationFormatted = '-';
-	} else {
-		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
-		const format = _x( 'MMM D', 'shorter date format' );
-		const dateStartFormatted = moment.utc( start_date ).format( format );
-		const dateEndFormatted = moment.utc( end_date ).format( format );
-		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted }`;
+		return '-';
 	}
 
-	return durationFormatted;
+	// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+	const format = _x( 'MMM D', 'shorter date format' );
+	const dateStartFormatted = moment.utc( start_date ).format( format );
+
+	// A campaign without an "end date", show start -> today (if not ended)
+	if ( is_evergreen && status === 'active' ) {
+		const todayFormatted = moment.utc().format( format );
+		return `${ dateStartFormatted } - ${ todayFormatted }`;
+	}
+
+	// Else show start -> end
+	const dateEndFormatted = moment.utc( end_date ).format( format );
+	return `${ dateStartFormatted } - ${ dateEndFormatted }`;
 };
 
 export const getCampaignActiveDays = ( start_date?: string, end_date?: string ) => {
