@@ -156,8 +156,6 @@ const GitHubLoginButton = ( {
 
 	const eventHandlers = {
 		onClick: handleClick,
-		onMouseEnter: () => setShowError( true ),
-		onMouseLeave: () => setShowError( false ),
 	};
 
 	let customButton = null;
