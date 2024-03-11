@@ -49,6 +49,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -421,6 +422,13 @@ class Login extends Component {
 							) }
 						</p>
 					);
+				} else if ( this.showContinueAsUser() && this.props.isWooPasswordless ) {
+					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate( 'First, select the account you’d like to use.' ) }
+						</p>
+					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
@@ -782,7 +790,7 @@ class Login extends Component {
 		if ( this.showContinueAsUser() ) {
 			if ( isWoo ) {
 				return (
-					<Fragment>
+					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							isWooOAuth2Client={ isWoo }
@@ -802,7 +810,7 @@ class Login extends Component {
 							showSocialLoginFormOnly={ true }
 							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
-					</Fragment>
+					</div>
 				);
 			}
 
@@ -838,11 +846,12 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo, isWooPasswordless } = this.props;
 
 		return (
 			<div
 				className={ classNames( 'login', {
+					'is-woo-passwordless': isWooPasswordless,
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
@@ -885,6 +894,7 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: getWccomFrom( state ),
+		isWooPasswordless: !! getWooPasswordless( state ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
