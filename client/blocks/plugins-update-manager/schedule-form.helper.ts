@@ -1,5 +1,3 @@
-import { translate } from 'i18n-calypso';
-
 /**
  * Prepare unix timestamp in seconds
  * based on selected frequency, day, hour and period
@@ -40,6 +38,22 @@ export const prepareTimestamp = (
 	return event.getTime() / 1000;
 };
 
+/**
+ * Validate name
+ * - required
+ * - max length 120
+ */
+export const validateName = ( name: string ) => {
+	let error = '';
+	if ( ! name ) {
+		error = 'Please provide a name to this plugin update schedule.';
+	} else if ( name.length > 120 ) {
+		error = 'Please provide a shorter name.';
+	}
+
+	return error;
+};
+
 type TimeSlot = {
 	frequency: string;
 	timestamp: number;
@@ -68,14 +82,14 @@ export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: Time
 			( newSchedule.frequency === 'daily' || schedule.frequency === 'daily' ) &&
 			existingDate.getHours() === newDate.getHours()
 		) {
-			error = translate( 'Please choose another time, as this slot is already scheduled.' );
+			error = 'Please choose another time, as this slot is already scheduled.';
 		} else if (
 			newSchedule.frequency === 'weekly' &&
 			schedule.frequency === 'weekly' &&
 			newDate.getDay() === existingDate.getDay() &&
 			newDate.getHours() === existingDate.getHours()
 		) {
-			error = translate( 'Please choose another time, as this slot is already scheduled.' );
+			error = 'Please pick another time for optimal performance, as this slot is already taken.';
 		}
 	} );
 
@@ -90,15 +104,13 @@ export const validatePlugins = ( plugins: string[], existingPlugins: Array< stri
 	let error = '';
 
 	if ( plugins.length === 0 ) {
-		error = translate( 'Please select at least one plugin to update.' );
+		error = 'Please select at least one plugin to update.';
 	} else if ( existingPlugins.length ) {
 		const _plugins = [ ...plugins ].sort();
 
 		existingPlugins.forEach( ( existing ) => {
 			if ( JSON.stringify( _plugins ) === JSON.stringify( [ ...existing ].sort() ) ) {
-				error = translate(
-					'Please select a different set of plugins, as this one has already been chosen.'
-				);
+				error = 'Please select a different set of plugins, as this one has already been chosen.';
 			}
 		} );
 	}

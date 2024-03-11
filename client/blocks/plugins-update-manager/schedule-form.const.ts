@@ -1,44 +1,42 @@
-import { translate } from 'i18n-calypso';
-
 export const DEFAULT_HOUR = 9;
 
 export const DAILY_OPTION = {
-	label: translate( 'Daily' ),
+	label: 'Daily',
 	value: 'daily',
 };
 
 export const WEEKLY_OPTION = {
-	label: translate( 'Weekly' ),
+	label: 'Weekly',
 	value: 'weekly',
 };
 
 export const DAY_OPTIONS = [
 	{
-		label: translate( 'Monday' ),
+		label: 'Monday',
 		value: '1',
 	},
 	{
-		label: translate( 'Tuesday' ),
+		label: 'Tuesday',
 		value: '2',
 	},
 	{
-		label: translate( 'Wednesday' ),
+		label: 'Wednesday',
 		value: '3',
 	},
 	{
-		label: translate( 'Thursday' ),
+		label: 'Thursday',
 		value: '4',
 	},
 	{
-		label: translate( 'Friday' ),
+		label: 'Friday',
 		value: '5',
 	},
 	{
-		label: translate( 'Saturday' ),
+		label: 'Saturday',
 		value: '6',
 	},
 	{
-		label: translate( 'Sunday' ),
+		label: 'Sunday',
 		value: '0',
 	},
 ];
@@ -96,11 +94,11 @@ export const HOUR_OPTIONS = [
 
 export const PERIOD_OPTIONS = [
 	{
-		label: translate( 'AM' ),
+		label: 'AM',
 		value: 'am',
 	},
 	{
-		label: translate( 'PM' ),
+		label: 'PM',
 		value: 'pm',
 	},
 ];

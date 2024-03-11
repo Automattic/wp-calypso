@@ -10,7 +10,6 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { arrowLeft, info } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SCHEDULES } from './config';
@@ -25,7 +24,6 @@ interface Props {
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const translate = useTranslate();
 	const { createMonitor } = useCreateMonitor( siteSlug );
 	const isEligibleForFeature = useIsEligibleForFeature();
 	const { onNavBack } = props;
@@ -67,11 +65,11 @@ export const ScheduleCreate = ( props: Props ) => {
 				<div className="ch-placeholder">
 					{ onNavBack && (
 						<Button icon={ arrowLeft } onClick={ onNavBack }>
-							{ translate( 'Back' ) }
+							Back
 						</Button>
 					) }
 				</div>
-				<Text>{ translate( 'New Schedule' ) }</Text>
+				<Text>New Schedule</Text>
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
@@ -85,7 +83,7 @@ export const ScheduleCreate = ( props: Props ) => {
 					disabled={ ! canCreateSchedules }
 					isBusy={ isBusy }
 				>
-					{ translate( 'Create' ) }
+					Create
 				</Button>
 				{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
 					<Text as="p" className="validation-msg">

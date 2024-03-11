@@ -11,7 +11,6 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
@@ -44,9 +43,8 @@ interface Props {
 	onSyncError?: ( error: string ) => void;
 }
 export const ScheduleForm = ( props: Props ) => {
-	const siteSlug = useSiteSlug();
-	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const siteSlug = useSiteSlug();
 	const isEligibleForFeature = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 	const initDate = scheduleForEdit
@@ -181,7 +179,7 @@ export const ScheduleForm = ( props: Props ) => {
 			>
 				<FlexItem>
 					<div className="form-field">
-						<label htmlFor="frequency">{ translate( 'Update every' ) }</label>
+						<label htmlFor="frequency">Update every</label>
 						<div className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
 							<RadioControl
 								name="frequency"
@@ -269,7 +267,7 @@ export const ScheduleForm = ( props: Props ) => {
 				</FlexItem>
 				<FlexItem>
 					<div className="form-field">
-						<label htmlFor="plugins">{ translate( 'Select plugins' ) }</label>
+						<label htmlFor="plugins">Select plugins</label>
 						<span className="plugin-select-stats">
 							{ selectedPlugins.length }/
 							{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
@@ -281,9 +279,7 @@ export const ScheduleForm = ( props: Props ) => {
 							</Text>
 						) : (
 							<Text className="info-msg">
-								{ translate(
-									'Plugins not listed below are managed and updated by WordPress.com for you.'
-								) }
+								Plugins not listed below are managed by WordPress.com and update automatically.
 							</Text>
 						) }
 						<div className="checkbox-options">
@@ -296,7 +292,7 @@ export const ScheduleForm = ( props: Props ) => {
 								{ isPluginsFetching && <Spinner /> }
 								{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
-										label={ translate( 'Select all' ) }
+										label="Select all"
 										indeterminate={
 											selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
 										}
