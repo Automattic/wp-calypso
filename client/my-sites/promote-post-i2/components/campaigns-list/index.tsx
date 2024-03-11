@@ -42,7 +42,6 @@ export default function CampaignsList( props: Props ) {
 		totalCampaigns,
 		hasMorePages,
 		campaigns,
-		hasPaymentsBlocked,
 	} = props;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
@@ -97,7 +96,6 @@ export default function CampaignsList( props: Props ) {
 								isLoading={ isLoading }
 								isFetchingPageResults={ isFetching }
 								isWooStore={ isWooStore }
-								hasPaymentsBlocked={ hasPaymentsBlocked }
 							/>
 						) }
 					</div>
