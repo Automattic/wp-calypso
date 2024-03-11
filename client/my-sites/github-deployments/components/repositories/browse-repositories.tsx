@@ -68,7 +68,7 @@ export const GitHubBrowseRepositories = ( {
 						) }
 					</span>
 					<Button primary onClick={ onNewInstallationRequest }>
-						{ __( 'Install WordPress.com app' ) }
+						{ __( 'Install the WordPress.com app' ) }
 						<Gridicon css={ { marginLeft: '4px' } } icon="external" size={ 18 } />
 					</Button>
 				</Card>
