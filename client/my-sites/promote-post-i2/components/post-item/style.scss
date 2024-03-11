@@ -129,6 +129,11 @@ body.is-section-promote-post-i2 {
 			color: var(--color-accent);
 			background-color: var(--color-surface);
 			box-shadow: none;
+
+			&:disabled {
+				color: var(--color-neutral-20);
+				border-color: var(--color-neutral-20);
+			}
 		}
 
 		&__view-button {
