@@ -899,11 +899,7 @@ class Signup extends Component {
 
 		return (
 			<>
-				<div
-					className={ `signup is-${ kebabCase( this.props.flowName ) } ${
-						this.props.isWooPasswordless ? 'is-woo-passwordless' : ''
-					}` }
-				>
+				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ showPageHeader && (
 						<SignupHeader
@@ -980,7 +976,6 @@ export default connect(
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
-			isWooPasswordless: config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless,
 		};
 	},
 	{

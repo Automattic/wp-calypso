@@ -41,6 +41,7 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -70,6 +71,7 @@ const LayoutLoggedOut = ( {
 	isPartnerSignup,
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
+	isWooPasswordless,
 	locale,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
@@ -139,6 +141,7 @@ const LayoutLoggedOut = ( {
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
+		'is-woo-passwordless': isWooPasswordless,
 	};
 
 	let masterbar = null;
@@ -355,6 +358,10 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
+			const isWooPasswordless =
+				// Feature can be enabled via config or query param.
+				config.isEnabled( 'woo/passwordless' ) || !! getWooPasswordless( state );
+
 			return {
 				isJetpackLogin,
 				isWhiteLogin,
@@ -375,6 +382,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
+				isWooPasswordless,
 			};
 		},
 		{ clearLastActionRequiresLogin }

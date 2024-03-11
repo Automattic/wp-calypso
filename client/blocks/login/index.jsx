@@ -846,12 +846,11 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo, isWooPasswordless } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
 
 		return (
 			<div
 				className={ classNames( 'login', {
-					'is-woo-passwordless': isWooPasswordless,
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),

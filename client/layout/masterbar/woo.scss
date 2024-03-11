@@ -1103,7 +1103,7 @@
 	}
 
 
-	.is-woo-passwordless {
+	&.is-woo-passwordless {
 		* {
 			font-family: $woo-inter-font;
 		}
@@ -1200,6 +1200,8 @@
 			}
 		}
 
+
+		.wp-login__container,
 		.magic-login,
 		.step-wrapper,
 		.jetpack-connect__main-logo {
@@ -1528,8 +1530,11 @@
 				margin: 0;
 				max-width: 327px;
 				margin-inline: auto;
+
 				p {
 					color: var(--studio-gray-60);
+					text-align: center;
+
 					font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 					font-size: rem(14px);
 					font-style: normal;
@@ -1567,9 +1572,4 @@
 			padding: 0;
 		}
 	}
-
-	.wp-login__container:has(> .is-woo-passwordless) {
-		padding: 48px 0 0;
-	}
-
 }
