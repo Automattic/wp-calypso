@@ -34,7 +34,6 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 					key={ `domain-${ purchase.meta }` }
 					purchase={ purchase }
 					siteSlug={ siteSlug }
-					isDomainOnly
 				/>
 			);
 		} else if ( isPlan( purchase ) ) {
