@@ -1,16 +1,17 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .patterns-category-gallery {
 	display: grid;
 	gap: 32px 24px;
 	grid-template-columns: 1fr;
 
-	@media ( min-width: $break-medium ) {
+	@include break-medium {
 		grid-template-columns: repeat(calc(var(--column-count) - 1), 1fr);
 	}
 
-	@media ( min-width: $break-huge ) {
+	@include break-huge {
 		grid-template-columns: repeat(var(--column-count), 1fr);
 	}
 
