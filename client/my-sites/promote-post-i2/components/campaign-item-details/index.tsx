@@ -115,7 +115,7 @@ export default function CampaignItemDetails( props: Props ) {
 		format,
 		budget_cents,
 		type,
-		is_evergreen = false,
+		is_evergreen = true,
 	} = campaign || {};
 
 	const {
@@ -152,11 +152,8 @@ export default function CampaignItemDetails( props: Props ) {
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const clicksFormatted = clicks_total && clicks_total > 0 ? clicks_total : '-';
-	const totalBudgetWeekly = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
-	const displayBudget = is_evergreen ? totalBudgetWeekly : total_budget;
-	const totalBudgetFormatted = `$${ formatCents( displayBudget || 0, 2 ) }`;
-
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
+
 	const weeklyBudgetFormatted = `$${ formatCents( weeklyBudget || 0, 2 ) }`;
 	const weeklySpend =
 		total_budget_used && billing_data ? total_budget_used - billing_data?.total : 0;
@@ -172,6 +169,9 @@ export default function CampaignItemDetails( props: Props ) {
 				args: { weeklySpendingPercentage },
 		  } )
 		: '';
+
+	const displayBudget = is_evergreen ? weeklyBudget : total_budget;
+	const totalBudgetFormatted = `$${ formatCents( displayBudget || 0, 2 ) }`;
 
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
