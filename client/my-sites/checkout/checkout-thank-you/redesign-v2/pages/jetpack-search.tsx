@@ -49,12 +49,12 @@ export default function JetpackSearchThankYou( { purchase }: JetpackSearchThankY
 			title={ translate( 'Welcome to Jetpack Search!' ) }
 			subtitle={
 				<>
-					<>{ translate( 'We are currently indexing your site.' ) }</>
-					<>
+					<p>{ translate( 'We are currently indexing your site.' ) }</p>
+					<p>
 						{ translate(
 							'In the meantime, we have configured Jetpack Search on your site — you should try customizing it in your traditional WordPress dashboard.'
 						) }
-					</>
+					</p>
 				</>
 			}
 			products={ <ThankYouJetpackSearchProduct siteId={ siteId } purchase={ purchase } /> }
