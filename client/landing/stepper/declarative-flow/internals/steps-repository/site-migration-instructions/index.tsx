@@ -1,4 +1,3 @@
-import { useSiteMigrationKey } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -7,16 +6,13 @@ import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
-	const site = useSite();
-	const siteId = site?.ID;
-	const siteMigrationKey = useSiteMigrationKey( siteId );
+	const siteMigrationKey = 'Yjx3xUYYTm89s9xBFe7jitNA94noUg6tzgjnpx9zPVwGdbewfL';
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const sourceSiteUrl = fromUrl
 		? addQueryArgs( fromUrl + '/wp-admin/admin.php', { page: 'migrateguru' } )
@@ -56,11 +52,9 @@ const SiteMigrationInstructions: Step = function () {
 						}
 					) }
 					<div className="site-migration-instructions__migration-key">
-						<code className="site-migration-instructions__key">
-							{ siteMigrationKey.data?.migration_key ?? '' }
-						</code>
+						<code className="site-migration-instructions__key">{ siteMigrationKey }</code>
 						<ClipboardButton
-							text={ siteMigrationKey.data?.migration_key ?? '' }
+							text={ siteMigrationKey }
 							className="site-migration-instructions__copy-key-button is-primary"
 							onCopy={ onCopy }
 						>
