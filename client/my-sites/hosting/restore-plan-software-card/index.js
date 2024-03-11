@@ -1,8 +1,7 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import MaterialIcon from 'calypso/components/material-icon';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
 import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';

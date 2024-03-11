@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import { MaterialIcon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import ChatButton from 'calypso/components/chat-button';
-import MaterialIcon from 'calypso/components/material-icon';
 import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSiteUrl } from 'calypso/state/sites/selectors';

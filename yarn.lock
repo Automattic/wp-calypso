@@ -611,6 +611,7 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/material-design-icons": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@storybook/addon-actions": "npm:^7.6.17"

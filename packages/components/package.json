@@ -31,6 +31,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@wordpress/base-styles": "^4.43.0",

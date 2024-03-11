@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import page from '@automattic/calypso-router';
-import { Card, CompactCard, Gridicon } from '@automattic/components';
+import { Card, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -10,7 +10,6 @@ import QueryMembershipsSubscriptions from 'calypso/components/data/query-members
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import MaterialIcon from 'calypso/components/material-icon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';

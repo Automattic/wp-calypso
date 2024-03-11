@@ -1,11 +1,10 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, MaterialIcon } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
 import {
 	composeAnalytics,

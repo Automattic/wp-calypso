@@ -1,9 +1,9 @@
+import { MaterialIcon } from '@automattic/components';
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
-import MaterialIcon from 'calypso/components/material-icon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep from './intro';
 import type { Step } from '../../types';
