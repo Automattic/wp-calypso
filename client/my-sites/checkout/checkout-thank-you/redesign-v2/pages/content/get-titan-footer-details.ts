@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
@@ -48,7 +49,7 @@ export default function getTitanFooterDetails(
 				'Explore our comprehensive support guides and find solutions to all your email inquiries.'
 			),
 			buttonText: translate( 'Email support resources' ),
-			buttonHref: '/support/category/domains-and-email/email/',
+			buttonHref: localizeUrl( 'https://wordpress.com/support/category/domains-and-email/email/' ),
 			buttonOnClick: () => {
 				recordTracksEvent( 'calypso_thank_you_footer_link_click', {
 					context,
