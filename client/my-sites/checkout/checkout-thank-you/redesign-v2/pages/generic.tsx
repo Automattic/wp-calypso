@@ -24,6 +24,11 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 	const siteId = useSelector( getSelectedSiteId );
 	const currentRoute = useSelector( getCurrentRoute );
 	const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+
+	// When users purchase a domain registration, we'll have two separate purchase items in the list,
+	// one for domain registration and one for domain mapping. This filter ensures we exclude the redundant
+	// item that should not be listed in the front end. i.e. a purchased domain registration should
+	// only be listed once in the congrats page.
 	const filteredPurchases = purchases.filter( ( purchase ) => {
 		return ! isDomainProduct( purchase ) || predicate( purchase );
 	} );
@@ -73,6 +78,8 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 
 	let footerDetails = [];
 
+	// Footer details should contain at most two support blurbs. The first support blurb for
+	// each product will be used to populate the footer, with the exception of plan products.
 	filteredPurchases.some( ( purchase ) => {
 		if ( isDomainProduct( purchase ) ) {
 			footerDetails = footerDetails.concat( getDomainFooterDetails( 'generic', 1 ) );
@@ -87,6 +94,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 		}
 	} );
 
+	// Fallback to the default generic support blurb if there less than two support blurbs in the footer.
 	if ( footerDetails.length < 2 ) {
 		footerDetails = footerDetails.concat( getDefaultFooterDetails( 'generic' ) );
 	}
