@@ -12,7 +12,7 @@ import './style.scss';
 
 export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns = [] } ) => {
 	const patternIdsByCategory = {
-		intro: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
+		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
 
 	return (

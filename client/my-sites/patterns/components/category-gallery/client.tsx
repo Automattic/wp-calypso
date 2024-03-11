@@ -1,6 +1,9 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import classNames from 'classnames';
-import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
+import {
+	CategoryGalleryServer,
+	COLUMN_COUNTS,
+} from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
@@ -14,12 +17,12 @@ import './style.scss';
 
 export const CategoryGalleryClient: CategoryGalleryFC = ( {
 	categories,
-	columnCount = 4,
 	description,
+	patternType,
 	title,
 } ) => {
 	const patternIdsByCategory = {
-		intro: categories?.map( ( { previewPattern } ) => `${ previewPattern?.ID }` ) ?? [],
+		first: categories?.map( ( { previewPattern } ) => `${ previewPattern?.ID }` ) ?? [],
 	};
 
 	if ( ! categories ) {
@@ -29,7 +32,13 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 	return (
 		<BlockRendererProvider
 			siteId={ RENDERER_SITE_ID }
-			placeholder={ <CategoryGalleryServer description={ description } title={ title } /> }
+			placeholder={
+				<CategoryGalleryServer
+					description={ description }
+					patternType={ patternType }
+					title={ title }
+				/>
+			}
 		>
 			<PatternsRendererProvider
 				patternIdsByCategory={ patternIdsByCategory }
@@ -39,7 +48,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 				<PatternsSection title={ title } description={ description }>
 					<div
 						className="patterns-category-gallery"
-						style={ { '--column-count': columnCount } as React.CSSProperties }
+						style={ { '--column-count': COLUMN_COUNTS[ patternType ] } as React.CSSProperties }
 					>
 						{ categories.map( ( category ) => (
 							<LocalizedLink
@@ -49,6 +58,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 							>
 								<div
 									className={ classNames( 'patterns-category-gallery__item-preview', {
+										'patterns-category-gallery__item-preview_page-layouts': patternType === 'pages',
 										'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
 									} ) }
 								>

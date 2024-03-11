@@ -37,8 +37,8 @@ type CategoryWithCount = Category & {
 
 export type CategoryGalleryProps = {
 	categories?: CategoryWithCount[];
-	columnCount?: number;
 	description: string;
+	patternType: 'regular' | 'pages';
 	title: string;
 };
 

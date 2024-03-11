@@ -54,6 +54,7 @@ export const PatternsHomePage = ( {
 				title="Ship faster with patterns"
 				description="Choose from a huge library of patterns to build any page you need."
 				categories={ categories?.map( ( c ) => ( { ...c, count: c.regularPatternCount } ) ) }
+				patternType="regular"
 			/>
 
 			{ searchTerm && <PatternGallery patterns={ patterns } isGridView={ isGridView } /> }
@@ -110,8 +111,10 @@ export const PatternsHomePage = ( {
 			<CategoryGallery
 				title="Beautifully curated page layouts"
 				description="Entire pages built of patterns, ready to be added to your site."
-				columnCount={ 3 }
-				categories={ categories?.map( ( c ) => ( { ...c, count: c.pagePatternCount } ) ) }
+				categories={ categories
+					?.filter( ( c ) => c.pagePatternCount )
+					.map( ( c ) => ( { ...c, count: c.pagePatternCount } ) ) }
+				patternType="pages"
 			/>
 
 			<PatternsGetStarted />

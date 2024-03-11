@@ -1,15 +1,21 @@
+import classNames from 'classnames';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import type { CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
+import type { CategoryGalleryProps, CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
+export const COLUMN_COUNTS: Record< CategoryGalleryProps[ 'patternType' ], number > = {
+	regular: 4,
+	pages: 3,
+};
+
 export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	categories,
-	columnCount = 4,
 	description,
 	title,
+	patternType,
 } ) => {
 	if ( ! categories ) {
 		return null;
@@ -19,7 +25,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 		<PatternsSection title={ title } description={ description }>
 			<div
 				className="patterns-category-gallery"
-				style={ { '--column-count': columnCount } as React.CSSProperties }
+				style={ { '--column-count': COLUMN_COUNTS[ patternType ] } as React.CSSProperties }
 			>
 				{ categories.map( ( category ) => (
 					<LocalizedLink
@@ -28,7 +34,12 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 						key={ category.name }
 					>
 						<div className="patterns-category-gallery__item-preview">
-							<div className="patterns-category-gallery__item-preview">
+							<div
+								className={ classNames( 'patterns-category-gallery__item-preview', {
+									'patterns-category-gallery__item-preview_page-layouts': patternType === 'pages',
+									'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
+								} ) }
+							>
 								<div className="patterns-category-gallery__item-preview-inner">
 									<PatternPreviewPlaceholder pattern={ category.previewPattern } />
 								</div>

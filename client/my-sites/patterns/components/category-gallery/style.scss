@@ -3,15 +3,15 @@
 
 .patterns-category-gallery {
 	display: grid;
-	grid-template-columns: repeat(var(--column-count), 1fr);
 	gap: 32px 24px;
+	grid-template-columns: 1fr;
 
-	@media ( max-width: $break-huge ) {
+	@media ( min-width: $break-medium ) {
 		grid-template-columns: repeat(calc(var(--column-count) - 1), 1fr);
 	}
 
-	@media ( max-width: $break-medium ) {
-		grid-template-columns: 1fr;
+	@media ( min-width: $break-huge ) {
+		grid-template-columns: repeat(var(--column-count), 1fr);
 	}
 
 	.patterns-category-gallery__item-preview {
@@ -24,6 +24,10 @@
 		grid-template-rows: minmax(50%, max-content);
 		margin-bottom: 14px;
 		overflow: hidden;
+	}
+
+	.patterns-category-gallery__item-preview_page-layouts {
+		aspect-ratio: 4 / 5;
 	}
 
 	.patterns-category-gallery__item-preview_mirrored {
