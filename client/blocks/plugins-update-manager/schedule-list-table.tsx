@@ -1,5 +1,6 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { Badge } from './badge';
@@ -16,8 +17,10 @@ interface Props {
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const { isEligibleForFeature } = useIsEligibleForFeature();
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
+
 	const { onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
@@ -31,11 +34,11 @@ export const ScheduleListTable = ( props: Props ) => {
 		<table>
 			<thead>
 				<tr>
-					<th>Name</th>
-					<th>Last Update</th>
-					<th>Next Update</th>
-					<th>Frequency</th>
-					<th>Plugins</th>
+					<th>{ translate( 'Name' ) }</th>
+					<th>{ translate( 'Last update' ) }</th>
+					<th>{ translate( 'Next update' ) }</th>
+					<th>{ translate( 'Frequency' ) }</th>
+					<th>{ translate( 'Plugins' ) }</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -62,8 +65,8 @@ export const ScheduleListTable = ( props: Props ) => {
 						<td>
 							{
 								{
-									daily: 'Daily',
-									weekly: 'Weekly',
+									daily: translate( 'Daily' ),
+									weekly: translate( 'Weekly' ),
 								}[ schedule.schedule ]
 							}
 						</td>
@@ -85,16 +88,16 @@ export const ScheduleListTable = ( props: Props ) => {
 								popoverProps={ { position: 'bottom left' } }
 								controls={ [
 									{
-										title: 'Edit',
+										title: translate( 'Edit' ),
 										onClick: () => onEditClick( schedule.id ),
 									},
 									{
-										title: 'Remove',
+										title: translate( 'Remove' ),
 										onClick: () => onRemoveClick( schedule.id ),
 									},
 								] }
 								icon={ ellipsis }
-								label="More"
+								label={ translate( 'More' ) }
 							/>
 						</td>
 					</tr>

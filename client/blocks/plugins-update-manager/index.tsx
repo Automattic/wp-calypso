@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export const PluginsUpdateManager = ( props: Props ) => {
+	const translate = useTranslate();
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -55,15 +57,15 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					onEditSchedule={ onEditSchedule }
 				/>
 			),
-			title: 'List schedules',
+			title: translate( 'List schedules' ),
 		},
 		create: {
 			component: <ScheduleCreate onNavBack={ onNavBack } />,
-			title: 'Create a new schedule',
+			title: translate( 'Set up a new schedule' ),
 		},
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
-			title: 'Edit schedule',
+			title: translate( 'Edit schedule' ),
 		},
 	}[ context ];
 
@@ -74,8 +76,8 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			<MainComponent wideLayout>
 				<NavigationHeader
 					navigationItems={ [] }
-					title="Plugin updates manager"
-					subtitle="Effortlessly schedule plugin auto-updates with built-in rollback logic."
+					title={ translate( 'Plugins update scheduler' ) }
+					subtitle={ translate( 'Schedule automatic plugin updates' ) }
 				>
 					{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (
 						<Button
@@ -85,7 +87,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 							onClick={ onCreateNewSchedule }
 							disabled={ ! canCreateSchedules }
 						>
-							Create a new schedule
+							{ translate( 'Set up a new schedule' ) }
 						</Button>
 					) }
 				</NavigationHeader>
