@@ -2,6 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { getTitanControlPanelRedirectPath } from 'calypso/my-sites/email/paths';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
