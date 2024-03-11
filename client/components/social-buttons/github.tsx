@@ -7,6 +7,7 @@ import {
 	MouseEvent,
 	ReactElement,
 	ReactNode,
+	useCallback,
 	useEffect,
 	useRef,
 	useState,
@@ -69,13 +70,13 @@ const GitHubLoginButton = ( {
 
 	const errorRef = useRef< EventTarget | null >( null );
 
-	const handleGitHubError = () => {
+	const handleGitHubError = useCallback( () => {
 		dispatch(
 			errorNotice(
 				translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
 			)
 		);
-	};
+	}, [ dispatch, errorNotice, translate ] );
 
 	const exchangeCodeForToken = async ( auth_code: string ) => {
 		let response;
