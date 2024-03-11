@@ -31,11 +31,11 @@ function TeamMembers( props: Props ) {
 
 	const members = data?.users || [];
 
-	// Move as a selector into the store to return not return pending users
-	const filteredMembers = members.filter(
+	const nonPendingMembers = members.filter(
 		( member ) => ! pendingInvitesMails?.includes( member?.email )
 	);
-	const membersTotal = filteredMembers.length;
+
+	const membersTotal = nonPendingMembers.length;
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
 
 	function getPersonRef( user: Member ) {
@@ -100,7 +100,7 @@ function TeamMembers( props: Props ) {
 						{ isLoading && renderLoadingPeople() }
 						<InfiniteList
 							listkey={ listKey }
-							items={ filteredMembers }
+							items={ nonPendingMembers }
 							fetchNextPage={ fetchNextPage }
 							fetchingNextPage={ isFetchingNextPage }
 							lastPage={ ! hasNextPage }
