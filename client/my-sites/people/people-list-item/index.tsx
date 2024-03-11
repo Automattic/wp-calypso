@@ -48,7 +48,9 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		return siteId && inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
 	} );
 
-	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites( siteId );
+	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites(
+		siteId as number
+	);
 
 	const navigateToUser = () => {
 		window.scrollTo( 0, 0 );
