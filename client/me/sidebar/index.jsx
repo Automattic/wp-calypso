@@ -75,8 +75,9 @@ class MeSidebar extends Component {
 	};
 
 	renderGlobalSidebar() {
+		const { context } = this.props;
 		const props = {
-			path: this.props.path,
+			path: context.path,
 			requireBackLink: true,
 		};
 		return <GlobalSidebar { ...props }>{ this.renderMenu( { isGlobal: true } ) }</GlobalSidebar>;
