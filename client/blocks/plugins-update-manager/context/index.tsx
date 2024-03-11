@@ -7,8 +7,8 @@ interface PluginUpdateManagerContextProps {
 }
 
 interface PluginUpdateManagerContextState {
-	hasUserManagedPlugins: boolean;
-	setHasUserManagedPlugins: ( hasUserManagedPlugins: boolean ) => void;
+	siteHasEligiblePlugins: boolean;
+	setSiteHasEligiblePlugins: ( siteHasEligiblePlugins: boolean ) => void;
 }
 
 const PluginUpdateManagerContext = createContext<
@@ -16,8 +16,8 @@ const PluginUpdateManagerContext = createContext<
 >( {
 	siteSlug: '',
 	isEligibleForFeature: false,
-	hasUserManagedPlugins: true,
-	setHasUserManagedPlugins: () => {},
+	siteHasEligiblePlugins: true,
+	setSiteHasEligiblePlugins: () => {},
 } );
 
 const PluginUpdateManagerContextProvider = ( {
@@ -25,11 +25,16 @@ const PluginUpdateManagerContextProvider = ( {
 	children,
 	isEligibleForFeature,
 }: PluginUpdateManagerContextProps & { children: ReactNode } ) => {
-	const [ hasUserManagedPlugins, setHasUserManagedPlugins ] = useState( true );
+	const [ siteHasEligiblePlugins, setSiteHasEligiblePlugins ] = useState( true );
 
 	return (
 		<PluginUpdateManagerContext.Provider
-			value={ { siteSlug, isEligibleForFeature, hasUserManagedPlugins, setHasUserManagedPlugins } }
+			value={ {
+				siteSlug,
+				isEligibleForFeature,
+				siteHasEligiblePlugins,
+				setSiteHasEligiblePlugins,
+			} }
 		>
 			{ children }
 		</PluginUpdateManagerContext.Provider>

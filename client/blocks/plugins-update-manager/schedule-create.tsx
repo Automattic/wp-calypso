@@ -18,8 +18,8 @@ import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useCreateMonitor } from './hooks/use-create-monitor';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
-import { useHasUserManagedPlugins } from './hooks/use-user-managed-plugins';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
@@ -29,6 +29,7 @@ export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const { createMonitor } = useCreateMonitor( siteSlug );
 	const isEligibleForFeature = useIsEligibleForFeature();
+	const siteHasEligiblePlugins = useSiteHasEligiblePlugins();
 	const { onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
@@ -43,7 +44,6 @@ export const ScheduleCreate = ( props: Props ) => {
 	} );
 	const isBusy = pendingMutations.length > 0;
 	const [ syncError, setSyncError ] = useState( '' );
-	const hasUserManagedPlugins = useHasUserManagedPlugins();
 
 	useEffect( () => {
 		if ( isFetched && schedules.length >= MAX_SCHEDULES ) {
@@ -64,7 +64,7 @@ export const ScheduleCreate = ( props: Props ) => {
 
 	return (
 		<>
-			{ ! hasUserManagedPlugins && (
+			{ ! siteHasEligiblePlugins && (
 				<Banner
 					title="No updatable plugins found"
 					description={ `You don't have any plugins that can be updated. Please head over to <a href="https://wordpress.com/plugins/${ siteSlug }">Plugins</a> to install some plugins.` }
@@ -93,7 +93,7 @@ export const ScheduleCreate = ( props: Props ) => {
 						form="schedule"
 						type="submit"
 						variant={ canCreateSchedules ? 'primary' : 'secondary' }
-						disabled={ ! canCreateSchedules }
+						disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 						isBusy={ isBusy }
 					>
 						Create
