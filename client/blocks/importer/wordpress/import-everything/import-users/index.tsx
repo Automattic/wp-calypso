@@ -1,7 +1,7 @@
 import { useSendInvites } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -109,9 +109,32 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	};
 
 	const onChangeChecked = ( index: number ) => ( checked: boolean ) => {
-		usersList[ index ].checked = checked;
-		setUsersList( usersList );
-		setCheckedUsersNumber( usersList.filter( ( x ) => x.checked )?.length );
+		const updatedUsersList = [ ...usersList ];
+		updatedUsersList[ index ].checked = checked;
+		setUsersList( updatedUsersList );
+		setCheckedUsersNumber( updatedUsersList.filter( ( x ) => x.checked )?.length );
+	};
+
+	const renderToggleAllUsers = () => {
+		const allUsersChecked = usersList.every( ( user ) => user.checked );
+		const toggleAllUsers = () => {
+			const updatedUsersList = usersList.map( ( user ) => {
+				return { ...user, checked: ! allUsersChecked };
+			} );
+			setUsersList( updatedUsersList );
+			setCheckedUsersNumber( updatedUsersList.filter( ( x ) => x.checked )?.length );
+		};
+
+		return (
+			<div className="import__user-migration-toggle-all-users">
+				<CheckboxControl
+					className="import__user-migration-toggle-all-users-checkbox"
+					checked={ allUsersChecked }
+					onChange={ toggleAllUsers }
+					label={ translate( 'Select all users' ) }
+				/>
+			</div>
+		);
 	};
 
 	const renderUser = (
@@ -130,7 +153,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 
 		return (
 			<ImportedUserItem
-				key={ user?.ID }
+				key={ `${ listUser?.user?.ID }-${ listUser?.checked }` }
 				user={ user }
 				isChecked={ checked }
 				onChangeChecked={ onChangeChecked( index ) }
@@ -203,16 +226,45 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	};
 
 	useEffect( () => {
-		let users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
-		if ( userId && users ) {
-			// Remove the current user from users array
-			users = users.filter( ( userItem ) => {
-				return userItem?.user?.linked_user_ID !== userId;
-			} );
+		let filteredUserData = usersData;
+		// We need to remove the current admin user from the list
+		if ( userId && filteredUserData?.users ) {
+			filteredUserData = {
+				...filteredUserData,
+				users: filteredUserData?.users?.filter( ( userItem ) => {
+					return userItem?.linked_user_ID !== userId;
+				} ),
+			};
 		}
-		if ( JSON.stringify( users ) !== JSON.stringify( usersList ) ) {
-			setUsersList( users );
-			setCheckedUsersNumber( users?.length || 0 );
+
+		const updatedUsers = filteredUserData?.users?.map( ( userItem ) => userItem );
+		const storedUsers = usersList?.map( ( userItem ) => userItem.user );
+
+		if ( JSON.stringify( updatedUsers ) !== JSON.stringify( storedUsers ) ) {
+			let updatedUsersList = updatedUsers?.map( ( user ) => ( { user, checked: true } ) ) || [];
+			const storedUsersList = usersList;
+
+			if ( userId && updatedUsersList ) {
+				updatedUsersList = updatedUsersList.filter( ( userItem ) => {
+					return userItem?.user?.linked_user_ID !== userId;
+				} );
+			}
+
+			// Update the checked status of the users to maintain the correct value
+			updatedUsersList = updatedUsersList?.map( ( userItem ) => {
+				const userId = userItem?.user?.ID;
+				const userExists = storedUsersList?.find(
+					( storedUser ) => storedUser?.user?.ID === userId
+				);
+				userItem.checked = userExists ? userExists?.checked : true;
+
+				return userItem;
+			} );
+
+			const updatedCheckedUsersNumber = updatedUsersList?.filter( ( x ) => x.checked )?.length;
+
+			setUsersList( updatedUsersList );
+			setCheckedUsersNumber( updatedCheckedUsersNumber );
 		}
 	}, [ userId, usersData, usersList ] );
 
@@ -245,6 +297,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			</div>
 			{ usersList.length > 0 && totalUsers && (
 				<div className="import__user-migration-user-list">
+					{ renderToggleAllUsers() }
 					{ renderUsersList() }
 					{ renderPagination() }
 				</div>

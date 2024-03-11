@@ -34,6 +34,22 @@
 			max-height: 548px;
 		}
 
+		.import__user-migration-toggle-all-users {
+			border-bottom: 1px solid var(--studio-gray-5, #dcdcde);
+			padding: 0.5rem 1.5rem;
+
+			.components-base-control__field {
+				margin-bottom: 0;
+
+				label {
+					color: #1e1e1e;
+					text-transform: uppercase;
+					font-size: 0.75rem;
+					font-weight: 500;
+				}
+			}
+		}
+
 		.import__user-migration-users {
 			& > :first-child {
 				border-top-left-radius: 4px;
