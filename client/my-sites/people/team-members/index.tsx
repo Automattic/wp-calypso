@@ -4,6 +4,7 @@ import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { useSelector } from 'calypso/state';
+import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
 import type { UsersQuery, Member } from '@automattic/data-stores';
@@ -20,13 +21,21 @@ function TeamMembers( props: Props ) {
 	const translate = useTranslate();
 	const { search, usersQuery, showAddTeamMembersBtn = true, showHeader = true } = props;
 	const site = useSelector( getSelectedSite );
+	const siteId = site?.ID as number;
+
+	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
+	const pendingInvitesMails = pendingInvites?.map( ( invite ) => invite.user?.email );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
 
 	const members = data?.users || [];
-	const membersTotal = data?.total;
 
+	// Move as a selector into the store to return not return pending users
+	const filteredMembers = members.filter(
+		( member ) => ! pendingInvitesMails?.includes( member?.email )
+	);
+	const membersTotal = filteredMembers.length;
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
 
 	function getPersonRef( user: Member ) {
@@ -91,7 +100,7 @@ function TeamMembers( props: Props ) {
 						{ isLoading && renderLoadingPeople() }
 						<InfiniteList
 							listkey={ listKey }
-							items={ members }
+							items={ filteredMembers }
 							fetchNextPage={ fetchNextPage }
 							fetchingNextPage={ isFetchingNextPage }
 							lastPage={ ! hasNextPage }
