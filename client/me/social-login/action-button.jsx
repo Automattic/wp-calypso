@@ -11,7 +11,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
 import { isRequesting } from 'calypso/state/login/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {
@@ -29,17 +28,6 @@ class SocialLoginActionButton extends Component {
 		fetchingUser: false,
 		userHasDisconnected: false,
 	};
-
-	componentDidMount() {
-		const { errorParam, service } = this.props;
-		if ( errorParam && service === 'github' ) {
-			this.props.showErrorNotice(
-				this.props.translate(
-					'Something went wrong when trying to connect with GitHub. Please try again.'
-				)
-			);
-		}
-	}
 
 	refreshUser = async () => {
 		this.setState( { fetchingUser: true } );
@@ -208,13 +196,11 @@ class SocialLoginActionButton extends Component {
 export default connect(
 	( state ) => ( {
 		isUpdatingSocialConnection: isRequesting( state ),
-		errorParam: state.route?.query?.current?.error,
 	} ),
 	{
 		connectSocialUser,
 		disconnectSocialUser,
 		fetchCurrentUser,
 		recordTracksEvent,
-		showErrorNotice: errorNotice,
 	}
 )( localize( SocialLoginActionButton ) );

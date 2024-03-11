@@ -46,6 +46,20 @@ const GitHubLoginButton = ( {
 	const translate = useTranslate();
 
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial );
+	const authError = useSelector( ( state: AppState ) => {
+		const path = state?.route?.path?.current;
+		const { initial, current } = state?.route?.query ?? {};
+		const initialError = initial?.error;
+		const currentError = current?.error;
+
+		// Sign-up flow is losing the error query param when redirecting to `/start/user-social`
+		// because of that, we are returning the initial query param error.
+		if ( path?.includes( '/start/user-social' ) ) {
+			return initialError;
+		}
+		return currentError;
+	} );
+
 	const isFormDisabled = useSelector( isFormDisabledSelector );
 	const dispatch = useDispatch();
 
@@ -113,6 +127,16 @@ const GitHubLoginButton = ( {
 			exchangeCodeForToken( code );
 		}
 	}, [ code, service, userHasDisconnected ] );
+
+	useEffect( () => {
+		if ( authError ) {
+			dispatch(
+				errorNotice(
+					translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
+				)
+			);
+		}
+	}, [ authError, translate ] );
 
 	const isDisabled = isFormDisabled || disabledState;
 
