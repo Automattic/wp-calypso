@@ -360,13 +360,16 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
-			const isWooPasswordless =
-				// Feature can be enabled via config or query param.
-				config.isEnabled( 'woo/passwordless' ) || !! getWooPasswordless( state );
-
-			const isWoo = isWooOAuth2Client( oauth2Client );
 			const wooPasswordless = getWooPasswordless( state );
-			if ( isWoo && ! wooPasswordless && config.isEnabled( 'woo/passwordless' ) ) {
+			const isWoo = isWooOAuth2Client( oauth2Client );
+
+			if (
+				// Wait until the currentRoute is not changed.
+				getCurrentRoute( state ) === currentRoute &&
+				isWoo &&
+				! wooPasswordless &&
+				config.isEnabled( 'woo/passwordless' )
+			) {
 				// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
 				const queryParams = { 'woo-passwordless': 'yes' };
 				const currentPath = window.location.pathname + window.location.search;
@@ -393,7 +396,9 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
-				isWooPasswordless,
+				isWooPasswordless:
+					( config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless ) &&
+					! ( isWooCoreProfilerFlow || isJetpackWooCommerceFlow || isJetpackWooDnaFlow ),
 			};
 		},
 		{ clearLastActionRequiresLogin }
