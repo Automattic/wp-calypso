@@ -41,7 +41,6 @@ import {
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { addQueryArgs } from 'calypso/lib/route';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -59,7 +58,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -899,11 +897,7 @@ class Signup extends Component {
 
 		return (
 			<>
-				<div
-					className={ `signup is-${ kebabCase( this.props.flowName ) } ${
-						this.props.isWooPasswordless ? 'is-woo-passwordless' : ''
-					}` }
-				>
+				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ showPageHeader && (
 						<SignupHeader
@@ -951,14 +945,6 @@ export default connect(
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const hostingFlow = startedInHostingFlow( state );
-		const isWoo = isWooOAuth2Client( oauth2Client );
-		const wooPasswordless = getWooPasswordless( state );
-		if ( isWoo && ! wooPasswordless && config.isEnabled( 'woo/passwordless' ) ) {
-			// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
-			const queryParams = { 'woo-passwordless': 'yes' };
-			const currentPath = window.location.pathname + window.location.search;
-			page.replace( addQueryArgs( queryParams, currentPath ) );
-		}
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -980,7 +966,6 @@ export default connect(
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
-			isWooPasswordless: config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless,
 		};
 	},
 	{

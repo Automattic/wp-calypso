@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
@@ -30,6 +31,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
+import { addQueryArgs } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -41,6 +43,7 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -70,6 +73,7 @@ const LayoutLoggedOut = ( {
 	isPartnerSignup,
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
+	isWooPasswordless,
 	locale,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
@@ -139,6 +143,7 @@ const LayoutLoggedOut = ( {
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
+		'is-woo-passwordless': isWooPasswordless,
 	};
 
 	let masterbar = null;
@@ -355,6 +360,19 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
+			const isWooPasswordless =
+				// Feature can be enabled via config or query param.
+				config.isEnabled( 'woo/passwordless' ) || !! getWooPasswordless( state );
+
+			const isWoo = isWooOAuth2Client( oauth2Client );
+			const wooPasswordless = getWooPasswordless( state );
+			if ( isWoo && ! wooPasswordless && config.isEnabled( 'woo/passwordless' ) ) {
+				// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
+				const queryParams = { 'woo-passwordless': 'yes' };
+				const currentPath = window.location.pathname + window.location.search;
+				page.replace( addQueryArgs( queryParams, currentPath ) );
+			}
+
 			return {
 				isJetpackLogin,
 				isWhiteLogin,
@@ -375,6 +393,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
+				isWooPasswordless,
 			};
 		},
 		{ clearLastActionRequiresLogin }
