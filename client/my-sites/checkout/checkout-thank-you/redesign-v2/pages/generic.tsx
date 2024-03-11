@@ -13,6 +13,8 @@ import { ThankYouTitanProduct } from '../products/titan-product';
 import getDefaultFooterDetails from './content/get-default-footer-details';
 import getDomainFooterDetails from './content/get-domain-footer-details';
 import getTitanFooterDetails from './content/get-titan-footer-details';
+import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface GenericThankYouProps {
 	purchases: ReceiptPurchase[];
@@ -76,7 +78,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 		);
 	} );
 
-	let footerDetails = [];
+	let footerDetails: ThankYouFooterDetailProps[] = [];
 
 	// Footer details should contain at most two support blurbs. The first support blurb for
 	// each product will be used to populate the footer, with the exception of plan products.
