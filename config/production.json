@@ -201,6 +201,7 @@
 		"videomaker-trial": true,
 		"videopress-tv": false,
 		"woop": false,
+		"woo/passwordless": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true
