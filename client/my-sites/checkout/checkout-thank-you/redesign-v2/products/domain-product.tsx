@@ -1,4 +1,4 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
+import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -93,6 +93,7 @@ export default function ThankYouDomainProduct( {
 	return (
 		<ThankYouProduct
 			name={ domainName }
+			details={ isDomainMapping( purchase ) && translate( 'Domain connection' ) }
 			isFree={ purchase?.priceInteger === 0 }
 			actions={ actions }
 		/>
