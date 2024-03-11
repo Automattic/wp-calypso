@@ -4,11 +4,14 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
+import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { didInviteDeletionSucceed } from 'calypso/state/invites/selectors';
+import { createNotice, removeNotice } from 'calypso/state/notices/actions';
+import { NoticeStatus } from 'calypso/state/notices/types';
 import { AppState } from 'calypso/types';
 import { Invite } from '../team-invites/types';
 import type { Member, SiteDetails } from '@automattic/data-stores';
@@ -54,7 +57,9 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 
 	const navigateToUser = () => {
 		window.scrollTo( 0, 0 );
-		composeAnalytics( recordGoogleEvent( 'People', 'Clicked User Profile From Team List' ) );
+		dispatch(
+			composeAnalytics( recordGoogleEvent( 'People', 'Clicked User Profile From Team List' ) )
+		);
 	};
 
 	const userHasPromoteCapability = () => {
@@ -81,6 +86,20 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		);
 	};
 
+	const displayNotice = (
+		message: string,
+		noticeType: NoticeStatus = 'is-success',
+		duration: undefined | number | null = 3000,
+		additionalOptions: { button?: string; id?: string; onClick?: () => void } = {}
+	) => {
+		const { notice } = dispatch(
+			createNotice( noticeType, message, { duration, ...additionalOptions } )
+		);
+		return {
+			removeNotice: () => dispatch( removeNotice( notice.noticeId ) ),
+		};
+	};
+
 	const onSendInvite = async ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		// Prevents navigation to invite-details screen and onClick event.
 		event.preventDefault();
@@ -89,8 +108,8 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		if ( isSubmittingInvites || ! user || ! user.roles ) {
 			return null;
 		}
-		const { email, roles } = user;
-		const userRoles = roles[ 0 ];
+		const { email } = user;
+		const userRoles = getRole( user );
 		const response = ( await sendInvites( [
 			{ email_or_username: email as string, role: userRoles },
 		] ) ) as [ sendInvitesResponse ];
@@ -98,6 +117,12 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		const success = response && response[ 0 ].success;
 		if ( success && siteId ) {
 			dispatch( requestSiteInvites( siteId ) );
+			displayNotice( translate( 'Invitation sent successfully' ) );
+			dispatch(
+				composeAnalytics(
+					recordGoogleEvent( 'calypso_sso_user_invite_success', { siteId: siteId } )
+				)
+			);
 		}
 	};
 

@@ -1,5 +1,7 @@
 import { Card, Button } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
@@ -31,11 +33,25 @@ function TeamMembers( props: Props ) {
 
 	const members = data?.users || [];
 
-	const nonPendingMembers = members.filter(
-		( member ) => ! pendingInvitesMails?.includes( member?.email )
+	// Filter out pending invites from the list of members and rendering then in order.
+	// This helps to display the SSO message in the right place and don't show users in the list that are pending invites.
+	const nonPendingMembersSorted = members
+		.filter( ( member ) => ! pendingInvitesMails?.includes( member?.email ) )
+		.sort( ( a, b ) => {
+			if ( a.linked_user_ID === false && b.linked_user_ID !== false ) {
+				return 1;
+			} else if ( a.linked_user_ID !== false && b.linked_user_ID === false ) {
+				return -1;
+			}
+			return 0;
+		} );
+
+	// Calculated to understand where to render the SSO message.
+	const firstNotConnectedUserIndex = nonPendingMembersSorted.findIndex(
+		( obj ) => obj.linked_user_ID === false
 	);
 
-	const membersTotal = nonPendingMembers.length;
+	const membersTotal = nonPendingMembersSorted.length;
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
 
 	function getPersonRef( user: Member ) {
@@ -61,9 +77,44 @@ function TeamMembers( props: Props ) {
 		} );
 	}
 
-	function renderPerson( user: Member ) {
+	function renderSSOMessageWrapper( key: number, children: ReactElement ) {
+		return (
+			<div className="people-list-sso-message__wrapper" key={ key }>
+				<div className="people-list-sso-message">
+					<div className="people-list-sso-message__icon">
+						<Icon icon={ info } size={ 24 } />
+					</div>
+					<p>
+						{ translate(
+							'Invite the users below to join WordPress.com, so they can log in securely using {{a}}Secure Sign On.{{/a}}',
+							{
+								components: {
+									a: (
+										<a
+											href="https://jetpack.com/support/sso/"
+											target="_blank"
+											rel="noopener noreferrer"
+										></a>
+									),
+								},
+							}
+						) }
+					</p>
+				</div>
+				{ children }
+			</div>
+		);
+	}
+
+	function renderPerson( user: Member, index: number ) {
 		const type = user.roles ? 'email' : 'viewer';
 
+		if ( firstNotConnectedUserIndex === index ) {
+			return renderSSOMessageWrapper(
+				index,
+				<PeopleListItem key={ user?.ID } user={ user } site={ site } type={ type } />
+			);
+		}
 		return <PeopleListItem key={ user?.ID } user={ user } site={ site } type={ type } />;
 	}
 
@@ -100,7 +151,7 @@ function TeamMembers( props: Props ) {
 						{ isLoading && renderLoadingPeople() }
 						<InfiniteList
 							listkey={ listKey }
-							items={ nonPendingMembers }
+							items={ nonPendingMembersSorted }
 							fetchNextPage={ fetchNextPage }
 							fetchingNextPage={ isFetchingNextPage }
 							lastPage={ ! hasNextPage }
