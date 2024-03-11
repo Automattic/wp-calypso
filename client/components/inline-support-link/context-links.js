@@ -315,6 +315,11 @@ const contextLinks = {
 		post_id: 99421,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'github-deployments': {
+		link: 'https://developer.wordpress.com/docs/developer-tools/github-deployments/',
+		post_id: 99879,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
 	'subscriptions-and-newsletters': {
 		link: 'https://wordpress.com/support/subscriptions-and-newsletters/',
 		post_id: 67810,
