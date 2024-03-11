@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -13,7 +13,6 @@ jest.unmock( '@automattic/calypso-products' );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	shouldFetchSitePlans: () => false,
-	isDotComPlan: jest.fn( () => false ),
 	isDIFMProduct: jest.fn( () => false ),
 } ) );
 
