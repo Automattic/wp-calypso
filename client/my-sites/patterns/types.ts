@@ -21,15 +21,28 @@ type CategoryBase = {
 
 export type CategorySnakeCase = CategoryBase & {
 	page_pattern_count: number;
-	pattern_preview: Pattern | null;
+	preview_pattern: Pattern | null;
 	regular_cattern_count: number;
 };
 
 export type Category = CategoryBase & {
 	pagePatternCount: number;
-	patternPreview: Pattern | null;
+	previewPattern: Pattern | null;
 	regularPatternCount: number;
 };
+
+type CategoryWithCount = Category & {
+	count: number;
+};
+
+export type CategoryGalleryProps = {
+	categories?: CategoryWithCount[];
+	columnCount?: number;
+	description: string;
+	title: string;
+};
+
+export type CategoryGalleryFC = React.FC< CategoryGalleryProps >;
 
 export type PatternGalleryProps = {
 	isGridView?: boolean;

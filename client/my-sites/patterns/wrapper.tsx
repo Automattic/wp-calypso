@@ -4,20 +4,22 @@ import { PatternsCategoryPage } from 'calypso/my-sites/patterns/pages/category';
 import { PatternsHomePage } from 'calypso/my-sites/patterns/pages/home';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
+import type { CategoryGalleryFC, PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
 type PatternsWrapperProps = {
 	category: string;
+	categoryGallery: CategoryGalleryFC;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 };
 
 export const PatternsWrapper = ( {
 	category,
+	categoryGallery,
 	isGridView,
-	patternGallery: PatternGallery,
+	patternGallery,
 }: PatternsWrapperProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -27,12 +29,16 @@ export const PatternsWrapper = ( {
 
 			<Main isLoggedOut fullWidthLayout>
 				{ ! category ? (
-					<PatternsHomePage isGridView={ isGridView } patternGallery={ PatternGallery } />
+					<PatternsHomePage
+						categoryGallery={ categoryGallery }
+						isGridView={ isGridView }
+						patternGallery={ patternGallery }
+					/>
 				) : (
 					<PatternsCategoryPage
 						category={ category }
 						isGridView={ isGridView }
-						patternGallery={ PatternGallery }
+						patternGallery={ patternGallery }
 					/>
 				) }
 			</Main>

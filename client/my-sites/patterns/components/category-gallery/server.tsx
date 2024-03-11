@@ -1,21 +1,16 @@
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
+import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import type { Category } from 'calypso/my-sites/patterns/types';
+import type { CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-type CategoryWithCount = Category & {
-	count: number;
-};
-
-type Props = {
-	categories?: CategoryWithCount[];
-	columnCount?: number;
-	description: string;
-	title: string;
-};
-
-export const CategoryGallery = ( { categories, columnCount = 4, description, title }: Props ) => {
+export const CategoryGalleryServer: CategoryGalleryFC = ( {
+	categories,
+	columnCount = 4,
+	description,
+	title,
+} ) => {
 	if ( ! categories ) {
 		return null;
 	}
@@ -32,13 +27,16 @@ export const CategoryGallery = ( { categories, columnCount = 4, description, tit
 						href={ `/patterns/${ category.name }` }
 						key={ category.name }
 					>
-						<div className="patterns-category-gallery__item-image">
-							{ /* <img src={ image } alt={ label } /> */ }
+						<div className="patterns-category-gallery__item-preview">
+							<div className="patterns-category-gallery__item-preview">
+								<div className="patterns-category-gallery__item-preview-inner">
+									<PatternPreviewPlaceholder pattern={ category.previewPattern } />
+								</div>
+							</div>
 						</div>
+
 						<div className="patterns-category-gallery__item-name">{ category.label }</div>
-						<div className="patterns-category-gallery__item-number">
-							{ category.count } patterns
-						</div>
+						<div className="patterns-category-gallery__item-count">{ category.count } patterns</div>
 					</LocalizedLink>
 				) ) }
 			</div>

@@ -15,13 +15,13 @@ export function getPatternCategoriesQueryOptions(
 					return categories.map(
 						( {
 							regular_cattern_count,
-							pattern_preview,
+							preview_pattern,
 							page_pattern_count,
 							...restCategory
 						} ) => ( {
 							...restCategory,
 							pagePatternCount: page_pattern_count,
-							patternPreview: pattern_preview,
+							previewPattern: preview_pattern,
 							regularPatternCount: regular_cattern_count,
 						} )
 					);

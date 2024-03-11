@@ -7,18 +7,29 @@ import type { Pattern } from 'calypso/my-sites/patterns/types';
 
 import './pattern-preview.scss';
 
-const DESKTOP_VIEWPORT_WIDTH = 1200;
+export const DESKTOP_VIEWPORT_WIDTH = 1200;
+
+export const ASPECT_RATIO = 7 / 4;
 
 type PatternPreviewProps = {
-	isGridView?: boolean;
-	pattern: Pattern;
+	hideTitle?: boolean;
+	pattern: Pattern | null;
+	viewportWidth?: number;
 };
 
-export function PatternPreview( { isGridView, pattern }: PatternPreviewProps ) {
+export function PatternPreview( {
+	hideTitle = false,
+	pattern,
+	viewportWidth,
+}: PatternPreviewProps ) {
 	const { renderedPatterns } = usePatternsRendererContext();
-	const patternId = encodePatternId( pattern.ID );
+	const patternId = encodePatternId( pattern?.ID ?? 0 );
 	const renderedPattern = renderedPatterns[ patternId ];
 	const [ resizeObserver, nodeSize ] = useResizeObserver();
+
+	if ( ! pattern ) {
+		return null;
+	}
 
 	return (
 		<div
@@ -30,13 +41,13 @@ export function PatternPreview( { isGridView, pattern }: PatternPreviewProps ) {
 
 			<div className="pattern-preview__renderer">
 				<PatternRenderer
-					minHeight={ nodeSize.width ? nodeSize.width / ( 7 / 3 ) : undefined }
+					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
-					viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
+					viewportWidth={ viewportWidth }
 				/>
 			</div>
 
-			<div className="pattern-preview__title">{ pattern.title }</div>
+			{ ! hideTitle && <div className="pattern-preview__title">{ pattern.title }</div> }
 		</div>
 	);
 }

@@ -1,6 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
 import DocumentHead from 'calypso/components/data/document-head';
-import { CategoryGallery } from 'calypso/my-sites/patterns/components/category-gallery';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
@@ -14,16 +13,18 @@ import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
 import ImgResponsive from './images/responsive.svg';
 import ImgStyle from './images/style.svg';
-import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
+import type { CategoryGalleryFC, PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
 type PatternsHomePageProps = {
+	categoryGallery: CategoryGalleryFC;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 };
 
 export const PatternsHomePage = ( {
+	categoryGallery: CategoryGallery,
 	isGridView,
 	patternGallery: PatternGallery,
 }: PatternsHomePageProps ) => {
