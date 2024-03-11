@@ -1,6 +1,6 @@
 import type { Pattern } from 'calypso/my-sites/patterns/types';
 
-import './pattern-preview.scss';
+import './style.scss';
 
 type PatternPreviewPlaceholderProps = { pattern: Pattern | null };
 

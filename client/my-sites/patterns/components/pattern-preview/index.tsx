@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import type { Pattern } from 'calypso/my-sites/patterns/types';
 
-import './pattern-preview.scss';
+import './style.scss';
 
 export const DESKTOP_VIEWPORT_WIDTH = 1200;
 

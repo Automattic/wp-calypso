@@ -1,5 +1,5 @@
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
-import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
+import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import type { CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 

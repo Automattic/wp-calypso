@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview-placeholder';
+import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
