@@ -1,10 +1,7 @@
 import {
-	isBlogger,
-	isBusiness,
 	isChargeback,
 	isCredits,
 	isDelayedDomainTransfer,
-	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
@@ -12,11 +9,7 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isJetpackPlan,
-	isP2Plus,
-	isPersonal,
 	isPlan,
-	isPremium,
-	isPro,
 	isSiteRedirect,
 	isStarter,
 	isThemePurchase,
@@ -83,8 +76,8 @@ import CheckoutThankYouHeader from './header';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
-import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import GenericThankYou from './redesign-v2/pages/generic';
+import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
@@ -715,67 +708,12 @@ export class CheckoutThankYou extends Component<
 			return [ 'failed-purchase-details' ];
 		}
 
-		// Check if it is the bulk domain transfer flow
-		if ( isBulkDomainTransfer( purchases ) ) {
-			return [
-				'domain-transfer-details',
-				...findPurchaseAndDomain( purchases, isDomainRegistration ),
-			];
-		}
-
-		if ( purchases.some( isJetpackPlan ) ) {
-			return [ 'jetpack-plan-details', purchases.find( isJetpackPlan ) ];
-		}
-		if ( purchases.some( isBlogger ) ) {
-			return [ 'blogger-plan-details', purchases.find( isBlogger ) ];
-		}
-		if ( purchases.some( isPersonal ) ) {
-			return [ 'personal-plan-details', purchases.find( isPersonal ) ];
-		}
-		if ( purchases.some( isStarter ) ) {
-			return [ 'starter-plan-details', purchases.find( isStarter ) ];
-		}
-		if ( purchases.some( isPremium ) ) {
-			return [ 'premium-plan-details', purchases.find( isPremium ) ];
-		}
-		if ( purchases.some( isBusiness ) ) {
-			return [ 'business-plan-details', purchases.find( isBusiness ) ];
-		}
-		if ( purchases.some( isPro ) ) {
-			return [ 'pro-plan-details', purchases.find( isPro ) ];
-		}
-		if ( purchases.some( isEcommerce ) ) {
-			return [ 'ecommerce-plan-details', purchases.find( isEcommerce ) ];
-		}
-		if ( purchases.some( isDomainRegistration ) ) {
-			return [
-				'domain-registration-details',
-				...findPurchaseAndDomain( purchases, isDomainRegistration ),
-			];
-		}
-		if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-			return [
-				'google-apps-details',
-				...findPurchaseAndDomain( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace ),
-			];
-		}
-		if ( purchases.some( isDomainMapping ) ) {
-			return [ 'domain-mapping-details', ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
-		}
 		if ( purchases.some( isSiteRedirect ) ) {
 			return [ 'site-redirect-details', ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
 		}
-		if ( purchases.some( isDomainTransfer ) ) {
-			return [ false, ...findPurchaseAndDomain( purchases, isDomainTransfer ) ];
-		}
-		if ( purchases.some( isTitanMail ) ) {
-			return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
-		}
+
 		if ( purchases.some( isChargeback ) ) {
 			return [ 'chargeback-details', purchases.find( isChargeback ) ];
-		}
-		if ( purchases.some( isP2Plus ) ) {
-			return [ 'p2-plus-details', purchases.find( isP2Plus ) ];
 		}
 
 		return [];
