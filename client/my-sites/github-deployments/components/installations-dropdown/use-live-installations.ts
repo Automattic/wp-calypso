@@ -16,14 +16,15 @@ interface UseLiveInstallationsParameters {
 	initialInstallationId?: number;
 }
 
-const APP_SLUG = config( 'github_app_slug' );
 const NOTICE_ID = 'github-app-install-notice';
 
 const AUTHORIZATION_URL = addQueryArgs( 'https://github.com/login/oauth/authorize', {
 	client_id: config( 'github_oauth_client_id' ),
 } );
 
-const INSTALLATION_URL = `https://github.com/apps/${ APP_SLUG }/installations/new`;
+const INSTALLATION_URL = `https://github.com/apps/${ config(
+	'github_app_slug'
+) }/installations/new`;
 
 export const useLiveInstallations = ( {
 	initialInstallationId,
@@ -79,6 +80,7 @@ export const useLiveInstallations = ( {
 				if ( 'github-app-authorized' === data.type ) {
 					try {
 						await authorizeApp( { code: data.code } );
+						refetch();
 						popup.location = INSTALLATION_URL;
 					} catch {
 						popup.close();
