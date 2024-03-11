@@ -1,4 +1,4 @@
-import { Site } from '../types';
+import { Site, SiteData } from '../types';
 
 export interface SitesDataViewsProps {
 	data:
@@ -7,6 +7,7 @@ export interface SitesDataViewsProps {
 	isLoading: boolean;
 	onSitesViewChange: ( view: SitesViewState ) => void;
 	sitesViewState: SitesViewState;
+	isLargeScreen: boolean;
 }
 
 export interface Sort {
@@ -30,4 +31,8 @@ export interface SitesViewState {
 	hiddenFields: string[];
 	layout: object;
 	selectedSite?: Site | undefined;
+}
+
+export interface SiteInfo extends SiteData {
+	id: number;
 }

@@ -36,10 +36,10 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/compat-data": "^7.23.5",
-		"@babel/core": "^7.23.7",
+		"@babel/core": "^7.23.9",
 		"@types/webpack-env": "^1.18.4",
 		"@wordpress/browserslist-config": "^5.35.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.2.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^5.3.0",
 		"autoprefixer": "^10.2.5",
 		"babel-loader": "^8.2.3",
 		"browserslist": "^4.8.2",
@@ -65,6 +65,6 @@
 	},
 	"peerDependencies": {
 		"postcss": "^8.4.5",
-		"webpack": "^5.90.1"
+		"webpack": "^5.90.3"
 	}
 }

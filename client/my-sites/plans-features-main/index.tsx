@@ -258,7 +258,7 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = useStorageAddOns( { siteId, isInSignup } );
+	const storageAddOns = useStorageAddOns( { siteId } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -649,6 +649,7 @@ const PlansFeaturesMain = ( {
 	} );
 
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
+
 	/**
 	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
 	 * for the sticky CTA bar.
@@ -665,15 +666,12 @@ const PlansFeaturesMain = ( {
 			return;
 		}
 
-		let lastHeight = masterbarElement.offsetHeight;
-
 		const observer = new ResizeObserver(
 			( [ masterbar ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
 				const currentHeight = masterbar.contentRect.height;
 
-				if ( currentHeight !== lastHeight ) {
+				if ( currentHeight !== masterbarHeight ) {
 					setMasterbarHeight( currentHeight );
-					lastHeight = currentHeight;
 				}
 			}
 		);

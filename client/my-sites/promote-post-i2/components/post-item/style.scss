@@ -131,6 +131,11 @@ body.is-section-promote-post-i2 {
 			box-shadow: none;
 		}
 
+		&__post-promote-button:hover {
+			text-decoration: underline;
+			color: var(--color-accent) !important;
+		}
+
 		&__view-button {
 			@include blazepress-data-row-font-buttons-mobile;
 			background-color: #f6f7f7;
@@ -147,6 +152,10 @@ body.is-section-promote-post-i2 {
 			align-items: center;
 		}
 
+		&__view-button:hover {
+			text-decoration: underline;
+		}
+
 		&__post-promote-button-mobile {
 			border-radius: 4px;
 			border: 1.5px solid var(--color-accent);
@@ -154,6 +163,12 @@ body.is-section-promote-post-i2 {
 			background-color: var(--color-surface);
 			box-shadow: none;
 			height: 28px;
+		}
+
+		&__post-promote-button-mobile:hover {
+			text-decoration: underline;
+			color: var(--color-accent);
+			background-color: var(--color-surface);
 		}
 	}
 

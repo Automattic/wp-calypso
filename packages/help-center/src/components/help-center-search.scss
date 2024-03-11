@@ -140,6 +140,7 @@
 						padding: 8px;
 					}
 
+
 					svg:last-child {
 						fill: var(--studio-gray-20);
 					}
@@ -148,15 +149,7 @@
 						display: block;
 						align-self: center;
 					}
-					.help-center-search-results__content {
-						width: 100%;
-						.help-center-search-results__badge {
-							height: auto;
-							font-size: $font-body-extra-small;
-							padding: 0 8px;
-							text-transform: uppercase;
-						}
-					}
+
 				}
 			}
 		}
@@ -217,6 +210,17 @@
 						color: var(--color-neutral);
 					}
 				}
+			}
+
+			.help-center-search-results-dev__resource {
+				margin-right: 15px;
+				display: block;
+				background: var(--studio-gray-0);
+				fill: var(--studio-blue-50);
+				padding: 8px;
+				text-transform: uppercase;
+				font-weight: 500;
+				font-size: 0.75rem;
 			}
 		}
 
@@ -572,6 +576,7 @@
 			color: var(--color-neutral-80);
 			list-style-type: circle;
 			list-style-position: inside;
+			margin: 0 0 1.5em 1.5em;
 		}
 
 		span.noticon.noticon-star {

@@ -2,12 +2,14 @@
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	height: 48px;
+	min-height: 48px;
 	padding: 0 32px;
 	border-bottom: 1px solid var(--studio-gray-0);
+	overflow: auto;
 
 	.button.is-borderless {
 		display: flex;
+		flex-shrink: 0;
 		flex-direction: row;
 		align-items: center;
 		gap: 8px;

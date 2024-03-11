@@ -400,7 +400,7 @@ class StatsSite extends Component {
 							statType="statsTopPosts"
 							showSummaryLink
 							className={ classNames(
-								'stats__flexible-grid-item--two-thirds',
+								'stats__flexible-grid-item--60',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -413,7 +413,7 @@ class StatsSite extends Component {
 							statType="statsReferrers"
 							showSummaryLink
 							className={ classNames(
-								'stats__flexible-grid-item--one-third--once-space',
+								'stats__flexible-grid-item--40--once-space',
 								'stats__flexible-grid-item--full--large',
 								'stats__flexible-grid-item--full--medium'
 							) }
@@ -427,6 +427,48 @@ class StatsSite extends Component {
 							className={ classNames( 'stats__flexible-grid-item--full' ) }
 						/>
 
+						{ config.isEnabled( 'stats/utm-module' ) && (
+							<>
+								<StatsModuleUTM
+									siteId={ siteId }
+									period={ this.props.period }
+									query={ query }
+									className={ classNames(
+										'stats__flexible-grid-item--60',
+										'stats__flexible-grid-item--full--large',
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+								<StatsModule
+									path="clicks"
+									moduleStrings={ moduleStrings.clicks }
+									period={ this.props.period }
+									query={ query }
+									statType="statsClicks"
+									showSummaryLink
+									className={ classNames(
+										'stats__flexible-grid-item--40--once-space',
+										'stats__flexible-grid-item--full--large',
+										'stats__flexible-grid-item--full--medium'
+									) }
+								/>
+								{ supportsEmailStats && (
+									<StatsModuleEmails
+										period={ this.props.period }
+										query={ query }
+										className={ classNames(
+											{
+												'stats__flexible-grid-item--half': ! this.isModuleHidden( 'authors' ),
+												'stats__flexible-grid-item--full': this.isModuleHidden( 'authors' ),
+											},
+											'stats__flexible-grid-item--full--large',
+											'stats__flexible-grid-item--full--medium'
+										) }
+									/>
+								) }
+							</>
+						) }
+
 						{ ! this.isModuleHidden( 'authors' ) && (
 							<StatsModule
 								path="authors"
@@ -435,9 +477,18 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsTopAuthors"
 								className={ classNames(
-									'stats__author-views',
-									'stats__flexible-grid-item--one-third--two-spaces',
-									'stats__flexible-grid-item--half--large',
+									{
+										'stats__author-views': ! config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--half--large':
+											! config.isEnabled( 'stats/utm-module' ),
+									},
+									{
+										'stats__flexible-grid-item--half': config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--half--large':
+											config.isEnabled( 'stats/utm-module' ),
+									},
 									'stats__flexible-grid-item--full--medium'
 								) }
 								showSummaryLink
@@ -454,31 +505,40 @@ class StatsSite extends Component {
 							className={ classNames(
 								{
 									'stats__flexible-grid-item--one-third--two-spaces':
-										! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+										! this.isModuleHidden( 'authors' ) && ! config.isEnabled( 'stats/utm-module' ),
+									'stats__flexible-grid-item--half--large':
+										! this.isModuleHidden( 'authors' ) && ! config.isEnabled( 'stats/utm-module' ),
+									'stats__flexible-grid-item--half':
+										this.isModuleHidden( 'authors' ) && ! config.isEnabled( 'stats/utm-module' ),
+								},
+								{
+									'stats__flexible-grid-item--one-third--two-spaces':
+										config.isEnabled( 'stats/utm-module' ),
+									'stats__flexible-grid-item--half--large': config.isEnabled( 'stats/utm-module' ),
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
 						/>
 
-						<StatsModule
-							path="clicks"
-							moduleStrings={ moduleStrings.clicks }
-							period={ this.props.period }
-							query={ query }
-							statType="statsClicks"
-							showSummaryLink
-							className={ classNames(
-								{
-									'stats__flexible-grid-item--one-third--two-spaces':
-										! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
-									'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
-								},
-								'stats__flexible-grid-item--full--medium'
-							) }
-						/>
+						{ ! config.isEnabled( 'stats/utm-module' ) && (
+							<StatsModule
+								path="clicks"
+								moduleStrings={ moduleStrings.clicks }
+								period={ this.props.period }
+								query={ query }
+								statType="statsClicks"
+								showSummaryLink
+								className={ classNames(
+									{
+										'stats__flexible-grid-item--one-third--two-spaces':
+											! this.isModuleHidden( 'authors' ),
+										'stats__flexible-grid-item--half--large': ! this.isModuleHidden( 'authors' ),
+										'stats__flexible-grid-item--half': this.isModuleHidden( 'authors' ),
+									},
+									'stats__flexible-grid-item--full--medium'
+								) }
+							/>
+						) }
 						{ ! this.isModuleHidden( 'videos' ) && (
 							<StatsModule
 								path="videoplays"
@@ -488,12 +548,20 @@ class StatsSite extends Component {
 								statType="statsVideoPlays"
 								showSummaryLink
 								className={ classNames(
-									'stats__flexible-grid-item--half',
+									{
+										'stats__flexible-grid-item--half': ! config.isEnabled( 'stats/utm-module' ),
+									},
+									{
+										'stats__flexible-grid-item--one-third--two-spaces':
+											config.isEnabled( 'stats/utm-module' ),
+										'stats__flexible-grid-item--half--large':
+											config.isEnabled( 'stats/utm-module' ),
+									},
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
 						) }
-						{ supportsEmailStats && (
+						{ supportsEmailStats && ! config.isEnabled( 'stats/utm-module' ) && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								query={ query }
@@ -521,24 +589,23 @@ class StatsSite extends Component {
 									showSummaryLink
 									useShortLabel={ true }
 									className={ classNames(
-										'stats__flexible-grid-item--half',
-										'stats__flexible-grid-item--full--large'
+										{
+											'stats__flexible-grid-item--half': ! config.isEnabled( 'stats/utm-module' ),
+											'stats__flexible-grid-item--full--large':
+												! config.isEnabled( 'stats/utm-module' ),
+										},
+										{
+											'stats__flexible-grid-item--one-third--two-spaces':
+												config.isEnabled( 'stats/utm-module' ),
+											'stats__flexible-grid-item--half--large':
+												config.isEnabled( 'stats/utm-module' ),
+										},
+										'stats__flexible-grid-item--full--medium'
 									) }
 								/>
 							)
 						}
 					</div>
-
-					{
-						// TODO: Move this under the Countries module.
-						// - Will require some reworking of the CSS to work correctly though.
-						// - Because of the visibility toggles for Authors and Videos, we require multiple
-						// copies of the Grid CSS.
-						// - May have to move from grid to flexbox.
-					 }
-					{ config.isEnabled( 'stats/utm-module' ) && (
-						<StatsModuleUTM siteId={ siteId } period={ this.props.period } query={ query } />
-					) }
 				</div>
 				{ supportsPlanUsage && (
 					<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
@@ -623,7 +690,7 @@ class StatsSite extends Component {
 				{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 					<QuerySiteFeatures siteIds={ [ siteId ] } />
 				) }
-				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>
 						<QueryKeyringConnections />

@@ -60,32 +60,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		currency: PropTypes.string,
 	};
 
-	isSearch() {
-		const { purchases } = this.props;
-		return purchases?.length > 0 && purchases[ 0 ].productType === 'search';
-	}
-
 	getText() {
 		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
 			this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
-		}
-
-		if ( this.isSearch() ) {
-			return (
-				<div>
-					<p>{ translate( 'We are currently indexing your site.' ) }</p>
-					<p>
-						{ translate(
-							'In the meantime, we have configured Jetpack Search on your site' +
-								' ' +
-								'— try customizing it!'
-						) }
-					</p>
-				</div>
-			);
 		}
 
 		if ( ! isDataLoaded || ! primaryPurchase ) {
@@ -314,14 +294,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
-	recordThankYouClick = () => {
-		this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
-			product_name: 'search',
-			value: 'Customizer',
-			site: 'wpcom',
-		} );
-	};
-
 	getButtonText = () => {
 		const {
 			displayMode,
@@ -413,18 +385,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
-	getSearchButtonProps() {
-		const { translate, selectedSite, jetpackSearchCustomizeUrl, jetpackSearchDashboardUrl } =
-			this.props;
-
-		const buttonTitle = selectedSite.jetpack
-			? translate( 'Go to Search Dashboard' )
-			: translate( 'Customize Search' );
-		const targetUrl = selectedSite.jetpack ? jetpackSearchDashboardUrl : jetpackSearchCustomizeUrl;
-
-		return { title: buttonTitle, url: targetUrl };
-	}
-
 	getButtons() {
 		const {
 			hasFailedPurchases,
@@ -437,22 +397,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
-
-		if ( this.isSearch() ) {
-			const buttonProps = this.getSearchButtonProps();
-			return (
-				<div className="checkout-thank-you__header-button">
-					<Button
-						className={ headerButtonClassName }
-						primary
-						href={ buttonProps.url }
-						onClick={ this.recordThankYouClick }
-					>
-						{ buttonProps.title }
-					</Button>
-				</div>
-			);
-		}
 
 		if (
 			isDataLoaded &&
@@ -516,10 +460,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some items failed.' );
-		}
-
-		if ( this.isSearch() ) {
-			return translate( 'Welcome to Jetpack Search!' );
 		}
 
 		if (

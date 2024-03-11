@@ -190,9 +190,30 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	eventSource?: string;
 };
 
-// The data model used in ContactDetailsFormFields and related components.
-// This is the data returned by the redux state, where the fields could have a
-// null value.
+/**
+ * The data returned by the /me/domain-contact-information endpoint
+ */
+export interface RawCachedDomainContactDetails {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	phone?: string;
+	phone_number_country?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+}
+
+/**
+ * The data model used in ContactDetailsFormFields and related components.
+ */
 export type PossiblyCompleteDomainContactDetails = {
 	firstName: string | null;
 	lastName: string | null;
@@ -206,6 +227,7 @@ export type PossiblyCompleteDomainContactDetails = {
 	postalCode: string | null;
 	countryCode: string | null;
 	fax: string | null;
+	extra?: ManagedContactDetailsTldExtraFieldsShape< string | null >;
 };
 
 export type DomainContactDetailsErrors = {
@@ -272,6 +294,7 @@ export interface LineItemType {
 	type: string;
 	label: string;
 	formattedAmount: string;
+	hasDeleteButton?: boolean;
 }
 
 export interface WPCOMCart {
@@ -365,6 +388,7 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 	};
 	fr?: {
 		registrantType?: T;
+		registrantVatId?: T;
 		trademarkNumber?: T;
 		sirenSiret?: T;
 	};

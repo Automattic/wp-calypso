@@ -1,104 +1,119 @@
-export const MAX_SELECTABLE_PLUGINS = 10;
+/**
+ * Prepare unix timestamp in seconds
+ * based on selected frequency, day, hour and period
+ */
+export const prepareTimestamp = (
+	frequency: string,
+	day: string,
+	hour: string,
+	period: string
+) => {
+	const event = new Date();
+	const now = new Date();
 
-export const DAILY_OPTION = {
-	label: 'Daily',
-	value: 'daily',
+	let hours = parseInt( hour ) % 12; // Get the hour value (0-11).
+	hours += period === 'pm' ? 12 : 0; // Add 12 if period is 'pm'.
+	hours %= 24; // Ensure the hour is in the range of 0-23.
+	event.setHours( hours, 0, 0, 0 );
+
+	// If the selected hour is in the past, advance to the next day.
+	if ( frequency === 'daily' && event < now ) {
+		event.setDate( event.getDate() + 1 );
+	}
+
+	if ( frequency === 'weekly' ) {
+		// Calculate the difference between the target day and today.
+		let dayDifference = parseInt( day ) - now.getDay();
+
+		// If the target day is today and the selected hour is in the past, advance to the next week.
+		if ( dayDifference === 0 && event < now ) {
+			dayDifference += 7;
+		}
+
+		// Set the date to the next selected day.
+		event.setDate( event.getDate() + dayDifference + ( dayDifference < 0 ? 7 : 0 ) );
+	}
+
+	// return timestamp in seconds
+	return event.getTime() / 1000;
 };
 
-export const WEEKLY_OPTION = {
-	label: 'Weekly',
-	value: 'weekly',
+/**
+ * Validate name
+ * - required
+ * - max length 120
+ */
+export const validateName = ( name: string ) => {
+	let error = '';
+	if ( ! name ) {
+		error = 'Please provide a name to this plugin update schedule.';
+	} else if ( name.length > 120 ) {
+		error = 'Please provide a shorter name.';
+	}
+
+	return error;
 };
 
-export const DAY_OPTIONS = [
-	{
-		label: 'Monday',
-		value: 'a',
-	},
-	{
-		label: 'Tuesday',
-		value: 'b',
-	},
-	{
-		label: 'Wednesday',
-		value: 'c',
-	},
-	{
-		label: 'Thursday',
-		value: 'd',
-	},
-	{
-		label: 'Friday',
-		value: 'e',
-	},
-	{
-		label: 'Saturday',
-		value: 'f',
-	},
-	{
-		label: 'Sunday',
-		value: 'g',
-	},
-];
+type TimeSlot = {
+	frequency: string;
+	timestamp: number;
+};
+/**
+ * Validate time slot
+ * based on existing schedules in context of frequency
+ */
+export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: TimeSlot[] = [] ) => {
+	let error = '';
+	const newDate = new Date( newSchedule.timestamp * 1000 );
 
-export const HOUR_OPTIONS = [
-	{
-		label: '00',
-		value: '0',
-	},
-	{
-		label: '01',
-		value: '1',
-	},
-	{
-		label: '02',
-		value: '3',
-	},
-	{
-		label: '03',
-		value: '3',
-	},
-	{
-		label: '04',
-		value: '4',
-	},
-	{
-		label: '05',
-		value: '5',
-	},
-	{
-		label: '06',
-		value: '6',
-	},
-	{
-		label: '07',
-		value: '7',
-	},
-	{
-		label: '08',
-		value: '8',
-	},
-	{
-		label: '09',
-		value: '9',
-	},
-	{
-		label: '10',
-		value: '10',
-	},
-	{
-		label: '11',
-		value: '11',
-	},
-];
+	// prepareTimestamp should always return a future date, but we need to catch it if it doesn't.
+	if ( newDate < new Date() ) {
+		error = 'Please choose a time in the future for this schedule.';
+	}
 
-export const PERIOD_OPTIONS = [
-	{
-		label: 'AM',
-		value: 'am',
-	},
-	{
-		label: 'PM',
-		value: 'pm',
-	},
-];
+	existingSchedules.forEach( ( schedule ) => {
+		if ( error ) {
+			return;
+		}
+
+		const existingDate = new Date( schedule.timestamp * 1000 );
+
+		if (
+			( newSchedule.frequency === 'daily' || schedule.frequency === 'daily' ) &&
+			existingDate.getHours() === newDate.getHours()
+		) {
+			error = 'Please choose another time, as this slot is already scheduled.';
+		} else if (
+			newSchedule.frequency === 'weekly' &&
+			schedule.frequency === 'weekly' &&
+			newDate.getDay() === existingDate.getDay() &&
+			newDate.getHours() === existingDate.getHours()
+		) {
+			error = 'Please pick another time for optimal performance, as this slot is already taken.';
+		}
+	} );
+
+	return error;
+};
+
+/**
+ * Validate plugins
+ * compared with existing scheduled plugins
+ */
+export const validatePlugins = ( plugins: string[], existingPlugins: Array< string[] > = [] ) => {
+	let error = '';
+
+	if ( plugins.length === 0 ) {
+		error = 'Please select at least one plugin to update.';
+	} else if ( existingPlugins.length ) {
+		const _plugins = [ ...plugins ].sort();
+
+		existingPlugins.forEach( ( existing ) => {
+			if ( JSON.stringify( _plugins ) === JSON.stringify( [ ...existing ].sort() ) ) {
+				error = 'Please select a different set of plugins, as this one has already been chosen.';
+			}
+		} );
+	}
+
+	return error;
+};

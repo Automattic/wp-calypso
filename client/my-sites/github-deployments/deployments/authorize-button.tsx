@@ -73,7 +73,7 @@ export const GitHubAuthorizeButton = () => {
 			onClick={ startAuthorization }
 		>
 			<SocialLogo icon="github" size={ 18 } css={ { marginRight: '4px' } } />
-			{ __( 'Authorize GitHub' ) }
+			{ __( 'Continue with GitHub' ) }
 		</Button>
 	);
 };

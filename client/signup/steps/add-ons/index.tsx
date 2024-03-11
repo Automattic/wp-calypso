@@ -53,8 +53,10 @@ const AddOns = ( {
 	const translate = useTranslate();
 
 	const getAddOnSelectedStatus = useCallback(
-		( { productSlug }: AddOnMeta ) => {
-			const available = ! selectedAddOns.find( ( product: string ) => product === productSlug );
+		( { addOnMeta }: { addOnMeta: AddOnMeta } ) => {
+			const available = ! selectedAddOns.find(
+				( product: string ) => product === addOnMeta.productSlug
+			);
 			return {
 				available,
 				text: translate( 'Added to your plan' ),

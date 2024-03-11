@@ -1,30 +1,40 @@
 import { translate } from 'i18n-calypso';
-
 /**
  * Menu items for the Global Site View sidebar.
  */
 export default function globalSiteSidebarMenu( {
 	showSiteMonitoring,
 	siteDomain,
+	shouldShowAddOns,
 	selectedSiteSlug,
 	isStagingSite,
+	isDesktop,
 }: {
 	showSiteMonitoring: boolean;
 	siteDomain: string;
+	shouldShowAddOns: boolean;
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
+	isDesktop: boolean;
 } ) {
 	return [
 		{
-			icon: 'dashicons-arrow-left-alt2',
+			type: 'current-site',
+			url: `/home/${ siteDomain }`,
+			shouldHide: ! isDesktop,
+		},
+		{
+			slug: 'home',
+			title: translate( 'My Home' ),
+			type: 'menu-item',
+			url: `/home/${ siteDomain }`,
+			shouldHide: isDesktop,
+		},
+		{
 			slug: 'wp-admin',
 			title: translate( 'WP Admin' ),
 			url: `https://${ selectedSiteSlug }/wp-admin`,
 			className: 'sidebar__menu-item-wp-admin',
-		},
-		{
-			type: 'current-site',
-			url: `/home/${ siteDomain }`,
 		},
 		{
 			slug: 'upgrades',
@@ -38,7 +48,7 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Add-ons' ),
 			type: 'menu-item',
 			url: `/add-ons/${ siteDomain }`,
-			shouldHide: isStagingSite,
+			shouldHide: ! shouldShowAddOns,
 		},
 		{
 			slug: 'domains',
@@ -86,6 +96,12 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Subscribers' ),
 			type: 'menu-item',
 			url: `/subscribers/${ siteDomain }`,
+		},
+		{
+			slug: 'connections',
+			title: translate( 'Connections' ),
+			type: 'menu-item',
+			url: `/marketing/connections/${ siteDomain }`,
 		},
 		{
 			slug: 'settings-site',

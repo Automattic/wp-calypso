@@ -84,5 +84,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'wpcom_staging_blog_ids',
 	'can_blaze',
 	'is_commercial',
+	'is_commercial_reasons',
 	'wpcom_admin_interface',
+	'wpcom_classic_early_release',
 ].join();

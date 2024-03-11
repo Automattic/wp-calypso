@@ -26,12 +26,12 @@ import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import LicensesForm from './licenses-form';
 import type { SelectedLicenseProp } from './types';
-import type { AssignLicenceProps } from '../types';
+import type { AssignLicenseProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenceProps ) {
+export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenseProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

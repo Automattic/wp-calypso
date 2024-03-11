@@ -20,6 +20,7 @@ interface Props {
 	ctaText: string;
 	subTitleText?: string;
 	hideTitleAndSubTitle?: boolean;
+	onFreeTrialSelectionSuccess?: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
@@ -37,6 +38,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		ctaText,
 		subTitleText,
 		hideTitleAndSubTitle = false,
+		onFreeTrialSelectionSuccess = () => {},
 		onCtaClick,
 		isBusy,
 		trackingEventsProps,
@@ -49,6 +51,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 
 	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
+			onFreeTrialSelectionSuccess?.();
 			// After the trial is added, we need to request the site again to get the updated plan
 			site && dispatch( requestSite( site.ID ) );
 		},

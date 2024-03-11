@@ -339,11 +339,6 @@ $grid-vertical-gutters: 32px;
 		grid-area: country;
 	}
 
-	.stats__module-wrapper--utm,
-	.list-utm {
-		grid-area: utm;
-	}
-
 	.stats__module-wrapper--authors,
 	.list-authors {
 		grid-area: authors;
@@ -384,10 +379,6 @@ $grid-vertical-gutters: 32px;
 	}
 }
 
-.stats-module-utm {
-	margin-bottom: 32px;
-}
-
 // page level class
 .is-section-stats {
 	// grid level class
@@ -397,37 +388,58 @@ $grid-vertical-gutters: 32px;
 			flex-wrap: wrap;
 			margin-bottom: $grid-vertical-gutters;
 
-			/* Full row */
+			/* Module takes full row */
 			.stats__flexible-grid-item--full {
 				flex: 0 1 100%;
 			}
 
-			/* Half row */
+			/* Module takes half row */
 			.stats__flexible-grid-item--half {
 				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(50% - $grid-horizontal-gutters / 2);
 			}
 
-			/* Third row - two blocks */
+			/* Module takes 1/3 row (spacing adjusted for when there are 2 blocks per row) */
 			.stats__flexible-grid-item--one-third--once-space {
 				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(33.33% - #{gutter-offset(2, 1)}); // at certain breakpints the container doesn't want to shrink without max-width
 			}
 
-			/* Third row - three blocks */
+			/* Module takes 1/3 row (spacing adjusted for when there are 3 blocks per row) */
 			.stats__flexible-grid-item--one-third--two-spaces {
 				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(33.33% - #{gutter-offset(3, 2)});
 			}
 
-			/* Third row - two blocks */
+			/* Module takes 2/3 row (spacing adjusted for when there are two blocks per row) */
 			.stats__flexible-grid-item--two-thirds {
 				flex: 0 1 auto;
 				box-sizing: border-box;
 				max-width: calc(66.66% - #{gutter-offset(2, 1)});
+			}
+
+			/* Module takes 40% (about 5/12) row (spacing adjusted for when there are 2 blocks per row) */
+			.stats__flexible-grid-item--40--once-space {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(40% - #{gutter-offset(2, 1)}); // at certain breakpints the container doesn't want to shrink without max-width
+			}
+
+			/* Module takes 40% (about 5/12) row (spacing adjusted for when there are 3 blocks per row) */
+			.stats__flexible-grid-item--40--two-spaces {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(40% - #{gutter-offset(3, 2)});
+			}
+
+			/* Module takes 60% (about 7/12) row (spacing adjusted for when there are two blocks per row) */
+			.stats__flexible-grid-item--60 {
+				flex: 0 1 auto;
+				box-sizing: border-box;
+				max-width: calc(60% - #{gutter-offset(2, 1)});
 			}
 
 			// sidebar + content // xlarge is the max value so the classes are for a large screen

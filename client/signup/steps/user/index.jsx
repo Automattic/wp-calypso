@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isNewsletterFlow, isHostingSignupFlow } from '@automattic/onboarding';
+import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, get } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,11 +17,11 @@ import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/an
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
-	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
-	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
@@ -45,6 +45,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -208,7 +209,7 @@ export class UserStep extends Component {
 						break;
 					case 'nux':
 						subHeaderText = translate(
-							'All Woo Express stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
+							'All Woo Express stores are powered by WordPress.com. Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 							{
 								components: {
 									a: <a href={ loginUrl } />,
@@ -485,7 +486,7 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( "Let's get started" ) }</h3>
+					<h3>{ translate( 'Create an account' ) }</h3>
 				</div>
 			);
 		}
@@ -557,11 +558,13 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
+		const isWooPasswordLess = this.props.wooPasswordless;
 		const { oauth2Client, isReskinned } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
-			isNewsletterFlow( this.props?.queryObject?.variationName );
+			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
+			isWooPasswordLess;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -602,6 +605,7 @@ export class UserStep extends Component {
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
+					labelText={ this.props.wooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -733,6 +737,7 @@ const ConnectedUser = connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
+			wooPasswordless: getWooPasswordless( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};

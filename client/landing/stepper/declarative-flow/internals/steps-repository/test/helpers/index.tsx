@@ -10,7 +10,7 @@ import type { Reducer } from 'redux';
 
 export interface RenderStepOptions {
 	initialEntry?: string;
-	reducers: Record< string, Reducer >;
+	reducers?: Record< string, Reducer >;
 }
 
 /** Utility to render a step for testing purposes */
@@ -38,14 +38,14 @@ const navigation = {
 
 const defaultProps = {
 	navigation,
-	stepName: 'site-migration-plugin-install',
+	stepName: 'site-migration-instructions',
 	flow: 'site-migration',
 	data: {
 		siteId: 123,
 		siteSlug: 'example.wordpress.com',
-		path: '/site-migration-plugin-install',
+		path: '/site-migration-instructions',
 		intent: SiteIntent.Build,
-		previousStep: 'site-migration-source',
+		previousStep: 'processing',
 	},
 };
 

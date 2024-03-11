@@ -1,9 +1,15 @@
-import { isWpComPlan, isP2Plus, isTitanMail } from '@automattic/calypso-products';
+import {
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isP2Plus,
+	isTitanMail,
+	isWpComPlan,
+} from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 import {
 	getDomainPurchase,
 	isBulkDomainTransfer,
 	isDomainOnly,
+	isSearch,
 	isTitanWithoutMailboxes,
 } from '../utils';
 
@@ -31,6 +37,10 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 		return true;
 	}
 
+	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
+		return true;
+	}
+
 	if ( isTitanWithoutMailboxes( props.selectedFeature ) && getDomainPurchase( purchases ) ) {
 		return true;
 	}
@@ -38,7 +48,21 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 	if ( purchases.length === 1 ) {
 		const purchase = purchases[ 0 ];
 
-		return isWpComPlan( purchase.productSlug ) || isP2Plus( purchase ) || isTitanMail( purchase );
+		if ( isWpComPlan( purchase.productSlug ) ) {
+			return true;
+		}
+
+		if ( isP2Plus( purchase ) ) {
+			return true;
+		}
+
+		if ( isTitanMail( purchase ) ) {
+			return true;
+		}
+
+		if ( isSearch( purchase ) ) {
+			return true;
+		}
 	}
 
 	return false;

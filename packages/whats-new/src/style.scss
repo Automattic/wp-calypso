@@ -13,27 +13,26 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 // Core modal style overrides
 .whats-new-guide__main {
 	&.components-guide-overlay {
-		background-color: rgba(0, 0, 0, 0.45);
+		background-color: transparent;
+		pointer-events: none;
 	}
 
 	&.components-modal__frame {
-		top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 		overflow: auto;
 		max-height: 80vh;
+		pointer-events: auto;
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
 			width: 90vw;
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
-			height: 520px;
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: $wpcom-modal-inner-content-width * 2;
 			min-height: $wpcom-modal-content-min-height;
 			height: fit-content;
-			top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
 		}
 	}
 
@@ -91,14 +90,15 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			}
 
 			.guide__forward-button {
-				background-color: var(--wp-admin-theme-color);
-				border-color: var(--wp-admin-theme-color);
+				background-color: var(--color-accent);
+				border-color: var(--color-accent);
 
 				color: var(--color-text-inverted);
 				font-size: $font-body-small;
 
 				&:focus {
-					border: none;
+					border-color: transparent;
+					box-shadow: 0 0 0 2px var(--color-accent-light);
 				}
 			}
 
@@ -170,7 +170,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	height: 50%;
 	max-height: 230px;
 	padding: 32px 52px 0;
-	background: var(--studio-blue-50);
+	background: #a6b1ee;
 	text-align: center;
 	display: flex;
 	flex-direction: column;

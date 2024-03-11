@@ -11,14 +11,16 @@ export interface Workflow {
 	workflow_path: string;
 }
 
+const childWorkflows = [ 'lint-css.yml', 'lint-js.yml', 'lint-php.yml' ];
+
 export const useDeploymentWorkflowsQuery = (
-	repository: GitHubRepositoryData,
+	repository: Pick< GitHubRepositoryData, 'owner' | 'name' > | undefined,
 	branchName: string,
 	options?: Partial< UseQueryOptions< Workflow[] > >
 ) => {
 	const path = addQueryArgs( '/hosting/github/workflows', {
-		repository_name: repository.name,
-		repository_owner: repository.owner,
+		repository_name: repository?.name,
+		repository_owner: repository?.owner,
 		branch_name: branchName,
 	} );
 
@@ -29,9 +31,12 @@ export const useDeploymentWorkflowsQuery = (
 				path,
 				apiNamespace: 'wpcom/v2',
 			} ),
+		select: ( workflows: Workflow[] ) =>
+			workflows.filter( ( workflow ) => ! childWorkflows.includes( workflow.file_name ) ),
 		meta: {
 			persist: false,
 		},
+		enabled: !! repository,
 		...options,
 	} );
 };

@@ -1,32 +1,33 @@
+import { Purchases, type AddOnMeta, Site } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { AddOnMeta } from '@automattic/data-stores';
+
+interface Props {
+	addOnMeta: AddOnMeta;
+	selectedSiteId?: number | null | undefined;
+}
 
 /**
  * Returns whether add-on product has been purchased or included in site plan.
  */
-const useAddOnPurchaseStatus = ( { productSlug, featureSlugs }: AddOnMeta ) => {
+const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ) => {
 	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const purchased = sitePurchases.find( ( product ) => product.productSlug === productSlug );
-	const isSiteFeature = useSelector(
-		( state ) =>
-			selectedSite &&
-			featureSlugs?.find( ( slug ) => siteHasFeature( state, selectedSite?.ID, slug ) )
+	const matchingPurchases = Purchases.useSitePurchasesByProductSlug( {
+		siteId: selectedSiteId,
+		productSlug: addOnMeta.productSlug,
+	} );
+	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
+	const isSiteFeature = addOnMeta.featureSlugs?.find(
+		( slug ) => siteFeatures.data?.active?.includes( slug )
 	);
 
 	/*
 	 * Order matters below:
 	 * 	1. Check if purchased first.
 	 * 	2. Check if site feature next.
-	 * Reason: `siteHasFeature` involves both purchases and plan features.
+	 * Reason: `siteFeatures.active` involves both purchases and plan features.
 	 */
 
-	if ( purchased ) {
+	if ( matchingPurchases ) {
 		return { available: false, text: translate( 'Purchased' ) };
 	}
 

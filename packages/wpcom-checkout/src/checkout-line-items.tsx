@@ -17,7 +17,6 @@ import {
 	isDIFMProduct,
 	isTieredVolumeSpaceAddon,
 	isAkismetProduct,
-	isGoogleWorkspace,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
 import {
@@ -1025,14 +1024,6 @@ function LineItemMetaInfo( { product }: { product: ResponseCartProduct } ) {
 			args: { quantity: spaceQuantity },
 		} );
 	}
-
-	if ( isGoogleWorkspace( product ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
-		return translate( 'Mailboxes and Productivity Tools' );
-	}
-
-	if ( isTitanMail( product ) ) {
-		return translate( 'Mailboxes' );
-	}
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
@@ -1195,13 +1186,15 @@ function JetpackAkismetSaleCouponCallout( { product }: { product: ResponseCartPr
 
 	const interval = product.bill_period === '31' ? 'month' : 'year';
 	const interval_count = interval === 'month' ? 1 : parseInt( product.bill_period ) / 365;
-	const discountText = getIntroductoryOfferIntervalDisplay(
+	const discountText = getIntroductoryOfferIntervalDisplay( {
 		translate,
-		interval,
-		interval_count,
-		false,
-		''
-	);
+		intervalUnit: interval,
+		intervalCount: interval_count,
+		isFreeTrial: false,
+		isPriceIncrease: false,
+		context: '',
+		remainingRenewalsUsingOffer: 0,
+	} );
 
 	return <DiscountCallout>{ discountText }</DiscountCallout>;
 }

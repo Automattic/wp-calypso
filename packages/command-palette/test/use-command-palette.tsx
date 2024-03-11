@@ -5,8 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { useCommandPalette } from '../src/use-command-palette';
-import { useSites } from '../src/use-sites';
-import { useSitesSortingQuery } from '../src/use-sites-sorting-query';
 
 const defaultCommands = [
 	{
@@ -115,30 +113,9 @@ const commandsWithContextResult = [
 jest.mock( 'cmdk', () => ( {
 	useCommandState: jest.fn(),
 } ) );
-jest.mock( '../src/use-sites-sorting-query', () => ( {
-	useSitesSortingQuery: jest.fn(),
-} ) );
-jest.mock( '../src/use-sites', () => ( {
-	useSites: jest.fn(),
-} ) );
 
 describe( 'useCommandPalette', () => {
 	const queryClient = new QueryClient();
-	( useSitesSortingQuery as jest.Mock ).mockReturnValue( {
-		data: {
-			sortKey: 'alphabetically',
-			sortOrder: 'asc',
-		},
-	} );
-	( useSites as jest.Mock ).mockReturnValue( {
-		data: [],
-	} );
-
-	const wpcom = {
-		req: {
-			get: () => {},
-		},
-	};
 
 	const renderUseCommandPalette = ( { currentRoute = null, commands } ) =>
 		renderHook(
@@ -150,8 +127,9 @@ describe( 'useCommandPalette', () => {
 					setSelectedCommandName: () => {},
 					search: '',
 					navigate: () => {},
-					wpcom: wpcom,
 					currentRoute,
+					useSites: () => [],
+					userCapabilities: {},
 				} ),
 			{
 				wrapper: ( { children } ) => (

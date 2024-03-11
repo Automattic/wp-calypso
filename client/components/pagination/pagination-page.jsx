@@ -13,6 +13,8 @@ class PaginationPage extends Component {
 		pageNumber: PropTypes.node.isRequired,
 		prevLabel: PropTypes.string,
 		totalPages: PropTypes.number.isRequired,
+		paginationLeftIcon: PropTypes.string,
+		paginationRightIcon: PropTypes.string,
 	};
 
 	clickHandler = ( event ) => {
@@ -51,6 +53,8 @@ class PaginationPage extends Component {
 			prevLabel,
 			totalPages,
 			compact,
+			paginationLeftIcon,
+			paginationRightIcon,
 		} = this.props;
 
 		switch ( pageNumber ) {
@@ -72,7 +76,7 @@ class PaginationPage extends Component {
 							onClick={ this.clickHandler }
 							disabled={ currentPage <= 1 }
 						>
-							<Gridicon icon="arrow-left" size={ 18 } />
+							<Gridicon icon={ paginationLeftIcon } size={ 18 } />
 							{ ! compact && ( prevLabel || translate( 'Previous' ) ) }
 						</Button>
 					</li>
@@ -91,7 +95,7 @@ class PaginationPage extends Component {
 							disabled={ currentPage >= totalPages }
 						>
 							{ ! compact && ( nextLabel || translate( 'Next' ) ) }
-							<Gridicon icon="arrow-right" size={ 18 } />
+							<Gridicon icon={ paginationRightIcon } size={ 18 } />
 						</Button>
 					</li>
 				);

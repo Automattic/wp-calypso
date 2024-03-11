@@ -48,6 +48,7 @@ import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
+import { GoogleWorkspaceSetUpThankYou } from 'calypso/my-sites/email/google-workspace-set-up-thank-you';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
@@ -87,7 +88,6 @@ import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
-import GoogleAppsDetails from './google-apps-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
@@ -96,6 +96,7 @@ import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
@@ -107,6 +108,7 @@ import {
 	getDomainPurchaseTypeAndPredicate,
 	isBulkDomainTransfer,
 	isDomainOnly,
+	isSearch,
 	isTitanWithoutMailboxes,
 } from './utils';
 import type { FindPredicate } from './utils';
@@ -572,10 +574,12 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
+			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
+				isGSuiteOrExtraLicenseOrGoogleWorkspace
+			);
 
 			if ( wasBulkDomainTransfer ) {
 				pageContent = (
@@ -587,7 +591,14 @@ export class CheckoutThankYou extends Component<
 			} else if ( isDomainOnly( purchases ) ) {
 				pageContent = <DomainOnlyThankYou purchases={ purchases } receiptId={ receiptId } />;
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
-				pageContent = <PlanOnlyThankYou primaryPurchase={ purchases[ 0 ] } />;
+				pageContent = (
+					<PlanOnlyThankYou
+						primaryPurchase={ purchases[ 0 ] }
+						isEmailVerified={ this.props.isEmailVerified }
+					/>
+				);
+			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
+				pageContent = <JetpackSearchThankYou purchase={ purchases[ 0 ] } />;
 			} else if ( wasTitanEmailOnlyProduct ) {
 				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
 
@@ -607,6 +618,10 @@ export class CheckoutThankYou extends Component<
 						domainName={ domainPurchase.meta }
 						isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					/>
+				);
+			} else if ( gSuiteOrExtraLicenseOrGoogleWorkspace ) {
+				pageContent = (
+					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
 			}
 
@@ -1096,9 +1111,6 @@ function PurchaseDetailsWrapper(
 				selectedSite={ props.selectedSite }
 			/>
 		);
-	}
-	if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-		return <GoogleAppsDetails purchases={ purchases } />;
 	}
 	if ( purchases.some( isDomainMapping ) ) {
 		return <DomainMappingDetails domain={ domain } isRootDomainWithUs={ isRootDomainWithUs } />;

@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '@automattic/data-stores';
 
 export interface Props {
@@ -15,7 +17,13 @@ export interface Props {
 		text: string;
 		handler: ( productSlug: string ) => void;
 	};
-	useAddOnAvailabilityStatus?: ( addOnMeta: AddOnMeta ) => {
+	useAddOnAvailabilityStatus?: ( {
+		selectedSiteId,
+		addOnMeta,
+	}: {
+		selectedSiteId?: number | null | undefined;
+		addOnMeta: AddOnMeta;
+	} ) => {
 		available: boolean;
 		text?: string;
 	};
@@ -96,7 +104,8 @@ const AddOnCard = ( {
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
-	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const availabilityStatus = useAddOnAvailabilityStatus?.( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
@@ -105,8 +114,7 @@ const AddOnCard = ( {
 		actionSecondary?.handler( addOnMeta.productSlug );
 	};
 
-	const shouldRenderLoadingState =
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE && addOnMeta.isLoading;
+	const shouldRenderLoadingState = addOnMeta.isLoading;
 
 	// if product is space upgrade choose the action based on the purchased status
 	const shouldRenderPrimaryAction =

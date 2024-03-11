@@ -10,6 +10,10 @@ export default class FormTextInput extends PureComponent {
 		isValid: PropTypes.bool,
 		selectOnFocus: PropTypes.bool,
 		className: PropTypes.string,
+		name: PropTypes.string,
+		value: PropTypes.any,
+		placeholder: PropTypes.any,
+		onChange: PropTypes.func,
 	};
 
 	state = {
