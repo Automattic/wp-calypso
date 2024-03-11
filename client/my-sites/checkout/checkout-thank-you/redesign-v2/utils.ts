@@ -1,4 +1,4 @@
-import { isDelayedDomainTransfer } from '@automattic/calypso-products';
+import { isDelayedDomainTransfer, isJetpackPlan } from '@automattic/calypso-products';
 import { CheckoutThankYouCombinedProps, getFailedPurchases, getPurchases } from '..';
 
 /**
@@ -16,6 +16,10 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 	}
 
 	const purchases = getPurchases( props );
+
+	if ( purchases.some( isJetpackPlan ) ) {
+		return false;
+	}
 
 	if ( purchases.find( isDelayedDomainTransfer ) ) {
 		return false;

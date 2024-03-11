@@ -76,19 +76,10 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import BloggerPlanDetails from './blogger-plan-details';
-import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
-import DomainMappingDetails from './domain-mapping-details';
-import DomainRegistrationDetails from './domain-registration-details';
-import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import JetpackPlanDetails from './jetpack-plan-details';
-import PersonalPlanDetails from './personal-plan-details';
-import PremiumPlanDetails from './premium-plan-details';
-import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
@@ -97,7 +88,6 @@ import GenericThankYou from './redesign-v2/pages/generic';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
-import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -940,117 +930,19 @@ function PurchaseDetailsWrapper(
 	const purchases = getPurchases( props );
 	const failedPurchases = getFailedPurchases( props );
 	const hasFailedPurchases = failedPurchases.length > 0;
-	const [ component, primaryPurchase, domain ] = props.componentAndPrimaryPurchaseAndDomain;
-	const primaryPurchaseSupportUrl = primaryPurchase?.registrarSupportUrl ?? null;
-	const isGenericReceipt = ! props.receiptId;
-	const registrarSupportUrl =
-		! component || isGenericReceipt || hasFailedPurchases ? null : primaryPurchaseSupportUrl;
-	const isRootDomainWithUs = primaryPurchase?.isRootDomainWithUs ?? false;
+	const [ domain ] = props.componentAndPrimaryPurchaseAndDomain;
 
 	if ( hasFailedPurchases ) {
 		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
 	}
 
-	if ( purchases.some( isJetpackPlan ) ) {
-		return (
-			<JetpackPlanDetails
-				customizeUrl={ props.customizeUrl }
-				domain={ domain }
-				purchases={ purchases }
-				failedPurchases={ failedPurchases }
-				isRootDomainWithUs={ isRootDomainWithUs }
-				registrarSupportUrl={ registrarSupportUrl }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isBlogger ) ) {
-		return (
-			<BloggerPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isPersonal ) ) {
-		return (
-			<PersonalPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isStarter ) ) {
-		return (
-			<StarterPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isPremium ) && props.selectedSite ) {
-		return (
-			<PremiumPlanDetails
-				customizeUrl={ props.customizeUrl }
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isBusiness ) && props.selectedSite ) {
-		return (
-			<BusinessPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isPro ) && props.selectedSite ) {
-		return (
-			<ProPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isEcommerce ) && props.selectedSite ) {
-		return (
-			<EcommercePlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isDomainRegistration ) && domain && props.selectedSite ) {
-		return (
-			<DomainRegistrationDetails
-				purchases={ purchases }
-				domain={ domain }
-				selectedSite={ props.selectedSite }
-			/>
-		);
-	}
-	if ( purchases.some( isDomainMapping ) ) {
-		return <DomainMappingDetails domain={ domain } isRootDomainWithUs={ isRootDomainWithUs } />;
-	}
 	if ( purchases.some( isSiteRedirect ) && domain && props.selectedSite ) {
 		return <SiteRedirectDetails domain={ domain } selectedSite={ props.selectedSite } />;
 	}
+
 	if ( purchases.some( isChargeback ) && props.selectedSite ) {
 		return <ChargebackDetails selectedSite={ props.selectedSite } />;
 	}
+
 	return null;
 }
