@@ -8,17 +8,16 @@ import type { Pattern } from 'calypso/my-sites/patterns/types';
 import './style.scss';
 
 export const DESKTOP_VIEWPORT_WIDTH = 1200;
-
 export const ASPECT_RATIO = 7 / 4;
 
 type PatternPreviewProps = {
-	hideTitle?: boolean;
+	isCategoryPreview?: boolean;
 	pattern: Pattern | null;
 	viewportWidth?: number;
 };
 
 export function PatternPreview( {
-	hideTitle = false,
+	isCategoryPreview,
 	pattern,
 	viewportWidth,
 }: PatternPreviewProps ) {
@@ -34,6 +33,7 @@ export function PatternPreview( {
 	return (
 		<div
 			className={ classNames( 'pattern-preview', {
+				'pattern-preview_category-gallery': isCategoryPreview,
 				'is-loading': ! renderedPattern,
 			} ) }
 		>
@@ -47,7 +47,7 @@ export function PatternPreview( {
 				/>
 			</div>
 
-			{ ! hideTitle && <div className="pattern-preview__title">{ pattern.title }</div> }
+			<div className="pattern-preview__title">{ pattern.title }</div>
 		</div>
 	);
 }

@@ -1,4 +1,5 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
+import classNames from 'classnames';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import {
@@ -46,10 +47,14 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 								href={ `/patterns/${ category.name }` }
 								key={ category.name }
 							>
-								<div className="patterns-category-gallery__item-preview">
+								<div
+									className={ classNames( 'patterns-category-gallery__item-preview', {
+										'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
+									} ) }
+								>
 									<div className="patterns-category-gallery__item-preview-inner">
 										<PatternPreview
-											hideTitle
+											isCategoryPreview
 											pattern={ category.previewPattern }
 											viewportWidth={ DESKTOP_VIEWPORT_WIDTH }
 										/>

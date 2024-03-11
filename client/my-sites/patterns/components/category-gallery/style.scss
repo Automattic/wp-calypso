@@ -26,10 +26,25 @@
 		overflow: hidden;
 	}
 
+	.patterns-category-gallery__item-preview_mirrored {
+		align-content: start;
+
+		.patterns-category-gallery__item-preview-inner {
+			// stylelint-disable-next-line scales/radii
+			border-radius: 0 0 5px 5px;
+			transform: scale(var(--scale)) translateY(-10px);
+			transform-origin: center top;
+		}
+	}
+
 	.patterns-category-gallery__item-preview-inner {
 		--scale: 0.85;
 
-		max-height: 100%;
+		background: var(--color-surface);
+		// stylelint-disable-next-line scales/radii
+		border-radius: 5px 5px 0 0;
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08);
+		overflow: hidden;
 		transform: scale(var(--scale)) translateY(10px);
 		transform-origin: center bottom;
 		transition: transform 0.35s ease;

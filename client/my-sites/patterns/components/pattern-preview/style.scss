@@ -22,3 +22,14 @@
 		min-height: 3rem;
 	}
 }
+
+.pattern-preview_category-gallery {
+	.pattern-preview__renderer {
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	.pattern-preview__title {
+		display: none;
+	}
+}
