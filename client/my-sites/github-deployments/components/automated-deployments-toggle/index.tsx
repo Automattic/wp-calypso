@@ -3,7 +3,7 @@ import { FormToggle } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import './style.scss';
 
 interface AutomatedDeploymentsToggleProps {
@@ -31,6 +31,9 @@ export const AutomatedDeploymentsToggle = ( {
 					} )
 				}
 			</div>
+			<FormSettingExplanation css={ { marginBottom: '0 !important' } }>
+				{ __( 'You can trigger a manual deployment later' ) }
+			</FormSettingExplanation>
 		</FormFieldset>
 	);
 };
