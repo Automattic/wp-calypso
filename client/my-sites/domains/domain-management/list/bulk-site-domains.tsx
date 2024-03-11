@@ -22,6 +22,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
+import PrimaryDomainSelector from '../components/primary-domain-selector';
 import {
 	createBulkAction,
 	deleteBulkActionStatus,
@@ -94,6 +95,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
+				<PrimaryDomainSelector domains={ data?.domains } />
 				<DomainsTable
 					isLoadingDomains={ isLoading }
 					domains={ data?.domains }
