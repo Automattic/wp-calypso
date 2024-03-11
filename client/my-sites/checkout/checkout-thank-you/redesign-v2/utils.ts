@@ -17,6 +17,10 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 
 	const purchases = getPurchases( props );
 
+	if ( ! purchases.length ) {
+		return false;
+	}
+
 	if ( purchases.find( isDelayedDomainTransfer ) ) {
 		return false;
 	}
