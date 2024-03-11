@@ -12,9 +12,11 @@ import { formatNumber, getShortDateString, getPostType } from '../../utils';
 export default function PostItem( {
 	post,
 	filterType,
+	hasPaymentsBlocked,
 }: {
 	post: BlazablePost;
 	filterType: string;
+	hasPaymentsBlocked: boolean;
 } ) {
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: 'post-' + post.ID,
@@ -139,7 +141,7 @@ export default function PostItem( {
 							</a>
 							<Button
 								isBusy={ false }
-								disabled={ false }
+								disabled={ hasPaymentsBlocked }
 								onClick={ onClickPromote }
 								className="post-item__post-promote-button-mobile"
 							>
@@ -173,7 +175,7 @@ export default function PostItem( {
 			<td className="post-item__post-promote">
 				<Button
 					isBusy={ false }
-					disabled={ false }
+					disabled={ hasPaymentsBlocked }
 					onClick={ onClickPromote }
 					className="post-item__post-promote-button"
 				>
