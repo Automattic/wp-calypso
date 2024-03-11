@@ -44,7 +44,6 @@ export const useCorePluginsQuery = (
 				plugin: plugin.plugin.endsWith( ext ) ? plugin.plugin : `${ plugin.plugin }${ ext }`,
 			} ) );
 		}
-
 		return _plugins;
 	};
 
