@@ -818,7 +818,6 @@ class RegisterDomainStep extends Component {
 
 							const isAvailablePremiumDomain = domainAvailability.AVAILABLE_PREMIUM === status;
 							const isAvailableSupportedPremiumDomain =
-								config.isEnabled( 'domains/premium-domain-purchases' ) &&
 								domainAvailability.AVAILABLE_PREMIUM === status &&
 								availabilityResult?.is_supported_premium_domain;
 
@@ -1029,9 +1028,7 @@ class RegisterDomainStep extends Component {
 					const status = get( result, 'status', error );
 					const isAvailable = domainAvailability.AVAILABLE === status;
 					const isAvailableSupportedPremiumDomain =
-						config.isEnabled( 'domains/premium-domain-purchases' ) &&
-						domainAvailability.AVAILABLE_PREMIUM === status &&
-						result?.is_supported_premium_domain;
+						domainAvailability.AVAILABLE_PREMIUM === status && result?.is_supported_premium_domain;
 					resolve( {
 						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
@@ -1097,9 +1094,7 @@ class RegisterDomainStep extends Component {
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
 					const isAvailableSupportedPremiumDomain =
-						config.isEnabled( 'domains/premium-domain-purchases' ) &&
-						AVAILABLE_PREMIUM === status &&
-						result?.is_supported_premium_domain;
+						AVAILABLE_PREMIUM === status && result?.is_supported_premium_domain;
 
 					/**
 					 * In rare cases we don't get the FQDN as suggestion from the suggestion engine but only
