@@ -43,11 +43,12 @@ export function createActions() {
 		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
+			const token = oauthToken.getToken();
 			const data: ImportSubscribersResponse = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
-				token: oauthToken.getToken(),
+				token: typeof token === 'string' ? token : undefined,
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				formData: file && [ [ 'import', file, file.name ] ],
@@ -112,11 +113,12 @@ export function createActions() {
 
 	function* getSubscribersImport( siteId: number, importId: number ) {
 		try {
+			const token = oauthToken.getToken();
 			const data: GetSubscribersImportResponse = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import/${ importId }`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
-				token: oauthToken.getToken(),
+				token: typeof token === 'string' ? token : undefined,
 			} );
 
 			yield getSubscribersImportSuccess( siteId, data );
@@ -138,11 +140,12 @@ export function createActions() {
 	function* getSubscribersImports( siteId: number, status?: ImportJobStatus ) {
 		try {
 			const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
+			const token = oauthToken.getToken();
 			const data: GetSubscribersImportsResponse = yield wpcomRequest( {
 				path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
-				token: oauthToken.getToken(),
+				token: typeof token === 'string' ? token : undefined,
 			} );
 
 			yield getSubscribersImportsSuccess( siteId, data );
