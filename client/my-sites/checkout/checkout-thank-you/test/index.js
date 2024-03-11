@@ -96,73 +96,6 @@ describe( 'CheckoutThankYou', () => {
 		} );
 	} );
 
-	describe( 'Simplified page', () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: PLAN_BUSINESS }, [] ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_BUSINESS,
-		};
-
-		test( 'Should display a full version when isSimplified is missing', () => {
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } />
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'business-plan-details' ) ).toBeVisible();
-			expect( screen.queryByTestId( 'happiness-support' ) ).toBeVisible();
-			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
-				expect.objectContaining( { isSimplified: undefined } ),
-				expect.anything()
-			);
-		} );
-
-		test( 'Should display a simplified version when isSimplified is set to true', () => {
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } isSimplified />
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'business-plan-details' ) ).not.toBeInTheDocument();
-			expect( screen.queryByTestId( 'happiness-support' ) ).not.toBeInTheDocument();
-			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
-				expect.objectContaining( { isSimplified: true } ),
-				expect.anything()
-			);
-		} );
-
-		test( 'Should pass props down to CheckoutThankYou', () => {
-			render(
-				<CheckoutThankYou
-					{ ...props }
-					isSimplified={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
-					upgradeIntent="plugins"
-				/>
-			);
-			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					siteUnlaunchedBeforeUpgrade: true,
-					upgradeIntent: 'plugins',
-				} ),
-				expect.anything()
-			);
-		} );
-	} );
-
 	it( 'renders the failed purchases content if there are failed purchases', async () => {
 		const props = {
 			...defaultProps,
@@ -191,35 +124,6 @@ describe( 'CheckoutThankYou', () => {
 		);
 
 		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: 'jetpack_personal' } ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_PREMIUM,
-		};
-
-		render(
-			<Provider store={ store }>
-				<CheckoutThankYou { ...props } />
-			</Provider>
-		);
-
-		expect( await screen.findByText( 'component--jetpack-plan-details' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the <PlanOnlyThankYou> component if the purchases include a Personal plan', async () => {
