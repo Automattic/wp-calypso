@@ -10,14 +10,11 @@ import {
 	useAddOnFeatureSlugs,
 	ProductsList,
 	Site,
+	Purchases,
 } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
-import { filterTransactions } from 'calypso/me/purchases/billing-history/filter-transactions';
-import { useSelector } from 'calypso/state';
-import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import { usePastBillingTransactions } from 'calypso/state/sites/hooks/use-billing-history';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -27,37 +24,6 @@ import isStorageAddonEnabled from '../is-storage-addon-enabled';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnPrices from './use-add-on-prices';
 import type { AddOnMeta } from '@automattic/data-stores';
-
-const useSpaceUpgradesPurchased = ( {
-	isInSignup,
-	siteId,
-}: {
-	isInSignup: boolean;
-	siteId?: number;
-} ) => {
-	const { billingTransactions, isLoading } = usePastBillingTransactions( isInSignup );
-	const filter = useSelector( ( state ) => getBillingTransactionFilters( state, 'past' ) );
-
-	return useMemo( () => {
-		const spaceUpgradesPurchased: number[] = [];
-
-		if ( billingTransactions && ! isInSignup ) {
-			const filteredTransactions = filterTransactions( billingTransactions, filter, siteId );
-			if ( filteredTransactions?.length ) {
-				for ( const transaction of filteredTransactions ) {
-					transaction.items?.length &&
-						spaceUpgradesPurchased.push(
-							...transaction.items
-								.filter( ( item ) => item.wpcom_product_slug === PRODUCT_1GB_SPACE )
-								.map( ( item ) => Number( item.licensed_quantity ) )
-						);
-				}
-			}
-		}
-
-		return { isLoading, spaceUpgradesPurchased };
-	}, [ billingTransactions, filter, isInSignup, siteId, isLoading ] );
-};
 
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const translate = useTranslate();
@@ -177,29 +143,29 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 
 interface Props {
 	selectedSiteId?: number | null | undefined;
-	isInSignup?: boolean;
 }
 
-const useAddOns = ( {
-	selectedSiteId,
-	isInSignup = false,
-}: Props = {} ): ( AddOnMeta | null )[] => {
-	// if upgrade is bought - show as manage
-	// if upgrade is not bought - only show it if available storage and if it's larger than previously bought upgrade
-	const { data: mediaStorage } = useMediaStorageQuery( selectedSiteId );
-	const { isLoading, spaceUpgradesPurchased } = useSpaceUpgradesPurchased( {
-		isInSignup,
-		siteId: selectedSiteId ?? undefined,
-	} );
+const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
+	const mediaStorage = useMediaStorageQuery( selectedSiteId );
 	const productsList = ProductsList.useProducts();
 	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
+	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
+	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
+		siteId: selectedSiteId,
+		productSlug: PRODUCT_1GB_SPACE,
+	} );
 
 	return useMemo(
 		() =>
 			activeAddOns
 				.filter( ( addOn ) => {
-					// remove the Jetpack AI add-on if the site already supports the feature
+					/**
+					 * Remove the Jetpack AI add-on if the site already supports the feature.
+					 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`.
+					 * The intention is to have a single source of truth. The add-on can be removed from display
+					 * instead with an appropriate flag, but kept in list of add-ons.
+					 */
 					if (
 						addOn.productSlug === PRODUCT_JETPACK_AI_MONTHLY &&
 						siteFeatures.data?.active?.includes( WPCOM_FEATURES_AI_ASSISTANT )
@@ -214,30 +180,47 @@ const useAddOns = ( {
 					const name = addOn.name ? addOn.name : product?.name || '';
 					const description = addOn.description ?? ( product?.description || '' );
 
-					// if it's a storage add on
+					/**
+					 * If siteFeatures, sitePurchases, or productsList are still loading, show the add-on as loading.
+					 * TODO: Potentially another candidate for migrating to `use-add-on-purchase-status`, and attach
+					 * that to the add-on's meta if need to.
+					 */
+					if ( siteFeatures.isLoading || sitePurchases.isLoading || productsList.isLoading ) {
+						return {
+							...addOn,
+							name,
+							description,
+							isLoading: true,
+						};
+					}
+
+					/**
+					 * If the product is not found in the products list, remove the add-on.
+					 * This should signal a wrong slug or a product that doesn't exist i.e. some sort of Bug.
+					 * (not sure if add-on without a connected product is a valid use case)
+					 */
+					if ( ! product ) {
+						return null;
+					}
+
+					/**
+					 * If it's a storage add-on.
+					 */
 					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-						// if storage add ons are not enabled in the config, remove them
+						// if storage add-ons are not enabled in the config, remove them
 						if ( ! isStorageAddonEnabled() ) {
 							return null;
 						}
 
-						// if storage add on hasn't loaded yet
-						if ( isLoading || ! product ) {
-							return {
-								...addOn,
-								name,
-								description,
-								isLoading,
-							};
-						}
-
-						// if storage add on is already purchased
-						if (
-							spaceUpgradesPurchased.findIndex(
-								( spaceUpgrade ) => spaceUpgrade === addOn.quantity
-							) >= 0 &&
-							product
-						) {
+						/**
+						 * If storage add-on is already purchased.
+						 * TODO: Consider migrating this part to `use-add-on-purchase-status` and attach
+						 * that to the add-on's meta if need to. The intention is to have a single source of truth.
+						 */
+						const isStorageAddOnPurchased = Object.values( spaceUpgradesPurchased ?? [] ).some(
+							( purchase ) => purchase.purchaseRenewalQuantity === addOn.quantity
+						);
+						if ( isStorageAddOnPurchased ) {
 							return {
 								...addOn,
 								name,
@@ -246,10 +229,12 @@ const useAddOns = ( {
 							};
 						}
 
-						const currentMaxStorage = mediaStorage?.max_storage_bytes / Math.pow( 1024, 3 );
+						/**
+						 * If the current storage add-on option is greater than the available upgrade.
+						 * TODO: This is also potentially a candidate for `use-add-on-purchase-status`.
+						 */
+						const currentMaxStorage = mediaStorage.data?.max_storage_bytes / Math.pow( 1024, 3 );
 						const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
-
-						// if the current storage add on option is greater than the available upgrade
 						if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
 							return {
 								...addOn,
@@ -260,12 +245,9 @@ const useAddOns = ( {
 						}
 					}
 
-					if ( ! product ) {
-						// will not render anything if product not fetched from API
-						// probably need some sort of placeholder in the add-ons page instead
-						return null;
-					}
-
+					/**
+					 * Regular product add-ons.
+					 */
 					return {
 						...addOn,
 						name,
@@ -274,10 +256,12 @@ const useAddOns = ( {
 				} ),
 		[
 			activeAddOns,
-			isLoading,
-			mediaStorage,
+			mediaStorage.data?.max_storage_bytes,
 			productsList.data,
-			siteFeatures.data,
+			productsList.isLoading,
+			siteFeatures.data?.active,
+			siteFeatures.isLoading,
+			sitePurchases.isLoading,
 			spaceUpgradesPurchased,
 		]
 	);
