@@ -25,6 +25,7 @@ import {
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
+import { useSetHasUserManagedPlugins } from './hooks/use-user-managed-plugins';
 import {
 	DAILY_OPTION,
 	DAY_OPTIONS,
@@ -55,6 +56,8 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true, true );
+	useSetHasUserManagedPlugins( plugins, isPluginsFetched );
+
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
