@@ -165,7 +165,7 @@ const ModalContent = styled.div( {
 } );
 
 const modalOverlayClassName = css( {
-	// golbal-notices has z-index: 179
+	// global-notices has z-index: 179
 	zIndex: 178,
 } );
 
@@ -271,9 +271,11 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 		height: 'auto',
 		verticalAlign: 'middle',
 	},
-	'.components-popover': {
-		zIndex: 177,
-	},
+} );
+
+const siteDropdownMenuPopoverClassName = css( {
+	// modalOverlayClassName has z-index: 178
+	zIndex: 177,
 
 	'.submenu-popover > .components-popover__content': {
 		display: 'flex',
@@ -459,6 +461,7 @@ export const SitesEllipsisMenu = ( {
 		<SiteDropdownMenu
 			icon={ <Gridicon icon="ellipsis" /> }
 			className={ className }
+			popoverProps={ { className: siteDropdownMenuPopoverClassName } }
 			label={ __( 'Site Actions' ) }
 		>
 			{ () => (
