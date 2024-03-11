@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import wpcom from 'calypso/lib/wp'; // Import restricted
+import * as oauthToken from 'calypso/lib/oauth-token'; // Import restricted
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	AddSubscribersResponse,
@@ -43,10 +43,11 @@ export function createActions() {
 		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
-			const data: ImportSubscribersResponse = yield wpcom.req.post( {
+			const data: ImportSubscribersResponse = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
+				token: oauthToken.getToken(),
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				formData: file && [ [ 'import', file, file.name ] ],
@@ -115,6 +116,7 @@ export function createActions() {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import/${ importId }`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
+				token: oauthToken.getToken(),
 			} );
 
 			yield getSubscribersImportSuccess( siteId, data );
@@ -140,6 +142,7 @@ export function createActions() {
 				path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
+				token: oauthToken.getToken(),
 			} );
 
 			yield getSubscribersImportsSuccess( siteId, data );
