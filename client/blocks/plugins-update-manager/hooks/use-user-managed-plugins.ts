@@ -5,7 +5,7 @@ import { PluginUpdateManagerContext } from '../context';
 export function useSetHasUserManagedPlugins( data: CorePluginsResponse, isFetched: boolean ) {
 	const { setHasUserManagedPlugins } = useContext( PluginUpdateManagerContext );
 	useEffect( () => {
-		if ( isFetched && ! data.length ) {
+		if ( isFetched && ! data.filter( ( plugin ) => ! plugin.is_managed ).length ) {
 			setHasUserManagedPlugins( false );
 			return;
 		}
