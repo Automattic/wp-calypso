@@ -156,17 +156,6 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		if (
-			this.props.isWoo &&
-			! this.props.wooPasswordless &&
-			config.isEnabled( 'woo/passwordless' )
-		) {
-			// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
-			const queryParams = { 'woo-passwordless': 'yes' };
-			const currentPath = window.location.pathname + window.location.search;
-			page.replace( addQueryArgs( queryParams, currentPath ) );
-		}
-
 		let providedDependencies = this.getDependenciesInQuery();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
@@ -912,7 +901,7 @@ class Signup extends Component {
 			<>
 				<div
 					className={ `signup is-${ kebabCase( this.props.flowName ) } ${
-						this.props.wooPasswordless ? 'is-woo-passwordless' : ''
+						this.props.isWooPasswordless ? 'is-woo-passwordless' : ''
 					}` }
 				>
 					<DocumentHead title={ this.props.pageTitle } />
@@ -962,6 +951,14 @@ export default connect(
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const hostingFlow = startedInHostingFlow( state );
+		const isWoo = isWooOAuth2Client( oauth2Client );
+		const wooPasswordless = getWooPasswordless( state );
+		if ( isWoo && ! wooPasswordless && config.isEnabled( 'woo/passwordless' ) ) {
+			// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
+			const queryParams = { 'woo-passwordless': 'yes' };
+			const currentPath = window.location.pathname + window.location.search;
+			page.replace( addQueryArgs( queryParams, currentPath ) );
+		}
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -983,8 +980,7 @@ export default connect(
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 			hostingFlow,
-			wooPasswordless: getWooPasswordless( state ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
+			isWooPasswordless: config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless,
 		};
 	},
 	{
