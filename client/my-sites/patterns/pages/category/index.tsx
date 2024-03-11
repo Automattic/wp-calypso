@@ -33,7 +33,7 @@ export const PatternsCategoryPage = ( {
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
 	// Helps prevent resetting the search input if a search term was provided through the URL
-	const isInitialLoad = useRef( true );
+	const isInitialRender = useRef( true );
 	// Helps reset the search input when navigating between categories
 	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
@@ -45,8 +45,8 @@ export const PatternsCategoryPage = ( {
 
 	// Resets the search term whenever the category changes
 	useEffect( () => {
-		if ( isInitialLoad.current ) {
-			isInitialLoad.current = false;
+		if ( isInitialRender.current ) {
+			isInitialRender.current = false;
 		} else {
 			setSearchTerm( '' );
 			setSearchFormKey( category );

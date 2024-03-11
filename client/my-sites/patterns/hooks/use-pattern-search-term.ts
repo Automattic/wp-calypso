@@ -55,11 +55,13 @@ export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< stri
  * Filter patterns by looking at their titles, description and category names
  */
 export function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) {
+	const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
 	return patterns.filter( ( pattern ) => {
-		const lowerCaseSearchTerm = searchTerm.toLowerCase();
 		const patternCategories = Object.values( pattern.categories ).map(
 			( category ) => category?.title
 		);
+		// Filters out falsy values in a way TS can understand
 		const fields = [ pattern.title, pattern.description, ...patternCategories ].filter(
 			( x ): x is NonNullable< typeof x > => Boolean( x )
 		);
