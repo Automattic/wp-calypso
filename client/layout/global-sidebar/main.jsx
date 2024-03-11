@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -8,10 +9,17 @@ import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import Sidebar from '../sidebar';
+import { GLOBAL_SIDEBAR_EVENTS } from './events';
 import { GlobalSidebarFooter } from './footer';
 import './style.scss';
 
-const GlobalSidebar = ( { children, onClick = undefined, className = '', ...props } ) => {
+const GlobalSidebar = ( {
+	children,
+	onClick = undefined,
+	className = '',
+	path = '',
+	...props
+} ) => {
 	const wrapperRef = useRef( null );
 	const bodyRef = useRef( null );
 	const menuItems = useSiteMenuItems();
@@ -27,6 +35,10 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 			bodyEl.scrollTop += event.deltaY;
 		}
 	}, [] );
+
+	const handleBackLinkClick = () => {
+		recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_BACK_CLICK, { path } );
+	};
 
 	useEffect( () => {
 		wrapperRef.current?.addEventListener( 'wheel', handleWheel, { passive: false } );
@@ -55,7 +67,7 @@ const GlobalSidebar = ( { children, onClick = undefined, className = '', ...prop
 				<Sidebar className={ className } { ...sidebarProps } onClick={ onClick }>
 					{ requireBackLink && (
 						<div className="sidebar__back-link">
-							<a href="/sites">
+							<a href="/sites" onClick={ handleBackLinkClick }>
 								<Gridicon icon="chevron-left" size={ 24 } />
 								<span className="sidebar__back-link-text">{ sidebarBackLinkText }</span>
 							</a>

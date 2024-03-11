@@ -36,7 +36,13 @@ export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } )
 
 					if ( 'current-site' === item?.type ) {
 						return (
-							<Site key={ item.type } site={ site } href={ item?.url } isSelected={ isSelected } />
+							<Site
+								key={ item.type }
+								site={ site }
+								href={ item?.url }
+								isSelected={ isSelected }
+								onSelect={ () => onMenuItemClick( item?.url ) }
+							/>
 						);
 					}
 					if ( 'separator' === item?.type ) {
