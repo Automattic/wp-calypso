@@ -30,3 +30,12 @@
 		gap: 16px;
 	}
 }
+
+.is-section-github-deployments {
+	// overwrite notices z-index so they are visible on top of the repository selection modal
+	.global-notices {
+		// This should be - z-index: z-index("root", ".is-section-github-deployments .global-notices")
+		// but the @automattic/onboarding/styles/mixins import overwrites the z-index function on client/assets/stylesheets/shared/functions/_z-index.scss
+		z-index: 100201;
+	}
+}
