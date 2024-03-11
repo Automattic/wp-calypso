@@ -69,6 +69,14 @@ const GitHubLoginButton = ( {
 
 	const errorRef = useRef< EventTarget | null >( null );
 
+	const handleGitHubError = () => {
+		dispatch(
+			errorNotice(
+				translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
+			)
+		);
+	};
+
 	const exchangeCodeForToken = async ( auth_code: string ) => {
 		let response;
 		try {
@@ -92,11 +100,7 @@ const GitHubLoginButton = ( {
 				);
 			}
 
-			dispatch(
-				errorNotice(
-					translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
-				)
-			);
+			handleGitHubError();
 			return;
 		}
 
@@ -130,13 +134,9 @@ const GitHubLoginButton = ( {
 
 	useEffect( () => {
 		if ( authError ) {
-			dispatch(
-				errorNotice(
-					translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
-				)
-			);
+			handleGitHubError();
 		}
-	}, [ authError, translate ] );
+	}, [ authError, handleGitHubError ] );
 
 	const isDisabled = isFormDisabled || disabledState;
 
