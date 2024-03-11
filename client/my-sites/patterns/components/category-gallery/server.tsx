@@ -37,13 +37,22 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 								} ) }
 							>
 								<div className="patterns-category-gallery__item-preview-inner">
-									<PatternPreviewPlaceholder pattern={ category.regularPreviewPattern } />
+									<PatternPreviewPlaceholder
+										pattern={
+											patternType === 'pages'
+												? category.pagePreviewPattern
+												: category.regularPreviewPattern
+										}
+									/>
 								</div>
 							</div>
 						</div>
 
 						<div className="patterns-category-gallery__item-name">{ category.label }</div>
-						<div className="patterns-category-gallery__item-count">{ category.count } patterns</div>
+						<div className="patterns-category-gallery__item-count">
+							{ patternType === 'pages' ? category.pagePatternCount : category.regularPatternCount }{ ' ' }
+							patterns
+						</div>
 					</LocalizedLink>
 				) ) }
 			</div>

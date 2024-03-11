@@ -22,7 +22,7 @@ type CategoryBase = {
 export type CategorySnakeCase = CategoryBase & {
 	page_pattern_count: number;
 	page_preview_pattern: Pattern | null;
-	regular_cattern_count: number;
+	regular_pattern_count: number;
 	regular_preview_pattern: Pattern | null;
 };
 
@@ -33,12 +33,8 @@ export type Category = CategoryBase & {
 	regularPreviewPattern: Pattern | null;
 };
 
-type CategoryWithCount = Category & {
-	count: number;
-};
-
 export type CategoryGalleryProps = {
-	categories?: CategoryWithCount[];
+	categories?: Category[];
 	description: string;
 	patternType: 'regular' | 'pages';
 	title: string;

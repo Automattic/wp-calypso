@@ -76,7 +76,10 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 
 								<div className="patterns-category-gallery__item-name">{ category.label }</div>
 								<div className="patterns-category-gallery__item-count">
-									{ category.count } patterns
+									{ patternType === 'pages'
+										? category.pagePatternCount
+										: category.regularPatternCount }{ ' ' }
+									patterns
 								</div>
 							</LocalizedLink>
 						) ) }

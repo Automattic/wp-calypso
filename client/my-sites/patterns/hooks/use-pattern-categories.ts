@@ -14,16 +14,16 @@ export function getPatternCategoriesQueryOptions(
 				.then( ( categories: CategorySnakeCase[] ) => {
 					return categories.map(
 						( {
-							regular_cattern_count,
-							page_preview_pattern,
 							page_pattern_count,
+							page_preview_pattern,
+							regular_pattern_count,
 							regular_preview_pattern,
 							...restCategory
 						} ): Category => ( {
 							...restCategory,
 							pagePatternCount: page_pattern_count,
 							pagePreviewPattern: page_preview_pattern,
-							regularPatternCount: regular_cattern_count,
+							regularPatternCount: regular_pattern_count,
 							regularPreviewPattern: regular_preview_pattern,
 						} )
 					);

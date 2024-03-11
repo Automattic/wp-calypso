@@ -53,7 +53,7 @@ export const PatternsHomePage = ( {
 			<CategoryGallery
 				title="Ship faster with patterns"
 				description="Choose from a huge library of patterns to build any page you need."
-				categories={ categories?.map( ( c ) => ( { ...c, count: c.regularPatternCount } ) ) }
+				categories={ categories }
 				patternType="regular"
 			/>
 
@@ -111,9 +111,7 @@ export const PatternsHomePage = ( {
 			<CategoryGallery
 				title="Beautifully curated page layouts"
 				description="Entire pages built of patterns, ready to be added to your site."
-				categories={ categories
-					?.filter( ( c ) => c.pagePatternCount )
-					.map( ( c ) => ( { ...c, count: c.pagePatternCount } ) ) }
+				categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
 				patternType="pages"
 			/>
 
