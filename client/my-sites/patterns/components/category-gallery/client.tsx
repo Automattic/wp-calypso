@@ -25,15 +25,12 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 		first: categories?.map( ( { previewPattern } ) => `${ previewPattern?.ID }` ) ?? [],
 	};
 
-	if ( ! categories ) {
-		return null;
-	}
-
 	return (
 		<BlockRendererProvider
 			siteId={ RENDERER_SITE_ID }
 			placeholder={
 				<CategoryGalleryServer
+					categories={ categories }
 					description={ description }
 					patternType={ patternType }
 					title={ title }
@@ -50,7 +47,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 						className="patterns-category-gallery"
 						style={ { '--column-count': COLUMN_COUNTS[ patternType ] } as React.CSSProperties }
 					>
-						{ categories.map( ( category ) => (
+						{ categories?.map( ( category ) => (
 							<LocalizedLink
 								className="patterns-category-gallery__item"
 								href={ `/patterns/${ category.name }` }

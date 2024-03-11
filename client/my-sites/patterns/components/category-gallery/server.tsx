@@ -17,17 +17,13 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	title,
 	patternType,
 } ) => {
-	if ( ! categories ) {
-		return null;
-	}
-
 	return (
 		<PatternsSection title={ title } description={ description }>
 			<div
 				className="patterns-category-gallery"
 				style={ { '--column-count': COLUMN_COUNTS[ patternType ] } as React.CSSProperties }
 			>
-				{ categories.map( ( category ) => (
+				{ categories?.map( ( category ) => (
 					<LocalizedLink
 						className="patterns-category-gallery__item"
 						href={ `/patterns/${ category.name }` }
