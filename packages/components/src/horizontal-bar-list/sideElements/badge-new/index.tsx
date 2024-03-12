@@ -1,4 +1,4 @@
-import { Badge } from '@automattic/components';
+import { Badge } from '../../../.';
 
 import './style.scss';
 
