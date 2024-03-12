@@ -243,25 +243,6 @@ import {
 	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
 	JETPACK_TAG_FOR_SMALL_SITES,
 	JETPACK_TAG_FOR_BLOGS,
-	FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
-	FEATURE_CANCELLATION_AD_FREE_SITE,
-	FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
-	FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-	FEATURE_CANCELLATION_EARN_AD_REVENUE,
-	FEATURE_CANCELLATION_EMAIL_SUPPORT,
-	FEATURE_CANCELLATION_GOOGLE_ANALYTICS,
-	FEATURE_CANCELLATION_HIGH_QUALITY_VIDEOS,
-	FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-	FEATURE_CANCELLATION_LIVE_CHAT,
-	FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-	FEATURE_CANCELLATION_PLUGINS,
-	FEATURE_CANCELLATION_PREMIUM_DESIGN,
-	FEATURE_CANCELLATION_PREMIUM_THEMES,
-	FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-	FEATURE_CANCELLATION_SEO_TOOLS,
-	FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-	FEATURE_CANCELLATION_SFTP_AND_DATABASE,
-	FEATURE_CANCELLATION_SHIPPING_CARRIERS,
 	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -464,7 +445,6 @@ import type {
 	WPComPlan,
 	IncompleteWPcomPlan,
 	IncompleteJetpackPlan,
-	CancellationFeatureLists,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -679,37 +659,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-			],
-			andMore: true,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-			],
-			andMore: true,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-			],
-			andMore: true,
-		},
-	} ),
 } );
 
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
@@ -761,32 +710,6 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-	} ),
 } );
 
 const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
@@ -937,32 +860,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-	} ),
 } );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
@@ -1165,39 +1062,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
-				FEATURE_CANCELLATION_SHIPPING_CARRIERS,
-				FEATURE_CANCELLATION_PREMIUM_DESIGN,
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_SEO_TOOLS,
-			],
-			andMore: true,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
-				FEATURE_CANCELLATION_SHIPPING_CARRIERS,
-				FEATURE_CANCELLATION_PREMIUM_DESIGN,
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_SEO_TOOLS,
-			],
-			andMore: true,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
-				FEATURE_CANCELLATION_SHIPPING_CARRIERS,
-				FEATURE_CANCELLATION_PREMIUM_DESIGN,
-				FEATURE_CANCELLATION_PLUGINS,
-				WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-				FEATURE_SELL_INTERNATIONALLY,
-			],
-			andMore: true,
-		},
-	} ),
 } );
 
 const getWooExpressMediumPlanCompareFeatures = (): string[] => [
@@ -1547,40 +1411,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_PREMIUM_THEMES,
-				FEATURE_CANCELLATION_GOOGLE_ANALYTICS,
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: false,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_LIVE_CHAT,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_PREMIUM_THEMES,
-				FEATURE_CANCELLATION_GOOGLE_ANALYTICS,
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-			],
-			andMore: false,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_PREMIUM_THEMES,
-				FEATURE_CANCELLATION_GOOGLE_ANALYTICS,
-				FEATURE_CANCELLATION_COLLECT_PAYMENTS,
-				FEATURE_CANCELLATION_AD_FREE_SITE,
-			],
-			andMore: false,
-		},
-	} ),
 } );
 
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
@@ -1815,37 +1645,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_SEO_TOOLS,
-				FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
-				FEATURE_CANCELLATION_SFTP_AND_DATABASE,
-				FEATURE_CANCELLATION_EMAIL_SUPPORT,
-			],
-			andMore: true,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_SEO_TOOLS,
-				FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
-				FEATURE_CANCELLATION_SFTP_AND_DATABASE,
-				FEATURE_CANCELLATION_LIVE_CHAT,
-			],
-			andMore: true,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_SEO_TOOLS,
-				FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
-				FEATURE_CANCELLATION_SFTP_AND_DATABASE,
-			],
-			andMore: true,
-		},
-	} ),
 	getSenseiFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
@@ -1937,37 +1736,6 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 				'you can keep your site on this legacy plan as long as your subscription remains active. ' +
 				'If canceled, the WordPress.com Pro plan can no longer be added to your account.'
 		),
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_PREMIUM_THEMES,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_HIGH_QUALITY_VIDEOS,
-				FEATURE_CANCELLATION_SFTP_AND_DATABASE,
-			],
-			andMore: true,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_PREMIUM_THEMES,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_HIGH_QUALITY_VIDEOS,
-				FEATURE_CANCELLATION_SFTP_AND_DATABASE,
-			],
-			andMore: true,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_PLUGINS,
-				FEATURE_CANCELLATION_PREMIUM_THEMES,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_HIGH_QUALITY_VIDEOS,
-			],
-			andMore: true,
-		},
-	} ),
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -3662,37 +3430,6 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 		FEATURE_TITAN_EMAIL,
 	],
 	getIncludedFeatures: () => [ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ],
-	getCancellationFeatureList: (): CancellationFeatureLists => ( {
-		monthly: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-			],
-			andMore: true,
-		},
-		yearly: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-			],
-			andMore: true,
-		},
-		withDomain: {
-			featureList: [
-				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-				FEATURE_CANCELLATION_EARN_AD_REVENUE,
-				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-			],
-			andMore: true,
-		},
-	} ),
 };
 
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
