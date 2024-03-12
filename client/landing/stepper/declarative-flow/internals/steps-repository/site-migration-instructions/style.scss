@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/variables";
+
 .site-migration-instructions {
 	.site-migration-instructions__list {
 		li {
@@ -20,6 +22,7 @@
 
 		&.error {
 			height: 55px;
+			color: $alert-red;
 		}
 	}
 
