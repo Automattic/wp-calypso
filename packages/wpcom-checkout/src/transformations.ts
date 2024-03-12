@@ -1,6 +1,5 @@
 import {
 	isBiennially,
-	isDomainIntroductoryOfferVisible,
 	isJetpackPlan,
 	isJetpackProduct,
 	isJetpackSocialAdvancedSlug,
@@ -455,11 +454,6 @@ function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartPro
 	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
 		return false;
 	}
-
-	if ( ! isDomainIntroductoryOfferVisible( product ) ) {
-		return false;
-	}
-
 	return true;
 }
 
@@ -546,12 +540,7 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 	// If there are no original cost overrides, return the first cost override's
 	// old price.
 	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
-		const overridesToConsider =
-			product.cost_overrides?.filter( ( override ) =>
-				isUserVisibleCostOverride( override, product )
-			) ?? [];
-
-		const firstOverride = overridesToConsider.length > 0 ? overridesToConsider[ 0 ] : null;
+		const firstOverride = product.cost_overrides[ 0 ];
 		if ( firstOverride ) {
 			return firstOverride.old_subtotal_integer + multiYearDiscount;
 		}
