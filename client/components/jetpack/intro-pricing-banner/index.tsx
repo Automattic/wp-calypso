@@ -95,9 +95,7 @@ const IntroPricingBanner: React.FC = () => {
 							className="intro-pricing-banner__item-label is-link"
 							onClick={ () => {
 								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' );
-								page.show(
-									localizeUrl( 'http://jetpack.cloud.localhost:3000/manage/pricing', locale )
-								);
+								page.show( localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale ) );
 							} }
 						>
 							{ preventWidows( translate( 'Explore bulk pricing' ) ) }
