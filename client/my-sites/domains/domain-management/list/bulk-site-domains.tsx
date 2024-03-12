@@ -95,7 +95,11 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
-				<PrimaryDomainSelector domains={ data?.domains } />
+				<PrimaryDomainSelector
+					domains={ data?.domains }
+					site={ site }
+					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
+				/>
 				<DomainsTable
 					isLoadingDomains={ isLoading }
 					domains={ data?.domains }
