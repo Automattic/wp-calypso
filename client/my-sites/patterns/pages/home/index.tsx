@@ -53,7 +53,7 @@ export const PatternsHomePage = ( {
 			<CategoryGallery
 				title="Ship faster with patterns"
 				description="Choose from a huge library of patterns to build any page you need."
-				categories={ categories }
+				categories={ categories?.filter( ( c ) => c.regularPatternCount ) }
 				patternType="regular"
 			/>
 

@@ -29,7 +29,7 @@ export function getPatternCategoriesQueryOptions(
 					);
 				} );
 		},
-		staleTime: Infinity,
+		staleTime: 5 * 60 * 1000,
 		...queryOptions,
 	};
 }

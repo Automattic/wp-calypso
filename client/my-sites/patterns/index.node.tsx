@@ -43,11 +43,7 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 
 	// Fetches the list of categories first, then fetches patterns if a specific category was requested
 	queryClient
-		.fetchQuery(
-			getPatternCategoriesQueryOptions( locale, {
-				staleTime: 10 * 60 * 1000,
-			} )
-		)
+		.fetchQuery( getPatternCategoriesQueryOptions( locale ) )
 		.then( ( categories ) => {
 			if ( ! params.category ) {
 				return;
@@ -65,7 +61,7 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 			performanceMark( context, 'getPatterns', true );
 
 			return queryClient.fetchQuery< Pattern[] >(
-				getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
+				getPatternsQueryOptions( locale, params.category )
 			);
 		} )
 		.then( () => {
