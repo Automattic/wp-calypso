@@ -126,7 +126,7 @@ export const PatternsCategoryPage = ( {
 					<h1 className="patterns-page-category__title">Patterns</h1>
 
 					<ToggleGroupControl
-						className="patterns__toggle-type"
+						className="patterns-page-category__toggle--pattern-type"
 						isBlock
 						label=""
 						onChange={ ( value ) => {
@@ -135,24 +135,34 @@ export const PatternsCategoryPage = ( {
 						} }
 						value={ patternTypeFilter }
 					>
-						<ToggleGroupControlOption label="Patterns" value={ PatternTypeFilter.REGULAR } />
 						<ToggleGroupControlOption
+							className="patterns-page-category__toggle-option"
+							label="Patterns"
+							value={ PatternTypeFilter.REGULAR }
+						/>
+						<ToggleGroupControlOption
+							className="patterns-page-category__toggle-option"
 							disabled={ categoryObject?.pagePatternCount === 0 }
 							label="Page layouts"
 							value={ PatternTypeFilter.PAGES }
 						/>
 					</ToggleGroupControl>
 
-					<ToggleGroupControl label="" isBlock className="patterns__toggle-view" value="patterns">
+					<ToggleGroupControl
+						className="patterns-page-category__toggle--view"
+						label=""
+						isBlock
+						value="patterns"
+					>
 						<ToggleGroupControlOption
-							value="patterns"
+							className="patterns-page-category__toggle-option--list-view"
 							label="List view"
-							className="patterns-button__list-view"
+							value="list"
 						/>
 						<ToggleGroupControlOption
-							value="layouts"
+							className="patterns-page-category__toggle-option--grid-view"
 							label="Grid view"
-							className="patterns-button__grid-view"
+							value="grid"
 						/>
 					</ToggleGroupControl>
 				</div>
