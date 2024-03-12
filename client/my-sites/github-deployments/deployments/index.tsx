@@ -46,11 +46,14 @@ export function GitHubDeployments() {
 		<PageShell
 			pageTitle={ __( 'GitHub Deployments' ) }
 			topRightButton={
-				<ConnectionWizardButton
-					onClick={ () => {
-						page( createDeploymentPage( siteSlug! ) );
-					} }
-				/>
+				deployments &&
+				deployments?.length > 0 && (
+					<ConnectionWizardButton
+						onClick={ () => {
+							page( createDeploymentPage( siteSlug! ) );
+						} }
+					/>
+				)
 			}
 		>
 			{ renderContent() }
