@@ -98,7 +98,6 @@ const SiteMigrationInstructions: Step = function () {
 											{
 												components: {
 													a: <a href={ destSiteUrl } target="_blank" rel="noreferrer" />,
-													strong: <strong />,
 												},
 											}
 										) }
