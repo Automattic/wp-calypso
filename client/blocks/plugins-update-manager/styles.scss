@@ -17,6 +17,23 @@
 	.components-text {
 		color: var(--studio-gray-60);
 		font-size: 0.875rem;
+
+		&.validation-msg,
+		&.info-msg {
+			display: block;
+			min-height: 1rem;
+			font-size: 0.75rem;
+			margin-bottom: 0.5rem;
+		}
+
+		&.validation-msg {
+			color: var(--studio-red-50);
+
+			svg {
+				fill: var(--studio-red-50);
+				margin-left: 0;
+			}
+		}
 	}
 
 	p.components-text {
@@ -107,6 +124,15 @@
 
 		.badge-component {
 			margin-inline-start: 0.5rem;
+		}
+	}
+
+	.components-card__footer {
+		display: flex;
+		align-items: baseline;
+
+		.validation-msg {
+			width: 100%;
 		}
 	}
 }

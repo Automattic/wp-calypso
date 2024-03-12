@@ -152,17 +152,6 @@ describe( 'useCommandPalette', () => {
 		);
 	} );
 
-	it( 'should return all the commands in the order they are added to commandsWithViewMySiteOnSite; View My Site should be hidden in /sites context', () => {
-		const { result } = renderUseCommandPalette( {
-			currentRoute: '/sites',
-			commands: commandsWithViewMySite,
-		} );
-
-		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
-			commandsWithViewMySiteOnSitesResult
-		);
-	} );
-
 	it( 'should return Enable Edge Cache command first as it matches the context; all other commands should follow in the order they are added to commandsWithContext array', () => {
 		const { result } = renderUseCommandPalette( {
 			currentRoute: '/settings',

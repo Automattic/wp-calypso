@@ -3,7 +3,7 @@ export const COMMAND_SEPARATOR = '|~~~|';
 export const useCommandFilter = () => {
 	const commandFilter = ( value: string, search: string ) => {
 		const lowercaseValue = value.toLowerCase();
-		const lowercaseSearch = search.toLowerCase();
+		const lowercaseSearch = search.toLowerCase().trim();
 
 		const [ beforeSeparator, afterSeparator ] = lowercaseValue.split( COMMAND_SEPARATOR );
 

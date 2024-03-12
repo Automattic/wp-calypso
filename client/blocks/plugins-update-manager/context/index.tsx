@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode } from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
 import type { SiteSlug } from 'calypso/types';
 
 interface PluginUpdateManagerContextProps {
@@ -6,19 +6,39 @@ interface PluginUpdateManagerContextProps {
 	isEligibleForFeature: boolean;
 }
 
-const PluginUpdateManagerContext = createContext< PluginUpdateManagerContextProps >( {
+interface PluginUpdateManagerContextState {
+	siteHasEligiblePlugins: boolean;
+	setSiteHasEligiblePlugins: ( siteHasEligiblePlugins: boolean ) => void;
+}
+
+const PluginUpdateManagerContext = createContext<
+	PluginUpdateManagerContextProps & PluginUpdateManagerContextState
+>( {
 	siteSlug: '',
 	isEligibleForFeature: false,
+	siteHasEligiblePlugins: true,
+	setSiteHasEligiblePlugins: () => {},
 } );
 
 const PluginUpdateManagerContextProvider = ( {
 	siteSlug,
 	children,
 	isEligibleForFeature,
-}: PluginUpdateManagerContextProps & { children: ReactNode } ) => (
-	<PluginUpdateManagerContext.Provider value={ { siteSlug, isEligibleForFeature } }>
-		{ children }
-	</PluginUpdateManagerContext.Provider>
-);
+}: PluginUpdateManagerContextProps & { children: ReactNode } ) => {
+	const [ siteHasEligiblePlugins, setSiteHasEligiblePlugins ] = useState( true );
+
+	return (
+		<PluginUpdateManagerContext.Provider
+			value={ {
+				siteSlug,
+				isEligibleForFeature,
+				siteHasEligiblePlugins,
+				setSiteHasEligiblePlugins,
+			} }
+		>
+			{ children }
+		</PluginUpdateManagerContext.Provider>
+	);
+};
 
 export { PluginUpdateManagerContext, PluginUpdateManagerContextProvider };

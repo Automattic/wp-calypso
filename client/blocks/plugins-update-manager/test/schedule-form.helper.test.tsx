@@ -17,22 +17,30 @@ describe( 'Schedule form validation', () => {
 	} );
 
 	test( 'timestamp / time slot', () => {
-		const ts_3am = 1709172000;
-		const ts_9pm = 1709236800;
-		const ts_mon_6am = 1709528400;
-		const ts_mon_6pm = 1709226000;
-		const ts_fri_6am = 1709269200;
-		const ts_fri_6pm = 1709312400;
+		const timestamp = getTwoDaysFutureUTCTime();
+		const ts_3am = timestamp + 3 * 60 * 60;
+		const ts_6pm = timestamp + 18 * 60 * 60;
+		const ts_9pm = timestamp + 21 * 60 * 60;
 
+		const nextMondayMidnight = getNextMondayMidnightUTCTime();
+		const ts_mon_6am = nextMondayMidnight + 6 * 60 * 60;
+		const ts_mon_6pm = nextMondayMidnight + 18 * 60 * 60;
+		const ts_fri_6am = nextMondayMidnight + 4 * 24 * 60 * 60 + 6 * 60 * 60;
+		const ts_fri_6pm = nextMondayMidnight + 4 * 24 * 60 * 60 + 18 * 60 * 60;
+
+		const now = new Date();
+		const past = now.getTime() - 1000;
+
+		//
 		const existingSchedules = [
-			{ frequency: 'daily', timestamp: 1709085600 }, // daily at 3:00 am
+			{ frequency: 'daily', timestamp: ts_3am }, // daily at 3:00 am
 		];
 		const existingSchedules2 = [
-			{ frequency: 'weekly', timestamp: 1709571600 }, // weekly on Monday at 6:00 pm
+			{ frequency: 'weekly', timestamp: ts_6pm }, // weekly on Monday at 6:00 pm
 		];
 		const existingSchedules3 = [
-			{ frequency: 'weekly', timestamp: 1709571600 }, // weekly on Monday at 6:00 pm
-			{ frequency: 'daily', timestamp: 1709085600 }, // daily at 3:00 am
+			{ frequency: 'weekly', timestamp: ts_mon_6pm }, // weekly on Monday at 6:00 pm
+			{ frequency: 'daily', timestamp: ts_3am }, // daily at 3:00 am
 		];
 
 		// Truthy value means there is an error message
@@ -77,5 +85,35 @@ describe( 'Schedule form validation', () => {
 		expect(
 			validateTimeSlot( { frequency: 'weekly', timestamp: ts_fri_6pm }, existingSchedules3 )
 		).toBeFalsy();
+
+		// One second in the past
+		expect(
+			validateTimeSlot( { frequency: 'daily', timestamp: past / 1000 }, existingSchedules )
+		).toBeTruthy();
 	} );
+
+	function getTwoDaysFutureUTCTime() {
+		const currentDate = new Date();
+		const twoDaysFuture = new Date( currentDate.getTime() + 2 * 24 * 60 * 60 * 1000 );
+
+		twoDaysFuture.setUTCHours( 0, 0, 0, 0 );
+
+		return Math.floor( twoDaysFuture.getTime() / 1000 ); // Returning Unix time in seconds
+	}
+
+	function getNextMondayMidnightUTCTime() {
+		const currentDate = new Date();
+		let daysUntilNextMonday = 1 - currentDate.getUTCDay();
+
+		if ( daysUntilNextMonday <= 0 ) {
+			daysUntilNextMonday += 7;
+		}
+
+		const nextMonday = new Date(
+			currentDate.getTime() + daysUntilNextMonday * 24 * 60 * 60 * 1000
+		); // Adding days to get to next Monday
+		nextMonday.setUTCHours( 0, 0, 0, 0 );
+
+		return Math.floor( nextMonday.getTime() / 1000 );
+	}
 } );

@@ -1,8 +1,14 @@
-import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
+import {
+	isPlan,
+	isJetpackPlan,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,6 +21,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
+import { WPCOMProductVariant } from '../item-variation-picker/types';
 import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
@@ -22,6 +29,103 @@ import {
 import './style.scss';
 
 const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
+
+const PromoCardV2 = styled.div`
+	position: relative;
+	background-color: #bbe0fa;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 500;
+	align-self: flex-end;
+
+	p {
+		margin: 0;
+		padding: 8px 16px;
+	}
+
+	&:before {
+		background-color: #bbe0fa;
+		display: block;
+		top: -5px;
+		content: '';
+		height: 8px;
+		right: 8%;
+		margin-left: -4px;
+		position: absolute;
+		transform: rotate( 225deg );
+		width: 8px;
+	}
+`;
+
+const CheckoutPromoCard: React.FC< {
+	onUpgradeClick: () => void;
+	domainRegistrationOrTransferInCart: ResponseCartProduct | undefined;
+	currentVariant: WPCOMProductVariant;
+	percentSavings: number;
+} > = ( {
+	onUpgradeClick,
+	domainRegistrationOrTransferInCart,
+	currentVariant,
+	percentSavings,
+} ) => {
+	const translate = useTranslate();
+
+	const isMonthly = currentVariant?.termIntervalInMonths === 1;
+	const isYearly = currentVariant?.termIntervalInMonths === 12;
+
+	const labelText = ( () => {
+		// TODO: After v2 merger, refactor free plan upsell into this section
+
+		if ( isMonthly ) {
+			if ( domainRegistrationOrTransferInCart ) {
+				return translate(
+					'Save money with longer billing cycles and get %(domainMeta)s free for the first year by {{upgradeLink}}switching to an annual plan.{{/upgradeLink}}',
+					{
+						comment: '"domainMeta" is the domain name and TLD, like "example.com" or "example.org"',
+						args: {
+							domainMeta: domainRegistrationOrTransferInCart.meta,
+						},
+						components: {
+							upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
+						},
+					}
+				);
+			}
+
+			return translate(
+				'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
+			);
+		}
+
+		if ( isYearly ) {
+			return translate(
+				"Save up to %(savingsPercentage)s% on longer billing cycles! It's hassle-free and easy on your wallet. {{upgradeLink}}Switch to a two-year plan and save.{{/upgradeLink}}",
+				{
+					comment:
+						'"savingsPercentage is the savings percentage for the upgrade as a number, like "20" for 20%"',
+					args: {
+						savingsPercentage: percentSavings,
+					},
+					components: {
+						upgradeLink: <Button onClick={ onUpgradeClick } variant="link" />,
+					},
+				}
+			);
+		}
+
+		return null;
+	} )();
+
+	return (
+		labelText && (
+			<PromoCardV2>
+				<div className="checkout-sidebar-plan-upsell__v2-wrapper">
+					<p>{ labelText }</p>
+				</div>
+			</PromoCardV2>
+		)
+	);
+};
 
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
@@ -34,36 +138,13 @@ export function CheckoutSidebarPlanUpsell() {
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
+
+	const domainRegistrationOrTransferInCart = responseCart.products.find(
+		( product ) => isDomainRegistration( product ) || isDomainTransfer( product )
+	);
+
 	const variants = useGetProductVariants( plan );
-	const translate = useTranslate();
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
-
-	const PromoCardV2 = styled.div`
-		position: relative;
-		background-color: #bbe0fa;
-		border-radius: 4px;
-		font-size: 12px;
-		font-weight: 500;
-		align-self: flex-end;
-
-		p {
-			margin: 0;
-			padding: 8px 16px;
-		}
-
-		&:before {
-			background-color: #bbe0fa;
-			display: block;
-			top: -5px;
-			content: '';
-			height: 8px;
-			right: 8%;
-			margin-left: -4px;
-			position: absolute;
-			transform: rotate( 225deg );
-			width: 8px;
-		}
-	`;
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy
@@ -83,10 +164,15 @@ export function CheckoutSidebarPlanUpsell() {
 		debug( 'no plan found in cart' );
 		return null;
 	}
-
+	const annualVariant = variants?.find( ( product ) => product.termIntervalInMonths === 12 );
 	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
 	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
 	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
+
+	if ( ! annualVariant ) {
+		debug( 'plan in cart has no annual variant; variants are', variants );
+		return null;
+	}
 
 	if ( ! biennialVariant ) {
 		debug( 'plan in cart has no biennial variant; variants are', variants );
@@ -98,7 +184,7 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
-	if ( biennialVariant.productId === plan.product_id ) {
+	if ( biennialVariant.productId === plan?.product_id ) {
 		debug( 'plan in cart is already biennial' );
 		return null;
 	}
@@ -114,10 +200,27 @@ export function CheckoutSidebarPlanUpsell() {
 		if ( isFormLoading ) {
 			return;
 		}
-		const newPlan = {
-			product_slug: biennialVariant.productSlug,
-			product_id: biennialVariant.productId,
-		};
+
+		let newPlan;
+
+		if ( currentVariant.termIntervalInMonths === 1 ) {
+			newPlan = {
+				product_slug: annualVariant.productSlug,
+				product_id: annualVariant.productId,
+			};
+		}
+
+		if ( currentVariant.termIntervalInMonths === 12 ) {
+			newPlan = {
+				product_slug: biennialVariant.productSlug,
+				product_id: biennialVariant.productId,
+			};
+		}
+
+		if ( ! newPlan ) {
+			return;
+		}
+
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
@@ -163,16 +266,13 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 	return (
 		<>
-			{ plan && shouldUseCheckoutV2 ? (
-				<PromoCardV2>
-					<div className="checkout-sidebar-plan-upsell__v2-wrapper">
-						<p>
-							{ translate(
-								'Longer plan billing cycles save you money and include a custom domain for free for the first year.'
-							) }
-						</p>
-					</div>
-				</PromoCardV2>
+			{ shouldUseCheckoutV2 ? (
+				<CheckoutPromoCard
+					onUpgradeClick={ onUpgradeClick }
+					domainRegistrationOrTransferInCart={ domainRegistrationOrTransferInCart }
+					currentVariant={ currentVariant }
+					percentSavings={ percentSavings }
+				/>
 			) : (
 				<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 					<div className="checkout-sidebar-plan-upsell__plan-grid">

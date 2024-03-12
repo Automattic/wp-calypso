@@ -114,8 +114,7 @@ const AddOnCard = ( {
 		actionSecondary?.handler( addOnMeta.productSlug );
 	};
 
-	const shouldRenderLoadingState =
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE && addOnMeta.isLoading;
+	const shouldRenderLoadingState = addOnMeta.isLoading;
 
 	// if product is space upgrade choose the action based on the purchased status
 	const shouldRenderPrimaryAction =

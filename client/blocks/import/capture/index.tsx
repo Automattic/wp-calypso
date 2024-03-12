@@ -76,10 +76,6 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	const showCapture = ! isAnalyzing || ( initialUrl && isFetchedAfterMount );
 
 	useEffect( () => {
-		if ( ! [ 'US', 'GB', 'AU', 'JP' ].includes( detectedCountryCode ) ) {
-			return;
-		}
-
 		if ( window && window.hj ) {
 			window.hj( 'trigger', 'importer_capture_step' );
 		}

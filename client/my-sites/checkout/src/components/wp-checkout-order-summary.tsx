@@ -161,9 +161,14 @@ export function CheckoutSummaryFeaturedList( {
 					/>
 				) }
 			</CheckoutSummaryFeatures>
-			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
-			) }
+			{ ! shouldUseCheckoutV2 &&
+				! isCartUpdating &&
+				! hasRenewalInCart &&
+				! isWcMobile &&
+				plan &&
+				hasMonthlyPlanInCart && (
+					<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
+				) }
 		</>
 	);
 }
@@ -849,7 +854,7 @@ const CheckoutSummaryFeatures = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 24px 0;
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `padding: 0;` : `padding: 24px 0;` ) }
 	}
 `;
 

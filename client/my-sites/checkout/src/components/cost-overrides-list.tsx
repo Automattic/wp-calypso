@@ -106,6 +106,7 @@ export function CostOverridesList( {
 							<span className="cost-overrides-list-item__discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
+									signForPositive: true,
 								} ) }
 							</span>
 						</div>
@@ -123,6 +124,7 @@ export function CostOverridesList( {
 							<span className="cost-overrides-list-item__discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
+									signForPositive: true,
 								} ) }
 							</span>
 						</div>
@@ -143,6 +145,7 @@ export function CostOverridesList( {
 							<span className="cost-overrides-list-item__discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
+									signForPositive: true,
 								} ) }
 							</span>
 							<span className="cost-overrides-list-item__actions">
@@ -250,6 +253,7 @@ function LineItemCostOverride( {
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
+						signForPositive: true,
 					} ) }
 			</span>
 			<LineItemCostOverrideIntroOfferDueDate product={ product } />

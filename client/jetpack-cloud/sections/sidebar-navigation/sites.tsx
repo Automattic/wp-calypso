@@ -11,6 +11,7 @@ import {
 	JETPACK_MANAGE_OVERVIEW_LINK,
 } from './lib/constants';
 import { MenuItemProps } from './types';
+import './style.scss';
 
 const SitesSidebar = ( { path }: { path: string } ) => {
 	const translate = useTranslate();
@@ -59,6 +60,7 @@ const SitesSidebar = ( { path }: { path: string } ) => {
 	return (
 		<NewSidebar
 			isJetpackManage
+			className="sites-dashboard__sidebar"
 			path={ JETPACK_MANAGE_SITES_LINK }
 			menuItems={ menuItems }
 			title={ translate( 'Sites' ) }
