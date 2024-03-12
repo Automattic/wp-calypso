@@ -2731,20 +2731,3 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Sensei Features */
 };
-
-// TODO move to main.ts:
-
-export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
-	if ( ! planFeaturesList ) {
-		return [];
-	}
-	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
-};
-
-export function isValidFeatureKey( feature: string ) {
-	return !! FEATURES_LIST[ feature ];
-}
-
-export function getFeatureByKey( feature: string ) {
-	return FEATURES_LIST[ feature ];
-}
