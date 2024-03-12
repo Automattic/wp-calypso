@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -8,28 +9,44 @@ import { CategoryPillNavigation } from 'calypso/components/category-pill-navigat
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
+import { getCategorySlug } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
 	usePatternSearchTerm,
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import {
+	PatternTypeFilter,
+	type Pattern,
+	type PatternGalleryFC,
+} from 'calypso/my-sites/patterns/types';
 import ImgGrid from './images/grid.svg';
 import ImgStar from './images/star.svg';
-import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+
+function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
+	return patterns.filter( ( pattern ) => {
+		const categorySlugs = Object.keys( pattern.categories );
+		const isPage = categorySlugs.includes( 'page' );
+
+		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
+	} );
+}
 
 type PatternsCategoryPageProps = {
 	category: string;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
+	patternType: PatternTypeFilter;
 };
 
 export const PatternsCategoryPage = ( {
 	category,
 	isGridView,
 	patternGallery: PatternGallery,
+	patternType,
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
 	// Helps prevent resetting the search input if a search term was provided through the URL
@@ -40,7 +57,10 @@ export const PatternsCategoryPage = ( {
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
-		select: ( patterns ) => filterPatternsByTerm( patterns, searchTerm ),
+		select( patterns ) {
+			const patternsByType = filterPatternsByType( patterns, patternType );
+			return filterPatternsByTerm( patternsByType, searchTerm );
+		},
 	} );
 
 	// Resets the search term whenever the category changes
@@ -56,7 +76,7 @@ export const PatternsCategoryPage = ( {
 	const categoryNavList = categories?.map( ( category ) => ( {
 		name: category.name || '',
 		label: category.label,
-		link: `/patterns/${ category.name }`,
+		link: getCategorySlug( category.name, patternType, false ),
 	} ) );
 
 	return (
@@ -98,9 +118,18 @@ export const PatternsCategoryPage = ( {
 				<div className="patterns-page-category__header">
 					<h1 className="patterns-page-category__title">Patterns</h1>
 
-					<ToggleGroupControl label="" isBlock className="patterns__toggle-type" value="patterns">
-						<ToggleGroupControlOption value="patterns" label="Patterns" />
-						<ToggleGroupControlOption value="layouts" label="Page layouts" />
+					<ToggleGroupControl
+						className="patterns__toggle-type"
+						isBlock
+						label=""
+						onChange={ ( value ) => {
+							const href = getCategorySlug( category, value as PatternTypeFilter );
+							page( href );
+						} }
+						value={ patternType }
+					>
+						<ToggleGroupControlOption value={ PatternTypeFilter.REGULAR } label="Patterns" />
+						<ToggleGroupControlOption value={ PatternTypeFilter.PAGES } label="Page layouts" />
 					</ToggleGroupControl>
 
 					<ToggleGroupControl label="" isBlock className="patterns__toggle-view" value="patterns">

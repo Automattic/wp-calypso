@@ -5,11 +5,16 @@ import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/cate
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import {
+	PatternTypeFilter,
+	type RouterContext,
+	type RouterNext,
+	type Pattern,
+} from 'calypso/my-sites/patterns/types';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { RouterContext, RouterNext, Pattern } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'renderPatterns' );
@@ -20,6 +25,9 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 			categoryGallery={ CategoryGalleryServer }
 			isGridView={ !! context.query.grid }
 			patternGallery={ PatternGalleryServer }
+			patternType={
+				context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
+			}
 		/>
 	);
 
@@ -77,7 +85,12 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
 
 	router(
-		[ `/${ langParam }/patterns/:category?`, `/patterns/:category?` ],
+		[
+			`/${ langParam }/patterns/:category?`,
+			`/${ langParam }/patterns/:type(layouts)/:category?`,
+			`/patterns/:category?`,
+			`/patterns/:type(layouts)/:category?`,
+		],
 		ssrSetupLocale,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,

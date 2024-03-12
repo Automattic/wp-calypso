@@ -2,9 +2,13 @@ import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-
 import Main from 'calypso/components/main';
 import { PatternsCategoryPage } from 'calypso/my-sites/patterns/pages/category';
 import { PatternsHomePage } from 'calypso/my-sites/patterns/pages/home';
+import {
+	type CategoryGalleryFC,
+	type PatternGalleryFC,
+	PatternTypeFilter,
+} from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { CategoryGalleryFC, PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
@@ -13,6 +17,7 @@ type PatternsWrapperProps = {
 	categoryGallery: CategoryGalleryFC;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
+	patternType: PatternTypeFilter;
 };
 
 export const PatternsWrapper = ( {
@@ -20,6 +25,7 @@ export const PatternsWrapper = ( {
 	categoryGallery,
 	isGridView,
 	patternGallery,
+	patternType,
 }: PatternsWrapperProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -39,6 +45,7 @@ export const PatternsWrapper = ( {
 						category={ category }
 						isGridView={ isGridView }
 						patternGallery={ patternGallery }
+						patternType={ patternType }
 					/>
 				) }
 			</Main>
