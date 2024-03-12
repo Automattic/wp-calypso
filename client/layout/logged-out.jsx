@@ -43,6 +43,7 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
@@ -353,20 +354,24 @@ export default withCurrentRoute(
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
-			const wccomFrom = currentQuery?.[ 'wccom-from' ];
+			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 
+			const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
 			const wooPasswordless = getWooPasswordless( state );
-			const isWoo = isWooOAuth2Client( oauth2Client );
+			const isWooPasswordless =
+				( config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless ) &&
+				// Enable woo-passwordless feature for WCCOM only.
+				isWCCOM;
 
 			if (
 				// Wait until the currentRoute is not changed.
 				getCurrentRoute( state ) === currentRoute &&
-				isWoo &&
+				isWCCOM &&
 				! wooPasswordless &&
 				config.isEnabled( 'woo/passwordless' )
 			) {
@@ -396,9 +401,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
-				isWooPasswordless:
-					( config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless ) &&
-					! ( isWooCoreProfilerFlow || isJetpackWooCommerceFlow || isJetpackWooDnaFlow ),
+				isWooPasswordless,
 			};
 		},
 		{ clearLastActionRequiresLogin }
