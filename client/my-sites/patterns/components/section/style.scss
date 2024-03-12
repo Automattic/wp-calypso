@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
 
 .patterns-section {
 	padding: 90px 0 96px;
@@ -26,7 +27,8 @@
 }
 
 .patterns-section__header {
-	padding: 0 110px 48px;
+	@include patterns-page-width;
+	padding-bottom: 48px;
 
 	h2 {
 		font-family: $font-recoleta;
@@ -45,7 +47,7 @@
 }
 
 .patterns-section__body {
-	padding: 0 110px;
+	@include patterns-page-width;
 }
 
 

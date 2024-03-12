@@ -74,22 +74,24 @@ export const PatternsCategoryPage = ( {
 			/>
 
 			{ categoryNavList && (
-				<CategoryPillNavigation
-					selectedCategory={ category }
-					buttons={ [
-						{
-							icon: ImgStar,
-							label: 'Discover',
-							link: addLocaleToPathLocaleInFront( '/patterns' ),
-						},
-						{
-							icon: ImgGrid,
-							label: 'All Categories',
-							link: '/222',
-						},
-					] }
-					list={ categoryNavList }
-				/>
+				<div className="category-pill-navigation__patterns-wrapper">
+					<CategoryPillNavigation
+						selectedCategory={ category }
+						buttons={ [
+							{
+								icon: ImgStar,
+								label: 'Discover',
+								link: addLocaleToPathLocaleInFront( '/patterns' ),
+							},
+							{
+								icon: ImgGrid,
+								label: 'All Categories',
+								link: '/222',
+							},
+						] }
+						list={ categoryNavList }
+					/>
+				</div>
 			) }
 
 			<div className="patterns-page-category">
