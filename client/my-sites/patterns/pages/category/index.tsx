@@ -3,11 +3,16 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import {
+	usePatternSearchTerm,
+	filterPatternsByTerm,
+} from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import ImgGrid from './images/grid.svg';
 import ImgStar from './images/star.svg';
@@ -27,9 +32,26 @@ export const PatternsCategoryPage = ( {
 	patternGallery: PatternGallery,
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
+	// Helps prevent resetting the search input if a search term was provided through the URL
+	const isInitialRender = useRef( true );
+	// Helps reset the search input when navigating between categories
+	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
 	const { data: categories } = usePatternCategories( locale );
-	const { data: patterns } = usePatterns( locale, category );
+	const { data: patterns = [] } = usePatterns( locale, category, {
+		select: ( patterns ) => filterPatternsByTerm( patterns, searchTerm ),
+	} );
+
+	// Resets the search term whenever the category changes
+	useEffect( () => {
+		if ( isInitialRender.current ) {
+			isInitialRender.current = false;
+		} else {
+			setSearchTerm( '' );
+			setSearchFormKey( category );
+		}
+	}, [ category ] );
 
 	const categoryNavList = categories?.map( ( category ) => ( {
 		name: category.name || '',
@@ -42,8 +64,13 @@ export const PatternsCategoryPage = ( {
 			<DocumentHead title="WordPress Patterns- Category" />
 
 			<PatternsHeader
-				title={ category + ' patterns' }
 				description="Introduce yourself or your brand to visitors."
+				key={ searchFormKey }
+				initialSearchTerm={ searchTerm }
+				onSearch={ ( query ) => {
+					setSearchTerm( query );
+				} }
+				title={ category + ' patterns' }
 			/>
 
 			{ categoryNavList && (
