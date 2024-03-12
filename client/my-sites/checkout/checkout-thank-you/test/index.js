@@ -13,6 +13,7 @@ jest.unmock( '@automattic/calypso-products' );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	shouldFetchSitePlans: () => false,
+	isDotComPlan: jest.fn( () => false ),
 	isDIFMProduct: jest.fn( () => false ),
 } ) );
 
@@ -21,7 +22,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 } ) );
 jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
-jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
@@ -35,6 +35,9 @@ jest.mock( '../business-plan-details', () => () => <div data-testid="business-pl
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
 jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 	<div data-testid="component--plan-only-thank-you" />
+) );
+jest.mock( '../redesign-v2/pages/generic', () => () => (
+	<div data-testid="component--generic-thank-you" />
 ) );
 
 const translate = ( x ) => x;
@@ -123,6 +126,35 @@ describe( 'CheckoutThankYou', () => {
 		);
 
 		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: 'jetpack_personal' } ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+
+		render(
+			<Provider store={ store }>
+				<CheckoutThankYou { ...props } />
+			</Provider>
+		);
+
+		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the <PlanOnlyThankYou> component if the purchases include a Personal plan', async () => {
