@@ -557,7 +557,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-		getTitle: () => i18n.translate( 'Dozens of premium themes' ),
+		getTitle: () => i18n.translate( 'Access to dozens of premium themes ' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 
