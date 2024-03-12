@@ -53,6 +53,7 @@ export { isComplete } from './is-complete';
 export { isCustomDesign } from './is-custom-design';
 export { isDelayedDomainTransfer } from './is-delayed-domain-transfer';
 export { isDIFMProduct } from './is-difm-product';
+export { isDomainIntroductoryOfferVisibleAsDiscount } from './is-domain-introductory-offer-visible-as-discount';
 export { isDomainMapping } from './is-domain-mapping';
 export { isDomainMoveInternal } from './is-domain-move-internal';
 export { isDomainProduct } from './is-domain-product';
