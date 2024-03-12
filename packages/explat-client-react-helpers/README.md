@@ -26,6 +26,10 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 
 ## API: `useExperiment('experiment_name')`
 
+Note: `useExperiment` can cause UI flickering if called in many different parts of the render tree, as components switch between loading and active states. This happens because the hook initializes with `useState` and updates via `useEffect` after initial render, making the first state always loading. If an experiment uses a single call to `useExperiment`, this is not an issue.
+
+To mitigate this, consider using global caching or design components to independently handle their loading states. We're exploring solutions and will update the documentation accordingly (pbmo2S-2sV-p2).
+
 ### Type signature
 
 `useExperiment: (experimentName: string) => [boolean, ExperimentAssignment | null]`
