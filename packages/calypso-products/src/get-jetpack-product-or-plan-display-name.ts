@@ -12,7 +12,7 @@ export function getJetpackProductOrPlanDisplayName(
 	const product = getProductFromSlug( productSlug );
 	let productName: TranslateResult | undefined = '';
 
-	if ( product instanceof String ) {
+	if ( typeof product === 'string' ) {
 		const plan = getPlan( productSlug );
 		productName = plan ? plan.getTitle() : '';
 	} else if ( typeof product === 'object' && 'product_name' in product ) {
