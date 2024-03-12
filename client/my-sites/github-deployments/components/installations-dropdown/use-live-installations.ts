@@ -9,7 +9,7 @@ import {
 	GitHubInstallationData,
 	useGithubInstallationsQuery,
 } from '../../use-github-installations-query';
-import { openPopup } from './open-popup';
+import { openPopup } from '../../utils/open-popup';
 import { useSaveGitHubCredentialsMutation } from './use-save-github-credentials-mutation';
 
 interface UseLiveInstallationsParameters {
@@ -75,7 +75,6 @@ export const useLiveInstallations = ( {
 	const onNewInstallationRequest = () => {
 		const openedPopup = openPopup( {
 			url: installationsError?.name === 'UnauthorizedError' ? AUTHORIZATION_URL : INSTALLATION_URL,
-			popupId: 'github-app-installation',
 			onMessage: async ( data, popup ) => {
 				if ( 'github-app-authorized' === data.type ) {
 					try {
