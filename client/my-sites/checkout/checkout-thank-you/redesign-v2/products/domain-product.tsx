@@ -90,7 +90,7 @@ export default function ThankYouDomainProduct( {
 		);
 	}
 
-	const isDomainConnection = purchase ? isDomainMapping( purchase as object ) : false;
+	const isDomainConnection = purchase && isDomainMapping( purchase );
 
 	return (
 		<ThankYouProduct
