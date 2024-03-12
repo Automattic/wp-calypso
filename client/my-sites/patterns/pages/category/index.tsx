@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -14,6 +13,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
@@ -25,15 +25,12 @@ import {
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import {
 	PatternTypeFilter,
+	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
-
-// We use this unstyled Emotion component simply to prevent errors related to the use of Emotion's
-// `useCx` hook in `ToggleGroupControl`
-const PatternsCategoryPageBody = styled.div``;
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -59,6 +56,7 @@ const handleSettingView = ( value: 'grid' | 'list' ) => {
 
 type PatternsCategoryPageProps = {
 	category: string;
+	categoryGallery: CategoryGalleryFC;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
@@ -66,6 +64,7 @@ type PatternsCategoryPageProps = {
 
 export const PatternsCategoryPage = ( {
 	category,
+	categoryGallery: CategoryGallery,
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
@@ -95,6 +94,8 @@ export const PatternsCategoryPage = ( {
 		}
 	}, [ category ] );
 
+	const isHomePage = ! category && ! searchTerm;
+
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
 	const categoryNavList = categories?.map( ( category ) => {
@@ -102,7 +103,7 @@ export const PatternsCategoryPage = ( {
 			category.pagePatternCount === 0 ? PatternTypeFilter.REGULAR : patternTypeFilter;
 
 		return {
-			id: category.name || '',
+			name: category.name,
 			label: category.label,
 			link:
 				getCategoryUrlPath( category.name, patternTypeFilterFallback, false ) +
@@ -112,19 +113,23 @@ export const PatternsCategoryPage = ( {
 
 	return (
 		<>
-			<DocumentHead title="WordPress Patterns- Category" />
+			<DocumentHead title="WordPress Patterns - Category" />
 
 			<PatternsHeader
-				description="Introduce yourself or your brand to visitors."
+				description={
+					isHomePage
+						? 'Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes.'
+						: 'Introduce yourself or your brand to visitors.'
+				}
 				key={ searchFormKey }
 				initialSearchTerm={ searchTerm }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title={ category + ' patterns' }
+				title={ isHomePage ? 'Build your perfect site with patterns' : category + ' patterns' }
 			/>
 
-			{ categoryNavList && (
+			{ ! isHomePage && categoryNavList && (
 				<div className="patterns-page-category__pill-navigation">
 					<CategoryPillNavigation
 						selectedCategory={ category }
@@ -145,56 +150,80 @@ export const PatternsCategoryPage = ( {
 				</div>
 			) }
 
-			<PatternsCategoryPageBody className="patterns-page-category">
-				<div className="patterns-page-category__header">
-					<h1 className="patterns-page-category__title">Patterns</h1>
+			{ isHomePage && (
+				<CategoryGallery
+					title="Ship faster with patterns"
+					description="Choose from a huge library of patterns to build any page you need."
+					categories={ categories }
+					patternTypeFilter={ PatternTypeFilter.REGULAR }
+				/>
+			) }
 
-					<ToggleGroupControl
-						className="patterns-page-category__toggle--pattern-type"
-						isBlock
-						label=""
-						onChange={ ( value ) => {
-							const href = getCategoryUrlPath( category, value as PatternTypeFilter );
-							page( href );
-						} }
-						value={ patternTypeFilter }
-					>
-						<ToggleGroupControlOption
-							className="patterns-page-category__toggle-option"
-							label="Patterns"
-							value={ PatternTypeFilter.REGULAR }
-						/>
-						<ToggleGroupControlOption
-							className="patterns-page-category__toggle-option"
-							disabled={ categoryObject?.pagePatternCount === 0 }
-							label="Page layouts"
-							value={ PatternTypeFilter.PAGES }
-						/>
-					</ToggleGroupControl>
+			{ ! isHomePage && (
+				<div className="patterns-page-category">
+					<div className="patterns-page-category__header">
+						<h1 className="patterns-page-category__title">Patterns</h1>
 
-					<ToggleGroupControl
-						className="patterns-page-category__toggle--view"
-						label=""
-						isBlock
-						value={ isGridView ? 'grid' : 'list' }
-					>
-						<ToggleGroupControlOption
-							className="patterns-page-category__toggle-option--list-view"
-							label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
-							value="list"
-							onClick={ () => handleSettingView( 'list' ) }
-						/>
-						<ToggleGroupControlOption
-							className="patterns-page-category__toggle-option--grid-view"
-							label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
-							value="grid"
-							onClick={ () => handleSettingView( 'grid' ) }
-						/>
-					</ToggleGroupControl>
+						{ category && (
+							<ToggleGroupControl
+								className="patterns-page-category__toggle--pattern-type"
+								isBlock
+								label=""
+								onChange={ ( value ) => {
+									const href = getCategoryUrlPath( category, value as PatternTypeFilter );
+									page( href );
+								} }
+								value={ patternTypeFilter }
+							>
+								<ToggleGroupControlOption
+									className="patterns-page-category__toggle-option"
+									label="Patterns"
+									value={ PatternTypeFilter.REGULAR }
+								/>
+								<ToggleGroupControlOption
+									className="patterns-page-category__toggle-option"
+									disabled={ categoryObject?.pagePatternCount === 0 }
+									label="Page layouts"
+									value={ PatternTypeFilter.PAGES }
+								/>
+							</ToggleGroupControl>
+						) }
+
+						<ToggleGroupControl
+							className="patterns-page-category__toggle--view"
+							label=""
+							isBlock
+							value={ isGridView ? 'grid' : 'list' }
+						>
+							<ToggleGroupControlOption
+								className="patterns-page-category__toggle-option--list-view"
+								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
+								value="list"
+								onClick={ () => handleSettingView( 'list' ) }
+							/>
+							<ToggleGroupControlOption
+								className="patterns-page-category__toggle-option--grid-view"
+								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
+								value="grid"
+								onClick={ () => handleSettingView( 'grid' ) }
+							/>
+						</ToggleGroupControl>
+					</div>
+
+					<PatternGallery patterns={ patterns } isGridView={ isGridView } />
 				</div>
+			) }
 
-				<PatternGallery patterns={ patterns } isGridView={ isGridView } />
-			</PatternsCategoryPageBody>
+			{ isHomePage && <PatternsCopyPasteInfo /> }
+
+			{ isHomePage && (
+				<CategoryGallery
+					title="Beautifully curated page layouts"
+					description="Entire pages built of patterns, ready to be added to your site."
+					categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+					patternTypeFilter={ PatternTypeFilter.PAGES }
+				/>
+			) }
 
 			<PatternsGetStarted />
 		</>
