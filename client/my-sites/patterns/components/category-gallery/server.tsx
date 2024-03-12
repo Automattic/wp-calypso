@@ -11,34 +11,34 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	categories,
 	description,
 	title,
-	patternType,
+	patternTypeFilter,
 } ) => {
 	return (
 		<PatternsSection title={ title } description={ description }>
 			<div
 				className={ classNames( 'patterns-category-gallery', {
-					'is-regular-patterns': patternType === PatternTypeFilter.REGULAR,
-					'is-page-patterns': patternType === PatternTypeFilter.PAGES,
+					'is-regular-patterns': patternTypeFilter === PatternTypeFilter.REGULAR,
+					'is-page-patterns': patternTypeFilter === PatternTypeFilter.PAGES,
 				} ) }
 			>
 				{ categories?.map( ( category ) => (
 					<LocalizedLink
 						className="patterns-category-gallery__item"
-						href={ getCategorySlug( category.name, patternType, false ) }
+						href={ getCategorySlug( category.name, patternTypeFilter, false ) }
 						key={ category.name }
 					>
 						<div className="patterns-category-gallery__item-preview">
 							<div
 								className={ classNames( 'patterns-category-gallery__item-preview', {
 									'patterns-category-gallery__item-preview_page-layouts':
-										patternType === PatternTypeFilter.PAGES,
+										patternTypeFilter === PatternTypeFilter.PAGES,
 									'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
 								} ) }
 							>
 								<div className="patterns-category-gallery__item-preview-inner">
 									<PatternPreviewPlaceholder
 										pattern={
-											patternType === PatternTypeFilter.PAGES
+											patternTypeFilter === PatternTypeFilter.PAGES
 												? category.pagePreviewPattern
 												: category.regularPreviewPattern
 										}
@@ -49,7 +49,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 
 						<div className="patterns-category-gallery__item-name">{ category.label }</div>
 						<div className="patterns-category-gallery__item-count">
-							{ patternType === PatternTypeFilter.PAGES
+							{ patternTypeFilter === PatternTypeFilter.PAGES
 								? category.pagePatternCount
 								: category.regularPatternCount }{ ' ' }
 							patterns

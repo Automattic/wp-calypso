@@ -15,7 +15,7 @@ import './style.scss';
 export const CategoryGalleryClient: CategoryGalleryFC = ( {
 	categories,
 	description,
-	patternType,
+	patternTypeFilter,
 	title,
 } ) => {
 	const patternIdsByCategory = {
@@ -36,7 +36,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 				<CategoryGalleryServer
 					categories={ categories }
 					description={ description }
-					patternType={ patternType }
+					patternTypeFilter={ patternTypeFilter }
 					title={ title }
 				/>
 			}
@@ -49,20 +49,20 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 				<PatternsSection title={ title } description={ description }>
 					<div
 						className={ classNames( 'patterns-category-gallery', {
-							'is-regular-patterns': patternType === PatternTypeFilter.REGULAR,
-							'is-page-patterns': patternType === PatternTypeFilter.PAGES,
+							'is-regular-patterns': patternTypeFilter === PatternTypeFilter.REGULAR,
+							'is-page-patterns': patternTypeFilter === PatternTypeFilter.PAGES,
 						} ) }
 					>
 						{ categories?.map( ( category ) => (
 							<LocalizedLink
 								className="patterns-category-gallery__item"
-								href={ getCategorySlug( category.name, patternType, false ) }
+								href={ getCategorySlug( category.name, patternTypeFilter, false ) }
 								key={ category.name }
 							>
 								<div
 									className={ classNames( 'patterns-category-gallery__item-preview', {
 										'patterns-category-gallery__item-preview_page-layouts':
-											patternType === PatternTypeFilter.PAGES,
+											patternTypeFilter === PatternTypeFilter.PAGES,
 										'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
 									} ) }
 								>
@@ -70,7 +70,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 										<PatternPreview
 											isCategoryPreview
 											pattern={
-												patternType === PatternTypeFilter.PAGES
+												patternTypeFilter === PatternTypeFilter.PAGES
 													? category.pagePreviewPattern
 													: category.regularPreviewPattern
 											}
@@ -81,7 +81,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 
 								<div className="patterns-category-gallery__item-name">{ category.label }</div>
 								<div className="patterns-category-gallery__item-count">
-									{ patternType === PatternTypeFilter.PAGES
+									{ patternTypeFilter === PatternTypeFilter.PAGES
 										? category.pagePatternCount
 										: category.regularPatternCount }{ ' ' }
 									patterns

@@ -39,14 +39,14 @@ type PatternsCategoryPageProps = {
 	category: string;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
-	patternType: PatternTypeFilter;
+	patternTypeFilter: PatternTypeFilter;
 };
 
 export const PatternsCategoryPage = ( {
 	category,
 	isGridView,
 	patternGallery: PatternGallery,
-	patternType,
+	patternTypeFilter,
 }: PatternsCategoryPageProps ) => {
 	const locale = useLocale();
 	// Helps prevent resetting the search input if a search term was provided through the URL
@@ -58,7 +58,7 @@ export const PatternsCategoryPage = ( {
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
-			const patternsByType = filterPatternsByType( patterns, patternType );
+			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
@@ -76,7 +76,7 @@ export const PatternsCategoryPage = ( {
 	const categoryNavList = categories?.map( ( category ) => ( {
 		name: category.name || '',
 		label: category.label,
-		link: getCategorySlug( category.name, patternType, false ),
+		link: getCategorySlug( category.name, patternTypeFilter, false ),
 	} ) );
 
 	return (
@@ -126,7 +126,7 @@ export const PatternsCategoryPage = ( {
 							const href = getCategorySlug( category, value as PatternTypeFilter );
 							page( href );
 						} }
-						value={ patternType }
+						value={ patternTypeFilter }
 					>
 						<ToggleGroupControlOption value={ PatternTypeFilter.REGULAR } label="Patterns" />
 						<ToggleGroupControlOption value={ PatternTypeFilter.PAGES } label="Page layouts" />

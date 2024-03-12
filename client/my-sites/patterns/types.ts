@@ -41,7 +41,7 @@ export type Category = CategoryBase & {
 type CategoryGalleryProps = {
 	categories?: Category[];
 	description: string;
-	patternType: PatternTypeFilter;
+	patternTypeFilter: PatternTypeFilter;
 	title: string;
 };
 
