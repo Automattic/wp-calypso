@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import BadgeNew from './sideElements/badge-new';
 import type { StatsCardProps } from './types';
 
 import './stats-card.scss';
@@ -14,6 +15,7 @@ const StatsCard = ( {
 	titleAriaLevel = 4,
 	footerAction,
 	isEmpty,
+	isNew,
 	emptyMessage,
 	heroElement,
 	splitHeader,
@@ -37,6 +39,7 @@ const StatsCard = ( {
 			aria-level={ titleAriaLevel }
 		>
 			{ title }
+			{ isNew && <BadgeNew /> }
 		</div>
 	);
 
