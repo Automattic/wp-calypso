@@ -41,7 +41,7 @@ describe( 'isRefactoredForThankYouV2', () => {
 		expect( isRefactoredForThankYouV2( props ) ).toBe( false );
 	} );
 
-	it( 'should return true if the purchases exists and are not delayed transfer', () => {
+	it( 'should return true if the purchases exist and are not delayed transfer', () => {
 		const props = {
 			receipt: {
 				data: {
