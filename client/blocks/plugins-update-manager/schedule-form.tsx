@@ -24,6 +24,7 @@ import {
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSetSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
 	DAILY_OPTION,
@@ -55,6 +56,8 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true, true );
+	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
+
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
