@@ -18,7 +18,6 @@ import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { navigate } from 'calypso/lib/navigate';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
@@ -247,14 +246,8 @@ const LayoutLoggedOut = ( {
 
 			{ [ 'plugins' ].includes( sectionName ) && (
 				<>
-					<UniversalNavbarFooter
-						currentRoute={ currentRoute }
-						isLoggedIn={ isLoggedIn }
-						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-							window.location.reload();
-						} }
-					/>
+					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+
 					{ config.isEnabled( 'layout/support-article-dialog' ) && (
 						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 					) }
@@ -263,14 +256,7 @@ const LayoutLoggedOut = ( {
 
 			{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
 				! isReaderTagEmbed && (
-					<UniversalNavbarFooter
-						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-							window.location.reload();
-						} }
-						currentRoute={ currentRoute }
-						isLoggedIn={ isLoggedIn }
-					/>
+					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 				) }
 
 			{ ! isLoggedIn && ! isReaderTagEmbed && (

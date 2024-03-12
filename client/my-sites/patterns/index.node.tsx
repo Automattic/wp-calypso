@@ -26,6 +26,7 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 
 	if ( cachedMarkup ) {
 		next();
+
 		return;
 	}
 
