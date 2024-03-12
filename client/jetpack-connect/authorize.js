@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
-	getProductFromSlug,
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
@@ -887,9 +886,13 @@ export class JetpackAuthorize extends Component {
 		const { searchParams } = getUrlParts( redirectAfterAuth );
 		const productSlug = searchParams.get( 'productSlug' );
 		const siteSlug = searchParams.get( 'fromSiteSlug' );
-		const product = getProductFromSlug( productSlug );
-		const productName = getJetpackProductOrPlanDisplayName( product );
 		const siteName = formatSlugToURL( siteSlug ).replace( /^https?:\/\//, '' );
+		const productName = getJetpackProductOrPlanDisplayName( productSlug );
+
+		// Do nothing if we don't have a product name here
+		if ( ! productName ) {
+			return null;
+		}
 
 		if ( authorizeSuccess || isAlreadyOnSitesList ) {
 			return translate(

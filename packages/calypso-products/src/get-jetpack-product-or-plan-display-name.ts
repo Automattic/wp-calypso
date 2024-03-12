@@ -1,15 +1,23 @@
 import { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
+import { getProductFromSlug } from './get-product-from-slug';
 import { getPlan } from './main';
-import type { Product } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 /**
  * Get Jetpack product display name based on the product purchase object.
  */
 export function getJetpackProductOrPlanDisplayName(
-	product: Product
+	productSlug: string
 ): TranslateResult | undefined {
-	return product?.product_name
-		? getJetpackProductDisplayName( product )
-		: getPlan( product.product_slug )?.getTitle();
+	const product = getProductFromSlug( productSlug );
+	let productName: TranslateResult | undefined = '';
+
+	if ( product instanceof String ) {
+		const plan = getPlan( productSlug );
+		productName = plan ? plan.getTitle() : '';
+	} else if ( typeof product === 'object' && 'product_name' in product ) {
+		productName = getJetpackProductDisplayName( product );
+	}
+
+	return productName;
 }
