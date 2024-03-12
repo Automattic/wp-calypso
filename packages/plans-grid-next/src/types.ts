@@ -205,6 +205,7 @@ export type PlanTypeSelectorProps = {
 	 */
 	coupon?: string;
 	displayedIntervals: UrlFriendlyTermType[];
+	intent: PlansIntent;
 };
 
 export type IntervalTypeProps = Pick<
@@ -225,6 +226,7 @@ export type IntervalTypeProps = Pick<
 	| 'title'
 	| 'coupon'
 	| 'onPlanIntervalUpdate'
+	| 'intent'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

@@ -516,6 +516,7 @@ const PlansFeaturesMain = ( {
 			coupon,
 			selectedSiteId: siteId,
 			withDiscount,
+			intent,
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
@@ -536,11 +537,6 @@ const PlansFeaturesMain = ( {
 				domain: isDomainUpsellFlow,
 				domainAndPlanPackage: isDomainAndPlanPackageFlow,
 				jetpackAppPlans: isJetpackAppFlow,
-			} );
-
-			recordTracksEvent( 'calypso_plans_plan_type_selector_option_change', {
-				interval_type: interval,
-				plans_intent: intent,
 			} );
 
 			if ( onPlanIntervalUpdate ) {
@@ -579,6 +575,7 @@ const PlansFeaturesMain = ( {
 		withDiscount,
 		getPlanTypeDestination,
 		onPlanIntervalUpdate,
+		intent,
 	] );
 
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
