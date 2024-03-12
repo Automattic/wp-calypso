@@ -1,0 +1,8 @@
+@mixin patterns-page-width {
+	max-width: 1440px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 110px;
+	padding-right: 110px;
+	box-sizing: border-box;
+}

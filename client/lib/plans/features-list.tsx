@@ -314,13 +314,13 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
+import { MaterialIcon } from '@automattic/components';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
 import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 import type {
 	FeatureObject as FeatureObjectPackaged,

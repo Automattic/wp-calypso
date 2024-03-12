@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { MaterialIcon } from '@automattic/components';
 import { useChatWidget } from '@automattic/help-center/src/hooks';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -9,7 +10,6 @@ import imgFreeDomain from 'calypso/assets/images/cancellation/free-domain.png';
 import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png';
 import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import FormattedHeader from 'calypso/components/formatted-header';
-import MaterialIcon from 'calypso/components/material-icon';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';

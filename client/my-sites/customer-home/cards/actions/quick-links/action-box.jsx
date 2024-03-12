@@ -1,6 +1,5 @@
-import { CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
 import classnames from 'classnames';
-import MaterialIcon from 'calypso/components/material-icon';
 
 const ActionBox = ( {
 	href,

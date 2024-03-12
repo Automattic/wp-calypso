@@ -5,7 +5,7 @@ import {
 	isBiennially,
 	isTriennially,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
 	useTransactionStatus,
@@ -31,7 +31,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import MaterialIcon from 'calypso/components/material-icon';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,

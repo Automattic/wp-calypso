@@ -40,7 +40,7 @@ export const ScheduleCreate = ( props: Props ) => {
 		isEligibleForFeature
 	);
 	const pendingMutations = useMutationState( {
-		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ], status: 'pending' },
+		filters: { mutationKey: [ 'create-update-schedule', siteSlug ], status: 'pending' },
 	} );
 	const isBusy = pendingMutations.length > 0;
 	const [ syncError, setSyncError ] = useState( '' );

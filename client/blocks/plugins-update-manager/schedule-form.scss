@@ -69,6 +69,18 @@
 				margin-bottom: 0;
 			}
 		}
+
+		&::-webkit-scrollbar {
+			-webkit-appearance: none;
+			width: 7px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			border-radius: 4px;
+			background-color: var(--studio-gray-10);
+			box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+		}
+
 	}
 
 	.form-field {
