@@ -84,21 +84,27 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	);
 
 	const handleNextStepProgression = useCallback( () => {
+		let newStepIndex = currentStepIndex;
 		if ( lastStepIndex > currentStepIndex ) {
-			setCurrentStepIndex( currentStepIndex + 1 );
+			newStepIndex = currentStepIndex + 1;
+			setCurrentStepIndex( newStepIndex );
 		}
-		handleCallback( currentStepIndex, config.options?.callbacks?.onNextStep );
+		handleCallback( newStepIndex, config.options?.callbacks?.onNextStep );
 	}, [ config.options?.callbacks?.onNextStep, currentStepIndex, lastStepIndex ] );
 
 	const handlePreviousStepProgression = useCallback( () => {
-		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
-		handleCallback( currentStepIndex, config.options?.callbacks?.onPreviousStep );
+		let newStepIndex = currentStepIndex;
+		if ( currentStepIndex > 0 ) {
+			newStepIndex = currentStepIndex - 1;
+			setCurrentStepIndex( newStepIndex );
+		}
+		handleCallback( newStepIndex, config.options?.callbacks?.onPreviousStep );
 	}, [ config.options?.callbacks?.onPreviousStep, currentStepIndex ] );
 
 	const handleGoToStep = useCallback(
 		( stepIndex: number ) => {
 			setCurrentStepIndex( stepIndex );
-			handleCallback( currentStepIndex, config.options?.callbacks?.onGoToStep );
+			handleCallback( stepIndex, config.options?.callbacks?.onGoToStep );
 		},
 		[ config.options?.callbacks?.onGoToStep, currentStepIndex ]
 	);
