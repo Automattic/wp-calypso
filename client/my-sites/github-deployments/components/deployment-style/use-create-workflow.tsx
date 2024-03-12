@@ -10,7 +10,7 @@ interface MutationVariables {
 	repositoryOwner: string;
 	repositoryName: string;
 	fileName: string;
-	fileContent: string;
+	workflowTemplate: string;
 }
 
 interface MutationResponse {
@@ -34,7 +34,7 @@ export const useCreateWorkflow = (
 			repositoryOwner,
 			repositoryName,
 			fileName,
-			fileContent,
+			workflowTemplate,
 		}: MutationVariables ) =>
 			wp.req.post(
 				{
@@ -47,7 +47,7 @@ export const useCreateWorkflow = (
 					repository_owner: repositoryOwner,
 					repository_name: repositoryName,
 					file_name: fileName,
-					file_content: fileContent,
+					workflow_template: workflowTemplate,
 				}
 			),
 		...options,
