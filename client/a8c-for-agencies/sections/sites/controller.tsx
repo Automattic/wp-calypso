@@ -1,33 +1,29 @@
 import { Context, type Callback } from '@automattic/calypso-router';
 import SitesSidebar from '../../components/sidebar-menu/sites';
 import SitesDashboard from './sites-dashboard';
+import { SitesDashboardProvider } from './sites-dashboard-provider';
 
 function configureSitesContext( isFavorites: boolean, context: Context ) {
-	context.secondary = <SitesSidebar path={ context.path } />;
-
-	const category = context.params.category || 'overview';
+	const category = context.params.category;
 	const siteUrl = context.params.siteUrl;
 	const siteFeature = context.params.feature;
-	const hideSiteList = !! siteUrl;
+	const hideListingInitialState = !! siteUrl;
 
 	context.primary = (
-		<SitesDashboard
-			currentPage={ 1 }
-			category={ category }
-			hideSiteList={ hideSiteList }
-			isFavorites={ isFavorites }
-			siteUrl={ siteUrl }
-			siteFeature={ siteFeature }
-		/>
+		<SitesDashboardProvider
+			categoryInitialState={ category }
+			siteUrlInitialState={ siteUrl }
+			siteFeatureInitialState={ siteFeature }
+			hideListingInitialState={ hideListingInitialState }
+		>
+			<SitesDashboard />
+		</SitesDashboardProvider>
 	);
+
+	context.secondary = <SitesSidebar path={ context.path } />;
 }
 
 export const sitesContext: Callback = ( context, next ) => {
 	configureSitesContext( false, context );
-	next();
-};
-
-export const sitesFavoriteContext: Callback = ( context, next ) => {
-	configureSitesContext( true, context );
 	next();
 };
