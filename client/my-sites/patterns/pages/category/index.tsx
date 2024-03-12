@@ -73,11 +73,18 @@ export const PatternsCategoryPage = ( {
 		}
 	}, [ category ] );
 
-	const categoryNavList = categories?.map( ( category ) => ( {
-		name: category.name || '',
-		label: category.label,
-		link: getCategorySlug( category.name, patternTypeFilter, false ),
-	} ) );
+	const categoryObject = categories?.find( ( { name } ) => name === category );
+
+	const categoryNavList = categories?.map( ( category ) => {
+		const patternTypeFilterFallback =
+			category.pagePatternCount === 0 ? PatternTypeFilter.REGULAR : patternTypeFilter;
+
+		return {
+			name: category.name || '',
+			label: category.label,
+			link: getCategorySlug( category.name, patternTypeFilterFallback, false ),
+		};
+	} );
 
 	return (
 		<>
@@ -128,8 +135,12 @@ export const PatternsCategoryPage = ( {
 						} }
 						value={ patternTypeFilter }
 					>
-						<ToggleGroupControlOption value={ PatternTypeFilter.REGULAR } label="Patterns" />
-						<ToggleGroupControlOption value={ PatternTypeFilter.PAGES } label="Page layouts" />
+						<ToggleGroupControlOption label="Patterns" value={ PatternTypeFilter.REGULAR } />
+						<ToggleGroupControlOption
+							disabled={ categoryObject?.pagePatternCount === 0 }
+							label="Page layouts"
+							value={ PatternTypeFilter.PAGES }
+						/>
 					</ToggleGroupControl>
 
 					<ToggleGroupControl label="" isBlock className="patterns__toggle-view" value="patterns">
