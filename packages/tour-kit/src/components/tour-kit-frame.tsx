@@ -212,6 +212,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 
 	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );
 
+	useEffect( () => {
+		if ( config.options?.callbacks?.onStepView ) {
+			handleCallback( currentStepIndex, config.options?.callbacks?.onStepView );
+		}
+	}, [ config.options?.callbacks?.onStepView, currentStepIndex ] );
+
 	return (
 		<>
 			<KeyboardNavigation
