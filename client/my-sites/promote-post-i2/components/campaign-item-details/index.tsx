@@ -181,7 +181,7 @@ export default function CampaignItemDetails( props: Props ) {
 		start_date,
 		end_date,
 		is_evergreen,
-		campaign?.status
+		campaign?.ui_status
 	);
 	const durationFormatted = duration_days
 		? sprintf(
@@ -276,6 +276,11 @@ export default function CampaignItemDetails( props: Props ) {
 			: __(
 					"If you continue, an approval request for your ad will be canceled, and the campaign won't start."
 			  );
+
+	const shouldShowStats =
+		! is_evergreen &&
+		!! ui_status &&
+		! [ 'created', 'rejected', 'scheduled' ].includes( ui_status );
 
 	const buttons = [
 		{
@@ -466,8 +471,11 @@ export default function CampaignItemDetails( props: Props ) {
 
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
-						<div className="campaign-item-details__main-stats-container">
-							{ !! status && ! [ 'created', 'rejected' ].includes( status ) && (
+						<div
+							className="campaign-item-details__main-stats-container"
+							style={ { display: is_evergreen && ! shouldShowStats ? 'none' : '' } }
+						>
+							{ shouldShowStats && (
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
 									<div className="campaign-item-details__main-stats-row ">
 										<div>
@@ -573,63 +581,66 @@ export default function CampaignItemDetails( props: Props ) {
 									</div>
 								</div>
 							) }
-							<div className="campaign-item-details__main-stats-row">
-								<div>
-									<span className="campaign-item-details__label">
-										{ is_evergreen && status === 'active'
-											? __( 'Duration so far' )
-											: __( 'Duration' ) }
-									</span>
-									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
-									</span>
-									<span className="campaign-item-details__details">
-										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
-									</span>
-								</div>
-								{ is_evergreen ? (
+
+							{ ! is_evergreen && shouldShowStats && (
+								<div className="campaign-item-details__main-stats-row">
 									<div>
-										<span className="campaign-item-details__label">{ __( 'Weekly spend' ) }</span>
+										<span className="campaign-item-details__label">
+											{ is_evergreen && status === 'active'
+												? __( 'Duration so far' )
+												: __( 'Duration' ) }
+										</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? (
-												<>
-													{ weeklySpendFormatted }{ ' ' }
-													<span className="campaign-item-details__details">
-														/ { totalBudgetFormatted }
-													</span>
-												</>
-											) : (
-												<FlexibleSkeleton />
-											) }
+											{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? weeklySpendingPercentageFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
-								) : (
+									{ is_evergreen ? (
+										<div>
+											<span className="campaign-item-details__label">{ __( 'Weekly spend' ) }</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? (
+													<>
+														{ weeklySpendFormatted }{ ' ' }
+														<span className="campaign-item-details__details">
+															/ { totalBudgetFormatted }
+														</span>
+													</>
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? weeklySpendingPercentageFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+									) : (
+										<div>
+											<span className="campaign-item-details__label">{ __( 'Budget' ) }</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+											</span>
+											<span className="campaign-item-details__details">
+												{ ! isLoading ? (
+													`${ budgetRemainingFormatted } remaining`
+												) : (
+													<FlexibleSkeleton />
+												) }
+											</span>
+										</div>
+									) }
 									<div>
-										<span className="campaign-item-details__label">{ __( 'Budget' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+										<span className="campaign-item-details__label">
+											{ translate( 'Overall spending' ) }
 										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? (
-												`${ budgetRemainingFormatted } remaining`
-											) : (
-												<FlexibleSkeleton />
-											) }
+										<span className="campaign-item-details__text wp-brand-font">
+											{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
-								) }
-								<div>
-									<span className="campaign-item-details__label">
-										{ translate( 'Overall spending' ) }
-									</span>
-									<span className="campaign-item-details__text wp-brand-font">
-										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
-									</span>
 								</div>
-							</div>
+							) }
 						</div>
 
 						<div className="campaign-item-details__main-stats-container">

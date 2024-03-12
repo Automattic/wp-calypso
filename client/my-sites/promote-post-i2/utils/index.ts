@@ -130,9 +130,15 @@ export const getCampaignDurationFormatted = (
 	const dateStartFormatted = moment.utc( start_date ).format( format );
 
 	// A campaign without an "end date", show start -> today (if not ended)
-	if ( is_evergreen && status === 'active' ) {
+	if ( is_evergreen ) {
 		const todayFormatted = moment.utc().format( format );
-		return `${ dateStartFormatted } - ${ todayFormatted }`;
+		if ( status === 'active' ) {
+			return `${ dateStartFormatted } - ${ todayFormatted }`;
+		}
+
+		if ( status === 'scheduled' ) {
+			return '-';
+		}
 	}
 
 	// Else show start -> end
