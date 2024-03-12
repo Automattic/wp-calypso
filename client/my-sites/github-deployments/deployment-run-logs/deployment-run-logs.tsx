@@ -18,7 +18,7 @@ const DeploymentRunLog = ( { entry }: { entry: LogEntry } ) => {
 
 		const { stdout, stderr } = entry.context.command;
 
-		if ( stdout.length === 0 && stdout.length === 0 ) {
+		if ( stdout?.length === 0 && stderr?.length === 0 ) {
 			return false;
 		}
 
