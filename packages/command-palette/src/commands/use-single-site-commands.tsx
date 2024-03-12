@@ -29,7 +29,6 @@ import {
 	wordpress as wordpressIcon,
 	comment as feedbackIcon,
 } from '@wordpress/icons';
-import classNames from 'classnames';
 import { Command, CommandCallBackParams } from '../use-command-palette';
 import { isCustomDomain } from '../utils';
 import { useCommandsParams } from './types';
@@ -994,15 +993,12 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			siteType: SiteType.ATOMIC,
 			icon: (
 				<svg
-					width={ width }
-					height={ height }
+					width={ 18 }
+					height={ 18 }
 					viewBox="0 0 19 19"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
-					className={ classNames( 'social-icons social-icons__apple', {
-						'social-icons--enabled': ! isDisabled,
-						'social-icons--disabled': !! isDisabled,
-					} ) }
+					className="social-icons--enabled"
 				>
 					<g clipPath="url(#clip0_2014_1339)">
 						<path
