@@ -74,7 +74,7 @@ export const PatternsCategoryPage = ( {
 			/>
 
 			{ categoryNavList && (
-				<div className="category-pill-navigation__patterns-wrapper">
+				<div className="patterns-page-category__pill-navigation">
 					<CategoryPillNavigation
 						selectedCategory={ category }
 						buttons={ [
