@@ -1184,7 +1184,7 @@
 			font-style: normal;
 			font-weight: 400;
 			line-height: 21px;
-			padding: 0 24px 11px 0;
+			padding: 0;
 			margin-top: 8px;
 
 			svg {
@@ -1200,6 +1200,9 @@
 			}
 		}
 
+		.layout__content {
+			padding-top: 80px;
+		}
 
 		.wp-login__container,
 		.magic-login,
@@ -1237,6 +1240,10 @@
 				font-weight: 500;
 				line-height: 27px;
 				letter-spacing: -0.025px;
+
+				&:hover {
+					color: $woo-purple-40;
+				}
 			}
 
 			@media screen and ( max-width: 660px ) {
