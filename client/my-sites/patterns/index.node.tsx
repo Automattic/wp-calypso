@@ -6,10 +6,13 @@ import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hook
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
+import performanceMark from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import type { RouterContext, RouterNext, Pattern } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
+	performanceMark( context, 'renderPatterns' );
+
 	context.primary = (
 		<PatternsWrapper
 			category={ context.params.category }
@@ -22,14 +25,18 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 }
 
 function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) {
+	performanceMark( context, 'fetchCategoriesAndPatterns' );
+
 	const { cachedMarkup, queryClient, lang, params, store } = context;
 
-	if ( cachedMarkup ) {
+	if ( cachedMarkup || Object.keys( context.query ).length > 0 ) {
 		next();
 		return;
 	}
 
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
+
+	performanceMark( context, 'getPatternCategories', true );
 
 	// Fetches the list of categories first, then fetches patterns if a specific category was requested
 	queryClient
@@ -52,11 +59,15 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 				};
 			}
 
+			performanceMark( context, 'getPatterns', true );
+
 			return queryClient.fetchQuery< Pattern[] >(
 				getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
 			);
 		} )
 		.then( () => {
+			performanceMark( context, 'finished', true );
+
 			next();
 		} )
 		.catch( ( error ) => {
