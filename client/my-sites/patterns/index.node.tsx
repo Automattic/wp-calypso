@@ -66,8 +66,6 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 			);
 		} )
 		.then( () => {
-			performanceMark( context, 'finished', true );
-
 			next();
 		} )
 		.catch( ( error ) => {
