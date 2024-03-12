@@ -115,7 +115,7 @@ export default function CampaignItemDetails( props: Props ) {
 		format,
 		budget_cents,
 		type,
-		is_evergreen = true,
+		is_evergreen = false,
 	} = campaign || {};
 
 	const {
