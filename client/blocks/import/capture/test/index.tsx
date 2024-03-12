@@ -48,7 +48,7 @@ describe( 'CaptureInput', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
-		// enter a value URL and resubmit
+		// Now, enter a valid URL and confirm we can submit ok
 		await userEvent.clear( screen.getByLabelText( /Enter the URL of the site/ ) );
 		await userEvent.type(
 			screen.getByLabelText( /Enter the URL of the site/ ),
