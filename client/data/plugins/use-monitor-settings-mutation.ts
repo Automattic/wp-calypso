@@ -52,7 +52,7 @@ interface MonitorSettingVariables {
 }
 
 export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptions = {} ) {
-	const MAX_RETRIES = 1;
+	const MAX_RETRIES = 3;
 	let retryCount = 0;
 
 	const isMonitorNotActive = ( data: UpdateMonitorSettingsCreate ) => {
