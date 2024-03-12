@@ -20,7 +20,19 @@ export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_POSTS_RECEIVE:
 			const posts = action.posts || action.payload.posts;
-			return { ...state, ...keyBy( posts, 'global_ID' ) };
+			const postsByDedupedGlobalId = {};
+
+			// Assign a new key in case of global_ID collision.
+			for ( const [ globalId, post ] of Object.entries( keyBy( posts, 'global_ID' ) ) ) {
+				let key = globalId;
+				if ( state[ globalId ] && state[ globalId ].feed_item_ID !== post.feed_item_ID ) {
+					key = `${ globalId }-${ post.feed_item_ID }`;
+				}
+
+				postsByDedupedGlobalId[ key ] = post;
+			}
+
+			return { ...state, ...postsByDedupedGlobalId };
 
 		case READER_SEEN_MARK_AS_SEEN_RECEIVE:
 		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE:
