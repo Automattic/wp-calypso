@@ -60,6 +60,7 @@
 	text-decoration: underline;
 	// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
 	text-underline-offset: 3px;
+	cursor: pointer;
 }
 
 .is-section-jetpack-connect .intro-pricing-banner.is-sticky,
