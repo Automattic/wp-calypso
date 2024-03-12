@@ -1,6 +1,6 @@
 # Category Pill Navigation
 
-This navigation component, designed for consistent design integration, is primarily used on the `/patterns/:category`, `/themes`, and `/blog` pages. It offers a uniform design aesthetic across various sections of the website.
+This component can be used to display a set of categories or tags as pills in an horizontal way. Each pill accepts a link, and the whole navigation bar can be scrolled.
 
 ## How to use
 
@@ -13,7 +13,7 @@ function render() {
 		<CategoryPillNavigation
 			list={ Array.from( { length: 15 }, ( _, i ) => ( {
 				name: `category-${ i }`,
-				label: `Category ${ i }`,
+				label: `Category ${ i + 1 }`,
 				link: '#',
 			} ) ) }
 			selectedCategory="category-2"
