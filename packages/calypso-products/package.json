@@ -36,6 +36,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"i18n-calypso": "workspace:^"
 	},
@@ -45,6 +46,7 @@
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "^9.22.0",
 		"react": "^18.2.0"
 	}
 }
