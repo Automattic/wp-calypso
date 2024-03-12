@@ -1,6 +1,7 @@
-import { ExternalLink, Card } from '../..';
+import { Card } from '../..';
+import ExternalLink from './index';
 
-export default { title: 'packages/components/external-link' };
+export default { title: 'packages/components/ExternalLink' };
 
 export const Default = () => (
 	<Card>
