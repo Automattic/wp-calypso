@@ -5,6 +5,7 @@ import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -109,10 +110,14 @@ export async function login( context, next ) {
 			return next( error );
 		}
 
-		try {
-			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
-		} catch ( error ) {
-			return next( error );
+		const OAuth2Client = getOAuth2Client( context.store.getState(), client_id );
+		if ( ! OAuth2Client ) {
+			// Only fetch the OAuth2 client data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+			try {
+				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+			} catch ( error ) {
+				return next( error );
+			}
 		}
 	}
 

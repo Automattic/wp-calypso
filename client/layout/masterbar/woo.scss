@@ -1226,11 +1226,13 @@
 		}
 
 		.login__header-subtitle,
-		.formatted-header__subtitle {
+		.formatted-header__subtitle,
+		.verification-code-form__help-text {
 			font-size: $font-body-large;
 			font-weight: 400;
 			line-height: 27px;
 			letter-spacing: -0.025px;
+			color: var(--studio-gray-60);
 			-webkit-font-smoothing: initial;
 
 			a {
@@ -1579,6 +1581,24 @@
 		.auth-form__separator + .auth-form__social.card {
 			border: 0;
 			padding: 0;
+		}
+
+		.two-factor-authentication__verification-code-form-wrapper {
+			padding: 0;
+
+			.two-factor-authentication__verification-code-form {
+				margin-bottom: 32px;
+				padding: 0;
+
+				.form-fieldset {
+					margin: 48px auto 8px;
+					max-width: 327px;
+				}
+
+				.form-button {
+					max-width: 327px;
+				}
+			}
 		}
 	}
 }
