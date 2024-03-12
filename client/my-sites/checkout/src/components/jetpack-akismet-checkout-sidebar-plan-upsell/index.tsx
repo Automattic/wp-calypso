@@ -120,16 +120,16 @@ const useCalculatedDiscounts = () => {
 				isIntroductoryOffer: true,
 			} );
 		} else {
-			// If an annual product has a free trial and the biennial does not, show the multi-uear discount instead
+			// If an annual product has a free trial and the biennial does not, show the multi-year discount instead
 			priceBreakdown.push( {
-				label: __( 'Multi-year discount*' ),
+				label: __( 'Multi-year discount' ),
 				priceInteger: originalPrice - biennial.priceInteger,
 				isDiscount: true,
 			} );
 		}
 	} else {
 		priceBreakdown.push( {
-			label: __( 'Multi-year discount*' ),
+			label: __( 'Multi-year discount' ),
 			priceInteger: originalPrice - biennial.priceInteger,
 			isDiscount: true,
 		} );
