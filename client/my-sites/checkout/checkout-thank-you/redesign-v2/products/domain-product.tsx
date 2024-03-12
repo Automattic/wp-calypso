@@ -90,10 +90,12 @@ export default function ThankYouDomainProduct( {
 		);
 	}
 
+	const isDomainConnection = purchase ? isDomainMapping( purchase as object ) : false;
+
 	return (
 		<ThankYouProduct
 			name={ domainName }
-			details={ isDomainMapping( purchase ) && translate( 'Domain connection' ) }
+			details={ isDomainConnection ? translate( 'Domain connection' ) : undefined }
 			isFree={ purchase?.priceInteger === 0 }
 			actions={ actions }
 		/>

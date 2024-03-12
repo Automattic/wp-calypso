@@ -7,7 +7,7 @@ import { getTitanControlPanelRedirectPath } from 'calypso/my-sites/email/paths';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
 
 export default function getTitanFooterDetails(
-	selectedSiteSlug: string,
+	selectedSiteSlug: string | null,
 	domainName: string,
 	currentRoute: string,
 	context: string,
