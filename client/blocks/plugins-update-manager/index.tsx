@@ -57,11 +57,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					onEditSchedule={ onEditSchedule }
 				/>
 			),
-			title: translate( 'List schedules' ),
+			title: translate( 'Scheduled Updates' ),
 		},
 		create: {
 			component: <ScheduleCreate onNavBack={ onNavBack } />,
-			title: translate( 'Set up a new schedule' ),
+			title: translate( 'New schedule' ),
 		},
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
@@ -76,7 +76,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 			<MainComponent wideLayout>
 				<NavigationHeader
 					navigationItems={ [] }
-					title={ translate( 'Plugins update scheduler' ) }
+					title={ translate( 'Plugin Update Manager' ) }
 					subtitle={ translate( 'Schedule automatic plugin updates' ) }
 				>
 					{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (
@@ -87,7 +87,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 							onClick={ onCreateNewSchedule }
 							disabled={ ! canCreateSchedules }
 						>
-							{ translate( 'Set up a new schedule' ) }
+							{ translate( 'Add new schedule' ) }
 						</Button>
 					) }
 				</NavigationHeader>

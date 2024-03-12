@@ -285,7 +285,7 @@ export const ScheduleForm = ( props: Props ) => {
 						) : (
 							<Text className="info-msg">
 								{ translate(
-									'Plugins not listed below are managed and updated by WordPress.com for you.'
+									'Plugins not listed below are automatically updated by WordPress.com.'
 								) }
 							</Text>
 						) }
