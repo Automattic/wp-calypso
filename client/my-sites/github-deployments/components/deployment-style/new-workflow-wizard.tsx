@@ -5,7 +5,6 @@ import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { CodeHighlighter } from '../code-highlighter';
 import { useCreateWorkflow } from './use-create-workflow';
 import { Workflow } from './use-deployment-workflows-query';
-import { newComposerWorkflowExample, newWorkflowExample } from './workflow-yaml-examples';
 
 import './style.scss';
 
@@ -13,7 +12,8 @@ interface NewWorkflowWizardProps {
 	repository: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	repositoryBranch: string;
 	workflows?: Workflow[];
-	useComposerWorkflow: boolean;
+	templateName: string;
+	exampleTemplate: string;
 	onWorkflowCreated( path: string ): void;
 }
 
@@ -25,7 +25,8 @@ export const NewWorkflowWizard = ( {
 	workflows,
 	repositoryBranch,
 	onWorkflowCreated,
-	useComposerWorkflow,
+	templateName,
+	exampleTemplate,
 }: NewWorkflowWizardProps ) => {
 	const { __ } = useI18n();
 
@@ -54,10 +55,6 @@ export const NewWorkflowWizard = ( {
 		setError( undefined );
 	}, [ workflows, __ ] );
 
-	const workflowContent = useComposerWorkflow
-		? newComposerWorkflowExample( repositoryBranch )
-		: newWorkflowExample( repositoryBranch );
-
 	return (
 		<div className="github-deployments-new-workflow-wizard">
 			<p css={ { marginBottom: 0 } }>
@@ -69,7 +66,7 @@ export const NewWorkflowWizard = ( {
 					<span>{ RECOMMENDED_WORKFLOW_PATH }</span>
 				</div>
 
-				<CodeHighlighter content={ workflowContent } />
+				<CodeHighlighter content={ exampleTemplate } />
 			</div>
 
 			{ error && (
@@ -89,7 +86,7 @@ export const NewWorkflowWizard = ( {
 							repositoryName: repository.name,
 							branchName: repositoryBranch,
 							fileName: RECOMMENDED_WORKFLOW_PATH,
-							fileContent: workflowContent,
+							workflowTemplate: templateName,
 						} )
 					}
 				>
