@@ -15,6 +15,14 @@
 		grid-template-columns: repeat(var(--column-count), 1fr);
 	}
 
+	&.is-regular-patterns {
+		--column-count: 4;
+	}
+
+	&.is-page-patterns {
+		--column-count: 3;
+	}
+
 	.patterns-category-gallery__item-preview {
 		aspect-ratio: 7 / 4;
 		align-content: end;

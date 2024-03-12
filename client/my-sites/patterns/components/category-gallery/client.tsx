@@ -1,9 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import classNames from 'classnames';
-import {
-	CategoryGalleryServer,
-	COLUMN_COUNTS,
-} from 'calypso/my-sites/patterns/components/category-gallery/server';
+import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
@@ -46,8 +43,10 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 			>
 				<PatternsSection title={ title } description={ description }>
 					<div
-						className="patterns-category-gallery"
-						style={ { '--column-count': COLUMN_COUNTS[ patternType ] } as React.CSSProperties }
+						className={ classNames( 'patterns-category-gallery', {
+							'is-regular-patterns': patternType === 'regular',
+							'is-page-patterns': patternType === 'pages',
+						} ) }
 					>
 						{ categories?.map( ( category ) => (
 							<LocalizedLink

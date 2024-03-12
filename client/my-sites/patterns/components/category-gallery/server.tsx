@@ -2,14 +2,9 @@ import classNames from 'classnames';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import type { CategoryGalleryProps, CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
+import type { CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
-
-export const COLUMN_COUNTS: Record< CategoryGalleryProps[ 'patternType' ], number > = {
-	regular: 4,
-	pages: 3,
-};
 
 export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	categories,
@@ -20,8 +15,10 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	return (
 		<PatternsSection title={ title } description={ description }>
 			<div
-				className="patterns-category-gallery"
-				style={ { '--column-count': COLUMN_COUNTS[ patternType ] } as React.CSSProperties }
+				className={ classNames( 'patterns-category-gallery', {
+					'is-regular-patterns': patternType === 'regular',
+					'is-page-patterns': patternType === 'pages',
+				} ) }
 			>
 				{ categories?.map( ( category ) => (
 					<LocalizedLink
