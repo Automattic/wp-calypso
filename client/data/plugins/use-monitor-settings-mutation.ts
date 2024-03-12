@@ -14,6 +14,7 @@ export type UpdateMonitorURL = {
 };
 
 export type UpdateMonitorSettings = {
+	monitor_active?: boolean;
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	sms_notifications?: boolean;
@@ -46,20 +47,49 @@ export const useMonitorSettingsQuery = (
 	} );
 };
 
+interface MonitorSettingVariables {
+	retryFlag?: boolean;
+}
+
 export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptions = {} ) {
+	const MAX_RETRIES = 1;
+	let retryCount = 0;
+
+	const isMonitorNotActive = ( data: UpdateMonitorSettingsCreate ) => {
+		return data?.settings && data?.settings?.monitor_active === false;
+	};
+
 	const mutation = useMutation( {
-		mutationFn: ( params: object ) =>
+		mutationFn: ( params: MonitorSettingVariables ) =>
 			wpcomRequest( {
 				path: `/sites/${ siteSlug }/jetpack-monitor-settings`,
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				body: params,
-			} ),
+			} ) as Promise< UpdateMonitorSettingsCreate >,
 		...queryOptions,
+		onSuccess: ( data, variables ) => {
+			const { retryFlag } = variables;
+			if ( retryFlag && isMonitorNotActive( data ) ) {
+				if ( retryCount < MAX_RETRIES ) {
+					// Increment the retry count
+					retryCount += 1;
+					// Retry the mutation if the monitor is not active
+					setTimeout( () => mutation.mutate( variables ), 3000 ); // Delay of 3 seconds
+				} else {
+					// Throw an error when maximum retry count is reached
+					throw new Error( 'Maximum retry count reached. Monitor is still not active.' );
+				}
+			}
+			return data;
+		},
 	} );
 
 	const { mutate } = mutation;
-	const createMonitorSettings = useCallback( ( params: object ) => mutate( params ), [ mutate ] );
+	const createMonitorSettings = useCallback(
+		( params: object, retryFlag: boolean ) => mutate( { ...params, retryFlag } ),
+		[ mutate ]
+	);
 
 	return { createMonitorSettings, ...mutation };
 }
