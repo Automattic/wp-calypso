@@ -41,9 +41,7 @@ export default function SitesDashboard() {
 		// We need a category in the URL if we have a selected site
 		if ( selectedSiteUrl && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		}
-
-		if ( category && selectedSiteUrl && selectedSiteFeature ) {
+		} else if ( category && selectedSiteUrl && selectedSiteFeature ) {
 			page.replace( '/sites/' + category + '/' + selectedSiteUrl + '/' + selectedSiteFeature );
 		} else if ( category && selectedSiteUrl ) {
 			page.replace( '/sites/' + category + '/' + selectedSiteUrl );
