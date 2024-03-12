@@ -25,12 +25,13 @@ $brand-text: "SF Pro Text", $sans;
 			line-height: 20px;
 			background: var(--studio-white);
 			border-radius: 4px;
-			bottom: -30px;
+			bottom: -24px;
 			color: var(--studio-black);
 			content: attr(data-tooltip);
 			display: none;
-			font-size: $font-body-small;
-			padding: 6px 10px;
+			font-size: $font-body-extra-small;
+			opacity: 0.95;
+			padding: 3px 6px;
 			position: absolute;
 			right: 0;
 			white-space: nowrap;
@@ -54,7 +55,7 @@ $brand-text: "SF Pro Text", $sans;
 			right: unset;
 			bottom: unset;
 			left: 0;
-			top: -35px;
+			top: -29px;
 		}
 	}
 

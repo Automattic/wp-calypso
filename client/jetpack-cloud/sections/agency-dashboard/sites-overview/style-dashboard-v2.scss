@@ -128,11 +128,12 @@
 		.sites-overview__column-action-button,
 		.sites-overview__row-status,
 		.toggle-activate-monitoring__toggle-button,
-		.sites-dataviews__favorite-btn-wrapper {
+		.sites-dataviews__favorite-btn-wrapper,
+		.sites-overview__boost-score {
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+8) {
+		td:nth-child(n+3):nth-child(-n+9) {
 			display: none;
 		}
 
@@ -280,7 +281,8 @@
 				.sites-overview__column-action-button,
 				.sites-overview__row-status,
 				.toggle-activate-monitoring__toggle-button,
-				.sites-dataviews__favorite-btn-wrapper {
+				.sites-dataviews__favorite-btn-wrapper,
+				.sites-overview__boost-score {
 					display: none;
 				}
 

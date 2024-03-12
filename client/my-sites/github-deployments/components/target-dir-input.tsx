@@ -18,7 +18,7 @@ export const TargetDirInput = ( { onChange, value }: TargetDirInputProps ) => {
 			<FormLabel htmlFor="targetDir">{ __( 'Destination directory' ) }</FormLabel>
 			<FormTextInput
 				id="targetDir"
-				placehlder="/"
+				placeholder="/"
 				value={ value }
 				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 					let targetDir = event.currentTarget.value.trim();

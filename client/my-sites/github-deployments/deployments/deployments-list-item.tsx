@@ -17,7 +17,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
-import { manageDeploymentPage } from '../routes';
+import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { DeleteDeploymentDialog } from './delete-deployment-dialog';
 import { DeploymentStarterMessage } from './deployment-starter-message';
 import { DeploymentsListItemActions } from './deployments-list-item-actions';
@@ -76,7 +76,14 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 	const columns = run ? (
 		<>
 			<td>{ run && <DeploymentCommitDetails run={ run } deployment={ deployment } /> }</td>
-			<td>{ run && <DeploymentStatus status={ run.status as DeploymentStatusValue } /> }</td>
+			<td>
+				{ run && (
+					<DeploymentStatus
+						status={ run.status as DeploymentStatusValue }
+						href={ viewDeploymentLogs( siteSlug!, deployment.id ) }
+					/>
+				) }
+			</td>
 			<td>
 				<span>{ formatDate( locale, new Date( run.created_on ) ) }</span>
 			</td>

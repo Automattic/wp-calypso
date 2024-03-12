@@ -30,6 +30,18 @@ export default function useStoredCards() {
 				name: 'Primary Card',
 				created: new Date().toString(),
 			},
+			{
+				id: '2',
+				card: {
+					brand: 'visa',
+					exp_month: 12,
+					exp_year: 2027,
+					last4: '5678',
+				},
+				is_default: false,
+				name: 'Secondary Card',
+				created: new Date().toString(),
+			},
 		];
 
 		return {

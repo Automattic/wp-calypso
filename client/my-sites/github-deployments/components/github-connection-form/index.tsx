@@ -1,11 +1,11 @@
-import { Button, FormLabel, Spinner } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel, Spinner } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ChangeEvent, useMemo, useRef, useState } from 'react';
+import classNames from 'classnames';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
-import Notice from 'calypso/components/notice';
-import { GitHubInstallationData } from 'calypso/my-sites/github-deployments/use-github-installations-query';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useGithubRepositoryBranchesQuery } from 'calypso/my-sites/github-deployments/use-github-repository-branches-query';
 import { useGithubRepositoryChecksQuery } from 'calypso/my-sites/github-deployments/use-github-repository-checks-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
@@ -33,10 +33,10 @@ interface InitialValues {
 }
 
 interface GitHubConnectionFormProps {
-	repository: GitHubRepositoryData;
+	repository?: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' > & { default_branch?: string };
 	deploymentId?: number;
-	installation: GitHubInstallationData;
-	initialValues?: InitialValues;
+	installationId?: number;
+	initialValues: InitialValues;
 	changeRepository?(): void;
 	onSubmit( deploymentData: CodeDeploymentData ): Promise< unknown >;
 }
@@ -44,30 +44,26 @@ interface GitHubConnectionFormProps {
 export const GitHubConnectionForm = ( {
 	repository,
 	deploymentId,
-	installation,
-	initialValues = {
-		branch: repository.default_branch,
-		destPath: '/',
-		isAutomated: false,
-		workflowPath: undefined,
-	},
+	installationId,
+	initialValues,
 	changeRepository,
 	onSubmit,
 }: GitHubConnectionFormProps ) => {
+	const [ submitted, setSubmitted ] = useState( false );
+
 	const [ branch, setBranch ] = useState( initialValues.branch );
 	const [ destPath, setDestPath ] = useState( initialValues.destPath );
 	const [ isAutoDeploy, setIsAutoDeploy ] = useState( initialValues.isAutomated );
-
 	const [ workflowPath, setWorkflowPath ] = useState< string | undefined >(
 		initialValues.workflowPath
 	);
-	const suggestionsApplied = useRef( false );
+
 	const { __ } = useI18n();
 
 	const { data: branches, isLoading: isFetchingBranches } = useGithubRepositoryBranchesQuery(
-		installation.external_id,
-		repository.owner,
-		repository.name
+		installationId,
+		repository?.owner,
+		repository?.name
 	);
 
 	const branchOptions = useMemo( () => {
@@ -90,23 +86,26 @@ export const GitHubConnectionForm = ( {
 			workflowFilename: workflowPath,
 		},
 		{
-			enabled: !! workflowPath,
+			enabled: !! repository && !! workflowPath,
 			refetchOnWindowFocus: false,
 		}
 	);
 
 	const { data: repoChecks } = useGithubRepositoryChecksQuery(
-		installation.external_id,
-		repository.owner,
-		repository.name,
+		installationId,
+		repository?.owner,
+		repository?.name,
 		branch
 	);
 
-	if ( repoChecks && ! suggestionsApplied.current ) {
-		setDestPath( repoChecks.suggested_directory );
-		suggestionsApplied.current = true;
-	}
+	useEffect( () => {
+		// Only apply path suggestions if creating a new deployment
+		if ( ! deploymentId && repoChecks?.suggested_directory ) {
+			setDestPath( repoChecks.suggested_directory );
+		}
+	}, [ deploymentId, repoChecks ] );
 
+	const displayMissingRepositoryError = submitted && ! repository;
 	const submitDisabled = !! workflowPath && workflowCheckResult?.conclusion !== 'success';
 
 	const useComposerWorkflow = repoChecks?.has_composer && ! repoChecks.has_vendor;
@@ -117,6 +116,12 @@ export const GitHubConnectionForm = ( {
 			onSubmit={ async ( e ) => {
 				e.preventDefault();
 
+				setSubmitted( true );
+
+				if ( ! repository || ! installationId ) {
+					return;
+				}
+
 				setIsPending( true );
 
 				try {
@@ -124,7 +129,7 @@ export const GitHubConnectionForm = ( {
 						externalRepositoryId: repository.id,
 						branchName: branch,
 						targetDir: destPath,
-						installationId: installation.external_id,
+						installationId: installationId,
 						isAutomated: isAutoDeploy,
 						workflowPath: workflowPath ?? undefined,
 					} );
@@ -134,27 +139,34 @@ export const GitHubConnectionForm = ( {
 			} }
 		>
 			<div className="github-deployments-connect-repository__configs">
-				{ deploymentId && (
-					<div css={ { marginBottom: '16px' } }>
-						<Notice isCompact>
-							{ __(
-								'Changes to an existing connection will be applied in the next deployment run.'
-							) }
-						</Notice>
-					</div>
-				) }
-				<FormFieldset>
+				<FormFieldset className="github-deployments-connect-repository__repository">
 					<FormLabel>{ __( 'Repository' ) }</FormLabel>
-					<div className="github-deployments-connect-repository__repository">
-						<ExternalLink href={ `https://github.com/${ repository.owner }/${ repository.name }` }>
-							{ repository.owner }/{ repository.name }
-						</ExternalLink>
+					<div
+						className={ classNames( 'github-deployments-connect-repository__repository-input', {
+							'github-deployments-connect-repository__repository-input--has-error':
+								displayMissingRepositoryError,
+						} ) }
+					>
+						{ repository ? (
+							<ExternalLink
+								href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+							>
+								{ repository.owner }/{ repository.name }
+							</ExternalLink>
+						) : (
+							<FormSettingExplanation css={ { margin: 0 } }>
+								{ __( 'No repository selected' ) }
+							</FormSettingExplanation>
+						) }
 						{ changeRepository && (
 							<Button compact onClick={ changeRepository }>
-								{ __( 'Change' ) }
+								{ __( 'Select repository' ) }
 							</Button>
 						) }
 					</div>
+					{ displayMissingRepositoryError && (
+						<FormInputValidation isError text={ __( 'Please select a repository' ) } />
+					) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="branch">{ __( 'Deployment branch' ) }</FormLabel>
@@ -182,9 +194,17 @@ export const GitHubConnectionForm = ( {
 					value={ isAutoDeploy }
 					hasWorkflowPath={ !! workflowPath }
 				/>
-				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
-					{ deploymentId ? __( 'Update connection' ) : __( 'Connect repository' ) }
-				</Button>
+				<div className="github-deployments-connect-repository__submit">
+					<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
+						{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
+					</Button>
+
+					{ deploymentId && (
+						<FormSettingExplanation>
+							{ __( 'Changes will be applied in the next deployment run.' ) }
+						</FormSettingExplanation>
+					) }
+				</div>
 			</div>
 			<DeploymentStyle
 				isDisabled={ isFetchingBranches }

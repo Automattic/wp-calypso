@@ -38,7 +38,7 @@ export const GitHubRepositoryListItem = ( {
 			<td>{ formatDate( locale, new Date( repository.updated_at ) ) }</td>
 			<td>
 				<Button compact onClick={ onSelect }>
-					{ __( 'Connect' ) }
+					{ __( 'Select' ) }
 				</Button>
 			</td>
 		</tr>

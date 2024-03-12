@@ -1,21 +1,27 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { Badge } from './badge';
 import { MOMENT_TIME_FORMAT } from './config';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
+import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { ellipsis } from './icons';
 
 interface Props {
-	siteSlug: string;
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
+	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
 	const moment = useLocalizedMoment();
-	const { siteSlug, onEditClick, onRemoveClick } = props;
-	const { data: schedules = [] } = useScheduleUpdatesQuery( siteSlug );
+	const { onEditClick, onRemoveClick } = props;
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { prepareScheduleName } = usePrepareScheduleName();
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -42,10 +48,16 @@ export const ScheduleListTable = ( props: Props ) => {
 								variant="link"
 								onClick={ () => onEditClick && onEditClick( schedule.id ) }
 							>
-								{ schedule.hook }
+								{ prepareScheduleName( schedule ) }
 							</Button>
 						</td>
-						<td></td>
+						<td>
+							{ schedule.last_run_status && (
+								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
+							) }
+							{ schedule.last_run_timestamp &&
+								moment( schedule.last_run_timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }
+						</td>
 						<td>{ moment( schedule.timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }</td>
 						<td>
 							{

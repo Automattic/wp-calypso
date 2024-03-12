@@ -9,6 +9,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import {
 	getName,
+	hasAmountAvailableToRefund,
 	isRefundable,
 	isSubscription,
 	isOneTimePurchase,
@@ -45,13 +46,24 @@ const CancelPurchaseRefundInformation = ( {
 
 	if ( isRefundable( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
-			text = i18n.translate(
-				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-					"you'll receive a refund and it will be removed from your site immediately.",
-				{
-					args: { refundPeriodInDays },
-				}
-			);
+			// Domain bought with domain credits, so there's no refund
+			if ( ! hasAmountAvailableToRefund( purchase ) ) {
+				text = i18n.translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						'it will be removed from your site immediately.',
+					{
+						args: { refundPeriodInDays },
+					}
+				);
+			} else {
+				text = i18n.translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						"you'll receive a refund and it will be removed from your site immediately.",
+					{
+						args: { refundPeriodInDays },
+					}
+				);
+			}
 		}
 
 		if ( isSubscription( purchase ) ) {

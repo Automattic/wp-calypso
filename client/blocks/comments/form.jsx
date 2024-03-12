@@ -168,6 +168,7 @@ class PostCommentForm extends Component {
 						onBlur={ this.handleBlur }
 						onChange={ this.handleTextChange }
 						enableAutoFocus={ isReply }
+						siteId={ post.site_ID }
 					/>
 					<Button
 						className={ buttonClasses }

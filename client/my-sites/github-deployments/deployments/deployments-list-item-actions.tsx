@@ -50,7 +50,7 @@ export const DeploymentsListItemActions = ( {
 								onClose();
 							} }
 						>
-							{ __( 'Configure repository' ) }
+							{ __( 'Configure connection' ) }
 						</MenuItem>
 					</MenuGroup>
 					<MenuGroup>

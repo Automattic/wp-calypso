@@ -5,10 +5,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
-import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
-import { useGithubInstallationsQuery } from '../use-github-installations-query';
-import { useGithubRepositoriesQuery } from '../use-github-repositories-query';
 import { useUpdateCodeDeployment } from './use-update-code-deployment';
 
 const noticeOptions = {
@@ -24,14 +21,17 @@ export const GitHubDeploymentManagementForm = ( {
 	codeDeployment,
 	onUpdated,
 }: GitHubDeploymentManagementFormProps ) => {
-	const installation = useGithubInstallationsQuery().data?.find(
-		( installation ) => installation.external_id === codeDeployment?.installation_id
-	);
 	const dispatch = useDispatch();
 
-	const repository = useGithubRepositoriesQuery( codeDeployment.installation_id ).data?.find(
-		( repository ) => repository.id === codeDeployment.external_repository_id
-	);
+	const repository = useMemo( () => {
+		const [ owner, name ] = codeDeployment.repository_name.split( '/' );
+
+		return {
+			id: codeDeployment.external_repository_id,
+			owner,
+			name,
+		};
+	}, [ codeDeployment ] );
 
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -69,13 +69,9 @@ export const GitHubDeploymentManagementForm = ( {
 		};
 	}, [ codeDeployment ] );
 
-	if ( ! installation || ! repository ) {
-		return <GitHubLoadingPlaceholder />;
-	}
-
 	return (
 		<GitHubConnectionForm
-			installation={ installation }
+			installationId={ codeDeployment.installation_id }
 			deploymentId={ codeDeployment.id }
 			repository={ repository }
 			initialValues={ initialValues }

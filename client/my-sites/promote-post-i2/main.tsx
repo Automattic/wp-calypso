@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -9,12 +10,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
 import {
 	BlazablePost,
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
 } from 'calypso/data/promote-post/types';
+import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
 import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-credit-balance-query';
 import usePostsQueryPaged, {
@@ -38,7 +41,6 @@ import PostsListBanner from './components/posts-list-banner';
 import WooBanner from './components/woo-banner';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
-
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
 const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 export type TabType = ( typeof TAB_OPTIONS )[ number ];
@@ -109,6 +111,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		selectedSiteId,
 		'',
 	] );
+
+	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
 		'campaigns',
@@ -249,7 +254,11 @@ export default function PromotedPosts( { tab }: Props ) {
 						showIcon={ false }
 						showSupportModal={ ! isRunningInJetpack }
 					/>
-					<Button variant="primary" onClick={ onClickPromote }>
+					<Button
+						variant="primary"
+						onClick={ onClickPromote }
+						disabled={ isLoadingBillingSummary || paymentBlocked }
+					>
 						{ translate( 'Promote' ) }
 					</Button>
 				</div>
@@ -258,7 +267,37 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ showBanner && ( isWooBlaze ? <WooBanner /> : <PostsListBanner /> ) }
 
+			{
+				// TODO: Uncomment when DebtNotifier is implemented
+				/* <DebtNotifier /> */
+			 }
+
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
+
+			{ ! isLoadingBillingSummary && paymentBlocked && (
+				<Notice
+					isReskinned={ true }
+					showDismiss={ false }
+					status="is-error"
+					icon="notice-outline"
+					className="promote-post-i2__payment-blocked-notice"
+				>
+					{ translate(
+						'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
+						{
+							components: {
+								wpcomSupport: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</Notice>
+			) }
 
 			{ /* Render campaigns tab */ }
 			{ selectedTab === 'campaigns' && (
@@ -307,6 +346,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						totalCampaigns={ totalPostsUnfiltered || 0 }
 						hasMorePages={ postsHasMorePages }
 						posts={ posts as BlazablePost[] }
+						hasPaymentsBlocked={ paymentBlocked }
 					/>
 				</>
 			) }

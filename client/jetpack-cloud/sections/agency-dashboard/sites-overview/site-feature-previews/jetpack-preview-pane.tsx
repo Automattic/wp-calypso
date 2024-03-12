@@ -76,7 +76,7 @@ export function JetpackPreviewPane( {
 			),
 			createFeaturePreview(
 				'jetpack_plugins',
-				'Plugins',
+				translate( 'Plugins' ),
 				true,
 				selectedFeatureId,
 				setSelectedFeatureId,

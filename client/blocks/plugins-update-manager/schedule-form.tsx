@@ -1,5 +1,4 @@
 import {
-	TextControl,
 	RadioControl,
 	SearchControl,
 	SelectControl,
@@ -16,15 +15,17 @@ import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import {
-	useCreateScheduleUpdatesMutation,
-	useEditScheduleUpdatesMutation,
-} from 'calypso/data/plugins/use-schedule-updates-mutation';
+	useCreateUpdateScheduleMutation,
+	useEditUpdateScheduleMutation,
+} from 'calypso/data/plugins/use-update-schedules-mutation';
 import {
-	useScheduleUpdatesQuery,
+	useUpdateScheduleQuery,
 	ScheduleUpdates,
-} from 'calypso/data/plugins/use-schedule-updates-query';
-import { SiteSlug } from 'calypso/types';
+} from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SELECTABLE_PLUGINS } from './config';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSetSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
+import { useSiteSlug } from './hooks/use-site-slug';
 import {
 	DAILY_OPTION,
 	DAY_OPTIONS,
@@ -33,23 +34,20 @@ import {
 	PERIOD_OPTIONS,
 	WEEKLY_OPTION,
 } from './schedule-form.const';
-import {
-	prepareTimestamp,
-	validateName,
-	validatePlugins,
-	validateTimeSlot,
-} from './schedule-form.helper';
+import { prepareTimestamp, validatePlugins, validateTimeSlot } from './schedule-form.helper';
 
 import './schedule-form.scss';
 
 interface Props {
-	siteSlug: SiteSlug;
 	scheduleForEdit?: ScheduleUpdates;
 	onSyncSuccess?: () => void;
+	onSyncError?: ( error: string ) => void;
 }
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
-	const { siteSlug, scheduleForEdit, onSyncSuccess } = props;
+	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
+	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
@@ -57,17 +55,20 @@ export const ScheduleForm = ( props: Props ) => {
 		data: plugins = [],
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
-	} = useCorePluginsQuery( siteSlug, true );
-	const { data: schedulesData = [] } = useScheduleUpdatesQuery( siteSlug );
-	const schedules = schedulesData.filter( ( x ) => x.id !== scheduleForEdit?.id ) ?? [];
-	const { createScheduleUpdates } = useCreateScheduleUpdatesMutation( siteSlug, {
+	} = useCorePluginsQuery( siteSlug, true, true );
+	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
+
+	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
+	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
+	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
 	} );
-	const { editScheduleUpdates } = useEditScheduleUpdatesMutation( siteSlug, {
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
 	} );
 
-	const [ name, setName ] = useState( scheduleForEdit?.hook || '' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
 		scheduleForEdit?.args || []
 	);
@@ -85,7 +86,6 @@ export const ScheduleForm = ( props: Props ) => {
 	const scheduledPlugins = schedules.map( ( schedule ) => schedule.args );
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
-		name: validateName( name ),
 		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 	} );
@@ -126,13 +126,11 @@ export const ScheduleForm = ( props: Props ) => {
 	const onFormSubmit = () => {
 		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
 		setFieldTouched( {
-			name: true,
 			plugins: true,
 			timestamp: true,
 		} );
 
 		const params = {
-			hook: name,
 			plugins: selectedPlugins,
 			schedule: {
 				timestamp,
@@ -142,16 +140,10 @@ export const ScheduleForm = ( props: Props ) => {
 
 		if ( formValid ) {
 			scheduleForEdit
-				? editScheduleUpdates( scheduleForEdit.id, params )
-				: createScheduleUpdates( params );
+				? editUpdateSchedule( scheduleForEdit.id, params )
+				: createUpdateSchedule( params );
 		}
 	};
-
-	// Name validation
-	useEffect(
-		() => setValidationErrors( { ...validationErrors, name: validateName( name ) } ),
-		[ name ]
-	);
 
 	// Plugin selection validation
 	useEffect(
@@ -189,24 +181,6 @@ export const ScheduleForm = ( props: Props ) => {
 				gap={ 12 }
 			>
 				<FlexItem>
-					<div className="form-field">
-						<label htmlFor="name">Name</label>
-						<TextControl
-							id="name"
-							value={ name }
-							onBlur={ () => setFieldTouched( { ...fieldTouched, name: true } ) }
-							onChange={ setName }
-							__next40pxDefaultSize
-							placeholder="Example: Security plugins"
-							autoComplete="off"
-						/>
-						{ fieldTouched?.name && validationErrors?.name && (
-							<Text className="validation-msg">
-								<Icon className="icon-info" icon={ info } size={ 16 } />
-								{ validationErrors.name }
-							</Text>
-						) }
-					</div>
 					<div className="form-field">
 						<label htmlFor="frequency">Update every</label>
 						<div className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>

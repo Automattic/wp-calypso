@@ -9,6 +9,8 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	findPlansKeys,
 	getPlan,
+	JETPACK_SEARCH_PRODUCTS,
+	PRODUCT_JETPACK_SEARCH,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -105,6 +107,13 @@ export const getProductsToDisplay = ( {
 				( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
 			) {
 				return product?.productSlug === PRODUCT_JETPACK_STATS_YEARLY;
+			}
+
+			// Removes Jetpack search free from products that can be displayed
+			if (
+				( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
+			) {
+				return product?.productSlug === PRODUCT_JETPACK_SEARCH;
 			}
 
 			return true;

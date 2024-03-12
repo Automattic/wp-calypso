@@ -28,6 +28,7 @@ export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressWordmark } from './wordpress-wordmark';
+export { default as MaterialIcon } from './material-icon';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
 export {
@@ -62,6 +63,8 @@ export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
 export { default as PlanPrice } from './plan-price';
+export { default as ExternalLink } from './external-link';
+export { default as ExternalLinkWithTracking } from './external-link/with-tracking';
 export * from './theme-type-badge';
 
 // Types

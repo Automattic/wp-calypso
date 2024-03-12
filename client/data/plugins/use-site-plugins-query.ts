@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { decodeEntitiesFromPlugins } from './helpers';
 import type { SiteId, SiteSlug } from 'calypso/types';
 
 export type SitePlugin = {
@@ -32,7 +33,7 @@ export type SitePluginsResponse = {
 export const useSitePluginsQuery = (
 	siteIdOrSlug: SiteId | SiteSlug | undefined
 ): UseQueryResult< SitePluginsResponse > => {
-	return useQuery( {
+	return useQuery< SitePluginsResponse >( {
 		queryKey: [ 'site-plugins', siteIdOrSlug ],
 		queryFn: () => {
 			return wpcomRequest( {
@@ -46,5 +47,11 @@ export const useSitePluginsQuery = (
 		enabled: !! siteIdOrSlug,
 		retry: false,
 		refetchOnWindowFocus: false,
+		select: ( data ) => {
+			return {
+				...data,
+				plugins: decodeEntitiesFromPlugins( data.plugins, [ 'display_name' ] ),
+			};
+		},
 	} );
 };

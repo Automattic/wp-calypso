@@ -9,18 +9,29 @@ export const prepareTimestamp = (
 	period: string
 ) => {
 	const event = new Date();
+	const now = new Date();
 
-	const hours = parseInt( hour ) + ( period === 'pm' ? 12 : 0 );
+	let hours = parseInt( hour ) % 12; // Get the hour value (0-11).
+	hours += period === 'pm' ? 12 : 0; // Add 12 if period is 'pm'.
+	hours %= 24; // Ensure the hour is in the range of 0-23.
 	event.setHours( hours, 0, 0, 0 );
 
-	if ( frequency === 'daily' ) {
-		// Set next day
+	// If the selected hour is in the past, advance to the next day.
+	if ( frequency === 'daily' && event < now ) {
 		event.setDate( event.getDate() + 1 );
 	}
 
 	if ( frequency === 'weekly' ) {
-		// Set first next selected day
-		event.setDate( event.getDate() + ( ( parseInt( day ) + 7 - event.getDay() ) % 7 || 7 ) );
+		// Calculate the difference between the target day and today.
+		let dayDifference = parseInt( day ) - now.getDay();
+
+		// If the target day is today and the selected hour is in the past, advance to the next week.
+		if ( dayDifference === 0 && event < now ) {
+			dayDifference += 7;
+		}
+
+		// Set the date to the next selected day.
+		event.setDate( event.getDate() + dayDifference + ( dayDifference < 0 ? 7 : 0 ) );
 	}
 
 	// return timestamp in seconds
@@ -54,6 +65,11 @@ type TimeSlot = {
 export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: TimeSlot[] = [] ) => {
 	let error = '';
 	const newDate = new Date( newSchedule.timestamp * 1000 );
+
+	// prepareTimestamp should always return a future date, but we need to catch it if it doesn't.
+	if ( newDate < new Date() ) {
+		error = 'Please choose a time in the future for this schedule.';
+	}
 
 	existingSchedules.forEach( ( schedule ) => {
 		if ( error ) {

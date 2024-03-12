@@ -5,7 +5,7 @@ import { WorkflowPicker } from './workflow-picker';
 import { WorkflowValidationWizard } from './workflow-validation-wizard';
 
 type AdvancedWorkflowStyleProps = {
-	repository: GitHubRepositoryData;
+	repository: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	branchName: string;
 	workflowPath?: string;
 	workflows?: Workflow[];
@@ -13,7 +13,6 @@ type AdvancedWorkflowStyleProps = {
 	isFetching: boolean;
 	useComposerWorkflow: boolean;
 	onWorkflowCreation( path: string ): void;
-	onNewWorkflowVerification( path: string ): void;
 	onChooseWorkflow( path: string ): void;
 };
 
@@ -25,7 +24,6 @@ export const AdvancedWorkflowStyle = ( {
 	branchName,
 	workflowPath,
 	onWorkflowCreation,
-	onNewWorkflowVerification,
 	onChooseWorkflow,
 	useComposerWorkflow,
 }: AdvancedWorkflowStyleProps ) => {
@@ -35,11 +33,9 @@ export const AdvancedWorkflowStyle = ( {
 		if ( ! workflow ) {
 			return (
 				<NewWorkflowWizard
-					isLoadingWorkflows={ isLoading || isFetching }
 					workflows={ workflows }
 					repository={ repository }
 					repositoryBranch={ branchName }
-					onWorkflowVerification={ onNewWorkflowVerification }
 					onWorkflowCreated={ onWorkflowCreation }
 					useComposerWorkflow={ useComposerWorkflow }
 				/>

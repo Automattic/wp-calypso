@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useMutationState } from '@tanstack/react-query';
 import {
 	__experimentalText as Text,
 	Button,
@@ -5,27 +7,56 @@ import {
 	CardHeader,
 	CardBody,
 	CardFooter,
+	Icon,
 } from '@wordpress/components';
-import { arrowLeft } from '@wordpress/icons';
-import { useScheduleUpdatesQuery } from 'calypso/data/plugins/use-schedule-updates-query';
-import { SiteSlug } from 'calypso/types';
+import { arrowLeft, info } from '@wordpress/icons';
+import { useState } from 'react';
+import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
 
 interface Props {
-	siteSlug: SiteSlug;
 	scheduleId?: string;
 	onNavBack?: () => void;
 }
 export const ScheduleEdit = ( props: Props ) => {
-	const { siteSlug, scheduleId, onNavBack } = props;
-	const { data: schedules = [], isFetched } = useScheduleUpdatesQuery( siteSlug );
+	const siteSlug = useSiteSlug();
+	const isEligibleForFeature = useIsEligibleForFeature();
+	const { scheduleId, onNavBack } = props;
+	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
+		siteSlug,
+		isEligibleForFeature
+	);
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+
+	const pendingMutations = useMutationState( {
+		filters: { mutationKey: [ 'edit-update-schedule', siteSlug ], status: 'pending' },
+	} );
+	const isBusy = pendingMutations.length > 0;
+	const [ syncError, setSyncError ] = useState( '' );
+
+	const { canCreateSchedules, errors: eligibilityCheckErrors } = useCanCreateSchedules(
+		siteSlug,
+		isEligibleForFeature
+	);
 
 	// If the schedule is not found, navigate back to the list
 	if ( isFetched && ! schedule ) {
 		onNavBack && onNavBack();
 		return null;
 	}
+
+	const onSyncSuccess = () => {
+		recordTracksEvent( 'calypso_scheduled_updates_edit_schedule', {
+			site_slug: siteSlug,
+		} );
+
+		setSyncError( '' );
+
+		return onNavBack && onNavBack();
+	};
 
 	return (
 		<Card className="plugins-update-manager">
@@ -43,16 +74,29 @@ export const ScheduleEdit = ( props: Props ) => {
 			<CardBody>
 				{ schedule && (
 					<ScheduleForm
-						siteSlug={ siteSlug }
 						scheduleForEdit={ schedule }
-						onSyncSuccess={ () => onNavBack && onNavBack() }
+						onSyncSuccess={ onSyncSuccess }
+						onSyncError={ setSyncError }
 					/>
 				) }
 			</CardBody>
 			<CardFooter>
-				<Button form="schedule" type="submit" variant="primary">
+				<Button
+					form="schedule"
+					type="submit"
+					variant={ canCreateSchedules ? 'primary' : 'secondary' }
+					isBusy={ isBusy }
+					disabled={ ! canCreateSchedules }
+				>
 					Save
 				</Button>
+				{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
+					<Text as="p" className="validation-msg">
+						<Icon className="icon-info" icon={ info } size={ 16 } />
+						{ ( eligibilityCheckErrors?.length && eligibilityCheckErrors[ 0 ].message ) || '' }
+						{ syncError }
+					</Text>
+				) }
 			</CardFooter>
 		</Card>
 	);

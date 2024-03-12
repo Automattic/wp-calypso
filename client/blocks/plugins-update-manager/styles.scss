@@ -14,9 +14,31 @@
 		min-height: 2.25rem;
 	}
 
+	.components-button.is-primary.is-busy {
+		background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
+		background-size: 100px 100%;
+	}
+
 	.components-text {
 		color: var(--studio-gray-60);
 		font-size: 0.875rem;
+
+		&.validation-msg,
+		&.info-msg {
+			display: block;
+			min-height: 1rem;
+			font-size: 0.75rem;
+			margin-bottom: 0.5rem;
+		}
+
+		&.validation-msg {
+			color: var(--studio-red-50);
+
+			svg {
+				fill: var(--studio-red-50);
+				margin-left: 0;
+			}
+		}
 	}
 
 	p.components-text {
@@ -109,4 +131,19 @@
 			margin-inline-start: 0.5rem;
 		}
 	}
+
+	.components-card__footer {
+		display: flex;
+		align-items: baseline;
+
+		.validation-msg {
+			width: 100%;
+		}
+	}
+}
+
+.plugins-update-manager-spinner {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 }

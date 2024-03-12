@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card, FormLabel } from '@automattic/components';
+import { Card, FormLabel, MaterialIcon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import MaterialIcon from 'calypso/components/material-icon';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

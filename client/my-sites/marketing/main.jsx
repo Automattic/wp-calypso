@@ -12,11 +12,16 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
@@ -115,10 +120,19 @@ export const Sharing = ( {
 		} );
 	}
 
-	// For p2 hub sites show only connections tab
 	let titleHeader = translate( 'Marketing and Integrations' );
 
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
+
+	if ( isGlobalSiteViewEnabled ) {
+		filters = [];
+		titleHeader = translate( 'Connections' );
+	}
+
 	if ( isP2Hub ) {
+		// For p2 hub sites show only connections tab.
 		filters = [ connectionsFilter ];
 		titleHeader = translate( 'Integrations' );
 	}

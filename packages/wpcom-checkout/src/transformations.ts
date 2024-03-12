@@ -143,16 +143,18 @@ function getDiscountReasonForIntroductoryOffer(
 	product: ResponseCartProduct,
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >,
-	allowFreeText: boolean
+	allowFreeText: boolean,
+	isPriceIncrease: boolean
 ): string {
-	return getIntroductoryOfferIntervalDisplay(
+	return getIntroductoryOfferIntervalDisplay( {
 		translate,
-		terms.interval_unit,
-		terms.interval_count,
-		product.item_subtotal_integer === 0 && allowFreeText,
-		'checkout',
-		terms.transition_after_renewal_count
-	);
+		intervalUnit: terms.interval_unit,
+		intervalCount: terms.interval_count,
+		isFreeTrial: product.item_subtotal_integer === 0 && allowFreeText,
+		isPriceIncrease,
+		context: 'checkout',
+		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+	} );
 }
 
 export interface CostOverrideForDisplay {
@@ -218,6 +220,10 @@ function makeSaleCostOverrideUnique(
 	return costOverride;
 }
 
+/**
+ * Replace introductory offer cost override text with wording specific to that
+ * offer, like "Discount for first 3 months" instead of "Introductory offer".
+ */
 function makeIntroductoryOfferCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
@@ -227,24 +233,28 @@ function makeIntroductoryOfferCostOverrideUnique(
 	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
 		return costOverride;
 	}
+	const isPriceIncrease = costOverride.old_subtotal_integer < costOverride.new_subtotal_integer;
 
-	// Replace introductory offer cost override text with wording specific to
-	// that offer, but not for renewals because an introductory offer manual
-	// renewal can be hard to explain simply and saying "Discount for first 3
-	// months" may not be accurate.
+	// Renewals get generic text because an introductory offer manual renewal
+	// can be hard to explain simply and saying "Discount for first 3 months"
+	// may not be accurate.
 	if ( product.is_renewal ) {
 		return {
 			...costOverride,
-			human_readable_reason: translate( 'Prorated renewal discount' ),
+			human_readable_reason: isPriceIncrease
+				? translate( 'Prorated renewal' )
+				: translate( 'Prorated renewal discount' ),
 		};
 	}
+
 	return {
 		...costOverride,
 		human_readable_reason: getDiscountReasonForIntroductoryOffer(
 			product,
 			product.introductory_offer_terms,
 			translate,
-			allowFreeText
+			allowFreeText,
+			isPriceIncrease
 		),
 	};
 }

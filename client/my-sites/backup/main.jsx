@@ -103,7 +103,7 @@ const BackupPage = ( { queryDate } ) => {
 							variant="primary"
 							trackEventName="calypso_jetpack_backup_now"
 						>
-							{ translate( 'Backup now' ) }
+							{ translate( 'Back up now' ) }
 						</BackupNowButton>
 					</NavigationHeader>
 				) }

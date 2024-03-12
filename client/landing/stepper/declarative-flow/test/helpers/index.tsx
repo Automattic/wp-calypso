@@ -17,8 +17,8 @@ export const getFlowLocation = () => {
 
 interface RenderFlowParams {
 	currentStep: string;
-	dependencies: ProvidedDependencies;
-	currentURL: string;
+	dependencies?: ProvidedDependencies;
+	currentURL?: string;
 	method: 'submit' | 'goBack';
 }
 /** Utility to render a flow for testing purposes */

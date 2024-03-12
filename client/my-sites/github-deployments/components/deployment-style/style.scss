@@ -203,4 +203,34 @@
 	.code-highlighter {
 		border: 1px solid var(--gray-gray-5, #dcdcde);
 	}
+
+	&__workflow-file {
+		border: 1px solid var(--gray-gray-5, #dcdcde);
+		border-radius: 2px;
+	}
+
+	&__workflow-file-name {
+		height: 48px;
+		display: flex;
+		align-items: center;
+		padding-left: 16px;
+		background-color: var(--studio-white);
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+
+		span {
+			color: var(--Gray-Gray-100, #101517);
+			font-family: monospace;
+			font-size: $font-body-extra-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: normal;
+			letter-spacing: -0.15px;
+		}
+	}
+}
+
+.github-deployments-deployments-style-popover {
+	.popover__inner {
+		max-width: 300px !important;
+	}
 }

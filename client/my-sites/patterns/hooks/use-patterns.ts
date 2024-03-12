@@ -8,8 +8,8 @@ export function getPatternsQueryOptions(
 	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' > = {}
 ) {
 	return {
-		queryKey: [ 'patterns', 'library', locale, category ],
-		queryFn: () => {
+		queryKey: [ 'pattern-library', 'patterns', locale, category ],
+		queryFn() {
 			return wpcom.req.get( `/ptk/patterns/${ locale }`, {
 				categories: category,
 				post_type: 'wp_block',
@@ -17,7 +17,6 @@ export function getPatternsQueryOptions(
 		},
 		staleTime: Infinity,
 		...queryOptions,
-		enabled: !! category,
 	};
 }
 

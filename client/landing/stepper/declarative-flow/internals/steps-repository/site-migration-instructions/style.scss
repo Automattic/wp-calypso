@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/variables";
+
 .site-migration-instructions {
 	.site-migration-instructions__list {
 		li {
@@ -7,6 +9,29 @@
 
 	.step-container__header p {
 		margin-top: 1.5rem;
+	}
+
+	.site-migration-instructions__list-migration-key-item {
+		height: 30px;
+		overflow: hidden;
+		transition: height 0.75s ease;
+
+		&.expanded {
+			height: 130px;
+		}
+
+		&.error {
+			height: 55px;
+			color: $alert-red;
+		}
+	}
+
+	.site-migration-instructions__show-key-button,
+	.site-migration-instructions__copy-key-button {
+		display: inline-block;
+		width: 100px;
+		margin-right: 0.5rem;
+		padding: 6px 12px;
 	}
 
 	.site-migration-instructions__migration-key {
@@ -21,7 +46,7 @@
 		display: inline-block;
 		margin-right: 0.75rem;
 		padding: 0.75rem 1rem;
-		width: 400px;
+		width: 375px;
 		overflow-x: scroll;
 	}
 }

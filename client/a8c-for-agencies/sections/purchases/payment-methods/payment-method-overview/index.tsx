@@ -14,7 +14,6 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import Pagination from 'calypso/components/pagination';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import StoredCreditCardV2 from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,6 +21,7 @@ import EmptyState from './empty-state';
 import useStoredCards from './hooks/use-stored-cards';
 import useStoredCardsPagination from './hooks/use-stored-cards-pagination';
 import LoadingState from './loading-state';
+import StoredCreditCard from './stored-credit-card';
 
 import './style.scss';
 
@@ -58,9 +58,9 @@ export default function PaymentMethodOverview() {
 			return (
 				<>
 					<div className="payment-method-overview__stored-cards">
-						{ primaryStoredCard && <StoredCreditCardV2 creditCard={ primaryStoredCard } /> }
+						{ primaryStoredCard && <StoredCreditCard creditCard={ primaryStoredCard } /> }
 						{ secondaryStoredCards.map( ( card: PaymentMethod, index: number ) => (
-							<StoredCreditCardV2
+							<StoredCreditCard
 								key={ card.id }
 								creditCard={ card }
 								showSecondaryCardCount={ secondaryStoredCards.length > 1 }

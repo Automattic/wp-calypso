@@ -9,6 +9,7 @@ import {
 	getDomainPurchase,
 	isBulkDomainTransfer,
 	isDomainOnly,
+	isSearch,
 	isTitanWithoutMailboxes,
 } from '../utils';
 
@@ -47,7 +48,21 @@ export const isRefactoredForThankYouV2 = ( props: CheckoutThankYouCombinedProps 
 	if ( purchases.length === 1 ) {
 		const purchase = purchases[ 0 ];
 
-		return isWpComPlan( purchase.productSlug ) || isP2Plus( purchase ) || isTitanMail( purchase );
+		if ( isWpComPlan( purchase.productSlug ) ) {
+			return true;
+		}
+
+		if ( isP2Plus( purchase ) ) {
+			return true;
+		}
+
+		if ( isTitanMail( purchase ) ) {
+			return true;
+		}
+
+		if ( isSearch( purchase ) ) {
+			return true;
+		}
 	}
 
 	return false;

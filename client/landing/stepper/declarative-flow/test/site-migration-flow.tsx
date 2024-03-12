@@ -18,8 +18,8 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
-	describe( 'submit', () => {
-		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
+	describe( 'navigation', () => {
+		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
@@ -50,7 +50,7 @@ describe( 'Site Migration Flow', () => {
 			);
 		} );
 
-		it( 'migrate redirects from the import-from page to bundleTransfer step', async () => {
+		it( 'migrate redirects from the import-from page to bundleTransfer step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -68,7 +68,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'upgrade redirects from the import-from page to site-migration-upgrade-plan page', async () => {
+		it( 'upgrade redirects from the import-from page to site-migration-upgrade-plan page', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -83,6 +83,22 @@ describe( 'Site Migration Flow', () => {
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
+
+		it( 'redirects from upgrade-plan to bundleTransfer step after selecting a free trial', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					freeTrialSelected: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: '/bundleTransfer',
+				state: { siteSlug: 'example.wordpress.com' },
+			} );
+		} );
 	} );
 
 	describe( 'goBack', () => {
@@ -90,13 +106,25 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-identify',
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?siteSlug=example.wordpress.com`,
 				state: null,
 			} );
+		} );
+
+		it( 'redirects the user to the goal step when going back from the identify step', async () => {
+			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationGoBack( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/goals?siteSlug=example.wordpress.com'
+			);
 		} );
 	} );
 } );
