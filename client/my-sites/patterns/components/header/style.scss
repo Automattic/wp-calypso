@@ -1,16 +1,18 @@
 
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/patterns/mixins";
 
 .patterns-header {
 	background: #1d2327;
-	padding: 0 26px;
 
 	.patterns-header__inner {
-		padding: 105px 0 64px 84px;
+		@include patterns-page-width;
+		padding-top: 105px;
+		padding-bottom: 64px;
 		background-image: url(./images/background@3x.png);
 		background-repeat: no-repeat;
-		background-position: bottom right 84px;
+		background-position: bottom right 110px;
 		background-size: auto 100%;
 		color: var(--studio-white);
 
@@ -51,10 +53,8 @@
 	}
 
 	@media ( max-width: $break-wide ) {
-		padding: 0 24px;
-
 		.patterns-header__inner {
-			padding: 90px 0 24px;
+			padding: 90px 24px 24px;
 			background: none;
 
 			h1 {
