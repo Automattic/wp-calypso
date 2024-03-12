@@ -126,7 +126,13 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 	};
 };
 
-export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText ) => {
+export const requestDeleteProduct = (
+	siteId,
+	product,
+	annualProduct,
+	noticeText,
+	cancelSubscriptions
+) => {
 	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_PRODUCT_DELETE,
@@ -143,20 +149,30 @@ export const requestDeleteProduct = ( siteId, product, annualProduct, noticeText
 		}
 
 		const requests = [
-			wpcom.req.post( {
-				method: 'DELETE',
-				path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+			wpcom.req.post(
+				{
+					method: 'DELETE',
+					path: `/sites/${ siteId }/memberships/product/${ product.ID }`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					cancel_subscriptions: Boolean( cancelSubscriptions ),
+				}
+			),
 		];
 
 		if ( annualProduct ) {
 			requests.push(
-				wpcom.req.post( {
-					method: 'DELETE',
-					path: `/sites/${ siteId }/memberships/product/${ annualProduct.ID }`,
-					apiNamespace: 'wpcom/v2',
-				} )
+				wpcom.req.post(
+					{
+						method: 'DELETE',
+						path: `/sites/${ siteId }/memberships/product/${ annualProduct.ID }`,
+						apiNamespace: 'wpcom/v2',
+					},
+					{
+						cancel_subscriptions: Boolean( cancelSubscriptions ),
+					}
+				)
 			);
 		}
 
