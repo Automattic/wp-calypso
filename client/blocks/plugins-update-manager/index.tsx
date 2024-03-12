@@ -77,7 +77,9 @@ export const PluginsUpdateManager = ( props: Props ) => {
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ translate( 'Plugin Update Manager' ) }
-					subtitle={ translate( 'Streamline your workflow with scheduled updates, timed to suit your needs' ) }
+					subtitle={ translate(
+						'Streamline your workflow with scheduled updates, timed to suit your needs.'
+					) }
 				>
 					{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (
 						<Button
