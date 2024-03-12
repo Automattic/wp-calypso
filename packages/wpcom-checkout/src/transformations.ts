@@ -1,6 +1,6 @@
 import {
 	isBiennially,
-	isDomainProduct,
+	isDomainIntroductoryOfferVisible,
 	isJetpackPlan,
 	isJetpackProduct,
 	isJetpackSocialAdvancedSlug,
@@ -456,7 +456,7 @@ function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartPro
 		return false;
 	}
 
-	if ( isDomainProduct( product ) ) {
+	if ( ! isDomainIntroductoryOfferVisible( product ) ) {
 		return false;
 	}
 
@@ -546,7 +546,6 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 	// If there are no original cost overrides, return the first cost override's
 	// old price.
 	if ( product.cost_overrides && product.cost_overrides.length > 0 ) {
-		// Introductory offers for Domains are used for premium domains and should not be considered as a discount.
 		const overridesToConsider =
 			product.cost_overrides?.filter( ( override ) =>
 				isUserVisibleCostOverride( override, product )
