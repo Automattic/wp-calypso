@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -7,72 +7,58 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
+import SitesDashboardContext from '../sites-dashboard-context';
 
-type Props = {
-	currentPage: number;
-	category: string;
-	hideSiteList: boolean;
-	isFavorites: boolean;
-	siteUrl: string;
-	siteFeature: string;
-};
+export default function SitesDashboard() {
+	const { hideListing, setHideListing } = useContext( SitesDashboardContext );
+	const { selectedCategory: category, setSelectedCategory: setCategory } =
+		useContext( SitesDashboardContext );
 
-export default function SitesDashboard( {
-	currentPage,
-	category,
-	hideSiteList,
-	isFavorites,
-	siteUrl,
-	siteFeature,
-}: Props ) {
-	const title = isFavorites ? 'Sites Favorites' : 'Sites';
-	const [ currentSitePreview, setCurrentSitePreview ] = useState( siteUrl );
-	const [ currentSiteFeature, setCurrentSiteFeature ] = useState( siteFeature );
+	const { selectedSiteUrl, setSelectedSiteUrl } = useContext( SitesDashboardContext );
+	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
 	const changeCurrentSitePreview = () => {
 		const randomSite = `example-${ Math.floor( Math.random() * 1000 ) }.com`;
 
-		setCurrentSitePreview( randomSite );
+		setSelectedSiteUrl( randomSite );
 	};
 
 	const changeCurrentSiteFeature = () => {
 		const randomNumber = Math.floor( Math.random() * 1000 );
 
-		setCurrentSiteFeature( 'Feature ' + randomNumber );
+		setSelectedSiteFeature( 'Feature_' + randomNumber );
 	};
 
 	const closePreview = () => {
-		setCurrentSitePreview( '' );
-		window.hideSiteList = false;
+		setSelectedSiteUrl( '' );
+		setHideListing( false );
 	};
 
-	window.hideSiteList =
-		typeof window.hideSiteList === 'undefined' ? hideSiteList : window.hideSiteList;
+	const currentPage = 1;
 
 	useEffect( () => {
-		if ( category && currentSitePreview && currentSiteFeature ) {
-			page.replace(
-				'/sites/' +
-					category +
-					'/' +
-					encodeURIComponent( currentSitePreview ) +
-					'/' +
-					encodeURIComponent( currentSiteFeature )
-			);
-		} else if ( category && currentSitePreview ) {
-			page.replace( '/sites/' + category + '/' + encodeURIComponent( currentSitePreview ) );
+		// We need a category in the URL if we have a selected site
+		if ( selectedSiteUrl && ! category ) {
+			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
+		}
+
+		if ( category && selectedSiteUrl && selectedSiteFeature ) {
+			page.replace( '/sites/' + category + '/' + selectedSiteUrl + '/' + selectedSiteFeature );
+		} else if ( category && selectedSiteUrl ) {
+			page.replace( '/sites/' + category + '/' + selectedSiteUrl );
 		} else if ( category ) {
 			page.replace( '/sites/' + category );
 		} else {
 			page.replace( '/sites' );
 		}
-	}, [ currentSitePreview, currentSiteFeature, category ] );
+	}, [ selectedSiteUrl, selectedSiteFeature, category, setCategory ] );
 
 	return (
 		<Layout title="Sites" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title }</Title>
+					<Title>Sites</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
@@ -82,7 +68,7 @@ export default function SitesDashboard( {
 						style={ {
 							border: '1px solid red',
 							flex: 1,
-							display: window.hideSiteList ? 'none' : 'block',
+							display: hideListing ? 'none' : 'block',
 						} }
 					>
 						Site List
@@ -97,12 +83,12 @@ export default function SitesDashboard( {
 						style={ {
 							border: '1px solid green',
 							flex: 1,
-							display: currentSitePreview ? 'block' : 'none',
+							display: selectedSiteUrl ? 'block' : 'none',
 						} }
 					>
-						Selected Site: { currentSitePreview }
+						Selected Site: { selectedSiteUrl }
 						<br />
-						Selected Feature: { currentSiteFeature }
+						Selected Feature: { selectedSiteFeature }
 						<br />
 						<br />
 						<button className="button" onClick={ changeCurrentSiteFeature }>
