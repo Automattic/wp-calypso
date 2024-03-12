@@ -19,7 +19,7 @@ function useSiteMediaStorage( {
 	return useQuery( {
 		queryKey: queryKeys.siteMediaStorage( siteIdOrSlug ),
 		queryFn: async (): Promise< SiteMediaStorage | undefined > => {
-			const mediaStorage: RawSiteMediaStorage = await wpcomRequest( {
+			const mediaStorage = await wpcomRequest< RawSiteMediaStorage >( {
 				path: `/sites/${ encodeURIComponent( siteIdOrSlug as string ) }/media-storage`,
 				apiVersion: '1.1',
 			} );
