@@ -1,4 +1,5 @@
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -91,7 +92,7 @@ function TeamMembers( props: Props ) {
 								components: {
 									a: (
 										<a
-											href="https://jetpack.com/support/sso/"
+											href={ localizeUrl( 'https://jetpack.com/support/sso/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										></a>
