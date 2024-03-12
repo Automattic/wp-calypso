@@ -205,7 +205,7 @@ export type PlanTypeSelectorProps = {
 	 */
 	coupon?: string;
 	displayedIntervals: UrlFriendlyTermType[];
-	intent: PlansIntent;
+	intent?: PlansIntent | null;
 };
 
 export type IntervalTypeProps = Pick<
