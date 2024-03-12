@@ -30,6 +30,7 @@ export * from './navigator';
 export { default as Notice } from './notice';
 export { default as SelectCardCheckbox } from './select-card-checkbox';
 export * from './utils';
+export * from './select-card-radio';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';
 export type { MShotsOptions } from './mshots-image';

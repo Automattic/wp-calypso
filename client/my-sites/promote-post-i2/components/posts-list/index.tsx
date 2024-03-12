@@ -20,6 +20,7 @@ type Props = {
 	totalCampaigns: number;
 	hasMorePages: boolean;
 	posts?: BlazablePost[];
+	hasPaymentsBlocked: boolean;
 };
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
@@ -47,6 +48,7 @@ export default function PostsList( props: Props ) {
 		totalCampaigns,
 		hasMorePages,
 		posts,
+		hasPaymentsBlocked,
 	} = props;
 
 	const translate = useTranslate();
@@ -110,6 +112,7 @@ export default function PostsList( props: Props ) {
 								isLoading={ isLoading }
 								isFetchingPageResults={ isFetching }
 								type={ postType }
+								hasPaymentsBlocked={ hasPaymentsBlocked }
 							/>
 						) }
 					</div>

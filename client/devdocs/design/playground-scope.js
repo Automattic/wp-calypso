@@ -6,6 +6,7 @@ export {
 	CompactCard,
 	FormInputValidation,
 	Gridicon,
+	MaterialIcon,
 	Popover,
 	ProgressBar,
 	Ribbon,
@@ -83,7 +84,6 @@ export { default as LanguagePicker } from 'calypso/components/language-picker';
 export { default as Layout } from 'calypso/components/layout';
 export { default as ListEnd } from 'calypso/components/list-end';
 export { default as Main } from 'calypso/components/main';
-export { default as MaterialIcon } from 'calypso/components/material-icon';
 export { default as MarkedLines } from 'calypso/components/marked-lines';
 export { default as Notices } from 'calypso/components/notice';
 export { default as Pagination } from 'calypso/components/pagination';

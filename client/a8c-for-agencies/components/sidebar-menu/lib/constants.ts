@@ -8,3 +8,5 @@ export const A4A_PURCHASES_LINK = '/purchases';
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;
 export const A4A_BILLING_LINK = `${ A4A_PURCHASES_LINK }/billing`;
 export const A4A_INVOICES_LINK = `${ A4A_PURCHASES_LINK }/invoices`;
+export const A4A_PAYMENT_METHODS_LINK = `${ A4A_PURCHASES_LINK }/payment-methods`;
+export const A4A_PAYMENT_METHODS_ADD_LINK = `${ A4A_PURCHASES_LINK }/payment-methods/add`;

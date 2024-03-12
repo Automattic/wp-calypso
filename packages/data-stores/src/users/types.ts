@@ -34,6 +34,7 @@ export type UseQuery = {
 type UsersQueryData = {
 	users: Member[];
 	total: number;
+	pages: { page: number; users: Member[] }[];
 };
 
 export type UsersQuery = {

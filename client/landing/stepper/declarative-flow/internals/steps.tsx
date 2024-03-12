@@ -230,4 +230,9 @@ export const STEPS = {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
 	},
+
+	SITE_MIGRATION_PLUGIN_INSTALL: {
+		slug: 'site-migration-plugin-install',
+		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
+	},
 };

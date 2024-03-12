@@ -110,9 +110,8 @@ const contextLinks = {
 		post_id: 164969,
 	},
 	'hosting-connect-to-ssh': {
-		link: 'https://developer.wordpress.com/docs/developer-tools/sftp-ssh/',
-		post_id: 99380,
-		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+		link: 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/',
+		post_id: 213309,
 	},
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
@@ -314,6 +313,11 @@ const contextLinks = {
 	'site-monitoring': {
 		link: 'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/',
 		post_id: 99421,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
+	},
+	'github-deployments': {
+		link: 'https://developer.wordpress.com/docs/developer-tools/github-deployments/',
+		post_id: 99879,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'subscriptions-and-newsletters': {

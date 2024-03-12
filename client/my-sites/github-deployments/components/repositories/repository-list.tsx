@@ -16,7 +16,7 @@ import { GitHubRepositoryListTable } from './repository-list-table';
 
 import './style.scss';
 
-const pageSize = 10;
+const pageSize = 5;
 
 interface RepositoriesListProps {
 	installation: GitHubInstallationData;
@@ -72,18 +72,18 @@ export const GitHubBrowseRepositoriesList = ( {
 				sortDirection={ direction }
 				onSortChange={ handleSortChange }
 			/>
-			<p css={ { marginBottom: 0 } }>
-				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
-				<ExternalLink href={ installation.management_url }>
-					{ __( 'Adjust permissions on GitHub' ) }
-				</ExternalLink>
-			</p>
 			<Pagination
 				page={ page }
 				perPage={ pageSize }
 				total={ filteredRepositories.length }
 				pageClick={ setPage }
 			/>
+			<p className="github-repositories-list-permissions-notice">
+				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
+				<ExternalLink href={ installation.management_url }>
+					{ __( 'Adjust permissions on GitHub' ) }
+				</ExternalLink>
+			</p>
 		</div>
 	);
 };

@@ -172,14 +172,14 @@ $font-size: rem(14px);
 
 				&:hover,
 				&:focus {
-					background-color: var(--color-sidebar-submenu-hover-background);
-					color: var(--color-sidebar-submenu-hover-text);
+					background-color: var(--color-sidebar-menu-hover-background);
+					color: var(--color-sidebar-menu-hover-text);
 				}
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: var(--color-sidebar-submenu-selected-background);
-				color: var(--color-sidebar-submenu-selected-text);
+				background-color: var(--color-sidebar-menu-selected-background);
+				color: var(--color-sidebar-menu-selected-text);
 				font-weight: 600;
 			}
 
@@ -286,9 +286,6 @@ $font-size: rem(14px);
 			}
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
-				background: var(--color-sidebar-menu-selected-background);
-				color: var(--color-sidebar-menu-selected-text);
-
 				.stats-sparkline {
 					--color-stats-sparkline: var(--color-sidebar-menu-selected-text);
 				}
@@ -364,8 +361,13 @@ $font-size: rem(14px);
 			padding: 12px 10px;
 			margin: 0 12px;
 			border-radius: 2px;
+			outline: none;
 		}
 
+		.sidebar__expandable-content .sidebar__menu-link {
+			margin: 0;
+			padding-left: 30px;
+		}
 		.sidebar__heading:not([tabindex="-1"]),
 		.sidebar__menu-link {
 			color: var(--color-sidebar-text);
@@ -418,15 +420,15 @@ $font-size: rem(14px);
 			}
 		}
 
-		.sidebar__menu {
-			// Is toggled open and selected
-			&.sidebar__menu--selected .sidebar__heading {
-				background: var(--color-sidebar-menu-selected-background);
-				color: var(--color-sidebar-menu-selected-text);
-
-				&:hover {
-					background-color: var(--color-sidebar-menu-selected-background);
-				}
+		.sidebar__menu.is-toggle-open {
+			.sidebar__heading {
+				background-color: var(--color-sidebar-submenu-background);
+				border-bottom-left-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+			.sidebar__expandable-content {
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
 			}
 		}
 
@@ -529,8 +531,12 @@ $font-size: rem(14px);
 
 	&.is-sidebar-collapsed {
 		.layout:not(.focus-sites) {
-			--sidebar-width-max: 36px;
-			--sidebar-width-min: 36px;
+			&:not(.is-global-sidebar-visible) {
+				&:not(.is-global-site-sidebar-visible) {
+					--sidebar-width-max: 36px;
+					--sidebar-width-min: 36px;
+				}
+			}
 		}
 
 		.sidebar__actions {

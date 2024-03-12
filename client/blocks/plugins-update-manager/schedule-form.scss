@@ -69,6 +69,18 @@
 				margin-bottom: 0;
 			}
 		}
+
+		&::-webkit-scrollbar {
+			-webkit-appearance: none;
+			width: 7px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			border-radius: 4px;
+			background-color: var(--studio-gray-10);
+			box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+		}
+
 	}
 
 	.form-field {
@@ -125,23 +137,6 @@
 			&:first-child {
 				margin-inline-end: 0.5rem;
 			}
-		}
-	}
-
-	.components-text.validation-msg,
-	.components-text.info-msg {
-		display: block;
-		min-height: 1rem;
-		font-size: 0.75rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.components-text.validation-msg {
-		color: var(--studio-red-50);
-
-		svg {
-			fill: var(--studio-red-50);
-			margin-left: 0;
 		}
 	}
 }

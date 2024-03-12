@@ -19,13 +19,6 @@ export default function globalSiteSidebarMenu( {
 } ) {
 	return [
 		{
-			icon: 'dashicons-arrow-left-alt2',
-			slug: 'wp-admin',
-			title: translate( 'WP Admin' ),
-			url: `https://${ selectedSiteSlug }/wp-admin`,
-			className: 'sidebar__menu-item-wp-admin',
-		},
-		{
 			type: 'current-site',
 			url: `/home/${ siteDomain }`,
 			shouldHide: ! isDesktop,
@@ -36,6 +29,12 @@ export default function globalSiteSidebarMenu( {
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 			shouldHide: isDesktop,
+		},
+		{
+			slug: 'wp-admin',
+			title: translate( 'WP Admin' ),
+			url: `https://${ selectedSiteSlug }/wp-admin`,
+			className: 'sidebar__menu-item-wp-admin',
 		},
 		{
 			slug: 'upgrades',
@@ -97,6 +96,12 @@ export default function globalSiteSidebarMenu( {
 			title: translate( 'Subscribers' ),
 			type: 'menu-item',
 			url: `/subscribers/${ siteDomain }`,
+		},
+		{
+			slug: 'connections',
+			title: translate( 'Connections' ),
+			type: 'menu-item',
+			url: `/marketing/connections/${ siteDomain }`,
 		},
 		{
 			slug: 'settings-site',

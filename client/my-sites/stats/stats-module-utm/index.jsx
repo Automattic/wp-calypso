@@ -1,33 +1,50 @@
+import { StatsCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
 import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
+import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 import UTMDropdown from './stats-module-utm-dropdown';
 
 const OPTION_KEYS = {
-	SOURCE_MEDIUM: 'source_medium',
-	CAMPAIGN_SOURCE_MEDIUM: 'campaign_source_medium',
-	SOURCE: 'source',
-	MEDIUM: 'medium',
-	CAMPAIGN: 'campaign',
+	SOURCE_MEDIUM: 'utm_source,utm_medium',
+	CAMPAIGN_SOURCE_MEDIUM: 'utm_campaign,utm_source,utm_medium',
+	SOURCE: 'utm_source',
+	MEDIUM: 'utm_medium',
+	CAMPAIGN: 'utm_campaign',
 };
 
 const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } ) => {
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
-	const [ displayOption, setDisplayOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
+	// Check if blog is internal.
+	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
+	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 	// Fetch UTM metrics with switched UTM parameters.
-	const { isFetching: isFetching, metrics } = useUTMMetricsQuery(
+	const { isFetching: isFetchingUTM, metrics } = useUTMMetricsQuery(
 		siteId,
-		'utm_source,utm_medium',
+		selectedOption,
 		postId
 	);
 	// Fetch top posts for all UTM metric items.
-	const { topPosts } = useUTMMetricTopPostsQuery( siteId, 'utm_source,utm_medium', metrics );
+	const { topPosts } = useUTMMetricTopPostsQuery( siteId, selectedOption, metrics );
+
+	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
+	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isFetchingUTM;
+	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
+
+	// TODO: trigger useUTMMetricsQuery manually once isAdvancedFeatureEnabled === true
 
 	// Combine metrics with top posts.
 	const data = metrics.map( ( metric ) => {
@@ -56,13 +73,11 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 			selectLabel: translate( 'Source / Medium' ),
 			headerLabel: translate( 'Posts by Source / Medium' ),
 			isGrouped: true, // display in a group on top of the dropdown
-			// data query action
 		},
 		[ OPTION_KEYS.CAMPAIGN_SOURCE_MEDIUM ]: {
 			selectLabel: translate( 'Campaign / Source / Medium' ),
 			headerLabel: translate( 'Posts by Campaign / Source / Medium' ),
 			isGrouped: true,
-			// data query action
 		},
 		[ OPTION_KEYS.SOURCE ]: {
 			selectLabel: translate( 'Source' ),
@@ -78,30 +93,47 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		},
 	};
 
-	const onDisplaySelect = ( optionKey ) => {
-		setDisplayOption( optionKey );
-	};
-
 	return (
-		<StatsModuleDataQuery
-			data={ data }
-			path="utm"
-			className={ classNames( className, 'stats-module-utm' ) }
-			moduleStrings={ moduleStrings.utm }
-			period={ period }
-			query={ query }
-			isLoading={ isFetching ?? true }
-			hideSummaryLink={ hideSummaryLink }
-			selectedOption={ optionLabels[ displayOption ] }
-			toggleControl={
-				<UTMDropdown
-					buttonLabel={ optionLabels[ displayOption ].selectLabel }
-					onSelect={ onDisplaySelect }
-					selectOptions={ optionLabels }
-					selected={ displayOption }
+		<>
+			{ isFetching && (
+				<StatsCard
+					title="UTM"
+					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+				>
+					<StatsModulePlaceholder isLoading />
+				</StatsCard>
+			) }
+			{ ! isFetching && ! isAdvancedFeatureEnabled && (
+				// TODO: update the ghost card to only show the module name
+				<StatsCard
+					title="UTM"
+					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+				>
+					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
+				</StatsCard>
+			) }
+			{ ! isFetching && isAdvancedFeatureEnabled && (
+				<StatsModuleDataQuery
+					data={ data }
+					path="utm"
+					className={ classNames( className, 'stats-module-utm' ) }
+					moduleStrings={ moduleStrings.utm }
+					period={ period }
+					query={ query }
+					isLoading={ isFetching ?? true }
+					hideSummaryLink={ hideSummaryLink }
+					selectedOption={ optionLabels[ selectedOption ] }
+					toggleControl={
+						<UTMDropdown
+							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+							onSelect={ setSelectedOption }
+							selectOptions={ optionLabels }
+							selected={ selectedOption }
+						/>
+					}
 				/>
-			}
-		/>
+			) }
+		</>
 	);
 };
 

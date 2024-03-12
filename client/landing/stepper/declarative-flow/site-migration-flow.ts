@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -22,6 +23,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.BUNDLE_TRANSFER,
+			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
@@ -124,20 +126,12 @@ const siteMigration: Flow = {
 			[]
 		);
 		const siteSlugParam = useSiteSlugParam();
-		const { setBundledPluginSlug } = useDispatch( SITE_STORE );
+		const urlQueryParams = useQuery();
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
-
-		useEffect( () => {
-			if ( ! siteSlugParam ) {
-				return;
-			}
-
-			setBundledPluginSlug( siteSlugParam, 'site-migration' );
-		}, [ siteSlugParam, setBundledPluginSlug ] );
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -190,15 +184,26 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
+				}
+
+				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
+					return navigate( STEPS.PROCESSING.slug, { pluginInstall: true } );
 				}
 
 				case STEPS.PROCESSING.slug: {
+					// Any process errors go to the error step.
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+					// If the plugin was installed successfully, go to the migration instructions.
+					if ( providedDependencies?.pluginInstall ) {
+						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+					}
+
+					// Otherwise processing has finished from the BundleTransfer step and we need to install the plugin.
+					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -219,6 +224,12 @@ const siteMigration: Flow = {
 						} );
 						return;
 					}
+					if ( providedDependencies?.freeTrialSelected ) {
+						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
 					if ( providedDependencies?.verifyEmail ) {
 						// not yet implemented
 						return;
@@ -231,7 +242,22 @@ const siteMigration: Flow = {
 			}
 		}
 
-		return { submit, exitFlow };
+		const goBack = () => {
+			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+				}
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }` );
+				}
+			}
+		};
+
+		return { goBack, submit, exitFlow };
 	},
 };
 

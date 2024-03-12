@@ -182,6 +182,11 @@ export class FullPostView extends Component {
 			return;
 		}
 
+		if ( event?.metaKey || event?.ctrlKey ) {
+			// avoid conflicting with the command palette shortcut cmd+k
+			return;
+		}
+
 		switch ( event.keyCode ) {
 			// Close full post - Esc
 			case 27: {

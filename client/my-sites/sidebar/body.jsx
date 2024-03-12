@@ -16,7 +16,7 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
+export const MySitesSidebarUnifiedBody = ( { path, children, onMenuItemClick } ) => {
 	const menuItems = useSiteMenuItems();
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const site = useSelector( getSelectedSite );
@@ -36,7 +36,13 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 
 					if ( 'current-site' === item?.type ) {
 						return (
-							<Site key={ item.type } site={ site } href={ item?.url } isSelected={ isSelected } />
+							<Site
+								key={ item.type }
+								site={ site }
+								href={ item?.url }
+								isSelected={ isSelected }
+								onSelect={ () => onMenuItemClick( item?.url ) }
+							/>
 						);
 					}
 					if ( 'separator' === item?.type ) {
@@ -62,6 +68,7 @@ export const MySitesSidebarUnifiedBody = ( { path, children } ) => {
 							key={ item.slug }
 							selected={ isSelected }
 							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							trackClickEvent={ onMenuItemClick }
 							{ ...item }
 						/>
 					);

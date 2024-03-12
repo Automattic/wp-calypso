@@ -214,6 +214,11 @@ class ReaderStream extends Component {
 			return;
 		}
 
+		if ( event?.metaKey || event?.ctrlKey ) {
+			// avoid conflicting with the command palette shortcut cmd+k
+			return;
+		}
+
 		switch ( event.keyCode ) {
 			// Move selection down - j
 			case 74: {

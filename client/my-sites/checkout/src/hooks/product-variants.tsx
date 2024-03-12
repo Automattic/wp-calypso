@@ -205,7 +205,7 @@ function getTermText(
 
 		case TERM_ANNUALLY:
 			return String(
-				! shouldUseCheckoutV2 ? translate( 'One year' ) : translate( 'Billed every one year' )
+				! shouldUseCheckoutV2 ? translate( 'One year' ) : translate( 'Billed every year' )
 			);
 
 		case TERM_MONTHLY:

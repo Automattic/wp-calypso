@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useStatsPurchases from '../hooks/use-stats-purchases';
-import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -30,9 +28,7 @@ const StatsModuleDataQuery = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const { isLoading: isLoadingFeatureCheck, supportCommercialUse: isAdvancedFeatureEnabled } =
-		useStatsPurchases( siteId );
-	const [ showLoader, setShowLoader ] = useState( isLoading || isLoadingFeatureCheck );
+	const [ showLoader, setShowLoader ] = useState( isLoading );
 
 	// Show error and loading based on the query
 	const hasError = false;
@@ -40,22 +36,15 @@ const StatsModuleDataQuery = ( {
 	const displaySummaryLink = data && ! hideSummaryLink;
 
 	useEffect( () => {
-		setShowLoader( isLoading || isLoadingFeatureCheck );
-	}, [ isLoadingFeatureCheck, isLoading ] );
+		setShowLoader( isLoading );
+	}, [ isLoading ] );
 
 	const getHref = () => {
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return (
-				'/stats/' +
-				period.period +
-				'/' +
-				path +
-				'/' +
-				siteSlug +
-				'?startDate=' +
-				period.startOf.format( 'YYYY-MM-DD' )
-			);
+			return `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.startOf.format(
+				'YYYY-MM-DD'
+			) }`;
 		}
 	};
 
@@ -88,12 +77,6 @@ const StatsModuleDataQuery = ( {
 			splitHeader
 			mainItemLabel={ selectedOption?.headerLabel }
 			toggleControl={ toggleControl }
-			overlay={
-				siteSlug &&
-				! isAdvancedFeatureEnabled && (
-					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
-				)
-			}
 		/>
 	);
 };

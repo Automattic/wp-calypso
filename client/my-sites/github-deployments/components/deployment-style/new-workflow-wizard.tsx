@@ -1,23 +1,19 @@
-import { Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ChangeEvent, useEffect, useState } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from '../../../../components/forms/form-text-input';
+import { useEffect, useState } from 'react';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { CodeHighlighter } from '../code-highlighter';
-import { useDeploymentStyleContext } from './context';
 import { useCreateWorkflow } from './use-create-workflow';
 import { Workflow } from './use-deployment-workflows-query';
-import { newWorkflowExample } from './workflow-yaml-examples';
+import { newComposerWorkflowExample, newWorkflowExample } from './workflow-yaml-examples';
 
 import './style.scss';
 
 interface NewWorkflowWizardProps {
-	repository: GitHubRepositoryData;
+	repository: Pick< GitHubRepositoryData, 'id' | 'owner' | 'name' >;
 	repositoryBranch: string;
-	isLoadingWorkflows: boolean;
 	workflows?: Workflow[];
-	onWorkflowVerification( path: string ): void;
+	useComposerWorkflow: boolean;
 	onWorkflowCreated( path: string ): void;
 }
 
@@ -27,29 +23,15 @@ const RECOMMENDED_WORKFLOW_PATH = WORKFLOWS_DIRECTORY + 'wpcom.yml';
 export const NewWorkflowWizard = ( {
 	repository,
 	workflows,
-	isLoadingWorkflows,
 	repositoryBranch,
-	onWorkflowVerification,
 	onWorkflowCreated,
+	useComposerWorkflow,
 }: NewWorkflowWizardProps ) => {
 	const { __ } = useI18n();
 
-	const { isCheckingWorkflow } = useDeploymentStyleContext();
-	const [ workflowPath, setWorkflowPath ] = useState( () => {
-		const existingWorkflow = !! workflows?.find(
-			( workflow ) => workflow.workflow_path === RECOMMENDED_WORKFLOW_PATH
-		);
-
-		if ( ! existingWorkflow ) {
-			return RECOMMENDED_WORKFLOW_PATH;
-		}
-
-		return WORKFLOWS_DIRECTORY;
-	} );
-
 	const { createWorkflow, isPending } = useCreateWorkflow( {
 		onSuccess: () => {
-			onWorkflowCreated( workflowPath );
+			onWorkflowCreated( RECOMMENDED_WORKFLOW_PATH );
 		},
 	} );
 
@@ -57,79 +39,56 @@ export const NewWorkflowWizard = ( {
 
 	useEffect( () => {
 		const existingWorkflow = !! workflows?.find(
-			( workflow ) => workflow.workflow_path === workflowPath
+			( workflow ) => workflow.workflow_path === RECOMMENDED_WORKFLOW_PATH
 		);
 
 		if ( existingWorkflow ) {
-			setError( __( 'A workflow file with this name already exist' ) );
-			return;
-		}
-
-		const notEndingInYml = ! /\.ya?ml$/.test( workflowPath );
-
-		if ( notEndingInYml ) {
-			setError( __( 'The workflow file path must end with .yml' ) );
-			return;
-		}
-
-		const notStartingWithWorkflowDir = ! workflowPath.startsWith( WORKFLOWS_DIRECTORY );
-
-		if ( notStartingWithWorkflowDir ) {
-			setError( __( 'The workflow file must live under the .github/workflows directory' ) );
+			setError(
+				__(
+					'A workflow file with this name already exists. Installing this workflow will overwrite it.'
+				)
+			);
 			return;
 		}
 
 		setError( undefined );
-	}, [ workflows, workflowPath, __ ] );
+	}, [ workflows, __ ] );
 
-	const workflowContent = newWorkflowExample( repositoryBranch );
+	const workflowContent = useComposerWorkflow
+		? newComposerWorkflowExample( repositoryBranch )
+		: newWorkflowExample( repositoryBranch );
 
 	return (
 		<div className="github-deployments-new-workflow-wizard">
 			<p css={ { marginBottom: 0 } }>
-				{ __(
-					'Create a new workflow file in your repository with the following content and then click ‘Verify workflow’ or let us install it for you.'
-				) }
+				{ __( 'Use our suggested workflow which you can install and then extend at GitHub.' ) }
 			</p>
 
-			<FormFieldset>
-				<FormLabel htmlFor="workflow-file-name">{ __( 'Workflow file name' ) }</FormLabel>
-				<FormTextInput
-					id="workflow-file-name"
-					placeholder={ __( 'Enter the workflow file name' ) }
-					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => {
-						setWorkflowPath( e.target.value );
-					} }
-					value={ workflowPath }
-				/>
-				{ error && (
-					<FormInputValidation css={ { paddingBottom: '0 !important' } } isError text={ error } />
-				) }
-			</FormFieldset>
+			<div className="github-deployments-new-workflow-wizard__workflow-file">
+				<div className="github-deployments-new-workflow-wizard__workflow-file-name">
+					<span>{ RECOMMENDED_WORKFLOW_PATH }</span>
+				</div>
 
-			<CodeHighlighter content={ workflowContent } />
+				<CodeHighlighter content={ workflowContent } />
+			</div>
+
+			{ error && (
+				<FormInputValidation css={ { paddingBottom: '0 !important' } } isError text={ error } />
+			) }
 
 			<div css={ { marginTop: '16px' } }>
 				<Button
 					type="button"
 					className="button form-button"
-					onClick={ () => onWorkflowVerification( workflowPath ) }
-					disabled={ isCheckingWorkflow || isLoadingWorkflows || !! error }
-					busy={ isCheckingWorkflow || isLoadingWorkflows }
-				>
-					{ __( 'Verify workflow' ) }
-				</Button>
-				<Button
-					type="button"
-					className="button form-button"
-					disabled={ !! error || isPending }
+					disabled={ isPending }
 					busy={ isPending }
 					onClick={ () =>
 						createWorkflow( {
 							repositoryId: repository.id,
-							repository,
+							repositoryOwner: repository.owner,
+							repositoryName: repository.name,
 							branchName: repositoryBranch,
-							fileName: workflowPath,
+							fileName: RECOMMENDED_WORKFLOW_PATH,
 							fileContent: workflowContent,
 						} )
 					}

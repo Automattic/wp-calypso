@@ -1,5 +1,3 @@
-import { Popover } from '@automattic/components';
-import { useState } from 'react';
 import { CodeDeploymentData } from 'calypso/my-sites/github-deployments/deployments/use-code-deployments-query';
 import { DeploymentRun } from '../deployment-run-logs/use-code-deployment-run-query';
 
@@ -31,7 +29,6 @@ export function getCommitDetails( deployment: CodeDeploymentData, run?: Deployme
 export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDetailsProps ) => {
 	const [ account, repo ] = deployment.repository_name.split( '/' );
 	const { message, sha, shaShort, path } = getCommitDetails( deployment, run );
-	const [ popoverRef, setPopoverRef ] = useState< HTMLElement >();
 
 	return (
 		<div className="github-deployments-list__commit-details">
@@ -70,12 +67,7 @@ export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDe
 				</span>
 				{ path && (
 					<>
-						<span
-							onFocus={ ( e ) => setPopoverRef( e.currentTarget ) }
-							onBlur={ () => setPopoverRef( undefined ) }
-							onMouseEnter={ ( e ) => setPopoverRef( e.currentTarget ) }
-							onMouseLeave={ () => setPopoverRef( undefined ) }
-						>
+						<span>
 							<svg
 								width="16"
 								height="16"
@@ -84,24 +76,16 @@ export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDe
 								xmlns="http://www.w3.org/2000/svg"
 							>
 								<path
-									fill-rule="evenodd"
-									clip-rule="evenodd"
+									fillRule="evenodd"
+									clipRule="evenodd"
 									d="M8.13197 5.16699L7.4741 3.85125C7.41763 3.73833 7.30221 3.66699 7.17595 3.66699H3.33333C3.14924 3.66699 3 3.81623 3 4.00033V11.8337C3 12.0178 3.14924 12.167 3.33333 12.167H12.6667C12.8508 12.167 13 12.0178 13 11.8337V5.50033C13 5.31623 12.8508 5.16699 12.6667 5.16699H8.13197ZM8.75 4.16699L8.36852 3.40404C8.14267 2.95233 7.68098 2.66699 7.17595 2.66699H3.33333C2.59695 2.66699 2 3.26395 2 4.00033V11.8337C2 12.57 2.59695 13.167 3.33333 13.167H12.6667C13.403 13.167 14 12.57 14 11.8337V5.50033C14 4.76395 13.403 4.16699 12.6667 4.16699H8.75Z"
 									fill="#50575E"
 								/>
 							</svg>
-							<span css={ { paddingLeft: '2px' } }>{ path }</span>
+							<span css={ { paddingLeft: '2px' } } title={ deployment.target_dir }>
+								{ path }
+							</span>
 						</span>
-						{ popoverRef && (
-							<Popover
-								className="github-deployments-commit-details-popover"
-								isVisible
-								context={ popoverRef }
-								position="top"
-							>
-								<code>{ deployment.target_dir }</code>
-							</Popover>
-						) }
 					</>
 				) }
 			</div>

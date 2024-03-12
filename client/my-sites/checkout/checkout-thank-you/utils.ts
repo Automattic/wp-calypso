@@ -144,5 +144,9 @@ export const getDomainPurchase = ( purchases: ReceiptPurchase[] ) =>
 
 export const getWPORGPluginSlugMap = () => WPORG_PLUGIN_SLUG_MAP;
 
+export const isSearch = ( purchase: ReceiptPurchase ) => {
+	return purchase.productType === 'search';
+};
+
 export const isTitanWithoutMailboxes = ( selectedFeature: string ) =>
 	selectedFeature === 'email-license';

@@ -24,6 +24,7 @@ const FilterBar = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '16px',
+	marginBottom: '32px',
 	paddingInline: 0,
 
 	flexDirection: 'column',
@@ -34,6 +35,10 @@ const FilterBar = styled.div( {
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingBlock: '16px',
+
+		'.layout.focus-sidebar &': {
+			flexWrap: 'wrap',
+		},
 	},
 } );
 

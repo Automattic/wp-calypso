@@ -3,10 +3,11 @@ import { Search } from '../search/search';
 
 interface SearchReposProps {
 	value: string;
+	disabled?: boolean;
 	onChange?( query: string ): void;
 }
 
-export const SearchRepos = ( { value, onChange }: SearchReposProps ) => {
+export const SearchRepos = ( { value, onChange, disabled }: SearchReposProps ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -16,6 +17,7 @@ export const SearchRepos = ( { value, onChange }: SearchReposProps ) => {
 			className="github-deployments-repositories__search"
 			placeholder={ __( 'Search repositories' ) }
 			options={ [] }
+			disabled={ disabled }
 			isSearching={ false }
 			onChange={ ( query ) => {
 				onChange?.( query.trim() );

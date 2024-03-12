@@ -6,7 +6,7 @@ import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import InfiniteList from 'calypso/components/infinite-list';
+import Pagination from 'calypso/components/pagination';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
@@ -23,6 +23,46 @@ interface Props {
 	onSubmit: () => void;
 }
 
+// Used to modify the way the pagination number list is displayed
+const getPageList = ( page: number, pageCount: number ) => {
+	const firstPage: number = 1;
+	const lastPage = pageCount;
+	let pageList: ( string | number )[] = [
+		firstPage,
+		page - 2,
+		page - 1,
+		page,
+		page + 1,
+		page + 2,
+		lastPage,
+	];
+	pageList.sort( ( a, b ) => Number( a ) - Number( b ) );
+
+	// Remove pages less than 1, or greater than total number of pages, and remove duplicates
+	pageList = pageList.filter( ( pageNumber, index, originalPageList ) => {
+		const currentPageNumber = Number( pageNumber );
+		return (
+			currentPageNumber >= firstPage &&
+			currentPageNumber <= lastPage &&
+			originalPageList.lastIndexOf( currentPageNumber ) === index
+		);
+	} );
+
+	if ( page - 3 > firstPage ) {
+		pageList.splice( 1, 1, 'more' );
+	}
+	if ( page + 3 < lastPage ) {
+		pageList.splice( pageList.length - 2, 1, 'more' );
+	}
+
+	// Arrows are always present, whether or not they are active is determined in the pagination page module
+	// These strings are converted to gridicons in PaginationPage, no translation needed
+	pageList.unshift( 'previous' );
+	pageList.push( 'next' );
+
+	return pageList;
+};
+
 const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const defaultTeamFetchOptions = { include_viewers: true };
 	const userId = useSelector( getCurrentUserId );
@@ -30,12 +70,17 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const usersQuery = useUsersQuery( site?.ID, defaultTeamFetchOptions ) as unknown as UsersQuery;
 	const { data: externalContributors } = useExternalContributorsQuery( site?.ID );
 	const { data: p2Guests } = useP2GuestsQuery( site?.ID );
-	const { data: usersData, fetchNextPage, isFetchingNextPage, hasNextPage } = usersQuery;
+	const { data: usersData, fetchNextPage, hasNextPage } = usersQuery;
 	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites( site?.ID );
 
 	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+	const totalUsers = usersData?.total ? usersData?.total - 1 : null;
+	const loadedPages = usersData?.pages || [];
 	const [ usersList, setUsersList ] = useState( users );
-	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( usersList?.length || 0 );
+	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( totalUsers || 0 );
+
+	const [ page, setPage ] = useState( 1 );
+	const perPage = 6;
 
 	const handleSubmit = async () => {
 		const selectedUsers = usersList
@@ -61,10 +106,6 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		} catch ( e ) {}
 
 		onSubmit?.();
-	};
-
-	const getUserRef = ( user: Member ) => {
-		return 'user-' + user?.ID;
 	};
 
 	const onChangeChecked = ( index: number ) => ( checked: boolean ) => {
@@ -96,6 +137,68 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				isExternalContributor={ isExternalContributor }
 				isP2Guest={ isP2Guest }
 			/>
+		);
+	};
+
+	const getTotalLoadedUsers = () => {
+		return loadedPages.reduce(
+			( acc: number, currentPage: { page: number; users: Member[] } ) =>
+				acc + currentPage?.users.length,
+			0
+		);
+	};
+
+	const onPageClick = ( page: number ) => {
+		setPage( page );
+		const totalLoadedUsers = getTotalLoadedUsers();
+		const lastPage = Math.ceil( totalLoadedUsers / perPage );
+		if ( page === lastPage && hasNextPage ) {
+			fetchNextPage();
+		}
+	};
+
+	const renderUsersList = () => {
+		const start = ( page - 1 ) * perPage;
+		const end = start + perPage;
+		return (
+			<div className="import__user-migration-users">
+				{ usersList.slice( start, end ).map( ( user, index ) => {
+					const originalIndex = start + index;
+					return renderUser( user, originalIndex );
+				} ) }
+			</div>
+		);
+	};
+
+	const renderCurrentPageInfo = () => {
+		const currentPageFirstItemIndex = ( page - 1 ) * perPage + 1;
+		const currentPageLastItemIndex =
+			page * perPage >= usersList.length ? usersList.length : page * perPage;
+		return (
+			<div className="import__user-migration-user-list-pagination-info">
+				{ currentPageFirstItemIndex }-{ currentPageLastItemIndex } of { totalUsers } items
+			</div>
+		);
+	};
+
+	const renderPagination = () => {
+		return (
+			<div className="import__user-migration-user-list-pagination-container">
+				{ renderCurrentPageInfo() }
+				<Pagination
+					className="import__user-migration-user-list-pagination-list"
+					compact={ true }
+					page={ page }
+					perPage={ perPage }
+					total={ usersList.length }
+					pageClick={ onPageClick }
+					nextLabel=" "
+					prevLabel=" "
+					getPageList={ getPageList }
+					paginationLeftIcon="chevron-left"
+					paginationRightIcon="chevron-right"
+				/>
+			</div>
 		);
 	};
 
@@ -140,17 +243,12 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					) }
 				</SubTitle>
 			</div>
-			<InfiniteList
-				items={ usersList }
-				fetchNextPage={ fetchNextPage }
-				fetchingNextPage={ isFetchingNextPage }
-				lastPage={ ! hasNextPage }
-				renderItem={ renderUser }
-				getItemRef={ getUserRef }
-				guessedItemHeight={ 126 }
-				renderLoadingPlaceholders={ () => <div>{ translate( 'Loading' ) }...</div> }
-				className="import__user-migration-list"
-			/>
+			{ usersList.length > 0 && totalUsers && (
+				<div className="import__user-migration-user-list">
+					{ renderUsersList() }
+					{ renderPagination() }
+				</div>
+			) }
 			<div className="import__user-migration-footer">
 				{ translate(
 					'After clicking the button to invite, the selected users {{strong}}will receive invitation emails{{/strong}} to join your site, ensuring a smooth transition.',

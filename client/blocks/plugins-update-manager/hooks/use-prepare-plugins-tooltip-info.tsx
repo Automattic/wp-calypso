@@ -1,16 +1,15 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { SitePlugin, useSitePluginsQuery } from 'calypso/data/plugins/use-site-plugins-query';
+import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import type { SiteSlug } from 'calypso/types';
 
 export function usePreparePluginsTooltipInfo( siteSlug: SiteSlug ) {
-	const { data: pluginsData } = useSitePluginsQuery( siteSlug );
-	const plugins = pluginsData?.plugins ?? [];
+	const { data: plugins = [] } = useCorePluginsQuery( siteSlug, true, true );
 
 	const preparePluginsTooltipInfo = ( pluginsArgs: string[] ) => {
 		const pluginsList = pluginsArgs
 			.map(
 				( plugin: string ) =>
-					plugins.find( ( { name }: SitePlugin ) => name === plugin )?.display_name
+					plugins.find( ( { plugin: _plugin }: CorePlugin ) => _plugin === plugin )?.name
 			)
 			.join( '<br />' );
 

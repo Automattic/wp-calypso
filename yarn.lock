@@ -610,6 +610,8 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/material-design-icons": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@storybook/addon-actions": "npm:^7.6.17"
@@ -12368,7 +12370,7 @@ __metadata:
     redux-mock-store: "npm:^1.5.4"
     redux-thunk: "npm:^2.4.2"
     regenerator-runtime: "npm:^0.13.9"
-    social-logos: "npm:^2.5.5"
+    social-logos: "npm:^2.5.9"
     source-map-support: "npm:^0.5.19"
     store: "npm:^2.0.12"
     stream-browserify: "npm:^3.0.0"
@@ -28870,14 +28872,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^2.5.2, social-logos@npm:^2.5.5":
-  version: 2.5.5
-  resolution: "social-logos@npm:2.5.5"
+"social-logos@npm:^2.5.2, social-logos@npm:^2.5.9":
+  version: 2.5.9
+  resolution: "social-logos@npm:2.5.9"
   dependencies:
     prop-types: "npm:^15.5.7"
   peerDependencies:
     react: 15 - 18
-  checksum: 1fa9c9767bc5e393bceb15a4f9a6fb5bd20199fbf4d2f0be99b60655beea675481d9a3debc3850d13c35963d1a2e267c150785d4404262f275fbc5b83647f222
+  checksum: 1f730f147b31ad9902b47bb03f32647ec5e3d131049e735758509be43870c8b2e17e9a93dfb20230e656314673f57fc10fcc62b220a13e65c83af6841b38f02f
   languageName: node
   linkType: hard
 

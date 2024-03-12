@@ -4,10 +4,11 @@ import { useDispatch } from 'calypso/state';
 import { openCommandPalette } from 'calypso/state/command-palette/actions';
 import SidebarMenuItem from '../menu-item';
 
-export const SidebarSearch = ( { tooltip } ) => {
+export const SidebarSearch = ( { tooltip, onClick } ) => {
 	const dispatch = useDispatch();
 	const showCommandPalette = () => {
 		dispatch( openCommandPalette() );
+		onClick();
 	};
 	return (
 		<>

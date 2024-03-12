@@ -1,8 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import {
-	CodePushExample,
-	UploadArtifactExample,
+	codePushExample,
+	uploadArtifactExample,
 	newWorkflowExample,
 } from './workflow-yaml-examples';
 
@@ -31,12 +31,12 @@ export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsPa
 			triggered_on_push: {
 				label: __( 'The workflow is triggered on push' ),
 				description: __( 'Ensure that your workflow triggers on code push:' ),
-				content: CodePushExample( branchName ),
+				content: codePushExample( branchName ),
 			},
 			upload_artifact_with_required_name: {
-				label: __( 'The upload artifact has the required name' ),
+				label: __( 'The uploaded artifact has the required name' ),
 				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
-				content: UploadArtifactExample(),
+				content: uploadArtifactExample(),
 			},
 		};
 	}, [ __, branchName ] );

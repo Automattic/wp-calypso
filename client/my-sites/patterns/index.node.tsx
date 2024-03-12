@@ -2,17 +2,16 @@ import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
-import { RENDERER_SITE_ID, getPatternCategorySlugs } from 'calypso/my-sites/patterns/controller';
-import { PatternsHomePage } from 'calypso/my-sites/patterns/home';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { RouterContext, RouterNext, Category, Pattern } from 'calypso/my-sites/patterns/types';
+import type { RouterContext, RouterNext, Pattern } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
-		<PatternsHomePage
+		<PatternsWrapper
 			category={ context.params.category }
 			isGridView={ !! context.query.grid }
 			patternGallery={ PatternGalleryServer }
@@ -22,7 +21,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	next();
 }
 
-function fetchPatterns( context: RouterContext, next: RouterNext ) {
+function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) {
 	const { cachedMarkup, queryClient, lang, params, store } = context;
 
 	if ( cachedMarkup ) {
@@ -32,19 +31,31 @@ function fetchPatterns( context: RouterContext, next: RouterNext ) {
 
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
-	const categoryPromise = queryClient.fetchQuery< Category[] >(
-		getPatternCategoriesQueryOptions( locale, RENDERER_SITE_ID, {
-			staleTime: 10 * 60 * 1000,
-		} )
-	);
+	// Fetches the list of categories first, then fetches patterns if a specific category was requested
+	queryClient
+		.fetchQuery(
+			getPatternCategoriesQueryOptions( locale, {
+				staleTime: 10 * 60 * 1000,
+			} )
+		)
+		.then( ( categories ) => {
+			if ( ! params.category ) {
+				return;
+			}
 
-	const patternPromise = params.category
-		? queryClient.fetchQuery< Pattern[] >(
+			const categoryNames = categories.map( ( category ) => category.name );
+
+			if ( ! categoryNames.includes( params.category ) ) {
+				throw {
+					status: 404,
+					message: 'Category Not Found',
+				};
+			}
+
+			return queryClient.fetchQuery< Pattern[] >(
 				getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
-		  )
-		: Promise.resolve();
-
-	Promise.all( [ categoryPromise, patternPromise ] )
+			);
+		} )
 		.then( () => {
 			next();
 		} )
@@ -55,17 +66,13 @@ function fetchPatterns( context: RouterContext, next: RouterNext ) {
 
 export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
-	const categorySlugs = getPatternCategorySlugs();
 
 	router(
-		[
-			`/${ langParam }/patterns/:category(${ categorySlugs })?`,
-			`/patterns/:category(${ categorySlugs })?`,
-		],
+		[ `/${ langParam }/patterns/:category?`, `/patterns/:category?` ],
 		ssrSetupLocale,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
-		fetchPatterns,
+		fetchCategoriesAndPatterns,
 		renderPatterns,
 		makeLayout
 	);

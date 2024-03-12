@@ -13,6 +13,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
@@ -92,6 +93,8 @@ export default function CampaignItemDetails( props: Props ) {
 	const { campaign, isLoading, siteId } = props;
 	const campaignId = campaign?.campaign_id;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const {
 		audience_list,
@@ -386,13 +389,16 @@ export default function CampaignItemDetails( props: Props ) {
 										target="_blank"
 									>
 										{ icon }
-										{ translate( 'Contact Support' ) }
+										<span className="contact-support-button-text">
+											{ translate( 'Contact Support' ) }
+										</span>
 									</Button>
 
 									{ ! canCancelCampaign( status ) && (
 										<WPButton
 											variant="primary"
 											className="promote-again-button"
+											disabled={ ! isLoadingBillingSummary && paymentBlocked }
 											onClick={ onClickPromote }
 										>
 											{ translate( 'Promote Again' ) }

@@ -503,6 +503,11 @@ export class SiteSelector extends Component {
 											'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
 										)
 									}
+									onClickBluehostMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_create_bluehost_site_click'
+										)
+									}
 								/>
 							) : (
 								<SiteSelectorAddSite />
