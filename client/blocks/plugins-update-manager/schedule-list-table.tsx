@@ -1,10 +1,9 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSiteDateTimeFormat } from 'calypso/blocks/plugins-update-manager/hooks/use-site-date-time-format';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { Badge } from './badge';
-import { MOMENT_TIME_FORMAT } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
@@ -18,13 +17,13 @@ interface Props {
 export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 
 	const { onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
+	const { prepareTimestamp } = useSiteDateTimeFormat( siteSlug );
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -58,10 +57,9 @@ export const ScheduleListTable = ( props: Props ) => {
 							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
 							) }
-							{ schedule.last_run_timestamp &&
-								moment( schedule.last_run_timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }
+							{ schedule.last_run_timestamp && prepareTimestamp( schedule.last_run_timestamp ) }
 						</td>
-						<td>{ moment( schedule.timestamp * 1000 ).format( MOMENT_TIME_FORMAT ) }</td>
+						<td>{ prepareTimestamp( schedule.timestamp ) }</td>
 						<td>
 							{
 								{
