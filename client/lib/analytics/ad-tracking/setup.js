@@ -220,6 +220,12 @@ function setupGtag() {
 		window.dataLayer.push( arguments );
 	};
 	window.gtag( 'js', new Date() );
+	window.gtag( 'consent', 'default', {
+		ad_storage: 'granted',
+		analytics_storage: 'granted',
+		ad_user_data: 'granted',
+		ad_personalization: 'granted',
+	} );
 }
 
 function setupWpcomGoogleAdsGtag() {

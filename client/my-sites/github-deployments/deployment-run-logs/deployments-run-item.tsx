@@ -59,7 +59,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 					<DeploymentStatus status={ run.status as DeploymentStatusValue } />
 				</td>
 				<td>
-					<span>{ formatDate( locale, new Date( deployment.updated_on ) ) }</span>
+					<span>{ formatDate( locale, new Date( run.created_on ) ) }</span>
 				</td>
 				<td>
 					<DeploymentDuration run={ run } />
@@ -80,7 +80,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 						) : logEntries.length === 0 ? (
 							<p>{ __( 'No logs available for this deployment run.' ) }</p>
 						) : (
-							<DeploymentRunLogs logEntries={ logEntries } />
+							<DeploymentRunLogs logEntries={ logEntries } run={ run } />
 						) }
 					</td>
 				</tr>

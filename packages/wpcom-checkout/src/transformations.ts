@@ -181,21 +181,11 @@ export interface LineItemCostOverrideForDisplay {
 	discountAmount?: number;
 }
 
-function isUserVisibleCostOverride(
-	costOverride: ResponseCartCostOverride,
-	product: ResponseCartProduct
-): boolean {
+function isUserVisibleCostOverride( costOverride: ResponseCartCostOverride ): boolean {
 	if ( costOverride.does_override_original_cost ) {
 		// We won't display original cost overrides since they are
 		// included in the original cost that's being displayed. They
 		// are not discounts.
-		return false;
-	}
-
-	if (
-		'introductory-offer' === costOverride.override_code &&
-		! canDisplayIntroductoryOfferDiscountForProduct( product )
-	) {
 		return false;
 	}
 	return true;
@@ -312,7 +302,7 @@ export function filterCostOverridesForLineItem(
 
 	return (
 		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
 			// Hide coupon overrides because they will be displayed separately.
 			.filter( ( costOverride ) => costOverride.override_code !== 'coupon-discount' )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
@@ -393,7 +383,7 @@ export function filterAndGroupCostOverridesForDisplay(
 		const costOverrides = product?.cost_overrides ?? [];
 
 		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, false )
@@ -442,19 +432,6 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
-}
-
-/**
- * Introductory offer discounts can sometimes be misleading. If we want to hide
- * them for a product in checkout, we can do so in this function.
- */
-function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartProduct ): boolean {
-	// Social Advanced has free trial that we don't consider an introductory
-	// offer. See https://github.com/Automattic/wp-calypso/pull/86353
-	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
-		return false;
-	}
-	return true;
 }
 
 /**

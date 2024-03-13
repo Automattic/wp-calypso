@@ -58,7 +58,6 @@ import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-su
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
@@ -1004,16 +1003,14 @@ function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 	responseCart: ResponseCart
 ): boolean {
 	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
-	return useSelector( ( state ) => {
-		return responseCart.products
-			.filter(
-				( product ) =>
-					! (
-						product.product_slug && excluded3PDAccountProductSlugs.includes( product.product_slug )
-					)
-			)
-			.some( ( product ) => isMarketplaceProduct( state, product.product_slug ) );
-	} );
+	return responseCart.products
+		.filter(
+			( product ) =>
+				! (
+					product.product_slug && excluded3PDAccountProductSlugs.includes( product.product_slug )
+				)
+		)
+		.some( ( product ) => product.extra.is_marketplace_product );
 }
 
 const JetpackCheckoutSeals = () => {
