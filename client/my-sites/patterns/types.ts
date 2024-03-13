@@ -33,7 +33,7 @@ export type Category = CategoryBase & {
 	regularPreviewPattern: Pattern | null;
 };
 
-export type CategoryGalleryProps = {
+type CategoryGalleryProps = {
 	categories?: Category[];
 	description: string;
 	patternType: 'regular' | 'pages';
@@ -42,7 +42,7 @@ export type CategoryGalleryProps = {
 
 export type CategoryGalleryFC = React.FC< CategoryGalleryProps >;
 
-export type PatternGalleryProps = {
+type PatternGalleryProps = {
 	isGridView?: boolean;
 	patterns?: Pattern[];
 };
