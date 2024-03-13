@@ -9,7 +9,7 @@ import '../panel/boot/stylesheets/style.scss';
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
-let isShowing = true;
+let isShowing = false;
 let isVisible = document.visibilityState === 'visible';
 
 let store = { dispatch: () => {}, getState: () => {} };

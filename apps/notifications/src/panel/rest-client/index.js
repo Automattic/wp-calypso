@@ -377,12 +377,13 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 
 	debug( 'updateLastSeenTime 1', {
 		proposedTime: proposedTime,
-		showing: this.showing,
-		visible: this.visible,
+		showing: this.isShowing,
+		visible: this.isVisible,
 		lastSeenTime: this.lastSeenTime,
 		mostRecentNoteTime: mostRecentNoteTime,
 	} );
 
+	debug( 'MORE DEBUG!' );
 	// Advance proposedTime to the latest visible note time.
 	if ( this.isShowing && this.isVisible && mostRecentNoteTime > proposedTime ) {
 		proposedTime = mostRecentNoteTime;
