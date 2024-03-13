@@ -8,12 +8,12 @@ import {
 	CardHeader,
 	Spinner,
 } from '@wordpress/components';
-import { Icon, arrowLeft, info } from '@wordpress/icons';
+import { arrowLeft } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -28,8 +28,9 @@ interface Props {
 }
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
+	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
+	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
@@ -84,18 +85,18 @@ export const ScheduleList = ( props: Props ) => {
 				onConfirm={ onRemoveDialogConfirm }
 				onCancel={ closeRemoveConfirm }
 			>
-				Are you sure you want to delete this schedule?
+				{ translate( 'Are you sure you want to delete this schedule?' ) }
 			</ConfirmDialog>
 			<Card className="plugins-update-manager">
 				<CardHeader size="extraSmall">
 					<div className="ch-placeholder">
 						{ onNavBack && (
 							<Button icon={ arrowLeft } onClick={ onNavBack }>
-								Back
+								{ translate( 'Back' ) }
 							</Button>
 						) }
 					</div>
-					<Text>Schedules</Text>
+					<Text>{ translate( 'Schedules' ) }</Text>
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
@@ -125,15 +126,6 @@ export const ScheduleList = ( props: Props ) => {
 									/>
 								) }
 							</>
-						) }
-					{ isFetched &&
-						! isLoadingCanCreateSchedules &&
-						schedules.length >= MAX_SCHEDULES &&
-						canCreateSchedules && (
-							<Text as="p">
-								<Icon className="icon-info" icon={ info } size={ 16 } />
-								The current feature implementation only allows to set up two schedules.
-							</Text>
 						) }
 				</CardBody>
 			</Card>

@@ -11,6 +11,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { arrowLeft, info } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { Banner } from 'calypso/components/banner';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
@@ -27,6 +28,7 @@ interface Props {
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 	const { createMonitor } = useCreateMonitor( siteSlug );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const siteHasEligiblePlugins = useSiteHasEligiblePlugins();
@@ -66,8 +68,15 @@ export const ScheduleCreate = ( props: Props ) => {
 		<>
 			{ ! siteHasEligiblePlugins && (
 				<Banner
-					title="No updatable plugins found"
-					description={ `You don't have any plugins that can be updated. Please head over to <a href="https://wordpress.com/plugins/${ siteSlug }">Plugins</a> to install some plugins.` }
+					title={ translate( 'No plugins to update' ) }
+					description={ translate(
+						'You don’t have any plugins that can be updated. Visit the {{a}}Plugins{{/a}} section to explore and install new plugins.',
+						{
+							components: {
+								a: <a href={ `/plugins/${ siteSlug }` } />,
+							},
+						}
+					) }
 					onClick={ () => {
 						page.redirect( `/plugins/${ siteSlug }` );
 					} }
@@ -78,7 +87,7 @@ export const ScheduleCreate = ( props: Props ) => {
 					<div className="ch-placeholder">
 						{ onNavBack && (
 							<Button icon={ arrowLeft } onClick={ onNavBack }>
-								Back
+								{ translate( 'Back' ) }
 							</Button>
 						) }
 					</div>
@@ -96,7 +105,7 @@ export const ScheduleCreate = ( props: Props ) => {
 						disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 						isBusy={ isBusy }
 					>
-						Create
+						{ translate( 'Create' ) }
 					</Button>
 					{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
 						<Text as="p" className="validation-msg">
