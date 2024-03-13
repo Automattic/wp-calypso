@@ -80,7 +80,7 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 						) : logEntries.length === 0 ? (
 							<p>{ __( 'No logs available for this deployment run.' ) }</p>
 						) : (
-							<DeploymentRunLogs logEntries={ logEntries } />
+							<DeploymentRunLogs logEntries={ logEntries } run={ run } />
 						) }
 					</td>
 				</tr>
