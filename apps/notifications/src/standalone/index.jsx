@@ -79,7 +79,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
 	const handleMessages = ( { action, hidden, showing } ) => {
-		debug( 'message received', {
+		debug( 'Message received', {
 			action,
 			hidden,
 			showing,
