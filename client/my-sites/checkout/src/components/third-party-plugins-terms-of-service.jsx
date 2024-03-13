@@ -1,14 +1,12 @@
 import { localize } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
-	const hasMarketplaceProduct = useSelector( ( state ) => {
-		return cart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
-	} );
+	const hasMarketplaceProduct = cart?.products?.some(
+		( product ) => product.extra.is_marketplace_product
+	);
 
 	if ( ! hasMarketplaceProduct ) {
 		return null;
