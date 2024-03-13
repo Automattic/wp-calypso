@@ -9,7 +9,7 @@ import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { Stripe } from '@stripe/stripe-js';
 
-const debug = debugFactory( 'calypso:partner-portal:credit-card' );
+const debug = debugFactory( 'calypso:a4a:credit-card' );
 
 export default function CreditCardSubmitButton( {
 	disabled,
