@@ -221,6 +221,8 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 		return null;
 	}
 
+	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
+
 	return (
 		<div>
 			<div>
@@ -234,17 +236,18 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Billed %(dueDate)s: %(price)s', {
-					args: {
-						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
-							dateStyle: 'long',
-						} ),
-						price: formatCurrency( dueAmount, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				{ shouldShowDueDate &&
+					translate( 'Billed %(dueDate)s: %(price)s', {
+						args: {
+							dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+								dateStyle: 'long',
+							} ),
+							price: formatCurrency( dueAmount, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
 			</div>
 			<div>
 				<LineItemBillingInterval product={ product } />{ ' ' }
