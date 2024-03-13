@@ -103,25 +103,25 @@ export class Notifications extends PureComponent {
 			prevWPcom: prevProps.wpcom,
 		} );
 
-		if ( prevProps.wpcom !== this.props.wpcom ) {
-			initAPI( this.props.wpcom );
-		}
+		// if ( prevProps.wpcom !== this.props.wpcom ) {
+		// 	initAPI( this.props.wpcom );
+		// }
 
-		if ( ! this.props.isShowing && prevProps.isShowing ) {
-			// unselect the note so keyhandlers don't steal keystrokes
-			store.dispatch( actions.ui.unselectNote() );
-		}
+		// if ( ! this.props.isShowing && prevProps.isShowing ) {
+		// 	// unselect the note so keyhandlers don't steal keystrokes
+		// 	store.dispatch( actions.ui.unselectNote() );
+		// }
 
-		if ( prevProps.isShowing !== this.props.isShowing ) {
-			store.dispatch( { type: SET_IS_SHOWING, isShowing: this.props.isShowing } );
-		}
+		// if ( prevProps.isShowing !== this.props.isShowing ) {
+		// 	store.dispatch( { type: SET_IS_SHOWING, isShowing: this.props.isShowing } );
+		// }
 
-		if (
-			prevProps.isShowing !== this.props.isShowing ||
-			prevProps.isVisible !== this.props.isVisible
-		) {
-			client.setVisibility( { isShowing: this.props.isShowing, isVisible: this.props.isVisible } );
-		}
+		// if (
+		// 	prevProps.isShowing !== this.props.isShowing ||
+		// 	prevProps.isVisible !== this.props.isVisible
+		// ) {
+		// 	client.setVisibility( { isShowing: this.props.isShowing, isVisible: this.props.isVisible } );
+		// }
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
