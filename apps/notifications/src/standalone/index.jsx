@@ -1,5 +1,5 @@
 import '@automattic/calypso-polyfills';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
@@ -76,35 +76,44 @@ const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 
-	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
-	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
-	const handleMessages = ( { action, hidden, showing } ) => {
-		debug( 'Message received', {
-			action,
-			hidden,
-			showing,
-			isShowing,
-			isVisible,
-		} );
+	debug( 'Notes wrapper render/update', { isShowing, isVisible } );
 
-		if ( 'togglePanel' === action ) {
-			if ( isShowing && ! showing ) {
-				reset();
+	const refresh = useCallback(
+		() => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } ),
+		[ isVisible ]
+	);
+	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
+
+	const handleMessages = useCallback(
+		( { action, hidden, showing } ) => {
+			debug( 'Message received', {
+				action,
+				hidden,
+				showing,
+				isShowing,
+				isVisible,
+			} );
+
+			if ( 'togglePanel' === action ) {
+				if ( isShowing && ! showing ) {
+					reset();
+				}
+
+				setIsShowing( showing );
+				refresh();
 			}
 
-			setIsShowing( showing );
-			refresh();
-		}
+			if ( 'toggleVisibility' === action ) {
+				setIsVisible( ! hidden );
+				refresh();
+			}
 
-		if ( 'toggleVisibility' === action ) {
-			setIsVisible( ! hidden );
-			refresh();
-		}
-
-		if ( 'refreshNotes' === action ) {
-			refreshNotes();
-		}
-	};
+			if ( 'refreshNotes' === action ) {
+				refreshNotes();
+			}
+		},
+		[ isShowing, isVisible, refresh ]
+	);
 
 	useEffect( () => {
 		document.addEventListener( 'visibilitychange', refresh );
