@@ -47,49 +47,43 @@ export const useMonitorSettingsQuery = (
 	} );
 };
 
-interface MonitorSettingVariables {
-	retryFlag?: boolean;
-}
-
 export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptions = {} ) {
 	const MAX_RETRIES = 3;
-	let retryCount = 0;
+	const isMonitorNotActiveErrorMsg = 'Monitor is not active.';
 
 	const isMonitorNotActive = ( data: UpdateMonitorSettingsCreate ) => {
 		return data?.settings && data?.settings?.monitor_active === false;
 	};
 
+	const isMonitorNotActiveError = ( error: Error ) => {
+		return error.message === isMonitorNotActiveErrorMsg;
+	};
+
 	const mutation = useMutation( {
-		mutationFn: ( params: MonitorSettingVariables ) =>
-			wpcomRequest( {
+		mutationFn: async ( params: object ) => {
+			const response: UpdateMonitorSettingsCreate = await wpcomRequest( {
 				path: `/sites/${ siteSlug }/jetpack-monitor-settings`,
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				body: params,
-			} ) as Promise< UpdateMonitorSettingsCreate >,
-		...queryOptions,
-		onSuccess: ( data, variables ) => {
-			const { retryFlag } = variables;
-			if ( retryFlag && isMonitorNotActive( data ) ) {
-				if ( retryCount < MAX_RETRIES ) {
-					// Increment the retry count
-					retryCount += 1;
-					// Retry the mutation if the monitor is not active
-					setTimeout( () => mutation.mutate( variables ), 3000 ); // Delay of 3 seconds
-				} else {
-					// Throw an error when maximum retry count is reached
-					throw new Error( 'Maximum retry count reached. Monitor is still not active.' );
-				}
+			} );
+			if ( isMonitorNotActive( response ) ) {
+				throw new Error( isMonitorNotActiveErrorMsg );
 			}
-			return data;
+			return response;
 		},
+		...queryOptions,
+		retry: ( failureCount, error ) => {
+			if ( isMonitorNotActiveError( error ) && failureCount < MAX_RETRIES ) {
+				return true;
+			}
+			return false;
+		},
+		retryDelay: 3000,
 	} );
 
 	const { mutate } = mutation;
-	const createMonitorSettings = useCallback(
-		( params: object, retryFlag: boolean ) => mutate( { ...params, retryFlag } ),
-		[ mutate ]
-	);
+	const createMonitorSettings = useCallback( ( params: object ) => mutate( params ), [ mutate ] );
 
 	return { createMonitorSettings, ...mutation };
 }
