@@ -1,8 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, ReactNode } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { LogEntry, useCodeDeploymentsRunLogDetailQuery } from './use-code-deployment-run-log-query';
 import { DeploymentRun } from './use-code-deployment-run-query';
 
@@ -10,6 +9,20 @@ interface DeploymentRunLogsProps {
 	logEntries: LogEntry[];
 	run: DeploymentRun;
 }
+
+const LogDetail = ( { children }: { children?: ReactNode } ) => (
+	<pre
+		css={ {
+			margin: 0,
+			paddingBlock: 0,
+			fontSize: '14px',
+			paddingInline: '16px',
+			whiteSpace: 'pre-wrap',
+		} }
+	>
+		{ children }
+	</pre>
+);
 
 const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun } ) => {
 	const { __ } = useI18n();
@@ -20,13 +33,19 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 	const commandIdentifier = entry.context?.command.command_identifier;
 	const hasDetail = !! commandIdentifier;
 
-	const { data: logDetail, isLoading } = useCodeDeploymentsRunLogDetailQuery(
+	const {
+		data: logDetail,
+		isLoading,
+		isError,
+	} = useCodeDeploymentsRunLogDetailQuery(
 		siteId,
 		run.code_deployment_id,
 		run.id,
 		commandIdentifier ?? null,
 		{
 			enabled: detailExpanded && hasDetail,
+			refetchOnWindowFocus: false,
+			retry: false,
 		}
 	);
 
@@ -49,6 +68,22 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 		);
 	}, [ logDetail ] );
 
+	const getDetail = () => {
+		if ( detail ) {
+			return <LogDetail>{ detail }</LogDetail>;
+		}
+
+		if ( isLoading ) {
+			return <LogDetail>{ __( 'Fetching log details…' ) }</LogDetail>;
+		}
+
+		if ( isError ) {
+			return <LogDetail>{ __( 'Failed to fetch logs. Please try again.' ) }</LogDetail>;
+		}
+
+		return null;
+	};
+
 	return (
 		<div>
 			<button
@@ -70,27 +105,7 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 					</>
 				) }
 			</button>
-			<div>
-				{ detailExpanded && isLoading && (
-					<pre>
-						<GitHubLoadingPlaceholder />
-					</pre>
-				) }
-				{ detailExpanded && detail && (
-					<pre
-						css={ {
-							background: 'white',
-							margin: 0,
-							paddingBlock: 0,
-							fontSize: '14px',
-							paddingInline: '16px',
-							whiteSpace: 'pre-wrap',
-						} }
-					>
-						{ detail }
-					</pre>
-				) }
-			</div>
+			{ detailExpanded && getDetail() }
 		</div>
 	);
 };
