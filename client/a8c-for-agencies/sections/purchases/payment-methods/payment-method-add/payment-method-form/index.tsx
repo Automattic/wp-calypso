@@ -32,7 +32,6 @@ import {
 	useIssueAndAssignLicenses,
 } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
-import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -40,11 +39,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
-import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
-import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
-import { getStripeConfiguration } from '../../../lib/get-stripe-configuration';
+import { useAssignNewCardProcessor } from '../../hooks/use-assign-new-card-processor';
+import { getStripeConfiguration } from '../../lib/get-stripe-configuration';
 
 import './style.scss';
 
@@ -68,27 +66,42 @@ function onPaymentSelectComplete( {
 function PaymentMethodForm() {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+
+	const paymentMethodRequired = true; // FIXME: This is a placeholder value, it should be fetched from the store.
+
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
 		setupIntentId: stripeSetupIntentId,
 		error: setupIntentError,
 	} = useStripeSetupIntentId();
+
 	const stripeMethod = useCreateStoredCreditCardMethod( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 	} );
+
 	const paymentMethods = useMemo(
 		() => [ stripeMethod ].filter( isValueTruthy ),
 		[ stripeMethod ]
 	);
+
 	const useAsPrimaryPaymentMethod: boolean = useSelect(
 		( select ) => select( creditCardStore ).useAsPrimaryPaymentMethod(),
 		[]
 	);
+
+	const elements = useElements();
+
+	const assignNewCardProcessor = useAssignNewCardProcessor( {
+		useAsPrimaryPaymentMethod,
+		stripe,
+		stripeConfiguration,
+		stripeSetupIntentId,
+		cardElement: elements?.getElement( CardElement ) ?? undefined,
+	} );
 
 	const sites = useSelector( getSites );
 
@@ -179,16 +192,11 @@ function PaymentMethodForm() {
 		// product - will make sure there will be a license issuing for that product
 		//
 		if ( returnQueryArg || products ) {
-			reduxDispatch(
-				fetchStoredCards( {
-					startingAfter: '',
-					endingBefore: '',
-				} )
-			);
+			// FIXME: Need to refetch the stored cards.
 		} else {
 			page( A4A_PAYMENT_METHODS_LINK );
 		}
-	}, [ returnQueryArg, products, reduxDispatch ] );
+	}, [ returnQueryArg, products ] );
 
 	useEffect( () => {
 		if ( paymentMethodRequired ) {
@@ -224,8 +232,6 @@ function PaymentMethodForm() {
 		}
 	}, [ setupIntentError, reduxDispatch ] );
 
-	const elements = useElements();
-
 	const getPreviousPageLink = () => {
 		if ( products ) {
 			return addQueryArgs(
@@ -253,20 +259,9 @@ function PaymentMethodForm() {
 			onPaymentError={ handleChangeError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
-				card: ( data: unknown ) => {
+				card: async ( data: unknown ) => {
 					reduxDispatch( removeNotice( 'payment-method-failure' ) );
-					return assignNewCardProcessor(
-						{
-							useAsPrimaryPaymentMethod,
-							translate,
-							stripe,
-							stripeConfiguration,
-							stripeSetupIntentId,
-							cardElement: elements?.getElement( CardElement ) ?? undefined,
-							reduxDispatch,
-						},
-						data
-					);
+					return await assignNewCardProcessor( data );
 				},
 			} }
 			initiallySelectedPaymentMethodId="card"
