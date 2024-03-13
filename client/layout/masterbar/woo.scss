@@ -1187,6 +1187,10 @@
 			padding: 0;
 			margin-top: 8px;
 
+			a {
+				line-height: 21px;
+			}
+
 			svg {
 				display: none;
 			}
@@ -1256,7 +1260,8 @@
 		}
 
 		.signup-form,
-		.login__body--continue-as-user {
+		.login__body--continue-as-user,
+		.login__lostpassword-form {
 			width: 100%;
 			margin: 48px auto 0;
 			padding: 0;
@@ -1305,6 +1310,10 @@
 					margin-bottom: 16px;
 				}
 			}
+
+			.auth-form__separator {
+				margin-block: 0;
+			}
 		}
 
 		.wp-login__main-footer {
@@ -1312,7 +1321,13 @@
 			align-items: center;
 			width: 100%;
 			flex-direction: column;
-			margin-block-start: 40px;
+			margin: 40px auto 0;
+
+			@media screen and ( max-width: 660px ) {
+				max-width: 327px;
+				margin-bottom: 40px;
+			}
+
 			.auth-form__social-buttons-tos {
 				margin: 0;
 			}
@@ -1416,14 +1431,19 @@
 			}
 		}
 
-		.auth-form__separator .auth-form__separator-text {
-			padding: 0 27px !important;
-		}
-
-
-		.auth-form__separator {
+		div.auth-form__separator {
 			margin: 32px auto;
 			max-width: initial;
+
+			&::before,
+			&::after {
+				border-block-start-color: #e0e0e1;
+			}
+
+			+ .auth-form__social.card {
+				border: 0;
+				padding: 0;
+			}
 		}
 
 		.continue-as-user {
@@ -1482,33 +1502,33 @@
 				text-align: center;
 				margin: 0;
 			}
-		}
 
-		.continue-as-user__not-you {
-			margin-bottom: 0;
-			display: flex;
-			height: 32px;
-			padding: 4px 16px;
-			justify-content: center;
-			align-items: center;
-			gap: 4px;
-		}
-
-		.continue-as-user__change-user-link {
-			text-decoration: none;
-			color: $woo-purple-50;
-			font-size: 0.875rem;
-			font-style: normal;
-			font-weight: 500;
-			line-height: 21px;
-
-			&:hover {
-				color: $woo-purple-70;
+			.continue-as-user__not-you {
+				margin-bottom: 0;
+				display: flex;
+				height: 32px;
+				padding: 4px 16px;
+				justify-content: center;
+				align-items: center;
+				gap: 4px;
 			}
-		}
 
-		.continue-as-user__continue-button {
-			margin-top: 24px;
+			.continue-as-user__change-user-link {
+				text-decoration: none;
+				color: $woo-purple-50;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 21px;
+
+				&:hover {
+					color: $woo-purple-70;
+				}
+			}
+
+			.continue-as-user__continue-button {
+				margin-top: 24px;
+			}
 		}
 
 		.magic-login {
@@ -1640,9 +1660,10 @@
 			}
 		}
 
-		.auth-form__separator + .auth-form__social.card {
-			border: 0;
-			padding: 0;
+		.login__lostpassword-form {
+			.login__form-action {
+				margin: 8px 0 32px;
+			}
 		}
 
 		.two-factor-authentication__verification-code-form-wrapper {

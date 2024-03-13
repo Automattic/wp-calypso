@@ -197,7 +197,7 @@ export class LoginForm extends Component {
 			! socialAccountIsLinking &&
 			hasAccountTypeLoaded &&
 			isRegularAccount( accountType ) &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless )
+			! ( this.props.isWoo && ! this.props.isPartnerSignup )
 		);
 	}
 
@@ -383,16 +383,17 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow } = this.props;
-		if ( this.isPasswordView() || this.isFullView() ) {
-			if ( isWoo && ! isWooCoreProfilerFlow ) {
-				return translate( 'Get started' );
-			}
+		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless } = this.props;
 
-			return translate( 'Log In' );
+		if ( this.isUsernameOrEmailView() || isWooPasswordless ) {
+			return translate( 'Continue' );
 		}
 
-		return translate( 'Continue' );
+		if ( isWoo && ! isWooCoreProfilerFlow ) {
+			return translate( 'Get started' );
+		}
+
+		return translate( 'Log In' );
 	};
 
 	showJetpackConnectSiteOnly = () => {
@@ -585,9 +586,7 @@ export class LoginForm extends Component {
 						);
 					} }
 				>
-					{ this.props.isWooPasswordless
-						? this.props.translate( 'Lost your password?' )
-						: this.props.translate( 'Forgot password?' ) }
+					{ this.props.translate( 'Forgot password?' ) }
 				</a>
 			);
 		}
@@ -862,7 +861,7 @@ export class LoginForm extends Component {
 							aria-hidden={ isPasswordHidden }
 						>
 							<FormLabel htmlFor="password">
-								{ this.props.isWoo && ! this.props.isPartnerSignup
+								{ this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless
 									? this.props.translate( 'Your password' )
 									: this.props.translate( 'Password' ) }
 							</FormLabel>

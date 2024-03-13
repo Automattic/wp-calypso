@@ -74,7 +74,7 @@ $breakpoint-mobile: 660px;
 // In this case we want the separator to be vertical
 .signup-form,
 .is-white-login .is-social-first,
-.is-woo-passwordless .wp-login__container .login {
+.login form.is-woo-passwordless {
 	.auth-form__separator {
 		@include horizontal-separator;
 		width: calc(100% - 32px);
