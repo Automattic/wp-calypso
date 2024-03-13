@@ -32,6 +32,7 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 	// Bypasses fetching if the rendered page is cached, or if any query parameters were passed in the URL
 	if ( cachedMarkup || Object.keys( context.query ).length > 0 ) {
 		next();
+
 		return;
 	}
 
