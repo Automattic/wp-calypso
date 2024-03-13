@@ -6,6 +6,7 @@ import { receiveMessage, sendMessage } from './messaging';
 
 import '../panel/boot/stylesheets/style.scss';
 
+const debug = require( 'debug' )( 'notifications:standalone' );
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
@@ -111,6 +112,11 @@ const init = ( wpcom ) => {
 	window.addEventListener(
 		'message',
 		receiveMessage( ( { action, hidden, showing } ) => {
+			debug( 'message received', {
+				action,
+				hidden,
+				showing,
+			} );
 			if ( 'togglePanel' === action ) {
 				if ( isShowing && ! showing ) {
 					reset();

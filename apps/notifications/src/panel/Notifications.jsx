@@ -9,6 +9,7 @@ import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 import Layout from './templates';
+const debug = require( 'debug' )( 'notifications:panel' );
 
 import './boot/stylesheets/style.scss';
 
@@ -92,6 +93,14 @@ export class Notifications extends PureComponent {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
+		debug( 'Panel will recieve props', {
+			isShowing,
+			isVisible,
+			wpcom,
+			prevShowing: this.props.isShowing,
+			prevVis: this.props.isVisible,
+			prevWPcom: this.props.wpcom,
+		} );
 		if ( wpcom !== this.props.wpcom ) {
 			initAPI( wpcom );
 		}
