@@ -3,7 +3,6 @@ import type { SiteSlug } from 'calypso/types';
 
 interface PluginUpdateManagerContextProps {
 	siteSlug: SiteSlug;
-	isEligibleForFeature: boolean;
 }
 
 interface PluginUpdateManagerContextState {
@@ -15,7 +14,6 @@ const PluginUpdateManagerContext = createContext<
 	PluginUpdateManagerContextProps & PluginUpdateManagerContextState
 >( {
 	siteSlug: '',
-	isEligibleForFeature: false,
 	siteHasEligiblePlugins: true,
 	setSiteHasEligiblePlugins: () => {},
 } );
@@ -23,7 +21,6 @@ const PluginUpdateManagerContext = createContext<
 const PluginUpdateManagerContextProvider = ( {
 	siteSlug,
 	children,
-	isEligibleForFeature,
 }: PluginUpdateManagerContextProps & { children: ReactNode } ) => {
 	const [ siteHasEligiblePlugins, setSiteHasEligiblePlugins ] = useState( true );
 
@@ -31,7 +28,6 @@ const PluginUpdateManagerContextProvider = ( {
 		<PluginUpdateManagerContext.Provider
 			value={ {
 				siteSlug,
-				isEligibleForFeature,
 				siteHasEligiblePlugins,
 				setSiteHasEligiblePlugins,
 			} }

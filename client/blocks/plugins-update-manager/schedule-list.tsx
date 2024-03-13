@@ -28,7 +28,7 @@ interface Props {
 }
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 	const isMobile = useMobileBreakpoint();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
@@ -52,7 +52,7 @@ export const ScheduleList = ( props: Props ) => {
 	);
 
 	const showScheduleListEmpty =
-		! isEligibleForFeature ||
+		( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
 		( isFetched &&
 			! isLoadingCanCreateSchedules &&
 			( schedules.length === 0 || ! canCreateSchedules ) );
@@ -99,7 +99,9 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ ( isLoading || isLoadingCanCreateSchedules ) && <Spinner /> }
+					{ ( isLoading || isLoadingCanCreateSchedules || isEligibleForFeatureLoading ) && (
+						<Spinner />
+					) }
 					{ showScheduleListEmpty && (
 						<ScheduleListEmpty
 							onCreateNewSchedule={ onCreateNewSchedule }

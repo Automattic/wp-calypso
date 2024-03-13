@@ -1,7 +1,7 @@
-import { WPCOM_FEATURES_SCHEDULED_UPDATES } from '@automattic/calypso-products';
-import { Button, Spinner } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useEffect } from 'react';
+import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
@@ -10,10 +10,6 @@ import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
-import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { hasLoadedSitePlansFromServer } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
@@ -35,19 +31,9 @@ interface Props {
 export const PluginsUpdateManager = ( props: Props ) => {
 	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const siteId = useSelector( getSelectedSiteId );
-	const hasScheduledUpdatesFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_SCHEDULED_UPDATES )
-	);
-	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
-	const isEligibleForFeature = hasScheduledUpdatesFeature && isAtomic;
-	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
-	const isFeaturesLoaded: boolean = useSelector( ( state ) =>
-		getHasLoadedSiteFeatures( state, siteId )
-	);
 
-	const isSitePlansLoaded: boolean = useSelector( ( state ) =>
-		hasLoadedSitePlansFromServer( state, siteId )
-	);
+	const { isEligibleForFeature, isSitePlansLoaded } = useIsEligibleForFeature();
+	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
@@ -82,10 +68,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	}[ context ];
 
 	return (
-		<PluginUpdateManagerContextProvider
-			siteSlug={ siteSlug }
-			isEligibleForFeature={ isEligibleForFeature }
-		>
+		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
 			<DocumentHead title={ title } />
 			{ ! isSitePlansLoaded && <QuerySitePlans siteId={ siteId } /> }
 			<MainComponent wideLayout>
@@ -106,17 +89,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						</Button>
 					) }
 				</NavigationHeader>
-				{ ! isFeaturesLoaded || ! isSitePlansLoaded ? (
-					<Spinner className="plugins-update-manager-spinner" />
-				) : (
-					<ScheduledUpdatesGate
-						hasScheduledUpdatesFeature={ hasScheduledUpdatesFeature }
-						isAtomic={ isAtomic }
-						siteId={ siteId as number }
-					>
-						{ component }
-					</ScheduledUpdatesGate>
-				) }
+				<ScheduledUpdatesGate siteId={ siteId as number }>{ component }</ScheduledUpdatesGate>
 			</MainComponent>
 		</PluginUpdateManagerContextProvider>
 	);

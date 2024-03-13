@@ -23,7 +23,7 @@ interface Props {
 }
 export const ScheduleEdit = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleId, onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
