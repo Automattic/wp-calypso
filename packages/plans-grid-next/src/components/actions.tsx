@@ -46,6 +46,7 @@ type PlanFeaturesActionsButtonProps = {
 	isStuck: boolean;
 	storageOptions?: StorageOption[];
 	visibleGridPlans: GridPlan[];
+	onTrialPlanSelected?: () => void;
 };
 
 const DummyDisabledButton = styled.div`
@@ -437,6 +438,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	isMonthlyPlan,
 	storageOptions,
 	visibleGridPlans,
+	onTrialPlanSelected,
 } ) => {
 	const translate = useTranslate();
 	const { gridPlansIndex, helpers } = usePlansGridContext();
@@ -460,7 +462,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 					upgrading_to: upgradePlan,
 					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
+				onTrialPlanSelected?.();
 			}
+
 			onUpgradeClick?.( upgradePlan );
 		},
 		[ currentSitePlanSlug, freeTrialPlanSlug, helpers, onUpgradeClick, planSlug ]

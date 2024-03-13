@@ -8,7 +8,12 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserId,
+	isCurrentUserEmailVerified,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { isReskinnedFlow } from '../is-flow';
 import './style.scss';
 
@@ -44,6 +49,9 @@ class StepWrapper extends Component {
 		queryParams: PropTypes.object,
 		customizedActionButtons: PropTypes.element,
 		userLoggedIn: PropTypes.bool,
+		userId: PropTypes.number,
+		savePreference: PropTypes.func,
+		isCurrentUserEmailVerified: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -267,5 +275,8 @@ class StepWrapper extends Component {
 export default connect( ( state ) => {
 	return {
 		userLoggedIn: isUserLoggedIn( state ),
+		userId: getCurrentUserId( state ),
+		savePreference: savePreference,
+		isCurrentUserEmailVerified: isCurrentUserEmailVerified( state ),
 	};
 } )( localize( StepWrapper ) );

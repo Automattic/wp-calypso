@@ -22,6 +22,7 @@ type TopButtonsProps = {
 		isTableCell?: boolean;
 		isStuck?: boolean;
 	};
+	onTrialPlanSelected?: () => void;
 };
 
 const TopButtons = ( {
@@ -32,6 +33,7 @@ const TopButtons = ( {
 	options,
 	planActionOverrides,
 	renderedGridPlans,
+	onTrialPlanSelected,
 }: TopButtonsProps ) => {
 	const translate = useTranslate();
 
@@ -83,6 +85,7 @@ const TopButtons = ( {
 						isStuck={ options?.isStuck || false }
 						storageOptions={ storageOptions }
 						visibleGridPlans={ renderedGridPlans }
+						onTrialPlanSelected={ onTrialPlanSelected }
 					/>
 				</PlanDivOrTdContainer>
 			);

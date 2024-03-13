@@ -61,7 +61,12 @@ import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserId,
+	getCurrentUserName,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -736,6 +741,16 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
+	const dispatch = useDispatch();
+	const userId = useSelector( getCurrentUserId );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const onTrialPlanSelected = useCallback( () => {
+		if ( ! isEmailVerified ) {
+			if ( savePreference ) {
+				dispatch( savePreference( `selected-trial-plan-${ userId }`, true ) );
+			}
+		}
+	}, [ dispatch, userId, isEmailVerified ] );
 	return (
 		<>
 			<div
@@ -856,6 +871,7 @@ const PlansFeaturesMain = ( {
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+									onTrialPlanSelected={ onTrialPlanSelected }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">

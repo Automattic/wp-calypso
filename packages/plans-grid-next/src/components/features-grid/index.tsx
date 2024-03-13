@@ -242,6 +242,7 @@ const FeaturesGrid = ( {
 	generatedWPComSubdomain,
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
+	onTrialPlanSelected,
 }: FeaturesGridProps ) => {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
@@ -260,6 +261,7 @@ const FeaturesGrid = ( {
 		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showUpgradeableStorage,
+		onTrialPlanSelected,
 	};
 
 	const planFeaturesProps = {
