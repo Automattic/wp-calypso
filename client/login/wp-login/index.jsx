@@ -434,8 +434,11 @@ export class Login extends Component {
 
 		const footer = (
 			<>
-				{ isSocialFirst ? (
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
+				{ isSocialFirst || isWooPasswordless ? (
+					<LoginFooter
+						lostPasswordLink={ this.getLostPasswordLink() }
+						shouldRenderTos={ isWooPasswordless }
+					/>
 				) : (
 					shouldRenderFooter && (
 						<LoginLinks

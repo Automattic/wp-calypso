@@ -1307,6 +1307,26 @@
 			}
 		}
 
+		.wp-login__main-footer {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			flex-direction: column;
+			margin-block-start: 40px;
+			.auth-form__social-buttons-tos {
+				margin: 0;
+			}
+
+			.login__lost-password-link {
+				color: $woo-purple-50;
+				text-align: center;
+				font-weight: 500;
+				line-height: 20px;
+				margin-block-start: 24px;
+				text-decoration: none;
+			}
+		}
+
 		.signup-form {
 			input[type="email"].form-text-input {
 				margin-bottom: 0;
@@ -1316,15 +1336,6 @@
 				padding: 0;
 				margin-top: 24px;
 			}
-		}
-
-		.login__form-forgot-password {
-			color: $woo-purple-50;
-			text-align: center;
-			font-weight: 500;
-			line-height: 20px;
-			margin-block-start: 32px;
-			text-decoration: none;
 		}
 
 		.auth-form__social {
