@@ -8,6 +8,7 @@ export interface SitesDataViewsProps {
 	onSitesViewChange: ( view: SitesViewState ) => void;
 	sitesViewState: SitesViewState;
 	isLargeScreen: boolean;
+	forceTourExampleSite?: boolean;
 }
 
 export interface Sort {
