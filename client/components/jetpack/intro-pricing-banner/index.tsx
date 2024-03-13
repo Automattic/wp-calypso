@@ -69,6 +69,11 @@ const IntroPricingBanner: React.FC = () => {
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
 			<div className="intro-pricing-banner">
 				<div className="intro-pricing-banner__content">
+					<div className="intro-pricing-banner__item is-centered-mobile">
+						<span className="intro-pricing-banner__item-label">
+							{ preventWidows( translate( 'Prices do not include VAT' ) ) }
+						</span>
+					</div>
 					<div className="intro-pricing-banner__item">
 						<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
 						<span className="intro-pricing-banner__item-label">

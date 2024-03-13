@@ -48,6 +48,12 @@
 	&:not(:last-child) {
 		margin-right: 16px;
 	}
+
+	&.is-centered-mobile {
+		@media ( max-width: $break-large ) {
+			align-self: center;
+		}
+	}
 }
 
 .intro-pricing-banner__item-icon {
