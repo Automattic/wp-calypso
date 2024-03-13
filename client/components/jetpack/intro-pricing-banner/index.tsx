@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -95,7 +94,9 @@ const IntroPricingBanner: React.FC = () => {
 							className="intro-pricing-banner__item-label is-link"
 							onClick={ () => {
 								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' );
-								page.show( localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale ) );
+								window.location.assign(
+									localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale )
+								);
 							} }
 						>
 							{ preventWidows( translate( 'Explore bulk pricing' ) ) }
