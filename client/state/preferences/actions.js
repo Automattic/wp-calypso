@@ -69,6 +69,7 @@ export const setPreference = ( key, value ) => ( {
  * @returns {(dispatch: import('calypso/state/types').CalypsoDispatch) => Promise} Action thunk
  */
 export const savePreference = ( key, value ) => ( dispatch ) => {
+	console.log( 'savePreference', key, value );
 	dispatch( setPreference( key, value ) );
 
 	const payload = {
@@ -77,9 +78,12 @@ export const savePreference = ( key, value ) => ( dispatch ) => {
 		},
 	};
 
+	console.log( 'savePreference payload', payload );
+
 	return wpcom.req
 		.put( '/me/preferences', payload )
 		.then( ( data ) => {
+			console.log( 'savePreference success', payload, data );
 			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 			dispatch( {
 				type: PREFERENCES_SAVE_SUCCESS,

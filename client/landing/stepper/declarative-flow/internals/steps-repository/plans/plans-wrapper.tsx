@@ -21,7 +21,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect, useLayoutEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -36,6 +36,8 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {
 	shouldIncludeFAQ?: boolean;
@@ -124,7 +126,19 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} );
 	};
 
+	const dispatch = useDispatch();
+	const userId = useSelector( getCurrentUserId );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const handleSelectedTrialPlan = () => {
+		console.log( 'handleSelectedTrialPlan', `selected-trial-plan-${ userId }`, isEmailVerified );
+		dispatch( savePreference( `selected-trial-plan-${ userId }`, true ) );
+	};
+
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
+		console.log( 'onUpgradeClick' );
+		if ( ! isEmailVerified ) {
+			handleSelectedTrialPlan();
+		}
 		const planCartItem = getPlanCartItem( cartItems );
 		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {

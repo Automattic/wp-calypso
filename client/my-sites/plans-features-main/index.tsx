@@ -61,12 +61,7 @@ import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import {
-	getCurrentUserId,
-	getCurrentUserName,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -340,12 +335,12 @@ const PlansFeaturesMain = ( {
 				return;
 			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
+			console.log( 'handleUpgradeClick', cartItemForPlan, clickedPlanSlug );
 			const planSlug = clickedPlanSlug ?? PLAN_FREE;
 			setLastClickedPlan( planSlug );
 			if ( isFreePlan( planSlug ) ) {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
-
 			const displayedModal = resolveModal( planSlug );
 			if ( displayedModal ) {
 				setIsModalOpen( true );
@@ -362,6 +357,7 @@ const PlansFeaturesMain = ( {
 				} );
 			}
 
+			console.log( onUpgradeClick, cartItems );
 			if ( onUpgradeClick ) {
 				onUpgradeClick( cartItems );
 				return;
@@ -740,17 +736,6 @@ const PlansFeaturesMain = ( {
 		siteId,
 		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
 	);
-
-	const dispatch = useDispatch();
-	const userId = useSelector( getCurrentUserId );
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const onTrialPlanSelected = useCallback( () => {
-		if ( ! isEmailVerified ) {
-			if ( savePreference ) {
-				dispatch( savePreference( `selected-trial-plan-${ userId }`, true ) );
-			}
-		}
-	}, [ dispatch, userId, isEmailVerified ] );
 	return (
 		<>
 			<div
@@ -871,7 +856,6 @@ const PlansFeaturesMain = ( {
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
-									onTrialPlanSelected={ onTrialPlanSelected }
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">

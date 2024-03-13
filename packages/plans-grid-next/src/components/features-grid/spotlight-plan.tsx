@@ -28,7 +28,6 @@ type SpotlightPlanProps = {
 	options?: {
 		isTableCell?: boolean;
 	};
-	onTrialPlanSelected?: () => void;
 };
 
 const SpotlightPlan = ( {
@@ -42,7 +41,6 @@ const SpotlightPlan = ( {
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	showUpgradeableStorage,
-	onTrialPlanSelected,
 }: SpotlightPlanProps ) => {
 	if ( ! gridPlanForSpotlight ) {
 		return null;
@@ -81,7 +79,6 @@ const SpotlightPlan = ( {
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
 				onUpgradeClick={ onUpgradeClick }
-				onTrialPlanSelected={ onTrialPlanSelected }
 			/>
 		</div>
 	);
