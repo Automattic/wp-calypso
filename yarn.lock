@@ -437,6 +437,7 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     i18n-calypso: "workspace:^"
     react-dom: "npm:^18.2.0"
