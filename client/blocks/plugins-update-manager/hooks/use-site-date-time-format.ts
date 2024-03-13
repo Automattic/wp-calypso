@@ -9,6 +9,13 @@ export function useSiteDateTimeFormat( siteSlug: string ) {
 	const timeFormat = getSiteSetting( 'time_format' );
 
 	// Prepare timestamp based on site settings
+	const prepareTime = ( unixTimestamp: number ) => {
+		const ts = unixTimestamp * 1000;
+
+		return phpToMomentDatetimeFormat( moment( ts ), timeFormat );
+	};
+
+	// Prepare timestamp based on site settings
 	const prepareDateTime = ( unixTimestamp: number ) => {
 		const ts = unixTimestamp * 1000;
 		const format = `${ dateFormat } ${ timeFormat }`;
@@ -26,6 +33,7 @@ export function useSiteDateTimeFormat( siteSlug: string ) {
 	return {
 		dateFormat,
 		timeFormat,
+		prepareTime,
 		prepareDateTime,
 		isAmPmPhpTimeFormat,
 	};
