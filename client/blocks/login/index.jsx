@@ -24,6 +24,7 @@ import {
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -302,6 +303,7 @@ class Login extends Component {
 			signupUrl,
 			isWoo,
 			isWooCoreProfilerFlow,
+			isWooPasswordless,
 		} = this.props;
 
 		if ( signupUrl ) {
@@ -315,6 +317,13 @@ class Login extends Component {
 
 		if ( isWooCoreProfilerFlow && isEmpty( currentQuery ) ) {
 			return getSignupUrl( initialQuery, currentRoute, oauth2Client, locale, pathname );
+		}
+
+		if ( isWooPasswordless ) {
+			return addQueryArgs(
+				{ 'woo-passwordless': 'yes' },
+				getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname )
+			);
 		}
 
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
@@ -866,12 +875,11 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo, isWooPasswordless } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
 
 		return (
 			<div
 				className={ classNames( 'login', {
-					'is-woo-passwordless': isWooPasswordless,
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),

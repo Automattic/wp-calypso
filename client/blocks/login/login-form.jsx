@@ -538,10 +538,15 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
+		if ( this.props.isWooPasswordless ) {
+			return this.props.translate( 'Your email or username' );
+		}
+
+		if ( this.props.isWooCoreProfilerFlow ) {
+			return this.props.translate( 'Your email address' );
+		}
+
 		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
-			if ( this.props.isWooCoreProfilerFlow ) {
-				return this.props.translate( 'Your email address' );
-			}
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -619,17 +624,18 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
-		const loginLink = getLoginLinkPageUrl(
-			this.props.locale,
-			this.props.currentRoute,
-			this.props.currentQuery?.signup_url,
-			this.props.oauth2Client?.id
-		);
-
 		const { query, usernameOrEmail } = this.props;
-		const emailAddress = usernameOrEmail || query?.email_address || this.state.usernameOrEmail;
 
-		return addQueryArgs( { email_address: emailAddress }, loginLink );
+		const loginLink = getLoginLinkPageUrl( {
+			locale: this.props.locale,
+			currentRoute: this.props.currentRoute,
+			signupUrl: this.props.currentQuery?.signup_url,
+			oauth2ClientId: this.props.oauth2Client?.id,
+			emailAddress: usernameOrEmail || query?.email_address || this.state.usernameOrEmail,
+			redirectTo: this.props.redirectTo,
+		} );
+
+		return loginLink;
 	}
 
 	renderMagicLoginLink() {
@@ -752,7 +758,10 @@ export class LoginForm extends Component {
 
 		return (
 			<form
-				className={ classNames( { 'is-social-first': isSocialFirst } ) }
+				className={ classNames( {
+					'is-social-first': isSocialFirst,
+					'is-woo-passwordless': isWooPasswordless,
+				} ) }
 				onSubmit={ this.onSubmitForm }
 				method="post"
 			>
@@ -916,14 +925,15 @@ export class LoginForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							shouldRenderToS={ this.props.isWoo && ! isPartnerSignup }
+							shouldRenderToS={
+								this.props.isWoo && ! isPartnerSignup && ! this.props.isWooPasswordless
+							}
 							isSocialFirst={ isSocialFirst }
 						>
 							{ loginButtons }
 						</SocialLoginForm>
 					</Fragment>
 				) }
-				{ isWoo && ! isPartnerSignup && isWooPasswordless && this.renderLostPasswordLink() }
 
 				{ this.showJetpackConnectSiteOnly() && (
 					<JetpackConnectSiteOnly
@@ -967,7 +977,7 @@ export default connect(
 				getCurrentQueryArguments( state )?.email_address,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery: getCurrentQueryArguments( state ),
-			isWooPasswordless: getWooPasswordless( state ),
+			isWooPasswordless: !! getWooPasswordless( state ),
 		};
 	},
 	{

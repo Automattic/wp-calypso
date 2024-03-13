@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -42,16 +41,16 @@ const LoginButtons = ( {
 			return null;
 		}
 
-		const loginLink = getLoginLinkPageUrl(
+		const loginLink = getLoginLinkPageUrl( {
 			locale,
 			currentRoute,
-			query?.signup_url,
-			oauth2Client?.id
-		);
+			signupUrl: query?.signup_url,
+			oauth2ClientId: oauth2Client?.id,
+			emailAddress: usernameOrEmail || query?.email_address,
+			redirectTo: query?.redirect_to,
+		} );
 
-		const emailAddress = usernameOrEmail || query?.email_address;
-
-		return addQueryArgs( loginLink, { email_address: emailAddress } );
+		return loginLink;
 	};
 
 	const handleMagicLoginClick = () => {

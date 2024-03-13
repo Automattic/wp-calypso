@@ -710,15 +710,6 @@
 		margin-top: -14px;
 	}
 
-	.is-woo-passwordless.login .login__form-forgot-password {
-		color: $woo-purple-50;
-		text-align: center;
-		font-weight: 500;
-		line-height: 20px;
-		margin-block-start: 32px;
-		text-decoration: none;
-	}
-
 	.logged-out-form__footer {
 		background: none;
 		border: none;
@@ -1265,7 +1256,6 @@
 		}
 
 		.signup-form,
-		.login form,
 		.login__body--continue-as-user {
 			width: 100%;
 			margin: 48px auto 0;
@@ -1273,6 +1263,48 @@
 			max-width: 327px;
 			display: flex;
 			flex-direction: column;
+		}
+
+		.wp-login__main.main {
+			max-width: 758px;
+		}
+
+		.login form.is-woo-passwordless {
+			display: flex;
+			flex-direction: row;
+			margin-top: 48px;
+			padding: 0;
+			justify-content: center;
+			max-width: 758px;
+
+			@media screen and ( max-width: 660px ) {
+				flex-direction: column;
+			}
+
+			.card.login__form {
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				width: 100%;
+				max-width: var(--login-form-column-max-width);
+				margin: 0;
+
+				~ .auth-form__social.card {
+					width: 100%;
+					max-width: var(--login-form-column-max-width);
+					margin: 0;
+				}
+
+				.login__form-userdata .form-label {
+					color: var(--color-gray-100);
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 600;
+					line-height: 24px;
+					margin-bottom: 16px;
+				}
+			}
 		}
 
 		.signup-form {
@@ -1283,25 +1315,6 @@
 			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
 				padding: 0;
 				margin-top: 24px;
-			}
-		}
-
-		.card.login__form {
-			padding: 0;
-			border-bottom-width: 0;
-			margin-inline: 0;
-
-			~ .auth-form__separator {
-				margin-block: 32px;
-			}
-
-			.login__form-userdata .form-label {
-				color: var(--color-gray-100);
-				font-size: 1rem;
-				font-style: normal;
-				font-weight: 600;
-				line-height: 24px;
-				margin-bottom: 16px;
 			}
 		}
 

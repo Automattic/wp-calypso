@@ -221,12 +221,12 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
-		const loginLink = getLoginLinkPageUrl(
-			this.props.locale,
-			this.props.currentRoute,
-			this.props.query?.signup_url,
-			this.props.oauth2Client?.id
-		);
+		const loginLink = getLoginLinkPageUrl( {
+			locale: this.props.locale,
+			currentRoute: this.props.currentRoute,
+			signupUrl: this.props.query?.signup_url,
+			oauth2ClientId: this.props.oauth2Client?.id,
+		} );
 
 		return (
 			<a
