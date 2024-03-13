@@ -16,10 +16,14 @@ export interface Context {
 }
 
 export interface Command {
-	command: string;
+	command_identifier: string;
 	exit_code: number;
-	stdout: string;
-	stderr: string;
+}
+
+export interface LogEntryDetail {
+	exit_code: number;
+	stdout: Array< string >;
+	stderr: Array< string >;
 }
 
 export const useCodeDeploymentsRunLogQuery = (
@@ -40,6 +44,34 @@ export const useCodeDeploymentsRunLogQuery = (
 		queryFn: (): LogEntry[] =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/code-deployments/${ deploymentId }/runs/${ runId }/logs`,
+				apiNamespace: 'wpcom/v2',
+			} ),
+		meta: {
+			persist: false,
+		},
+		...options,
+	} );
+};
+export const useCodeDeploymentsRunLogDetailQuery = (
+	siteId: number | null,
+	deploymentId: number,
+	runId: number,
+	commandIdentifier: string | null,
+	options?: Partial< UseQueryOptions< LogEntryDetail > >
+) => {
+	return useQuery< LogEntryDetail >( {
+		enabled: !! siteId && !! commandIdentifier,
+		queryKey: [
+			GITHUB_DEPLOYMENTS_QUERY_KEY,
+			CODE_DEPLOYMENTS_RUN_LOG_QUERY_KEY,
+			siteId,
+			deploymentId,
+			runId,
+			commandIdentifier,
+		],
+		queryFn: (): LogEntryDetail =>
+			wp.req.get( {
+				path: `/sites/${ siteId }/hosting/code-deployments/${ deploymentId }/runs/${ runId }/logs/${ commandIdentifier }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		meta: {
