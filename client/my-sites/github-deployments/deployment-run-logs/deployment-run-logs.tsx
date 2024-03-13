@@ -15,7 +15,6 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 	const { __ } = useI18n();
 	const [ detailExpanded, setDetailExpanded ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
-	const deployment = run.code_deployment!;
 	const openDetail = () => setDetailExpanded( ( v ) => ! v );
 
 	const commandIdentifier = entry.context?.command.command_identifier;
@@ -23,7 +22,7 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 
 	const { data: logDetail, isLoading } = useCodeDeploymentsRunLogDetailQuery(
 		siteId,
-		deployment.id,
+		run.code_deployment_id,
 		run.id,
 		commandIdentifier ?? null,
 		{
