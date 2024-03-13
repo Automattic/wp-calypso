@@ -294,6 +294,22 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	return true;
 }
 
+export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
+	const introOffer = product.cost_overrides?.find( ( costOverride ) => {
+		costOverride.override_code !== 'introductory-offer';
+	} );
+	if ( ! introOffer ) {
+		return false;
+	}
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return false;
+	}
+	if ( introOffer.old_subtotal_integer < introOffer.new_subtotal_integer ) {
+		return false;
+	}
+	return true;
+}
+
 export function filterCostOverridesForLineItem(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >
@@ -326,6 +342,17 @@ export function filterCostOverridesForLineItem(
 				// discount is only temporary and the user will still be charged
 				// the remainder before the next renewal.
 				if ( doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+					return {
+						humanReadableReason: costOverride.human_readable_reason,
+						overrideCode: costOverride.override_code,
+					};
+				}
+
+				// Introductory offer discounts which are price increases
+				// should have their full details displayed because displaying
+				// them as a simple price change can be confusing. We therefore
+				// hide the price change amount.
+				if ( doesIntroductoryOfferHavePriceIncrease( product ) ) {
 					return {
 						humanReadableReason: costOverride.human_readable_reason,
 						overrideCode: costOverride.override_code,
