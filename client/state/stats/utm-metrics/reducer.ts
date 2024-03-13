@@ -30,7 +30,6 @@ const isValidJSON = ( string: string ) => {
 	}
 };
 
-const metricsParser = ( UTMValues: { [ key: string ]: number }, stopFurtherRequest?: boolean ) => {
 const topPostsParser = (
 	posts: Array< UTMMetricItemTopPostRaw >,
 	siteSlug?: string
@@ -50,11 +49,21 @@ const topPostsParser = (
 	} ) );
 };
 
+const metricsParser = (
+	UTMValues: { [ key: string ]: number },
+	topPosts: { [ key: string ]: Array< UTMMetricItemTopPostRaw > } | undefined,
+	siteSlug?: string
+) => {
 	const combinedKeys = Object.keys( UTMValues );
+	// Stop fetching top posts by other requests
+	// when `topPosts` is already fetched within the same request
+	// or set to an empty object.
+	const stopFurtherRequest = !! topPosts;
 
 	return combinedKeys.map( ( combinedKey: string ) => {
 		const parsedKeys = isValidJSON( combinedKey ) ? JSON.parse( combinedKey ) : [ combinedKey ];
 		const value = UTMValues[ combinedKey ];
+		const posts = topPosts && combinedKey in topPosts ? topPosts[ combinedKey ] : [];
 
 		const data = {
 			label: parsedKeys[ 0 ],
@@ -69,6 +78,11 @@ const topPostsParser = (
 		// Show the label for three UTM parameters: `utm_campaign,utm_source,utm_medium`.
 		if ( parsedKeys[ 2 ] ) {
 			data.label += ` / ${ parsedKeys[ 2 ] }`;
+		}
+
+		// Prepare top posts of each UTM parameter value.
+		if ( posts.length ) {
+			data.children = topPostsParser( posts, siteSlug );
 		}
 
 		// Set no `paramValues` to prevent top post requests.
@@ -92,16 +106,18 @@ const topPostsParser = (
 const dataReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_RECEIVE: {
-			const data = action.data.top_utm_values;
+			const values = action.data.top_utm_values;
+			const topPosts = action.data.top_posts;
+			const siteSlug = action.siteSlug;
 
 			return {
 				...state,
-				metrics: metricsParser( data ),
+				metrics: metricsParser( values, topPosts, siteSlug ),
 			};
 		}
 
 		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
-			const data = action.data.top_utm_values;
+			const values = action.data.top_utm_values;
 
 			const { metricsByPost } = state as {
 				metricsByPost: { [ key: string ]: Array< UTMMetricItem > };
@@ -111,7 +127,7 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 				...state,
 				metricsByPost: {
 					...metricsByPost,
-					[ action.postId ]: metricsParser( data, true ),
+					[ action.postId ]: metricsParser( values, {} ),
 				},
 			};
 		}

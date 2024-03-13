@@ -25,6 +25,8 @@ export const fetch = ( action: AnyAction ) => {
 					date: new Date().toISOString().split( 'T' )[ 0 ],
 					days: 7,
 					post_id: postId || '',
+					// Only query top posts if postId is not provided or 0.
+					query_top_posts: ! postId ? true : false,
 				},
 			},
 			action
@@ -58,12 +60,12 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/utm-metrics/index.js', {
 	[ STATS_UTM_METRICS_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
-			onSuccess: ( { siteId, postId }: AnyAction, data: object ) => {
+			onSuccess: ( { siteId, postId, siteSlug }: AnyAction, data: object ) => {
 				if ( postId ) {
 					return receiveMetricsByPost( siteId, postId, data );
 				}
 
-				return receiveMetrics( siteId, data );
+				return receiveMetrics( siteId, data, siteSlug );
 			},
 			onError: ( { siteId }: AnyAction ) => requestMetricsFail( siteId ),
 			// fromApi,
