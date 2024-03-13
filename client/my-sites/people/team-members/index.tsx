@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Icon, info } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -10,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
+import InfoIcon from './InfoIcon';
 import type { UsersQuery, Member } from '@automattic/data-stores';
 
 import './style.scss';
@@ -83,7 +84,7 @@ function TeamMembers( props: Props ) {
 			<div className="people-list-sso-message__wrapper" key={ key }>
 				<div className="people-list-sso-message">
 					<div className="people-list-sso-message__icon">
-						<Icon icon={ info } size={ 24 } />
+						<Icon icon={ InfoIcon } size={ 24 } />
 					</div>
 					<p>
 						{ translate(
