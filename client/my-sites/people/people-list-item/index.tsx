@@ -6,13 +6,11 @@ import { get } from 'lodash';
 import React from 'react';
 import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
-import { didInviteDeletionSucceed } from 'calypso/state/invites/selectors';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import { AppState } from 'calypso/types';
 import { Invite } from '../team-invites/types';
 import type { Member, SiteDetails } from '@automattic/data-stores';
 import './style.scss';
@@ -43,13 +41,8 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	clickableItem = true,
 }: PeopleListItemProps ) => {
 	const siteId = site && site?.ID;
-	const inviteKey = invite?.key;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
-	const inviteWasDeleted = useSelector( ( state: AppState ) => {
-		return siteId && inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
-	} );
 
 	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites(
 		siteId as number
@@ -170,14 +163,6 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	};
 
 	const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
-
-	if ( isInvite && inviteWasDeleted ) {
-		// After an invite is deleted and the user is returned to the
-		// invites list, the invite can occasionally reappear in the next
-		// API call, so we need to check for this situation and avoid
-		// rendering an invite that we know is actually deleted.
-		return null;
-	}
 
 	const classes = classNames( 'people-list-item', {
 		'is-invite': isInvite,
