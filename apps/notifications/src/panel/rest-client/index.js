@@ -355,7 +355,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 		proposedTime = proposedTime / 1000;
 	}
 
-	debug( 'updateLastSeenTime 0', {
+	debug( 'updateLastSeenTime: 0', {
 		proposedTime: proposedTime,
 		fromStorage: fromStorage,
 		lastSeenTime: this.lastSeenTime,
@@ -375,7 +375,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 		mostRecentNoteTime = Date.parse( notes[ 0 ].timestamp ) / 1000;
 	}
 
-	debug( 'updateLastSeenTime 1', {
+	debug( 'updateLastSeenTime: 1', {
 		proposedTime: proposedTime,
 		showing: this.showing,
 		visible: this.visible,
@@ -389,7 +389,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 		fromNote = true;
 	}
 
-	debug( 'updateLastSeenTime 2', {
+	debug( 'updateLastSeenTime: 2', {
 		proposedTime: proposedTime,
 		fromNote: fromNote,
 		oldNews: proposedTime <= this.lastSeenTime,
@@ -408,7 +408,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 
 	// Update the database only if an unseen note has become visible.
 	if ( fromNote ) {
-		debug( 'updateLastSeenTime 3', this.lastSeenTime );
+		debug( 'updateLastSeenTime: 3', this.lastSeenTime );
 		sendLastSeenTime( this.lastSeenTime );
 	}
 
