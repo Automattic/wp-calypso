@@ -1,10 +1,10 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
-	const hasMarketplaceProduct = cart?.products?.some(
+export default function ThirdPartyPluginsTermsOfService( { cart }: { cart: ResponseCart } ) {
+	const translate = useTranslate();
+	const hasMarketplaceProduct = cart.products.some(
 		( product ) => product.extra.is_marketplace_product
 	);
 
@@ -29,5 +29,3 @@ function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
 
 	return <CheckoutTermsItem>{ thirdPartyPluginsTerms }</CheckoutTermsItem>;
 }
-
-export default localize( ThirdPartyPluginsTermsOfService );
