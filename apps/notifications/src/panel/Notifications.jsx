@@ -63,7 +63,11 @@ export class Notifications extends PureComponent {
 						}
 
 						if ( 'boolean' === typeof action.isVisible ) {
-							client.setVisibility.call( client, { isShowing, isVisible: action.isVisible } );
+							// this is the next issue. isShowing is always the mount value. bad.
+							client.setVisibility.call( client, {
+								isShowing: this.props.isShowing,
+								isVisible: action.isVisible,
+							} );
 						}
 
 						client.refreshNotes.call( client, action.isVisible );
