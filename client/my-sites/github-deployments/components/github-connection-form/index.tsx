@@ -154,7 +154,7 @@ export const GitHubConnectionForm = ( {
 								{ repository.owner }/{ repository.name }
 							</ExternalLink>
 						) : (
-							<FormSettingExplanation css={ { margin: 0 } }>
+							<FormSettingExplanation css={ { margin: '0 !important' } }>
 								{ __( 'No repository selected' ) }
 							</FormSettingExplanation>
 						) }
