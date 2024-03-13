@@ -27,7 +27,7 @@ import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -44,6 +44,7 @@ import {
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -360,6 +361,17 @@ class Login extends Component {
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
+		const signupLink = (
+			<a
+				href={ this.getSignupUrl() }
+				onClick={ () => {
+					// If the user is already logged in, log them out before sending them to the signup page. Otherwise, they will see the weird logged-in state on the signup page.
+					if ( this.props.isLoggedIn ) {
+						this.props.logoutUser();
+					}
+				} }
+			/>
+		);
 
 		if ( isSocialFirst ) {
 			headerText = translate( 'Log in to WordPress.com' );
@@ -389,7 +401,7 @@ class Login extends Component {
 							<br />
 							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 								components: {
-									signupLink: <a href={ this.getSignupUrl() } />,
+									signupLink,
 								},
 							} ) }
 						</span>
@@ -452,7 +464,7 @@ class Login extends Component {
 							{ poweredByWpCom }
 							{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
 								components: {
-									signupLink: <a href={ this.getSignupUrl() } />,
+									signupLink,
 									br: <br />,
 								},
 							} ) }
@@ -473,7 +485,7 @@ class Login extends Component {
 								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 								{
 									components: {
-										signupLink: <a href={ this.getSignupUrl() } />,
+										signupLink,
 										br: <br />,
 									},
 								}
@@ -563,7 +575,7 @@ class Login extends Component {
 						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 						{
 							components: {
-								signupLink: <a href={ this.getSignupUrl() } />,
+								signupLink,
 							},
 						}
 					);
@@ -735,6 +747,17 @@ class Login extends Component {
 			loginButtons,
 		} = this.props;
 
+		const signupLink = (
+			<a
+				href={ this.getSignupUrl() }
+				onClick={ () => {
+					if ( this.props.isLoggedIn ) {
+						this.props.logoutUser();
+					}
+				} }
+			/>
+		);
+
 		if ( socialConnect ) {
 			return (
 				<AsyncLoad
@@ -760,7 +783,7 @@ class Login extends Component {
 							<p className="login__lost-password-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 									components: {
-										signupLink: <a href={ this.getSignupUrl() } />,
+										signupLink,
 									},
 								} ) }
 							</p>
@@ -790,7 +813,7 @@ class Login extends Component {
 							<p className="login__two-factor-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 									components: {
-										signupLink: <a href={ this.getSignupUrl() } />,
+										signupLink,
 									},
 								} ) }
 							</p>
@@ -943,11 +966,13 @@ export default connect(
 		requestError: getRequestError( state ),
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		rebootAfterLogin,
 		hideMagicLoginRequestForm,
 		sendEmailLogin,
+		logoutUser,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...ownProps,
