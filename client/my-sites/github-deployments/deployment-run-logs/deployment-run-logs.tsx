@@ -28,7 +28,6 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 		commandIdentifier ?? null,
 		{
 			enabled: detailExpanded && hasDetail,
-			refetchInterval: 5000,
 		}
 	);
 
