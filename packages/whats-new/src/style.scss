@@ -19,6 +19,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	&.components-modal__frame {
 		overflow: auto;
 		max-height: 80vh;
+		cursor: auto;
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
 			width: 90vw;
