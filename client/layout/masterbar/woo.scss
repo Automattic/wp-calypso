@@ -1312,7 +1312,9 @@
 			}
 
 			.auth-form__separator {
-				margin-block: 0;
+				@media screen and ( min-width: 660px ) {
+					margin-block: 0;
+				}
 			}
 		}
 
@@ -1546,7 +1548,7 @@
 				margin: 0;
 
 				@media screen and ( max-width: 660px ) {
-					text-align: left;
+					text-align: center;
 					max-width: 327px;
 					margin: 0 auto;
 				}
@@ -1663,6 +1665,18 @@
 		.login__lostpassword-form {
 			.login__form-action {
 				margin: 8px 0 32px;
+				width: 100%;
+			}
+
+			.login__form-userdata {
+				width: 100%;
+			}
+		}
+
+		.login__lost-password-footer {
+			@media screen and ( max-width: 660px ) {
+				margin-bottom: 32px;
+				align-items: center;
 			}
 		}
 
