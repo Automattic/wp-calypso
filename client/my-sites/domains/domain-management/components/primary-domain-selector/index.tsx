@@ -10,7 +10,7 @@ type PrimaryDomainSelectorProps = {
 	domains: undefined | DomainData[];
 	userCanSetPrimaryDomains: boolean;
 	site: undefined | null | SiteDetails;
-	onSetPrimaryDomain: ( domain: string ) => void;
+	onSetPrimaryDomain: ( domain: string, onComplete: () => void ) => void;
 };
 
 const PrimaryDomainSelector = ( {
@@ -41,28 +41,31 @@ const PrimaryDomainSelector = ( {
 
 	const isOnFreePlan = site?.plan?.is_free ?? false;
 
+	const shouldUpgradeToMakeDomainPrimary = ( domain: DomainData ): boolean => {
+		return (
+			! userCanSetPrimaryDomains &&
+			isOnFreePlan &&
+			( domain.type === 'registered' || domain.type === 'mapping' ) &&
+			! domain.current_user_can_create_site_from_domain_only &&
+			! domain.wpcom_domain &&
+			! domain.is_wpcom_staging_domain &&
+			( site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false )
+		);
+	};
+
 	const validPrimaryDomains = domains.filter( ( domain ) => {
 		return (
 			domain.can_set_as_primary &&
 			! domain.aftermarket_auction &&
 			domain.points_to_wpcom &&
-			! (
-				( ! userCanSetPrimaryDomains && isOnFreePlan ) ??
-				( true &&
-					( domain.type === 'registered' || domain.type === 'mapping' ) &&
-					! domain.current_user_can_create_site_from_domain_only &&
-					! domain.wpcom_domain &&
-					! domain.is_wpcom_staging_domain &&
-					( site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false ) )
-			)
+			! shouldUpgradeToMakeDomainPrimary( domain )
 		);
 	} );
 
 	const onSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedDomain( event.target.value );
 		setIsSettingPrimaryDomain( true );
-		onSetPrimaryDomain( event.target.value );
-		setIsSettingPrimaryDomain( false );
+		onSetPrimaryDomain( event.target.value, () => setIsSettingPrimaryDomain( false ) );
 	};
 
 	return (
