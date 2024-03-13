@@ -371,14 +371,14 @@ export default withCurrentRoute(
 			if (
 				// Wait until the currentRoute is not changed.
 				getCurrentRoute( state ) === currentRoute &&
+				// window.location.pathname === currentRoute &&
 				isWCCOM &&
 				! wooPasswordless &&
 				config.isEnabled( 'woo/passwordless' )
 			) {
 				// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
-				const queryParams = { 'woo-passwordless': 'yes' };
-				const currentPath = window.location.pathname + window.location.search;
-				page.replace( addQueryArgs( queryParams, currentPath ) );
+				const queryParams = { ...currentQuery, 'woo-passwordless': 'yes' };
+				page.replace( addQueryArgs( queryParams, currentRoute ) );
 			}
 
 			return {
