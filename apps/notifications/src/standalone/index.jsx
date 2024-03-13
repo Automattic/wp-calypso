@@ -1,17 +1,18 @@
 import '@automattic/calypso-polyfills';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
+const debug = require( 'debug' )( 'notifications:standalone' );
 
 import '../panel/boot/stylesheets/style.scss';
 
-const debug = require( 'debug' )( 'notifications:standalone' );
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
-let isShowing = false;
-let isVisible = document.visibilityState === 'visible';
+// let isShowing = false;
+// let isVisible = document.visibilityState === 'visible';
 
 let store = { dispatch: () => {}, getState: () => {} };
 const customEnhancer = ( next ) => ( reducer, initialState ) =>
@@ -71,10 +72,55 @@ const customMiddleware = {
 	],
 };
 
-const render = ( wpcom ) => {
-	document.body.classList.add( 'font-smoothing-antialiased' );
+const NotesWrapper = ( { wpcom } ) => {
+	const [ isShowing, setIsShowing ] = useState( false );
+	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 
-	ReactDOM.render(
+	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
+	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
+
+	useEffect( () => {
+		document.addEventListener( 'visibilitychange', refresh );
+
+		window.addEventListener(
+			'message',
+			receiveMessage( ( { action, hidden, showing } ) => {
+				debug( 'message received', {
+					action,
+					hidden,
+					showing,
+					isShowing,
+					isVisible,
+				} );
+
+				if ( 'togglePanel' === action ) {
+					if ( isShowing && ! showing ) {
+						reset();
+					}
+
+					setIsShowing( showing );
+					refresh();
+				}
+
+				if ( 'toggleVisibility' === action ) {
+					setIsVisible( ! hidden );
+					refresh();
+				}
+			} )
+		);
+
+		window.addEventListener(
+			'message',
+			receiveMessage( ( { action } ) => {
+				if ( 'refreshNotes' === action ) {
+					refreshNotes();
+				}
+			} )
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	return (
 		<Notifications
 			customEnhancer={ customEnhancer }
 			customMiddleware={ customMiddleware }
@@ -84,7 +130,15 @@ const render = ( wpcom ) => {
 			receiveMessage={ sendMessage }
 			redirectPath="/"
 			wpcom={ wpcom }
-		/>,
+		/>
+	);
+};
+
+const render = ( wpcom ) => {
+	document.body.classList.add( 'font-smoothing-antialiased' );
+
+	ReactDOM.render(
+		<NotesWrapper wpcom={ wpcom } />,
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);
 };
@@ -104,43 +158,43 @@ const init = ( wpcom ) => {
 	setTracksUser( wpcom );
 	render( wpcom );
 
-	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
-	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
+	// const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
+	// const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
 
-	document.addEventListener( 'visibilitychange', refresh );
+	// document.addEventListener( 'visibilitychange', refresh );
 
-	window.addEventListener(
-		'message',
-		receiveMessage( ( { action, hidden, showing } ) => {
-			debug( 'message received', {
-				action,
-				hidden,
-				showing,
-			} );
-			if ( 'togglePanel' === action ) {
-				if ( isShowing && ! showing ) {
-					reset();
-				}
+	// window.addEventListener(
+	// 	'message',
+	// 	receiveMessage( ( { action, hidden, showing } ) => {
+	// 		debug( 'message received', {
+	// 			action,
+	// 			hidden,
+	// 			showing,
+	// 		} );
+	// 		if ( 'togglePanel' === action ) {
+	// 			if ( isShowing && ! showing ) {
+	// 				reset();
+	// 			}
 
-				isShowing = showing;
-				refresh();
-			}
+	// 			isShowing = showing;
+	// 			refresh();
+	// 		}
 
-			if ( 'toggleVisibility' === action ) {
-				isVisible = ! hidden;
-				refresh();
-			}
-		} )
-	);
+	// 		if ( 'toggleVisibility' === action ) {
+	// 			isVisible = ! hidden;
+	// 			refresh();
+	// 		}
+	// 	} )
+	// );
 
-	window.addEventListener(
-		'message',
-		receiveMessage( ( { action } ) => {
-			if ( 'refreshNotes' === action ) {
-				refreshNotes();
-			}
-		} )
-	);
+	// window.addEventListener(
+	// 	'message',
+	// 	receiveMessage( ( { action } ) => {
+	// 		if ( 'refreshNotes' === action ) {
+	// 			refreshNotes();
+	// 		}
+	// 	} )
+	// );
 };
 
 createClient().then( init );
