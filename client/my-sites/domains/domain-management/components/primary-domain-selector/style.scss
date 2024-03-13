@@ -1,17 +1,17 @@
 .domains-set-primary-address {
-	margin-bottom: 2em;
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
-	padding: 24px;
-	&__title {
-		margin-bottom: 0;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.5em;
-		font-weight: 600;
-		color: var(--studio-gray-80);
+	&.form-fieldset {
+		margin-bottom: 2em;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		padding: 24px;
 	}
-	&__subtitle {
-		font-size: $font-body-small;
+	&__title.form-label {
+		margin-bottom: 0.5em;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+	&__subtitle.form-setting-explanation {
+		font-style: normal;
 		margin-bottom: 1em;
-		color: var(--studio-gray-50);
+		color: var(--color-text-subtle);
 	}
 }

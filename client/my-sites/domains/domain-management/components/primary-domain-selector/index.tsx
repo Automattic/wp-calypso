@@ -1,7 +1,12 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect } from 'react';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import type { DomainData, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -88,28 +93,40 @@ const PrimaryDomainSelector = ( {
 		onSetPrimaryDomain( event.target.value, () => setIsSettingPrimaryDomain( false ), domain.type );
 	};
 
+	const supportLink = localizeUrl( 'https://wordpress.com/support/domains/set-a-primary-address/' );
+
 	return (
-		<div className="domains-set-primary-address">
-			<div className="domains-set-primary-address__title">
+		<FormFieldset className="domains-set-primary-address">
+			<FormLabel htmlFor="primary-domain-selector" className="domains-set-primary-address__title">
 				{ translate( 'Primary site address' ) }
+			</FormLabel>
+			<div>
+				<FormSettingExplanation className="domains-set-primary-address__subtitle">
+					{ translate(
+						'The current primary address set for this site is: {{strong}}%(selectedDomain)s{{/strong}}. You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							args: { selectedDomain: selectedDomain as string },
+							components: {
+								strong: <strong />,
+								learnMoreLink: <InlineSupportLink supportLink={ supportLink } showIcon={ false } />,
+							},
+						}
+					) }
+				</FormSettingExplanation>
+				<FormSelect
+					disabled={ isSettingPrimaryDomain }
+					id="primary-domain-selector"
+					onChange={ onSelectChange }
+					value={ selectedDomain }
+				>
+					{ validPrimaryDomains.map( ( domain ) => (
+						<option key={ domain.domain } value={ domain.domain }>
+							{ domain.domain }
+						</option>
+					) ) }
+				</FormSelect>
 			</div>
-			<div className="domains-set-primary-address__subtitle">
-				{ translate( 'The current primary address set for this site is:' ) }{ ' ' }
-				<b>{ selectedDomain }</b>.{ ' ' }
-				{ translate( 'You can change it by selecting a different address from the list below.' ) }
-			</div>
-			<FormSelect
-				disabled={ isSettingPrimaryDomain }
-				onChange={ onSelectChange }
-				value={ selectedDomain }
-			>
-				{ validPrimaryDomains.map( ( domain ) => (
-					<option key={ domain.domain } value={ domain.domain }>
-						{ domain.domain }
-					</option>
-				) ) }
-			</FormSelect>
-		</div>
+		</FormFieldset>
 	);
 };
 
