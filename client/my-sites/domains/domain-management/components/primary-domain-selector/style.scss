@@ -1,0 +1,17 @@
+.domains-set-primary-address {
+	margin-bottom: 2em;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	padding: 24px;
+	&__title {
+		margin-bottom: 0;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 1.5em;
+		font-weight: 600;
+		color: var(--studio-gray-80);
+	}
+	&__subtitle {
+		font-size: $font-body-small;
+		margin-bottom: 1em;
+		color: var(--studio-gray-50);
+	}
+}

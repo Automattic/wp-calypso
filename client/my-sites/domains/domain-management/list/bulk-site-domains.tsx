@@ -99,6 +99,18 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					domains={ data?.domains }
 					site={ site }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
+					onSetPrimaryDomain={ async ( domain: string ) => {
+						if ( site ) {
+							try {
+								await dispatch( setPrimaryDomain( site.ID, domain ) );
+								dispatch( showUpdatePrimaryDomainSuccessNotice( domain ) );
+								page.replace( domainManagementList( domain ) );
+								await refetch();
+							} catch ( error ) {
+								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
+							}
+						}
+					} }
 				/>
 				<DomainsTable
 					isLoadingDomains={ isLoading }

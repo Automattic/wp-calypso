@@ -1,22 +1,28 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import type { DomainData, SiteDetails } from '@automattic/data-stores';
 
-// import './style.scss';
+import './style.scss';
 
 type PrimaryDomainSelectorProps = {
 	domains: undefined | DomainData[];
 	userCanSetPrimaryDomains: boolean;
 	site: undefined | null | SiteDetails;
+	onSetPrimaryDomain: ( domain: string ) => void;
 };
 
 const PrimaryDomainSelector = ( {
 	domains,
 	site,
 	userCanSetPrimaryDomains,
+	onSetPrimaryDomain,
 }: PrimaryDomainSelectorProps ) => {
 	const [ selectedDomain, setSelectedDomain ] = useState< undefined | string >( undefined );
+	const [ isSettingPrimaryDomain, setIsSettingPrimaryDomain ] = useState< boolean >( false );
+
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( domains?.length ) {
@@ -33,31 +39,47 @@ const PrimaryDomainSelector = ( {
 		return null;
 	}
 
+	const isOnFreePlan = site?.plan?.is_free ?? false;
+
 	const validPrimaryDomains = domains.filter( ( domain ) => {
 		return (
 			domain.can_set_as_primary &&
 			! domain.aftermarket_auction &&
+			domain.points_to_wpcom &&
 			! (
-				( ! userCanSetPrimaryDomains && site?.plan?.is_free ) ??
+				( ! userCanSetPrimaryDomains && isOnFreePlan ) ??
 				( true &&
 					( domain.type === 'registered' || domain.type === 'mapping' ) &&
 					! domain.current_user_can_create_site_from_domain_only &&
 					! domain.wpcom_domain &&
 					! domain.is_wpcom_staging_domain &&
 					( site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false ) )
-			) &&
-			domain.points_to_wpcom
+			)
 		);
 	} );
 
-	const changeType = ( event: ChangeEvent< HTMLSelectElement > ) => {
+	const onSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedDomain( event.target.value );
+		setIsSettingPrimaryDomain( true );
+		onSetPrimaryDomain( event.target.value );
+		setIsSettingPrimaryDomain( false );
 	};
 
 	return (
-		<div>
-			PRIMARY DOMAIN DROPDOWN
-			<FormSelect onChange={ changeType } value={ selectedDomain }>
+		<div className="domains-set-primary-address">
+			<div className="domains-set-primary-address__title">
+				{ translate( 'Primary site address' ) }
+			</div>
+			<div className="domains-set-primary-address__subtitle">
+				{ translate( 'The current primary address set for this site is:' ) }{ ' ' }
+				<b>{ selectedDomain }</b>.{ ' ' }
+				{ translate( 'You can change it by selecting a different address from the list below.' ) }
+			</div>
+			<FormSelect
+				disabled={ isSettingPrimaryDomain }
+				onChange={ onSelectChange }
+				value={ selectedDomain }
+			>
 				{ validPrimaryDomains.map( ( domain ) => (
 					<option key={ domain.domain }>{ domain.domain }</option>
 				) ) }
