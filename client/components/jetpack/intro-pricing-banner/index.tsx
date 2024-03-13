@@ -4,6 +4,7 @@ import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -26,12 +27,23 @@ const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 47;
 const CONNECT_STORE_HEIGHT = 0;
 
+const useShowNoticeVAT = () => {
+	const query = useGeoLocationQuery();
+	// It's better to show more information rather than hide it. So we don't show notice if we don't have geodata yet.
+	if ( query.isLoading ) {
+		return false;
+	}
+	// If there is an error, we fail safe and show the notice. If we have a country - we show notice if it's not US.
+	return query.isError || 'US' !== query.data?.country_short;
+};
+
 const IntroPricingBanner: React.FC = () => {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 	const clientRect = useBoundingClientRect( '.header__content .header__jetpack-masterbar-cart' );
 	const isSmallScreen = useBreakpoint( '<660px' );
+	const shouldShowNoticeVAT = useShowNoticeVAT();
 
 	const windowBoundaryOffset = useMemo( () => {
 		if ( isJetpackCloud() ) {
@@ -69,11 +81,13 @@ const IntroPricingBanner: React.FC = () => {
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
 			<div className="intro-pricing-banner">
 				<div className="intro-pricing-banner__content">
-					<div className="intro-pricing-banner__item is-centered-mobile">
-						<span className="intro-pricing-banner__item-label">
-							{ preventWidows( translate( 'Prices do not include VAT' ) ) }
-						</span>
-					</div>
+					{ shouldShowNoticeVAT && (
+						<div className="intro-pricing-banner__item is-centered-mobile">
+							<span className="intro-pricing-banner__item-label">
+								{ preventWidows( translate( 'Prices do not include VAT' ) ) }
+							</span>
+						</div>
+					) }
 					<div className="intro-pricing-banner__item">
 						<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
 						<span className="intro-pricing-banner__item-label">
