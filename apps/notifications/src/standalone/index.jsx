@@ -78,45 +78,38 @@ const NotesWrapper = ( { wpcom } ) => {
 
 	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
+	const handleMessages = ( { action, hidden, showing } ) => {
+		debug( 'message received', {
+			action,
+			hidden,
+			showing,
+			isShowing,
+			isVisible,
+		} );
+
+		if ( 'togglePanel' === action ) {
+			if ( isShowing && ! showing ) {
+				reset();
+			}
+
+			setIsShowing( showing );
+			refresh();
+		}
+
+		if ( 'toggleVisibility' === action ) {
+			setIsVisible( ! hidden );
+			refresh();
+		}
+
+		if ( 'refreshNotes' === action ) {
+			refreshNotes();
+		}
+	};
 
 	useEffect( () => {
 		document.addEventListener( 'visibilitychange', refresh );
 
-		window.addEventListener(
-			'message',
-			receiveMessage( ( { action, hidden, showing } ) => {
-				debug( 'message received', {
-					action,
-					hidden,
-					showing,
-					isShowing,
-					isVisible,
-				} );
-
-				if ( 'togglePanel' === action ) {
-					if ( isShowing && ! showing ) {
-						reset();
-					}
-
-					setIsShowing( showing );
-					refresh();
-				}
-
-				if ( 'toggleVisibility' === action ) {
-					setIsVisible( ! hidden );
-					refresh();
-				}
-			} )
-		);
-
-		window.addEventListener(
-			'message',
-			receiveMessage( ( { action } ) => {
-				if ( 'refreshNotes' === action ) {
-					refreshNotes();
-				}
-			} )
-		);
+		window.addEventListener( 'message', receiveMessage( handleMessages ) );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
