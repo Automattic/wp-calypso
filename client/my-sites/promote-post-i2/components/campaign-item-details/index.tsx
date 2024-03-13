@@ -14,7 +14,10 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
-import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import {
+	CampaignResponse,
+	Order,
+} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
@@ -131,11 +134,10 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const { card_name, payment_method, credits, total } = billing_data || {};
+	const { card_name, payment_method, credits, total, orders } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
-		( status === 'finished' || status === 'canceled' ) &&
-		( payment_method || ! isNaN( total || 0 ) );
+		orders && orders.length > 0 && ( payment_method || ! isNaN( total || 0 ) );
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
@@ -753,6 +755,48 @@ export default function CampaignItemDetails( props: Props ) {
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
+										{ orders && orders.length > 0 && (
+											<div className="campaign-item-details__weekly-orders-row">
+												<div className="campaign-item-details__weekly-label"></div>
+												<div className="campaign-item-details__weekly-duration">
+													<span className="campaign-item-details__label">
+														{ translate( 'Duration' ) }
+													</span>
+												</div>
+												<div className="campaign-item-details__weekly-amount">
+													<span className="campaign-item-details__label">
+														{ translate( 'Amount' ) }
+													</span>
+												</div>
+											</div>
+										) }
+										{ orders && orders.length > 0
+											? orders.map( ( order: Order, index: number ) => {
+													const { total, created_at } = order;
+													const formatDuration = ( created_at: string ) => {
+														const originalDate = moment( created_at );
+														const weekBefore = originalDate.clone().subtract( 7, 'days' );
+
+														return `${ weekBefore.format( 'MMM, D' ) } - ${ originalDate.format(
+															'MMM, D'
+														) }`;
+													};
+
+													const durationFormatted = formatDuration( created_at );
+
+													return (
+														<div key={ index } className="campaign-item-details__weekly-orders-row">
+															<div className="campaign-item-details__weekly-label">
+																{ translate( 'Weekly spent' ) }
+															</div>
+															<div className="campaign-item-details__weekly-duration">
+																{ durationFormatted }
+															</div>
+															<div className="campaign-item-details__weekly-amount">${ total }</div>
+														</div>
+													);
+											  } )
+											: [] }
 										<div className="campaign-item-details__secondary-payment-row">
 											{ payment_method && card_name && (
 												<>

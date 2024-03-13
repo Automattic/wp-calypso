@@ -389,6 +389,34 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		.campaign-item-details__secondary-stats-interests-mobile {
 			display: none;
 		}
+
+		.campaign-item-details__weekly-orders-row {
+			display: grid;
+			grid-template-columns: 42% 43% 15%;
+			flex-grow: 1;
+			justify-content: space-between;
+			width: 100%;
+
+			> div {
+				display: flex;
+				flex-direction: column;
+				padding: 16px;
+
+				> span {
+					display: flex;
+					align-items: center;
+				}
+			}
+
+			.campaign-item-details__weekly-amount {
+				text-align: right;
+
+				> span {
+					text-align: right;
+				}
+			}
+		}
+
 		.campaign-item-details__secondary-payment-row {
 			display: grid;
 			grid-template-columns: 42% 58%;
