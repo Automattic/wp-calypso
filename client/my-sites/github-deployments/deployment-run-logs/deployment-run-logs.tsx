@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -12,18 +12,22 @@ interface DeploymentRunLogsProps {
 }
 
 const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun } ) => {
+	const { __ } = useI18n();
 	const [ detailExpanded, setDetailExpanded ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
 	const deployment = run.code_deployment!;
 	const openDetail = () => setDetailExpanded( ( v ) => ! v );
 
+	const commandIdentifier = entry.context?.command.command_identifier;
+	const hasDetail = !! commandIdentifier;
+
 	const { data: logDetail, isLoading } = useCodeDeploymentsRunLogDetailQuery(
 		siteId,
 		deployment.id,
 		run.id,
-		entry.context?.command.command_identifier || null,
+		commandIdentifier ?? null,
 		{
-			enabled: detailExpanded,
+			enabled: detailExpanded && hasDetail,
 			refetchInterval: 5000,
 		}
 	);
@@ -51,19 +55,19 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 		<div>
 			<button
 				css={ {
-					cursor: entry.context?.command.command_identifier ? 'pointer' : undefined,
+					cursor: hasDetail ? 'pointer' : undefined,
 					margin: 0,
 					padding: 0,
 					fontFamily: '"Courier 10 Pitch", Courier, monospace',
 				} }
-				onClick={ entry.context?.command.command_identifier ? openDetail : undefined }
+				onClick={ hasDetail ? openDetail : undefined }
 			>
 				{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
-				{ entry.context?.command.command_identifier && (
+				{ hasDetail && (
 					<>
 						…{ ' ' }
 						<span className="show-more">
-							{ detailExpanded ? translate( 'show less' ) : translate( 'show more' ) }
+							{ detailExpanded ? __( 'show less' ) : __( 'show more' ) }
 						</span>
 					</>
 				) }
