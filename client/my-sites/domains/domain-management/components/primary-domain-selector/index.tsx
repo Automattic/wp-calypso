@@ -53,7 +53,7 @@ const PrimaryDomainSelector = ( {
 		);
 	};
 
-	const validPrimaryDomains = domains.filter( ( domain ) => {
+	let validPrimaryDomains = domains.filter( ( domain ) => {
 		return (
 			domain.can_set_as_primary &&
 			! domain.aftermarket_auction &&
@@ -61,6 +61,20 @@ const PrimaryDomainSelector = ( {
 			! shouldUpgradeToMakeDomainPrimary( domain )
 		);
 	} );
+
+	const hasWpcomStagingDomain = validPrimaryDomains.find(
+		( domain ) => domain.is_wpcom_staging_domain
+	);
+
+	if ( hasWpcomStagingDomain ) {
+		validPrimaryDomains = validPrimaryDomains.filter( ( domain ) => {
+			if ( domain.wpcom_domain ) {
+				return domain.is_wpcom_staging_domain;
+			}
+
+			return true;
+		} );
+	}
 
 	const onSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedDomain( event.target.value );
