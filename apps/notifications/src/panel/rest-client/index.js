@@ -377,8 +377,8 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 
 	debug( 'updateLastSeenTime: 1', {
 		proposedTime: proposedTime,
-		showing: this.showing,
-		visible: this.visible,
+		showing: this.isShowing,
+		visible: this.isVisible,
 		lastSeenTime: this.lastSeenTime,
 		mostRecentNoteTime: mostRecentNoteTime,
 	} );
@@ -468,6 +468,12 @@ function loadMore() {
 }
 
 function setVisibility( { isShowing, isVisible } ) {
+	debug( 'set visibility: 1', {
+		thisShowing: this.isShowing,
+		isShowing,
+		thisVisible: this.isVisible,
+		isVisible,
+	} );
 	if ( this.isShowing === isShowing && this.isVisible === isVisible ) {
 		return;
 	}
