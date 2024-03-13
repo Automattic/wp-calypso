@@ -27,10 +27,7 @@ import {
 	A4A_PAYMENT_METHODS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
-import {
-	useReturnUrl,
-	useIssueAndAssignLicenses,
-} from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import useIssueAndAssignLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-and-assign-licenses';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -42,6 +39,7 @@ import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { useAssignNewCardProcessor } from '../../hooks/use-assign-new-card-processor';
+import { useReturnUrl } from '../../hooks/use-return-url';
 import { getStripeConfiguration } from '../../lib/get-stripe-configuration';
 
 import './style.scss';
@@ -115,6 +113,8 @@ function PaymentMethodForm() {
 	);
 
 	const dispatch = useDispatch();
+
+	// FIXME: We will need to change this hook to use A4A-based hook.
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
 		useIssueAndAssignLicenses(
 			siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null,
@@ -149,7 +149,7 @@ function PaymentMethodForm() {
 			}
 		);
 
-	useReturnUrl( ! paymentMethodRequired );
+	useReturnUrl( { redirect: ! paymentMethodRequired } );
 
 	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
