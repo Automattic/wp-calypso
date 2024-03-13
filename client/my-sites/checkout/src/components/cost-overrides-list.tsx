@@ -9,6 +9,7 @@ import {
 import {
 	LineItemBillingInterval,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	doesIntroductoryOfferHavePriceIncrease,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -167,14 +168,26 @@ export function CostOverridesList( {
 	);
 }
 
-function LineItemCostOverrideIntroOfferDueDate( { product }: { product: ResponseCartProduct } ) {
+/**
+ * Introductory offers sometimes have complex pricing plans that are not easy
+ * to display as a simple discount. This component displays more details about
+ * certain offers.
+ */
+function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseCartProduct } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
-	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+
+	// We only want to display this info for introductory offers which have
+	// pricing that is difficult to display as a simple discount. Currently
+	// that is offers with different term lengths or price increases.
+	if (
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) &&
+		! doesIntroductoryOfferHavePriceIncrease( product )
+	) {
 		return null;
 	}
 
@@ -256,7 +269,7 @@ function LineItemCostOverride( {
 						signForPositive: true,
 					} ) }
 			</span>
-			<LineItemCostOverrideIntroOfferDueDate product={ product } />
+			<LineItemIntroOfferCostOverrideDetail product={ product } />
 		</div>
 	);
 }
