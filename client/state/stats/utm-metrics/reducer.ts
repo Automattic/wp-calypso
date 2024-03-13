@@ -6,7 +6,11 @@ import {
 	STATS_UTM_TOP_POSTS_REQUEST,
 	STATS_UTM_TOP_POSTS_RECEIVE,
 } from 'calypso/state/action-types';
-import { UTMMetricItem, UTMMetricItemTopPost } from 'calypso/state/stats/utm-metrics/types';
+import {
+	UTMMetricItem,
+	UTMMetricItemTopPostRaw,
+	UTMMetricItemTopPost,
+} from 'calypso/state/stats/utm-metrics/types';
 import {
 	combineReducers,
 	keyedReducer,
@@ -27,6 +31,25 @@ const isValidJSON = ( string: string ) => {
 };
 
 const metricsParser = ( UTMValues: { [ key: string ]: number }, stopFurtherRequest?: boolean ) => {
+const topPostsParser = (
+	posts: Array< UTMMetricItemTopPostRaw >,
+	siteSlug?: string
+): Array< UTMMetricItemTopPost > => {
+	return posts.map( ( topPost: UTMMetricItemTopPostRaw ) => ( {
+		id: topPost.id,
+		label: topPost.title,
+		value: topPost.views,
+		href: topPost.href,
+		page: siteSlug ? `/stats/post/${ topPost.id }/${ siteSlug }` : null,
+		actions: [
+			{
+				data: topPost.href,
+				type: 'link',
+			},
+		],
+	} ) );
+};
+
 	const combinedKeys = Object.keys( UTMValues );
 
 	return combinedKeys.map( ( combinedKey: string ) => {
@@ -98,28 +121,14 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 			const siteSlug = action.siteSlug;
 
 			const { topPosts } = state as {
-				topPosts: { [ key: string ]: Array< UTMMetricItemTopPost > };
+				topPosts: { [ key: string ]: Array< UTMMetricItemTopPostRaw > };
 			};
 
 			return {
 				...state,
 				topPosts: {
 					...topPosts,
-					[ action.paramValues ]: data.map( ( topPost: UTMMetricItemTopPost ) => {
-						return {
-							id: topPost.id,
-							label: topPost.title,
-							value: topPost.views,
-							href: topPost.href,
-							page: siteSlug ? `/stats/post/${ topPost.id }/${ action.siteSlug }` : null,
-							actions: [
-								{
-									data: topPost.href,
-									type: 'link',
-								},
-							],
-						};
-					} ),
+					[ action.paramValues ]: topPostsParser( data, siteSlug ),
 				},
 			};
 		}
