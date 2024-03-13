@@ -14,7 +14,6 @@ import {
 } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
@@ -147,8 +146,8 @@ interface Props {
 
 const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
-	const mediaStorage = useMediaStorageQuery( selectedSiteId );
 	const productsList = ProductsList.useProducts();
+	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
 	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
 	const spaceUpgradesPurchased = Purchases.useSitePurchasesByProductSlug( {
@@ -233,7 +232,9 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 						 * If the current storage add-on option is greater than the available upgrade.
 						 * TODO: This is also potentially a candidate for `use-add-on-purchase-status`.
 						 */
-						const currentMaxStorage = mediaStorage.data?.max_storage_bytes / Math.pow( 1024, 3 );
+						const currentMaxStorage = mediaStorage.data?.maxStorageBytes
+							? mediaStorage.data.maxStorageBytes / Math.pow( 1024, 3 )
+							: 0;
 						const availableStorageUpgrade = STORAGE_LIMIT - currentMaxStorage;
 						if ( ( addOn.quantity ?? 0 ) > availableStorageUpgrade ) {
 							return {
@@ -256,7 +257,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 				} ),
 		[
 			activeAddOns,
-			mediaStorage.data?.max_storage_bytes,
+			mediaStorage.data?.maxStorageBytes,
 			productsList.data,
 			productsList.isLoading,
 			siteFeatures.data?.active,
