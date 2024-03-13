@@ -427,7 +427,6 @@ export class Login extends Component {
 			isWhiteLogin,
 			isP2Login,
 			isGravPoweredClient,
-			oauth2Client,
 			privateSite,
 			socialConnect,
 			twoFactorAuthType,
@@ -438,6 +437,7 @@ export class Login extends Component {
 			isWooCoreProfilerFlow,
 			isWooPasswordless,
 			isPartnerSignup,
+			isWoo,
 		} = this.props;
 
 		if ( isGravPoweredLoginPage ) {
@@ -469,8 +469,9 @@ export class Login extends Component {
 			! socialConnect &&
 			! isJetpackMagicLinkSignUpFlow &&
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( oauth2Client ) && ! isPartnerSignup ) &&
+			! ( isWoo && ! isPartnerSignup ) &&
 			! isWooCoreProfilerFlow;
+
 		if ( shouldRenderFooter ) {
 			return (
 				<>
@@ -624,7 +625,11 @@ export default connect(
 			isLoginView:
 				! props.twoFactorAuthType &&
 				! props.socialConnect &&
-				currentRoute !== '/log-in/lostpassword',
+				// React lost password screen.
+				! currentRoute.includes( '/lostpassword' ) &&
+				// When user clicks on the signup link, it changes the route but it doesn't immediately render the signup page
+				// So we need to check if the current route is not the signup route to avoid flickering
+				! currentRoute.includes( '/start' ),
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
