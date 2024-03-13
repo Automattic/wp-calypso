@@ -207,7 +207,7 @@ export const GitHubConnectionForm = ( {
 				</div>
 			</div>
 			<DeploymentStyle
-				isDisabled={ isFetchingBranches }
+				isDisabled={ ! repository || isFetchingBranches }
 				branchName={ branch }
 				repository={ repository }
 				workflowPath={ workflowPath }

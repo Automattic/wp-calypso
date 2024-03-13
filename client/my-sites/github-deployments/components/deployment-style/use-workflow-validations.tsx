@@ -1,10 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import {
-	codePushExample,
-	uploadArtifactExample,
-	newWorkflowExample,
-} from './workflow-yaml-examples';
+import { codePushExample, uploadArtifactExample } from './workflow-yaml-examples';
 
 interface Validation {
 	label: string;
@@ -14,9 +10,13 @@ interface Validation {
 
 interface UseWorkflowValidationsParams {
 	branchName: string;
+	validYamlFile: string;
 }
 
-export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsParams ) => {
+export const useWorkflowValidations = ( {
+	branchName,
+	validYamlFile,
+}: UseWorkflowValidationsParams ) => {
 	const { __ } = useI18n();
 
 	const validations: Record< string, Validation > = useMemo( () => {
@@ -26,7 +26,7 @@ export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsPa
 				description: __(
 					'Ensure that your workflow file contains a valid YAML structure. Here’s an example:'
 				),
-				content: newWorkflowExample( branchName ),
+				content: validYamlFile,
 			},
 			triggered_on_push: {
 				label: __( 'The workflow is triggered on push' ),
@@ -39,7 +39,7 @@ export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsPa
 				content: uploadArtifactExample(),
 			},
 		};
-	}, [ __, branchName ] );
+	}, [ __, branchName, validYamlFile ] );
 
 	return validations;
 };
