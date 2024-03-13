@@ -275,9 +275,9 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	product: ResponseCartProduct
 ): boolean {
 	if (
-		product.cost_overrides?.some( ( costOverride ) => {
-			costOverride.override_code !== 'introductory-offer';
-		} )
+		product.cost_overrides?.some(
+			( costOverride ) => costOverride.override_code !== 'introductory-offer'
+		)
 	) {
 		return false;
 	}
@@ -295,16 +295,16 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 }
 
 export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
-	const introOffer = product.cost_overrides?.find( ( costOverride ) => {
-		costOverride.override_code !== 'introductory-offer';
-	} );
+	const introOffer = product.cost_overrides?.find(
+		( costOverride ) => costOverride.override_code === 'introductory-offer'
+	);
 	if ( ! introOffer ) {
 		return false;
 	}
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return false;
 	}
-	if ( introOffer.old_subtotal_integer < introOffer.new_subtotal_integer ) {
+	if ( introOffer.old_subtotal_integer >= introOffer.new_subtotal_integer ) {
 		return false;
 	}
 	return true;
