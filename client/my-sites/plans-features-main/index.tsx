@@ -12,8 +12,9 @@ import {
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
+	isValidFeatureKey,
+	getFeaturesList,
 } from '@automattic/calypso-products';
-import { isValidFeatureKey, getFeaturesList } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
