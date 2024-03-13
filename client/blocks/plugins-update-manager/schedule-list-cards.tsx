@@ -22,7 +22,7 @@ export const ScheduleListCards = ( props: Props ) => {
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
-	const { prepareTimestamp } = useSiteDateTimeFormat( siteSlug );
+	const { prepareDateTime } = useSiteDateTimeFormat( siteSlug );
 
 	return (
 		<div className="schedule-list--cards">
@@ -63,13 +63,13 @@ export const ScheduleListCards = ( props: Props ) => {
 							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
 							) }
-							{ schedule.last_run_timestamp && prepareTimestamp( schedule.last_run_timestamp ) }
+							{ schedule.last_run_timestamp && prepareDateTime( schedule.last_run_timestamp ) }
 						</span>
 					</div>
 
 					<div className="schedule-list--card-label">
 						<label htmlFor="next-update">{ translate( 'Next update' ) }</label>
-						<span id="next-update">{ prepareTimestamp( schedule.timestamp ) }</span>
+						<span id="next-update">{ prepareDateTime( schedule.timestamp ) }</span>
 					</div>
 
 					<div className="schedule-list--card-label">

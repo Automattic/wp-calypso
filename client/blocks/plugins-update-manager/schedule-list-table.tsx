@@ -23,7 +23,7 @@ export const ScheduleListTable = ( props: Props ) => {
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
-	const { prepareTimestamp } = useSiteDateTimeFormat( siteSlug );
+	const { prepareDateTime } = useSiteDateTimeFormat( siteSlug );
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -57,9 +57,9 @@ export const ScheduleListTable = ( props: Props ) => {
 							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
 							) }
-							{ schedule.last_run_timestamp && prepareTimestamp( schedule.last_run_timestamp ) }
+							{ schedule.last_run_timestamp && prepareDateTime( schedule.last_run_timestamp ) }
 						</td>
-						<td>{ prepareTimestamp( schedule.timestamp ) }</td>
+						<td>{ prepareDateTime( schedule.timestamp ) }</td>
 						<td>
 							{
 								{
