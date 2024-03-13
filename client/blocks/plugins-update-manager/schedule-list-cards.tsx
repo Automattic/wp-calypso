@@ -16,7 +16,7 @@ interface Props {
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const moment = useLocalizedMoment();
 	const { onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );

@@ -15,21 +15,19 @@ import './style.scss';
 
 interface ScheduledUpdatesGateProps {
 	children: ReactNode;
-	hasScheduledUpdatesFeature: boolean;
-	isAtomic: boolean;
 	siteId: SiteId;
 }
 
-const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
-	children,
-	hasScheduledUpdatesFeature,
-	isAtomic,
-	siteId,
-} ) => {
+const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( { children, siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const transferState = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const {
+		isEligibleForFeature,
+		hasScheduledUpdatesFeature,
+		isAtomic,
+		loading: isEligibleForFeatureLoading,
+	} = useIsEligibleForFeature();
 	const [ hasTransfer, setHasTransferring ] = useState(
 		!! (
 			transferState &&
@@ -75,7 +73,7 @@ const ScheduledUpdatesGate: FC< ScheduledUpdatesGateProps > = ( {
 		return null;
 	};
 
-	if ( ! isEligibleForFeature ) {
+	if ( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) {
 		return (
 			<div tabIndex={ -1 } className="scheduled-updates-gate" onFocus={ handleFocus }>
 				{ getNoticeBanner() }

@@ -28,7 +28,7 @@ interface Props {
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const { createMonitor } = useCreateMonitor( siteSlug );
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const siteHasEligiblePlugins = useSiteHasEligiblePlugins();
 	const { onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(

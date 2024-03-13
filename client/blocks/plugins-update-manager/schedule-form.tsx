@@ -46,7 +46,7 @@ interface Props {
 export const ScheduleForm = ( props: Props ) => {
 	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
