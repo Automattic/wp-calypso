@@ -325,11 +325,6 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},
-			{
-				label: __( 'Admin interface style' ),
-				href: `/hosting-config/${ siteSlug }#admin-interface-style`,
-				sectionName: 'admin-interface-style',
-			},
 		].filter( ( { condition } ) => condition ?? true );
 	}, [ __, siteSlug, hasStagingSitesFeature, githubDeploymentsFeature ] );
 }

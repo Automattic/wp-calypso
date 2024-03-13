@@ -51,7 +51,6 @@ import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
-import SiteAdminInterfaceCard from './site-admin-interface-card';
 import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
@@ -141,11 +140,6 @@ const MainCards = ( {
 		{
 			feature: 'cache',
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
-			type: 'basic',
-		},
-		siteId && {
-			feature: 'wp-admin',
-			content: <SiteAdminInterfaceCard siteId={ siteId } />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );

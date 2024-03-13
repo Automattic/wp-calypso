@@ -61,6 +61,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import { BuiltByUpsell } from './built-by-upsell-banner';
 import Masterbar from './masterbar';
+import SiteAdminInterface from './site-admin-interface';
 import SiteIconSetting from './site-icon-setting';
 import LaunchSite from './site-visibility/launch-site';
 import wrapSettingsForm from './wrap-settings-form';
@@ -549,6 +550,15 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 	}
 
+	renderAdminInterface() {
+		const { site, siteIsAtomic } = this.props;
+		if ( ! ( siteIsAtomic || isEnabled( 'layout/wpcom-admin-interface' ) ) ) {
+			return null;
+		}
+
+		return <SiteAdminInterface siteId={ site.ID } />;
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -609,6 +619,7 @@ export class SiteSettingsFormGeneral extends Component {
 					isUnlaunchedSite={ propsisUnlaunchedSite }
 					urlRef="unlaunched-settings"
 				/>
+				{ this.renderAdminInterface() }
 				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
@@ -700,6 +711,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
+		wpcom_admin_interface: 'calypso',
 		admin_url: '',
 	};
 
@@ -721,6 +733,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
+		wpcom_admin_interface: settings.wpcom_admin_interface ?? 'calypso',
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
