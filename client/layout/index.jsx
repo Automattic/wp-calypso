@@ -41,6 +41,7 @@ import {
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -346,7 +347,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<WhatsNewLoader
-					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden }
+					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden && ! this.props.isNewUser }
 					siteId={ this.props.siteId }
 				/>
 				<HelpCenterLoader
@@ -537,6 +538,7 @@ export default withCurrentRoute(
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ),
 				userCapabilities: state.currentUser.capabilities,
+				isNewUser: isUserNewerThan( state, WEEK_IN_MILLISECONDS ),
 			};
 		},
 		{
