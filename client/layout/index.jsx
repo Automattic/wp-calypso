@@ -538,7 +538,7 @@ export default withCurrentRoute(
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ),
 				userCapabilities: state.currentUser.capabilities,
-				isNewUser: isUserNewerThan( state, WEEK_IN_MILLISECONDS ),
+				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			};
 		},
 		{
