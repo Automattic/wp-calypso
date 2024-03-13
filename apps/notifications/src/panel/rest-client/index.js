@@ -468,6 +468,12 @@ function loadMore() {
 }
 
 function setVisibility( { isShowing, isVisible } ) {
+	debug( 'set visibility: 1', {
+		thisShowing: this.isShowing,
+		isShowing,
+		thisVisible: this.isVisible,
+		isVisible,
+	} );
 	if ( this.isShowing === isShowing && this.isVisible === isVisible ) {
 		return;
 	}
@@ -476,6 +482,12 @@ function setVisibility( { isShowing, isVisible } ) {
 	this.isVisible = isVisible;
 
 	if ( isVisible && isShowing ) {
+		debug( 'set visibility: 2 - call updateLastSeentime', {
+			thisShowing: this.isShowing,
+			isShowing,
+			thisVisible: this.isVisible,
+			isVisible,
+		} );
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}
