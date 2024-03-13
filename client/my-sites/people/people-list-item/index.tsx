@@ -93,12 +93,27 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		};
 	};
 
+	const handleInviteSuccess = ( siteId: number ) => {
+		dispatch( requestSiteInvites( siteId ) );
+		displayNotice( translate( 'Invitation sent successfully' ) );
+		dispatch(
+			composeAnalytics( recordGoogleEvent( 'calypso_sso_user_invite_success', { siteId } ) )
+		);
+	};
+
+	const handleInviteError = ( siteId: number ) => {
+		displayNotice( translate( 'The invitation sending has failed.' ), 'is-error' );
+		dispatch(
+			composeAnalytics( recordGoogleEvent( 'calypso_sso_user_invite_error', { siteId } ) )
+		);
+	};
+
 	const onSendInvite = async ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		// Prevents navigation to invite-details screen and onClick event.
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( isSubmittingInvites || ! user || ! user.roles ) {
+		if ( isSubmittingInvites || ! user || ! user.roles || ! siteId ) {
 			return null;
 		}
 		const { email } = user;
@@ -107,16 +122,8 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 			{ email_or_username: email as string, role: userRoles },
 		] ) ) as [ sendInvitesResponse ];
 
-		const success = response && response[ 0 ].success;
-		if ( success && siteId ) {
-			dispatch( requestSiteInvites( siteId ) );
-			displayNotice( translate( 'Invitation sent successfully' ) );
-			dispatch(
-				composeAnalytics(
-					recordGoogleEvent( 'calypso_sso_user_invite_success', { siteId: siteId } )
-				)
-			);
-		}
+		const success = response && response[ 0 ]?.success;
+		success ? handleInviteSuccess( siteId ) : handleInviteError( siteId );
 	};
 
 	const renderInviteButton = () => {
