@@ -267,6 +267,13 @@ function LineItemCostOverride( {
 	product: ResponseCartProduct;
 } ) {
 	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
+	if ( isPriceIncrease ) {
+		return (
+			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+				<LineItemIntroOfferCostOverrideDetail product={ product } />
+			</div>
+		);
+	}
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span
