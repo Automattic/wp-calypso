@@ -10,7 +10,7 @@ type PrimaryDomainSelectorProps = {
 	domains: undefined | DomainData[];
 	userCanSetPrimaryDomains: boolean;
 	site: undefined | null | SiteDetails;
-	onSetPrimaryDomain: ( domain: string, onComplete: () => void ) => void;
+	onSetPrimaryDomain: ( domain: string, onComplete: () => void, type: string ) => void;
 };
 
 const PrimaryDomainSelector = ( {
@@ -64,8 +64,14 @@ const PrimaryDomainSelector = ( {
 
 	const onSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedDomain( event.target.value );
+
+		const domain = domains.find( ( d ) => d.domain === event.target.value );
+		if ( ! domain ) {
+			return;
+		}
+
 		setIsSettingPrimaryDomain( true );
-		onSetPrimaryDomain( event.target.value, () => setIsSettingPrimaryDomain( false ) );
+		onSetPrimaryDomain( event.target.value, () => setIsSettingPrimaryDomain( false ), domain.type );
 	};
 
 	return (
@@ -84,7 +90,9 @@ const PrimaryDomainSelector = ( {
 				value={ selectedDomain }
 			>
 				{ validPrimaryDomains.map( ( domain ) => (
-					<option key={ domain.domain }>{ domain.domain }</option>
+					<option key={ domain.domain } value={ domain.domain }>
+						{ domain.domain }
+					</option>
 				) ) }
 			</FormSelect>
 		</div>

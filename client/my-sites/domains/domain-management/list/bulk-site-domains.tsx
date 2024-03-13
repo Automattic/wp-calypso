@@ -10,6 +10,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector, useDispatch } from 'calypso/state';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -99,8 +100,29 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					domains={ data?.domains }
 					site={ site }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
-					onSetPrimaryDomain={ async ( domain: string, onComplete: () => void ) => {
+					onSetPrimaryDomain={ async (
+						domain: string,
+						onComplete: () => void,
+						type: string
+					): Promise< void > => {
 						if ( site ) {
+							dispatch(
+								recordGoogleEvent(
+									'Domain Management',
+									'Changed Primary Domain in Site Domains',
+									'Domain Name',
+									domain
+								)
+							);
+							dispatch(
+								recordTracksEvent(
+									'calypso_domain_management_settings_change_primary_domain_dropdown',
+									{
+										section: type,
+										mode: 'dropdown',
+									}
+								)
+							);
 							try {
 								await dispatch( setPrimaryDomain( site.ID, domain ) );
 								dispatch( showUpdatePrimaryDomainSuccessNotice( domain ) );
