@@ -252,6 +252,10 @@ function CheckoutSidebarNudge( {
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
 
+	const productsWithVariants = responseCart?.products?.filter(
+		( product ) => product.product_variants?.length > 1 && product.is_bundled === false
+	);
+
 	if ( isWcMobile ) {
 		return null;
 	}
@@ -280,8 +284,12 @@ function CheckoutSidebarNudge( {
 	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
 		return (
 			<CheckoutSidebarNudgeWrapper>
-				<CheckoutSidebarPlanUpsell />
-				<JetpackAkismetCheckoutSidebarPlanUpsell />
+				{ ! ( productsWithVariants.length > 1 ) && (
+					<>
+						<CheckoutSidebarPlanUpsell />
+						<JetpackAkismetCheckoutSidebarPlanUpsell />
+					</>
+				) }
 				{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
 					<SecondaryCartPromotions
 						responseCart={ responseCart }
