@@ -28,7 +28,7 @@ function TeamMembers( props: Props ) {
 	const siteId = site?.ID as number;
 
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
-	const pendingInvitesMails = pendingInvites?.map( ( invite ) => invite.user?.email );
+	const pendingInvitesEmails = pendingInvites?.map( ( invite ) => invite.user?.email );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
@@ -38,7 +38,7 @@ function TeamMembers( props: Props ) {
 	// Filter out pending invites from the list of members and rendering then in order.
 	// This helps to display the SSO message in the right place and don't show users in the list that are pending invites.
 	const nonPendingMembersSorted = members
-		.filter( ( member ) => ! pendingInvitesMails?.includes( member?.email ) )
+		.filter( ( member ) => ! pendingInvitesEmails?.includes( member?.email ) )
 		.sort( ( a, b ) => {
 			if ( a.linked_user_ID === false && b.linked_user_ID !== false ) {
 				return 1;
