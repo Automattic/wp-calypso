@@ -20,7 +20,7 @@ import type { GridPlan } from '../../../types';
 
 function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 	const translate = useTranslate();
-	const { helpers, gridPlansIndex, coupon, selectedSiteId } = usePlansGridContext();
+	const { helpers, gridPlansIndex, coupon, siteId } = usePlansGridContext();
 	const {
 		isMonthlyPlan,
 		pricing: { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer },
@@ -37,7 +37,7 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		withoutPlanUpgradeCredits: true,
 		storageAddOns: storageAddOnsForPlan,
 		coupon,
-		selectedSiteId,
+		siteId,
 		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
 	} )?.[ yearlyVariantPlanSlug ?? '' ];
 

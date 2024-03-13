@@ -1,40 +1,65 @@
 import {
-	FeatureList,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { GridPlan, PlansIntent } from '../../types';
+import { type UseGridPlansParams } from './types';
+import useGridPlans from './use-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from './use-restructured-plan-features-for-comparison-grid';
+import type { GridPlan } from '../../types';
 
-interface Params {
-	allFeaturesList: FeatureList;
-	gridPlans: Omit< GridPlan, 'features' >[];
-	intent?: PlansIntent;
-	selectedFeature?: string | null;
-	showLegacyStorageFeature?: boolean;
-}
+const HIDDEN_PLANS = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
 
 const useGridPlansForComparisonGrid = ( {
 	allFeaturesList,
-	gridPlans,
+	coupon,
+	eligibleForFreeHostingTrial,
+	hiddenPlans,
 	intent,
+	isDisplayingPlansNeededForFeature,
+	isSubdomainNotGenerated,
 	selectedFeature,
+	selectedPlan,
 	showLegacyStorageFeature,
-}: Params ): GridPlan[] => {
-	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
+	siteId,
+	storageAddOns,
+	term,
+	useCheckPlanAvailabilityForPurchase,
+	useFreeTrialPlanSlugs,
+}: UseGridPlansParams ): GridPlan[] | null => {
+	const gridPlans = useGridPlans( {
 		allFeaturesList,
-		gridPlans,
+		coupon,
+		eligibleForFreeHostingTrial,
+		hiddenPlans,
+		intent,
+		isDisplayingPlansNeededForFeature,
+		isSubdomainNotGenerated,
+		selectedFeature,
+		selectedPlan,
+		siteId,
+		showLegacyStorageFeature,
+		storageAddOns,
+		term,
+		useCheckPlanAvailabilityForPurchase,
+		useFreeTrialPlanSlugs,
+	} );
+
+	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {
+		gridPlans: gridPlans || [],
+		allFeaturesList,
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
 
 	return useMemo( () => {
-		const hiddenPlans = [ PLAN_HOSTING_TRIAL_MONTHLY, PLAN_ENTERPRISE_GRID_WPCOM ];
+		if ( ! gridPlans ) {
+			return null;
+		}
 
 		return gridPlans.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible && ! hiddenPlans.includes( gridPlan.planSlug ) ) {
+			if ( gridPlan.isVisible && ! HIDDEN_PLANS.includes( gridPlan.planSlug ) ) {
 				return [
 					...acc,
 					{

@@ -11,7 +11,7 @@ import { useState } from '@wordpress/element';
 export default function useMaxDiscount(
 	plans: PlanSlug[],
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase,
-	selectedSiteId?: number | null
+	siteId?: number | null
 ): number {
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
@@ -21,7 +21,7 @@ export default function useMaxDiscount(
 	const monthlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlans,
 		withoutPlanUpgradeCredits: true,
-		selectedSiteId,
+		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
@@ -29,7 +29,7 @@ export default function useMaxDiscount(
 	const yearlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlugs,
 		withoutPlanUpgradeCredits: true,
-		selectedSiteId,
+		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,

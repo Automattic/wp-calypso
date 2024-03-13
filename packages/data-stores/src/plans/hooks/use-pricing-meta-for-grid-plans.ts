@@ -18,9 +18,9 @@ interface Props {
 	planSlugs: PlanSlug[];
 
 	/**
-	 * `selectedSiteId` required on purpose to mitigate risk with not passing something through when we should
+	 * `siteId` required on purpose to mitigate risk with not passing something through when we should
 	 */
-	selectedSiteId: number | null | undefined;
+	siteId: number | null | undefined;
 
 	/**
 	 * `coupon` required on purpose to mitigate risk with not passing somethiing through when we should
@@ -59,7 +59,7 @@ function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): 
  */
 const usePricingMetaForGridPlans = ( {
 	planSlugs,
-	selectedSiteId,
+	siteId,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
 	withoutPlanUpgradeCredits = false,
@@ -69,11 +69,11 @@ const usePricingMetaForGridPlans = ( {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
 	// sitePlans - unclear if all plans are included
-	const sitePlans = Plans.useSitePlans( { siteId: selectedSiteId } );
-	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-	const introOffers = Plans.useIntroOffers( { siteId: selectedSiteId, coupon } );
+	const sitePlans = Plans.useSitePlans( { siteId } );
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const introOffers = Plans.useIntroOffers( { siteId, coupon } );
 	const purchasedPlan = Purchases.useSitePurchaseById( {
-		siteId: selectedSiteId,
+		siteId,
 		purchaseId: currentPlan?.purchaseId,
 	} );
 	const selectedStorageOptions = useSelect(
@@ -90,7 +90,7 @@ const usePricingMetaForGridPlans = ( {
 		  }
 		| null = null;
 
-	if ( ( selectedSiteId && sitePlans.isLoading ) || plans.isLoading ) {
+	if ( ( siteId && sitePlans.isLoading ) || plans.isLoading ) {
 		/**
 		 * Null until all data is ready, at least in initial state.
 		 * - For now a simple loader is shown until these are resolved
@@ -119,7 +119,7 @@ const usePricingMetaForGridPlans = ( {
 				 * 0. No plan or sitePlan (when selected site exists): planSlug is for a priceless plan.
 				 * TODO clk: the condition on `.pricing` here needs investigation. There should be a pricing object for all returned API plans.
 				 */
-				if ( ! plan?.pricing || ( selectedSiteId && ! sitePlan?.pricing ) ) {
+				if ( ! plan?.pricing || ( siteId && ! sitePlan?.pricing ) ) {
 					return [
 						planSlug,
 						{
@@ -140,7 +140,7 @@ const usePricingMetaForGridPlans = ( {
 				 *   - The current site's plan gets the price with which the plan was purchased
 				 *     (so may not be the most recent billing plan's).
 				 */
-				if ( selectedSiteId && currentPlan?.planSlug === planSlug ) {
+				if ( siteId && currentPlan?.planSlug === planSlug ) {
 					let monthlyPrice = sitePlan?.pricing.originalPrice.monthly;
 					let fullPrice = sitePlan?.pricing.originalPrice.full;
 

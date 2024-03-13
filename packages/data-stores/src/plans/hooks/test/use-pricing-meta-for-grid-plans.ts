@@ -99,7 +99,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -140,7 +140,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -182,7 +182,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -224,7 +224,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 			planSlugs: [ PLAN_PREMIUM ],
 			withoutPlanUpgradeCredits: true,
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
