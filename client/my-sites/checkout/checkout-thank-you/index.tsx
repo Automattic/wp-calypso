@@ -96,6 +96,7 @@ import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
@@ -107,6 +108,7 @@ import {
 	getDomainPurchaseTypeAndPredicate,
 	isBulkDomainTransfer,
 	isDomainOnly,
+	isSearch,
 	isTitanWithoutMailboxes,
 } from './utils';
 import type { FindPredicate } from './utils';
@@ -595,6 +597,8 @@ export class CheckoutThankYou extends Component<
 						isEmailVerified={ this.props.isEmailVerified }
 					/>
 				);
+			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
+				pageContent = <JetpackSearchThankYou purchase={ purchases[ 0 ] } />;
 			} else if ( wasTitanEmailOnlyProduct ) {
 				const titanPurchase = purchases.find( ( purchase ) => isTitanMail( purchase ) );
 

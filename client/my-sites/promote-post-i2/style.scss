@@ -272,6 +272,21 @@ body.is-section-promote-post-i2 {
 
 	}
 
+	&__payment-blocked-notice {
+		display: flex;
+		align-items: center;
+		margin: 24px;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 1040px;
+		width: calc(100% - 128px);
+		justify-content: center;
+
+		@media screen and (max-width: ($break-medium + 287px)) {
+			width: calc(100% - 32px);
+		}
+	}
+
 	.promote-post-i2__header-subtitle {
 		&_desktop {
 			display: block;
@@ -308,6 +323,11 @@ body.is-section-promote-post-i2 {
 		.section-nav__mobile-header {
 			display: none;
 		}
+	}
+
+	.promote-post-i2__debt-notifier {
+		color: $studio-gray-100;
+		padding-top: 16px;
 	}
 
 	.section-nav-tab {
@@ -465,6 +485,7 @@ body.is-section-promote-post-i2 {
 
 				.promote-post-i2__header-subtitle_mobile,
 				.promote-post-i2__search-bar-wrapper,
+				.promote-post-i2__debt-notifier,
 				.posts-list__table,
 				.posts-list__loading-container,
 				.promote-post-i2__table,
@@ -577,6 +598,7 @@ $break-medium-expanded-menu: $break-medium + 272px;
 	.promote-post-i2__search-bar-wrapper,
 	.promote-post-i2__table,
 	.promote-post-i2__aux-wrapper,
+	.promote-post-i2__debt-notifier,
 	.posts-list-banner__container .posts-list-banner__content,
 	.posts-list-woo-banner__container .posts-list-banner__content {
 		margin-left: auto;

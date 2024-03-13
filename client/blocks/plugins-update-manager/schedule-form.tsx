@@ -11,6 +11,7 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
@@ -24,6 +25,7 @@ import {
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSetSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
 	DAILY_OPTION,
@@ -43,9 +45,10 @@ interface Props {
 	onSyncError?: ( error: string ) => void;
 }
 export const ScheduleForm = ( props: Props ) => {
-	const moment = useLocalizedMoment();
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
@@ -55,6 +58,8 @@ export const ScheduleForm = ( props: Props ) => {
 		isLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true, true );
+	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
+
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
@@ -179,7 +184,7 @@ export const ScheduleForm = ( props: Props ) => {
 			>
 				<FlexItem>
 					<div className="form-field">
-						<label htmlFor="frequency">Update every</label>
+						<label htmlFor="frequency">{ translate( 'Update every' ) }</label>
 						<div className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
 							<RadioControl
 								name="frequency"
@@ -267,7 +272,7 @@ export const ScheduleForm = ( props: Props ) => {
 				</FlexItem>
 				<FlexItem>
 					<div className="form-field">
-						<label htmlFor="plugins">Select plugins</label>
+						<label htmlFor="plugins">{ translate( 'Select plugins' ) }</label>
 						<span className="plugin-select-stats">
 							{ selectedPlugins.length }/
 							{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
@@ -279,7 +284,9 @@ export const ScheduleForm = ( props: Props ) => {
 							</Text>
 						) : (
 							<Text className="info-msg">
-								Plugins not listed below are managed by WordPress.com and update automatically.
+								{ translate(
+									'Plugins not listed below are automatically updated by WordPress.com.'
+								) }
 							</Text>
 						) }
 						<div className="checkbox-options">
@@ -292,7 +299,7 @@ export const ScheduleForm = ( props: Props ) => {
 								{ isPluginsFetching && <Spinner /> }
 								{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
 									<CheckboxControl
-										label="Select all"
+										label={ translate( 'Select all' ) }
 										indeterminate={
 											selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
 										}

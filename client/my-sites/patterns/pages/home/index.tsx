@@ -5,27 +5,50 @@ import { PatternsGridGallery } from 'calypso/my-sites/patterns/components/grid-g
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import {
+	usePatternSearchTerm,
+	filterPatternsByTerm,
+} from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
+import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
 import ImgLayout from './images/layout.svg';
 import ImgPattern from './images/pattern.svg';
 import ImgResponsive from './images/responsive.svg';
 import ImgStyle from './images/style.svg';
+import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-export const PatternsHomePage = () => {
+type PatternsHomePageProps = {
+	isGridView?: boolean;
+	patternGallery: PatternGalleryFC;
+};
+
+export const PatternsHomePage = ( {
+	isGridView,
+	patternGallery: PatternGallery,
+}: PatternsHomePageProps ) => {
 	const locale = useLocale();
 
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
 	const { data: categories } = usePatternCategories( locale );
+	const { data: patterns = [] } = usePatterns( locale, '', {
+		enabled: Boolean( searchTerm ),
+		select: ( patterns ) => filterPatternsByTerm( patterns, searchTerm ),
+	} );
 
 	return (
 		<>
 			<DocumentHead title="WordPress Patterns- Home" />
 
 			<PatternsHeader
-				title="Build your perfect site with patterns"
 				description="Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes."
+				initialSearchTerm={ searchTerm }
+				onSearch={ ( query ) => {
+					setSearchTerm( query );
+				} }
+				title="Build your perfect site with patterns"
 			/>
 
 			<PatternsGridGallery
@@ -39,6 +62,8 @@ export const PatternsHomePage = () => {
 					link: `/patterns/${ category.name }`,
 				} ) ) }
 			/>
+
+			{ searchTerm && <PatternGallery patterns={ patterns } isGridView={ isGridView } /> }
 
 			<PatternsSection
 				title="Copy. Paste. Customize."

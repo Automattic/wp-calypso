@@ -1,20 +1,26 @@
-@import "@wordpress/base-styles/breakpoints.scss";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
+@import "calypso/my-sites/patterns/mixins";
 
-.is-section-patterns .category-pill-navigation {
-	padding: 32px 110px;
+.patterns-page-category__pill-navigation {
+	background: var(--studio-white);
+
+	.category-pill-navigation {
+		@include patterns-page-width;
+		padding-top: 32px;
+		padding-bottom: 32px;
+	}
 
 	@media ( max-width: $break-wide ) {
-		padding: 24px 0;
-
-		.category-pill-navigation__list .category-pill-navigation__list-inner {
-			padding: 0 24px;
+		.category-pill-navigation {
+			padding: 24px;
 		}
 	}
 }
 
 .patterns-page-category {
-	padding: 0 110px 96px;
+	@include patterns-page-width;
+	padding-bottom: 96px;
 
 	@media ( max-width: $break-wide ) {
 		padding: 24px;

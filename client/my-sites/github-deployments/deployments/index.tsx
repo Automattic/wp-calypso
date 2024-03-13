@@ -8,9 +8,6 @@ import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { PageShell } from '../components/page-shell';
 import { GitHubDeploymentCreationForm } from '../deployment-creation/deployment-creation-form';
 import { createDeploymentPage } from '../routes';
-import { useGithubInstallationsQuery } from '../use-github-installations-query';
-import { GitHubAuthorizeButton } from './authorize-button';
-import { GitHubAuthorizeCard } from './authorize-card';
 import { ConnectionWizardButton } from './connection-wizard-button';
 import { GitHubDeploymentsList } from './deployments-list';
 import { useCodeDeploymentsQuery } from './use-code-deployments-query';
@@ -22,63 +19,43 @@ export function GitHubDeployments() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { __ } = useI18n();
 
-	const { data: installations, isLoading: isLoadingInstallations } = useGithubInstallationsQuery();
-	const {
-		data: deployments,
-		isLoading: isLoadingDeployments,
-		refetch,
-	} = useCodeDeploymentsQuery( siteId );
-
-	const hasConnectedAnInstallation = installations && installations.length > 0;
-	const hasDeployments = deployments && deployments.length > 0;
-	const isLoading = isLoadingInstallations || isLoadingDeployments;
-	const renderTopRightButton = () => {
-		if ( hasConnectedAnInstallation && hasDeployments ) {
-			return (
-				<ConnectionWizardButton
-					onClick={ () => {
-						page( createDeploymentPage( siteSlug! ) );
-					} }
-				/>
-			);
-		}
-
-		if ( hasDeployments && ! hasConnectedAnInstallation ) {
-			return <GitHubAuthorizeButton />;
-		}
-
-		return null;
-	};
+	const { data: deployments, isLoading, refetch } = useCodeDeploymentsQuery( siteId );
 
 	const renderContent = () => {
-		if ( isLoading ) {
-			return <GitHubLoadingPlaceholder />;
-		}
-
 		if ( deployments?.length ) {
 			return <GitHubDeploymentsList deployments={ deployments } />;
 		}
 
-		if ( installations ) {
-			return (
-				<>
-					<HeaderCake isCompact>
-						<h1>{ __( 'Connect repository' ) }</h1>
-					</HeaderCake>
-					<ActionPanel>
-						<GitHubDeploymentCreationForm onConnected={ refetch } />
-					</ActionPanel>
-				</>
-			);
+		if ( isLoading ) {
+			return <GitHubLoadingPlaceholder />;
 		}
 
-		if ( ! installations && ! isLoadingInstallations ) {
-			return <GitHubAuthorizeCard />;
-		}
+		return (
+			<>
+				<HeaderCake isCompact>
+					<h1>{ __( 'Connect repository' ) }</h1>
+				</HeaderCake>
+				<ActionPanel>
+					<GitHubDeploymentCreationForm onConnected={ refetch } />
+				</ActionPanel>
+			</>
+		);
 	};
 
 	return (
-		<PageShell pageTitle={ __( 'GitHub Deployments' ) } topRightButton={ renderTopRightButton() }>
+		<PageShell
+			pageTitle={ __( 'GitHub Deployments' ) }
+			topRightButton={
+				deployments &&
+				deployments?.length > 0 && (
+					<ConnectionWizardButton
+						onClick={ () => {
+							page( createDeploymentPage( siteSlug! ) );
+						} }
+					/>
+				)
+			}
+		>
 			{ renderContent() }
 		</PageShell>
 	);

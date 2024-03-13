@@ -98,6 +98,12 @@ export default function globalSiteSidebarMenu( {
 			url: `/subscribers/${ siteDomain }`,
 		},
 		{
+			slug: 'connections',
+			title: translate( 'Connections' ),
+			type: 'menu-item',
+			url: `/marketing/connections/${ siteDomain }`,
+		},
+		{
 			slug: 'settings-site',
 			title: translate( 'Settings' ),
 			type: 'menu-item',

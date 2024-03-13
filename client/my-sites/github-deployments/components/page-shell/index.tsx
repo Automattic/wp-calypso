@@ -69,7 +69,7 @@ export function PageShell( { topRightButton, pageTitle, children }: GitHubDeploy
 				css={ { paddingBottom: '40px !important' } }
 				title={ translate( 'GitHub Deployments' ) }
 				subtitle={ translate(
-					'Changes pushed to the selected repository’s branches will be automatically deployed. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'Effortlessly deploy code from GitHub repositories. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: (

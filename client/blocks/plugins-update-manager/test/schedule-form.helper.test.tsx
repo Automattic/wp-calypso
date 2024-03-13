@@ -61,9 +61,6 @@ describe( 'Schedule form validation', () => {
 			validateTimeSlot( { frequency: 'daily', timestamp: ts_mon_6pm }, existingSchedules2 )
 		).toBeTruthy();
 		expect(
-			validateTimeSlot( { frequency: 'weekly', timestamp: ts_fri_6pm }, existingSchedules2 )
-		).toBeFalsy();
-		expect(
 			validateTimeSlot( { frequency: 'daily', timestamp: ts_fri_6pm }, existingSchedules2 )
 		).toBeTruthy();
 

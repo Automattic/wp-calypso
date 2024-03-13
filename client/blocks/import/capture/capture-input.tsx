@@ -5,7 +5,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -35,6 +35,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
+	const lastInvalidValue = useRef< string | undefined >();
 	const exampleInputWebsite = 'artfulbaker.blog';
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
@@ -77,7 +78,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		isValid && onInputEnter( urlValue );
 		setSubmitted( true );
 
-		if ( ! isValid && urlValue?.length > 4 ) {
+		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
+			lastInvalidValue.current = urlValue;
 			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
 				url: urlValue,
 			} );

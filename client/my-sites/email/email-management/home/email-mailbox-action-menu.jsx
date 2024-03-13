@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog } from '@automattic/components';
+import { Dialog, MaterialIcon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -13,7 +13,6 @@ import googleSheetsIcon from 'calypso/assets/images/email-providers/google-works
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useRemoveEmailForwardMutation from 'calypso/data/emails/use-remove-email-forward-mutation';
 import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';

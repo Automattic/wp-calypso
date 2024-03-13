@@ -8,7 +8,7 @@
 	"site_name": "Automattic For Agencies",
 	"features": {
 		"a8c-for-agencies": true,
-		"oauth": true,
+		"oauth": false,
 		"a4a/mock-api-data": false
 	},
 	"enable_all_sections": false,

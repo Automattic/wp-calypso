@@ -1,11 +1,22 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .is-section-patterns {
 	.layout__content {
 		padding: 0;
+
+		.masterbar {
+			// Makes sure the navigation bar header appears below the masterbar and notices
+			z-index: z-index("root", ".main") - 1;
+		}
 	}
 
 	.is-logged-in {
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;
+
+			@media ( max-width: $break-medium ) {
+				padding-top: 46px;
+			}
 		}
 	}
 

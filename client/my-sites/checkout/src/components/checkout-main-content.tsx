@@ -5,7 +5,7 @@ import {
 	isBiennially,
 	isTriennially,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
 	useTransactionStatus,
@@ -31,7 +31,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import MaterialIcon from 'calypso/components/material-icon';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -40,6 +39,7 @@ import {
 	hasDIFMProduct,
 	has100YearPlan as cartHas100YearPlan,
 	ObjectWithProducts,
+	hasPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
@@ -54,11 +54,13 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout'
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
@@ -224,22 +226,86 @@ const getPresalesChatKey = ( responseCart: ObjectWithProducts ) => {
 };
 
 /* Include a condition for your use case here if you want to show a specific nudge in the checkout sidebar */
-function CheckoutSidebarNudge( { responseCart }: { responseCart: ResponseCart } ) {
+function CheckoutSidebarNudge( {
+	responseCart,
+	siteId,
+	formStatus,
+	changeSelection,
+	addItemToCart,
+	isCartPendingUpdate,
+	areThereDomainProductsInCart,
+}: {
+	responseCart: ResponseCart;
+	siteId: number | undefined;
+	formStatus: FormStatus;
+	changeSelection: OnChangeItemVariant;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
+	isCartPendingUpdate: boolean;
+	areThereDomainProductsInCart: boolean;
+} ) {
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
-	if ( ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct ) {
+	const domainWithoutPlanInCartOrSite =
+		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
+
+	if ( isWcMobile ) {
+		return null;
+	}
+
+	if ( isDIFMInCart ) {
 		return (
-			<CheckoutSidebarNudgeWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-				<CheckoutSidebarPlanUpsell />
-				<JetpackAkismetCheckoutSidebarPlanUpsell />
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutNextSteps responseCart={ responseCart } />
+
+				{ shouldUseCheckoutV2 && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ siteId }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						onChangeSelection={ changeSelection }
+					/>
+				) }
 			</CheckoutSidebarNudgeWrapper>
 		);
 	}
+
+	/**
+	 * TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
+	 * V2 checkout handles monthly products in the CheckoutSidebarPlanUpsell so this condition is not needed
+	 */
+	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
+		return (
+			<CheckoutSidebarNudgeWrapper>
+				<CheckoutSidebarPlanUpsell />
+				<JetpackAkismetCheckoutSidebarPlanUpsell />
+				{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
+					<SecondaryCartPromotions
+						responseCart={ responseCart }
+						addItemToCart={ addItemToCart }
+						isCartPendingUpdate={ isCartPendingUpdate }
+						isPurchaseRenewal={ isPurchaseRenewal }
+					/>
+				) }
+				{ shouldUseCheckoutV2 && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ siteId }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						onChangeSelection={ changeSelection }
+					/>
+				) }
+			</CheckoutSidebarNudgeWrapper>
+		);
+	}
+
 	return null;
 }
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
@@ -483,21 +549,15 @@ export default function CheckoutMainContent( {
 								) }
 
 								<WPCheckoutOrderSummary siteId={ siteId } onChangeSelection={ changeSelection } />
-								<CheckoutSidebarNudge responseCart={ responseCart } />
-								{ shouldUseCheckoutV2 && (
-									<CheckoutSummaryFeaturedList
-										responseCart={ responseCart }
-										siteId={ siteId }
-										isCartUpdating={ FormStatus.VALIDATING === formStatus }
-										onChangeSelection={ changeSelection }
-									/>
-								) }
-								<SecondaryCartPromotions
+								<CheckoutSidebarNudge
 									responseCart={ responseCart }
+									siteId={ siteId }
+									formStatus={ formStatus }
+									changeSelection={ changeSelection }
 									addItemToCart={ addItemToCart }
 									isCartPendingUpdate={ isCartPendingUpdate }
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
 								/>
-								<CheckoutNextSteps responseCart={ responseCart } />
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
 					</CheckoutSummaryArea>
@@ -852,13 +912,18 @@ const CheckoutSummaryBody = styled.div< { shouldUseCheckoutV2: boolean } >`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
+const CheckoutSidebarNudgeWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
-	${ ( props ) => props.shouldUseCheckoutV2 && `grid-area: nudge` };
+	grid-area: nudge;
+	row-gap: 16px;
 
 	& > * {
 		max-width: 288px;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		row-gap: 36px;
 	}
 `;
 

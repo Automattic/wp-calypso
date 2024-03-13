@@ -271,23 +271,19 @@ export const useCommandPalette = ( {
 	const commandHasContext = ( paths: string[] = [] ): boolean =>
 		paths.some( ( path ) => currentRoute?.includes( path ) ) ?? false;
 
-	const viewMySitesCommand = commands.find( ( command ) => command.name === 'viewMySites' );
-
 	// Sort commands with contextual commands ranking higher than general in a given context
-	const sortedCommands = commands
-		.filter( ( command ) => ! ( command === viewMySitesCommand ) )
-		.sort( ( a, b ) => {
-			const hasContextCommand = commandHasContext( a.context );
-			const hasNoContext = commandHasContext( b.context );
+	const sortedCommands = commands.sort( ( a, b ) => {
+		const hasContextCommand = commandHasContext( a.context );
+		const hasNoContext = commandHasContext( b.context );
 
-			if ( hasContextCommand && ! hasNoContext ) {
-				return -1; // commands with context come first if there is a context match
-			} else if ( ! hasContextCommand && hasNoContext ) {
-				return 1; // commands without context set
-			}
+		if ( hasContextCommand && ! hasNoContext ) {
+			return -1; // commands with context come first if there is a context match
+		} else if ( ! hasContextCommand && hasNoContext ) {
+			return 1; // commands without context set
+		}
 
-			return 0; // no change in order
-		} );
+		return 0; // no change in order
+	} );
 
 	// Inject a tracks event on the callback of each command
 	let finalSortedCommands = sortedCommands.map( ( command ) => ( {
@@ -302,8 +298,12 @@ export const useCommandPalette = ( {
 	} ) );
 
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
-	if ( viewMySitesCommand && currentRoute !== '/sites' ) {
-		finalSortedCommands.unshift( viewMySitesCommand );
+	if ( currentRoute !== '/sites' ) {
+		const index = finalSortedCommands.findIndex( ( command ) => command.name === 'viewMySites' );
+		if ( index > 0 ) {
+			const [ element ] = finalSortedCommands.splice( index, 1 );
+			finalSortedCommands.unshift( element );
+		}
 	}
 
 	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );

@@ -10,6 +10,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { arrowLeft, info } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
@@ -23,8 +24,10 @@ interface Props {
 }
 export const ScheduleEdit = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const translate = useTranslate();
+
 	const { scheduleId, onNavBack } = props;
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
 		isEligibleForFeature
@@ -64,11 +67,11 @@ export const ScheduleEdit = ( props: Props ) => {
 				<div className="ch-placeholder">
 					{ onNavBack && (
 						<Button icon={ arrowLeft } onClick={ onNavBack }>
-							Back
+							{ translate( 'Back' ) }
 						</Button>
 					) }
 				</div>
-				<Text>Edit Schedule</Text>
+				<Text>{ translate( 'Edit Schedule' ) }</Text>
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody>
@@ -88,7 +91,7 @@ export const ScheduleEdit = ( props: Props ) => {
 					isBusy={ isBusy }
 					disabled={ ! canCreateSchedules }
 				>
-					Save
+					{ translate( 'Save' ) }
 				</Button>
 				{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
 					<Text as="p" className="validation-msg">

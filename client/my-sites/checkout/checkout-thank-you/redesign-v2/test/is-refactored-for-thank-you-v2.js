@@ -88,4 +88,16 @@ describe( 'isRefactoredForThankYouV2', () => {
 			expect( isRefactoredForThankYouV2( props ) ).toBe( true );
 		}
 	} );
+
+	it( 'should return true for Jetpack Search', () => {
+		const props = {
+			receipt: {
+				data: {
+					purchases: [ { productType: 'search' } ],
+					failedPurchases: [],
+				},
+			},
+		};
+		expect( isRefactoredForThankYouV2( props ) ).toBe( true );
+	} );
 } );

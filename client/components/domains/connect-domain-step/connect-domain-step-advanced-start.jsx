@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, MaterialIcon } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import CardHeading from 'calypso/components/card-heading';
-import MaterialIcon from 'calypso/components/material-icon';
 import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { modeType, stepSlug, stepsHeading } from './constants';

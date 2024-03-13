@@ -45,7 +45,6 @@
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
-		"domains/premium-domain-purchases": true,
 		"domains/transfer-to-any-user": true,
 		"email-accounts/enabled": true,
 		"external-media": true,

@@ -32,6 +32,15 @@
 		align-items: center;
 		padding: 0 $padding-outside $header-spacer $padding-outside;
 
+		.stats-card-header__title {
+			display: flex;
+			align-items: center;
+
+			& > :first-child {
+				margin-left: 10px;
+			}
+		}
+
 		.stats-card-header__title,
 		.stats-card-header__title:visited {
 			font-size: $header-font-size;
