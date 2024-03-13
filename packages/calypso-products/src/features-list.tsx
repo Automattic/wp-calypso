@@ -312,13 +312,15 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+} from './constants';
+import {
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
 	isBusinessPlan,
 	isFreePlan,
 	isWooExpressPlan,
-} from './';
+} from './main';
 import type { FeatureList } from './types';
 
 /**
