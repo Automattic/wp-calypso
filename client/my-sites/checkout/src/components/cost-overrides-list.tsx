@@ -55,7 +55,7 @@ const CostOverridesListStyle = styled.div`
 		color: #787c82;
 	}
 
-	& .cost-overrides-list-item__reason {
+	& .cost-overrides-list-item__reason--is-discount {
 		color: #008a20;
 	}
 
@@ -99,9 +99,16 @@ export function CostOverridesList( {
 		<CostOverridesListStyle>
 			{ ! showOnlyCoupons &&
 				nonCouponOverrides.map( ( costOverride ) => {
+					const isPriceIncrease = costOverride.discountAmount < 0;
 					return (
 						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason">
+							<span
+								className={
+									isPriceIncrease
+										? 'cost-overrides-list-item__reason'
+										: 'cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount'
+								}
+							>
 								{ costOverride.humanReadableReason }
 							</span>
 							<span className="cost-overrides-list-item__discount">
@@ -117,7 +124,7 @@ export function CostOverridesList( {
 				couponOverrides.map( ( costOverride ) => {
 					return (
 						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason">
+							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 								{ couponCode.length > 0
 									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
 									: costOverride.humanReadableReason }
@@ -138,12 +145,12 @@ export function CostOverridesList( {
 							className="cost-overrides-list-item cost-overrides-list-item--coupon"
 							key={ costOverride.humanReadableReason }
 						>
-							<span className="cost-overrides-list-item__reason">
+							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 								{ couponCode.length > 0
 									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
 									: costOverride.humanReadableReason }
 							</span>
-							<span className="cost-overrides-list-item__discount">
+							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
 									signForPositive: true,
@@ -259,9 +266,18 @@ function LineItemCostOverride( {
 	costOverride: LineItemCostOverrideForDisplay;
 	product: ResponseCartProduct;
 } ) {
+	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-			<span className="cost-overrides-list-item__reason">{ costOverride.humanReadableReason }</span>
+			<span
+				className={
+					isPriceIncrease
+						? 'cost-overrides-list-item__reason'
+						: 'cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount'
+				}
+			>
+				{ costOverride.humanReadableReason }
+			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
