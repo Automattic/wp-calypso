@@ -49,6 +49,7 @@ export class Notifications extends PureComponent {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
+		debug( 'component will mount', this.props );
 		const { customEnhancer, customMiddleware, isShowing, isVisible, receiveMessage, wpcom } =
 			this.props;
 
@@ -88,6 +89,7 @@ export class Notifications extends PureComponent {
 	}
 
 	componentDidMount() {
+		debug( 'component did mount', this.props );
 		store.dispatch( { type: 'APP_IS_READY' } );
 	}
 
