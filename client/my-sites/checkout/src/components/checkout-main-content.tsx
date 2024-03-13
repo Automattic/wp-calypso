@@ -253,7 +253,7 @@ function CheckoutSidebarNudge( {
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
 
 	const productsWithVariants = responseCart?.products?.filter(
-		( product ) => product.product_variants?.length > 1 && product.is_bundled === false
+		( product ) => product.product_variants?.length > 1 && product.is_domain_registration === false
 	);
 
 	if ( isWcMobile ) {
