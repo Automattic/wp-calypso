@@ -9,6 +9,17 @@ import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-chec
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
 
+	& input[type='text'].form-text-input,
+	input[type='url'].form-text-input,
+	input[type='password'].form-text-input,
+	input[type='email'].form-text-input,
+	input[type='tel'].form-text-input,
+	input[type='number'].form-text-input,
+	input[type='search'].form-text-input,
+	.form-fieldset.contact-details-form-fields select {
+		border-radius: 3px;
+	}
+
 	& .form-input-validation {
 		padding: 6px 6px 11px;
 	}
