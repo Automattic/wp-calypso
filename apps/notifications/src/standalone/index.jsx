@@ -86,20 +86,20 @@ const NotesWrapper = ( { wpcom } ) => {
 
 	const handleMessages = useCallback(
 		( { action, hidden, showing } ) => {
-			debug( 'Message received', {
-				action,
-				hidden,
-				showing,
-				isShowing,
-				isVisible,
-			} );
-
 			if ( 'togglePanel' === action ) {
-				if ( isShowing && ! showing ) {
-					reset();
-				}
-
-				setIsShowing( showing );
+				setIsShowing( ( prevIsShowing ) => {
+					debug( 'togglePanel message received', {
+						action,
+						hidden,
+						showing,
+						isShowing: prevIsShowing,
+					} );
+					// Toggle showing based on current state
+					if ( prevIsShowing && ! showing ) {
+						reset();
+					}
+					return showing;
+				} );
 				refresh();
 			}
 
@@ -112,7 +112,7 @@ const NotesWrapper = ( { wpcom } ) => {
 				refreshNotes();
 			}
 		},
-		[ isShowing, isVisible, refresh ]
+		[ refresh ]
 	);
 
 	useEffect( () => {
