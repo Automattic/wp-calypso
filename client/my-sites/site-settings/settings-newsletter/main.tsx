@@ -18,6 +18,7 @@ import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 import { SubscribeModalOnCommentSetting } from './SubscribeModalOnCommentSetting';
 import { SubscribeModalSetting } from './SubscribeModalSetting';
+import { SubscribePostEndSetting } from './SubscribePostEndSetting';
 import { NewsletterCategoriesSection } from './newsletter-categories-section';
 
 const defaultNewsletterCategoryIds: number[] = [];
@@ -35,6 +36,7 @@ type Fields = {
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 	sm_enabled?: boolean;
+	jetpack_subscriptions_subscribe_post_end_enabled?: boolean;
 	jetpack_verbum_subscription_modal?: boolean;
 };
 
@@ -50,6 +52,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
 		sm_enabled,
+		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_verbum_subscription_modal,
 	} = settings;
 
@@ -60,6 +63,8 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
 		sm_enabled: !! sm_enabled,
+		jetpack_subscriptions_subscribe_post_end_enabled:
+			!! jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_verbum_subscription_modal: !! jetpack_verbum_subscription_modal,
 	};
 };
@@ -91,6 +96,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		wpcom_subscription_emails_use_excerpt,
 		subscription_options,
 		sm_enabled,
+		jetpack_subscriptions_subscribe_post_end_enabled,
 		jetpack_verbum_subscription_modal,
 	} = fields;
 
@@ -141,6 +147,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
+				<SubscribePostEndSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscriptions_subscribe_post_end_enabled }
+				/>
 				<SubscribeModalSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }

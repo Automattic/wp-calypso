@@ -7,7 +7,8 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-export const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
+
+const SUBSCRIBE_MODAL_OPTION = 'sm_enabled';
 
 type SubscribeModalSettingProps = {
 	value?: boolean;
