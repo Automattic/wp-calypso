@@ -1,14 +1,15 @@
 import { Site, SiteData } from '../types';
 
 export interface SitesDataViewsProps {
+	className?: string;
 	data:
 		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
 		| undefined;
+	forceTourExampleSite?: boolean;
+	isLargeScreen: boolean;
 	isLoading: boolean;
 	onSitesViewChange: ( view: SitesViewState ) => void;
 	sitesViewState: SitesViewState;
-	isLargeScreen: boolean;
-	forceTourExampleSite?: boolean;
 }
 
 export interface Sort {
