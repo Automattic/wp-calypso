@@ -294,17 +294,26 @@ export function doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
 	return true;
 }
 
+function doesIntroductoryOfferCostOverrideHavePriceIncrease(
+	costOverride: ResponseCartCostOverride
+): boolean {
+	if ( costOverride.override_code !== 'introductory-offer' ) {
+		return false;
+	}
+	if ( costOverride.old_subtotal_integer >= costOverride.new_subtotal_integer ) {
+		return false;
+	}
+	return true;
+}
+
 export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartProduct ): boolean {
 	const introOffer = product.cost_overrides?.find(
-		( costOverride ) => costOverride.override_code === 'introductory-offer'
+		doesIntroductoryOfferCostOverrideHavePriceIncrease
 	);
 	if ( ! introOffer ) {
 		return false;
 	}
 	if ( ! product.introductory_offer_terms?.enabled ) {
-		return false;
-	}
-	if ( introOffer.old_subtotal_integer >= introOffer.new_subtotal_integer ) {
 		return false;
 	}
 	return true;
@@ -411,6 +420,11 @@ export function filterAndGroupCostOverridesForDisplay(
 
 		costOverrides
 			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
+			// Remove intro offers which increase the cost because they are not
+			// discounts and will have their terms displayed elsewhere.
+			.filter(
+				( costOverride ) => ! doesIntroductoryOfferCostOverrideHavePriceIncrease( costOverride )
+			)
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, false )
@@ -538,6 +552,19 @@ export function getSubtotalWithoutDiscountsForProduct( product: ResponseCartProd
 		const lastOriginalCostOverride = originalCostOverrides.pop();
 		if ( lastOriginalCostOverride ) {
 			return lastOriginalCostOverride.new_subtotal_integer + multiYearDiscount;
+		}
+	}
+
+	// If there is an introductory offer override that increases the price,
+	// consider that part of the base price because it's confusing to show
+	// "Subtotal before discounts" as lower than the "Subtotal". The details of
+	// the price increase will be displayed elsewhere.
+	if ( doesIntroductoryOfferHavePriceIncrease( product ) ) {
+		const introOffer = product.cost_overrides?.find(
+			( offer ) => offer.override_code === 'introductory-offer'
+		);
+		if ( introOffer ) {
+			return introOffer.new_subtotal_integer + multiYearDiscount;
 		}
 	}
 
