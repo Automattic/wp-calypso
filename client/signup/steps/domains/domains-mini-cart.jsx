@@ -78,7 +78,10 @@ export class DomainsMiniCart extends Component {
 			args: { cost: formattedOriginalCost },
 		} );
 		const hasPromotion = domain.cost_overrides?.some(
-			( override ) => ! override.does_override_original_cost
+			// Currently all domain products are using the 'introductory-offer' override code only for the first year costs for a H/L Premium domains
+			// These should be not be considered as promotions
+			( override ) =>
+				! override.does_override_original_cost && override.override_code !== 'introductory-offer'
 		);
 
 		return isRemoving ? null : (
