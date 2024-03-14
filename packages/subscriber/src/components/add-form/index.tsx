@@ -19,6 +19,8 @@ import {
 	useRef,
 	useCallback,
 } from 'react';
+// eslint-disable-next-line no-restricted-imports
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
@@ -389,6 +391,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
 			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
 
+		const importSubscribersUrl = isJetpackCloud()
+			? 'https://jetpack.com/support/newsletter/import-subscribers/'
+			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
+
 		const interpolateElement = {
 			uploadBtn: formFileUploadElement,
 			Button: (
@@ -396,9 +402,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					variant="link"
 					target="_blank"
 					rel="noreferrer"
-					href={ localizeUrl(
-						'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-					) }
+					href={ localizeUrl( importSubscribersUrl ) }
 				/>
 			),
 		};
