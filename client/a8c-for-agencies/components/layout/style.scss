@@ -1,11 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+html,
+.theme-a8c-for-agencies {
+	overflow: auto;
+}
+
 .main.a4a-layout {
 	background: var(--color-surface);
 	margin: 0;
-	padding-block-start: 48px;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	height: calc(100vh - 32px);
 
 	header.current-section {
 		margin-block-end: 16px;
@@ -22,7 +27,7 @@
 
 .a4a-layout__container {
 	max-width: 100%;
-	min-height: calc(100vh - 80px);
+	max-height: 100%;
 	display: flex;
 	flex-direction: column;
 	margin: auto;
@@ -31,14 +36,21 @@
 
 .a4a-layout__body {
 	width: 100%;
-	flex: 1 1 100%;
+	overflow-y: auto;
 	padding-block-start: 16px;
 	padding-block-end: 32px;
+
+	-ms-overflow-style: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .a4a-layout__top-wrapper,
 .a4a-layout__body {
 	margin-inline: 0;
+	max-height: 100%;
 
 	> * {
 		padding-inline: 16px;
@@ -58,7 +70,7 @@
 
 			// If we don't have a navigation, we will require some spacing on the borders.
 			&:not(.has-navigation) {
-				padding-block-end: 48px;
+				padding-block: 48px;
 			}
 		}
 	}
@@ -68,7 +80,7 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		.a4a-layout__top-wrapper {
 			&:not(.has-navigation) {
-				padding-block-end: 28px;
+				padding-block: 28px;
 			}
 		}
 	}
