@@ -1,6 +1,7 @@
 // FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -25,6 +26,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
 import IssueLicenseContext from './context';
 import LicensesForm from './licenses-form';
+import useSubmitForm from './licenses-form/hooks/use-submit-form';
 import type { SelectedLicenseProp } from './types';
 import type { AssignLicenseProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -44,7 +46,14 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 		.reduce( ( a, b ) => a + b, 0 );
 
 	const { selectedSize, setSelectedSize, availableSizes } = useProductBundleSize( true );
-	const isReady = true; // FIXME: Fix this with actual form ready state
+
+	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
+	// track if the user purchases a different set of products.
+	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
+		?.toString()
+		.split( ',' );
+
+	const { isReady, submitForm } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const onShowReviewLicensesModal = useCallback( () => {
 		setShowReviewLicenses( true );
@@ -211,8 +220,8 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 					onClose={ onDismissReviewLicensesModal }
 					selectedLicenses={ getGroupedLicenses() }
 					selectedSite={ selectedSite }
-					isFormReady={ true } // FIXME: Fix this with actual form ready state
-					submitForm={ () => {} } // FIXME: Fix this with actual form submit
+					isFormReady={ isReady }
+					submitForm={ submitForm }
 				/>
 			) }
 		</>

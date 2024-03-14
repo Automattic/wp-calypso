@@ -2,42 +2,17 @@ import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useIssueAndAssignLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
+import { serializeQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
+import { containEquivalentItems } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-submit-form';
+import { a4aPurchasesBasePath } from 'calypso/lib/a8c-for-agencies/paths';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
-import { IssueLicenseRequest } from '../../../hooks/use-issue-licenses';
-import { serializeQueryStringProducts } from '../../../lib/querystring-products';
+import useIssueAndAssignLicenses from '../../hooks/use-issue-and-assign-licenses';
+import { IssueLicenseRequest } from '../../hooks/use-issue-licenses';
 import type { SiteDetails } from '@automattic/data-stores';
-
-export const containEquivalentItems = (
-	selectedLicenses: IssueLicenseRequest[],
-	suggestedProductSlugs: string[]
-) => {
-	const selectedProductSlugs = [ ...new Set( selectedLicenses.map( ( { slug } ) => slug ) ) ];
-	if ( selectedProductSlugs.length !== suggestedProductSlugs.length ) {
-		return false;
-	}
-
-	const [ sorted1, sorted2 ] = [
-		[ ...selectedProductSlugs ].sort(),
-		[ ...suggestedProductSlugs ].sort(),
-	];
-	for ( let i = 0; i < sorted1.length; ++i ) {
-		// If the two lists are sorted and an element differs between the two
-		// at any index, they must not contain exactly the same items
-		// in exactly the same quantities
-		if ( sorted1[ i ] !== sorted2[ i ] ) {
-			return false;
-		}
-	}
-
-	return true;
-};
 
 const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs?: string[] ) => {
 	const dispatch = useDispatch();
@@ -54,7 +29,9 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 								{
 									components: {
 										a: (
-											<a href="/partner-portal/payment-methods/add?return=/partner-portal/issue-license" />
+											<a
+												href={ a4aPurchasesBasePath( '/payment-methods/add?return=/marketplace' ) }
+											/>
 										),
 										br: <br />,
 									},
@@ -71,7 +48,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			onAssignError: ( error: Error ) =>
 				dispatch( errorNotice( error.message, { isPersistent: true } ) ),
 		} );
-	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+	const paymentMethodRequired = false; // FIXME: Fix this with actual data
 
 	const maybeTrackUnsuggestedSelection = useCallback(
 		( selectedLicenses: IssueLicenseRequest[] ) => {
@@ -89,7 +66,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			// from what we recommend on the dashboard
 			dispatch(
 				recordTracksEvent(
-					'calypso_partner_portal_issue_multiple_licenses_changed_selection_after_dashboard_visit'
+					'calypso_a4a_issue_multiple_licenses_changed_selection_after_dashboard_visit'
 				)
 			);
 		},
@@ -101,7 +78,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			const serializedLicenses = serializeQueryStringProducts( licensesToIssue );
 			// Record the user's intent to issue licenses for these product(s)
 			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_multiple_licenses_submit', {
+				recordTracksEvent( 'calypso_a4a_issue_multiple_licenses_submit', {
 					products: serializedLicenses,
 				} )
 			);
@@ -118,7 +95,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 						...( selectedSite?.ID && { site_id: selectedSite?.ID } ),
 						...( fromDashboard && { source: 'dashboard' } ),
 					},
-					partnerPortalBasePath( '/payment-methods/add' )
+					a4aPurchasesBasePath( '/payment-methods/add' )
 				);
 
 				page( nextStep );
