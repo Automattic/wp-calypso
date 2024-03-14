@@ -28,13 +28,14 @@ const CLOUD_MASTERBAR_HEIGHT = 47;
 const CONNECT_STORE_HEIGHT = 0;
 
 const useShowNoticeVAT = () => {
+	const excludedCountries = [ 'US', 'CA' ];
 	const query = useGeoLocationQuery();
-	// It's better to show more information rather than hide it. So we don't show notice if we don't have geodata yet.
+	// It's better to pop-in more information rather than hide it. So we don't show notice if we don't have geodata yet.
 	if ( query.isLoading ) {
 		return false;
 	}
-	// If there is an error, we fail safe and show the notice. If we have a country - we show notice if it's not US.
-	return query.isError || 'US' !== query.data?.country_short;
+	// If there is an error, we fail safe and show the notice. If we have a country - we show notice if the country is not exceptions list.
+	return query.isError || ! excludedCountries.includes( query.data?.country_short ?? '' );
 };
 
 const IntroPricingBanner: React.FC = () => {
