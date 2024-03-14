@@ -60,12 +60,20 @@ function getRedirectToAfterLoginUrl( {
 	signupDependencies,
 	stepName,
 	userLoggedIn,
+	isWooPasswordless,
 } ) {
 	if (
 		oauth2Signup &&
 		initialContext?.query?.oauth2_redirect &&
 		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
+		if (
+			isWooPasswordless &&
+			! initialContext.query.oauth2_redirect.includes( 'woo-passwordless' )
+		) {
+			return initialContext.query.oauth2_redirect + '&woo-passwordless=yes';
+		}
+
 		return initialContext.query.oauth2_redirect;
 	}
 	if (
@@ -558,13 +566,12 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const isWooPasswordLess = this.props.wooPasswordless;
 		const { oauth2Client, isReskinned } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
-			isWooPasswordLess;
+			this.props.isWooPasswordless;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -605,7 +612,7 @@ export class UserStep extends Component {
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
-					labelText={ this.props.wooPasswordless ? this.props.translate( 'Your email' ) : null }
+					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -737,7 +744,7 @@ const ConnectedUser = connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
-			wooPasswordless: getWooPasswordless( state ),
+			isWooPasswordless: !! getWooPasswordless( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};

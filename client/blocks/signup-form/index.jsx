@@ -859,6 +859,10 @@ class SignupForm extends Component {
 
 	termsOfServiceLink = () => {
 		if ( this.props.isWoo ) {
+			if ( this.props.isWooPasswordless ) {
+				return null;
+			}
+
 			return (
 				<p className="signup-form__terms-of-service-link">
 					{ this.props.translate(
@@ -1236,7 +1240,7 @@ class SignupForm extends Component {
 
 		if (
 			( this.props.isPasswordless &&
-				( 'wpcc' !== this.props.flowName || this.props.wooPasswordless ) ) ||
+				( 'wpcc' !== this.props.flowName || this.props.isWooPasswordless ) ) ||
 			isGravatar
 		) {
 			let formProps = {
@@ -1370,7 +1374,7 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
-			wooPasswordless: getWooPasswordless( state ),
+			isWooPasswordless: !! getWooPasswordless( state ),
 			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
 			isWooCoreProfilerFlow,
 			isP2Flow:

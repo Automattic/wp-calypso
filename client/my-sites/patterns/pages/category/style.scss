@@ -13,7 +13,10 @@
 
 	@media ( max-width: $break-wide ) {
 		.category-pill-navigation {
-			padding: 24px;
+			padding: 24px 0;
+			.category-pill-navigation__list-inner {
+				padding: 0 24px;
+			}
 		}
 	}
 }
@@ -32,6 +35,11 @@
 	padding: 56px 0 48px;
 	align-items: center;
 
+	@media ( max-width: $break-medium ) {
+		display: block;
+		padding: 0 0 24px;
+	}
+
 	.patterns-page-category__title {
 		margin-right: auto;
 		font-family: $font-recoleta;
@@ -45,42 +53,44 @@
 		flex: none;
 		margin-left: 24px;
 		white-space: nowrap;
+	}
 
-		.components-base-control__field,
-		.components-base-control__label {
-			margin-bottom: 0;
-		}
+	.components-base-control__field,
+	.components-base-control__label {
+		margin-bottom: 0;
+	}
 
-		.components-toggle-group-control-option-base {
-			min-width: 118px;
-		}
+	.patterns-page-category__toggle-option {
+		min-width: 118px;
 
-		.patterns-button__list-view,
-		.patterns-button__grid-view {
-			min-width: 34px;
-
-			div {
-				font-size: 0;
-			}
-
-			&[aria-checked="true"] {
-				filter: invert(100%);
-			}
-		}
-
-		.patterns-button__list-view {
-			background: url(./images/list.svg) no-repeat center center;
-		}
-
-		.patterns-button__grid-view {
-			background: url(./images/grid.svg) no-repeat center center;
+		&:disabled {
+			cursor: default;
+			opacity: 0.5;
 		}
 	}
 
-	@media ( max-width: $break-medium  ) {
-		display: block;
-		padding: 0 0 24px;
+	.patterns-page-category__toggle-option--list-view,
+	.patterns-page-category__toggle-option--grid-view {
+		min-width: 34px;
 
+		div {
+			font-size: 0;
+		}
+
+		&[aria-checked="true"] {
+			filter: invert(100%);
+		}
+	}
+
+	.patterns-page-category__toggle-option--list-view {
+		background: url(./images/list.svg) no-repeat center center;
+	}
+
+	.patterns-page-category__toggle-option--grid-view {
+		background: url(./images/grid.svg) no-repeat center center;
+	}
+
+	@media ( max-width: $break-medium ) {
 		.patterns-page-category__title {
 			display: none;
 		}
@@ -89,15 +99,15 @@
 			margin-left: 0;
 		}
 
-		.patterns__toggle-type {
+		.patterns-page-category__toggle--pattern-type {
 			width: 100%;
 		}
 
-		.patterns__toggle-view {
+		.patterns-page-category__toggle--view {
 			display: none;
 		}
 
-		.components-toggle-group-control-option-base {
+		.patterns-page-category__toggle-option {
 			height: 40px;
 		}
 	}

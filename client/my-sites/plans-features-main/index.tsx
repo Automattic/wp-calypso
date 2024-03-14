@@ -12,6 +12,8 @@ import {
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
+	isValidFeatureKey,
+	getFeaturesList,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -54,7 +56,6 @@ import {
 	planItem as getCartItemForPlan,
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
-import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
@@ -422,7 +423,7 @@ const PlansFeaturesMain = ( {
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
-		allFeaturesList: FEATURES_LIST,
+		allFeaturesList: getFeaturesList(),
 		useFreeTrialPlanSlugs,
 		selectedFeature,
 		term,
@@ -453,7 +454,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
-		allFeaturesList: FEATURES_LIST,
+		allFeaturesList: getFeaturesList(),
 		gridPlans: filteredPlansForPlanFeatures,
 		intent,
 		selectedFeature,
@@ -462,7 +463,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
-		allFeaturesList: FEATURES_LIST,
+		allFeaturesList: getFeaturesList(),
 		availableGridPlans: gridPlans || [],
 		gridPlans: filteredPlansForPlanFeatures,
 		intent,
@@ -850,7 +851,7 @@ const PlansFeaturesMain = ( {
 									showUpgradeableStorage={ showUpgradeableStorage }
 									stickyRowOffset={ masterbarHeight }
 									useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-									allFeaturesList={ FEATURES_LIST }
+									allFeaturesList={ getFeaturesList() }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 									recordTracksEvent={ recordTracksEvent }
@@ -912,7 +913,7 @@ const PlansFeaturesMain = ( {
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }
 												useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-												allFeaturesList={ FEATURES_LIST }
+												allFeaturesList={ getFeaturesList() }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 												planTypeSelectorProps={

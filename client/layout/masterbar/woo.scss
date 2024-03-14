@@ -18,6 +18,7 @@
 	$woo-form-divider-border: 1px solid #e6e6e6;
 	$gray-60: #50575e;
 	$gray-50: #646970;
+	$woo-inter-font:  "Inter", -apple-system, system-ui, sans-serif;
 
 	background: #fff;
 	min-height: 100%;
@@ -1098,6 +1099,486 @@
 
 		.login__lostpassword-subtitle a {
 			line-height: inherit;
+		}
+	}
+
+
+	&.is-woo-passwordless {
+		* {
+			font-family: $woo-inter-font;
+		}
+
+		$woo-font-size-input: $font-body;
+		$woo-radius-input: 8px;
+
+		h1,
+		h3 {
+			color: var(--studio-gray-100);
+			font-feature-settings: "ss01" on, "salt" on;
+			font-family: proxima-nova, sans-serif;
+			text-align: center;
+			font-size: 2.25rem;
+			font-weight: 700;
+			line-height: 39.6px;
+			letter-spacing: -0.72px;
+
+			@media screen and ( max-width: 660px ) {
+				text-align: left;
+			}
+		}
+
+		input[type="text"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="tel"].form-text-input,
+		textarea.form-text-input {
+			border: 2px solid var(--studio-gray-10);
+			height: 48px;
+			padding: 8px 16px;
+			font-size: $woo-font-size-input;
+			font-style: normal;
+			line-height: 24px;
+			border-radius: $woo-radius-input;
+
+			&:focus,
+			&:hover,
+			&:focus:hover {
+				border: 2px solid $woo-purple-50;
+				box-shadow: none;
+			}
+
+			&:disabled {
+				border: 2px solid var(--studio-gray-5);
+				background: var(--studio-gray-0);
+			}
+		}
+
+		.button.is-primary,
+		.login .button.is-primary,
+		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+			background-color: $woo-purple-50;
+			font-family: $woo-inter-font;
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 28px;
+
+			&.is-busy {
+				background-image: none;
+			}
+
+			&:hover {
+				background-color: $woo-purple-70;
+				color: #fff;
+			}
+
+			&:disabled {
+				background-color: var(--studio-gray-0);
+				color: var(--studio-gray-20);
+			}
+		}
+
+		.form-input-validation.is-error {
+			color: #8a2424;
+			font-size: rem(14px);
+			font-style: normal;
+			font-weight: 400;
+			line-height: 21px;
+			padding: 0;
+			margin-top: 8px;
+
+			svg {
+				display: none;
+			}
+		}
+
+		.validation-fieldset {
+			&:has(.is-error) {
+				input {
+					border: 2px solid  #e26f56;
+				}
+			}
+		}
+
+		.layout__content {
+			padding-top: 80px;
+		}
+
+		.wp-login__container,
+		.magic-login,
+		.step-wrapper,
+		.jetpack-connect__main-logo {
+			padding: 48px 0 0;
+		}
+
+		.login__form-header {
+			margin-bottom: 12px;
+		}
+
+		.formatted-header__title {
+			margin-bottom: 12px;
+
+			@media screen and ( max-width: 660px ) {
+				padding: 0;
+				max-width: 327px;
+				margin: 0 auto 16px;
+			}
+		}
+
+		.login__header-subtitle,
+		.formatted-header__subtitle {
+			font-size: $font-body-large;
+			font-weight: 400;
+			line-height: 27px;
+			letter-spacing: -0.025px;
+			-webkit-font-smoothing: initial;
+
+			a {
+				color: $woo-purple-50;
+				font-size: rem(18px);
+				font-style: normal;
+				font-weight: 500;
+				line-height: 27px;
+				letter-spacing: -0.025px;
+
+				&:hover {
+					color: $woo-purple-40;
+				}
+			}
+
+			@media screen and ( max-width: 660px ) {
+				padding: 0;
+				max-width: 327px;
+				margin: 0 auto;
+				width: 100%;
+			}
+		}
+
+		.signup-form,
+		.login__body--continue-as-user {
+			width: 100%;
+			margin: 48px auto 0;
+			padding: 0;
+			max-width: 327px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.signup-form {
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+
+			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
+				padding: 0;
+				margin-top: 24px;
+			}
+		}
+
+		.auth-form__social {
+			max-width: 100%;
+			padding: 40px 0 14px;
+			border-top: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			.auth-form__social-buttons {
+				width: 100%;
+
+				.auth-form__social-buttons-container {
+					gap: 16px;
+				}
+
+				.social-buttons__button.button {
+					display: flex;
+					height: 48px;
+					padding: 8px 16px;
+					align-items: center;
+					gap: 60px;
+					align-self: stretch;
+					border-radius: 8px; // stylelint-disable-line scales/radii
+					border: 2px solid var(--studio-gray-10);
+					width: 100%;
+					margin: 0;
+
+					&:hover {
+						background: var(--studio-gray-0, #f6f7f7);
+					}
+
+					svg {
+						margin: 0;
+					}
+				}
+
+				.social-buttons__service-name {
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 24px;
+					color: var(--studio-gray-100);
+					margin: 0;
+				}
+
+				.social-icons {
+					border: 0;
+					padding: 0;
+				}
+
+				.login__social-tos {
+					margin: 0 auto 2.5em;
+					max-width: 100%;
+					order: -1;
+
+					a {
+						font-size: inherit;
+						line-height: inherit;
+					}
+				}
+			}
+
+			.auth-form__social-buttons-tos {
+				margin-top: 32px;
+				font-size: $woo-font-size-small;
+				line-height: 18px;
+				color: $gray-50;
+				text-align: center;
+
+				a {
+					color: $gray-50;
+					line-height: 18px;
+					font-size: inherit;
+				}
+			}
+		}
+
+		.auth-form__separator .auth-form__separator-text {
+			padding: 0 27px !important;
+		}
+
+
+		.auth-form__separator {
+			margin: 32px auto;
+			max-width: initial;
+		}
+
+		.continue-as-user {
+			margin: 0;
+			max-width: initial;
+
+			~ .auth-form__separator {
+				margin: 32px auto;
+			}
+
+			.continue-as-user__user-info {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				align-self: stretch;
+				border-radius: 8px; // stylelint-disable-line scales/radii
+				border: 2px solid #dcdcde;
+				height: 221px;
+				box-sizing: border-box;
+				padding: 32px 24px 16px 24px;
+			}
+
+			~ .card.auth-form__social.is-login {
+				margin: 0;
+				padding: 0;
+				max-width: initial;
+			}
+
+
+			.continue-as-user__gravatar-link {
+				display: flex;
+				flex-direction: column;
+				margin: 0 0 8px;
+				padding: 0;
+				border: 0;
+				border-radius: 0;
+			}
+
+			.gravatar.continue-as-user__gravatar {
+				width: 80px;
+				height: 80px;
+				box-sizing: border-box;
+			}
+
+			.continue-as-user__username {
+				font-style: normal;
+				margin-top: 8px;
+
+			}
+
+			.continue-as-user__email {
+				font-size: 0.875rem;
+				line-height: 21px;
+				color: $gray-50;
+				text-align: center;
+				margin: 0;
+			}
+		}
+
+		.continue-as-user__not-you {
+			margin-bottom: 0;
+			display: flex;
+			height: 32px;
+			padding: 4px 16px;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
+		}
+
+		.continue-as-user__change-user-link {
+			text-decoration: none;
+			color: $woo-purple-50;
+			font-size: 0.875rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 21px;
+
+			&:hover {
+				color: $woo-purple-70;
+			}
+		}
+
+		.continue-as-user__continue-button {
+			margin-top: 24px;
+		}
+
+		.magic-login {
+			margin-top: 0;
+
+			h1.magic-login__form-header {
+				color: var(--studio-gray-100);
+				font-feature-settings: "ss01" on, "salt" on;
+				font-family: proxima-nova, sans-serif;
+				text-align: center;
+				font-size: 2.25rem;
+				font-weight: 700;
+				line-height: 39.6px;
+				letter-spacing: -0.72px;
+				margin: 0;
+
+				@media screen and ( max-width: 660px ) {
+					text-align: left;
+					max-width: 327px;
+					margin: 0 auto;
+				}
+			}
+
+			.magic-login__form-action {
+				margin-top: 8px;
+			}
+
+			.magic-login__form {
+				border: none;
+				padding: 0;
+
+				p {
+					text-align: center;
+				}
+
+				.logged-out-form {
+					max-width: 100%;
+					padding: 0;
+					box-shadow: none;
+
+					form {
+						max-width: 327px;
+					}
+				}
+
+				label.form-label {
+					color: var(--studio-gray-100);
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 600;
+					line-height: 24px;
+					margin-bottom: 16px;
+				}
+			}
+
+			.magic-login__form p.magic-login__form-sub-header,
+			.magic-login__form-text {
+				color: var(--studio-gray-60);
+				text-align: center;
+				font-size: rem(18px);
+				font-style: normal;
+				font-weight: 400;
+				line-height: 27px;
+				letter-spacing: -0.025px;
+				margin: 12px auto 48px;
+
+				strong {
+					font-weight: 600;
+				}
+			}
+
+			.magic-login__emails-list {
+				max-width: 327px;
+				margin-inline: auto;
+
+				li {
+					border-radius: 8px; // stylelint-disable-line scales/radii
+					border: 2px solid var(--studio-gray-10);
+				}
+
+				a {
+					color: var(--studio-gray-100);
+					text-decoration: none;
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 24px;
+				}
+			}
+
+			.magic-login__footer {
+				margin: 0;
+				max-width: 327px;
+				margin-inline: auto;
+
+				p {
+					color: var(--studio-gray-60);
+					text-align: center;
+
+					font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+					font-size: rem(14px);
+					font-style: normal;
+					font-weight: 400;
+					line-height: 20px;
+				}
+
+				a {
+					text-decoration: none;
+					color: $woo-purple-50;
+					font-size: rem(14px);
+					font-style: normal;
+					font-weight: 500;
+					line-height: 20px;
+				}
+			}
+		}
+
+		.logged-out-form {
+			padding: 0;
+			margin: 0;
+
+			label.form-label {
+				color: var(--color-gray-100);
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 600;
+				line-height: 24px;
+				margin-bottom: 16px;
+			}
+		}
+
+		.auth-form__separator + .auth-form__social.card {
+			border: 0;
+			padding: 0;
 		}
 	}
 }

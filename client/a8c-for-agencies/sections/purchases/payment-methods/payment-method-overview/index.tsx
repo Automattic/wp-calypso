@@ -17,9 +17,9 @@ import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/pay
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useStoredCards from '../hooks/use-stored-cards';
+import useStoredCardsPagination from '../hooks/use-stored-cards-pagination';
 import EmptyState from './empty-state';
-import useStoredCards from './hooks/use-stored-cards';
-import useStoredCardsPagination from './hooks/use-stored-cards-pagination';
 import LoadingState from './loading-state';
 import StoredCreditCard from './stored-credit-card';
 

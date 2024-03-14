@@ -22,6 +22,10 @@
 	--color-scary-50: var(--studio-red-50);
 	--color-scary-60: var(--studio-red-60);
 	--color-scary-70: var(--studio-red-70);
+
+	--color-accent: #0088bf;
+	--color-accent-60: #0088bf;
+	--color-accent-70: #006089;
 }
 
 .theme-a8c-for-agencies {
@@ -143,4 +147,11 @@ html {
 
 .site-selector .site-selector__actions {
 	padding: 16px;
+}
+
+.button.is-primary:hover,
+.button.is-primary:focus {
+	background-color: var(--color-accent-70);
+	border-color: var(--color-accent-70);
+	color: var(--color-text-inverted);
 }

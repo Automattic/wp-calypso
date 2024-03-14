@@ -23,6 +23,7 @@ import {
 	isThemePurchase,
 	isTitanMail,
 	shouldFetchSitePlans,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
@@ -42,7 +43,6 @@ import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
 import {
 	domainManagementList,
