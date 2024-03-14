@@ -1,3 +1,10 @@
+import {
+	isBiennially,
+	isDIFMProduct,
+	isMonthlyProduct,
+	isTriennially,
+	isYearly,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
@@ -7,7 +14,6 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
-	LineItemBillingInterval,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 } from '@automattic/wpcom-checkout';
@@ -250,7 +256,7 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 					} ) }
 			</div>
 			<div>
-				<LineItemBillingInterval product={ product } />{ ' ' }
+				<IntroOfferBillingInterval product={ product } />{ ' ' }
 				<span>
 					{ formatCurrency( renewAmount, product.currency, {
 						isSmallestUnit: true,
@@ -260,6 +266,34 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 			</div>
 		</div>
 	);
+}
+
+export function IntroOfferBillingInterval( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+
+	if ( isDIFMProduct( product ) ) {
+		return <span>{ translate( 'One-time fee' ) }</span>;
+	}
+
+	if ( product.is_included_for_100yearplan ) {
+		return null;
+	}
+
+	if ( isMonthlyProduct( product ) ) {
+		return <span>{ translate( 'Billed every month' ) }</span>;
+	}
+
+	if ( isYearly( product ) ) {
+		return <span>{ translate( 'Billed every year' ) }</span>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <>{ translate( 'Billed every two years' ) }</>;
+	}
+
+	if ( isTriennially( product ) ) {
+		return <>{ translate( 'Billed every three years' ) }</>;
+	}
 }
 
 function LineItemCostOverride( {
