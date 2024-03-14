@@ -76,7 +76,11 @@ const NotesWrapper = ( { wpcom } ) => {
 
 	debug( 'Notes wrapper render/update', { isShowing, isVisible } );
 
-	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
+	const refresh = () =>
+		setIsVisible( ( prevIsVisible ) => {
+			store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible: prevIsVisible } );
+			return prevIsVisible;
+		} );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
 
 	const handleMessages = ( { action, hidden, showing } ) => {
