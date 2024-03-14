@@ -299,6 +299,10 @@
 	max-height: calc(100vh - 32px);
 	min-height: calc(100vh - 32px);
 
+	.activity-card-list .activity-card .activity-card__time {
+		background: none;
+	}
+
 	.sites-overview__add-site-issue-license-buttons.is-with-split-button {
 		flex-direction: row;
 
