@@ -54,7 +54,7 @@ const handleSettingView = ( value: 'grid' | 'list' ) => {
 	page( location.pathname + paramsString );
 };
 
-type PatternsCategoryPageProps = {
+type PatternLibraryProps = {
 	category: string;
 	categoryGallery: CategoryGalleryFC;
 	isGridView?: boolean;
@@ -62,13 +62,13 @@ type PatternsCategoryPageProps = {
 	patternTypeFilter: PatternTypeFilter;
 };
 
-export const PatternsCategoryPage = ( {
+export const PatternLibrary = ( {
 	category,
 	categoryGallery: CategoryGallery,
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
-}: PatternsCategoryPageProps ) => {
+}: PatternLibraryProps ) => {
 	const locale = useLocale();
 	// Helps prevent resetting the search input if a search term was provided through the URL
 	const isInitialRender = useRef( true );

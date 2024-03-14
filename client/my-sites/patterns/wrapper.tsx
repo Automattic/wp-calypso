@@ -1,6 +1,6 @@
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
-import { PatternsCategoryPage } from 'calypso/my-sites/patterns/pages/category';
+import { PatternLibrary } from 'calypso/my-sites/patterns/pages/category';
 import {
 	type CategoryGalleryFC,
 	type PatternGalleryFC,
@@ -33,7 +33,7 @@ export const PatternsWrapper = ( {
 			{ isLoggedIn && <UniversalNavbarHeader isLoggedIn /> }
 
 			<Main isLoggedOut fullWidthLayout>
-				<PatternsCategoryPage
+				<PatternLibrary
 					category={ category }
 					categoryGallery={ categoryGallery }
 					isGridView={ isGridView }
