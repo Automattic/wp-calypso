@@ -36,6 +36,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
+			shouldLogError: false,
 			message: __( 'This domain has already been entered.' ),
 		};
 	}
@@ -44,6 +45,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
+			shouldLogError: false,
 			message: __( 'Please enter a valid domain name.' ),
 		};
 	}
@@ -52,6 +54,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: false,
+			shouldLogError: false,
 			message: __( 'Please enter a valid authentication code.' ),
 		};
 	}
@@ -61,6 +64,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: true,
+			shouldLogError: false,
 			message: __( 'Checking domain lock status.' ),
 		};
 	}
