@@ -25,7 +25,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns =
 				shouldShufflePosts={ false }
 				siteId={ RENDERER_SITE_ID }
 			>
-				<div className={ classNames( 'patterns', { patterns_grid: isGridView } ) }>
+				<div className={ classNames( 'pattern-gallery', { 'pattern-gallery--grid': isGridView } ) }>
 					{ patterns.map( ( pattern ) => (
 						<PatternPreview
 							key={ pattern.ID }
