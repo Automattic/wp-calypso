@@ -223,8 +223,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<TransferNoticeWrapper { ...result } />
 						) : (
 							<>
-								{ translatedStatus }
-								<SiteLaunchNag site={ site } />
+								<div>
+									{ translatedStatus }
+									<SiteLaunchNag site={ site } />
+								</div>
 								{ isDIFMInProgress && (
 									<BadgeDIFM className="site__badge">{ __( 'Built By Express' ) }</BadgeDIFM>
 								) }
