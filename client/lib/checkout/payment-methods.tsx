@@ -8,7 +8,7 @@ import creditCardPlaceholderImage from 'calypso/assets/images/upgrades/cc-placeh
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
-import razorpayImage from 'calypso/assets/images/upgrades/razorpay.svg';
+import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PARTNER_RAZORPAY = 'razorpay';
