@@ -188,19 +188,14 @@ const SiteMigrationInstructions: Step = function () {
 				className="is-step-site-migration-instructions"
 				hideSkip={ true }
 				hideBack={ true }
-				isHorizontalLayout={ true }
 				formattedHeader={
 					<>
 						<FormattedHeader
 							id="site-migration-instructions-header"
-							headerText={ translate( 'Migrate your site' ) }
-							align="left"
+							headerText={ translate( 'Ready to migrate your site?' ) }
+							align="center"
 						/>
-						<p>
-							{ translate(
-								'Move your existing WordPress site to WordPress.com. Follow these steps to get started.'
-							) }
-						</p>
+						<p>{ translate( 'Follow these steps to get started.' ) }</p>
 					</>
 				}
 				stepContent={ stepContent }

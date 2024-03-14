@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/variables";
 
 .site-migration-instructions {
+	.step-container {
+		max-width: 654px;
+	}
+
 	.site-migration-instructions__list {
 		li {
 			margin-bottom: 0.5rem;
