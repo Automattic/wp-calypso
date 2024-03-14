@@ -754,7 +754,7 @@ export default function CampaignItemDetails( props: Props ) {
 						{ canDisplayPaymentSection ? (
 							<div className="campaign-item-details__payment-container">
 								<div className="campaign-item-details__payment">
-									<div className="campaign-item-details__payment-row">
+									<div className="campaign-item-details__payment-row ">
 										{ orders && orders.length > 0 && (
 											<div className="campaign-item-details__weekly-orders-row">
 												<div className="campaign-item-details__weekly-label"></div>

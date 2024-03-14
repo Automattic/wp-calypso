@@ -394,18 +394,15 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			display: grid;
 			grid-template-columns: 42% 43% 15%;
 			flex-grow: 1;
+			margin-top: 8px;
 			justify-content: space-between;
 			width: 100%;
 
 			> div {
 				display: flex;
 				flex-direction: column;
-				padding: 16px;
+				padding: 8px 16px 0;
 
-				> span {
-					display: flex;
-					align-items: center;
-				}
 			}
 
 			.campaign-item-details__weekly-amount {
