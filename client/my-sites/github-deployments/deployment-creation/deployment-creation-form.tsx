@@ -91,6 +91,11 @@ export const GitHubDeploymentCreationForm = ( {
 		},
 		onError: ( error ) => {
 			reduxDispatch(
+				recordTracksEvent( 'calypso_hosting_github_create_deployment_failure', {
+					reason: error.message,
+				} )
+			);
+			reduxDispatch(
 				errorNotice(
 					// translators: "reason" is why connecting the branch failed.
 					sprintf( __( 'Failed to create deployment: %(reason)s' ), { reason: error.message } ),
@@ -105,6 +110,8 @@ export const GitHubDeploymentCreationForm = ( {
 				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
 					connected: ! error,
 					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
+					is_automated: data?.is_automated,
+					workflow_path: data?.workflow_path,
 				} )
 			);
 		},
@@ -147,7 +154,7 @@ export const GitHubDeploymentCreationForm = ( {
 	);
 };
 
-function getDeploymentTypeFromPath( path: string ) {
+export function getDeploymentTypeFromPath( path: string ) {
 	if ( path === '/' ) {
 		return 'root';
 	} else if ( path === '/wp-content' ) {

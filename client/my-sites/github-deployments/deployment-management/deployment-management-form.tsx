@@ -5,6 +5,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
+import { getDeploymentTypeFromPath } from '../deployment-creation/deployment-creation-form';
 import { CodeDeploymentData } from '../deployments/use-code-deployments-query';
 import { useUpdateCodeDeployment } from './use-update-code-deployment';
 
@@ -42,6 +43,11 @@ export const GitHubDeploymentManagementForm = ( {
 		},
 		onError: ( error ) => {
 			dispatch(
+				recordTracksEvent( 'calypso_hosting_github_update_deployment_failure', {
+					reason: error.message,
+				} )
+			);
+			dispatch(
 				errorNotice(
 					// translators: "reason" is why connecting the branch failed.
 					sprintf( __( 'Failed to create deployment: %(reason)s' ), { reason: error.message } ),
@@ -51,10 +57,13 @@ export const GitHubDeploymentManagementForm = ( {
 				)
 			);
 		},
-		onSettled: ( _, error ) => {
+		onSettled: ( data, error ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
+				recordTracksEvent( 'calypso_hosting_github_update_deployment_success', {
 					connected: ! error,
+					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
+					is_automated: data?.is_automated,
+					workflow_path: data?.workflow_path,
 				} )
 			);
 		},
