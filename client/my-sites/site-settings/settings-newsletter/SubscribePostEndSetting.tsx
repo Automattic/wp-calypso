@@ -9,11 +9,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SUBSCRIBE_POST_END_OPTION = 'jetpack_subscriptions_subscribe_post_end_enabled';
 
-type SubscribePostEndSettingProps = {
+interface SubscribePostEndSettingProps {
 	value?: boolean;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	disabled?: boolean;
-};
+}
 
 export const SubscribePostEndSetting = ( {
 	value = false,
@@ -23,17 +23,18 @@ export const SubscribePostEndSetting = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	// Construct a link to edit the modal
-	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
-	const isBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? false;
-	const themeSlug = activeThemeData?.[ 0 ]?.stylesheet;
 	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
-	const singlePostTemplateEditorUrl = isBlockTheme
-		? addQueryArgs( siteEditorUrl, {
-				postType: 'wp_template',
-				postId: `${ themeSlug }//single`,
-		  } )
-		: false;
+	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
+	const showEditLink = !! activeThemeData?.[ 0 ]?.is_block_theme;
+
+	const getEditUrl = () => {
+		const themeSlug = activeThemeData?.[ 0 ]?.stylesheet;
+
+		return addQueryArgs( siteEditorUrl, {
+			postType: 'wp_template',
+			postId: `${ themeSlug }//single`,
+		} );
+	};
 
 	const onEditClick = () => {
 		recordTracksEvent( 'calypso_settings_subscribe_post_end_edit_click' );
@@ -47,10 +48,10 @@ export const SubscribePostEndSetting = ( {
 			label={
 				<>
 					{ translate( 'Add the Subscribe Block at the end of each post' ) }
-					{ singlePostTemplateEditorUrl && (
+					{ showEditLink && (
 						<>
 							{ '. ' }
-							<ExternalLink href={ singlePostTemplateEditorUrl } onClick={ onEditClick }>
+							<ExternalLink href={ getEditUrl() } onClick={ onEditClick }>
 								{ translate( 'Preview and edit' ) }
 							</ExternalLink>
 						</>
