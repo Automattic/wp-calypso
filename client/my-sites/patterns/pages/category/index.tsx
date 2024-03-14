@@ -69,7 +69,7 @@ export const PatternLibrary = ( {
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
-	searchTerm: initialSearchTerm,
+	searchTerm: urlQuerySearchTerm,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	// Helps prevent resetting the search input if a search term was provided through the URL
@@ -77,7 +77,7 @@ export const PatternLibrary = ( {
 	// Helps reset the search input when navigating between categories
 	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( initialSearchTerm );
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm ?? '' );
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
@@ -88,11 +88,11 @@ export const PatternLibrary = ( {
 
 	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
 	useEffect( () => {
-		if ( ! initialSearchTerm ) {
+		if ( ! urlQuerySearchTerm ) {
 			setSearchTerm( '' );
 			setSearchFormKey( Math.random().toString() );
 		}
-	}, [ initialSearchTerm ] );
+	}, [ urlQuerySearchTerm ] );
 
 	// Resets the search term whenever the category changes
 	useEffect( () => {
@@ -127,16 +127,16 @@ export const PatternLibrary = ( {
 
 			<PatternsHeader
 				description={
-					isHomePage
-						? 'Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes.'
-						: 'Introduce yourself or your brand to visitors.'
+					category
+						? 'Introduce yourself or your brand to visitors.'
+						: 'Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes.'
 				}
 				key={ searchFormKey }
 				initialSearchTerm={ searchTerm }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title={ isHomePage ? 'Build your perfect site with patterns' : category + ' patterns' }
+				title={ category ? `${ category } patterns` : 'Build your perfect site with patterns' }
 			/>
 
 			{ ! isHomePage && categoryNavList && (
@@ -172,7 +172,9 @@ export const PatternLibrary = ( {
 			{ ! isHomePage && (
 				<div className="patterns-page-category">
 					<div className="patterns-page-category__header">
-						<h1 className="patterns-page-category__title">Patterns</h1>
+						<h1 className="patterns-page-category__title">
+							{ searchTerm ? `${ patterns.length } patterns` : 'Patterns' }
+						</h1>
 
 						{ category && (
 							<ToggleGroupControl

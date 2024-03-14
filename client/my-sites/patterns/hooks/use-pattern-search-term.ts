@@ -6,24 +6,12 @@ import type { Dispatch, SetStateAction } from 'react';
 export const QUERY_PARAM_SEARCH = 's';
 
 /**
- * Retrieve a query parameter value from the URL
- */
-function getQueryParam( key: string ) {
-	if ( typeof window !== 'undefined' ) {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( key ) ?? '';
-	}
-
-	return '';
-}
-
-/**
  * Set up search form state and URL-related `useEffect` callbacks
  */
 export function usePatternSearchTerm(
-	initialSearchTerm?: string
+	initialSearchTerm: string
 ): [ string, Dispatch< SetStateAction< string > > ] {
-	const [ searchTerm, setSearchTerm ] = useState( initialSearchTerm ?? '' );
+	const [ searchTerm, setSearchTerm ] = useState( initialSearchTerm );
 
 	// Updates the URL of the page whenever the search term changes
 	useEffect( () => {
@@ -42,7 +30,8 @@ export function usePatternSearchTerm(
 	// Updates the search term whenever the URL of the page changes
 	useEffect( () => {
 		function onPopstate() {
-			setSearchTerm( getQueryParam( QUERY_PARAM_SEARCH ) );
+			const params = new URLSearchParams( window.location.search );
+			setSearchTerm( params.get( QUERY_PARAM_SEARCH ) ?? '' );
 		}
 
 		window.addEventListener( 'popstate', onPopstate );
