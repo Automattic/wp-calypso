@@ -12,22 +12,20 @@ export default function Hosting() {
 	const translate = useTranslate();
 
 	return (
-		<>
-			<Layout
-				className={ classNames( 'hosting-overview' ) }
-				title={ translate( 'Hosting Marketplace' ) }
-				wide
-				withBorder
-				sidebarNavigation={ <MobileSidebarNavigation /> }
-			>
-				<LayoutTop>
-					<LayoutHeader>
-						<Title>{ translate( 'Marketplace' ) }</Title>
-					</LayoutHeader>
-				</LayoutTop>
+		<Layout
+			className={ classNames( 'hosting-overview' ) }
+			title={ translate( 'Hosting Marketplace' ) }
+			wide
+			withBorder
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
+			<LayoutTop>
+				<LayoutHeader>
+					<Title>{ translate( 'Marketplace' ) }</Title>
+				</LayoutHeader>
+			</LayoutTop>
 
-				<LayoutBody>Hosting here</LayoutBody>
-			</Layout>
-		</>
+			<LayoutBody>Hosting here</LayoutBody>
+		</Layout>
 	);
 }
