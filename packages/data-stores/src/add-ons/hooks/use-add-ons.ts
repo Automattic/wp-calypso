@@ -260,6 +260,7 @@ const useAddOns = ( {
 				} ),
 		[
 			activeAddOns,
+			enableStorageAddOns,
 			mediaStorage.data?.maxStorageBytes,
 			productsList.data,
 			productsList.isLoading,
