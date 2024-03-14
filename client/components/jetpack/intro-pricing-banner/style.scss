@@ -21,7 +21,7 @@
 .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
 	height: 120px;
 	margin-bottom: 2rem;
-	gap: 1.25rem;
+	column-gap: 1.25rem;
 
 	@include break-large {
 		height: 54px;
@@ -34,6 +34,8 @@
 	align-items: flex-start;
 
 	@include break-large {
+		flex-wrap: wrap;
+		justify-content: center;
 		flex-direction: row;
 		align-items: center;
 	}
