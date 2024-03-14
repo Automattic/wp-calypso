@@ -1,5 +1,5 @@
 import '@automattic/calypso-polyfills';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
@@ -76,42 +76,36 @@ const NotesWrapper = ( { wpcom } ) => {
 
 	debug( 'Notes wrapper render/update', { isShowing, isVisible } );
 
-	const refresh = useCallback(
-		() => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } ),
-		[ isVisible ]
-	);
+	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
 
-	const handleMessages = useCallback(
-		( { action, hidden, showing } ) => {
-			if ( 'togglePanel' === action ) {
-				setIsShowing( ( prevIsShowing ) => {
-					debug( 'togglePanel message received', {
-						action,
-						hidden,
-						showing,
-						isShowing: prevIsShowing,
-					} );
-					// Toggle showing based on current state
-					if ( prevIsShowing && ! showing ) {
-						reset();
-					}
-					return showing;
+	const handleMessages = ( { action, hidden, showing } ) => {
+		if ( 'togglePanel' === action ) {
+			setIsShowing( ( prevIsShowing ) => {
+				debug( 'togglePanel message received', {
+					action,
+					hidden,
+					showing,
+					isShowing: prevIsShowing,
 				} );
-				refresh();
-			}
+				// Toggle showing based on current state
+				if ( prevIsShowing && ! showing ) {
+					reset();
+				}
+				return showing;
+			} );
+			refresh();
+		}
 
-			if ( 'toggleVisibility' === action ) {
-				setIsVisible( ! hidden );
-				refresh();
-			}
+		if ( 'toggleVisibility' === action ) {
+			setIsVisible( ! hidden );
+			refresh();
+		}
 
-			if ( 'refreshNotes' === action ) {
-				refreshNotes();
-			}
-		},
-		[ refresh ]
-	);
+		if ( 'refreshNotes' === action ) {
+			refreshNotes();
+		}
+	};
 
 	useEffect( () => {
 		document.addEventListener( 'visibilitychange', refresh );
