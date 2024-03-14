@@ -98,6 +98,11 @@ export default async function razorpayProcessor(
 					( result ) => resolve( { bd_order_id: response.order_id.toString(), ...result } )
 				);
 				debug( 'Opening Razorpay modal with options', razorpayOptions );
+				transactionOptions.reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_razorpay_open_modal', {
+						transactionData: formattedTransactionData,
+					} )
+				);
 				const razorpay = new window.Razorpay( razorpayOptions );
 				razorpay.open();
 			} );
