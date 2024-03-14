@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useLayoutEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
@@ -77,12 +78,16 @@ export const useLiveInstallations = ( {
 			url: installationsError?.name === 'UnauthorizedError' ? AUTHORIZATION_URL : INSTALLATION_URL,
 			onMessage: async ( data, popup ) => {
 				if ( 'github-app-authorized' === data.type ) {
+					dispatch( recordTracksEvent( 'calypso_hosting_github_app_authorised_success' ) );
+
 					try {
 						await authorizeApp( { code: data.code } );
 						refetch();
 						popup.location = INSTALLATION_URL;
 					} catch {
 						popup.close();
+
+						dispatch( recordTracksEvent( 'calypso_hosting_github_app_install_failed' ) );
 
 						dispatch(
 							errorNotice( __( 'Failed to authorize GitHub. Please try again.' ), {
@@ -96,6 +101,12 @@ export const useLiveInstallations = ( {
 					popup.close();
 
 					const { installationId } = data as { installationId?: number };
+
+					dispatch(
+						recordTracksEvent( 'calypso_hosting_github_app_install_success', {
+							is_org_request: ! installationId,
+						} )
+					);
 
 					if ( ! installationId ) {
 						dispatch(
@@ -125,6 +136,8 @@ export const useLiveInstallations = ( {
 		} );
 
 		if ( ! openedPopup ) {
+			dispatch( recordTracksEvent( 'calypso_hosting_github_app_install_failed' ) );
+
 			dispatch(
 				errorNotice( __( 'Failed to authorize GitHub. Please try again.' ), {
 					duration: 5000,
