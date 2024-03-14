@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -9,8 +10,10 @@ import {
 	useCallback,
 	useEffect,
 	useRef,
+	useState,
 } from 'react';
 import GitHubIcon from 'calypso/components/social-icons/github';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isFormDisabled as isFormDisabledSelector } from 'calypso/state/login/selectors';
@@ -58,8 +61,13 @@ const GitHubLoginButton = ( {
 		return currentError;
 	} );
 
-	const isDisabled = useSelector( isFormDisabledSelector );
+	const isFormDisabled = useSelector( isFormDisabledSelector );
 	const dispatch = useDispatch();
+
+	const [ disabledState ] = useState< boolean >( false );
+	const [ errorState ] = useState< string | null >( null );
+	const [ showError, setShowError ] = useState< boolean >( false );
+
 	const errorRef = useRef< EventTarget | null >( null );
 
 	const handleGitHubError = useCallback( () => {
@@ -131,6 +139,8 @@ const GitHubLoginButton = ( {
 		}
 	}, [ authError, handleGitHubError ] );
 
+	const isDisabled = isFormDisabled || disabledState;
+
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
 		e.preventDefault();
@@ -185,6 +195,16 @@ const GitHubLoginButton = ( {
 					</span>
 				</button>
 			) }
+			<Popover
+				id="social-buttons__error"
+				className="social-buttons__error"
+				isVisible={ showError }
+				onClose={ () => setShowError( false ) }
+				position="top"
+				context={ errorRef.current }
+			>
+				{ preventWidows( errorState ) }
+			</Popover>
 		</>
 	);
 };
