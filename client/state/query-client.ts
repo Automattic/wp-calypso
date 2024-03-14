@@ -1,5 +1,9 @@
 import { hydrate, QueryClient } from '@tanstack/react-query';
-import { PersistedClient, persistQueryClient } from '@tanstack/react-query-persist-client';
+import {
+	PersistedClient,
+	Persister,
+	persistQueryClient,
+} from '@tanstack/react-query-persist-client';
 import { throttle } from 'lodash';
 import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
 import { shouldPersist } from 'calypso/state/initial-state';
@@ -9,20 +13,37 @@ import {
 	storePersistedStateItem,
 } from 'calypso/state/persisted-state';
 import { shouldDehydrateQuery } from './should-dehydrate-query';
+import type { DebouncedFunc } from '@wordpress/compose';
+
+type ThrotthledPersister = {
+	persistClient: DebouncedFunc< ( state: PersistedClient ) => Promise< unknown > >;
+} & Omit< Persister, 'persistClient' >;
 
 export async function createQueryClient( userId?: number ): Promise< QueryClient > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
-	await hydrateBrowserState( queryClient, userId );
+	const persister = await hydrateBrowserState( queryClient, userId );
+
+	if ( typeof window !== 'undefined' ) {
+		// Persist the cache to local storage before the browser is unloaded
+		window.addEventListener( 'beforeunload', () => {
+			if ( persister ) {
+				// cancel any pending throtthled function calls
+				persister.persistClient.flush();
+				persistQueryClient( { queryClient, persister: persister as unknown as Persister } );
+			}
+		} );
+	}
+
 	return queryClient;
 }
 
 export async function hydrateBrowserState(
 	queryClient: QueryClient,
 	userId: number | undefined
-): Promise< void > {
+): Promise< ThrotthledPersister | void > {
 	if ( shouldPersist() ) {
 		const storeKey = `query-state-${ userId ?? 'logged-out' }`;
 		const persister = {
@@ -52,6 +73,8 @@ export async function hydrateBrowserState(
 				shouldDehydrateQuery,
 			},
 		} );
+
+		return persister;
 	}
 }
 
