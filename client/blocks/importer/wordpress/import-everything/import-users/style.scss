@@ -84,6 +84,14 @@
 			.imported-user-item {
 				border-bottom: 1px solid var(--studio-gray-5, #dcdcde);
 			}
+
+			.import__user-migration-user-list-no-users {
+				padding: 0.5rem 1.5rem;
+				color: #1e1e1e;
+				text-transform: uppercase;
+				font-size: 0.75rem;
+				font-weight: 500;
+			}
 		}
 
 		.import__user-migration-user-list-pagination-container {
