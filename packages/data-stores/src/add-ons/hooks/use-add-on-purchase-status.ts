@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { Purchases, Site } from '../..';
+import * as Purchases from '../../purchases';
+import * as Site from '../../site';
 import type { AddOnMeta } from '../types';
 
 interface Props {

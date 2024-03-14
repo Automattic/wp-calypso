@@ -31,15 +31,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSite: jest.fn(),
 } ) );
 jest.mock( '@automattic/data-stores', () => ( {
-	Onboard: {
-		...jest.requireActual( '@automattic/data-stores' ).Onboard,
-	},
-	WpcomPlansUI: {
-		...jest.requireActual( '@automattic/data-stores' ).WpcomPlansUI,
-	},
-	Site: {
-		...jest.requireActual( '@automattic/data-stores' ).Site,
-	},
+	...jest.requireActual( '@automattic/data-stores' ),
 	Plans: {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
 		usePlans: jest.fn(),

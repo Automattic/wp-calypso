@@ -1,5 +1,5 @@
 import { useCallback } from '@wordpress/element';
-import { Site } from '../..';
+import * as Site from '../../site';
 
 /**
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.

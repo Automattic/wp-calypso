@@ -7,7 +7,9 @@ import {
 } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { ProductsList, Site, Purchases } from '../..';
+import * as ProductsList from '../../products-list';
+import * as Purchases from '../../purchases';
+import * as Site from '../../site';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
