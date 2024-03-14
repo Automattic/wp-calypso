@@ -1,17 +1,7 @@
-import {
-	RadioControl,
-	SelectControl,
-	__experimentalText as Text,
-	Flex,
-	FlexItem,
-	FlexBlock,
-} from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
+import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form.frequency';
 import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form.plugins';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
@@ -24,15 +14,7 @@ import {
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSetSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
-import {
-	DAILY_OPTION,
-	DAY_OPTIONS,
-	DEFAULT_HOUR,
-	HOUR_OPTIONS,
-	PERIOD_OPTIONS,
-	WEEKLY_OPTION,
-} from './schedule-form.const';
-import { prepareTimestamp, validatePlugins, validateTimeSlot } from './schedule-form.helper';
+import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
 
 import './schedule-form.scss';
 
@@ -43,13 +25,9 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
-	const initDate = scheduleForEdit
-		? moment( scheduleForEdit?.timestamp * 1000 )
-		: moment( new Date() ).hour( DEFAULT_HOUR );
+
 	const { data: plugins = [], isFetched: isPluginsFetched } = useCorePluginsQuery(
 		siteSlug,
 		true,
@@ -74,10 +52,7 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >(
 		scheduleForEdit?.schedule || 'daily'
 	);
-	const [ day, setDay ] = useState< string >( initDate.weekday().toString() );
-	const [ hour, setHour ] = useState< string >( ( initDate.hour() % 12 ).toString() );
-	const [ period, setPeriod ] = useState< string >( initDate.hours() < 12 ? 'am' : 'pm' );
-	const timestamp = prepareTimestamp( frequency, day, hour, period );
+	const [ timestamp, setTimestamp ] = useState< number >( scheduleForEdit?.timestamp );
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
@@ -147,92 +122,19 @@ export const ScheduleForm = ( props: Props ) => {
 				gap={ 12 }
 			>
 				<FlexItem>
-					<div className="form-field">
-						<label htmlFor="frequency">{ translate( 'Update every' ) }</label>
-						<div className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
-							<RadioControl
-								name="frequency"
-								options={ [ DAILY_OPTION ] }
-								selected={ frequency }
-								onChange={ ( f ) => setFrequency( f as 'daily' ) }
-								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
-							></RadioControl>
-							{ frequency === 'daily' && (
-								<Flex gap={ 6 }>
-									<FlexBlock>
-										<div className="form-field">
-											<div className="time-controls">
-												<SelectControl
-													__next40pxDefaultSize
-													name="hour"
-													value={ hour }
-													options={ HOUR_OPTIONS }
-													onChange={ setHour }
-												/>
-												<SelectControl
-													__next40pxDefaultSize
-													name="period"
-													value={ period }
-													options={ PERIOD_OPTIONS }
-													onChange={ setPeriod }
-												/>
-											</div>
-										</div>
-									</FlexBlock>
-								</Flex>
-							) }
-						</div>
-						<div className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
-							<RadioControl
-								name="frequency"
-								options={ [ WEEKLY_OPTION ] }
-								selected={ frequency }
-								onChange={ ( f ) => setFrequency( f as 'weekly' ) }
-								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
-							></RadioControl>
-							{ frequency === 'weekly' && (
-								<Flex gap={ 6 } direction={ [ 'column', 'row' ] }>
-									<FlexItem>
-										<div className="form-field">
-											<SelectControl
-												__next40pxDefaultSize
-												name="day"
-												value={ day }
-												options={ DAY_OPTIONS }
-												onChange={ setDay }
-											/>
-										</div>
-									</FlexItem>
-									<FlexBlock>
-										<div className="form-field">
-											<div className="time-controls">
-												<SelectControl
-													__next40pxDefaultSize
-													name="hour"
-													value={ hour }
-													options={ HOUR_OPTIONS }
-													onChange={ setHour }
-												/>
-												<SelectControl
-													__next40pxDefaultSize
-													name="period"
-													value={ period }
-													options={ PERIOD_OPTIONS }
-													onChange={ setPeriod }
-												/>
-											</div>
-										</div>
-									</FlexBlock>
-								</Flex>
-							) }
-						</div>
-						{ fieldTouched?.timestamp && validationErrors?.timestamp && (
-							<Text className="validation-msg">
-								<Icon className="icon-info" icon={ info } size={ 16 } />
-								{ validationErrors?.timestamp }
-							</Text>
-						) }
-					</div>
+					<ScheduleFormFrequency
+						initTimestamp={ timestamp }
+						initFrequency={ frequency }
+						error={ validationErrors?.timestamp }
+						showError={ fieldTouched?.plugins }
+						onChange={ ( frequency, timestamp ) => {
+							setTimestamp( timestamp );
+							setFrequency( frequency );
+						} }
+						onTouch={ ( touched ) => {
+							setFieldTouched( { ...fieldTouched, timestamp: touched } );
+						} }
+					/>
 				</FlexItem>
 				<FlexItem>
 					<ScheduleFormPlugins
