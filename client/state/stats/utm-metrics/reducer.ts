@@ -106,7 +106,7 @@ const metricsParser = (
 const dataReducer = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case STATS_UTM_METRICS_RECEIVE: {
-			const values = action.data.top_utm_values;
+			const values = action.data.top_utm_values || {};
 			const topPosts = action.data.top_posts;
 			const siteSlug = action.siteSlug;
 
@@ -117,7 +117,7 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 		}
 
 		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
-			const values = action.data.top_utm_values;
+			const values = action.data.top_utm_values || {};
 
 			const { metricsByPost } = state as {
 				metricsByPost: { [ key: string ]: Array< UTMMetricItem > };
