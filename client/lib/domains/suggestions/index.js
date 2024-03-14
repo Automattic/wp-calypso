@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getDomainSuggestionsVendor } from '@automattic/domain-picker';
 
 /**
@@ -11,9 +10,9 @@ import { getDomainSuggestionsVendor } from '@automattic/domain-picker';
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
 export const getSuggestionsVendor = ( options = {} ) => {
-	// If the isPremium prop is not given, fallback to the value set in config.
+	// If the isPremium prop is not given, fallback to true.
 	if ( typeof options.isPremium === 'undefined' ) {
-		options.isPremium = config.isEnabled( 'domains/premium-domain-purchases' );
+		options.isPremium = true;
 	}
 
 	return getDomainSuggestionsVendor( options );

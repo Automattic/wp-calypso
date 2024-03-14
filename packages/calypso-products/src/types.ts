@@ -318,7 +318,6 @@ export type Plan = BillingTerm & {
 	getRecommendedFor?: () => Array< JetpackTag >;
 	getTagline?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];
-	getCancellationFeatureList?: () => CancellationFeatureLists;
 	/**
 	 * Features that are included as part of this plan.
 	 *
@@ -358,15 +357,4 @@ export interface PlanMatchesQuery {
 	term?: string;
 	group?: string;
 	type?: string;
-}
-
-export interface CancellationFeatureLists {
-	monthly: CancellationFeatureList;
-	yearly: CancellationFeatureList;
-	withDomain: CancellationFeatureList;
-}
-
-export interface CancellationFeatureList {
-	featureList: string[];
-	andMore: boolean;
 }

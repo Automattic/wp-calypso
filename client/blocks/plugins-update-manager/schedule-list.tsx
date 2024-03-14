@@ -8,13 +8,12 @@ import {
 	CardHeader,
 	Spinner,
 } from '@wordpress/components';
-import { Icon, arrowLeft, info } from '@wordpress/icons';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MAX_SCHEDULES } from './config';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -31,7 +30,7 @@ export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
@@ -54,7 +53,7 @@ export const ScheduleList = ( props: Props ) => {
 	);
 
 	const showScheduleListEmpty =
-		! isEligibleForFeature ||
+		( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
 		( isFetched &&
 			! isLoadingCanCreateSchedules &&
 			( schedules.length === 0 || ! canCreateSchedules ) );
@@ -101,7 +100,9 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ ( isLoading || isLoadingCanCreateSchedules ) && <Spinner /> }
+					{ ( isLoading || isLoadingCanCreateSchedules || isEligibleForFeatureLoading ) && (
+						<Spinner />
+					) }
 					{ showScheduleListEmpty && (
 						<ScheduleListEmpty
 							onCreateNewSchedule={ onCreateNewSchedule }
@@ -125,17 +126,6 @@ export const ScheduleList = ( props: Props ) => {
 									/>
 								) }
 							</>
-						) }
-					{ isFetched &&
-						! isLoadingCanCreateSchedules &&
-						schedules.length >= MAX_SCHEDULES &&
-						canCreateSchedules && (
-							<Text as="p">
-								<Icon className="icon-info" icon={ info } size={ 16 } />
-								{ translate(
-									'The current feature implementation allows to set up two schedules.'
-								) }
-							</Text>
 						) }
 				</CardBody>
 			</Card>

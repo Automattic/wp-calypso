@@ -1,0 +1,14 @@
+.repository-selection-dialog {
+	width: 622px;
+	height: 470px;
+	display: flex;
+	flex-direction: column;
+
+	h1 {
+		margin-bottom: 0.25rem !important;
+	}
+
+	.formatted-header {
+		margin-bottom: 24px !important;
+	}
+}

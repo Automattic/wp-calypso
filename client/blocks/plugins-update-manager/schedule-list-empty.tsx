@@ -16,7 +16,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 				{ ! canCreateSchedules
 					? translate( 'This site is unable to schedule auto-updates for plugins.' )
 					: translate(
-							'Keep your site up to date with scheduled automatic plugin updates. Built-in rollback included.'
+							'Take control of your site’s maintenance by choosing when your plugins update—whatever day and time is most convenient. Up to two schedules let you enjoy hassle-free automatic updates, and our built-in rollback feature reverts any flawed updates for added peace of mind.'
 					  ) }
 			</Text>
 			{ onCreateNewSchedule && (
@@ -27,7 +27,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 					onClick={ onCreateNewSchedule }
 					disabled={ ! canCreateSchedules }
 				>
-					{ translate( 'Set up a new schedule' ) }
+					{ translate( 'Add new schedule' ) }
 				</Button>
 			) }
 		</div>

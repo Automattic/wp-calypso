@@ -18,10 +18,9 @@ import './style.scss';
 const useIsomorphicEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = ( event ) => {
-	const newURL = `${ event.target.value }${ removeLocaleFromPathLocaleInFront(
-		window.location.pathname
-	) }`;
-	window.location.href = newURL;
+	const pathWithoutLocale = removeLocaleFromPathLocaleInFront( window.location.pathname );
+
+	window.location.href = `/${ event.target.value }${ pathWithoutLocale }`;
 };
 
 const allLanguageOptions: LanguageOptions = {

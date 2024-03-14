@@ -17,7 +17,7 @@ interface Props {
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { onEditClick, onRemoveClick } = props;

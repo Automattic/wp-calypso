@@ -154,7 +154,7 @@ export const GitHubConnectionForm = ( {
 								{ repository.owner }/{ repository.name }
 							</ExternalLink>
 						) : (
-							<FormSettingExplanation css={ { margin: 0 } }>
+							<FormSettingExplanation css={ { margin: '0 !important' } }>
 								{ __( 'No repository selected' ) }
 							</FormSettingExplanation>
 						) }
@@ -196,7 +196,7 @@ export const GitHubConnectionForm = ( {
 				/>
 				<div className="github-deployments-connect-repository__submit">
 					<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
-						{ deploymentId ? __( 'Update connection' ) : __( 'Connect repository' ) }
+						{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
 					</Button>
 
 					{ deploymentId && (
@@ -207,7 +207,7 @@ export const GitHubConnectionForm = ( {
 				</div>
 			</div>
 			<DeploymentStyle
-				isDisabled={ isFetchingBranches }
+				isDisabled={ ! repository || isFetchingBranches }
 				branchName={ branch }
 				repository={ repository }
 				workflowPath={ workflowPath }

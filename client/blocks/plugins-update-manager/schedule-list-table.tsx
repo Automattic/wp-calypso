@@ -19,7 +19,7 @@ export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 
 	const { onEditClick, onRemoveClick } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );

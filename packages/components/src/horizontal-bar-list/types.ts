@@ -70,6 +70,7 @@ export type StatsCardProps = {
 		url?: string;
 	};
 	isEmpty?: boolean;
+	isNew?: boolean;
 	emptyMessage?: string;
 	/**
 	 * @property {string} metricLabel - a label to use for the values on the right side of the bars - `Views` by default

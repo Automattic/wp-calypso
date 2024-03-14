@@ -1,5 +1,5 @@
 import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
-import { CompactCard, ScreenReaderText } from '@automattic/components';
+import { CompactCard, ScreenReaderText, MaterialIcon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
@@ -11,7 +11,6 @@ import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggest
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { isSubdomain } from 'calypso/lib/domains';

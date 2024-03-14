@@ -22,6 +22,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
+import { useIsGitHubDeploymentsAvailableQuery } from '../github-deployments/use-is-feature-available';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
@@ -117,6 +118,10 @@ const useSiteMenuItems = () => {
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
+	const { data: gitHubDeploymentsAvailable } = useIsGitHubDeploymentsAvailableQuery( {
+		siteId: selectedSiteId,
+	} );
+
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu();
 	}
@@ -164,6 +169,7 @@ const useSiteMenuItems = () => {
 		shouldShowMailboxes,
 		shouldShowAddOns,
 		showSiteMonitoring: isAtomic,
+		showGithubDeployments: gitHubDeploymentsAvailable?.available ?? false,
 	};
 
 	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );

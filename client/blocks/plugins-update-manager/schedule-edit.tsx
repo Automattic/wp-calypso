@@ -27,7 +27,7 @@ export const ScheduleEdit = ( props: Props ) => {
 	const translate = useTranslate();
 
 	const { scheduleId, onNavBack } = props;
-	const isEligibleForFeature = useIsEligibleForFeature();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
 		isEligibleForFeature

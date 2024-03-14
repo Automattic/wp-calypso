@@ -61,7 +61,6 @@
 		"domains/kracken-ui/max-characters-filter": false,
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
-		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
@@ -231,6 +230,7 @@
 		"videomaker-trial": true,
 		"videopress-tv": true,
 		"woop": false,
+		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true

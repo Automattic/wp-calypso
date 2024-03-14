@@ -348,16 +348,6 @@ export const useComparisonData = () => {
 				icon: DesignIcon,
 				features: [
 					{
-						id: 'themes',
-						name: translate( 'Themes' ),
-						url: links.themes,
-						info: {
-							FREE: { content: translate( 'Starter Themes' ) },
-							SECURITY: { content: translate( 'Starter Themes' ) },
-							COMPLETE: { content: translate( 'Starter Themes' ) },
-						},
-					},
-					{
 						id: 'related_posts',
 						name: translate( 'Related posts' ),
 						url: links.related_posts,
