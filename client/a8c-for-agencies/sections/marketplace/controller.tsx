@@ -1,5 +1,6 @@
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getSites from 'calypso/state/selectors/get-sites';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
@@ -7,7 +8,7 @@ import HostingOverview from './hosting-overview';
 import IssueLicense from './issue-license';
 
 export const marketplaceContext: Callback = () => {
-	page.redirect( '/purchases/licenses' );
+	page.redirect( A4A_MARKETPLACE_PRODUCTS_LINK );
 };
 
 export const marketplaceProductsContext: Callback = ( context, next ) => {
