@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { chevronLeft, key, settings } from '@wordpress/icons';
+import { chevronLeft, plugins, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
@@ -23,7 +23,7 @@ export default function ( { path }: Props ) {
 		return [
 			createItem(
 				{
-					icon: key,
+					icon: plugins,
 					path: A4A_MARKETPLACE_LINK,
 					link: A4A_MARKETPLACE_PRODUCTS_LINK,
 					title: translate( 'Products' ),
@@ -35,7 +35,7 @@ export default function ( { path }: Props ) {
 			),
 			createItem(
 				{
-					icon: settings,
+					icon: tool,
 					path: A4A_MARKETPLACE_LINK,
 					link: A4A_MARKETPLACE_HOSTING_LINK,
 					title: translate( 'Hosting' ),
