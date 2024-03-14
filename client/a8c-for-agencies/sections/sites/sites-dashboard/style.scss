@@ -303,27 +303,33 @@
 		background: none;
 	}
 
-	.sites-overview__add-site-issue-license-buttons.is-with-split-button {
-		flex-direction: row;
+	.sites-overview__add-site-issue-license-buttons {
+		display: flex;
+		grid-gap: 8px;
 
-		> a {
-			flex-grow: 1;
-		}
+		&.is-with-split-button {
+			flex-direction: row;
 
-		.split-button {
-			display: flex;
-		}
-
-		.split-button__main {
-			flex-grow: 1;
-		}
-
-		@media ( max-width: $break-small ) {
 			> a {
-				flex-grow: 0;
+				flex-grow: 1;
+			}
+
+			.split-button {
+				display: flex;
+			}
+
+			.split-button__main {
+				flex-grow: 1;
+			}
+
+			@media ( max-width: $break-small ) {
+				> a {
+					flex-grow: 0;
+				}
 			}
 		}
 	}
+
 	.sites-overview__add-new-site {
 		white-space: nowrap;
 	}
