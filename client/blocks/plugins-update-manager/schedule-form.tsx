@@ -227,7 +227,7 @@ export const ScheduleForm = ( props: Props ) => {
 								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'weekly' && (
-								<Flex gap={ 6 }>
+								<Flex gap={ 6 } direction={ [ 'column', 'row' ] }>
 									<FlexItem>
 										<div className="form-field">
 											<SelectControl
