@@ -4,12 +4,12 @@ import {
 	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	PLAN_BUSINESS,
 	getPlan,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { NextButton, SubTitle } from '@automattic/onboarding';
 import { Button, Spinner } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { TrialPlan } from './trial-plan';
 import { useVerifyEmail } from './use-verify-email';
 import './style.scss';

@@ -1,4 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
+import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import i18n from 'i18n-calypso';
+import SupportIcon from './assets/images/support.svg';
+import Theme2Image from './assets/images/theme-2.jpg';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -293,11 +298,6 @@ import {
 	FEATURE_SELL_60_COUNTRIES,
 	FEATURE_SHIPPING_INTEGRATIONS,
 	FEATURE_AI_ASSISTED_PRODUCT_DESCRIPTION,
-	isPersonalPlan,
-	isPremiumPlan,
-	isEcommercePlan,
-	isBusinessPlan,
-	isFreePlan,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
@@ -312,24 +312,22 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+} from './constants';
+import {
+	isPersonalPlan,
+	isPremiumPlan,
+	isEcommercePlan,
+	isBusinessPlan,
+	isFreePlan,
 	isWooExpressPlan,
-} from '@automattic/calypso-products';
-import { MaterialIcon } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
-import i18n from 'i18n-calypso';
-import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
-import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
-import ExternalLink from 'calypso/components/external-link';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
-import type {
-	FeatureObject as FeatureObjectPackaged,
-	FeatureList as FeatureListPackaged,
-} from '@automattic/calypso-products';
+} from './main';
+import type { FeatureList } from './types';
 
-export type FeatureObject = FeatureObjectPackaged;
-
-export type FeatureList = FeatureListPackaged;
+/**
+ * Hardcoded URL temporary until @automattic/urls is cretated
+ */
+export const DOMAIN_PRICING_AND_AVAILABLE_TLDS =
+	'https://wordpress.com/support/domains/domain-pricing-and-available-tlds/';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
@@ -2740,18 +2738,3 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Sensei Features */
 };
-
-export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
-	if ( ! planFeaturesList ) {
-		return [];
-	}
-	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
-};
-
-export function isValidFeatureKey( feature: string ) {
-	return !! FEATURES_LIST[ feature ];
-}
-
-export function getFeatureByKey( feature: string ) {
-	return FEATURES_LIST[ feature ];
-}

@@ -23,6 +23,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
+		"@automattic/data-stores": "workspace:^",
 		"@automattic/search": "workspace:^"
 	},
 	"peerDependencies": {
