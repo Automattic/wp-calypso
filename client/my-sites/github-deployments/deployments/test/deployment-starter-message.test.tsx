@@ -25,7 +25,9 @@ describe( 'DeploymentStarterMessage', () => {
 		);
 
 		expect(
-			getByText( 'Push something to the ‘trunk’ branch of ‘repository’.' )
+			getByText(
+				'Push something to the ‘trunk’ branch of ‘repository’ or trigger a deployment from the menu.'
+			)
 		).toBeInTheDocument();
 	} );
 
@@ -38,7 +40,7 @@ describe( 'DeploymentStarterMessage', () => {
 			/>
 		);
 
-		expect( getByText( 'Trigger a deployment from the ellipsis menu.' ) ).toBeInTheDocument();
+		expect( getByText( 'Trigger a deployment from the menu.' ) ).toBeInTheDocument();
 	} );
 
 	test( 'instructs the user to create a manual deployment for advanced connections', () => {
