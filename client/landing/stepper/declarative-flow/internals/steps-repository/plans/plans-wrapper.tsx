@@ -29,6 +29,7 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
+import { useDispatch as useDispatchRedux } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -126,7 +127,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} );
 	};
 
-	const dispatch = useDispatch();
+	const dispatch = useDispatchRedux();
 	const userId = useSelector( getCurrentUserId );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const handleSelectedTrialPlan = () => {
