@@ -18,7 +18,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com' ),
+			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/developer-tools/wp-cli/' ),
 		},
 		{
 			id: 'staging-sites',
@@ -31,7 +31,9 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/support/how-to-create-a-staging-site/' ),
+			linkLearnMore: localizeUrl(
+				'https://developer.wordpress.com/docs/developer-tools/staging-sites/'
+			),
 		},
 		{
 			id: 'custom-code',
@@ -70,7 +72,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
+			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/support/' ),
 		},
 		{
 			id: 'malware-scanning-removal',
@@ -84,7 +86,10 @@ export const useFeaturesList = () => {
 					components: {
 						backupsLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/support/restore' ) }
+								id="restore"
+								href={ localizeUrl(
+									'https://developer.wordpress.com/docs/platform-features/real-time-backup-restore/'
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ handleClickLink }
@@ -92,7 +97,10 @@ export const useFeaturesList = () => {
 						),
 						malwareScanningLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/support/malware-and-site-security' ) }
+								id="malware-and-site-security"
+								href={ localizeUrl(
+									'https://developer.wordpress.com/docs/platform-features/jetpack-scan/'
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ handleClickLink }
@@ -100,7 +108,10 @@ export const useFeaturesList = () => {
 						),
 						siteMonitoringLink: (
 							<a
-								href={ localizeUrl( 'https://wordpress.com/support/site-monitoring' ) }
+								id="site-monitoring"
+								href={ localizeUrl(
+									'https://developer.wordpress.com/docs/platform-features/account-security/'
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 								onClick={ handleClickLink }

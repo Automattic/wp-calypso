@@ -21,24 +21,29 @@ describe( 'useHandleClickLink', () => {
 		);
 	} );
 
-	describe( 'ensure track events are recorded without the /support/ prefix', () => {
-		test.each( [
-			[ 'https://wordpress.com/support/feature', 'feature' ],
-			[ 'https://wordpress.com/support/category/feature', 'category/feature' ],
-			[ 'https://wordpress.com/support/feature-with-hyphens', 'feature-with-hyphens' ],
-			[ 'https://wordpress.com/support/supported/feature', 'supported/feature' ],
-		] )(
-			"for the URL %s a tracks event is recorded using the 'feature' value '%s'",
-			( href, feature ) => {
-				const { result } = renderHook( () => useHandleClickLink() );
-				const event = { currentTarget: { href } };
+	describe( 'ensure track events report correct property', () => {
+		it( 'should report element id when defined', () => {
+			const { result } = renderHook( () => useHandleClickLink() );
+			const elementId = 'my-feature';
+			const event = { currentTarget: { id: elementId } };
 
-				act( () => result.current( event ) );
+			act( () => result.current( event ) );
 
-				expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
-					feature,
-				} );
-			}
-		);
+			expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
+				feature: elementId,
+			} );
+		} );
+
+		it( 'should report href when element id is not defined', () => {
+			const { result } = renderHook( () => useHandleClickLink() );
+			const href = 'https://wordpress.com';
+			const event = { currentTarget: { href } };
+
+			act( () => result.current( event ) );
+
+			expect( mockRecordTracksEventWithUserIsDevAccount ).toHaveBeenCalledWith( tracksHandle, {
+				feature: href,
+			} );
+		} );
 	} );
 } );
