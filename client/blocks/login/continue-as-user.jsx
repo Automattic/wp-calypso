@@ -7,6 +7,7 @@ import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 
 import './continue-as-user.scss';
 
@@ -42,6 +43,7 @@ function ContinueAsUser( {
 	redirectPath,
 	isSignUpFlow,
 	isWooOAuth2Client,
+	isWooPasswordless,
 } ) {
 	const translate = useTranslate();
 	const { url: validatedRedirectUrlFromQuery, loading: validatingQueryURL } =
@@ -100,6 +102,36 @@ function ContinueAsUser( {
 	);
 
 	if ( isWooOAuth2Client ) {
+		if ( isWooPasswordless ) {
+			return (
+				<div className="continue-as-user">
+					<div className="continue-as-user__user-info">
+						{ gravatarLink }
+						<div className="continue-as-user__not-you">
+							<button
+								type="button"
+								id="loginAsAnotherUser"
+								className="continue-as-user__change-user-link"
+								onClick={ onChangeAccount }
+							>
+								{ translate( 'Sign in as a different user' ) }
+							</button>
+						</div>
+					</div>
+					<Button
+						primary
+						busy={ isLoading }
+						className="continue-as-user__continue-button"
+						href={ validatedRedirectUrlFromQuery || validatedRedirectPath || '/' }
+					>
+						{ `${ translate( 'Continue as', {
+							context: 'Continue as an existing WordPress.com user',
+						} ) } ${ userName }` }
+					</Button>
+				</div>
+			);
+		}
+
 		return (
 			<div className="continue-as-user">
 				<div className="continue-as-user__user-info">
@@ -148,4 +180,5 @@ function ContinueAsUser( {
 export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
+	isWooPasswordless: !! getWooPasswordless( state ),
 } ) )( ContinueAsUser );
