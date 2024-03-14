@@ -240,8 +240,8 @@ export const ScheduleForm = ( props: Props ) => {
 						error={ validationErrors?.plugins }
 						showError={ fieldTouched?.plugins }
 						onChange={ setSelectedPlugins }
-						onTouch={ () => {
-							setFieldTouched( { ...fieldTouched, plugins: true } );
+						onTouch={ ( touched ) => {
+							setFieldTouched( { ...fieldTouched, plugins: touched } );
 						} }
 					/>
 				</FlexItem>

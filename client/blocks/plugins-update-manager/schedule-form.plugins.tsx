@@ -17,7 +17,7 @@ interface Props {
 	touched?: boolean;
 	error?: string;
 	showError?: boolean;
-	onTouch?: () => void;
+	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( value: string[] ) => void;
 }
 export function ScheduleFormPlugins( props: Props ) {
@@ -35,7 +35,7 @@ export function ScheduleFormPlugins( props: Props ) {
 		isFetched: isPluginsFetched,
 	} = useCorePluginsQuery( siteSlug, true, true );
 
-	useEffect( () => onTouch?.(), [ fieldTouched ] );
+	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
 	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
 
 	const onPluginSelectionChange = useCallback(
