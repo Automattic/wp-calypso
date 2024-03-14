@@ -1,7 +1,7 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
-import useStoredCards from '../hooks/use-stored-cards';
+import useStoredCards from '../../hooks/use-stored-cards';
 import DeletePrimaryCardConfirmation from './delete-primary-confirmation';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { FunctionComponent } from 'react';

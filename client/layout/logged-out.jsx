@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
@@ -18,7 +19,6 @@ import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { navigate } from 'calypso/lib/navigate';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
@@ -30,6 +30,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
+import { addQueryArgs } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -41,6 +42,8 @@ import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -70,6 +73,7 @@ const LayoutLoggedOut = ( {
 	isPartnerSignup,
 	isPartnerSignupStart,
 	isWooCoreProfilerFlow,
+	isWooPasswordless,
 	locale,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
@@ -139,6 +143,7 @@ const LayoutLoggedOut = ( {
 		'is-woocommerce-core-profiler-flow': isWooCoreProfilerFlow,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
+		'is-woo-passwordless': isWooPasswordless,
 	};
 
 	let masterbar = null;
@@ -247,14 +252,8 @@ const LayoutLoggedOut = ( {
 
 			{ [ 'plugins' ].includes( sectionName ) && (
 				<>
-					<UniversalNavbarFooter
-						currentRoute={ currentRoute }
-						isLoggedIn={ isLoggedIn }
-						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-							window.location.reload();
-						} }
-					/>
+					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
+
 					{ config.isEnabled( 'layout/support-article-dialog' ) && (
 						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 					) }
@@ -263,14 +262,7 @@ const LayoutLoggedOut = ( {
 
 			{ [ 'patterns', 'reader', 'theme', 'themes' ].includes( sectionName ) &&
 				! isReaderTagEmbed && (
-					<UniversalNavbarFooter
-						onLanguageChange={ ( e ) => {
-							navigate( `/${ e.target.value + pathNameWithoutLocale }` );
-							window.location.reload();
-						} }
-						currentRoute={ currentRoute }
-						isLoggedIn={ isLoggedIn }
-					/>
+					<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 				) }
 
 			{ ! isLoggedIn && ! isReaderTagEmbed && (
@@ -348,12 +340,32 @@ export default withCurrentRoute(
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 			const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
-			const wccomFrom = currentQuery?.[ 'wccom-from' ];
+			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute;
+
+			const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
+			const wooPasswordless = getWooPasswordless( state );
+			const isWooPasswordless =
+				( config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless ) &&
+				// Enable woo-passwordless feature for WCCOM only.
+				isWCCOM;
+
+			if (
+				// Wait until the currentRoute is not changed.
+				getCurrentRoute( state ) === currentRoute &&
+				// window.location.pathname === currentRoute &&
+				isWCCOM &&
+				! wooPasswordless &&
+				config.isEnabled( 'woo/passwordless' )
+			) {
+				// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
+				const queryParams = { ...currentQuery, 'woo-passwordless': 'yes' };
+				page.replace( addQueryArgs( queryParams, currentRoute ) );
+			}
 
 			return {
 				isJetpackLogin,
@@ -375,6 +387,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooCoreProfilerFlow,
+				isWooPasswordless,
 			};
 		},
 		{ clearLastActionRequiresLogin }

@@ -99,6 +99,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 				<StatsCard
 					title="UTM"
 					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+					isNew
 				>
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>
@@ -108,6 +109,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 				<StatsCard
 					title="UTM"
 					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
+					isNew
 				>
 					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
 				</StatsCard>

@@ -9,13 +9,13 @@ export function getPatternsQueryOptions(
 ) {
 	return {
 		queryKey: [ 'pattern-library', 'patterns', locale, category ],
-		queryFn: () => {
+		queryFn() {
 			return wpcom.req.get( `/ptk/patterns/${ locale }`, {
 				categories: category,
 				post_type: 'wp_block',
 			} );
 		},
-		staleTime: Infinity,
+		staleTime: 5 * 60 * 1000,
 		...queryOptions,
 	};
 }

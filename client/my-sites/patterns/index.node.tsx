@@ -1,20 +1,33 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import {
+	PatternTypeFilter,
+	type RouterContext,
+	type RouterNext,
+	type Pattern,
+} from 'calypso/my-sites/patterns/types';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
+import performanceMark from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { RouterContext, RouterNext, Pattern } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
+	performanceMark( context, 'renderPatterns' );
+
 	context.primary = (
 		<PatternsWrapper
 			category={ context.params.category }
+			categoryGallery={ CategoryGalleryServer }
 			isGridView={ !! context.query.grid }
 			patternGallery={ PatternGalleryServer }
+			patternTypeFilter={
+				context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
+			}
 		/>
 	);
 
@@ -22,22 +35,24 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 }
 
 function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) {
+	performanceMark( context, 'fetchCategoriesAndPatterns' );
+
 	const { cachedMarkup, queryClient, lang, params, store } = context;
 
-	if ( cachedMarkup ) {
+	// Bypasses fetching if the rendered page is cached, or if any query parameters were passed in the URL
+	if ( cachedMarkup || Object.keys( context.query ).length > 0 ) {
 		next();
+
 		return;
 	}
 
 	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
 
+	performanceMark( context, 'getPatternCategories', true );
+
 	// Fetches the list of categories first, then fetches patterns if a specific category was requested
 	queryClient
-		.fetchQuery(
-			getPatternCategoriesQueryOptions( locale, {
-				staleTime: 10 * 60 * 1000,
-			} )
-		)
+		.fetchQuery( getPatternCategoriesQueryOptions( locale ) )
 		.then( ( categories ) => {
 			if ( ! params.category ) {
 				return;
@@ -52,8 +67,10 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 				};
 			}
 
+			performanceMark( context, 'getPatterns', true );
+
 			return queryClient.fetchQuery< Pattern[] >(
-				getPatternsQueryOptions( locale, params.category, { staleTime: 10 * 60 * 1000 } )
+				getPatternsQueryOptions( locale, params.category )
 			);
 		} )
 		.then( () => {
@@ -68,7 +85,12 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
 
 	router(
-		[ `/${ langParam }/patterns/:category?`, `/patterns/:category?` ],
+		[
+			`/${ langParam }/patterns/:category?`,
+			`/${ langParam }/patterns/:type(layouts)/:category?`,
+			`/patterns/:category?`,
+			`/patterns/:type(layouts)/:category?`,
+		],
 		ssrSetupLocale,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,

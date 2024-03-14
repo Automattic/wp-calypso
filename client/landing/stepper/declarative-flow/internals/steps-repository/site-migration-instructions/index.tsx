@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -6,16 +7,22 @@ import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
-	const siteMigrationKey = 'Yjx3xUYYTm89s9xBFe7jitNA94noUg6tzgjnpx9zPVwGdbewfL';
+	const site = useSite();
+	const siteId = site?.ID;
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const sourceSiteUrl = fromUrl
 		? addQueryArgs( fromUrl + '/wp-admin/admin.php', { page: 'migrateguru' } )
+		: '';
+	const destSiteUrl = fromUrl
+		? addQueryArgs( site?.URL + '/wp-admin/admin.php', { page: 'migrateguru' } )
 		: '';
 	const [ buttonTextCopy, setButtonTextCopy ] = useState( false );
 	const onCopy = () => {
@@ -24,6 +31,26 @@ const SiteMigrationInstructions: Step = function () {
 		setTimeout( () => {
 			setButtonTextCopy( false );
 		}, 2000 );
+	};
+	const [ siteMigrationKey, setSiteMigrationKey ] = useState< string | null >( null );
+	const [ siteMigrationKeyError, setSiteMigrationKeyError ] = useState< string | null >( null );
+	const [ hideSiteMigrationKey, setHideSiteMigrationKey ] = useState( true );
+
+	const getMigrationKey = async () => {
+		try {
+			const response = await wpcom.req.get(
+				`/sites/${ siteId }/atomic-migration-status/migrate-guru-key?http_envelope=1`,
+				{
+					apiNamespace: 'wpcom/v2',
+				}
+			);
+
+			setSiteMigrationKey( response?.migration_key );
+			recordTracksEvent( 'calypso_migration_instructions_key_retrieved' );
+		} catch ( error ) {
+			setSiteMigrationKeyError( error as string );
+			recordTracksEvent( 'calypso_migration_instructions_key_error', { error } );
+		}
 	};
 
 	const stepContent = (
@@ -43,23 +70,76 @@ const SiteMigrationInstructions: Step = function () {
 					} ) }
 				</li>
 				<li>
-					{ translate(
-						'Click {{strong}}Copy key{{/strong}} below to get your migration key - you will need that in a few minutes to start the migration.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-					<div className="site-migration-instructions__migration-key">
-						<code className="site-migration-instructions__key">{ siteMigrationKey }</code>
-						<ClipboardButton
-							text={ siteMigrationKey }
-							className="site-migration-instructions__copy-key-button is-primary"
-							onCopy={ onCopy }
-						>
-							{ buttonTextCopy ? translate( 'Copied!' ) : translate( 'Copy key' ) }
-						</ClipboardButton>
+					<div
+						className={ `site-migration-instructions__list-migration-key-item ${
+							siteMigrationKey ? 'expanded' : ''
+						}${ siteMigrationKeyError ? 'error' : '' }` }
+					>
+						{ ! siteMigrationKey && (
+							<>
+								{ ! siteMigrationKeyError && (
+									<Button
+										primary
+										compact
+										className="site-migration-instructions__get-key-button component-button"
+										onClick={ getMigrationKey }
+									>
+										{ translate( 'Get migration key', {
+											components: {
+												strong: <strong />,
+											},
+										} ) }
+									</Button>
+								) }
+								{ siteMigrationKeyError && (
+									<>
+										{ translate(
+											'We were unable to retrieve your migration key. To get the key manually, go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}}.',
+											{
+												components: {
+													a: <a href={ destSiteUrl } target="_blank" rel="noreferrer" />,
+												},
+											}
+										) }
+									</>
+								) }
+							</>
+						) }
+						{ siteMigrationKey && ! siteMigrationKeyError && (
+							<>
+								{ translate(
+									'Click {{strong}}Copy key{{/strong}} below to copy your migration key - you will need that in a few minutes to start the migration. This key is unique to your site and will only be available once.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+								<div className="site-migration-instructions__migration-key">
+									<code className="site-migration-instructions__key">
+										{ hideSiteMigrationKey
+											? '*'.repeat( siteMigrationKey.length - 5 )
+											: siteMigrationKey }
+									</code>
+									<Button
+										primary
+										onClick={ () => {
+											setHideSiteMigrationKey( ! hideSiteMigrationKey );
+										} }
+										className="site-migration-instructions__show-key-button components-button"
+									>
+										{ hideSiteMigrationKey ? translate( 'Show key' ) : translate( 'Hide key' ) }
+									</Button>
+									<ClipboardButton
+										text={ siteMigrationKey }
+										className="site-migration-instructions__copy-key-button is-primary"
+										onCopy={ onCopy }
+									>
+										{ buttonTextCopy ? translate( 'Copied!' ) : translate( 'Copy key' ) }
+									</ClipboardButton>
+								</div>
+							</>
+						) }
 					</div>
 				</li>
 				<li>

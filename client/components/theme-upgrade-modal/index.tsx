@@ -19,12 +19,17 @@ import {
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
 	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
+	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import { Button, Dialog, ScreenReaderText } from '@automattic/components';
 import { ProductsList } from '@automattic/data-stores';
@@ -35,7 +40,6 @@ import { Icon as WpIcon, check, close } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
@@ -52,6 +56,7 @@ interface UpgradeModalProps {
 	isOpen: boolean;
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
 	isMarketplacePlanSubscriptionNeeeded?: boolean;
+	currentPlanTerm?: string;
 	marketplaceProduct?: ProductListItem;
 	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
@@ -75,6 +80,7 @@ export const ThemeUpgradeModal = ( {
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
 	isMarketplacePlanSubscriptionNeeeded,
+	currentPlanTerm,
 	marketplaceProduct,
 	closeModal,
 	checkout,
@@ -108,6 +114,14 @@ export const ThemeUpgradeModal = ( {
 	);
 	const monthlyBusinessPlanProduct = useSelect(
 		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
+		[]
+	);
+	const biAnnualBusinessPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-2y' ),
+		[]
+	);
+	const triAnnualBusinessPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-3y' ),
 		[]
 	);
 
@@ -275,13 +289,43 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
-		const businessPlanPrice = monthlyBusinessPlanProduct?.combined_cost_display;
+		const getBusinessPlanByTerm = ( term: string ) => {
+			switch ( term ) {
+				case TERM_TRIENNIALLY:
+					return triAnnualBusinessPlanProduct;
+				case TERM_BIENNIALLY:
+					return biAnnualBusinessPlanProduct;
+				case TERM_ANNUALLY:
+					return businessPlanProduct;
+				case TERM_MONTHLY:
+				default:
+					return monthlyBusinessPlanProduct;
+			}
+		};
+
+		const getPlanTextByTerm = ( term: string, cost: string ) => {
+			switch ( term ) {
+				case TERM_TRIENNIALLY:
+					return translate( '%(cost)s per three years', { args: { cost } } );
+				case TERM_BIENNIALLY:
+					return translate( '%(cost)s per two years', { args: { cost } } );
+				case TERM_ANNUALLY:
+					return translate( '%(cost)s per year', { args: { cost } } );
+				case TERM_MONTHLY:
+				default:
+					return translate( '%(cost)s per month', { args: { cost } } );
+			}
+		};
+
+		const businessPlan = getBusinessPlanByTerm( currentPlanTerm || '' );
+
+		const businessPlanPrice = businessPlan?.combined_cost_display;
 		const productPrice = marketplaceProduct?.cost_display;
 
-		const businessPlanPriceText =
-			monthlyBusinessPlanProduct?.product_term === 'year'
-				? translate( '%(cost)s per year', { args: { cost: businessPlanPrice || '' } } )
-				: translate( '%(cost)s per month', { args: { cost: businessPlanPrice || '' } } );
+		const businessPlanPriceText = getPlanTextByTerm(
+			currentPlanTerm || '',
+			businessPlanPrice || ''
+		);
 
 		const productPriceText =
 			marketplaceProduct?.product_term === 'year'

@@ -90,16 +90,17 @@ const IntroPricingBanner: React.FC = () => {
 					</div>
 					<div className="intro-pricing-banner__item is-agencies">
 						<img className="intro-pricing-banner__item-icon" src={ people } alt="" />
-						<a
+						<button
 							className="intro-pricing-banner__item-label is-link"
-							onClick={ () =>
-								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
-							}
-							href={ localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale ) }
-							rel="noreferrer"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' );
+								window.location.assign(
+									localizeUrl( 'https://cloud.jetpack.com/manage/pricing', locale )
+								);
+							} }
 						>
 							{ preventWidows( translate( 'Explore bulk pricing' ) ) }
-						</a>
+						</button>
 					</div>
 					{ shouldShowCart && hasCrossed && (
 						<CloudCart cartStyle={ isSmallScreen ? {} : { left: clientRect.left } } />

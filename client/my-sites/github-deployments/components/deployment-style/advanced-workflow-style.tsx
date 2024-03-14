@@ -1,3 +1,4 @@
+import { useWorkflowTemplate } from 'calypso/my-sites/github-deployments/components/deployment-style/use-get-workflow-template-query';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { NewWorkflowWizard } from './new-workflow-wizard';
 import { Workflow } from './use-deployment-workflows-query';
@@ -13,7 +14,6 @@ type AdvancedWorkflowStyleProps = {
 	isFetching: boolean;
 	useComposerWorkflow: boolean;
 	onWorkflowCreation( path: string ): void;
-	onNewWorkflowVerification( path: string ): void;
 	onChooseWorkflow( path: string ): void;
 };
 
@@ -25,23 +25,27 @@ export const AdvancedWorkflowStyle = ( {
 	branchName,
 	workflowPath,
 	onWorkflowCreation,
-	onNewWorkflowVerification,
 	onChooseWorkflow,
 	useComposerWorkflow,
 }: AdvancedWorkflowStyleProps ) => {
+	const templateName = useComposerWorkflow ? 'with_composer' : 'simple';
+
+	const { data: template } = useWorkflowTemplate( { branchName, template: templateName } );
+
 	const getContent = () => {
 		const workflow = workflows?.find( ( workflow ) => workflow.workflow_path === workflowPath );
+
+		const templateContents = template?.template ?? '';
 
 		if ( ! workflow ) {
 			return (
 				<NewWorkflowWizard
-					isLoadingWorkflows={ isLoading || isFetching }
 					workflows={ workflows }
 					repository={ repository }
 					repositoryBranch={ branchName }
-					onWorkflowVerification={ onNewWorkflowVerification }
 					onWorkflowCreated={ onWorkflowCreation }
-					useComposerWorkflow={ useComposerWorkflow }
+					templateName={ templateName }
+					exampleTemplate={ templateContents }
 				/>
 			);
 		}
@@ -51,6 +55,7 @@ export const AdvancedWorkflowStyle = ( {
 				repository={ repository }
 				branchName={ branchName }
 				workflow={ workflow }
+				validYamlFile={ templateContents }
 			/>
 		);
 	};

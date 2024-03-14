@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, MaterialIcon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -13,7 +13,6 @@ import {
 	getDomainInboundTransferStatusInfo,
 	getDomainTransferrability,
 } from 'calypso/components/domains/use-my-domain/utilities';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';

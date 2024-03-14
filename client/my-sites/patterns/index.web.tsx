@@ -6,19 +6,28 @@ import {
 	render as clientRender,
 	notFound,
 } from 'calypso/controller/index.web';
+import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
+import {
+	PatternTypeFilter,
+	type RouterContext,
+	type RouterNext,
+} from 'calypso/my-sites/patterns/types';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
-import type { RouterContext, RouterNext } from 'calypso/my-sites/patterns/types';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
 			<PatternsWrapper
 				category={ context.params.category }
+				categoryGallery={ CategoryGalleryClient }
 				isGridView={ !! context.query.grid }
 				patternGallery={ PatternGalleryClient }
+				patternTypeFilter={
+					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
+				}
 			/>
 		);
 	}
@@ -58,5 +67,12 @@ export default function ( router: typeof clientRouter ) {
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		...middleware
 	);
+	router(
+		`/${ langParam }/patterns/:type(layouts)/:category?`,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
+		...middleware
+	);
+
 	router( `/patterns/:category?`, ...middleware );
+	router( `/patterns/:type(layouts)/:category?`, ...middleware );
 }

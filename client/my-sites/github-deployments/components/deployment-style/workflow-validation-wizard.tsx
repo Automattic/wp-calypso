@@ -13,15 +13,17 @@ interface WorkflowValidationWizardProps {
 	repository: Pick< GitHubRepositoryData, 'owner' | 'name' >;
 	branchName: string;
 	workflow: Workflow;
+	validYamlFile: string;
 }
 
 export const WorkflowValidationWizard = ( {
 	repository,
 	branchName,
 	workflow,
+	validYamlFile,
 }: WorkflowValidationWizardProps ) => {
 	const { __ } = useI18n();
-	const validations = useWorkflowValidations( { branchName } );
+	const validations = useWorkflowValidations( { branchName, validYamlFile } );
 	const { workflowCheckResult, isCheckingWorkflow, onWorkflowVerify } = useDeploymentStyleContext();
 
 	const getWorkflowCheckDescription = () => {
