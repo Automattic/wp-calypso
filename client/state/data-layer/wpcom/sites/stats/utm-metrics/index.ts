@@ -28,8 +28,11 @@ const daysInYearFromDate = ( date: string ) => {
 export const fetch = ( action: AnyAction ) => {
 	const { siteId, utmParam, postId, query } = action;
 
+	// `num` is only for the period `day`.
+	const num = query.num || 1;
+
 	// Calculate the number of days to query based on the period.
-	let days = 1;
+	let days = num;
 	switch ( query.period ) {
 		case 'week':
 			days = 7;
