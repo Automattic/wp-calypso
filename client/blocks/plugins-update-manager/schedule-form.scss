@@ -130,11 +130,6 @@
 		}
 	}
 
-	// Change flex to block on mobile to prevent the hour/minute field from wrapping
-	.is-mobile {
-		display: block;
-	}
-
 	.time-controls {
 		& > div {
 			display: inline-block;
