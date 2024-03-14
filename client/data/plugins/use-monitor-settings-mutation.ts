@@ -51,8 +51,8 @@ export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptio
 	const MAX_RETRIES = 3;
 	const isMonitorNotActiveErrorMsg = 'Monitor is not active.';
 
-	const isMonitorNotActive = ( data: UpdateMonitorSettingsCreate ) => {
-		return data?.settings && data?.settings?.monitor_active === false;
+	const isMonitorActive = ( data: UpdateMonitorSettingsCreate ) => {
+		return data?.settings && data?.settings?.monitor_active === true;
 	};
 
 	const isMonitorNotActiveError = ( error: Error ) => {
@@ -67,7 +67,7 @@ export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptio
 				method: 'POST',
 				body: params,
 			} );
-			if ( isMonitorNotActive( response ) ) {
+			if ( ! isMonitorActive( response ) ) {
 				throw new Error( isMonitorNotActiveErrorMsg );
 			}
 			return response;
