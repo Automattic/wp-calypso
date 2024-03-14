@@ -729,7 +729,12 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-marketplace',
-		paths: [ '/marketplace', '/marketplace/assign-license' ],
+		paths: [
+			'/marketplace',
+			'/marketplace/products',
+			'/marketplace/hosting',
+			'/marketplace/assign-license',
+		],
 		module: 'calypso/a8c-for-agencies/sections/marketplace',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
