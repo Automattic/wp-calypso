@@ -1,10 +1,15 @@
 import { Site, SiteData } from '../types';
 
+export interface SitesDataResponse {
+	sites: Array< Site >;
+	total: number;
+	perPage: number;
+	totalFavorites: number;
+}
+
 export interface SitesDataViewsProps {
 	className?: string;
-	data:
-		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
-		| undefined;
+	data: SitesDataResponse | undefined;
 	forceTourExampleSite?: boolean;
 	isLargeScreen: boolean;
 	isLoading: boolean;
