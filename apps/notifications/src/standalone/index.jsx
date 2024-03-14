@@ -11,8 +11,6 @@ import '../panel/boot/stylesheets/style.scss';
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );
 const locale = match ? match[ 1 ] : 'en';
-// let isShowing = false;
-// let isVisible = document.visibilityState === 'visible';
 
 let store = { dispatch: () => {}, getState: () => {} };
 const customEnhancer = ( next ) => ( reducer, initialState ) =>
@@ -159,44 +157,6 @@ const setTracksUser = ( wpcom ) => {
 const init = ( wpcom ) => {
 	setTracksUser( wpcom );
 	render( wpcom );
-
-	// const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
-	// const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
-
-	// document.addEventListener( 'visibilitychange', refresh );
-
-	// window.addEventListener(
-	// 	'message',
-	// 	receiveMessage( ( { action, hidden, showing } ) => {
-	// 		debug( 'message received', {
-	// 			action,
-	// 			hidden,
-	// 			showing,
-	// 		} );
-	// 		if ( 'togglePanel' === action ) {
-	// 			if ( isShowing && ! showing ) {
-	// 				reset();
-	// 			}
-
-	// 			isShowing = showing;
-	// 			refresh();
-	// 		}
-
-	// 		if ( 'toggleVisibility' === action ) {
-	// 			isVisible = ! hidden;
-	// 			refresh();
-	// 		}
-	// 	} )
-	// );
-
-	// window.addEventListener(
-	// 	'message',
-	// 	receiveMessage( ( { action } ) => {
-	// 		if ( 'refreshNotes' === action ) {
-	// 			refreshNotes();
-	// 		}
-	// 	} )
-	// );
 };
 
 createClient().then( init );

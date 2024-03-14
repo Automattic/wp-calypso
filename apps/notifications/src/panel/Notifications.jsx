@@ -67,7 +67,9 @@ export class Notifications extends PureComponent {
 								isShowing: this.props.isShowing,
 								isVisible: action.isVisible,
 							} );
-							// this is the next issue. isShowing is always the mount value. bad.
+							// Use this.props instead of destructuring isShowing, so that this uses
+							// the value on props at any given time and not only the value that was
+							// present on initial mount.
 							client.setVisibility.call( client, {
 								isShowing: this.props.isShowing,
 								isVisible: action.isVisible,
@@ -101,37 +103,6 @@ export class Notifications extends PureComponent {
 		store.dispatch( { type: 'APP_IS_READY' } );
 	}
 
-	componentDidUpdate( prevProps ) {
-		debug( 'Panel did update', {
-			isShowing: this.props.isShowing,
-			isVisible: this.props.isVisible,
-			wpcom: this.props.wpcom,
-			prevShowing: prevProps.isShowing,
-			prevVis: prevProps.isVisible,
-			prevWPcom: prevProps.wpcom,
-		} );
-
-		// if ( prevProps.wpcom !== this.props.wpcom ) {
-		// 	initAPI( this.props.wpcom );
-		// }
-
-		// if ( ! this.props.isShowing && prevProps.isShowing ) {
-		// 	// unselect the note so keyhandlers don't steal keystrokes
-		// 	store.dispatch( actions.ui.unselectNote() );
-		// }
-
-		// if ( prevProps.isShowing !== this.props.isShowing ) {
-		// 	store.dispatch( { type: SET_IS_SHOWING, isShowing: this.props.isShowing } );
-		// }
-
-		// if (
-		// 	prevProps.isShowing !== this.props.isShowing ||
-		// 	prevProps.isVisible !== this.props.isVisible
-		// ) {
-		// 	client.setVisibility( { isShowing: this.props.isShowing, isVisible: this.props.isVisible } );
-		// }
-	}
-
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
 		debug( 'Panel will recieve props', {
@@ -142,6 +113,7 @@ export class Notifications extends PureComponent {
 			prevVis: this.props.isVisible,
 			prevWPcom: this.props.wpcom,
 		} );
+
 		if ( wpcom !== this.props.wpcom ) {
 			initAPI( wpcom );
 		}
