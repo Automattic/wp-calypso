@@ -126,7 +126,7 @@ export class SectionMigrate extends Component {
 		}
 
 		wpcom.site( this.props.sourceSite.ID ).pluginsList( ( error, data ) => {
-			if ( data.plugins ) {
+			if ( data?.plugins ) {
 				this.setState( { sourceSitePlugins: data.plugins } );
 			}
 		} );
