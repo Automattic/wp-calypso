@@ -101,8 +101,8 @@ export default function SitesDashboard() {
 	const data: SitesDataResponse = {
 		sites: mockedSites,
 		total: 5,
-		per_page: 50,
-		total_favorites: 2,
+		perPage: 50,
+		totalFavorites: 2,
 	};
 	const isError = false;
 	const refetch = () => {};
