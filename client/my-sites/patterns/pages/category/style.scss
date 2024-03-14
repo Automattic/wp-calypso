@@ -13,7 +13,10 @@
 
 	@media ( max-width: $break-wide ) {
 		.category-pill-navigation {
-			padding: 24px;
+			padding: 24px 0;
+			.category-pill-navigation__list-inner {
+				padding: 0 24px;
+			}
 		}
 	}
 }
