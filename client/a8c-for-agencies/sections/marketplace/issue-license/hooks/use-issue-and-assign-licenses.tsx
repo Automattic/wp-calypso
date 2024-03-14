@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { a4aPurchasesBasePath } from 'calypso/lib/a8c-for-agencies/paths';
+import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -111,7 +111,7 @@ function useIssueAndAssignLicenses(
 				const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 				dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 
-				page.redirect( a4aPurchasesBasePath( '/licenses' ) );
+				page.redirect( A4A_LICENSES_LINK );
 				return;
 			}
 
@@ -132,7 +132,7 @@ function useIssueAndAssignLicenses(
 			}
 
 			// Otherwise, send them to the overview of all licenses
-			page.redirect( a4aPurchasesBasePath( '/licenses' ) );
+			page.redirect( A4A_LICENSES_LINK );
 		};
 
 		return { issueAndAssignLicenses, isReady };

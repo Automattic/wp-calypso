@@ -2,9 +2,9 @@ import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { serializeQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import { containEquivalentItems } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-submit-form';
-import { a4aPurchasesBasePath } from 'calypso/lib/a8c-for-agencies/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -28,11 +28,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 								'A primary payment method is required.{{br/}} {{a}}Try adding a new payment method{{/a}} or contact support.',
 								{
 									components: {
-										a: (
-											<a
-												href={ a4aPurchasesBasePath( '/payment-methods/add?return=/marketplace' ) }
-											/>
-										),
+										a: <a href={ `${ A4A_PAYMENT_METHODS_ADD_LINK }?return=/marketplace` } />,
 										br: <br />,
 									},
 								}
@@ -95,7 +91,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 						...( selectedSite?.ID && { site_id: selectedSite?.ID } ),
 						...( fromDashboard && { source: 'dashboard' } ),
 					},
-					a4aPurchasesBasePath( '/payment-methods/add' )
+					A4A_PAYMENT_METHODS_ADD_LINK
 				);
 
 				page( nextStep );

@@ -13,12 +13,15 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import {
+	A4A_DOWNLOAD_PRODUCTS_LINK,
+	A4A_LICENSES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import areLicenseKeysAssignableToMultisite from 'calypso/jetpack-cloud/sections/partner-portal/lib/are-license-keys-assignable-to-multisite';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
-import { a4aPurchasesBasePath } from 'calypso/lib/a8c-for-agencies/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -112,11 +115,11 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 
 	const onClickAssignLater = useCallback( () => {
 		if ( licenseKeysArray.length > 1 ) {
-			page.redirect( a4aPurchasesBasePath( '/licenses' ) );
+			page.redirect( A4A_LICENSES_LINK );
 		}
 
 		const licenseKey = licenseKeysArray[ 0 ];
-		page.redirect( addQueryArgs( { highlight: licenseKey }, a4aPurchasesBasePath( '/licenses' ) ) );
+		page.redirect( addQueryArgs( { highlight: licenseKey }, A4A_LICENSES_LINK ) );
 	}, [ licenseKeysArray ] );
 
 	const onClickAssignLicenses = useCallback( async () => {
@@ -140,7 +143,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 			return page.redirect(
 				addQueryArgs(
 					{ products: licenseKeysArray.join( ',' ), attachedSiteId: selectedSite?.ID },
-					a4aPurchasesBasePath( '/download-products' )
+					A4A_DOWNLOAD_PRODUCTS_LINK
 				)
 			);
 		}
@@ -150,7 +153,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 			return page.redirect( '/sites' );
 		}
 
-		return page.redirect( a4aPurchasesBasePath( '/licenses' ) );
+		return page.redirect( A4A_LICENSES_LINK );
 	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
 
 	return (
