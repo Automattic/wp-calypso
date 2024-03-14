@@ -84,15 +84,14 @@ const NotesWrapper = ( { wpcom } ) => {
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
 
 	const handleMessages = ( { action, hidden, showing } ) => {
+		debug( 'message received', {
+			action,
+			hidden,
+			showing,
+		} );
+
 		if ( 'togglePanel' === action ) {
 			setIsShowing( ( prevIsShowing ) => {
-				debug( 'togglePanel message received', {
-					action,
-					hidden,
-					showing,
-					isShowing: prevIsShowing,
-				} );
-				// Toggle showing based on current state
 				if ( prevIsShowing && ! showing ) {
 					reset();
 				}

@@ -99,13 +99,12 @@ export class Notifications extends PureComponent {
 	}
 
 	componentDidMount() {
-		debug( 'component did mount', this.props );
 		store.dispatch( { type: 'APP_IS_READY' } );
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( { isShowing, isVisible, wpcom } ) {
-		debug( 'Panel will recieve props', {
+		debug( 'Component will recieve props', {
 			isShowing,
 			isVisible,
 			wpcom,
