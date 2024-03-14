@@ -74,7 +74,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 
-	debug( 'Notes wrapper render/update', { isShowing, isVisible } );
+	debug( 'wrapper state update', { isShowing, isVisible } );
 
 	const refresh = () =>
 		setIsVisible( ( prevIsVisible ) => {
@@ -114,6 +114,11 @@ const NotesWrapper = ( { wpcom } ) => {
 		document.addEventListener( 'visibilitychange', refresh );
 
 		window.addEventListener( 'message', receiveMessage( handleMessages ) );
+
+		// Ensure empty dependency array so we only add these listeners once. The functionality of
+		// refresh and handleMessages will not change after initial mount. Alternatively caching
+		// these functions to pass into this dependency array would use extra resources
+		// unnecessarily.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
