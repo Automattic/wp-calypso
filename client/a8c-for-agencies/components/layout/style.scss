@@ -16,6 +16,10 @@
 	}
 }
 
+.main.a4a-layout.is-compact {
+	padding-block-start: 28px;
+}
+
 .a4a-layout__container {
 	max-width: 100%;
 	min-height: calc(100vh - 80px);
@@ -51,9 +55,25 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		.a4a-layout__top-wrapper {
 			border-block-end: 1px solid var(--color-neutral-5);
+
+			// If we don't have a navigation, we will require some spacing on the borders.
+			&:not(.has-navigation) {
+				padding-block-end: 48px;
+			}
 		}
 	}
 }
+
+.main.a4a-layout.is-with-border.is-compact {
+	@include breakpoint-deprecated( ">660px" ) {
+		.a4a-layout__top-wrapper {
+			&:not(.has-navigation) {
+				padding-block-end: 28px;
+			}
+		}
+	}
+}
+
 
 .a4a-layout__header {
 	display: flex;
