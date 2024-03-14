@@ -60,12 +60,20 @@ function getRedirectToAfterLoginUrl( {
 	signupDependencies,
 	stepName,
 	userLoggedIn,
+	wooPasswordless,
 } ) {
 	if (
 		oauth2Signup &&
 		initialContext?.query?.oauth2_redirect &&
 		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
+		if (
+			wooPasswordless &&
+			! initialContext.query.oauth2_redirect.includes( 'woo-passwordless' )
+		) {
+			return initialContext.query.oauth2_redirect + '&woo-passwordless=yes';
+		}
+
 		return initialContext.query.oauth2_redirect;
 	}
 	if (
