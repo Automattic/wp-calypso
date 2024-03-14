@@ -1,6 +1,7 @@
 import { UseQueryResult, useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { SiteSlug } from 'calypso/types';
 
 export type UpdateMonitorURLOptions = {
@@ -75,6 +76,9 @@ export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptio
 		...queryOptions,
 		retry: ( failureCount, error ) => {
 			if ( isMonitorNotActiveError( error ) && failureCount < MAX_RETRIES ) {
+				recordTracksEvent( 'calypso_scheduled_updates_retry_monitor_settings', {
+					site_slug: siteSlug,
+				} );
 				return true;
 			}
 			return false;
