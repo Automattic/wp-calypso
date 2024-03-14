@@ -35,6 +35,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const { isFetching: isFetchingUTM, metrics } = useUTMMetricsQuery(
 		siteId,
 		selectedOption,
+		query,
 		postId
 	);
 	// Fetch top posts for all UTM metric items.

@@ -19,6 +19,7 @@ import 'calypso/state/stats/init';
 export function requestMetrics(
 	siteId: number,
 	utmParam: string,
+	query: object,
 	postId?: number,
 	siteSlug?: string
 ) {
@@ -26,6 +27,7 @@ export function requestMetrics(
 		type: STATS_UTM_METRICS_REQUEST,
 		siteId,
 		utmParam,
+		query,
 		postId,
 		siteSlug,
 	};
