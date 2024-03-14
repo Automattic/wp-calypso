@@ -95,11 +95,18 @@ export default async function razorpayProcessor(
 					transactionOptions.razorpayConfiguration,
 					transactionOptions.contactDetails,
 					response as WPCOMTransactionEndpointResponseRedirect,
-					( result ) => resolve( { bd_order_id: response.order_id.toString(), ...result } )
+					( result ) => {
+						transactionOptions.reduxDispatch(
+							recordTracksEvent( 'calypso_checkout_razorpay_modal_complete', {
+								transactionData: formattedTransactionData,
+							} )
+						);
+						return resolve( { bd_order_id: response.order_id.toString(), ...result } );
+					}
 				);
 				debug( 'Opening Razorpay modal with options', razorpayOptions );
 				transactionOptions.reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_razorpay_open_modal', {
+					recordTracksEvent( 'calypso_checkout_razorpay_modal_open', {
 						transactionData: formattedTransactionData,
 					} )
 				);
@@ -132,6 +139,11 @@ export default async function razorpayProcessor(
 			}
 
 			if ( confirmationResult.success === true ) {
+				transactionOptions.reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_razorpay_confirmation_success', {
+						confirmationResult,
+					} )
+				);
 				return makeSuccessResponse( confirmationResult );
 			}
 			// This should not happen because the API will have returned an
@@ -141,11 +153,11 @@ export default async function razorpayProcessor(
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
 			transactionOptions.reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_razorpay_transaction_failed', {
+				recordTracksEvent( 'calypso_checkout_razorpay_transaction_error', {
 					error: error.message,
 				} )
 			);
-			logStashEvent( 'calypso_checkout_razorpay_transaction_failed', {
+			logStashEvent( 'calypso_checkout_razorpay_transaction_error', {
 				error: error.message,
 			} );
 			return makeErrorResponse( error.message );
