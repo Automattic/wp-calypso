@@ -158,7 +158,12 @@ export default function SitesDashboard() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	return (
-		<Layout title="Sites" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout
+			title="Sites"
+			className="sites-dashboard"
+			wide
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
 			<div
 				className={ classNames(
 					'sites-dashboard__layout',
