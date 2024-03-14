@@ -382,10 +382,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 
 		if ( userListFilters.selectedRoleFilters.length ) {
 			updatedUsersList = updatedUsersList.filter( ( user ) => {
-				const userRoles = user.user?.roles;
-				return userRoles
-					? userRoles?.some( ( role ) => userListFilters.selectedRoleFilters.includes( role ) )
-					: false;
+				return userListFilters.selectedRoleFilters.includes( getRole( user.user ) );
 			} );
 		}
 		setFilteredUsers( updatedUsersList );
