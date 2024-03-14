@@ -7,15 +7,15 @@ import {
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
-import type { CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
+import { RENDERER_SITE_ID, getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
+import { PatternTypeFilter, type CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
 export const CategoryGalleryClient: CategoryGalleryFC = ( {
 	categories,
 	description,
-	patternType,
+	patternTypeFilter,
 	title,
 } ) => {
 	const patternIdsByCategory = {
@@ -36,7 +36,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 				<CategoryGalleryServer
 					categories={ categories }
 					description={ description }
-					patternType={ patternType }
+					patternTypeFilter={ patternTypeFilter }
 					title={ title }
 				/>
 			}
@@ -49,19 +49,20 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 				<PatternsSection title={ title } description={ description }>
 					<div
 						className={ classNames( 'patterns-category-gallery', {
-							'is-regular-patterns': patternType === 'regular',
-							'is-page-patterns': patternType === 'pages',
+							'is-regular-patterns': patternTypeFilter === PatternTypeFilter.REGULAR,
+							'is-page-patterns': patternTypeFilter === PatternTypeFilter.PAGES,
 						} ) }
 					>
 						{ categories?.map( ( category ) => (
 							<LocalizedLink
 								className="patterns-category-gallery__item"
-								href={ `/patterns/${ category.name }` }
+								href={ getCategoryUrlPath( category.name, patternTypeFilter, false ) }
 								key={ category.name }
 							>
 								<div
 									className={ classNames( 'patterns-category-gallery__item-preview', {
-										'patterns-category-gallery__item-preview_page-layouts': patternType === 'pages',
+										'patterns-category-gallery__item-preview_page-layouts':
+											patternTypeFilter === PatternTypeFilter.PAGES,
 										'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
 									} ) }
 								>
@@ -69,7 +70,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 										<PatternPreview
 											isCategoryPreview
 											pattern={
-												patternType === 'pages'
+												patternTypeFilter === PatternTypeFilter.PAGES
 													? category.pagePreviewPattern
 													: category.regularPreviewPattern
 											}
@@ -80,7 +81,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 
 								<div className="patterns-category-gallery__item-name">{ category.label }</div>
 								<div className="patterns-category-gallery__item-count">
-									{ patternType === 'pages'
+									{ patternTypeFilter === PatternTypeFilter.PAGES
 										? category.pagePatternCount
 										: category.regularPatternCount }{ ' ' }
 									patterns
