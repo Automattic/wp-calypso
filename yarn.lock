@@ -711,6 +711,7 @@ __metadata:
     "@wordpress/data-controls": "npm:^3.21.0"
     "@wordpress/deprecated": "npm:^3.52.0"
     "@wordpress/element": "npm:^5.29.0"
+    "@wordpress/i18n": "npm:^4.52.0"
     "@wordpress/primitives": "npm:^3.50.0"
     "@wordpress/url": "npm:^3.53.0"
     fast-json-stable-stringify: "npm:^2.1.0"
