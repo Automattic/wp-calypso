@@ -30,7 +30,7 @@ export async function createQueryClient( userId?: number ): Promise< QueryClient
 		// Persist the cache to local storage before the browser is unloaded
 		window.addEventListener( 'beforeunload', () => {
 			if ( persister ) {
-				// cancel any pending throtthled function calls
+				// flush the debouncer so the next persist is immediate
 				persister.persistClient.flush();
 				persistQueryClient( { queryClient, persister: persister as unknown as Persister } );
 			}
