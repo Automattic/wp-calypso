@@ -33,6 +33,8 @@ export function generateFlows( {
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
 			lastModified: '2023-07-18',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'account',
