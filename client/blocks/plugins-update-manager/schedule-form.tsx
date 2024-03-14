@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	RadioControl,
 	SearchControl,
@@ -92,6 +93,7 @@ export const ScheduleForm = ( props: Props ) => {
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
+	const isMobile = useMobileBreakpoint();
 
 	const onPluginSelectionChange = useCallback(
 		( plugin: CorePlugin, isChecked: boolean ) => {
@@ -227,7 +229,7 @@ export const ScheduleForm = ( props: Props ) => {
 								onBlur={ () => setFieldTouched( { ...fieldTouched, timestamp: true } ) }
 							></RadioControl>
 							{ frequency === 'weekly' && (
-								<Flex gap={ 6 }>
+								<Flex gap={ 6 } className={ classnames( { 'is-mobile': isMobile } ) }>
 									<FlexItem>
 										<div className="form-field">
 											<SelectControl
