@@ -279,13 +279,7 @@ function LineItemCostOverride( {
 	}
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-			<span
-				className={
-					isPriceIncrease
-						? 'cost-overrides-list-item__reason'
-						: 'cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount'
-				}
-			>
+			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 				{ costOverride.humanReadableReason }
 			</span>
 			<span className="cost-overrides-list-item__discount">
