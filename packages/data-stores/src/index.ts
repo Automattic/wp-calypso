@@ -17,6 +17,7 @@ import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useSiteIntent } from './queries/use-site-intent';
 export { useSendInvites } from './users/use-send-invites';
+export * from './add-ons/types';
 export * from './starter-designs-queries';
 export * from './site/types';
 export * from './templates';
