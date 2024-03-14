@@ -55,7 +55,7 @@
 	},
 	"peerDependencies": {
 		"@babel/runtime": "^7.23.9",
-		"@wordpress/data": "^9.22.0",
+		"@wordpress/data": "^9.23.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
 	},
