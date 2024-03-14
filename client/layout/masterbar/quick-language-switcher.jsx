@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
 import { Fragment, useReducer } from 'react';
 import { connect } from 'react-redux';
@@ -22,13 +23,20 @@ function QuickLanguageSwitcher( props ) {
 
 	return (
 		<Fragment>
-			<MasterbarItem
-				icon="globe"
-				className="masterbar__quick-language-switcher"
-				onClick={ toggleLanguagesModal }
-			>
-				{ props.selectedLanguageSlug }
-			</MasterbarItem>
+			{ props.shouldRenderAsButton ? (
+				<button className={ props.className } onClick={ toggleLanguagesModal }>
+					<Gridicon icon="globe" size={ 24 } />
+					{ props.selectedLanguageSlug }
+				</button>
+			) : (
+				<MasterbarItem
+					icon="globe"
+					className="masterbar__quick-language-switcher"
+					onClick={ toggleLanguagesModal }
+				>
+					{ props.selectedLanguageSlug }
+				</MasterbarItem>
+			) }
 			{ isShowingModal && (
 				<LanguagePickerModal
 					languages={ languages }
