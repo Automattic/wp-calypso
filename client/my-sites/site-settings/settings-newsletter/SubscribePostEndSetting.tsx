@@ -46,7 +46,7 @@ export const SubscribePostEndSetting = ( {
 			disabled={ disabled }
 			label={
 				<>
-					{ translate( 'Add the Subscribe Block at the of each post' ) }
+					{ translate( 'Add the Subscribe Block at the end of each post' ) }
 					{ singlePostTemplateEditorUrl && (
 						<>
 							{ '. ' }
