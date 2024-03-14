@@ -44,6 +44,7 @@ import {
 import { useIsGitHubDeploymentsAvailableQuery } from '../github-deployments/use-is-feature-available';
 import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
+import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
 import { GitHubDeploymentsCard } from './github-deployments-card';
 import HostingActivateStatus from './hosting-activate-status';
@@ -140,6 +141,11 @@ const MainCards = ( {
 		{
 			feature: 'cache',
 			content: <CacheCard disabled={ isBasicHostingDisabled } />,
+			type: 'basic',
+		},
+		siteId && {
+			feature: 'wp-admin',
+			content: <SiteAdminInterface siteId={ siteId } isHosting />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );

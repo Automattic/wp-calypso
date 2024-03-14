@@ -551,8 +551,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderAdminInterface() {
-		const { site, siteIsAtomic } = this.props;
-		if ( ! ( siteIsAtomic || isEnabled( 'layout/wpcom-admin-interface' ) ) ) {
+		const { site } = this.props;
+		if ( ! isEnabled( 'layout/wpcom-admin-interface' ) ) {
 			return null;
 		}
 
