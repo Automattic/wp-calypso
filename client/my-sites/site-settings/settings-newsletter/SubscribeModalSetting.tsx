@@ -2,7 +2,7 @@ import { ExternalLink, ToggleControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -43,25 +43,30 @@ export const SubscribeModalSetting = ( {
 
 	return (
 		<>
+			<SupportInfo
+				text={ translate(
+					'Automatically add a subscribe form pop-up to every post and turn visitors into subscribers. It will appear as readers scroll through your posts.'
+				) }
+				privacyLink={ false }
+			/>
 			<ToggleControl
 				checked={ !! value }
 				onChange={ handleToggle( SUBSCRIBE_MODAL_OPTION ) }
 				disabled={ disabled }
-				label={ translate( 'Enable subscription pop-up' ) }
-			/>
-			<FormSettingExplanation>
-				{ translate(
-					'Automatically add a subscribe form pop-up to every post and turn visitors into subscribers. It will appear as readers scroll through your posts.'
-				) }
-				{ subscribeModalEditorUrl && (
+				label={
 					<>
-						{ ' ' }
-						<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
-							{ translate( 'Preview and edit the pop-up' ) }
-						</ExternalLink>
+						{ translate( 'Show subscription pop-up when scrolling a post' ) }
+						{ subscribeModalEditorUrl && (
+							<>
+								{ '. ' }
+								<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
+									{ translate( 'Preview and edit' ) }
+								</ExternalLink>
+							</>
+						) }
 					</>
-				) }
-			</FormSettingExplanation>
+				}
+			/>
 		</>
 	);
 };

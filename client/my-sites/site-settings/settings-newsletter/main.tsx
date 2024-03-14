@@ -157,16 +157,14 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 					handleToggle={ handleToggle }
 					value={ sm_enabled }
 				/>
-			</Card>
-			{ shouldShowSubscriptionOnCommentModule && (
-				<Card className="site-settings__card">
+				{ shouldShowSubscriptionOnCommentModule && (
 					<SubscribeModalOnCommentSetting
 						disabled={ disabled }
 						handleToggle={ handleToggle }
 						value={ jetpack_verbum_subscription_modal }
 					/>
-				</Card>
-			) }
+				) }
+			</Card>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				disabled={ disabled }
