@@ -12,6 +12,9 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { mockedSites } from 'calypso/a8c-for-agencies/data/sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import LayoutNavigation, {
+	LayoutNavigationTabs as NavigationTabs,
+} from 'calypso/jetpack-cloud/components/layout/nav';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import { JetpackPreviewPane } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-feature-previews/jetpack-preview-pane';
@@ -157,6 +160,22 @@ export default function SitesDashboard() {
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
 
+	// This is a basic representation of the feature families for now, with just the Overview tab.
+	const navItems = [
+		{
+			label: translate( 'Overview' ),
+		},
+	].map( ( navItem ) => ( {
+		...navItem,
+		selected: translate( 'Overview' ) === navItem.label,
+		children: navItem.label,
+	} ) );
+
+	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
+	const selectedItemProps = {
+		selectedText: selectedItem.label,
+	};
+
 	return (
 		<Layout
 			title="Sites"
@@ -179,6 +198,9 @@ export default function SitesDashboard() {
 								<SiteTopHeaderButtons />
 							</Actions>
 						</LayoutHeader>
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
 					</LayoutTop>
 
 					<DashboardDataContext.Provider

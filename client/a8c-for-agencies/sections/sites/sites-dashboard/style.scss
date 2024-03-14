@@ -275,6 +275,13 @@
 		max-width: none;
 	}
 
+	.sites-dashboard__layout:not(.preview-hidden) {
+
+		.section-nav {
+			display: none;
+		}
+	}
+
 	.sites-dashboard__layout {
 		display: flex;
 		flex-direction: row;
