@@ -926,19 +926,19 @@ export function LineItemBillingInterval( { product }: { product: ResponseCartPro
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return <span>{ translate( 'Billed every month' ) }</span>;
+		return <span>{ translate( 'Renews every month' ) }</span>;
 	}
 
 	if ( isYearly( product ) ) {
-		return <span>{ translate( 'Billed every year' ) }</span>;
+		return <span>{ translate( 'Renews every year' ) }</span>;
 	}
 
 	if ( isBiennially( product ) ) {
-		return <>{ translate( 'Billed every two years' ) }</>;
+		return <>{ translate( 'Renews every two years' ) }</>;
 	}
 
 	if ( isTriennially( product ) ) {
-		return <>{ translate( 'Billed every three years' ) }</>;
+		return <>{ translate( 'Renews every three years' ) }</>;
 	}
 }
 
