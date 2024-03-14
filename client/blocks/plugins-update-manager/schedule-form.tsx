@@ -236,7 +236,7 @@ export const ScheduleForm = ( props: Props ) => {
 				</FlexItem>
 				<FlexItem>
 					<ScheduleFormPlugins
-						initPlugins={ scheduleForEdit?.args }
+						initPlugins={ selectedPlugins }
 						error={ validationErrors?.plugins }
 						showError={ fieldTouched?.plugins }
 						onChange={ setSelectedPlugins }
