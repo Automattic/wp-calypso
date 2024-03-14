@@ -46,6 +46,11 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 			},
 			onError: ( error ) => {
 				dispatch(
+					recordTracksEvent( 'calypso_hosting_github_manual_deployment_run_failed', {
+						reason: error.message,
+					} )
+				);
+				dispatch(
 					errorNotice(
 						// translators: "reason" is why connecting the branch failed.
 						sprintf( __( 'Failed to trigger deployment run: %(reason)s' ), {
