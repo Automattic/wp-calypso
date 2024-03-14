@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { requestMetrics } from 'calypso/state/stats/utm-metrics/actions';
 import { getMetrics, isLoading } from 'calypso/state/stats/utm-metrics/selectors';
 
 export default function useUTMMetricsQuery( siteId: number, UTMParam: string, postId?: number ) {
 	const dispatch = useDispatch();
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	useEffect( () => {
-		dispatch( requestMetrics( siteId, UTMParam, postId ) );
-	}, [ dispatch, siteId, UTMParam, postId ] );
+		dispatch( requestMetrics( siteId, UTMParam, postId, siteSlug ) );
+	}, [ dispatch, siteId, UTMParam, postId, siteSlug ] );
 
 	const isFetching = useSelector( ( state ) => isLoading( state, siteId ) );
 	const metrics = useSelector( ( state ) => getMetrics( state, siteId, postId ) );
