@@ -6,6 +6,7 @@ import {
 	render as clientRender,
 	notFound,
 } from 'calypso/controller/index.web';
+import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -17,6 +18,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 		context.primary = (
 			<PatternsWrapper
 				category={ context.params.category }
+				categoryGallery={ CategoryGalleryClient }
 				isGridView={ !! context.query.grid }
 				patternGallery={ PatternGalleryClient }
 			/>
