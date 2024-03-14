@@ -110,7 +110,7 @@ export const useFeaturesList = () => {
 							<a
 								id="site-monitoring"
 								href={ localizeUrl(
-									'https://developer.wordpress.com/docs/platform-features/account-security/'
+									'https://developer.wordpress.com/docs/troubleshooting/site-monitoring/'
 								) }
 								target="_blank"
 								rel="noopener noreferrer"
