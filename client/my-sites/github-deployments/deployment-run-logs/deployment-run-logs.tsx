@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState, ReactNode } from 'react';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LogEntry, useCodeDeploymentsRunLogDetailQuery } from './use-code-deployment-run-log-query';
 import { DeploymentRun } from './use-code-deployment-run-query';
@@ -26,6 +27,7 @@ const LogDetail = ( { children }: { children?: ReactNode } ) => (
 
 const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun } ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 	const [ detailExpanded, setDetailExpanded ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
 	const openDetail = () => setDetailExpanded( ( v ) => ! v );
@@ -84,6 +86,11 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 		return null;
 	};
 
+	const handleToggleExpand = () => {
+		if ( hasDetail ) {
+			openDetail();
+		}
+	};
 	return (
 		<div>
 			<button
@@ -93,7 +100,12 @@ const DeploymentRunLog = ( { entry, run }: { entry: LogEntry; run: DeploymentRun
 					padding: 0,
 					fontFamily: '"Courier 10 Pitch", Courier, monospace',
 				} }
-				onClick={ hasDetail ? openDetail : undefined }
+				onClick={ () => {
+					if ( ! detailExpanded ) {
+						dispatch( recordTracksEvent( 'calypso_hosting_github_log_entry_expanded' ) );
+					}
+					handleToggleExpand();
+				} }
 			>
 				{ entry.timestamp } { entry.level.toUpperCase() } { entry.message }
 				{ hasDetail && (

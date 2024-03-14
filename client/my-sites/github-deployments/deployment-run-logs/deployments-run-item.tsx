@@ -14,18 +14,22 @@ import {
 	DeploymentStatusValue,
 } from 'calypso/my-sites/github-deployments/deployments/deployment-status';
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
-import { useSelector } from 'calypso/state/index';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useDispatch, useSelector } from 'calypso/state/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
 import { DeploymentRunLogs } from './deployment-run-logs';
 import { DeploymentRun } from './use-code-deployment-run-query';
 
 interface DeploymentsListItemProps {
 	run: DeploymentRun;
+	rowNumber: number;
 }
 
-export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
+export const DeploymentsRunItem = ( { run, rowNumber }: DeploymentsListItemProps ) => {
 	const locale = useLocale();
 	const siteId = useSelector( getSelectedSiteId );
+	const dispatch = useDispatch();
+
 	const deployment = run.code_deployment!;
 	const [ expanded, setExpanded ] = useState( false );
 	const icon = expanded ? chevronUp : chevronDown;
@@ -40,7 +44,9 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 	);
 	const { author } = run.metadata;
 
-	const handleToggleExpanded = () => setExpanded( ! expanded );
+	const handleToggleExpanded = () => {
+		setExpanded( ! expanded );
+	};
 
 	return (
 		<>
@@ -65,7 +71,19 @@ export const DeploymentsRunItem = ( { run }: DeploymentsListItemProps ) => {
 					<DeploymentDuration run={ run } />
 				</td>
 				<td>
-					<Button plain onClick={ handleToggleExpanded }>
+					<Button
+						plain
+						onClick={ () => {
+							if ( ! expanded ) {
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_github_log_entry_expanded', {
+										row_number: rowNumber,
+									} )
+								);
+							}
+							handleToggleExpanded();
+						} }
+					>
 						<Icon icon={ icon } size={ 24 } />
 					</Button>
 				</td>
