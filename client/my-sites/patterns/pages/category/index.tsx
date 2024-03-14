@@ -9,7 +9,7 @@ import { CategoryPillNavigation } from 'calypso/components/category-pill-navigat
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
-import { getCategorySlug } from 'calypso/my-sites/patterns/controller';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
 	usePatternSearchTerm,
@@ -82,7 +82,7 @@ export const PatternsCategoryPage = ( {
 		return {
 			name: category.name || '',
 			label: category.label,
-			link: getCategorySlug( category.name, patternTypeFilterFallback, false ),
+			link: getCategoryUrlPath( category.name, patternTypeFilterFallback, false ),
 		};
 	} );
 
@@ -130,7 +130,7 @@ export const PatternsCategoryPage = ( {
 						isBlock
 						label=""
 						onChange={ ( value ) => {
-							const href = getCategorySlug( category, value as PatternTypeFilter );
+							const href = getCategoryUrlPath( category, value as PatternTypeFilter );
 							page( href );
 						} }
 						value={ patternTypeFilter }

@@ -7,7 +7,7 @@ import {
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { RENDERER_SITE_ID, getCategorySlug } from 'calypso/my-sites/patterns/controller';
+import { RENDERER_SITE_ID, getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { PatternTypeFilter, type CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
@@ -56,7 +56,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 						{ categories?.map( ( category ) => (
 							<LocalizedLink
 								className="patterns-category-gallery__item"
-								href={ getCategorySlug( category.name, patternTypeFilter, false ) }
+								href={ getCategoryUrlPath( category.name, patternTypeFilter, false ) }
 								key={ category.name }
 							>
 								<div

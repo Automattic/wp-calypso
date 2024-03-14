@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { getCategorySlug } from 'calypso/my-sites/patterns/controller';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { PatternTypeFilter, type CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
@@ -24,7 +24,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 				{ categories?.map( ( category ) => (
 					<LocalizedLink
 						className="patterns-category-gallery__item"
-						href={ getCategorySlug( category.name, patternTypeFilter, false ) }
+						href={ getCategoryUrlPath( category.name, patternTypeFilter, false ) }
 						key={ category.name }
 					>
 						<div className="patterns-category-gallery__item-preview">

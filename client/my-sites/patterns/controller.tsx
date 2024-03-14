@@ -3,7 +3,7 @@ import { PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 
 export const RENDERER_SITE_ID = 226011606; // assemblerdemo
 
-export function getCategorySlug(
+export function getCategoryUrlPath(
 	categorySlug: string,
 	type: PatternTypeFilter,
 	includeLocale = true
