@@ -1556,7 +1556,6 @@ __metadata:
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.90.3"
   peerDependencies:
-    "@automattic/i18n-utils": "workspace:^"
     "@wordpress/i18n": ^4.52.0
     postcss: ^8.4.5
     react: ^18.2.0
