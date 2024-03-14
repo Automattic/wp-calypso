@@ -8,6 +8,7 @@ import {
 } from 'calypso/controller/index.web';
 import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import {
 	PatternTypeFilter,
 	type RouterContext,
@@ -28,6 +29,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 				patternTypeFilter={
 					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
 				}
+				searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
 			/>
 		);
 	}

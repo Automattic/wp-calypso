@@ -4,6 +4,7 @@ import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/l
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import {
 	PatternTypeFilter,
@@ -28,6 +29,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 			patternTypeFilter={
 				context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
 			}
+			searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
 		/>
 	);
 

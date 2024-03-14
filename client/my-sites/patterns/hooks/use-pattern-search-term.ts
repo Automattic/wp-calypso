@@ -20,8 +20,10 @@ function getQueryParam( key: string ) {
 /**
  * Set up search form state and URL-related `useEffect` callbacks
  */
-export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< string > > ] {
-	const [ searchTerm, setSearchTerm ] = useState( getQueryParam( QUERY_PARAM_SEARCH ) );
+export function usePatternSearchTerm(
+	initialSearchTerm?: string
+): [ string, Dispatch< SetStateAction< string > > ] {
+	const [ searchTerm, setSearchTerm ] = useState( initialSearchTerm ?? '' );
 
 	// Updates the URL of the page whenever the search term changes
 	useEffect( () => {

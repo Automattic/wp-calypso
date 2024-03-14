@@ -60,6 +60,7 @@ type PatternLibraryProps = {
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
+	searchTerm?: string;
 };
 
 export const PatternLibrary = ( {
@@ -68,6 +69,7 @@ export const PatternLibrary = ( {
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
+	searchTerm: initialSearchTerm,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	// Helps prevent resetting the search input if a search term was provided through the URL
@@ -75,7 +77,7 @@ export const PatternLibrary = ( {
 	// Helps reset the search input when navigating between categories
 	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm();
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( initialSearchTerm );
 	const { data: categories } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
@@ -83,6 +85,14 @@ export const PatternLibrary = ( {
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
+
+	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
+	useEffect( () => {
+		if ( ! initialSearchTerm ) {
+			setSearchTerm( '' );
+			setSearchFormKey( Math.random().toString() );
+		}
+	}, [ initialSearchTerm ] );
 
 	// Resets the search term whenever the category changes
 	useEffect( () => {

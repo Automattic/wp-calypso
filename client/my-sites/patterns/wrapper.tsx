@@ -17,6 +17,7 @@ type PatternsWrapperProps = {
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
+	searchTerm?: string;
 };
 
 export const PatternsWrapper = ( {
@@ -25,6 +26,7 @@ export const PatternsWrapper = ( {
 	isGridView,
 	patternGallery,
 	patternTypeFilter,
+	searchTerm,
 }: PatternsWrapperProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -39,6 +41,7 @@ export const PatternsWrapper = ( {
 					isGridView={ isGridView }
 					patternGallery={ patternGallery }
 					patternTypeFilter={ patternTypeFilter }
+					searchTerm={ searchTerm }
 				/>
 			</Main>
 
