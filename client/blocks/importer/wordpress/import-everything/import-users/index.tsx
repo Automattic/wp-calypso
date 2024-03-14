@@ -16,7 +16,7 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ImportedUserItem from './imported-user-item';
-import { getRole } from './utils';
+import { getRole, getRoleFilterValues } from './utils';
 import type { UsersQuery, Member, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -76,10 +76,17 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const { data: usersData, fetchNextPage, hasNextPage } = usersQuery;
 	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites( site?.ID );
 
+	// Get initial user data
+	// Remove current user (admin) from the list
+	// Remove users with roles that are not allowed to be imported
 	const users =
 		usersData?.users
 			?.map( ( user ) => ( { user, checked: true } ) )
-			?.filter( ( user ) => user.user?.linked_user_ID !== userId ) || []; // Get initial user data and remove current user (admin) from the list
+			?.filter(
+				( userItem ) =>
+					userItem.user?.linked_user_ID !== userId &&
+					getRoleFilterValues.map( ( role ) => role.value ).includes( getRole( userItem.user ) )
+			) || [];
 
 	const totalUsers = usersData?.total ? usersData?.total - 1 : null;
 	const loadedPages = usersData?.pages || [];
