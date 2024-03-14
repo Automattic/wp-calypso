@@ -19,9 +19,14 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 	title,
 } ) => {
 	const patternIdsByCategory = {
-		page: categories?.map( ( { pagePreviewPattern } ) => `${ pagePreviewPattern?.ID }` ) ?? [],
+		page:
+			categories
+				?.filter( ( { pagePreviewPattern } ) => pagePreviewPattern )
+				.map( ( { pagePreviewPattern } ) => `${ pagePreviewPattern?.ID }` ) ?? [],
 		regular:
-			categories?.map( ( { regularPreviewPattern } ) => `${ regularPreviewPattern?.ID }` ) ?? [],
+			categories
+				?.filter( ( { regularPreviewPattern } ) => regularPreviewPattern )
+				.map( ( { regularPreviewPattern } ) => `${ regularPreviewPattern?.ID }` ) ?? [],
 	};
 
 	return (
