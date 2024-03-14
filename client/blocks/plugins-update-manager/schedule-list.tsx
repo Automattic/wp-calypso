@@ -62,6 +62,7 @@ export const ScheduleList = ( props: Props ) => {
 		siteHasEligiblePluginsLoading;
 
 	const showScheduleListEmpty =
+		schedules.length === 0 &&
 		( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
 		( ! siteHasEligiblePlugins && ! siteHasEligiblePluginsLoading ) ||
 		( isFetched &&
@@ -110,7 +111,7 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ isLoading && <Spinner /> }
+					{ schedules.length === 0 && isLoading && <Spinner /> }
 					{ ! isLoading && showScheduleListEmpty && (
 						<ScheduleListEmpty
 							onCreateNewSchedule={ onCreateNewSchedule }
