@@ -20,5 +20,9 @@ export const getShouldShowGlobalSiteSidebar = (
 	sectionGroup: string
 ) => {
 	// Global Site View should be limited to classic interface users only for now.
-	return isGlobalSiteViewEnabled( state, siteId ) && sectionGroup === 'sites' && !! siteId;
+	return (
+		isGlobalSiteViewEnabled( state, siteId ) &&
+		( sectionGroup === 'sites' || sectionGroup === 'jetpack-cloud' ) &&
+		!! siteId
+	);
 };
