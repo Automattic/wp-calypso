@@ -6,11 +6,16 @@ import {
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
+const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
+
 export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns = [] } ) => {
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
@@ -30,8 +35,9 @@ export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns =
 						'pattern-gallery--grid': isGridView,
 					} ) }
 				>
-					{ patterns.map( ( pattern ) => (
+					{ patterns.map( ( pattern, i ) => (
 						<PatternPreview
+							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,

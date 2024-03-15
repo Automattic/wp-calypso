@@ -1,6 +1,8 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
+import { Button } from '@automattic/components';
 import { useResizeObserver } from '@wordpress/compose';
+import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -14,16 +16,29 @@ export const ASPECT_RATIO = 7 / 4;
 
 type PatternPreviewProps = {
 	className?: string;
+	canCopy?: boolean;
 	pattern: Pattern | null;
 	viewportWidth?: number;
 };
 
-export function PatternPreview( { className, pattern, viewportWidth }: PatternPreviewProps ) {
+export function PatternPreview( {
+	className,
+	canCopy = true,
+	pattern,
+	viewportWidth,
+}: PatternPreviewProps ) {
 	const [ isCopied, setIsCopied ] = useState( false );
 	const { renderedPatterns } = usePatternsRendererContext();
 	const patternId = encodePatternId( pattern?.ID ?? 0 );
 	const renderedPattern = renderedPatterns[ patternId ];
 	const [ resizeObserver, nodeSize ] = useResizeObserver();
+
+	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
+	let copyButtonText = isPreviewLarge ? 'Copy pattern' : 'Copy';
+
+	if ( isCopied ) {
+		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
+	}
 
 	useEffect( () => {
 		if ( ! isCopied ) {
@@ -62,28 +77,26 @@ export function PatternPreview( { className, pattern, viewportWidth }: PatternPr
 			<div className="pattern-preview__header">
 				<div className="pattern-preview__title">{ pattern.title }</div>
 
-				<ClipboardButton
-					className="pattern-preview__copy pattern-preview__copy--large"
-					onCopy={ () => {
-						setIsCopied( true );
-					} }
-					primary
-					text={ pattern?.html ?? '' }
-				>
-					{ isCopied ? 'Pattern copied!' : 'Copy pattern' }
-				</ClipboardButton>
+				{ canCopy && (
+					<ClipboardButton
+						borderless={ ! isPreviewLarge }
+						className="pattern-preview__copy"
+						onCopy={ () => {
+							setIsCopied( true );
+						} }
+						text={ pattern?.html ?? '' }
+						primary={ isPreviewLarge }
+						transparent={ ! isPreviewLarge }
+					>
+						{ copyButtonText }
+					</ClipboardButton>
+				) }
 
-				<ClipboardButton
-					borderless
-					className="pattern-preview__copy pattern-preview__copy--small"
-					onCopy={ () => {
-						setIsCopied( true );
-					} }
-					text={ pattern?.html ?? '' }
-					transparent
-				>
-					{ isCopied ? 'Copied' : 'Copy' }
-				</ClipboardButton>
+				{ ! canCopy && (
+					<Button className="pattern-preview__get-access" borderless transparent>
+						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
+					</Button>
+				) }
 			</div>
 		</div>
 	);
