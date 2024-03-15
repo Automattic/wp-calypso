@@ -2,7 +2,7 @@
 @import "@automattic/components/src/styles/typography";
 @import "calypso/my-sites/patterns/mixins";
 
-.patterns-page-category__pill-navigation {
+.pattern-library__pill-navigation {
 	background: var(--studio-white);
 
 	.category-pill-navigation {
@@ -21,7 +21,7 @@
 	}
 }
 
-.patterns-page-category {
+.pattern-library {
 	@include patterns-page-width;
 	padding-bottom: 96px;
 
@@ -30,7 +30,7 @@
 	}
 }
 
-.patterns-page-category__header {
+.pattern-library__header {
 	display: flex;
 	padding: 56px 0 48px;
 	align-items: center;
@@ -40,7 +40,7 @@
 		padding: 0 0 24px;
 	}
 
-	.patterns-page-category__title {
+	.pattern-library__title {
 		margin-right: auto;
 		font-family: $font-recoleta;
 		font-size: rem(40px);
@@ -60,7 +60,7 @@
 		margin-bottom: 0;
 	}
 
-	.patterns-page-category__toggle-option {
+	.pattern-library__toggle-option {
 		min-width: 118px;
 
 		&:disabled {
@@ -69,10 +69,15 @@
 		}
 	}
 
-	.patterns-page-category__toggle-option--list-view,
-	.patterns-page-category__toggle-option--grid-view {
+	.pattern-library__toggle-option--list-view,
+	.pattern-library__toggle-option--grid-view {
+		min-width: 34px;
 		padding: 0 8px;
 		color: var(--studio-black);
+
+		div {
+			font-size: 0;
+		}
 
 		&[aria-checked="true"] {
 			color: var(--studio-white);
@@ -80,7 +85,7 @@
 	}
 
 	@media ( max-width: $break-medium ) {
-		.patterns-page-category__title {
+		.pattern-library__title {
 			display: none;
 		}
 
@@ -88,15 +93,15 @@
 			margin-left: 0;
 		}
 
-		.patterns-page-category__toggle--pattern-type {
+		.pattern-library__toggle--pattern-type {
 			width: 100%;
 		}
 
-		.patterns-page-category__toggle--view {
+		.pattern-library__toggle--view {
 			display: none;
 		}
 
-		.patterns-page-category__toggle-option {
+		.pattern-library__toggle-option {
 			height: 40px;
 		}
 	}

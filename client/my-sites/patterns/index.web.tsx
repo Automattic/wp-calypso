@@ -8,6 +8,7 @@ import {
 } from 'calypso/controller/index.web';
 import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
+import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import {
 	PatternTypeFilter,
@@ -21,16 +22,18 @@ import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper
-				category={ context.params.category }
-				categoryGallery={ CategoryGalleryClient }
-				isGridView={ !! context.query.grid }
-				patternGallery={ PatternGalleryClient }
-				patternTypeFilter={
-					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
-				}
-				searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
-			/>
+			<PatternsWrapper>
+				<PatternLibrary
+					category={ context.params.category }
+					categoryGallery={ CategoryGalleryClient }
+					isGridView={ !! context.query.grid }
+					patternGallery={ PatternGalleryClient }
+					patternTypeFilter={
+						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
+					}
+					searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
+				/>
+			</PatternsWrapper>
 		);
 	}
 

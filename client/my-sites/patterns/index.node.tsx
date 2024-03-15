@@ -3,6 +3,7 @@ import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
+import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
@@ -21,16 +22,18 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'renderPatterns' );
 
 	context.primary = (
-		<PatternsWrapper
-			category={ context.params.category }
-			categoryGallery={ CategoryGalleryServer }
-			isGridView={ !! context.query.grid }
-			patternGallery={ PatternGalleryServer }
-			patternTypeFilter={
-				context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
-			}
-			searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
-		/>
+		<PatternsWrapper>
+			<PatternLibrary
+				category={ context.params.category }
+				categoryGallery={ CategoryGalleryServer }
+				isGridView={ !! context.query.grid }
+				patternGallery={ PatternGalleryServer }
+				patternTypeFilter={
+					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
+				}
+				searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
+			/>
+		</PatternsWrapper>
 	);
 
 	next();

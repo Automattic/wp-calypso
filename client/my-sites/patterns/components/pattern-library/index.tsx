@@ -139,8 +139,8 @@ export const PatternLibrary = ( {
 				title={ category ? `${ category } patterns` : 'Build your perfect site with patterns' }
 			/>
 
-			{ ! isHomePage && categoryNavList && (
-				<div className="patterns-page-category__pill-navigation">
+			{ categoryNavList && (
+				<div className="pattern-library__pill-navigation">
 					<CategoryPillNavigation
 						selectedCategory={ category }
 						buttons={ [
@@ -170,15 +170,15 @@ export const PatternLibrary = ( {
 			) }
 
 			{ ! isHomePage && (
-				<div className="patterns-page-category">
-					<div className="patterns-page-category__header">
-						<h1 className="patterns-page-category__title">
+				<div className="pattern-library">
+					<div className="pattern-library__header">
+						<h1 className="pattern-library__title">
 							{ searchTerm ? `${ patterns.length } patterns` : 'Patterns' }
 						</h1>
 
 						{ category && (
 							<ToggleGroupControl
-								className="patterns-page-category__toggle--pattern-type"
+								className="pattern-library__toggle--pattern-type"
 								isBlock
 								label=""
 								onChange={ ( value ) => {
@@ -188,12 +188,12 @@ export const PatternLibrary = ( {
 								value={ patternTypeFilter }
 							>
 								<ToggleGroupControlOption
-									className="patterns-page-category__toggle-option"
+									className="pattern-library__toggle-option"
 									label="Patterns"
 									value={ PatternTypeFilter.REGULAR }
 								/>
 								<ToggleGroupControlOption
-									className="patterns-page-category__toggle-option"
+									className="pattern-library__toggle-option"
 									disabled={ categoryObject?.pagePatternCount === 0 }
 									label="Page layouts"
 									value={ PatternTypeFilter.PAGES }
@@ -202,19 +202,19 @@ export const PatternLibrary = ( {
 						) }
 
 						<ToggleGroupControl
-							className="patterns-page-category__toggle--view"
+							className="pattern-library__toggle--view"
 							label=""
 							isBlock
 							value={ isGridView ? 'grid' : 'list' }
 						>
 							<ToggleGroupControlOption
-								className="patterns-page-category__toggle-option--list-view"
+								className="pattern-library__toggle-option--list-view"
 								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 								value="list"
 								onClick={ () => handleSettingView( 'list' ) }
 							/>
 							<ToggleGroupControlOption
-								className="patterns-page-category__toggle-option--grid-view"
+								className="pattern-library__toggle-option--grid-view"
 								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 								value="grid"
 								onClick={ () => handleSettingView( 'grid' ) }
