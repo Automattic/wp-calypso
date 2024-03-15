@@ -282,6 +282,17 @@
 		}
 	}
 
+	thead .dataviews-view-table__row th span {
+		font-size: rem(11px);
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--studio-automattic-80);
+	}
+
+	tr.dataviews-view-table__row th[data-field-id="favorite"] {
+		vertical-align: top;
+	}
+
 	.sites-overview__content-wrapper {
 		max-width: none;
 	}
@@ -449,5 +460,4 @@
 			}
 		}
 	}
-
 }
