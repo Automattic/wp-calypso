@@ -713,8 +713,10 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( param ) =>
 					commandNavigation(
 						`${
-							siteUsesWpAdminInterface( param.site ) ? 'https://cloud.jetpack.com' : ''
-						}/activity-log/${ param.site.slug }`
+							siteUsesWpAdminInterface( param.site )
+								? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
+								: '/activity-log/'
+						}${ param.site.slug }`
 					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
@@ -730,8 +732,10 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( param ) =>
 					commandNavigation(
 						`${
-							siteUsesWpAdminInterface( param.site ) ? 'https://cloud.jetpack.com' : ''
-						}/backup/${ param.site.slug }`
+							siteUsesWpAdminInterface( param.site )
+								? 'https://jetpack.com/redirect/?source=calypso-backups&site='
+								: '/backup/'
+						}${ param.site.slug }`
 					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),

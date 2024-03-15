@@ -521,7 +521,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'audit log', 'Keyword for the Open activity log command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: commandNavigation(
-				`${ shouldUseWpAdmin ? 'https://cloud.jetpack.com' : '' }/activity-log/:site`
+				`${
+					shouldUseWpAdmin
+						? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
+						: '/activity-log/'
+				}:site`
 			),
 			filterP2: true,
 			icon: acitvityLogIcon,
@@ -530,7 +534,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
 			callback: commandNavigation(
-				`${ shouldUseWpAdmin ? 'https://cloud.jetpack.com' : '' }/backup/:site`
+				`${
+					shouldUseWpAdmin
+						? 'https://jetpack.com/redirect/?source=calypso-backups&site='
+						: '/backup/'
+				}:site`
 			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
