@@ -1,9 +1,19 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/components/src/styles/typography";
+
 .pattern-preview {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 	justify-content: space-between;
 	position: relative;
+
+	.pattern-gallery--list & {
+		@include break-huge {
+			flex-direction: column-reverse;
+		}
+	}
 
 	.pattern-preview__renderer {
 		background: var(--color-surface);
@@ -18,18 +28,81 @@
 		aspect-ratio: 7 / 4;
 	}
 
-	.pattern-preview__title {
-		min-height: 3rem;
+	.pattern-preview__header {
+		align-items: center;
+		color: var(--Gray-Gray-100, #101517);
+		display: flex;
+		font-family: $font-sf-pro-display;
+		gap: 16px;
+		justify-content: space-between;
+		line-height: 1.3;
+	}
+
+	.pattern-gallery--list & .pattern-preview__title {
+		@include break-huge {
+			font-size: rem(20px);
+		}
+	}
+
+	.pattern-preview__copy {
+		--default-color: #3858e9;
+		--hover-color: #1d35b4;
+	}
+
+	.pattern-preview__copy--list {
+		background-color: var(--default-color);
+		border-color: var(--default-color);
+		font-size: rem(13px);
+
+		&:enabled:hover,
+		&:focus {
+			background-color: var(--hover-color);
+			border-color: var(--hover-color);
+		}
+	}
+
+	.pattern-preview__copy--grid {
+		color: var(--default-color);
+		font: inherit;
+		padding: 0;
+
+		&:enabled:hover {
+			color: var(--hover-color);
+		}
+	}
+
+	.pattern-gallery--list & .pattern-preview__copy--list {
+		display: none;
+
+		@include break-medium {
+			display: block;
+		}
+	}
+
+	.pattern-gallery--list & .pattern-preview__copy--grid {
+		display: block;
+
+		@include break-medium {
+			display: none;
+		}
+	}
+
+	.pattern-gallery--grid & .pattern-preview__copy--list {
+		display: none;
+	}
+
+	.pattern-gallery--grid & .pattern-preview__copy--grid {
+		display: block;
 	}
 }
 
-.pattern-preview_category-gallery {
+.pattern-preview--category-gallery {
 	.pattern-preview__renderer {
 		border-radius: 0;
 		box-shadow: none;
 	}
 
-	.pattern-preview__title {
+	.pattern-preview__header {
 		display: none;
 	}
 }

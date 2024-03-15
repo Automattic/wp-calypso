@@ -8,7 +8,10 @@ export function PatternPreviewPlaceholder( { pattern }: PatternPreviewPlaceholde
 	return (
 		<div className="pattern-preview is-loading">
 			<div className="pattern-preview__renderer" />
-			<div className="pattern-preview__title">{ pattern?.title }</div>
+
+			<div className="pattern-preview__header">
+				<div className="pattern-preview__title">{ pattern?.title }</div>
+			</div>
 		</div>
 	);
 }
