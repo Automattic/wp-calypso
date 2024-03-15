@@ -83,7 +83,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
 
 		const nextRenewalText = translate(
-			'The promotional period for your %(productName)s lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s.',
+			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s.',
 			{
 				args: {
 					productName,
