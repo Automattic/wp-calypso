@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .main.a4a-layout.sites-dashboard {
 	background: inherit;
@@ -164,12 +165,22 @@
 		.sites-dashboard__layout:not(.preview-hidden) {
 
 			.sites-overview {
-				padding: 48px 24px 32px;
+				padding: 0;
 				overflow-y: hidden;
+
+				.a4a-layout__viewport {
+					padding-inline: 16px;
+				}
+
+				.a4a-layout__header-title {
+					font-size: rem(20px);
+					font-weight: 500;
+				}
 			}
 
 			.sites-overview__content {
 				padding: 0;
+				padding-inline: 0 !important;
 			}
 
 			.sites-overview__issue-license-button-short-caption {
@@ -334,8 +345,6 @@
 		.a4a-layout__top-wrapper,
 		.a4a-layout__body {
 			> * {
-				padding-inline: 0;
-
 				@include breakpoint-deprecated(">660px") {
 					max-width: none;
 				}
@@ -361,6 +370,7 @@
 
 			.sites-overview__content {
 				margin-top: 16px;
+				padding-inline: 64px;
 			}
 		}
 
@@ -405,7 +415,7 @@
 
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
-					padding: 48px 64px 0;
+					padding: 0;
 					overflow-x: auto;
 				}
 			}

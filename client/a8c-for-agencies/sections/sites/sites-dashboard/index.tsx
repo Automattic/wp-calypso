@@ -8,13 +8,13 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
+import LayoutNavigation, {
+	LayoutNavigationTabs as NavigationTabs,
+} from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { mockedSites } from 'calypso/a8c-for-agencies/data/sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import LayoutNavigation, {
-	LayoutNavigationTabs as NavigationTabs,
-} from 'calypso/jetpack-cloud/components/layout/nav';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import { JetpackPreviewPane } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-feature-previews/jetpack-preview-pane';
@@ -181,6 +181,7 @@ export default function SitesDashboard() {
 			title="Sites"
 			className="sites-dashboard"
 			wide
+			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<div
@@ -190,7 +191,7 @@ export default function SitesDashboard() {
 				) }
 			>
 				<div className="sites-overview">
-					<LayoutTop>
+					<LayoutTop withNavigation>
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
