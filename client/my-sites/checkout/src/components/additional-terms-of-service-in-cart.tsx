@@ -141,6 +141,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 			}
 		);
 
+		const shouldShowRegularPriceNoticeText = regularPrice !== renewalPrice;
+
 		const shouldShowEndOfPromotionText =
 			args.subscription_auto_renew_date !== args.subscription_end_of_promotion_date ||
 			args.maybe_prorated_regular_renewal_price_integer !== args.renewal_price_integer;
@@ -148,8 +150,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 		return (
 			<>
 				{ termLengthText } { nextRenewalText }{ ' ' }
-				{ shouldShowEndOfPromotionText && endOfPromotionChargeText } { regularPriceNoticeText }{ ' ' }
-				{ emailNoticesText }{ ' ' }
+				{ shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
+				{ shouldShowRegularPriceNoticeText && regularPriceNoticeText } { emailNoticesText }{ ' ' }
 			</>
 		);
 	}
