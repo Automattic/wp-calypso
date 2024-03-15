@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import { StickyContainer } from '../sticky-container';
 import { IntervalTypeSelector } from './components/interval-type-selector';
-import type { PlanTypeSelectorProps } from '../../types';
+import type { PlanTypeSelectorProps } from '../../../types';
 
 import './style.scss';
 

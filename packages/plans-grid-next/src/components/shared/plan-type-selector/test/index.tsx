@@ -12,7 +12,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen, render } from '@testing-library/react';
 import React from 'react';
-import PlanTypeSelector from '../plan-type-selector';
+import PlanTypeSelector from '../index';
 
 describe( '<PlanTypeSelector />', () => {
 	test( 'Should show IntervalTypeToggle when kind is set to `interval`', () => {

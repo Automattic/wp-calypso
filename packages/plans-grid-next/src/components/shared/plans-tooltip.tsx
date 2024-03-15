@@ -2,7 +2,7 @@ import { Tooltip } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
 import { Dispatch, PropsWithChildren, SetStateAction, useRef } from 'react';
-import { hasTouch } from '../lib/touch-detect';
+import { hasTouch } from '../../lib/touch-detect';
 
 const HoverAreaContainer = styled.span`
 	max-width: 220px;
@@ -25,7 +25,7 @@ const StyledTooltip = styled( Tooltip )`
 	}
 `;
 
-export const Plans2023Tooltip = ( {
+export const PlansTooltip = ( {
 	showOnMobile = true,
 	...props
 }: PropsWithChildren< {

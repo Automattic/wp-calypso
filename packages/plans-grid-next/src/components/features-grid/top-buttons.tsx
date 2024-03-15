@@ -8,8 +8,8 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { GridPlan, PlanActionOverrides } from '../../types';
-import PlanFeatures2023GridActions from '../actions';
-import PlanDivOrTdContainer from '../plan-div-td-container';
+import PlanActions from '../shared/plan-actions';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
 
 type TopButtonsProps = {
 	currentSitePlanSlug?: string | null;
@@ -67,7 +67,7 @@ const TopButtons = ( {
 					className={ classes }
 					isTableCell={ options?.isTableCell }
 				>
-					<PlanFeatures2023GridActions
+					<PlanActions
 						availableForPurchase={ availableForPurchase }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }

@@ -1,5 +1,5 @@
 import { GridPlan } from '../../types';
-import PlanDivOrTdContainer from '../plan-div-td-container';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
 
 type PlanTaglineProps = {
 	renderedGridPlans: GridPlan[];

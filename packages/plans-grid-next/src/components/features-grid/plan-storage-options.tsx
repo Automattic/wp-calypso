@@ -3,8 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { isStorageUpgradeableForPlan } from '../../lib/is-storage-upgradeable-for-plan';
 import { GridPlan } from '../../types';
 import { getStorageStringFromFeature } from '../../util';
-import PlanDivOrTdContainer from '../plan-div-td-container';
-import StorageAddOnDropdown from '../storage-add-on-dropdown';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
+import StorageAddOnDropdown from '../shared/storage-add-on-dropdown';
 
 type PlanStorageOptionsProps = {
 	intervalType: string;

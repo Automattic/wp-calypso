@@ -1,7 +1,7 @@
 import { getPlanClass } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { GridPlan } from '../../types';
-import PlanDivOrTdContainer from '../plan-div-td-container';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
 
 type PlanHeadersProps = {
 	renderedGridPlans: GridPlan[];

@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import useMaxDiscount from '../hooks/use-max-discount';
 import PopupMessages from './popup-messages';
-import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
+import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../../types';
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();

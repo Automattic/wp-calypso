@@ -12,13 +12,13 @@ import {
 import { CloudLogo, VIPLogo, WooLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../grid-context';
-import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
-import PlanDivOrTdContainer from './plan-div-td-container';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
-import PopularBadge from './popular-badge';
-import type { GridPlan } from '../types';
+import { usePlansGridContext } from '../../grid-context';
+import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
+import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import PlanDivOrTdContainer from '../shared/plan-div-td-container';
+import { PlansTooltip } from '../shared/plans-tooltip';
+import PopularBadge from '../shared/popular-badge';
+import type { GridPlan } from '../../types';
 
 const PlanLogo: React.FunctionComponent< {
 	renderedGridPlans: GridPlan[];
@@ -75,7 +75,7 @@ const PlanLogo: React.FunctionComponent< {
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planSlug ) && (
-					<Plans2023Tooltip
+					<PlansTooltip
 						text={ translate(
 							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 						) }
@@ -84,27 +84,27 @@ const PlanLogo: React.FunctionComponent< {
 						activeTooltipId={ activeTooltipId }
 					>
 						<CloudLogo />
-					</Plans2023Tooltip>
+					</PlansTooltip>
 				) }
 				{ shouldShowWooLogo && (
-					<Plans2023Tooltip
+					<PlansTooltip
 						text={ translate( 'Make your online store a reality with the power of WooCommerce.' ) }
 						id="woo-logo"
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					>
 						<WooLogo />
-					</Plans2023Tooltip>
+					</PlansTooltip>
 				) }
 				{ isWpcomEnterpriseGridPlan( planSlug ) && (
-					<Plans2023Tooltip
+					<PlansTooltip
 						text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
 						id="enterprise-logo"
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					>
 						<VIPLogo />
-					</Plans2023Tooltip>
+					</PlansTooltip>
 				) }
 			</header>
 		</PlanDivOrTdContainer>

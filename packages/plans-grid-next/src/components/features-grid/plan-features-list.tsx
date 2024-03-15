@@ -1,7 +1,7 @@
 import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { DataResponse, GridPlan } from '../../types';
-import PlanFeaturesContainer from '../plan-features-container';
+import PlanFeaturesContainer from './plan-features-container';
 
 type PlanFeaturesListProps = {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;

@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
-import { PlanFeaturesItem } from './item';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
-import type { TransformedFeatureObject, DataResponse } from '../types';
+import { PlansTooltip } from '../shared/plans-tooltip';
+import { PlanFeaturesItem } from './plan-features-item';
+import type { TransformedFeatureObject, DataResponse } from '../../types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -49,7 +49,7 @@ const FreePlanCustomDomainFeature: React.FC< {
 	);
 };
 
-const PlanFeatures2023GridFeatures: React.FC< {
+const PlanFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planSlug: string;
 	paidDomainName?: string;
@@ -112,7 +112,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
-										<Plans2023Tooltip
+										<PlansTooltip
 											text={ translate( '%s is not included', {
 												args: [ paidDomainName as string ],
 												comment: '%s is a domain name.',
@@ -127,16 +127,16 @@ const PlanFeatures2023GridFeatures: React.FC< {
 												generatedWPComSubdomain={ generatedWPComSubdomain }
 												isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 											/>
-										</Plans2023Tooltip>
+										</PlansTooltip>
 									) : (
-										<Plans2023Tooltip
+										<PlansTooltip
 											text={ currentFeature.getDescription?.( { planSlug } ) }
 											activeTooltipId={ activeTooltipId }
 											setActiveTooltipId={ setActiveTooltipId }
 											id={ key }
 										>
 											{ currentFeature.getTitle( { domainName: paidDomainName, planSlug } ) }
-										</Plans2023Tooltip>
+										</PlansTooltip>
 									) }
 								</span>
 							</span>
@@ -148,4 +148,4 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	);
 };
 
-export default PlanFeatures2023GridFeatures;
+export default PlanFeatures;
