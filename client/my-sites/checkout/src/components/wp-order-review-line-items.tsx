@@ -43,11 +43,9 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< {
-	shouldUseCheckoutV2?: boolean;
-} >`
+const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
+	margin: 24px 0 0 0;
 	padding: 0;
 `;
 
@@ -173,10 +171,7 @@ export function WPOrderReviewLineItems( {
 	);
 
 	return (
-		<WPOrderReviewList
-			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-		>
+		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.uuid }

@@ -84,6 +84,10 @@ export type RemoveProductFromCart = ( uuidToRemove: string ) => Promise< Respons
 
 export type UpdateTaxLocationInCart = ( location: CartLocation ) => Promise< ResponseCart >;
 
+export type SetCouponFieldVisible = ( couponFieldVisible: boolean ) => void;
+
+export type RemoveCouponAndClearField = () => Promise< ResponseCart< ResponseCartProduct > >;
+
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
  * cache status.
