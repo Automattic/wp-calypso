@@ -44,7 +44,7 @@ export const GitHubDeploymentManagementForm = ( {
 		onError: ( error ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_github_update_deployment_failure', {
-					reason: error.message,
+					reason: error.code,
 				} )
 			);
 			dispatch(

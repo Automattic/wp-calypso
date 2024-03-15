@@ -92,7 +92,7 @@ export const GitHubDeploymentCreationForm = ( {
 		onError: ( error ) => {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_hosting_github_create_deployment_failure', {
-					reason: error.message,
+					reason: error.code,
 				} )
 			);
 			reduxDispatch(
