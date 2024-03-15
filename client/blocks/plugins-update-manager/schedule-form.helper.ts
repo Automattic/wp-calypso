@@ -40,6 +40,24 @@ export const prepareTimestamp = (
 	return event.getTime() / 1000;
 };
 
+export const convertHourTo24 = ( hour: string, period: string ): string => {
+	if ( period === 'pm' ) {
+		return hour === '12' ? '12' : ( parseInt( hour, 10 ) + 12 ).toString();
+	}
+
+	return hour;
+};
+
+export const convertHourTo12 = ( hour: string ): string => {
+	const _hour = parseInt( hour, 10 );
+
+	if ( _hour === 0 ) {
+		return '12';
+	}
+
+	return _hour > 12 ? ( _hour - 12 ).toString() : _hour.toString();
+};
+
 type TimeSlot = {
 	frequency: string;
 	timestamp: number;

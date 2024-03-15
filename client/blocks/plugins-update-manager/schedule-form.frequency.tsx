@@ -10,10 +10,12 @@ import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { ScheduleFormTime } from 'calypso/blocks/plugins-update-manager/schedule-form.time';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
+import { useSiteSlug } from './hooks/use-site-slug';
 import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedule-form.const';
 import { prepareTimestamp } from './schedule-form.helper';
+import { ScheduleFormTime } from './schedule-form.time';
 
 type Frequency = 'daily' | 'weekly';
 
@@ -26,9 +28,12 @@ interface Props {
 	onChange?: ( frequency: Frequency, timestamp: number ) => void;
 }
 export function ScheduleFormFrequency( props: Props ) {
+	const siteSlug = useSiteSlug();
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { initTimestamp, initFrequency = 'daily', error, showError, onChange, onTouch } = props;
+	const { isAmPmPhpTimeFormat } = useSiteDateTimeFormat( siteSlug );
+	const isAmPmFormat = isAmPmPhpTimeFormat();
 
 	const initDate = initTimestamp
 		? moment( initTimestamp )
@@ -66,6 +71,7 @@ export function ScheduleFormFrequency( props: Props ) {
 							<ScheduleFormTime
 								initHour={ hour }
 								initPeriod={ period }
+								isAmPmFormat={ isAmPmFormat }
 								onChange={ ( hour, period ) => {
 									setHour( hour );
 									setPeriod( period );
@@ -100,6 +106,7 @@ export function ScheduleFormFrequency( props: Props ) {
 							<ScheduleFormTime
 								initHour={ hour }
 								initPeriod={ period }
+								isAmPmFormat={ isAmPmFormat }
 								onChange={ ( hour, period ) => {
 									setHour( hour );
 									setPeriod( period );
