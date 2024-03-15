@@ -5,7 +5,20 @@
 	--a4a-corners-soft: 4px;
 
 	// FIXME: Remove this when we have a proper color scheme
-	--studio-a8c-50: #029cd7;
+	--studio-automattic-0: #ebf4fa;
+	--studio-automattic-5: #c4e2f5;
+	--studio-automattic-10: #88ccf2;
+	--studio-automattic-20: #5ab7e8;
+	--studio-automattic-30: #24a3e0;
+	--studio-automattic-40: #1490c7;
+	--studio-automattic-50: #0277a8;
+	--studio-automattic-60: #036085;
+	--studio-automattic-70: #02506e;
+	--studio-automattic-80: #02384d;
+	--studio-automattic-90: #022836;
+	--studio-automattic-100: #021b24;
+	--studio-automattic: #24a3e0;
+
 	--color-surface-backdrop: #021a23;
 
 	--color-sidebar-background: #021a23;
@@ -24,15 +37,17 @@
 	--color-scary-60: var(--studio-red-60);
 	--color-scary-70: var(--studio-red-70);
 
-	--color-accent: #0088bf;
-	--color-accent-60: #0088bf;
-	--color-accent-70: #006089;
+	--color-primary: var(--studio-automattic-60);
+	--color-primary-40: var(--studio-automattic-40);
+	--color-accent: var(--studio-automattic-60);
+	--color-accent-60: var(--studio-automattic-60);
+	--color-accent-70: var(--studio-automattic-70);
 }
 
 .theme-a8c-for-agencies {
 	.button.is-primary {
-		background-color: var(--studio-a8c-50);
-		border-color: var(--studio-a8c-50);
+		background-color: var(--studio-automattic-60);
+		border-color: var(--studio-automattic-60);
 	}
 
 	.button.is-borderless:focus,
@@ -42,25 +57,25 @@
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--studio-a8c-50);
-		border-color: var(--studio-a8c-50);
+		background-color: var(--studio-automattic-60);
+		border-color: var(--studio-automattic-60);
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--studio-a8c-50);
-		border-color: var(--studio-a8c-50);
+		background: var(--studio-automattic-60);
+		border-color: var(--studio-automattic-60);
 	}
 
 	.components-button.is-tertiary {
-		color: var(--studio-a8c-50);
+		color: var(--studio-automattic-60);
 	}
 
 	.button.is-borderless.is-primary.is-active,
 	.button.is-borderless.is-primary:active,
 	.button.is-borderless.is-primary:focus,
 	.button.is-borderless.is-primary:hover {
-		color: var(--studio-a8c-50);
+		color: var(--studio-automattic-60);
 	}
 
 	// Masterbar
@@ -185,7 +200,7 @@ html {
 
 .button.is-primary:hover,
 .button.is-primary:focus {
-	background-color: var(--color-accent-70);
-	border-color: var(--color-accent-70);
+	background-color: var(--studio-automattic-70);
+	border-color: var(--studio-automattic-70);
 	color: var(--color-text-inverted);
 }
