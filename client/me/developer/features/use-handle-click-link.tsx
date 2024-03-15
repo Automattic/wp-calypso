@@ -6,16 +6,9 @@ export const useHandleClickLink = () => {
 
 	return useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement > ) => {
-			const prefixToRemove = '/support/';
-			const pathIndex = event.currentTarget.href.indexOf( prefixToRemove );
-
-			let featureSlug = event.currentTarget.href;
-			if ( pathIndex !== -1 ) {
-				featureSlug = featureSlug.substring( pathIndex + prefixToRemove.length );
-			}
-			featureSlug = featureSlug.replace( /^\/|\/$/g, '' );
+			const feature = event.currentTarget.id ? event.currentTarget.id : event.currentTarget.href;
 			recordTracksEventWithUserIsDevAccount( 'calypso_me_developer_learn_more', {
-				feature: featureSlug,
+				feature,
 			} );
 		},
 		[ recordTracksEventWithUserIsDevAccount ]

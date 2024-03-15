@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
+import { Icon, chevronRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
@@ -7,12 +8,12 @@ import './style.scss';
 
 type CategoryPillNavigationProps = {
 	buttons?: {
-		icon: string;
+		icon: React.ReactElement< typeof Icon >;
 		label: string;
 		link: string;
 	}[];
 	list: {
-		name: string;
+		id: string;
 		label?: string;
 		link: string;
 	}[];
@@ -60,16 +61,17 @@ export const CategoryPillNavigation = ( {
 		<div className="category-pill-navigation">
 			<div className="category-pill-navigation__list">
 				{ showLeftArrow && (
-					<Button
-						className="category-pill-navigation__arrow"
-						onClick={ () => scrollTo( 'left' ) }
-					/>
+					<Button className="category-pill-navigation__arrow" onClick={ () => scrollTo( 'left' ) }>
+						<Icon icon={ chevronRight } size={ 28 } />
+					</Button>
 				) }
 				{ showRightArrow && (
 					<Button
 						className="category-pill-navigation__arrow right"
 						onClick={ () => scrollTo( 'right' ) }
-					/>
+					>
+						<Icon icon={ chevronRight } size={ 28 } />
+					</Button>
 				) }
 				<div
 					className="category-pill-navigation__list-inner"
@@ -84,7 +86,7 @@ export const CategoryPillNavigation = ( {
 									href={ button.link }
 									className="category-pill-navigation__button"
 								>
-									{ button.icon && <img src={ button.icon } alt={ button.label } /> }
+									{ button.icon }
 									{ button.label }
 								</LocalizedLink>
 							) ) }
@@ -93,10 +95,10 @@ export const CategoryPillNavigation = ( {
 					) }
 					{ list.map( ( category ) => (
 						<LocalizedLink
-							key={ category.name }
+							key={ category.id }
 							href={ category.link }
 							className={ classnames( 'category-pill-navigation__button', {
-								'is-active': category.name === selectedCategory,
+								'is-active': category.id === selectedCategory,
 							} ) }
 						>
 							{ category.label }

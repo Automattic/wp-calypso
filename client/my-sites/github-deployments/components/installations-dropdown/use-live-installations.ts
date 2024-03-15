@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useLayoutEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -19,9 +18,8 @@ interface UseLiveInstallationsParameters {
 
 const NOTICE_ID = 'github-app-install-notice';
 
-const AUTHORIZATION_URL = addQueryArgs( 'https://github.com/login/oauth/authorize', {
-	client_id: config( 'github_oauth_client_id' ),
-} );
+const AUTHORIZATION_URL =
+	'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?ux_mode=popup';
 
 const INSTALLATION_URL = `https://github.com/apps/${ config(
 	'github_app_slug'

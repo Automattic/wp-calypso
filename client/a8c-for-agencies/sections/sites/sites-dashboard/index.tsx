@@ -8,6 +8,9 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
+import LayoutNavigation, {
+	LayoutNavigationTabs as NavigationTabs,
+} from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { mockedSites } from 'calypso/a8c-for-agencies/data/sites';
@@ -157,11 +160,28 @@ export default function SitesDashboard() {
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
 
+	// This is a basic representation of the feature families for now, with just the Overview tab.
+	const navItems = [
+		{
+			label: translate( 'Overview' ),
+		},
+	].map( ( navItem ) => ( {
+		...navItem,
+		selected: translate( 'Overview' ) === navItem.label,
+		children: navItem.label,
+	} ) );
+
+	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
+	const selectedItemProps = {
+		selectedText: selectedItem.label,
+	};
+
 	return (
 		<Layout
 			title="Sites"
 			className="sites-dashboard"
 			wide
+			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<div
@@ -171,7 +191,7 @@ export default function SitesDashboard() {
 				) }
 			>
 				<div className="sites-overview">
-					<LayoutTop>
+					<LayoutTop withNavigation>
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
@@ -179,6 +199,9 @@ export default function SitesDashboard() {
 								<SiteTopHeaderButtons />
 							</Actions>
 						</LayoutHeader>
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
 					</LayoutTop>
 
 					<DashboardDataContext.Provider
