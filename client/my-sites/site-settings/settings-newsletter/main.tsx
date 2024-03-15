@@ -123,7 +123,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		return ! isJetpackSite;
 	} );
 
-	const subscribePostEndToggle = config.isEnabled( 'jetpack/subscriptions-subscribe-post-end' );
+	const isSubscriptionSiteEnabled = config.isEnabled( 'jetpack/subscription-site' );
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 	const savedSubscriptionOptions = settings?.subscription_options;
 
@@ -149,7 +149,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
-				{ subscribePostEndToggle && (
+				{ isSubscriptionSiteEnabled && (
 					<SubscribePostEndSetting
 						disabled={ disabled }
 						handleToggle={ handleToggle }

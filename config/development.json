@@ -102,7 +102,7 @@
 		"jetpack/sharing-buttons-block-enabled": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
-		"jetpack/subscriptions-subscribe-post-end": true,
+		"jetpack/subscription-site": true,
 		"jetpack/offer-complete-after-activation": false,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"jitms": true,
