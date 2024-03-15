@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import classNames from 'classnames';
 import cookie from 'cookie';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -9,6 +10,7 @@ import './style.scss';
 
 const SurveyModal = ( {
 	name,
+	className,
 	url,
 	heading,
 	title,
@@ -42,7 +44,7 @@ const SurveyModal = ( {
 	}
 
 	return (
-		<div className="modal-survey-notice">
+		<div className={ classNames( 'modal-survey-notice', className ) }>
 			<Button className="modal-survey-notice__backdrop" onClick={ onClose } />
 			<div className="modal-survey-notice__popup">
 				<div className="modal-survey-notice__popup-head">
@@ -85,6 +87,7 @@ const SurveyModal = ( {
 
 SurveyModal.propTypes = {
 	name: PropTypes.string.isRequired,
+	className: PropTypes.string,
 	url: PropTypes.string.isRequired,
 	heading: PropTypes.string.isRequired,
 	title: PropTypes.string,
