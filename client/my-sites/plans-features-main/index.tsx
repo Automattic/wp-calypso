@@ -340,6 +340,7 @@ const PlansFeaturesMain = ( {
 			if ( isFreePlan( planSlug ) ) {
 				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
+
 			const displayedModal = resolveModal( planSlug );
 			if ( displayedModal ) {
 				setIsModalOpen( true );
@@ -734,6 +735,7 @@ const PlansFeaturesMain = ( {
 		siteId,
 		gridPlansForFeaturesGrid.map( ( gridPlan ) => gridPlan.planSlug )
 	);
+
 	return (
 		<>
 			<div

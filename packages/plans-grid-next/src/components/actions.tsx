@@ -461,7 +461,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 					saw_free_trial_offer: !! freeTrialPlanSlug,
 				} );
 			}
-
 			onUpgradeClick?.( upgradePlan );
 		},
 		[ currentSitePlanSlug, freeTrialPlanSlug, helpers, onUpgradeClick, planSlug ]
