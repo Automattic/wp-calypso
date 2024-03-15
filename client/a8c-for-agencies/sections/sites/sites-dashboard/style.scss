@@ -388,6 +388,10 @@
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 		}
 
+		.section-nav-tabs__list {
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
+
 		&.preview-hidden {
 			.sites-overview {
 				flex-grow: 1;
