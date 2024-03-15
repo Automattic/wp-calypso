@@ -203,9 +203,7 @@ const PlanOnlyThankYou = ( {
 				// automatically log the user into the wp-admin.
 				isWpComEcommercePlan( primaryPurchase.productSlug ) &&
 					transferComplete &&
-					isEmailVerified && (
-						<WpAdminAutoLogin site={ { URL: `https://${ siteUrl }` } } delay={ 0 } />
-					)
+					isEmailVerified && <WpAdminAutoLogin site={ { URL: siteUrl } } delay={ 0 } />
 			}
 			<ThankYouV2
 				title={ translate( 'Get the best out of your site' ) }
