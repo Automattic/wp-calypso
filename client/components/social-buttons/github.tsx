@@ -150,7 +150,7 @@ const GitHubLoginButton = ( {
 		}
 
 		const scope = encodeURIComponent( 'read:user,user:email' );
-		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-redirect?redirect_uri=${ stripQueryString(
+		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/authorize?redirect_uri=${ stripQueryString(
 			redirectUri
 		) }&scope=${ scope }&ux_mode=redirect`;
 	};
