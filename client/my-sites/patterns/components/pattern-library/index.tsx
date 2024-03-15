@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -31,6 +32,8 @@ import {
 } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+
+const PatternLibraryWrapper = styled.div``;
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -170,7 +173,7 @@ export const PatternLibrary = ( {
 			) }
 
 			{ ! isHomePage && (
-				<div className="pattern-library">
+				<PatternLibraryWrapper className="pattern-library">
 					<div className="pattern-library__header">
 						<h1 className="pattern-library__title">
 							{ searchTerm ? `${ patterns.length } patterns` : 'Patterns' }
@@ -223,7 +226,7 @@ export const PatternLibrary = ( {
 					</div>
 
 					<PatternGallery patterns={ patterns } isGridView={ isGridView } />
-				</div>
+				</PatternLibraryWrapper>
 			) }
 
 			{ isHomePage && <PatternsCopyPasteInfo /> }
