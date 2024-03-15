@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
@@ -64,18 +64,18 @@ export default function createExPlatClientReactHelpers(
 			...providedOptions,
 		};
 
+		// Manual updates to ensure rerendering when we want it:
+		// https://legacy.reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const [ _ignored, forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 		const [ previousExperimentName ] = useState( experimentName );
-		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
-			true,
-			null,
-		] );
 
 		useEffect( () => {
 			let isSubscribed = true;
 			if ( options.isEligible ) {
-				exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
+				exPlatClient.loadExperimentAssignment( experimentName ).then( () => {
 					if ( isSubscribed ) {
-						setState( [ false, experimentAssignment ] );
+						forceUpdate();
 					}
 				} );
 			}
@@ -97,7 +97,9 @@ export default function createExPlatClientReactHelpers(
 			return [ false, null ];
 		}
 
-		return state;
+		const maybeExperimentAssignment =
+			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment( experimentName );
+		return [ !! maybeExperimentAssignment, maybeExperimentAssignment ];
 	};
 
 	const Experiment = ( {
