@@ -1,10 +1,10 @@
 import { Card } from '@automattic/components';
+import { Icon, starEmpty as iconStar, category as iconCategory } from '@wordpress/icons';
 import { FunctionComponent } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
-import ImgStar from 'calypso/my-sites/patterns/pages/category/images/star.svg';
 
 const list = Array.from( { length: 15 }, ( _, i ) => ( {
-	name: `category-${ i }`,
+	id: `category-${ i }`,
 	label: `Category ${ i }`,
 	link: '#',
 } ) );
@@ -21,12 +21,12 @@ export const CategoryPillNavigationExample: FunctionComponent = () => {
 					selectedCategory="category-2"
 					buttons={ [
 						{
-							icon: ImgStar,
+							icon: <Icon icon={ iconStar } size={ 30 } />,
 							label: 'Discover',
 							link: '/',
 						},
 						{
-							icon: ImgStar,
+							icon: <Icon icon={ iconCategory } size={ 26 } />,
 							label: 'All categories',
 							link: '/',
 						},
