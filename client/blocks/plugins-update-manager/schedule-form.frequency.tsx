@@ -37,7 +37,7 @@ export function ScheduleFormFrequency( props: Props ) {
 	const { initTimestamp, initFrequency = 'daily', error, showError, onChange, onTouch } = props;
 
 	const initDate = initTimestamp
-		? moment( initTimestamp * 1000 )
+		? moment( initTimestamp )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
 
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( initFrequency );

@@ -52,7 +52,9 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >(
 		scheduleForEdit?.schedule || 'daily'
 	);
-	const [ timestamp, setTimestamp ] = useState< number >( scheduleForEdit?.timestamp );
+	const [ timestamp, setTimestamp ] = useState< number >(
+		scheduleForEdit ? scheduleForEdit?.timestamp * 1000 : Date.now()
+	);
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
