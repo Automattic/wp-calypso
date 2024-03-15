@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
@@ -101,8 +100,6 @@ const PrimaryDomainSelector = ( {
 		onSetPrimaryDomain( selectedDomain, () => setIsSettingPrimaryDomain( false ), domain.type );
 	};
 
-	const supportLink = localizeUrl( 'https://wordpress.com/support/domains/set-a-primary-address/' );
-
 	const trackUpgradeClick = () => {
 		recordTracksEvent( 'calypso_primary_site_address_nudge_cta_click', {
 			cta_name: 'add_custom_domain',
@@ -131,7 +128,7 @@ const PrimaryDomainSelector = ( {
 								{
 									components: {
 										learnMoreLink: (
-											<InlineSupportLink supportLink={ supportLink } showIcon={ false } />
+											<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
 										),
 									},
 								}
