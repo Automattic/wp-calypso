@@ -98,6 +98,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
+		isOnboardingPaidMediaFlow: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -1045,6 +1046,7 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
+				isOnboardingPaidMediaFlow={ this.props.isOnboardingPaidMediaFlow }
 			/>
 		);
 	};
@@ -1104,7 +1106,14 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
+		const {
+			flowName,
+			isAllDomains,
+			isOnboardingPaidMediaFlow,
+			isReskinned,
+			stepSectionName,
+			translate,
+		} = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1150,7 +1159,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( flowName === 'onboarding-pm' ) {
+			if ( isOnboardingPaidMediaFlow ) {
 				return translate(
 					"Find a unique web address that's easy to remember and even easier to share."
 				);
@@ -1169,8 +1178,15 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName } =
-			this.props;
+		const {
+			flowName,
+			headerText,
+			isAllDomains,
+			isOnboardingPaidMediaFlow,
+			isReskinned,
+			stepSectionName,
+			translate,
+		} = this.props;
 
 		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
@@ -1189,7 +1205,7 @@ export class RenderDomainsStep extends Component {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
 
-			if ( flowName === 'onboarding-pm' ) {
+			if ( isOnboardingPaidMediaFlow ) {
 				return translate( 'Claim your domain name' );
 			}
 
