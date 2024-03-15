@@ -33,6 +33,8 @@ import {
 
 import './style.scss';
 
+// We use this unstyled Emotion component simply to prevent errors related to the use of Emotion's
+// `useCx` hook in `ToggleGroupControl`
 const PatternLibraryWrapper = styled.div``;
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
