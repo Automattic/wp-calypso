@@ -22,7 +22,7 @@
 		transition: height 0.75s ease;
 
 		&.expanded {
-			height: 130px;
+			height: auto;
 		}
 
 		&.error {
@@ -42,15 +42,13 @@
 	.site-migration-instructions__migration-key {
 		display: flex;
 		justify-content: space-between;
-		margin-top: 0.5rem;
+		margin-top: 0.5rem 0.75rem 0 0;
 		max-width: 100%;
+		background: var(--color-neutral-0);
+		padding: 0.75rem;
 	}
 
 	.site-migration-instructions__migration-key .site-migration-instructions__key {
-		background: var(--color-neutral-0);
-		display: inline-block;
-		margin-right: 0.75rem;
-		padding: 0.75rem 1rem;
 		width: 375px;
 		overflow-x: scroll;
 	}
