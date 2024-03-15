@@ -499,7 +499,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openJetpackStats',
 			label: __( 'Open Jetpack Stats', __i18n_text_domain__ ),
-			callback: commandNavigation( '/stats/:site' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/admin.php?page=stats' : '/stats/:site'
+			),
 			icon: statsIcon,
 		},
 		{
@@ -518,7 +520,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 				_x( 'audit log', 'Keyword for the Open activity log command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/activity-log/:site' ),
+			callback: commandNavigation(
+				`${ shouldUseWpAdmin ? 'https://cloud.jetpack.com' : '' }/activity-log/:site`
+			),
 			filterP2: true,
 			icon: acitvityLogIcon,
 		},
@@ -526,7 +530,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
 			callback: commandNavigation(
-				`${ siteType === SiteType.ATOMIC ? 'https://cloud.jetpack.com' : '' }/backup/:site`
+				`${ shouldUseWpAdmin ? 'https://cloud.jetpack.com' : '' }/backup/:site`
 			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
@@ -935,7 +939,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'manageSettingsNewsletter',
 			label: __( 'Manage newsletter settings', __i18n_text_domain__ ),
 			context: [ '/wp-admin/options-' ],
-			callback: commandNavigation( '/settings/newsletter/:site' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin
+					? '/wp-admin/admin.php?page=jetpack#/newsletter'
+					: '/settings/newsletter/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
