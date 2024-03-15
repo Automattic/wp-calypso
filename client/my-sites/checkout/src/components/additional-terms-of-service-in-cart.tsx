@@ -143,11 +143,19 @@ function getMessageForTermsOfServiceRecordUnknown(
 
 		const taxesNotIncludedText = translate( 'Prices do not include applicable taxes.' );
 
-		const shouldShowRegularPriceNoticeText = regularPrice !== renewalPrice;
-
 		const shouldShowEndOfPromotionText =
 			args.subscription_auto_renew_date !== args.subscription_end_of_promotion_date ||
 			args.maybe_prorated_regular_renewal_price_integer !== args.renewal_price_integer;
+
+		const shouldShowRegularPriceNoticeText = ( () => {
+			if ( regularPrice === renewalPrice ) {
+				return false;
+			}
+			if ( shouldShowEndOfPromotionText && regularPrice === maybeProratedRegularPrice ) {
+				return false;
+			}
+			return true;
+		} )();
 
 		return (
 			<>
