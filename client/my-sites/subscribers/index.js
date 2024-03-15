@@ -5,12 +5,7 @@ import {
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import {
-	amendCurrentSection,
-	subscribers,
-	subscriberDetails,
-	externalSubscriberDetails,
-} from './controller';
+import { subscribers, subscriberDetails, externalSubscriberDetails } from './controller';
 
 export default function () {
 	page( '/subscribers', siteSelection, sites, makeLayout, clientRender );
@@ -21,7 +16,6 @@ export default function () {
 		navigation,
 		redirectIfCurrentUserCannot( 'list_users' ),
 		subscribers,
-		amendCurrentSection,
 		makeLayout,
 		clientRender
 	);
@@ -31,7 +25,6 @@ export default function () {
 		navigation,
 		redirectIfCurrentUserCannot( 'list_users' ),
 		subscriberDetails,
-		amendCurrentSection,
 		makeLayout,
 		clientRender
 	);
@@ -41,7 +34,6 @@ export default function () {
 		navigation,
 		redirectIfCurrentUserCannot( 'list_users' ),
 		externalSubscriberDetails,
-		amendCurrentSection,
 		makeLayout,
 		clientRender
 	);

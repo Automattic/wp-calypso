@@ -1,7 +1,5 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { setSectionMiddleware } from 'calypso/controller';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { sanitizeInt } from './helpers';
 import SubscribersPage from './main';
 import SubscriberDetailsPage from './subscriber-details-page';
@@ -27,14 +25,6 @@ const queryStringChanged = ( key ) => ( value ) => {
 
 	return page.show( addQueryArgs( path, { [ key ]: value } ) );
 };
-
-export function amendCurrentSection( context, next ) {
-	if ( ! isJetpackCloud() ) {
-		setSectionMiddleware( { name: 'subscribers', group: 'sites' } )( context );
-	}
-
-	next();
-}
 
 export function subscribers( context, next ) {
 	const { query } = context;
