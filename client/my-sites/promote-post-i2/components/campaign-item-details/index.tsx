@@ -797,6 +797,11 @@ export default function CampaignItemDetails( props: Props ) {
 													);
 											  } )
 											: [] }
+										{ orders && orders.length > 0 && (
+											<div className="campaign-item-details__weekly-orders-row">
+												<div className="campaign-item-details__weekly-orders-seperator"></div>
+											</div>
+										) }
 										<div className="campaign-item-details__secondary-payment-row">
 											{ payment_method && card_name && (
 												<>

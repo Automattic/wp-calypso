@@ -390,11 +390,14 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			display: none;
 		}
 
+		.campaign-item-details__payment-row {
+			margin: 24px 0;
+		}
+
 		.campaign-item-details__weekly-orders-row {
 			display: grid;
 			grid-template-columns: 42% 43% 15%;
 			flex-grow: 1;
-			margin-top: 8px;
 			justify-content: space-between;
 			width: 100%;
 
@@ -403,6 +406,24 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				flex-direction: column;
 				padding: 8px 16px 0;
 
+			}
+
+			@media (max-width: ($break-medium + 425)) {
+				grid-template-columns: 60% 40%;
+			}
+
+			.campaign-item-details__weekly-label {
+				@media (max-width: ($break-medium + 425)) {
+					display: none;
+				}
+			}
+
+			.campaign-item-details__weekly-orders-seperator {
+				background: #dcdcde;
+				height: 1px;
+				margin: 24px 16px 8px;
+				padding: 0;
+				grid-column: 1 / 4; /* Span across all columns */
 			}
 
 			.campaign-item-details__weekly-amount {
