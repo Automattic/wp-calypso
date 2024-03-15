@@ -44,6 +44,19 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	} );
 }
 
+const handleSettingView = ( value: 'grid' | 'list' ) => {
+	const searchParams = new URLSearchParams( location.search );
+
+	if ( value === 'grid' ) {
+		searchParams.set( 'grid', '1' );
+	} else {
+		searchParams.delete( 'grid' );
+	}
+
+	const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
+	page( location.pathname + paramsString );
+};
+
 type PatternsCategoryPageProps = {
 	category: string;
 	isGridView?: boolean;
@@ -96,19 +109,6 @@ export const PatternsCategoryPage = ( {
 				( isGridView ? '?grid=1' : '' ),
 		};
 	} );
-
-	const handleSettingView = ( value: 'grid' | 'list' ) => {
-		const searchParams = new URLSearchParams( location.search );
-
-		if ( value === 'grid' ) {
-			searchParams.set( 'grid', '1' );
-		} else {
-			searchParams.delete( 'grid' );
-		}
-
-		const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
-		page( location.pathname + paramsString );
-	};
 
 	return (
 		<>
