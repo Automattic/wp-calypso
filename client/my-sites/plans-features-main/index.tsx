@@ -335,7 +335,6 @@ const PlansFeaturesMain = ( {
 				return;
 			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
-			console.log( 'handleUpgradeClick', cartItemForPlan, clickedPlanSlug );
 			const planSlug = clickedPlanSlug ?? PLAN_FREE;
 			setLastClickedPlan( planSlug );
 			if ( isFreePlan( planSlug ) ) {
@@ -357,7 +356,6 @@ const PlansFeaturesMain = ( {
 				} );
 			}
 
-			console.log( onUpgradeClick, cartItems );
 			if ( onUpgradeClick ) {
 				onUpgradeClick( cartItems );
 				return;
