@@ -121,7 +121,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		} );
 
 		const emailNoticesText = translate(
-			'You will receive email notices %(numberOfDays)d days before renewals, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
+			'You will receive an email notice %(numberOfDays)d days before being billed, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
 			{
 				args: {
 					numberOfDays,
