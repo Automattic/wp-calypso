@@ -47,7 +47,7 @@ export function PatternPreview( {
 
 		const timeoutId = setTimeout( () => {
 			setIsCopied( false );
-		}, 3500 );
+		}, 4500 );
 
 		return () => {
 			clearTimeout( timeoutId );
