@@ -2,7 +2,8 @@ import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products'
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
+import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -25,17 +26,18 @@ const PrimaryDomainSelector = ( {
 	onSetPrimaryDomain,
 }: PrimaryDomainSelectorProps ) => {
 	const [ selectedDomain, setSelectedDomain ] = useState< undefined | string >( undefined );
+	const [ primaryDomain, setPrimaryDomain ] = useState< undefined | string >( undefined );
 	const [ isSettingPrimaryDomain, setIsSettingPrimaryDomain ] = useState< boolean >( false );
 
 	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( domains?.length ) {
-			const primaryDomain = domains.find( ( domain ) => {
+			const primary = domains.find( ( domain ) => {
 				return domain.primary_domain;
 			} );
-			if ( primaryDomain ) {
-				setSelectedDomain( primaryDomain.domain );
+			if ( primary ) {
+				setPrimaryDomain( primary.domain );
 			}
 		}
 	}, [ domains ] );
@@ -63,7 +65,8 @@ const PrimaryDomainSelector = ( {
 			domain.can_set_as_primary &&
 			! domain.aftermarket_auction &&
 			domain.points_to_wpcom &&
-			! shouldUpgradeToMakeDomainPrimary( domain )
+			! shouldUpgradeToMakeDomainPrimary( domain ) &&
+			! domain.primary_domain
 		);
 	} );
 
@@ -83,14 +86,18 @@ const PrimaryDomainSelector = ( {
 
 	const onSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedDomain( event.target.value );
+	};
 
-		const domain = domains.find( ( d ) => d.domain === event.target.value );
-		if ( ! domain ) {
+	const onSubmit = ( event: FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+
+		const domain = domains.find( ( d ) => d.domain === selectedDomain );
+		if ( ! domain || ! selectedDomain ) {
 			return;
 		}
 
 		setIsSettingPrimaryDomain( true );
-		onSetPrimaryDomain( event.target.value, () => setIsSettingPrimaryDomain( false ), domain.type );
+		onSetPrimaryDomain( selectedDomain, () => setIsSettingPrimaryDomain( false ), domain.type );
 	};
 
 	const supportLink = localizeUrl( 'https://wordpress.com/support/domains/set-a-primary-address/' );
@@ -103,28 +110,55 @@ const PrimaryDomainSelector = ( {
 			<div>
 				<FormSettingExplanation className="domains-set-primary-address__subtitle">
 					{ translate(
-						'The current primary address set for this site is: {{strong}}%(selectedDomain)s{{/strong}}. You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'The current primary address set for this site is: {{strong}}%(selectedDomain)s{{/strong}}.',
 						{
-							args: { selectedDomain: selectedDomain as string },
+							args: { selectedDomain: primaryDomain as string },
 							components: {
 								strong: <strong />,
-								learnMoreLink: <InlineSupportLink supportLink={ supportLink } showIcon={ false } />,
 							},
 						}
-					) }
+					) }{ ' ' }
+					{ validPrimaryDomains.length > 1
+						? translate(
+								'You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportLink={ supportLink } showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate(
+								'If you want to change it you can add a new custom domain for your site'
+						  ) }
 				</FormSettingExplanation>
-				<FormSelect
-					disabled={ isSettingPrimaryDomain }
-					id="primary-domain-selector"
-					onChange={ onSelectChange }
-					value={ selectedDomain }
-				>
-					{ validPrimaryDomains.map( ( domain ) => (
-						<option key={ domain.domain } value={ domain.domain }>
-							{ domain.domain }
-						</option>
-					) ) }
-				</FormSelect>
+				{ validPrimaryDomains.length > 1 && (
+					<>
+						<FormSelect
+							disabled={ isSettingPrimaryDomain }
+							id="primary-domain-selector"
+							onChange={ onSelectChange }
+							value={ selectedDomain }
+						>
+							{ validPrimaryDomains.map( ( domain ) => (
+								<option key={ domain.domain } value={ domain.domain }>
+									{ domain.domain }
+								</option>
+							) ) }
+						</FormSelect>
+
+						<FormButton
+							className="domains-set-primary-address__submit"
+							primary
+							busy={ isSettingPrimaryDomain }
+							disabled={ isSettingPrimaryDomain }
+							onClick={ onSubmit }
+						>
+							{ translate( 'Set as primary site address' ) }
+						</FormButton>
+					</>
+				) }
 			</div>
 		</FormFieldset>
 	);
