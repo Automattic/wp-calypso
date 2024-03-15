@@ -97,7 +97,7 @@ const Sso = ( {
 				ReactDOM.createPortal(
 					<SurveyModal
 						name="sso-disable"
-						url="https://wordpressdotcom.survey.fm/sso-disable-survey?initiated-from=calypso"
+						url="https://wordpressdotcom.survey.fm/disable-sso-survey?initiated-from=calypso"
 						heading={ translate( 'SSO Survey' ) }
 						title={ translate( 'Hi there!' ) }
 						description={ translate(
