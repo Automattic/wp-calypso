@@ -35,7 +35,7 @@ import './style.scss';
 
 // We use this unstyled Emotion component simply to prevent errors related to the use of Emotion's
 // `useCx` hook in `ToggleGroupControl`
-const PatternLibraryWrapper = styled.div``;
+const PatternLibraryBody = styled.div``;
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -144,7 +144,7 @@ export const PatternLibrary = ( {
 				title={ category ? `${ category } patterns` : 'Build your perfect site with patterns' }
 			/>
 
-			{ categoryNavList && (
+			{ ! isHomePage && categoryNavList && (
 				<div className="pattern-library__pill-navigation">
 					<CategoryPillNavigation
 						selectedCategory={ category }
@@ -175,7 +175,7 @@ export const PatternLibrary = ( {
 			) }
 
 			{ ! isHomePage && (
-				<PatternLibraryWrapper className="pattern-library">
+				<PatternLibraryBody className="pattern-library">
 					<div className="pattern-library__header">
 						<h1 className="pattern-library__title">
 							{ searchTerm ? `${ patterns.length } patterns` : 'Patterns' }
@@ -228,7 +228,7 @@ export const PatternLibrary = ( {
 					</div>
 
 					<PatternGallery patterns={ patterns } isGridView={ isGridView } />
-				</PatternLibraryWrapper>
+				</PatternLibraryBody>
 			) }
 
 			{ isHomePage && <PatternsCopyPasteInfo /> }
