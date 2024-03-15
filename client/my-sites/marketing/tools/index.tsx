@@ -94,7 +94,6 @@ export const MarketingTools: FunctionComponent = () => {
 						"Hire our dedicated experts to build a handcrafted, personalized website. Share some details about what you're looking for, and we'll make it happen."
 					) }
 					imagePath={ wordPressLogo }
-					imageAlt={ translate( 'Built by WordPress.com logo' ) }
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }

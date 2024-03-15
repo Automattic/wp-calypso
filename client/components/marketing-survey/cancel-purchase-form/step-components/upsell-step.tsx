@@ -167,10 +167,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					{ translate(
 						'Building a website from scratch can be a lot of work. ' +
 							'Our professional website design service can help you skip to a beautiful, finished website without all the hassle. ' +
-							'No matter what you need - whether it’s a custom design or just a redesign - our pro design team can make it happen.',
-						{
-							components: { b: <strong /> },
-						}
+							'No matter what you need - whether it’s a custom design or just a redesign - our pro design team can make it happen.'
 					) }
 				</Upsell>
 			);
