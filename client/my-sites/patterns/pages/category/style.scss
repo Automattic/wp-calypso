@@ -60,6 +60,7 @@
 		margin-bottom: 0;
 	}
 
+
 	.patterns-page-category__toggle-option {
 		min-width: 118px;
 
@@ -71,23 +72,12 @@
 
 	.patterns-page-category__toggle-option--list-view,
 	.patterns-page-category__toggle-option--grid-view {
-		min-width: 34px;
-
-		div {
-			font-size: 0;
-		}
+		padding: 0 8px;
+		color: var(--studio-black);
 
 		&[aria-checked="true"] {
-			filter: invert(100%);
+			color: var(--studio-white);
 		}
-	}
-
-	.patterns-page-category__toggle-option--list-view {
-		background: url(./images/list.svg) no-repeat center center;
-	}
-
-	.patterns-page-category__toggle-option--grid-view {
-		background: url(./images/grid.svg) no-repeat center center;
 	}
 
 	@media ( max-width: $break-medium ) {
