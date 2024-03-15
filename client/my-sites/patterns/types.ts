@@ -13,6 +13,11 @@ export type RouterContext = Context &
 
 export type { Pattern };
 
+export enum PatternTypeFilter {
+	PAGES = 'pages',
+	REGULAR = 'regular',
+}
+
 type CategoryBase = {
 	name: string;
 	label: string;
@@ -21,15 +26,28 @@ type CategoryBase = {
 
 export type CategorySnakeCase = CategoryBase & {
 	page_pattern_count: number;
-	regular_cattern_count: number;
+	page_preview_pattern: Pattern | null;
+	regular_pattern_count: number;
+	regular_preview_pattern: Pattern | null;
 };
 
 export type Category = CategoryBase & {
 	pagePatternCount: number;
+	pagePreviewPattern: Pattern | null;
 	regularPatternCount: number;
+	regularPreviewPattern: Pattern | null;
 };
 
-export type PatternGalleryProps = {
+type CategoryGalleryProps = {
+	categories?: Category[];
+	description: string;
+	patternTypeFilter: PatternTypeFilter;
+	title: string;
+};
+
+export type CategoryGalleryFC = React.FC< CategoryGalleryProps >;
+
+type PatternGalleryProps = {
 	isGridView?: boolean;
 	patterns?: Pattern[];
 };

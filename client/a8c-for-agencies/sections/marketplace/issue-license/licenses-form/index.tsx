@@ -15,9 +15,8 @@ import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import IssueLicenseContext from '../context';
-import { PRODUCT_FILTER_ALL } from './constants';
+import useSubmitForm from './hooks/use-submit-form';
 import ProductFilterSearch from './product-filter-search';
-import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
 import type { SelectedLicenseProp } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -42,10 +41,6 @@ export default function LicensesForm( {
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
-	const [ selectedProductFilter, setSelectedProductFilter ] = useState< string | null >(
-		PRODUCT_FILTER_ALL
-	);
-
 	const {
 		filteredProductsAndBundles,
 		isLoadingProducts,
@@ -54,9 +49,9 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		data,
+		suggestedProductSlugs,
 	} = useProductAndPlans( {
 		selectedSite,
-		selectedProductFilter,
 		selectedBundleSize: quantity,
 		productSearchQuery,
 		usePublicQuery: true, // FIXME: Fix this when we have the API endpoint for A4A
@@ -186,7 +181,7 @@ export default function LicensesForm( {
 		[ dispatch, handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
-	const isReady = true; // FIXME: Fix this with actual form ready state
+	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
@@ -196,16 +191,6 @@ export default function LicensesForm( {
 					license.quantity === quantity
 			),
 		[ quantity, selectedLicenses ]
-	);
-
-	const onProductFilterSelect = useCallback(
-		( value: string | null ) => {
-			setSelectedProductFilter( value );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_issue_license_filter_submit', { value } )
-			);
-		},
-		[ dispatch ]
 	);
 
 	const onProductSearch = useCallback(
@@ -292,12 +277,6 @@ export default function LicensesForm( {
 				<ProductFilterSearch
 					onProductSearch={ onProductSearch }
 					onClick={ trackClickCallback( 'search' ) }
-				/>
-				<ProductFilterSelect
-					selectedProductFilter={ selectedProductFilter }
-					onProductFilterSelect={ onProductFilterSelect }
-					onClick={ trackClickCallback( 'filter' ) }
-					isSingleLicense={ isSingleLicenseView }
 				/>
 			</div>
 

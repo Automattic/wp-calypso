@@ -16,12 +16,20 @@ import 'calypso/state/stats/init';
  * @returns {Object}  Action object
  */
 
-export function requestMetrics( siteId: number, utmParam: string, postId?: number ) {
+export function requestMetrics(
+	siteId: number,
+	utmParam: string,
+	query: object,
+	postId?: number,
+	siteSlug?: string
+) {
 	return {
 		type: STATS_UTM_METRICS_REQUEST,
 		siteId,
-		postId,
 		utmParam,
+		query,
+		postId,
+		siteSlug,
 	};
 }
 
@@ -39,11 +47,12 @@ export function requestMetricsFail( siteId: number ) {
  * @param {Object} data   API response
  * @returns {Object}  Action object
  */
-export function receiveMetrics( siteId: number, data: object ) {
+export function receiveMetrics( siteId: number, data: object, siteSlug: string ) {
 	return {
 		type: STATS_UTM_METRICS_RECEIVE,
 		siteId,
 		data,
+		siteSlug,
 	};
 }
 

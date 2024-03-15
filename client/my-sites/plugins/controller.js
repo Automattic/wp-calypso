@@ -126,7 +126,7 @@ export function updatesManager( context, next ) {
 			context.primary = createElement( PluginsUpdateManager, {
 				siteSlug,
 				context: 'create',
-				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
+				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
 			} );
 			break;
 
@@ -135,7 +135,7 @@ export function updatesManager( context, next ) {
 				siteSlug,
 				scheduleId,
 				context: 'edit',
-				onNavBack: () => page.redirect( `/plugins/scheduled-updates/${ siteSlug }` ),
+				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
 			} );
 			break;
 
@@ -144,10 +144,9 @@ export function updatesManager( context, next ) {
 			context.primary = createElement( PluginsUpdateManager, {
 				siteSlug,
 				context: 'list',
-				onCreateNewSchedule: () =>
-					page.redirect( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),
 				onEditSchedule: ( id ) =>
-					page.redirect( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
+					page.show( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
 			} );
 			break;
 	}

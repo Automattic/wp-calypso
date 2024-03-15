@@ -1,7 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
-import { PatternsGridGallery } from 'calypso/my-sites/patterns/components/grid-gallery';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
@@ -10,22 +9,26 @@ import {
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import {
+	PatternTypeFilter,
+	type CategoryGalleryFC,
+	type PatternGalleryFC,
+} from 'calypso/my-sites/patterns/types';
 import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
-import ImgLayout from './images/layout.svg';
-import ImgPattern from './images/pattern.svg';
 import ImgResponsive from './images/responsive.svg';
 import ImgStyle from './images/style.svg';
-import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
 type PatternsHomePageProps = {
+	categoryGallery: CategoryGalleryFC;
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 };
 
 export const PatternsHomePage = ( {
+	categoryGallery: CategoryGallery,
 	isGridView,
 	patternGallery: PatternGallery,
 }: PatternsHomePageProps ) => {
@@ -51,16 +54,11 @@ export const PatternsHomePage = ( {
 				title="Build your perfect site with patterns"
 			/>
 
-			<PatternsGridGallery
+			<CategoryGallery
 				title="Ship faster with patterns"
 				description="Choose from a huge library of patterns to build any page you need."
-				list={ categories?.map( ( category ) => ( {
-					name: category.name,
-					label: category.label,
-					number: category.regularPatternCount,
-					image: ImgPattern,
-					link: `/patterns/${ category.name }`,
-				} ) ) }
+				categories={ categories?.filter( ( c ) => c.regularPatternCount ) }
+				patternTypeFilter={ PatternTypeFilter.REGULAR }
 			/>
 
 			{ searchTerm && <PatternGallery patterns={ patterns } isGridView={ isGridView } /> }
@@ -114,19 +112,11 @@ export const PatternsHomePage = ( {
 				</div>
 			</PatternsSection>
 
-			<PatternsGridGallery
+			<CategoryGallery
 				title="Beautifully curated page layouts"
 				description="Entire pages built of patterns, ready to be added to your site."
-				columnCount={ 3 }
-				list={ categories
-					?.filter( ( { pagePatternCount } ) => pagePatternCount )
-					.map( ( category ) => ( {
-						name: category.name,
-						label: category.label,
-						number: category.pagePatternCount,
-						image: ImgLayout,
-						link: `/patterns/${ category.name }`,
-					} ) ) }
+				categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+				patternTypeFilter={ PatternTypeFilter.PAGES }
 			/>
 
 			<PatternsGetStarted />

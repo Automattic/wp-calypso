@@ -13,6 +13,11 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import {
+	A4A_DOWNLOAD_PRODUCTS_LINK,
+	A4A_LICENSES_LINK,
+	A4A_SITES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
@@ -21,7 +26,10 @@ import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
+import useAssignLicensesToSite from '../issue-license/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
 
 import './styles.scss';
@@ -58,9 +66,13 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isReady = true; // FIXME: Fix this with actual form ready state
-
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
+
+	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+		},
+	} );
 
 	const licenseKeysArray = useMemo( () => {
 		const products = getQueryArg( window.location.href, 'products' );
@@ -104,14 +116,14 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 
 	const onClickAssignLater = useCallback( () => {
 		if ( licenseKeysArray.length > 1 ) {
-			page.redirect( '/partner-portal/licenses' );
+			page.redirect( A4A_LICENSES_LINK );
 		}
 
 		const licenseKey = licenseKeysArray[ 0 ];
-		page.redirect( addQueryArgs( { highlight: licenseKey }, '/purchases/licenses' ) );
+		page.redirect( addQueryArgs( { highlight: licenseKey }, A4A_LICENSES_LINK ) );
 	}, [ licenseKeysArray ] );
 
-	const onClickAssignLicenses = useCallback( () => {
+	const onClickAssignLicenses = useCallback( async () => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_assign_multiple_licenses_submit', {
 				products: licenseKeysArray.join( ',' ),
@@ -119,8 +131,31 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 			} )
 		);
 
-		// TODO: Need to implement actual assign Licenses operation once we have a working API
-	}, [ dispatch, licenseKeysArray, selectedSite?.ID ] );
+		const assignLicensesResult = await assignLicensesToSite( licenseKeysArray );
+
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicensesResult ) );
+
+		const goToDownloadStep = licenseKeysArray.some( ( licenseKey ) =>
+			isWooCommerceProduct( licenseKey )
+		);
+
+		if ( goToDownloadStep ) {
+			return page.redirect(
+				addQueryArgs(
+					{ products: licenseKeysArray.join( ',' ), attachedSiteId: selectedSite?.ID },
+					A4A_DOWNLOAD_PRODUCTS_LINK
+				)
+			);
+		}
+
+		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+		if ( fromDashboard ) {
+			return page.redirect( A4A_SITES_LINK );
+		}
+
+		return page.redirect( A4A_LICENSES_LINK );
+	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
 
 	return (
 		<Layout

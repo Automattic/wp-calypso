@@ -3,8 +3,11 @@ import { LocalizeProps } from 'i18n-calypso';
 import { FC } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import QuickLanguageSwitcher from 'calypso/layout/masterbar/quick-language-switcher';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import { UserData } from 'calypso/lib/user/user';
+import { useSelector } from 'calypso/state';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
 
 const CustomReaderIcon = () => (
@@ -31,6 +34,7 @@ export const GlobalSidebarFooter: FC< {
 	translate: LocalizeProps[ 'translate' ];
 	user?: UserData;
 } > = ( { translate, user } ) => {
+	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
 	return (
 		<SidebarFooter>
 			<a
@@ -62,6 +66,9 @@ export const GlobalSidebarFooter: FC< {
 				}
 				onClick={ () => recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.HELPCENTER_CLICK ) }
 			/>
+			{ isInSupportSession && (
+				<QuickLanguageSwitcher className="sidebar__footer-language-switcher" shouldRenderAsButton />
+			) }
 		</SidebarFooter>
 	);
 };
