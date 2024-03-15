@@ -16,6 +16,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import {
 	A4A_DOWNLOAD_PRODUCTS_LINK,
 	A4A_LICENSES_LINK,
+	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
@@ -150,7 +151,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 
 		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 		if ( fromDashboard ) {
-			return page.redirect( '/sites' );
+			return page.redirect( A4A_SITES_LINK );
 		}
 
 		return page.redirect( A4A_LICENSES_LINK );

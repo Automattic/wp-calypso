@@ -2,7 +2,10 @@ import page from '@automattic/calypso-router';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_LICENSES_LINK,
+	A4A_SITES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -127,7 +130,7 @@ function useIssueAndAssignLicenses(
 			// let's politely send them back there
 			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 			if ( fromDashboard ) {
-				page.redirect( '/sites' );
+				page.redirect( A4A_SITES_LINK );
 				return;
 			}
 
