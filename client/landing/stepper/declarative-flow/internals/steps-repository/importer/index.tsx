@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { MigrationStatus } from '@automattic/data-stores';
-import { IMPORT_HOSTED_SITE_FLOW, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -13,17 +13,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
-import {
-	getCurrentUser,
-	getCurrentUserId,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	fetchImporterState,
 	resetImport,
@@ -36,7 +33,6 @@ import {
 } from 'calypso/state/imports/selectors';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { requestSites } from 'calypso/state/sites/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
@@ -82,25 +78,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			migrationStatus === MigrationStatus.BACKING_UP ||
 			migrationStatus === MigrationStatus.BACKING_UP_QUEUED ||
 			migrationStatus === MigrationStatus.RESTORING;
-		const userId = useSelector( getCurrentUserId );
-		const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 		const currentPath = window.location.pathname + window.location.search;
-		const pathStep = isEmailVerified ? null : currentPath;
-		/**
-		 * Save the selected trial plan path in the user's preferences.
-		 */
-		const saveHostingFlowPathStep = () => {
-			dispatch( savePreference( `hosting-flow-path-step-${ userId }`, pathStep ) );
-		};
 
-		/**
-	 	↓ Effects
-		 */
-		useEffect( () => {
-			if ( flow === IMPORT_HOSTED_SITE_FLOW ) {
-				saveHostingFlowPathStep();
-			}
-		}, [ pathStep ] );
+		useSaveHostingFlowPathStep( flow, currentPath );
 
 		useEffect( () => {
 			dispatch( requestSites() );
