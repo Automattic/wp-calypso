@@ -94,6 +94,58 @@ export const HOUR_OPTIONS = [
 	},
 ];
 
+export const HOUR_OPTIONS_24 = [
+	{
+		label: '00',
+		value: '0',
+	},
+	...HOUR_OPTIONS,
+	{
+		label: '13',
+		value: '13',
+	},
+	{
+		label: '14',
+		value: '14',
+	},
+	{
+		label: '15',
+		value: '15',
+	},
+	{
+		label: '16',
+		value: '16',
+	},
+	{
+		label: '17',
+		value: '17',
+	},
+	{
+		label: '18',
+		value: '18',
+	},
+	{
+		label: '19',
+		value: '19',
+	},
+	{
+		label: '20',
+		value: '20',
+	},
+	{
+		label: '21',
+		value: '21',
+	},
+	{
+		label: '22',
+		value: '22',
+	},
+	{
+		label: '23',
+		value: '23',
+	},
+];
+
 export const PERIOD_OPTIONS = [
 	{
 		label: translate( 'AM' ),
