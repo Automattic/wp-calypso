@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
-import { classNames } from 'classnames';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
