@@ -2,13 +2,7 @@
  * @jest-environment jsdom
  */
 
-import {
-	PLAN_ECOMMERCE,
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-	isDotComPlan,
-	PLAN_PERSONAL,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -29,9 +23,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
-jest.mock( '../atomic-store-thank-you-card', () => () => (
-	<div data-testid="atomic-store-thank-you-card" />
-) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
@@ -169,62 +160,6 @@ describe( 'CheckoutThankYou', () => {
 				} ),
 				expect.anything()
 			);
-		} );
-	} );
-
-	describe( 'Presence of <AtomicStoreThankYouCard /> in render() output', () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: PLAN_ECOMMERCE }, [] ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_ECOMMERCE,
-		};
-
-		afterAll( () => {
-			isDotComPlan.mockImplementation( () => false );
-		} );
-
-		test( 'Should be there for AT', () => {
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou
-						{ ...props }
-						transferComplete={ true }
-						isWooCommerceInstalled={ true }
-					/>
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).toBeVisible();
-		} );
-
-		test( 'Should not be there for AT', () => {
-			const { rerender } = render(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } transferComplete={ false } />
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
-
-			isDotComPlan.mockImplementation( () => true );
-
-			rerender(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } />
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
