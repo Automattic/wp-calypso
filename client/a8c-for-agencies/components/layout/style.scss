@@ -39,12 +39,6 @@ html,
 	overflow-y: auto;
 	padding-block-start: 16px;
 	padding-block-end: 32px;
-
-	-ms-overflow-style: none;
-
-	&::-webkit-scrollbar {
-		display: none;
-	}
 }
 
 .a4a-layout__top-wrapper,
