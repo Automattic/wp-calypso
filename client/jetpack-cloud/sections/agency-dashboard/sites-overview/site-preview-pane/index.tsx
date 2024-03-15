@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React from 'react';
-import SitePreviewPaneContent from './site-preview-pane-content';
 import SitePreviewPaneHeader from './site-preview-pane-header';
 import SitePreviewPaneTabs from './site-preview-pane-tabs';
 import { FeaturePreviewInterface, SitePreviewPaneProps } from './types';
@@ -54,7 +53,7 @@ export default function SitePreviewPane( {
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
 			<SitePreviewPaneTabs featureTabs={ featureTabs } />
-			<SitePreviewPaneContent>{ selectedFeature.preview }</SitePreviewPaneContent>
+			{ selectedFeature.preview }
 		</div>
 	);
 }
