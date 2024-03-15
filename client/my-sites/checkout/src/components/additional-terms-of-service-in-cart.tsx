@@ -82,13 +82,21 @@ function getMessageForTermsOfServiceRecordUnknown(
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
 
-		const nextRenewalText = translate(
-			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s.',
+		const termLengthText = translate(
+			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
 			{
 				args: {
 					productName,
 					startDate,
 					endDate,
+				},
+			}
+		);
+
+		const nextRenewalText = translate(
+			'You will next be charged %(renewalPrice)s on %(renewalDate)s.',
+			{
+				args: {
 					renewalPrice,
 					renewalDate,
 				},
@@ -139,8 +147,9 @@ function getMessageForTermsOfServiceRecordUnknown(
 
 		return (
 			<>
-				{ nextRenewalText } { shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
-				{ regularPriceNoticeText } { emailNoticesText }{ ' ' }
+				{ termLengthText } { nextRenewalText }{ ' ' }
+				{ shouldShowEndOfPromotionText && endOfPromotionChargeText } { regularPriceNoticeText }{ ' ' }
+				{ emailNoticesText }{ ' ' }
 			</>
 		);
 	}
