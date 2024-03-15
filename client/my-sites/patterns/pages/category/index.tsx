@@ -5,6 +5,12 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import {
+	Icon,
+	starEmpty as iconStar,
+	category as iconCategory,
+	menu as iconMenu,
+} from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,8 +28,6 @@ import {
 	type Pattern,
 	type PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
-import ImgGrid from './images/grid.svg';
-import ImgStar from './images/star.svg';
 
 import './style.scss';
 
@@ -39,6 +43,19 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
 }
+
+const handleSettingView = ( value: 'grid' | 'list' ) => {
+	const searchParams = new URLSearchParams( location.search );
+
+	if ( value === 'grid' ) {
+		searchParams.set( 'grid', '1' );
+	} else {
+		searchParams.delete( 'grid' );
+	}
+
+	const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
+	page( location.pathname + paramsString );
+};
 
 type PatternsCategoryPageProps = {
 	category: string;
@@ -85,9 +102,11 @@ export const PatternsCategoryPage = ( {
 			category.pagePatternCount === 0 ? PatternTypeFilter.REGULAR : patternTypeFilter;
 
 		return {
-			name: category.name || '',
+			id: category.name || '',
 			label: category.label,
-			link: getCategoryUrlPath( category.name, patternTypeFilterFallback, false ),
+			link:
+				getCategoryUrlPath( category.name, patternTypeFilterFallback, false ) +
+				( isGridView ? '?grid=1' : '' ),
 		};
 	} );
 
@@ -111,12 +130,12 @@ export const PatternsCategoryPage = ( {
 						selectedCategory={ category }
 						buttons={ [
 							{
-								icon: ImgStar,
+								icon: <Icon icon={ iconStar } size={ 30 } />,
 								label: 'Discover',
 								link: addLocaleToPathLocaleInFront( '/patterns' ),
 							},
 							{
-								icon: ImgGrid,
+								icon: <Icon icon={ iconCategory } size={ 26 } />,
 								label: 'All Categories',
 								link: '/222',
 							},
@@ -157,17 +176,19 @@ export const PatternsCategoryPage = ( {
 						className="patterns-page-category__toggle--view"
 						label=""
 						isBlock
-						value="patterns"
+						value={ isGridView ? 'grid' : 'list' }
 					>
 						<ToggleGroupControlOption
 							className="patterns-page-category__toggle-option--list-view"
-							label="List view"
+							label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 							value="list"
+							onClick={ () => handleSettingView( 'list' ) }
 						/>
 						<ToggleGroupControlOption
 							className="patterns-page-category__toggle-option--grid-view"
-							label="Grid view"
+							label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 							value="grid"
+							onClick={ () => handleSettingView( 'grid' ) }
 						/>
 					</ToggleGroupControl>
 				</div>

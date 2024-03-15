@@ -20,6 +20,7 @@ export const DeveloperFeatures = () => {
 						{ linkLearnMore && (
 							<div className="developer-features-list__item-learn-more">
 								<a
+									id={ id }
 									href={ linkLearnMore }
 									target="_blank"
 									rel="noopener noreferrer"
