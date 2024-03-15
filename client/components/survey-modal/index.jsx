@@ -64,7 +64,7 @@ const SurveyModal = ( {
 					<div className="modal-survey-notice__popup-content-description">{ description }</div>
 					<div className="modal-survey-notice__popup-content-buttons">
 						<Button
-							className="dmodal-survey-notice__popup-content-buttons-cancel"
+							className="modal-survey-notice__popup-content-buttons-cancel"
 							onClick={ onClose }
 						>
 							{ dismissText }
