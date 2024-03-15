@@ -46,9 +46,15 @@
 				letter-spacing: -0.15px;
 			}
 
-			.modal-survey-notice__popup-head-close svg {
-				fill: var(--studio-white);
-			}
+		}
+
+		.modal-survey-notice__popup-head-close svg {
+			fill: var(--studio-white);
+		}
+
+		> .modal-survey-notice__popup-head-close {
+			position: absolute;
+			right: 0;
 		}
 
 		.modal-survey-notice__popup-img {

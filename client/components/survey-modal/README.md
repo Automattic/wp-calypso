@@ -41,7 +41,7 @@ function MyComponent() {
 - `name` - (string) The name to use for cookie management. Recommended to use Kebap case.
 - `className` - (string) Additional className for the modal.
 - `url` - (string) The url to which the confirm button links to.
-- `heading` - (string) Heading of the modal
+- `heading` - _optional_ (string) Heading of the modal
 - `title` - _optional_ (string) Title text
 - `surveyImage` - _optional_ (string) Image to display in the modal
 - `description` - (string) Description text

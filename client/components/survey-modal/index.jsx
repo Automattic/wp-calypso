@@ -47,12 +47,21 @@ const SurveyModal = ( {
 		<div className={ classNames( 'modal-survey-notice', className ) }>
 			<Button className="modal-survey-notice__backdrop" onClick={ onClose } />
 			<div className="modal-survey-notice__popup">
-				<div className="modal-survey-notice__popup-head">
-					<div className="modal-survey-notice__popup-head-title">{ heading }</div>
+				{ heading && (
+					<div className="modal-survey-notice__popup-head">
+						<div className="modal-survey-notice__popup-head-title">{ heading }</div>
+						<Button onClick={ onClose } className="modal-survey-notice__popup-head-close">
+							<Gridicon icon="cross" size={ 16 } />
+						</Button>
+					</div>
+				) }
+
+				{ ! heading && (
 					<Button onClick={ onClose } className="modal-survey-notice__popup-head-close">
 						<Gridicon icon="cross" size={ 16 } />
 					</Button>
-				</div>
+				) }
+
 				{ surveyImage && (
 					<div className="modal-survey-notice__popup-img">
 						<img src={ surveyImage } alt={ heading } />
@@ -89,7 +98,7 @@ SurveyModal.propTypes = {
 	name: PropTypes.string.isRequired,
 	className: PropTypes.string,
 	url: PropTypes.string.isRequired,
-	heading: PropTypes.string.isRequired,
+	heading: PropTypes.string,
 	title: PropTypes.string,
 	surveyImage: PropTypes.string,
 	description: PropTypes.string.isRequired,
