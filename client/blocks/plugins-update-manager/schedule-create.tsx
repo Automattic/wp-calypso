@@ -78,7 +78,7 @@ export const ScheduleCreate = ( props: Props ) => {
 						}
 					) }
 					onClick={ () => {
-						page.redirect( `/plugins/${ siteSlug }` );
+						page.show( `/plugins/${ siteSlug }` );
 					} }
 				/>
 			) }
