@@ -16,6 +16,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import IssueLicenseContext from '../context';
 import { PRODUCT_FILTER_ALL } from './constants';
+import useSubmitForm from './hooks/use-submit-form';
 import ProductFilterSearch from './product-filter-search';
 import ProductFilterSelect from './product-filter-select';
 import LicensesFormSection from './sections';
@@ -54,6 +55,7 @@ export default function LicensesForm( {
 		products,
 		wooExtensions,
 		data,
+		suggestedProductSlugs,
 	} = useProductAndPlans( {
 		selectedSite,
 		selectedProductFilter,
@@ -186,7 +188,7 @@ export default function LicensesForm( {
 		[ dispatch, handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
 	);
 
-	const isReady = true; // FIXME: Fix this with actual form ready state
+	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
