@@ -50,7 +50,7 @@ const SiteMigrationInstructions: Step = function () {
 			recordTracksEvent( 'calypso_migration_instructions_key_retrieved' );
 		} catch ( error ) {
 			setSiteMigrationKeyError( error as string );
-			recordTracksEvent( 'calypso_migration_instructions_key_error', { error } );
+			recordTracksEvent( 'calypso_migration_instructions_key_error' );
 		}
 	};
 
