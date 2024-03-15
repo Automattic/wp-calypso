@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
+	isAnyHostingFlow,
 	START_WRITING_FLOW,
 	isLinkInBioFlow,
 	isNewsletterFlow,
@@ -31,14 +32,14 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { useDispatch as useDispatchRedux } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {
 	shouldIncludeFAQ?: boolean;
@@ -85,12 +86,29 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const site = useSite();
 	const siteId = site?.ID;
+	const dispatch = useDispatchRedux();
+	const userId = useSelector( getCurrentUserId );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const currentPath = window.location.pathname + window.location.search;
+	const pathStep = isEmailVerified ? null : currentPath;
+	/**
+	 * Save the selected trial plan path in the user's preferences.
+	 */
+	const saveHostingFlowPathStep = () => {
+		dispatch( savePreference( `hosting-flow-path-step-${ userId }`, pathStep ) );
+	};
 
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
 			setSelectedSiteId( siteId );
 		}
 	}, [ selectedSiteId, siteId, setSelectedSiteId ] );
+
+	useEffect( () => {
+		if ( isAnyHostingFlow( flowName ) ) {
+			saveHostingFlowPathStep();
+		}
+	}, [ pathStep ] );
 
 	const [ planIntervalPath, setPlanIntervalPath ] = useState< string >( '' );
 	const { __ } = useI18n();
@@ -127,19 +145,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} );
 	};
 
-	const dispatch = useDispatchRedux();
-	const userId = useSelector( getCurrentUserId );
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const handleSelectedTrialPlan = () => {
-		console.log( 'handleSelectedTrialPlan', `selected-trial-plan-${ userId }`, isEmailVerified );
-		dispatch( savePreference( `selected-trial-plan-${ userId }`, true ) );
-	};
-
 	const onUpgradeClick = ( cartItems?: MinimalRequestCartProduct[] | null ) => {
-		console.log( 'onUpgradeClick' );
-		if ( ! isEmailVerified ) {
-			handleSelectedTrialPlan();
-		}
 		const planCartItem = getPlanCartItem( cartItems );
 		if ( planCartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
