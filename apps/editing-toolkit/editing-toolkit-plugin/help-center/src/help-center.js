@@ -67,6 +67,7 @@ function HelpCenterContent() {
 				label="Help"
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
+				size="compact"
 			/>
 		</>
 	);
