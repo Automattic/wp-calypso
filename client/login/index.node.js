@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, setLocaleMiddleware } from 'calypso/controller';
 import webRouter from './index.web';
-import redirectLoggedIn from './redirect-logged-in';
 
 /**
  * Re-exports
@@ -17,7 +16,6 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/use/${ lang }`, `/log-in/link/jetpack/use/${ lang }` ],
 			setLocaleMiddleware(),
-			redirectLoggedIn,
 			makeLayout
 		);
 	}
