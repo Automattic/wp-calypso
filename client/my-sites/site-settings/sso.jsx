@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -26,6 +27,7 @@ const Sso = ( {
 	ssoModuleUnavailable,
 	translate,
 } ) => {
+	const localeSlug = useLocale();
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
 	return (
@@ -90,7 +92,8 @@ const Sso = ( {
 					</FormFieldset>
 				</Card>
 			</div>
-			{ isModalVisible &&
+			{ localeSlug === 'en' &&
+				isModalVisible &&
 				ReactDOM.createPortal(
 					<SurveyModal
 						name="sso-disable"
