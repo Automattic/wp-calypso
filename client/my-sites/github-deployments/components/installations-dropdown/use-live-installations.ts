@@ -74,6 +74,8 @@ export const useLiveInstallations = ( {
 	};
 
 	const onNewInstallationRequest = () => {
+		dispatch( recordTracksEvent( 'calypso_hosting_github_app_open_auth_popup_requested' ) );
+
 		const openedPopup = openPopup( {
 			url: installationsError?.name === 'UnauthorizedError' ? AUTHORIZATION_URL : INSTALLATION_URL,
 			onMessage: async ( data, popup ) => {
