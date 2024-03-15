@@ -57,7 +57,7 @@ export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< stri
  * Filter patterns by looking at their titles, descriptions and category names
  */
 export function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) {
-	const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
+	const lowerCaseSearchTerms = searchTerm.toLowerCase().trim().split( /\s+/ );
 
 	return patterns.filter( ( pattern ) => {
 		const patternCategories = Object.values( pattern.categories ).map(
@@ -68,6 +68,9 @@ export function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) 
 			( x ): x is NonNullable< typeof x > => Boolean( x )
 		);
 
-		return fields.some( ( field ) => field.toLowerCase().includes( lowerCaseSearchTerm ) );
+		// If any of the fields matches all parts of the search term, return true
+		return fields.some( ( field ) =>
+			lowerCaseSearchTerms.every( ( term ) => field.toLowerCase().includes( term ) )
+		);
 	} );
 }
