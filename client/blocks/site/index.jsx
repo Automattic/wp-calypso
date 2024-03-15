@@ -190,7 +190,7 @@ class Site extends Component {
 				) }
 				{ site.options && site.options.is_difm_lite_in_progress && (
 					<span className="site__badge site__badge-domain-only">
-						{ translate( 'Built By Express' ) }
+						{ translate( 'Express Website Design Service' ) }
 					</span>
 				) }
 				{ shouldShowPublicComingSoonSiteBadge && (
