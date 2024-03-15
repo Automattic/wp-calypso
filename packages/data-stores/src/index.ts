@@ -1,3 +1,4 @@
+import * as AddOns from './add-ons';
 import * as Analyzer from './analyzer';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
@@ -26,8 +27,6 @@ export * from './plans/types';
 export * from './theme';
 export * from './user/types';
 export * from './wpcom-plans-ui/types';
-export * from './add-ons/use-add-on-checkout-link';
-export * from './add-ons/use-add-on-feature-slugs';
 export * from './queries/use-launchpad';
 export * from './queries/use-launchpad-navigator';
 export * from './queries/use-all-domains-query';
@@ -40,6 +39,7 @@ export * from './site-reset';
 const { SubscriptionManager } = Reader;
 
 export {
+	AddOns,
 	Analyzer,
 	User,
 	DomainSuggestions,
