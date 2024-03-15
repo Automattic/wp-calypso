@@ -82,6 +82,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		useSaveHostingFlowPathStep( flow, currentPath );
 
+		/**
+	 	↓ Effects
+		 */
 		useEffect( () => {
 			dispatch( requestSites() );
 		}, [ dispatch ] );
