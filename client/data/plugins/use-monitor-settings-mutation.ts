@@ -75,11 +75,13 @@ export function useCreateMonitorSettingsMutation( siteSlug: SiteSlug, queryOptio
 		},
 		...queryOptions,
 		retry: ( failureCount, error ) => {
-			if ( isMonitorNotActiveError( error ) && failureCount < MAX_RETRIES ) {
-				recordTracksEvent( 'calypso_scheduled_updates_retry_monitor_settings', {
+			if ( isMonitorNotActiveError( error ) ) {
+				if ( failureCount < MAX_RETRIES ) {
+					return true;
+				}
+				recordTracksEvent( 'calypso_scheduled_updates_retry_monitor_settings_failed', {
 					site_slug: siteSlug,
 				} );
-				return true;
 			}
 			return false;
 		},
