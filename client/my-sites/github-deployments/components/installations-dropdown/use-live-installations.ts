@@ -18,7 +18,7 @@ interface UseLiveInstallationsParameters {
 const NOTICE_ID = 'github-app-install-notice';
 
 const AUTHORIZATION_URL =
-	'https://public-api.wordpress.com/wpcom/v2/hosting/github/authorize?ux_mode=popup';
+	'https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?ux_mode=popup';
 
 const INSTALLATION_URL = `https://github.com/apps/${ config(
 	'github_app_slug'
