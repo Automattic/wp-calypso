@@ -1,3 +1,4 @@
+import { domainProductSlugs } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
@@ -380,6 +381,32 @@ function getMessageForTermsOfServiceRecordUnknown(
 			),
 		},
 	};
+
+	if (
+		args.product_meta &&
+		args.product_meta !== '' &&
+		args.domain_transfer_slug === domainProductSlugs.TRANSFER_IN
+	) {
+		return translate(
+			'The promotional period of your %(productName)s for %(domainName)s will begin once the {{domainTransferSupportLink}}domain transfer is completed{{/domainTransferSupportLink}}. At that time, you will be notified of the promotional period, renewal date, and renewal price (%(renewalPrice)s) via email.',
+			{
+				args: {
+					...defaultRenewalArgs.args,
+					domainName: args.product_meta,
+				},
+				components: {
+					...defaultRenewalArgs.components,
+					domainTransferSupportLink: (
+						<a
+							href="/support/domains/incoming-domain-transfer/"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
+	}
 
 	if ( args.product_meta && args.product_meta !== '' ) {
 		return translate(
