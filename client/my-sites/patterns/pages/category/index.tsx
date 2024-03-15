@@ -91,9 +91,24 @@ export const PatternsCategoryPage = ( {
 		return {
 			id: category.name || '',
 			label: category.label,
-			link: getCategoryUrlPath( category.name, patternTypeFilterFallback, false ),
+			link:
+				getCategoryUrlPath( category.name, patternTypeFilterFallback, false ) +
+				( isGridView ? '?grid=1' : '' ),
 		};
 	} );
+
+	const handleSettingView = ( value: 'grid' | 'list' ) => {
+		const searchParams = new URLSearchParams( location.search );
+
+		if ( value === 'grid' ) {
+			searchParams.set( 'grid', '1' );
+		} else {
+			searchParams.delete( 'grid' );
+		}
+
+		const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
+		page( location.pathname + paramsString );
+	};
 
 	return (
 		<>
@@ -161,17 +176,19 @@ export const PatternsCategoryPage = ( {
 						className="patterns-page-category__toggle--view"
 						label=""
 						isBlock
-						value="patterns"
+						value={ isGridView ? 'grid' : 'list' }
 					>
 						<ToggleGroupControlOption
 							className="patterns-page-category__toggle-option--list-view"
 							label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 							value="list"
+							onClick={ () => handleSettingView( 'list' ) }
 						/>
 						<ToggleGroupControlOption
 							className="patterns-page-category__toggle-option--grid-view"
 							label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 							value="grid"
+							onClick={ () => handleSettingView( 'grid' ) }
 						/>
 					</ToggleGroupControl>
 				</div>
