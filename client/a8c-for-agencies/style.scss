@@ -5,7 +5,7 @@
 	--a4a-corners-soft: 4px;
 
 	// FIXME: Remove this when we have a proper color scheme
-	--studio-a8c-20: #029cd7;
+	--studio-a8c-50: #029cd7;
 	--color-surface-backdrop: #021a23;
 
 	--color-sidebar-background: #021a23;
@@ -27,23 +27,23 @@
 
 .theme-a8c-for-agencies {
 	.button.is-primary {
-		background-color: var(--studio-a8c-20);
-		border-color: var(--studio-a8c-20);
+		background-color: var(--studio-a8c-50);
+		border-color: var(--studio-a8c-50);
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--studio-a8c-20);
-		border-color: var(--studio-a8c-20);
+		background-color: var(--studio-a8c-50);
+		border-color: var(--studio-a8c-50);
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--studio-a8c-20);
-		border-color: var(--studio-a8c-20);
+		background: var(--studio-a8c-50);
+		border-color: var(--studio-a8c-50);
 	}
 
 	.components-button.is-tertiary {
-		color: var(--studio-a8c-20);
+		color: var(--studio-a8c-50);
 	}
 
 	// Masterbar
