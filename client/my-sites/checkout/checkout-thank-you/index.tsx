@@ -595,6 +595,10 @@ export class CheckoutThankYou extends Component<
 					<PlanOnlyThankYou
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
+						transferInProgress={
+							! this.props.transferComplete || ! this.props.isWooCommerceInstalled
+						}
+						receiptId={ receiptId }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
