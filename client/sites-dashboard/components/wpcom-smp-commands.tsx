@@ -105,6 +105,27 @@ export const useCommandsArrayWpcom = ( {
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 	const dispatch = useDispatch();
 
+	function navigateWithinSamePage(
+		targetPath: string,
+		elementId: string,
+		commandParams: Pick< CommandCallBackParams, 'close' | 'command' >
+	) {
+		const currentPath = window.location.pathname;
+		const targetUrl = new URL( targetPath, window.location.origin );
+
+		//Check if the user is on the same page but is not looking at the right section
+		if ( currentPath === targetUrl.pathname && window.location.hash !== `#${ elementId }` ) {
+			window.location.hash = elementId;
+			const element = document.getElementById( elementId );
+			if ( element ) {
+				commandParams.close();
+				element.scrollIntoView( { behavior: 'smooth' } );
+			}
+		} else {
+			commandNavigation( targetUrl.href )( commandParams );
+		}
+	}
+
 	const { setEdgeCache } = useSetEdgeCacheMutation();
 	//temporary patch to not add github deployments to the command palette if feature is not available, will be removed.
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -829,9 +850,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage staging sites' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#staging-site` )( param ),
-				...siteFilters.hostingEnabled,
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#staging-site`;
+					navigateWithinSamePage( targetPath, 'staging-site', param );
+				},
 			},
 			icon: toolIcon,
 		},
