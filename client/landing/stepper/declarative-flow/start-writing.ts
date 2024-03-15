@@ -25,7 +25,7 @@ const startWriting: Flow = {
 	get title() {
 		return translate( 'Blog' );
 	},
-	isSignupFlow: false,
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{
