@@ -5,11 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { SelectedLicenseProp as SelectedItem } from '../../issue-license/types';
+import { ShoppingCartItem } from '../../types';
 
 type ItemProps = {
-	item: SelectedItem;
-	onRemoveItem: ( item: SelectedItem ) => void;
+	item: ShoppingCartItem;
+	onRemoveItem: ( item: ShoppingCartItem ) => void;
 };
 
 export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps ) {

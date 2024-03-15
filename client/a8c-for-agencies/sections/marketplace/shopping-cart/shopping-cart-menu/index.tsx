@@ -5,15 +5,15 @@ import { useTranslate } from 'i18n-calypso';
 import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { SelectedLicenseProp as SelectedItem } from '../../issue-license/types';
+import { ShoppingCartItem } from '../../types';
 import ShoppingCartMenuItem from './item';
 
 import './style.scss';
 type Props = {
 	onClose: () => void;
-	onRemoveItem: ( item: SelectedItem ) => void;
+	onRemoveItem: ( item: ShoppingCartItem ) => void;
 	onCheckout: () => void;
-	items: SelectedItem[];
+	items: ShoppingCartItem[];
 };
 
 export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {

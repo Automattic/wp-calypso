@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { SelectedLicenseProp as SelectedItem } from '../issue-license/types';
+import { ShoppingCartItem } from '../types';
 import ShoppingCartIcon from './shopping-cart-icon';
 import ShoppingCartMenu from './shopping-cart-menu';
 
@@ -11,8 +11,8 @@ import './style.scss';
 
 type Props = {
 	onCheckout: () => void;
-	onRemoveItem: ( item: SelectedItem ) => void;
-	items: SelectedItem[];
+	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	items: ShoppingCartItem[];
 };
 
 export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props ) {
