@@ -1150,6 +1150,12 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( flowName === 'onboarding-pm' ) {
+				return translate(
+					"Find a unique web address that's easy to remember and even easier to share."
+				);
+			}
+
 			return (
 				! stepSectionName &&
 				'domain-transfer' !== flowName &&
@@ -1182,6 +1188,11 @@ export class RenderDomainsStep extends Component {
 			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
+
+			if ( flowName === 'onboarding-pm' ) {
+				return translate( 'Claim your domain name' );
+			}
+
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 

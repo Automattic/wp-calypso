@@ -135,6 +135,7 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomains: PropTypes.array,
 		forceExactSuggestion: PropTypes.bool,
 		checkDomainAvailabilityPromises: PropTypes.array,
+		promptText: PropTypes.array,
 
 		/**
 		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
@@ -1434,11 +1435,43 @@ class RegisterDomainStep extends Component {
 	};
 
 	renderBestNamesPrompt() {
-		const { translate, promptText } = this.props;
+		const { translate, promptText, flowName } = this.props;
+		const icon = <Icon icon={ tip } size={ 20 } />;
+		const isPaidMediaFlow = flowName === 'onboarding-pm';
+		const defaultPrompt = (
+			<>
+				{ icon }
+				{ translate( 'The best names are short and memorable' ) }
+			</>
+		);
+		let prompt = defaultPrompt;
+
+		if ( promptText ) {
+			prompt = (
+				<>
+					{ icon }
+					{ promptText }
+				</>
+			);
+		} else if ( isPaidMediaFlow ) {
+			prompt = translate(
+				'{{p}}{{icon/}}Think of your domain name as a welcome mat for your website. Choose from hundreds of top-level domains (e.g. .com or .net), and claim your corner of the web with a custom site address.{{/p}}{{p}}Your first year of domain registration is free when you choose an annual, 2-year, or 3-year plan.{{/p}}',
+				{
+					components: {
+						icon,
+						p: <p />,
+					},
+				}
+			);
+		}
+
 		return (
-			<div className="register-domain-step__example-prompt">
-				<Icon icon={ tip } size={ 20 } />
-				{ promptText ?? translate( 'The best names are short and memorable' ) }
+			<div
+				className={ classNames( 'register-domain-step__example-prompt', {
+					[ 'register-domain-step__example-prompt--stacked' ]: isPaidMediaFlow,
+				} ) }
+			>
+				{ prompt }
 			</div>
 		);
 	}
