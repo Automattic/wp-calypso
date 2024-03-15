@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -25,6 +26,10 @@ import ImgGrid from './images/grid.svg';
 import ImgStar from './images/star.svg';
 
 import './style.scss';
+
+// We use this unstyled Emotion component simply to prevent errors related to the use of Emotion's
+// `useCx` hook in `ToggleGroupControl`
+const PatternsCategoryPageBody = styled.div``;
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -121,7 +126,7 @@ export const PatternsCategoryPage = ( {
 				</div>
 			) }
 
-			<div className="patterns-page-category">
+			<PatternsCategoryPageBody className="patterns-page-category">
 				<div className="patterns-page-category__header">
 					<h1 className="patterns-page-category__title">Patterns</h1>
 
@@ -168,7 +173,7 @@ export const PatternsCategoryPage = ( {
 				</div>
 
 				<PatternGallery patterns={ patterns } isGridView={ isGridView } />
-			</div>
+			</PatternsCategoryPageBody>
 
 			<PatternsGetStarted />
 		</>
