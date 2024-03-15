@@ -1,5 +1,9 @@
 @import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/woo-commerce";
+
+$breakpoint-mobile: 660px;
 
 .woo {
 	$woo-purple-40: #966ccf;
@@ -12,13 +16,13 @@
 	$woo-font-size-small: $font-body-extra-small;
 	$woo-font-size-base: $font-body-small;
 	$woo-font-size-input: $font-body-small;
+	$woo-inter-font:  "Inter", -apple-system, system-ui, sans-serif;
 	$woo-radius-input: 4px;
 	$woo-form-whitespace: 60px;
 	$woo-form-whitespace-660: 20px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
 	$gray-60: #50575e;
 	$gray-50: #646970;
-	$woo-inter-font:  "Inter", -apple-system, system-ui, sans-serif;
 
 	background: #fff;
 	min-height: 100%;
@@ -205,7 +209,7 @@
 				margin-top: -10px;
 				font-weight: 500;
 
-				@media screen and ( max-width: 660px ) {
+				@media ( max-width: $break-mobile ) {
 					display: none;
 				}
 			}
@@ -237,12 +241,12 @@
 		background-color: #fff;
 		z-index: 999;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			display: flex;
 		}
 
 		.masterbar__login-back-link {
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				display: block;
 			}
 		}
@@ -252,7 +256,7 @@
 	.layout__content {
 		padding-top: 85px;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-top: 50px;
 			padding-bottom: 80px;
 		}
@@ -276,7 +280,7 @@
 		flex-direction: column;
 		padding: 54px 24px 32px;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding: 32px 16px 28px;
 		}
 	}
@@ -285,7 +289,7 @@
 		margin-top: 0;
 		margin-bottom: 8px;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			margin-bottom: 16px;
 		}
 	}
@@ -313,7 +317,7 @@
 			font-size: 2.75rem;
 			line-height: 52px;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				text-align: left;
 			}
 		}
@@ -339,7 +343,7 @@
 			}
 		}
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			text-align: left;
 		}
 	}
@@ -352,7 +356,7 @@
 	.auth-form__social-buttons {
 		align-items: center;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			align-items: flex-start;
 		}
 
@@ -417,7 +421,7 @@
 		padding: 60px 0 0;
 		width: 100%;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-top: 30px;
 		}
 	}
@@ -447,14 +451,14 @@
 	.login__two-factor-footer {
 		padding-left: $woo-form-whitespace;
 		padding-right: $woo-form-whitespace;
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
 	.login__form-header-wrapper {
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
@@ -606,7 +610,7 @@
 		padding-bottom: 40px;
 		text-align: center;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-top: 28px;
 		}
 	}
@@ -631,7 +635,7 @@
 			text-decoration: none;
 		}
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			align-items: flex-start;
 		}
 	}
@@ -748,18 +752,18 @@
 		margin: 0 0 8px;
 		padding: 0;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
 	.formatted-header__subtitle {
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			width: 250px;
 		}
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
@@ -793,7 +797,7 @@
 		flex-direction: column;
 		align-items: center;
 
-		@media screen and ( max-width: 660px ) {
+		@media ( max-width: $break-mobile ) {
 			align-items: flex-start;
 		}
 
@@ -875,7 +879,7 @@
 		.wp-login__container,
 		.magic-login,
 		.step-wrapper {
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				padding-top: 40px;
 			}
 		}
@@ -910,7 +914,7 @@
 			line-height: 32px;
 			font-weight: 500;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				font-size: rem(28px);
 			}
 		}
@@ -920,7 +924,7 @@
 		}
 
 		form.two-factor-authentication__verification-code-form-wrapper {
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				margin: 0;
 				max-width: 660px;
 			}
@@ -930,7 +934,7 @@
 		.formatted-header__subtitle {
 			color: $gray-700;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				width: auto;
 			}
 		}
@@ -1024,7 +1028,7 @@
 			text-align: center;
 			line-height: 16px;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				text-align: start;
 			}
 
@@ -1034,14 +1038,14 @@
 		}
 
 		.jetpack-connect__logged-in-content {
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				padding-left: $woo-form-whitespace-660;
 				padding-right: $woo-form-whitespace-660;
 			}
 		}
 
 		.jetpack-connect__features_wrapper {
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				display: none !important;
 			}
 		}
@@ -1081,7 +1085,7 @@
 			flex-direction: column;
 			padding: 48px 24px 32px;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				padding: 32px 16px 28px;
 			}
 
@@ -1104,12 +1108,13 @@
 
 
 	&.is-woo-passwordless {
+		$max-width: 327px;
+		$woo-font-size-input: $font-body;
+		$woo-radius-input: 8px;
+
 		* {
 			font-family: $woo-inter-font;
 		}
-
-		$woo-font-size-input: $font-body;
-		$woo-radius-input: 8px;
 
 		h1,
 		h3 {
@@ -1122,7 +1127,7 @@
 			line-height: 39.6px;
 			letter-spacing: -0.72px;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				text-align: left;
 			}
 		}
@@ -1219,9 +1224,9 @@
 		.formatted-header__title {
 			margin-bottom: 12px;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				padding: 0;
-				max-width: 327px;
+				max-width: $max-width;
 				margin: 0 auto 16px;
 			}
 		}
@@ -1250,9 +1255,9 @@
 				}
 			}
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				padding: 0;
-				max-width: 327px;
+				max-width: $max-width;
 				margin: 0 auto;
 				width: 100%;
 				text-align: left;
@@ -1282,7 +1287,7 @@
 			justify-content: center;
 			max-width: 758px;
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-medium ) {
 				flex-direction: column;
 			}
 
@@ -1292,12 +1297,12 @@
 				flex-direction: column;
 				justify-content: center;
 				width: 100%;
-				max-width: var(--login-form-column-max-width);
+				max-width: $max-width;
 				margin: 0;
 
 				~ .auth-form__social.card {
 					width: 100%;
-					max-width: var(--login-form-column-max-width);
+					max-width: $max-width;
 					margin: 0;
 				}
 
@@ -1312,7 +1317,7 @@
 			}
 
 			.auth-form__separator {
-				@media screen and ( min-width: 660px ) {
+				@media screen and ( min-width: $break-medium ) {
 					margin-block: 0;
 				}
 			}
@@ -1325,8 +1330,8 @@
 			flex-direction: column;
 			margin: 40px auto 0;
 
-			@media screen and ( max-width: 660px ) {
-				max-width: 327px;
+			@media ( max-width: $break-mobile ) {
+				max-width: $max-width;
 				margin-bottom: 40px;
 			}
 
@@ -1435,7 +1440,7 @@
 
 		div.auth-form__separator {
 			margin: 32px auto;
-			max-width: initial;
+			max-width: $max-width;
 
 			&::before,
 			&::after {
@@ -1547,9 +1552,9 @@
 				letter-spacing: -0.72px;
 				margin: 0;
 
-				@media screen and ( max-width: 660px ) {
+				@media ( max-width: $break-mobile ) {
 					text-align: center;
-					max-width: 327px;
+					max-width: $max-width;
 					margin: 0 auto;
 				}
 			}
@@ -1572,7 +1577,7 @@
 					box-shadow: none;
 
 					form {
-						max-width: 327px;
+						max-width: $max-width;
 					}
 				}
 
@@ -1603,7 +1608,7 @@
 			}
 
 			.magic-login__emails-list {
-				max-width: 327px;
+				max-width: $max-width;
 				margin-inline: auto;
 
 				li {
@@ -1623,7 +1628,7 @@
 
 			.magic-login__footer {
 				margin: 0;
-				max-width: 327px;
+				max-width: $max-width;
 				margin-inline: auto;
 
 				p {
@@ -1674,7 +1679,7 @@
 		}
 
 		.login__lost-password-footer {
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				margin-bottom: 32px;
 				align-items: center;
 			}
@@ -1686,7 +1691,7 @@
 			.button,
 			.form-fieldset,
 			.auth-form__separator {
-				max-width: 327px !important;
+				max-width: $max-width !important;
 			}
 
 			.two-factor-authentication__verification-code-form {
@@ -1723,18 +1728,18 @@
 					font-weight: 500;
 					color: var(--studio-gray-100);
 					margin: 0 auto;
-					max-width: 327px !important;
+					max-width: $max-width !important;
 				}
 			}
 		}
 
 		.login__two-factor-footer {
 			p {
-				max-width: 327px;
+				max-width: $max-width;
 				text-align: center;
 			}
 
-			@media screen and ( max-width: 660px ) {
+			@media ( max-width: $break-mobile ) {
 				align-items: center;
 			}
 		}
