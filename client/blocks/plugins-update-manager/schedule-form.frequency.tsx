@@ -10,15 +10,9 @@ import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { ScheduleFormTime } from 'calypso/blocks/plugins-update-manager/schedule-form.time';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import {
-	DAILY_OPTION,
-	DAY_OPTIONS,
-	DEFAULT_HOUR,
-	HOUR_OPTIONS,
-	PERIOD_OPTIONS,
-	WEEKLY_OPTION,
-} from './schedule-form.const';
+import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedule-form.const';
 import { prepareTimestamp } from './schedule-form.helper';
 
 type Frequency = 'daily' | 'weekly';
@@ -69,24 +63,14 @@ export function ScheduleFormFrequency( props: Props ) {
 				{ frequency === 'daily' && (
 					<Flex gap={ 6 }>
 						<FlexBlock>
-							<div className="form-field">
-								<div className="time-controls">
-									<SelectControl
-										__next40pxDefaultSize
-										name="hour"
-										value={ hour }
-										options={ HOUR_OPTIONS }
-										onChange={ setHour }
-									/>
-									<SelectControl
-										__next40pxDefaultSize
-										name="period"
-										value={ period }
-										options={ PERIOD_OPTIONS }
-										onChange={ setPeriod }
-									/>
-								</div>
-							</div>
+							<ScheduleFormTime
+								initHour={ hour }
+								initPeriod={ period }
+								onChange={ ( hour, period ) => {
+									setHour( hour );
+									setPeriod( period );
+								} }
+							/>
 						</FlexBlock>
 					</Flex>
 				) }
@@ -113,24 +97,14 @@ export function ScheduleFormFrequency( props: Props ) {
 							</div>
 						</FlexItem>
 						<FlexBlock>
-							<div className="form-field">
-								<div className="time-controls">
-									<SelectControl
-										__next40pxDefaultSize
-										name="hour"
-										value={ hour }
-										options={ HOUR_OPTIONS }
-										onChange={ setHour }
-									/>
-									<SelectControl
-										__next40pxDefaultSize
-										name="period"
-										value={ period }
-										options={ PERIOD_OPTIONS }
-										onChange={ setPeriod }
-									/>
-								</div>
-							</div>
+							<ScheduleFormTime
+								initHour={ hour }
+								initPeriod={ period }
+								onChange={ ( hour, period ) => {
+									setHour( hour );
+									setPeriod( period );
+								} }
+							/>
 						</FlexBlock>
 					</Flex>
 				) }
