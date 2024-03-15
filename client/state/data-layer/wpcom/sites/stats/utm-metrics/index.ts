@@ -26,7 +26,7 @@ const daysInYearFromDate = ( date: string ) => {
 };
 
 export const fetch = ( action: AnyAction ) => {
-	const { siteId, utmParam, postId, query } = action;
+	const { siteId, utmParam, postId, query = {} } = action;
 
 	// `num` is only for the period `day`.
 	const num = query.num || 1;
