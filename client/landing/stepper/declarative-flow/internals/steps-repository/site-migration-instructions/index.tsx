@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
+import { classNames } from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -71,9 +72,10 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					<div
-						className={ `site-migration-instructions__list-migration-key-item ${
-							siteMigrationKey ? 'expanded' : ''
-						}${ siteMigrationKeyError ? 'error' : '' }` }
+						className={ classNames( 'site-migration-instructions__list-migration-key-item', {
+							expanded: siteMigrationKey,
+							error: siteMigrationKeyError,
+						} ) }
 					>
 						{ ! siteMigrationKey && (
 							<>
