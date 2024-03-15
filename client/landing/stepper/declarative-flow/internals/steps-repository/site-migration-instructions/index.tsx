@@ -124,7 +124,6 @@ const SiteMigrationInstructions: Step = function () {
 											: siteMigrationKey }
 									</code>
 									<Button
-										primary
 										onClick={ () => {
 											setHideSiteMigrationKey( ! hideSiteMigrationKey );
 										} }
@@ -134,7 +133,7 @@ const SiteMigrationInstructions: Step = function () {
 									</Button>
 									<ClipboardButton
 										text={ siteMigrationKey }
-										className="site-migration-instructions__copy-key-button is-primary"
+										className="site-migration-instructions__copy-key-button is-secondary"
 										onCopy={ onCopy }
 									>
 										{ buttonTextCopy ? translate( 'Copied!' ) : translate( 'Copy key' ) }
