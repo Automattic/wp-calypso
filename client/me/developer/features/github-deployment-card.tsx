@@ -17,7 +17,7 @@ export const GitHubDeploymentCard = () => {
 			</div>
 			<div className="developer-features-list__item-description">
 				{ translate(
-					'Connect your GitHub repositories to WordPress.com and develop your sites reliably, predictably, and automatically using version control. Deploy your code directly to your site automatically or on request.'
+					'Speed up your development workflow and take version control further by connecting your WordPress.com sites and GitHub repos. Choose from fully automatic or on-demand deployment.'
 				) }
 			</div>
 			<div className="developer-features-list__item-learn-more">
