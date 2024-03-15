@@ -1,9 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import classNames from 'classnames';
 import cookie from 'cookie';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import './style.scss';
