@@ -43,9 +43,9 @@ An array of objects, each representing a navigation link:
 
 ```
 {
-	name: string; // Acts as an `id` and is primarily used for highlighting the active item.
-	label?: string; // The text displayed on the link.
-	link: string; // The URL that the link points to.
+	name: string; // Acts as an `id` and is primarily used for highlighting the active item
+	label?: string; // The text displayed on the link
+	link: string; // The URL that the link points to
 }[]
 ```
 
@@ -60,9 +60,9 @@ This property should match the `name` of one of the items in the `list` array to
 An optional array of additional link objects to prepend to the main list of links:
 ```
 {
-	icon: string; // The icon displayed before the label.
-	label: string; // The text displayed on the link.
-	link: string; // The URL that the link points to.
+	icon: string; // The icon displayed before the label
+	label: string; // The text displayed on the link
+	link: string; // The URL that the link points to
 }[] | undefined
 ```
 
