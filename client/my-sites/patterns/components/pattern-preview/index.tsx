@@ -13,16 +13,12 @@ export const DESKTOP_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
 
 type PatternPreviewProps = {
-	isCategoryPreview?: boolean;
+	className?: string;
 	pattern: Pattern | null;
 	viewportWidth?: number;
 };
 
-export function PatternPreview( {
-	isCategoryPreview,
-	pattern,
-	viewportWidth,
-}: PatternPreviewProps ) {
+export function PatternPreview( { className, pattern, viewportWidth }: PatternPreviewProps ) {
 	const [ isCopied, setIsCopied ] = useState( false );
 	const { renderedPatterns } = usePatternsRendererContext();
 	const patternId = encodePatternId( pattern?.ID ?? 0 );
@@ -49,8 +45,7 @@ export function PatternPreview( {
 
 	return (
 		<div
-			className={ classNames( 'pattern-preview', {
-				'pattern-preview--category-gallery': isCategoryPreview,
+			className={ classNames( 'pattern-preview', className, {
 				'is-loading': ! renderedPattern,
 			} ) }
 		>
@@ -68,7 +63,7 @@ export function PatternPreview( {
 				<div className="pattern-preview__title">{ pattern.title }</div>
 
 				<ClipboardButton
-					className="pattern-preview__copy pattern-preview__copy--list"
+					className="pattern-preview__copy pattern-preview__copy--large"
 					onCopy={ () => {
 						setIsCopied( true );
 					} }
@@ -80,7 +75,7 @@ export function PatternPreview( {
 
 				<ClipboardButton
 					borderless
-					className="pattern-preview__copy pattern-preview__copy--grid"
+					className="pattern-preview__copy pattern-preview__copy--small"
 					onCopy={ () => {
 						setIsCopied( true );
 					} }

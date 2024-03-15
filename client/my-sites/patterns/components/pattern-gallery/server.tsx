@@ -9,11 +9,17 @@ export const PatternGalleryServer: PatternGalleryFC = ( { isGridView, patterns =
 		<div
 			className={ classNames( 'pattern-gallery', {
 				'pattern-gallery--grid': isGridView,
-				'pattern-gallery--list': ! isGridView,
 			} ) }
 		>
 			{ patterns?.map( ( pattern ) => (
-				<PatternPreviewPlaceholder key={ pattern.ID } pattern={ pattern } />
+				<PatternPreviewPlaceholder
+					className={ classNames( {
+						'pattern-preview--grid': isGridView,
+						'pattern-preview--list': ! isGridView,
+					} ) }
+					key={ pattern.ID }
+					pattern={ pattern }
+				/>
 			) ) }
 		</div>
 	);
