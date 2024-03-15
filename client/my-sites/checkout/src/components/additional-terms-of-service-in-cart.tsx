@@ -141,6 +141,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 			}
 		);
 
+		const taxesNotIncludedText = translate( 'Prices do not include applicable taxes.' );
+
 		const shouldShowRegularPriceNoticeText = regularPrice !== renewalPrice;
 
 		const shouldShowEndOfPromotionText =
@@ -151,7 +153,8 @@ function getMessageForTermsOfServiceRecordUnknown(
 			<>
 				{ termLengthText } { nextRenewalText }{ ' ' }
 				{ shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
-				{ shouldShowRegularPriceNoticeText && regularPriceNoticeText } { emailNoticesText }{ ' ' }
+				{ shouldShowRegularPriceNoticeText && regularPriceNoticeText } { taxesNotIncludedText }{ ' ' }
+				{ emailNoticesText }{ ' ' }
 			</>
 		);
 	}
