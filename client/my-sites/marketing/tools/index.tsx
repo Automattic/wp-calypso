@@ -8,7 +8,7 @@ import { Fragment, FunctionComponent } from 'react';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import builtByWp from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
+import wordPressLogo from 'calypso/assets/images/icons/wordpress-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
@@ -93,7 +93,7 @@ export const MarketingTools: FunctionComponent = () => {
 					description={ translate(
 						"Hire our dedicated experts to build a handcrafted, personalized website. Share some details about what you're looking for, and we'll make it happen."
 					) }
-					imagePath={ builtByWp }
+					imagePath={ wordPressLogo }
 					imageAlt={ translate( 'Built by WordPress.com logo' ) }
 				>
 					<Button
