@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -102,6 +103,12 @@ const PrimaryDomainSelector = ( {
 
 	const supportLink = localizeUrl( 'https://wordpress.com/support/domains/set-a-primary-address/' );
 
+	const trackUpgradeClick = () => {
+		recordTracksEvent( 'calypso_primary_site_address_nudge_cta_click', {
+			cta_name: 'add_custom_domain',
+		} );
+	};
+
 	return (
 		<FormFieldset className="domains-set-primary-address">
 			<FormLabel htmlFor="primary-domain-selector" className="domains-set-primary-address__title">
@@ -130,7 +137,20 @@ const PrimaryDomainSelector = ( {
 								}
 						  )
 						: translate(
-								'If you want to change it you can add a new custom domain for your site'
+								'Before you can change the primary site address you have to add a new custom domain. Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}} or {{mapDomainLink}}map{{/mapDomainLink}} a domain you already own.',
+								{
+									components: {
+										domainSearchLink: (
+											<a
+												href={ '/domains/add/use-my-domain/' + primaryDomain }
+												onClick={ trackUpgradeClick }
+											/>
+										),
+										mapDomainLink: (
+											<a href={ '/domains/add/' + primaryDomain } onClick={ trackUpgradeClick } />
+										),
+									},
+								}
 						  ) }
 				</FormSettingExplanation>
 				{ validPrimaryDomains.length > 1 && (
