@@ -13,6 +13,7 @@ import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOptions, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import TransferPending from '../../transfer-pending';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
@@ -27,6 +28,8 @@ interface PlanOnlyThankYouProps {
 	errorNotice: ( text: string, noticeOptions?: object ) => void;
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
+	transferInProgress?: boolean;
+	receiptId?: number;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -44,6 +47,8 @@ const PlanOnlyThankYou = ( {
 	errorNotice,
 	removeNotice,
 	successNotice,
+	transferInProgress,
+	receiptId,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -191,7 +196,9 @@ const PlanOnlyThankYou = ( {
 		},
 	} );
 
-	return (
+	return isWpComEcommercePlan( primaryPurchase.productSlug ) && transferInProgress ? (
+		<TransferPending orderId={ receiptId as number } siteId={ siteId as number } />
+	) : (
 		<ThankYouV2
 			title={ translate( 'Get the best out of your site' ) }
 			subtitle={ preventWidows( subtitle ) }
