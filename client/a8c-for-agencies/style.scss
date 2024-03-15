@@ -35,6 +35,12 @@
 		border-color: var(--studio-a8c-50);
 	}
 
+	.button.is-borderless:focus,
+	.button.is-borderless:hover,
+	.button.is-borderless {
+		background: none;
+	}
+
 	.components-form-toggle.is-checked .components-form-toggle__track {
 		background-color: var(--studio-a8c-50);
 		border-color: var(--studio-a8c-50);
@@ -47,6 +53,13 @@
 	}
 
 	.components-button.is-tertiary {
+		color: var(--studio-a8c-50);
+	}
+
+	.button.is-borderless.is-primary.is-active,
+	.button.is-borderless.is-primary:active,
+	.button.is-borderless.is-primary:focus,
+	.button.is-borderless.is-primary:hover {
 		color: var(--studio-a8c-50);
 	}
 
