@@ -23,7 +23,14 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 	const { discountedCost } = getTotalInvoiceValue( userProducts, items );
 
 	return (
-		<Popover isVisible={ true } onClose={ onClose } noArrow={ false } offset={ 24 }>
+		<Popover
+			isVisible={ true }
+			onClose={ onClose }
+			noArrow={ false }
+			offset={ 24 }
+			expandOnMobile
+			headerTitle={ translate( 'Your cart' ) }
+		>
 			<div className="shopping-cart__menu">
 				<div className="shopping-cart__menu-header">
 					<h2 className="shopping-cart__menu-header-title">{ translate( 'Your cart' ) }</h2>

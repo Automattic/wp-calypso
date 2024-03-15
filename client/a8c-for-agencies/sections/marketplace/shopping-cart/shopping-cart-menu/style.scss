@@ -1,14 +1,28 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .shopping-cart__menu {
-	min-width: 500px;
 	padding: 24px 16px 16px;
 	border-radius: 4px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	@include break-medium {
+		min-width: 500px;
+		height: auto;
+	}
 }
 
 .shopping-cart__menu-header {
-	display: flex;
+	display: none;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 16px;
+
+	@include break-medium {
+		display: flex;
+	}
 }
 
 .shopping-cart__menu-header-title {
@@ -21,12 +35,14 @@
 	border-radius: 4px;
 	max-width: 24px;
 	max-height: 24px;
+
 }
 
 .shopping-cart__menu-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	flex-grow: 1;
 }
 
 .shopping-cart__menu-list-item {
@@ -40,11 +56,16 @@
 
 .shopping-cart__menu-list-item-details {
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
 	flex-grow: 1;
 	font-size: 0.875rem;
 	line-height: 1.7;
 	font-weight: 400;
+
+	@include break-medium {
+		flex-direction: row;
+	}
 }
 
 .shopping-cart__menu-list-item-price-actual {
