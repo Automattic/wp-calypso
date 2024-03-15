@@ -21,6 +21,8 @@ const SitesDataViews = ( {
 	isLargeScreen,
 	onSitesViewChange,
 	sitesViewState,
+	forceTourExampleSite = false,
+	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
@@ -276,10 +278,11 @@ const SitesDataViews = ( {
 
 	const urlParams = new URLSearchParams( window.location.search );
 	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
-	const useExampleDataForTour = isOnboardingTourActive && ( ! sites || sites.length === 0 );
+	const useExampleDataForTour =
+		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
 
 	return (
-		<>
+		<div className={ className }>
 			<DataViews
 				data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
 				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
@@ -296,7 +299,7 @@ const SitesDataViews = ( {
 				actions={ actions }
 				isLoading={ isLoading }
 			/>
-		</>
+		</div>
 	);
 };
 
