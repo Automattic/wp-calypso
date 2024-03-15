@@ -9,6 +9,7 @@ import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
 import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+import { ResizableBox } from '@wordpress/components';
 
 export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns = [] } ) => {
 	const patternIdsByCategory = {
@@ -27,11 +28,26 @@ export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns =
 			>
 				<div className={ classNames( 'pattern-gallery', { 'pattern-gallery--grid': isGridView } ) }>
 					{ patterns.map( ( pattern ) => (
-						<PatternPreview
-							key={ pattern.ID }
-							pattern={ pattern }
-							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
-						/>
+						<ResizableBox
+							minWidth={ 500 }
+							showHandle
+							enable={ {
+								top: false,
+								right: true,
+								bottom: false,
+								left: false,
+								topRight: false,
+								bottomRight: true,
+								bottomLeft: false,
+								topLeft: false,
+							} }
+						>
+							<PatternPreview
+								key={ pattern.ID }
+								pattern={ pattern }
+								viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
+							/>
+						</ResizableBox>
 					) ) }
 				</div>
 			</PatternsRendererProvider>
