@@ -473,10 +473,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
-						<div
-							className="campaign-item-details__main-stats-container"
-							style={ { display: is_evergreen && ! shouldShowStats ? 'none' : '' } }
-						>
+						<div className="campaign-item-details__main-stats-container">
 							{ shouldShowStats && (
 								<div className="campaign-item-details__main-stats campaign-item-details__impressions">
 									<div className="campaign-item-details__main-stats-row ">
@@ -584,65 +581,63 @@ export default function CampaignItemDetails( props: Props ) {
 								</div>
 							) }
 
-							{ ! is_evergreen && shouldShowStats && (
-								<div className="campaign-item-details__main-stats-row">
+							<div className="campaign-item-details__main-stats-row">
+								<div>
+									<span className="campaign-item-details__label">
+										{ is_evergreen && status === 'active'
+											? __( 'Duration so far' )
+											: __( 'Duration' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
+								{ is_evergreen ? (
 									<div>
-										<span className="campaign-item-details__label">
-											{ is_evergreen && status === 'active'
-												? __( 'Duration so far' )
-												: __( 'Duration' ) }
-										</span>
+										<span className="campaign-item-details__label">{ __( 'Weekly spend' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? (
+												<>
+													{ weeklySpendFormatted }{ ' ' }
+													<span className="campaign-item-details__details">
+														/ { totalBudgetFormatted }
+													</span>
+												</>
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? weeklySpendingPercentageFormatted : <FlexibleSkeleton /> }
 										</span>
 									</div>
-									{ is_evergreen ? (
-										<div>
-											<span className="campaign-item-details__label">{ __( 'Weekly spend' ) }</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? (
-													<>
-														{ weeklySpendFormatted }{ ' ' }
-														<span className="campaign-item-details__details">
-															/ { totalBudgetFormatted }
-														</span>
-													</>
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? weeklySpendingPercentageFormatted : <FlexibleSkeleton /> }
-											</span>
-										</div>
-									) : (
-										<div>
-											<span className="campaign-item-details__label">{ __( 'Budget' ) }</span>
-											<span className="campaign-item-details__text wp-brand-font">
-												{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
-											</span>
-											<span className="campaign-item-details__details">
-												{ ! isLoading ? (
-													`${ budgetRemainingFormatted } remaining`
-												) : (
-													<FlexibleSkeleton />
-												) }
-											</span>
-										</div>
-									) }
+								) : (
 									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Overall spending' ) }
-										</span>
+										<span className="campaign-item-details__label">{ __( 'Budget' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? (
+												`${ budgetRemainingFormatted } remaining`
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 									</div>
+								) }
+								<div>
+									<span className="campaign-item-details__label">
+										{ translate( 'Overall spending' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+									</span>
 								</div>
-							) }
+							</div>
 						</div>
 
 						<div className="campaign-item-details__main-stats-container">
