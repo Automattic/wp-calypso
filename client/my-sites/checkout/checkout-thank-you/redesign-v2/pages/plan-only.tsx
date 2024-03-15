@@ -14,7 +14,6 @@ import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import TransferPending from '../../transfer-pending';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
@@ -29,8 +28,7 @@ interface PlanOnlyThankYouProps {
 	errorNotice: ( text: string, noticeOptions?: object ) => void;
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
-	transferInProgress?: boolean;
-	receiptId?: number;
+	transferComplete?: boolean;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -48,8 +46,7 @@ const PlanOnlyThankYou = ( {
 	errorNotice,
 	removeNotice,
 	successNotice,
-	transferInProgress,
-	receiptId,
+	transferComplete,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -199,20 +196,17 @@ const PlanOnlyThankYou = ( {
 
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
 
-	// Display the progress bar if an ecommerce site is still being transferred
-	if ( isWpComEcommercePlan( primaryPurchase.productSlug ) && transferInProgress ) {
-		return <TransferPending orderId={ receiptId as number } siteId={ siteId as number } />;
-	}
-
 	return (
 		<>
-			{ /* If an ecommerce site is verified and completely transferred,
-			     automatically log the user into the wp-admin. */ }
-			{ isWpComEcommercePlan( primaryPurchase.productSlug ) &&
-				! transferInProgress &&
-				isEmailVerified && (
-					<WpAdminAutoLogin site={ { URL: `https://${ siteUrl }` } } delay={ 0 } />
-				) }
+			{
+				// If an ecommerce site is verified and completely transferred,
+				// automatically log the user into the wp-admin.
+				isWpComEcommercePlan( primaryPurchase.productSlug ) &&
+					transferComplete &&
+					isEmailVerified && (
+						<WpAdminAutoLogin site={ { URL: `https://${ siteUrl }` } } delay={ 0 } />
+					)
+			}
 			<ThankYouV2
 				title={ translate( 'Get the best out of your site' ) }
 				subtitle={ preventWidows( subtitle ) }
