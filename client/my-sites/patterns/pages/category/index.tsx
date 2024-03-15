@@ -22,7 +22,11 @@ import {
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
-import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
+import {
+	PatternTypeFilter,
+	type Pattern,
+	type PatternGalleryFC,
+} from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
