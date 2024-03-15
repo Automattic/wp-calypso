@@ -4,6 +4,8 @@ import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { Icon, linkOff } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { CodeDeploymentData } from './use-code-deployments-query';
 
@@ -20,6 +22,7 @@ export const DeploymentsListItemActions = ( {
 	onDisconnectRepository,
 	deployment,
 }: DeploymentsListItemActionsProps ) => {
+	const dispatch = useDispatch();
 	const { __ } = useI18n();
 
 	return (
@@ -29,6 +32,9 @@ export const DeploymentsListItemActions = ( {
 					<MenuGroup>
 						<MenuItem
 							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_github_manual_deployment_run_click' )
+								);
 								onManualDeployment();
 								onClose();
 							} }
@@ -38,6 +44,7 @@ export const DeploymentsListItemActions = ( {
 						<MenuItem
 							disabled={ ! deployment.current_deployment_run }
 							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_hosting_github_see_deployment_runs_click' ) );
 								page( viewDeploymentLogs( siteSlug, deployment.id ) );
 								onClose();
 							} }
@@ -46,6 +53,9 @@ export const DeploymentsListItemActions = ( {
 						</MenuItem>
 						<MenuItem
 							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_github_configure_connection_click' )
+								);
 								page( manageDeploymentPage( siteSlug, deployment.id ) );
 								onClose();
 							} }
@@ -57,6 +67,9 @@ export const DeploymentsListItemActions = ( {
 						<MenuItem
 							className="github-deployments-list__menu-item-danger"
 							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_hosting_github_disconnect_repository_click' )
+								);
 								onDisconnectRepository();
 								onClose();
 							} }

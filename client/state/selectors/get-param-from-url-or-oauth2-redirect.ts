@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import 'calypso/state/route/init';
 import getCurrentQueryArguments from './get-current-query-arguments';
+import getInitialQueryArguments from './get-initial-query-arguments';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -13,6 +14,7 @@ export const getParamFromUrlOrOauth2Redirect = (
 	state: AppState,
 	paramName: string
 ): string | null => {
+	const initialQuery = getInitialQueryArguments( state );
 	const currentQuery = getCurrentQueryArguments( state );
 	const paramValue = get( currentQuery, paramName ) as string | null;
 
@@ -21,8 +23,14 @@ export const getParamFromUrlOrOauth2Redirect = (
 	}
 
 	try {
-		const queryOauth2Redirect = currentQuery?.oauth2_redirect || currentQuery?.redirect_to;
+		const queryOauth2Redirect =
+			currentQuery?.oauth2_redirect ||
+			currentQuery?.redirect_to ||
+			initialQuery?.oauth2_redirect ||
+			initialQuery?.redirect_to;
+
 		const oauth2RedirectUrl = new URL( queryOauth2Redirect as string );
+
 		return oauth2RedirectUrl.searchParams.get( paramName );
 	} catch ( e ) {
 		// ignore

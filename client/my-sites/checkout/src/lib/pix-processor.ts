@@ -1,6 +1,7 @@
 import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
+import { isValidCPF } from 'calypso/lib/checkout/processor-specific';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
@@ -53,6 +54,14 @@ export async function pixProcessor(
 	const paymentMethodId = 'pix';
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+
+	if ( ! isValidCPF( submitData.document ) ) {
+		return makeErrorResponse(
+			translate( 'Your CPF is invalid. Please verify that you have entered it correctly.', {
+				textOnly: true,
+			} )
+		);
+	}
 
 	const baseURL = new URL(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com'

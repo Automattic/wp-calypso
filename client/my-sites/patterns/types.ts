@@ -13,6 +13,11 @@ export type RouterContext = Context &
 
 export type { Pattern };
 
+export enum PatternTypeFilter {
+	PAGES = 'pages',
+	REGULAR = 'regular',
+}
+
 type CategoryBase = {
 	name: string;
 	label: string;
@@ -36,7 +41,7 @@ export type Category = CategoryBase & {
 type CategoryGalleryProps = {
 	categories?: Category[];
 	description: string;
-	patternType: 'regular' | 'pages';
+	patternTypeFilter: PatternTypeFilter;
 	title: string;
 };
 

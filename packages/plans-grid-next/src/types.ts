@@ -1,4 +1,4 @@
-import { Plans, type AddOnMeta } from '@automattic/data-stores';
+import { Plans, AddOns } from '@automattic/data-stores';
 import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
 import type {
 	UrlFriendlyTermType,
@@ -38,7 +38,7 @@ export interface GridPlan {
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
 	pricing: Plans.PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
+	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;

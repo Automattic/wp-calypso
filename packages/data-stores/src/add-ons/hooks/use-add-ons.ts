@@ -5,24 +5,22 @@ import {
 	PRODUCT_1GB_SPACE,
 	WPCOM_FEATURES_AI_ASSISTANT,
 } from '@automattic/calypso-products';
-import {
-	useAddOnCheckoutLink,
-	useAddOnFeatureSlugs,
-	ProductsList,
-	Site,
-	Purchases,
-} from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import * as ProductsList from '../../products-list';
+import * as Purchases from '../../purchases';
+import * as Site from '../../site';
 import { STORAGE_LIMIT } from '../constants';
 import customDesignIcon from '../icons/custom-design';
 import jetpackAIIcon from '../icons/jetpack-ai';
 import spaceUpgradeIcon from '../icons/space-upgrade';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
-import isStorageAddonEnabled from '../is-storage-addon-enabled';
+import isStorageAddonEnabled from '../lib/is-storage-addon-enabled';
+import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import useAddOnDisplayCost from './use-add-on-display-cost';
+import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 import useAddOnPrices from './use-add-on-prices';
-import type { AddOnMeta } from '@automattic/data-stores';
+import type { AddOnMeta } from '../types';
 
 const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 	const translate = useTranslate();
@@ -142,9 +140,13 @@ const useActiveAddOnsDefs = ( selectedSiteId: Props[ 'selectedSiteId' ] ) => {
 
 interface Props {
 	selectedSiteId?: number | null | undefined;
+	enableStorageAddOns?: boolean;
 }
 
-const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
+const useAddOns = ( {
+	selectedSiteId,
+	enableStorageAddOns,
+}: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
 	const productsList = ProductsList.useProducts();
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
@@ -206,8 +208,11 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 					 * If it's a storage add-on.
 					 */
 					if ( addOn.productSlug === PRODUCT_1GB_SPACE ) {
-						// if storage add-ons are not enabled in the config, remove them
-						if ( ! isStorageAddonEnabled() ) {
+						// if storage add-ons are not enabled in the config or disabled via hook prop, remove them
+						if (
+							( 'boolean' === typeof enableStorageAddOns && ! enableStorageAddOns ) ||
+							( ! isStorageAddonEnabled() && 'boolean' !== typeof enableStorageAddOns )
+						) {
 							return null;
 						}
 
@@ -257,6 +262,7 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 				} ),
 		[
 			activeAddOns,
+			enableStorageAddOns,
 			mediaStorage.data?.maxStorageBytes,
 			productsList.data,
 			productsList.isLoading,

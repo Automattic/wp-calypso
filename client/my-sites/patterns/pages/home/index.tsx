@@ -9,11 +9,15 @@ import {
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import {
+	PatternTypeFilter,
+	type CategoryGalleryFC,
+	type PatternGalleryFC,
+} from 'calypso/my-sites/patterns/types';
 import ImgCopyPaste from './images/copy-paste.svg';
 import ImgEdit from './images/edit.svg';
 import ImgResponsive from './images/responsive.svg';
 import ImgStyle from './images/style.svg';
-import type { CategoryGalleryFC, PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
@@ -54,7 +58,7 @@ export const PatternsHomePage = ( {
 				title="Ship faster with patterns"
 				description="Choose from a huge library of patterns to build any page you need."
 				categories={ categories?.filter( ( c ) => c.regularPatternCount ) }
-				patternType="regular"
+				patternTypeFilter={ PatternTypeFilter.REGULAR }
 			/>
 
 			{ searchTerm && <PatternGallery patterns={ patterns } isGridView={ isGridView } /> }
@@ -112,7 +116,7 @@ export const PatternsHomePage = ( {
 				title="Beautifully curated page layouts"
 				description="Entire pages built of patterns, ready to be added to your site."
 				categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-				patternType="pages"
+				patternTypeFilter={ PatternTypeFilter.PAGES }
 			/>
 
 			<PatternsGetStarted />

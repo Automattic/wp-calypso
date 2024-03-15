@@ -1,5 +1,5 @@
 import { useCallback } from '@wordpress/element';
-import type { SiteDetails } from '../site/types';
+import * as Site from '../../site';
 
 /**
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.
@@ -7,14 +7,14 @@ import type { SiteDetails } from '../site/types';
  * @returns {Function} A function returnig a formatted checkout link for the given add-on and quantity
  */
 
-export const useAddOnCheckoutLink = (): ( (
-	selectedSiteSlug: SiteDetails[ 'slug' ] | null,
+const useAddOnCheckoutLink = (): ( (
+	selectedSiteSlug: Site.SiteDetails[ 'slug' ] | null,
 	addOnSlug: string,
 	quantity?: number
 ) => string ) => {
 	const checkoutLinkCallback = useCallback(
 		(
-			selectedSiteSlug: SiteDetails[ 'slug' ] | null,
+			selectedSiteSlug: Site.SiteDetails[ 'slug' ] | null,
 			addOnSlug: string,
 			quantity?: number
 		): string => {
@@ -34,3 +34,5 @@ export const useAddOnCheckoutLink = (): ( (
 	);
 	return checkoutLinkCallback;
 };
+
+export default useAddOnCheckoutLink;

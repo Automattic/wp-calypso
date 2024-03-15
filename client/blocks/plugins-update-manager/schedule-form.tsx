@@ -1,20 +1,18 @@
 import {
 	RadioControl,
-	SearchControl,
 	SelectControl,
-	CheckboxControl,
 	__experimentalText as Text,
 	Flex,
 	FlexItem,
 	FlexBlock,
-	Spinner,
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form.plugins';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
 	useEditUpdateScheduleMutation,
@@ -23,7 +21,6 @@ import {
 	useUpdateScheduleQuery,
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
-import { MAX_SELECTABLE_PLUGINS } from './config';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSetSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -53,11 +50,11 @@ export const ScheduleForm = ( props: Props ) => {
 	const initDate = scheduleForEdit
 		? moment( scheduleForEdit?.timestamp * 1000 )
 		: moment( new Date() ).hour( DEFAULT_HOUR );
-	const {
-		data: plugins = [],
-		isLoading: isPluginsFetching,
-		isFetched: isPluginsFetched,
-	} = useCorePluginsQuery( siteSlug, true, true );
+	const { data: plugins = [], isFetched: isPluginsFetched } = useCorePluginsQuery(
+		siteSlug,
+		true,
+		true
+	);
 	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
 
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
@@ -86,44 +83,11 @@ export const ScheduleForm = ( props: Props ) => {
 		frequency: schedule.schedule,
 	} ) );
 	const scheduledPlugins = schedules.map( ( schedule ) => schedule.args );
-	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {
 		plugins: validatePlugins( selectedPlugins, scheduledPlugins ),
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
-
-	const onPluginSelectionChange = useCallback(
-		( plugin: CorePlugin, isChecked: boolean ) => {
-			if ( isChecked ) {
-				const _plugins: string[] = [ ...selectedPlugins ];
-				_plugins.push( plugin.plugin );
-				setSelectedPlugins( _plugins );
-			} else {
-				setSelectedPlugins( selectedPlugins.filter( ( name ) => name !== plugin.plugin ) );
-			}
-		},
-		[ selectedPlugins ]
-	);
-
-	const onPluginSelectAllChange = useCallback(
-		( isChecked: boolean ) => {
-			isChecked
-				? setSelectedPlugins( plugins.map( ( plugin ) => plugin.plugin ) ?? [] )
-				: setSelectedPlugins( [] );
-		},
-		[ plugins ]
-	);
-
-	const isPluginSelectionDisabled = useCallback(
-		( plugin: CorePlugin ) => {
-			return (
-				selectedPlugins.length >= MAX_SELECTABLE_PLUGINS &&
-				! selectedPlugins.includes( plugin.plugin )
-			);
-		},
-		[ selectedPlugins ]
-	);
 
 	const onFormSubmit = () => {
 		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
@@ -271,65 +235,15 @@ export const ScheduleForm = ( props: Props ) => {
 					</div>
 				</FlexItem>
 				<FlexItem>
-					<div className="form-field">
-						<label htmlFor="plugins">{ translate( 'Select plugins' ) }</label>
-						<span className="plugin-select-stats">
-							{ selectedPlugins.length }/
-							{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
-						</span>
-						{ fieldTouched?.plugins && validationErrors?.plugins ? (
-							<Text className="validation-msg">
-								<Icon className="icon-info" icon={ info } size={ 16 } />
-								{ validationErrors?.plugins }
-							</Text>
-						) : (
-							<Text className="info-msg">
-								{ translate(
-									'Plugins not listed below are automatically updated by WordPress.com.'
-								) }
-							</Text>
-						) }
-						<div className="checkbox-options">
-							<SearchControl
-								id="plugins"
-								onChange={ setPluginSearchTerm }
-								value={ pluginSearchTerm }
-							/>
-							<div className="checkbox-options-container">
-								{ isPluginsFetching && <Spinner /> }
-								{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
-									<CheckboxControl
-										label={ translate( 'Select all' ) }
-										indeterminate={
-											selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
-										}
-										checked={ selectedPlugins.length === plugins.length }
-										onChange={ onPluginSelectAllChange }
-									/>
-								) }
-								{ isPluginsFetched &&
-									plugins.map( ( plugin ) => (
-										<Fragment key={ plugin.plugin }>
-											{ plugin.name.toLowerCase().includes( pluginSearchTerm.toLowerCase() ) && (
-												<CheckboxControl
-													key={ plugin.plugin }
-													label={ plugin.name }
-													checked={ selectedPlugins.includes( plugin.plugin ) }
-													disabled={ isPluginSelectionDisabled( plugin ) }
-													className={ classnames( {
-														disabled: isPluginSelectionDisabled( plugin ),
-													} ) }
-													onChange={ ( isChecked ) => {
-														setFieldTouched( { ...fieldTouched, plugins: true } );
-														onPluginSelectionChange( plugin, isChecked );
-													} }
-												/>
-											) }
-										</Fragment>
-									) ) }
-							</div>
-						</div>
-					</div>
+					<ScheduleFormPlugins
+						initPlugins={ selectedPlugins }
+						error={ validationErrors?.plugins }
+						showError={ fieldTouched?.plugins }
+						onChange={ setSelectedPlugins }
+						onTouch={ ( touched ) => {
+							setFieldTouched( { ...fieldTouched, plugins: touched } );
+						} }
+					/>
 				</FlexItem>
 			</Flex>
 		</form>
