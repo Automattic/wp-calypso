@@ -8,8 +8,10 @@ type Props = {
 
 export default function SitePreviewPaneFooter( { children, className }: Props ) {
 	return (
-		<>
-			<div className={ classNames( 'site-preview__footer', className ) }>{ children }</div>
-		</>
+		children && (
+			<>
+				<div className={ classNames( 'site-preview__footer', className ) }>{ children }</div>
+			</>
+		)
 	);
 }
