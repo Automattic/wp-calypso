@@ -74,7 +74,7 @@ export const ScheduleListTable = ( props: Props ) => {
 							{ schedule?.args && (
 								<Tooltip
 									text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
-									position="middle right"
+									placement="left-end"
 									delay={ 0 }
 									hideOnClick={ false }
 								>
