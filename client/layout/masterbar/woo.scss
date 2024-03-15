@@ -1211,10 +1211,7 @@
 			padding: 48px 0 0;
 		}
 
-		.login__form-header {
-			margin-bottom: 12px;
-		}
-
+		.login__form-header,
 		.formatted-header__title {
 			margin-bottom: 12px;
 
@@ -1226,11 +1223,14 @@
 		}
 
 		.login__header-subtitle,
-		.formatted-header__subtitle {
+		.formatted-header__subtitle,
+		.verification-code-form__help-text,
+		.security-key-form__help-text {
 			font-size: $font-body-large;
 			font-weight: 400;
 			line-height: 27px;
 			letter-spacing: -0.025px;
+			color: var(--studio-gray-60);
 			-webkit-font-smoothing: initial;
 
 			a {
@@ -1251,6 +1251,7 @@
 				max-width: 327px;
 				margin: 0 auto;
 				width: 100%;
+				text-align: left;
 			}
 		}
 
@@ -1579,6 +1580,65 @@
 		.auth-form__separator + .auth-form__social.card {
 			border: 0;
 			padding: 0;
+		}
+
+		.two-factor-authentication__verification-code-form-wrapper {
+			padding: 0;
+
+			.button,
+			.form-fieldset,
+			.auth-form__separator {
+				max-width: 327px !important;
+			}
+
+			.two-factor-authentication__verification-code-form {
+				margin-bottom: 32px;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+
+				.form-fieldset {
+					margin: 48px auto 8px;
+					width: 100%;
+				}
+
+				.security-key-form__help-text,
+				.security-key-form__add-wait-for-key {
+					margin-bottom: 48px;
+
+					p:first-child {
+						margin-bottom: 12px;
+					}
+				}
+			}
+
+			.two-factor-authentication__actions.card {
+				padding: 0;
+				border: 0;
+				margin-bottom: 32px;
+				clip-path: none;
+
+				.button {
+					min-height: 48px;
+					font-style: normal;
+					font-weight: 500;
+					color: var(--studio-gray-100);
+					margin: 0 auto;
+					max-width: 327px !important;
+				}
+			}
+		}
+
+		.login__two-factor-footer {
+			p {
+				max-width: 327px;
+				text-align: center;
+			}
+
+			@media screen and ( max-width: 660px ) {
+				align-items: center;
+			}
 		}
 	}
 }
