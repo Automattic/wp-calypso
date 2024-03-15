@@ -17,7 +17,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -58,7 +58,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
-import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
@@ -259,7 +258,7 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = useStorageAddOns( { siteId } );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )

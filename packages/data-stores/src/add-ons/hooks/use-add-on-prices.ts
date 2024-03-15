@@ -1,6 +1,6 @@
-import { ProductsList } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { useMemo } from '@wordpress/element';
+import * as ProductsList from '../../products-list';
 
 const useAddOnPrices = ( productSlug: ProductsList.StoreProductSlug, quantity?: number ) => {
 	const productsList = ProductsList.useProducts();
