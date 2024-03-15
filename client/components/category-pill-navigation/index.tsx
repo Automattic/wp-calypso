@@ -8,7 +8,7 @@ import './style.scss';
 
 type CategoryPillNavigationProps = {
 	buttons?: {
-		icon: JSX.Element;
+		icon: React.ReactElement< typeof Icon >;
 		label: string;
 		link: string;
 	}[];
