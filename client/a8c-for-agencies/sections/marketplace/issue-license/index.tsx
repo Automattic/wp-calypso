@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import { ShoppingCartContext } from '../context';
+import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 import LicensesForm from './licenses-form';
 import useSubmitForm from './licenses-form/hooks/use-submit-form';
@@ -31,7 +32,8 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ selectedItems, setSelectedItems ] = useState< ShoppingCartItem[] >( [] );
+	const { selectedItems, setSelectedItems } = useShoppingCart();
+
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
 
@@ -92,7 +94,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 							<ShoppingCart
 								items={ selectedItems }
 								onRemoveItem={ ( item: ShoppingCartItem ) => {
-									setSelectedItems( ( selectedItems ) =>
+									setSelectedItems(
 										selectedItems.filter( ( selectedItem ) => selectedItem !== item )
 									);
 								} }
