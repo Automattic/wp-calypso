@@ -143,14 +143,30 @@ function getMessageForTermsOfServiceRecordUnknown(
 
 		const taxesNotIncludedText = translate( 'Prices do not include applicable taxes.' );
 
+		// No need to show the endOfPromotionChargeText if the price and date
+		// we are already showing as the next renewal info is the same as the
+		// end of promotion renewal info.
 		const shouldShowEndOfPromotionText =
-			args.subscription_auto_renew_date !== args.subscription_end_of_promotion_date ||
-			args.maybe_prorated_regular_renewal_price_integer !== args.renewal_price_integer;
+			// Show the endOfPromotionChargeText if the endDate differs from
+			// the renewalDate because it is about the endDate.
+			renewalDate !== endDate ||
+			// Show the endOfPromotionChargeText if the
+			// maybeProratedRegularPrice differs from the renewalPrice because
+			// it is about the maybeProratedRegularPrice.
+			renewalPrice !== maybeProratedRegularPrice;
 
 		const shouldShowRegularPriceNoticeText = ( () => {
-			if ( regularPrice === renewalPrice ) {
+			// No need to show the regularPriceNoticeText if the price we are
+			// already showing as the next renewal price is the same as the
+			// regular renewal price, as long as there is no end of promotion
+			// text to mislead the reader into thinking it referrs to all
+			// renewals.
+			if ( ! shouldShowEndOfPromotionText && regularPrice === renewalPrice ) {
 				return false;
 			}
+			// No need to show the regularPriceNoticeText if the price we are
+			// already showing as the end of promotion renewal price is the
+			// same as the regular renewal price.
 			if ( shouldShowEndOfPromotionText && regularPrice === maybeProratedRegularPrice ) {
 				return false;
 			}
