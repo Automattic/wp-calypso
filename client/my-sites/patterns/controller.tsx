@@ -1,36 +1,17 @@
-import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
-import Patterns from 'calypso/my-sites/patterns/patterns';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 
-type Next = ( error?: Error ) => void;
+export const RENDERER_SITE_ID = 226011606; // assemblerdemo
 
-export function fetchPatterns( context: PageJSContext, next: Next ) {
-	const { cachedMarkup, queryClient, lang, params, store } = context;
+export function getCategoryUrlPath(
+	categorySlug: string,
+	type: PatternTypeFilter,
+	includeLocale = true
+) {
+	const href =
+		type === PatternTypeFilter.PAGES
+			? `/patterns/layouts/${ categorySlug }`
+			: `/patterns/${ categorySlug }`;
 
-	if ( cachedMarkup ) {
-		next();
-
-		return;
-	}
-
-	const locale = getCurrentUserLocale( store.getState() ) || lang || 'en';
-
-	// TODO: Get category from url
-	params.category = 'intro';
-
-	queryClient
-		.fetchQuery( getPatternsQueryOptions( locale, params.category ) )
-		.then( () => {
-			next();
-		} )
-		.catch( ( error: Error ) => {
-			next( error );
-		} );
-}
-
-export function renderPatterns( context: PageJSContext, next: Next ) {
-	context.primary = <Patterns category={ context.params.category } />;
-
-	next();
+	return includeLocale ? addLocaleToPathLocaleInFront( href ) : href;
 }

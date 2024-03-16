@@ -7,6 +7,7 @@ import {
 	MouseEvent,
 	ReactElement,
 	ReactNode,
+	useCallback,
 	useEffect,
 	useRef,
 	useState,
@@ -46,6 +47,20 @@ const GitHubLoginButton = ( {
 	const translate = useTranslate();
 
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial );
+	const authError = useSelector( ( state: AppState ) => {
+		const path = state?.route?.path?.current;
+		const { initial, current } = state?.route?.query ?? {};
+		const initialError = initial?.error;
+		const currentError = current?.error;
+
+		// Sign-up flow is losing the error query param when redirecting to `/start/user-social`
+		// because of that, we are returning the initial query param error.
+		if ( path?.includes( '/start/user-social' ) ) {
+			return initialError;
+		}
+		return currentError;
+	} );
+
 	const isFormDisabled = useSelector( isFormDisabledSelector );
 	const dispatch = useDispatch();
 
@@ -54,6 +69,14 @@ const GitHubLoginButton = ( {
 	const [ showError, setShowError ] = useState< boolean >( false );
 
 	const errorRef = useRef< EventTarget | null >( null );
+
+	const handleGitHubError = useCallback( () => {
+		dispatch(
+			errorNotice(
+				translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
+			)
+		);
+	}, [ dispatch, errorNotice, translate ] );
 
 	const exchangeCodeForToken = async ( auth_code: string ) => {
 		let response;
@@ -78,11 +101,7 @@ const GitHubLoginButton = ( {
 				);
 			}
 
-			dispatch(
-				errorNotice(
-					translate( 'Something went wrong when trying to connect with GitHub. Please try again.' )
-				)
-			);
+			handleGitHubError();
 			return;
 		}
 
@@ -114,6 +133,12 @@ const GitHubLoginButton = ( {
 		}
 	}, [ code, service, userHasDisconnected ] );
 
+	useEffect( () => {
+		if ( authError ) {
+			handleGitHubError();
+		}
+	}, [ authError, handleGitHubError ] );
+
 	const isDisabled = isFormDisabled || disabledState;
 
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
@@ -125,15 +150,13 @@ const GitHubLoginButton = ( {
 		}
 
 		const scope = encodeURIComponent( 'read:user,user:email' );
-		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-redirect?redirect_uri=${ stripQueryString(
+		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
 			redirectUri
 		) }&scope=${ scope }&ux_mode=redirect`;
 	};
 
 	const eventHandlers = {
 		onClick: handleClick,
-		onMouseEnter: () => setShowError( true ),
-		onMouseLeave: () => setShowError( false ),
 	};
 
 	let customButton = null;

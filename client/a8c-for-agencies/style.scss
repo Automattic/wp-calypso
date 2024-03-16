@@ -3,18 +3,84 @@
 	// border-radius
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
+
+	// FIXME: Remove this when we have a proper color scheme
+	--studio-automattic-0: #ebf4fa;
+	--studio-automattic-5: #c4e2f5;
+	--studio-automattic-10: #88ccf2;
+	--studio-automattic-20: #5ab7e8;
+	--studio-automattic-30: #24a3e0;
+	--studio-automattic-40: #1490c7;
+	--studio-automattic-50: #0277a8;
+	--studio-automattic-60: #036085;
+	--studio-automattic-70: #02506e;
+	--studio-automattic-80: #02384d;
+	--studio-automattic-90: #022836;
+	--studio-automattic-100: #021b24;
+	--studio-automattic: #24a3e0;
+
+	--color-surface-backdrop: #021a23;
+
+	--color-sidebar-background: #021a23;
+	--color-sidebar-menu-hover-background: #02395c;
+	--color-sidebar-menu-hover-text: #fff;
+	--color-sidebar-menu-selected-background: #02395c;
+	--color-sidebar-menu-selected-text: #fff;
+	--color-sidebar-text: #fff;
+	--color-sidebar-text-alternative: #bbe0fa;
+	--color-sidebar-gridicon-fill: #bbe0fa;
+
+	--color-scary-0: var(--studio-red-0);
+	--color-scary-5: var(--studio-red-5);
+	--color-scary-40: var(--studio-red-40);
+	--color-scary-50: var(--studio-red-50);
+	--color-scary-60: var(--studio-red-60);
+	--color-scary-70: var(--studio-red-70);
+
+	--color-primary: var(--studio-automattic-60);
+	--color-primary-40: var(--studio-automattic-40);
+	--color-accent: var(--studio-automattic-60);
+	--color-accent-60: var(--studio-automattic-60);
+	--color-accent-70: var(--studio-automattic-70);
 }
 
 .theme-a8c-for-agencies {
+	.button.is-primary {
+		background-color: var(--studio-automattic-60);
+		border-color: var(--studio-automattic-60);
+	}
+
+	.button.is-borderless:focus,
+	.button.is-borderless:hover,
+	.button.is-borderless {
+		background: none;
+	}
+
+	.components-form-toggle.is-checked .components-form-toggle__track {
+		background-color: var(--studio-automattic-60);
+		border-color: var(--studio-automattic-60);
+	}
+
+	.components-checkbox-control__input[type="checkbox"]:checked,
+	.components-checkbox-control__input[type="checkbox"]:indeterminate {
+		background: var(--studio-automattic-60);
+		border-color: var(--studio-automattic-60);
+	}
+
+	.components-button.is-tertiary {
+		color: var(--studio-automattic-60);
+	}
+
+	.button.is-borderless.is-primary.is-active,
+	.button.is-borderless.is-primary:active,
+	.button.is-borderless.is-primary:focus,
+	.button.is-borderless.is-primary:hover {
+		color: var(--studio-automattic-60);
+	}
+
 	// Masterbar
 	@media only screen and ( min-width: 782px ) {
 		--masterbar-height: 46px;
-	}
-
-	.main {
-		box-sizing: border-box;
-		padding-inline-start: 16px;
-		padding-inline-end: 16px;
 	}
 }
 
@@ -22,15 +88,16 @@
 .theme-a8c-for-agencies .layout.has-no-masterbar {
 	--masterbar-height: 0;
 
-	// By default, there's 32px of top padding on the layout component.
-	// On mobile views this accommodates the masterbar, but we don't have one;
-	// so, we can remove it by default and re-add it when our width is >660px.
 	.layout__content {
-		padding-block-start: initial;
+		padding: 16px;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		padding-block-start: 32px;
+		padding-block-start: 0;
+
+		.layout__content {
+			padding: 16px 16px 16px calc(var(--sidebar-width-max));
+		}
 	}
 }
 
@@ -71,6 +138,10 @@
 			}
 		}
 	}
+}
+
+.theme-a8c-for-agencies .current-section {
+	margin: -32px 0 0;
 }
 
 // Universal Text Styles
@@ -125,4 +196,11 @@ html {
 
 .site-selector .site-selector__actions {
 	padding: 16px;
+}
+
+.button.is-primary:hover,
+.button.is-primary:focus {
+	background-color: var(--studio-automattic-70);
+	border-color: var(--studio-automattic-70);
+	color: var(--color-text-inverted);
 }

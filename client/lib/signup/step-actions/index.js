@@ -359,7 +359,11 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
 		dependencies.isStoreFlow = true;
 	}
-	const extra = buildDIFMCartExtrasObject( dependencies, siteSlug );
+	const extra = buildDIFMCartExtrasObject(
+		dependencies,
+		siteSlug,
+		`step-actions-flow-${ step.lastKnownFlow || '' }`
+	);
 	const cartItem = {
 		product_slug: WPCOM_DIFM_LITE,
 		extra,
@@ -1207,6 +1211,13 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
+}
+
+export function excludeSurveyStepIfInactive( stepName, defaultDependencies, nextProps ) {
+	if ( ! nextProps.initialContext?.isSignupSurveyActive ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
 }
 
 export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {

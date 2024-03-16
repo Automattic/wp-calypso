@@ -43,6 +43,11 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
+	MIGRATION_ERROR: {
+		slug: 'error',
+		asyncComponent: () => import( './steps-repository/migration-error' ),
+	},
+
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
@@ -211,18 +216,23 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
 	},
 
+	SITE_MIGRATION_IDENTIFY: {
+		slug: 'site-migration-identify',
+		asyncComponent: () => import( './steps-repository/site-migration-identify' ),
+	},
+
 	SITE_MIGRATION_IMPORT_OR_MIGRATE: {
 		slug: 'site-migration-import-or-migrate',
 		asyncComponent: () => import( './steps-repository/site-migration-import-or-migrate' ),
 	},
 
-	SITE_MIGRATION_PLUGIN_INSTALL: {
-		slug: 'site-migration-plugin-install',
-		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
-	},
-
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
+	},
+
+	SITE_MIGRATION_PLUGIN_INSTALL: {
+		slug: 'site-migration-plugin-install',
+		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 };

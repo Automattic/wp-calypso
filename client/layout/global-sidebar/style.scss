@@ -25,12 +25,13 @@ $brand-text: "SF Pro Text", $sans;
 			line-height: 20px;
 			background: var(--studio-white);
 			border-radius: 4px;
-			bottom: -30px;
+			bottom: -24px;
 			color: var(--studio-black);
 			content: attr(data-tooltip);
 			display: none;
-			font-size: $font-body-small;
-			padding: 6px 10px;
+			font-size: $font-body-extra-small;
+			opacity: 0.95;
+			padding: 3px 6px;
 			position: absolute;
 			right: 0;
 			white-space: nowrap;
@@ -54,7 +55,7 @@ $brand-text: "SF Pro Text", $sans;
 			right: unset;
 			bottom: unset;
 			left: 0;
-			top: -35px;
+			top: -29px;
 		}
 	}
 
@@ -64,7 +65,8 @@ $brand-text: "SF Pro Text", $sans;
 
 	.sidebar__header {
 		align-items: center;
-		display: flex;
+		// Hide the header when the masterbar is visible.
+		display: none;
 		gap: 8px;
 		padding: 30px 24px 29px;
 
@@ -122,18 +124,35 @@ $brand-text: "SF Pro Text", $sans;
 		@include custom-scrollbars-on-hover(transparent, $gray-600);
 		flex: 1;
 		overflow-y: auto;
-
+		padding-top: 12px;
 
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {
 			display: flex;
 			min-height: unset;
 			flex-direction: column;
+			gap: 3px;
 		}
 
 		.sidebar {
 			&:first-child {
 				margin-top: 4px;
+			}
+
+			.sidebar__menu.is-togglable .sidebar__heading,
+			.sidebar__expandable-content .sidebar__menu-link {
+				font-size: $default-font-size;
+				line-height: 15px;
+			}
+
+			.sidebar__expandable-content {
+				.sidebar__menu-link {
+					margin: 0;
+				}
+
+				.reader-sidebar-tags__text-input {
+					padding-inline-end: 0;
+				}
 			}
 		}
 
@@ -147,6 +166,8 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__expandable-arrow {
 			fill: var(--studio-white);
+			height: 15px;
+			width: 15px;
 		}
 
 		.selected .sidebar__menu-link::after {
@@ -210,6 +231,23 @@ $brand-text: "SF Pro Text", $sans;
 			}
 		}
 
+		.sidebar__footer-language-switcher {
+			align-items: center;
+			color: var(--studio-gray-5);
+			cursor: pointer;
+			display: flex;
+			height: 32px;
+			gap: 6px;
+			padding: 6px;
+			justify-content: center;
+			margin-inline-start: auto;
+		}
+
+
+		&:has(.sidebar__footer-language-switcher) {
+			background: var(--studio-orange);
+		}
+
 		.sidebar__item-help,
 		.sidebar__footer-link,
 		.sidebar__footer-wpadmin {
@@ -229,6 +267,7 @@ $brand-text: "SF Pro Text", $sans;
 			}
 		}
 
+		.sidebar__footer-language-switcher,
 		.sidebar__footer-link,
 		.sidebar__item-help {
 			&:hover {
@@ -290,6 +329,10 @@ $brand-text: "SF Pro Text", $sans;
 			}
 		}
 	}
+
+	.is-section-reader & .sidebar__menu-item-siteicon {
+		margin-inline-end: 12px;
+	}
 }
 
 .accessible-focus div.global-sidebar {
@@ -320,5 +363,15 @@ $brand-text: "SF Pro Text", $sans;
 		padding-top: 0;
 		margin-top: 0;
 		top: 0;
+	}
+
+	.global-sidebar {
+		.sidebar__header {
+			display: flex;
+		}
+
+		.sidebar__body {
+			padding-top: 0;
+		}
 	}
 }

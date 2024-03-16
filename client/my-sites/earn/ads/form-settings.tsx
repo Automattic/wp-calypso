@@ -46,6 +46,7 @@ type Settings = {
 	custom_adstxt_enabled?: boolean;
 	custom_adstxt?: string;
 	jetpack_module_enabled?: boolean;
+	cmp_enabled?: boolean;
 };
 
 const AdsFormSettings = () => {
@@ -135,6 +136,7 @@ const AdsFormSettings = () => {
 			custom_adstxt_enabled: false,
 			custom_adstxt: '',
 			jetpack_module_enabled: false,
+			cmp_enabled: false,
 		};
 	}
 
@@ -150,6 +152,7 @@ const AdsFormSettings = () => {
 			custom_adstxt_enabled: settings.custom_adstxt_enabled,
 			custom_adstxt: settings.custom_adstxt,
 			jetpack_module_enabled: settings.jetpack_module_enabled,
+			cmp_enabled: settings.cmp_enabled,
 		};
 	}
 
@@ -169,7 +172,6 @@ const AdsFormSettings = () => {
 			<FormFieldset>
 				<FormLegend>{ translate( 'Ads Visibility' ) }</FormLegend>
 				<FormLabel>
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="yes"
@@ -181,7 +183,6 @@ const AdsFormSettings = () => {
 				</FormLabel>
 
 				<FormLabel>
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="no"
@@ -193,7 +194,6 @@ const AdsFormSettings = () => {
 				</FormLabel>
 
 				<FormLabel>
-					{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 					<FormRadio
 						name="show_to_logged_in"
 						value="pause"
@@ -409,6 +409,25 @@ const AdsFormSettings = () => {
 							</FormSettingExplanation>
 						</FormFieldset>
 					</div>
+				) }
+
+				{ siteIsJetpack && (
+					<FormFieldset>
+						<ToggleControl
+							checked={ !! settings.cmp_enabled }
+							disabled={ isDisabled }
+							onChange={ () => handleCompactToggle( 'cmp_enabled' ) }
+							label={ translate( 'Enable GDPR Consent Banner' ) }
+						/>
+
+						<div className="ads__child-settings">
+							<FormSettingExplanation>
+								{ translate(
+									'Show a cookie banner to all EU and UK site visitors prompting them to consent to their personal data being used to personalize the ads they see. Without proper consents EU/UK visitors will only see lower paying non-personalized ads.'
+								) }
+							</FormSettingExplanation>
+						</div>
+					</FormFieldset>
 				) }
 			</div>
 		);

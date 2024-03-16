@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
+import { MaterialIcon } from '@automattic/components';
 import { edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import MaterialIcon from 'calypso/components/material-icon';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns/dns-records-list-header';
 import { domainManagementDnsEditRecord } from 'calypso/my-sites/domains/paths';

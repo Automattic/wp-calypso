@@ -11,6 +11,11 @@
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
+	// Temporary fix on the help center article content inside the editor
+	.wp-block-columns-is-layout-flex {
+		display: block !important;
+	}
+
 	h1 {
 		font-size: $font-title-large;
 		font-weight: 600;
@@ -103,6 +108,7 @@
 			margin-top: 12px;
 			margin-bottom: 12px;
 			margin-left: 32px;
+			display: block !important;
 		}
 	}
 
@@ -170,6 +176,7 @@
 		font-size: $font-body-small;
 		text-align: center;
 		color: var(--color-neutral-40);
+		display: block !important;
 	}
 
 	// placeholder for videopress videos

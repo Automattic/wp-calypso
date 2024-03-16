@@ -18,6 +18,7 @@ import {
 	chevronRight,
 	external as externalIcon,
 } from '@wordpress/icons';
+import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
@@ -44,6 +45,11 @@ interface SearchResultsSectionProps {
 
 const noop = () => {
 	return;
+};
+
+const isResultFromDeveloperWordpress = ( url: string ) => {
+	const developerSiteRegex: RegExp = /developer\.wordpress\.com/;
+	return developerSiteRegex.test( url );
 };
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -116,6 +122,8 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
+	const isRtl = useRtl();
 	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
@@ -224,6 +232,12 @@ function HelpSearchResults( {
 			return <Icon icon={ pageIcon } />;
 		};
 
+		const DeveloperResourceIndicator = () => {
+			return (
+				<div className="help-center-search-results-dev__resource">{ isRtl ? 'ved' : 'dev' }</div>
+			);
+		};
+
 		return (
 			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
@@ -241,7 +255,11 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							<LinkIcon />
+							{ isResultFromDeveloperWordpress( result.link ) ? (
+								<DeveloperResourceIndicator />
+							) : (
+								<LinkIcon />
+							) }
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 							<Icon
 								width={ 20 }

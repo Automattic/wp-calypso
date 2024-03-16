@@ -12,10 +12,10 @@ import {
 	Feature,
 	applyTestFiltersToPlansList,
 	FEATURE_CUSTOM_DOMAIN,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export default function getPlanFeatures(
@@ -50,7 +50,7 @@ export default function getPlanFeatures(
 			.filter( ( feature ) => ! isMonthlyPlan || ! annualPlanOnlyFeatures.includes( feature ) )
 			// Show the free domain feature if `showFreeDomainFeature` is true
 			.filter( ( feature ) => feature !== FEATURE_CUSTOM_DOMAIN || showFreeDomainFeature )
-			.map( ( feature ) => String( FEATURES_LIST[ feature ].getTitle() ) );
+			.map( ( feature ) => String( getFeatureByKey( feature )?.getTitle() ) );
 
 		// If the new feature list is available, return it.
 		// Else fallback to the previous list of features.

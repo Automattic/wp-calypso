@@ -3,10 +3,11 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useDispatch } from '@wordpress/data';
+import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
+import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, Component } from 'react';
+import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -17,6 +18,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -25,10 +27,12 @@ import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
+import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -37,9 +41,11 @@ import {
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -47,13 +53,12 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
-	masterbarIsVisible,
 	getSidebarIsCollapsed,
+	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
-
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -91,6 +96,53 @@ function SidebarScrollSynchronizer() {
 	}, [ active ] );
 
 	return null;
+}
+
+function WhatsNewLoader( { loadWhatsNew, siteId } ) {
+	const { fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
+
+	useEffect( () => {
+		fetchSeenWhatsNewAnnouncements();
+	}, [ fetchSeenWhatsNewAnnouncements ] );
+
+	const { seenWhatsNewAnnouncements } = useSelect( ( select ) => {
+		const helpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			seenWhatsNewAnnouncements: helpCenterSelect.getSeenWhatsNewAnnouncements(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if (
+			data &&
+			data.length > 0 &&
+			! isLoading &&
+			seenWhatsNewAnnouncements &&
+			typeof seenWhatsNewAnnouncements.indexOf === 'function'
+		) {
+			if ( config.isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+				data.forEach( ( item ) => {
+					if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
+						setShowWhatsNew( true );
+						return;
+					}
+				} );
+			}
+		}
+	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
+
+	const handleClose = useCallback( () => {
+		setShowWhatsNew( false );
+	}, [ setShowWhatsNew ] );
+
+	if ( ! loadWhatsNew ) {
+		return null;
+	}
+
+	return showWhatsNew && <WhatsNewGuide onClose={ handleClose } siteId={ siteId } />;
 }
 
 function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
@@ -294,6 +346,10 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
+				<WhatsNewLoader
+					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden && ! this.props.isNewUser }
+					siteId={ this.props.siteId }
+				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -372,10 +428,16 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'yolo/command-palette' ) && (
 					<AsyncLoad
-						require="calypso/components/command-palette"
+						require="@automattic/command-palette"
 						placeholder={ null }
 						isOpenGlobal={ this.props.isCommandPaletteOpen }
 						onClose={ this.props.closeCommandPalette }
+						currentSiteId={ this.props.siteId }
+						navigate={ navigate }
+						useCommands={ useCommandsArrayWpcom }
+						currentRoute={ this.props.currentRoutePattern }
+						useSites={ useSiteExcerptsSorted }
+						userCapabilities={ this.props.userCapabilities }
 					/>
 				) }
 			</div>
@@ -472,8 +534,11 @@ export default withCurrentRoute(
 				sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 				userAllowedToHelpCenter,
 				currentRoute,
-				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
+				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
+				currentRoutePattern: getCurrentRoutePattern( state ),
+				userCapabilities: state.currentUser.capabilities,
+				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			};
 		},
 		{

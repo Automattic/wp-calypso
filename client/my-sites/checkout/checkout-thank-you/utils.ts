@@ -5,6 +5,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
 	isDomainTransfer,
 	isDomainMapping,
 	isDomainRegistration,
@@ -23,7 +24,9 @@ const buildKeyValuePairByProductSlugs = (
 	productSlugs: ReadonlyArray< string >,
 	value: string
 ) => {
-	return productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} );
+	return productSlugs
+		? productSlugs.reduce( ( map, productSlug ) => ( { ...map, [ productSlug ]: value } ), {} )
+		: {};
 };
 
 const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
@@ -32,6 +35,7 @@ const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, 'jetpack-social' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SEARCH_PRODUCTS, 'jetpack-search' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_VIDEOPRESS_PRODUCTS, 'jetpack-videopress' ),
+	...buildKeyValuePairByProductSlugs( JETPACK_SCAN_PRODUCTS, 'jetpack-protect' ),
 };
 
 const JETPACK_PLUGIN_IMAGE_MAP: Record< string, string > = {
@@ -129,3 +133,20 @@ export function getDomainPurchaseTypeAndPredicate(
 
 	return [ 'TRANSFER', isDomainTransfer ];
 }
+
+export const getDomainPurchase = ( purchases: ReceiptPurchase[] ) =>
+	purchases.find(
+		( purchase ) =>
+			isDomainMapping( purchase ) ||
+			isDomainTransfer( purchase ) ||
+			isDomainRegistration( purchase )
+	);
+
+export const getWPORGPluginSlugMap = () => WPORG_PLUGIN_SLUG_MAP;
+
+export const isSearch = ( purchase: ReceiptPurchase ) => {
+	return purchase.productType === 'search';
+};
+
+export const isTitanWithoutMailboxes = ( selectedFeature: string ) =>
+	selectedFeature === 'email-license';

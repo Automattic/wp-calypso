@@ -19,6 +19,7 @@ class SidebarNotifications extends Component {
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		title: TranslatableString,
+		onClick: PropTypes.func,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
 		hasUnseenNotifications: PropTypes.bool,
@@ -108,6 +109,11 @@ class SidebarNotifications extends Component {
 		} );
 	};
 
+	handleClick = ( event ) => {
+		this.toggleNotesFrame( event );
+		this.props.onClick();
+	};
+
 	render() {
 		const classes = classNames( this.props.className, 'sidebar-notifications', {
 			'is-active':
@@ -121,7 +127,7 @@ class SidebarNotifications extends Component {
 				<SidebarMenuItem
 					url="/notifications"
 					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
-					onClick={ this.toggleNotesFrame }
+					onClick={ this.handleClick }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
 					className={ classes }
@@ -134,6 +140,7 @@ class SidebarNotifications extends Component {
 						isShowing={ this.props.isNotificationsOpen }
 						checkToggle={ this.checkToggleNotes }
 						setIndicator={ this.setNotesIndicator }
+						isGlobalSidebarVisible={ true }
 						placeholder={ null }
 					/>
 				</div>

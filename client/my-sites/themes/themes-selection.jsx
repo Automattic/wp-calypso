@@ -63,6 +63,7 @@ class ThemesSelection extends Component {
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		forceWpOrgSearch: PropTypes.bool,
+		onDesignYourOwnClick: PropTypes.func,
 		themeShowcaseEventRecorder: PropTypes.shape( {
 			recordThemeClick: PropTypes.func,
 			recordThemeStyleVariationClick: PropTypes.func,
@@ -235,6 +236,7 @@ class ThemesSelection extends Component {
 			shouldFetchWpOrgThemes,
 			wpOrgQuery,
 			wpOrgThemes,
+			onDesignYourOwnClick,
 			tier,
 		} = this.props;
 
@@ -264,6 +266,7 @@ class ThemesSelection extends Component {
 					loading={ isRequesting }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
+					onDesignYourOwnClick={ onDesignYourOwnClick }
 					siteId={ siteId }
 					searchTerm={ query.search }
 					tabFilter={ tabFilter }

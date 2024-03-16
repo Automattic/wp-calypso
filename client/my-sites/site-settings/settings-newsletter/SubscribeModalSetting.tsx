@@ -50,13 +50,13 @@ export const SubscribeModalSetting = ( {
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					'Grow your subscriber list by enabling a pop-up modal with a subscription form. This will show as readers scroll.'
+					'Automatically add a subscribe form pop-up to every post and turn visitors into subscribers. It will appear as readers scroll through your posts.'
 				) }
 				{ subscribeModalEditorUrl && (
 					<>
 						{ ' ' }
 						<ExternalLink href={ subscribeModalEditorUrl } onClick={ onEditClick }>
-							{ translate( 'Preview and edit the popup' ) }
+							{ translate( 'Preview and edit the pop-up' ) }
 						</ExternalLink>
 					</>
 				) }

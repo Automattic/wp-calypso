@@ -106,6 +106,7 @@ export function CostOverridesList( {
 							<span className="cost-overrides-list-item__discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
+									signForPositive: true,
 								} ) }
 							</span>
 						</div>
@@ -123,6 +124,7 @@ export function CostOverridesList( {
 							<span className="cost-overrides-list-item__discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
+									signForPositive: true,
 								} ) }
 							</span>
 						</div>
@@ -143,6 +145,7 @@ export function CostOverridesList( {
 							<span className="cost-overrides-list-item__discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
+									signForPositive: true,
 								} ) }
 							</span>
 							<span className="cost-overrides-list-item__actions">
@@ -174,6 +177,14 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
 		return null;
 	}
+
+	// Introductory offer manual renewals often have prorated prices that are
+	// difficult to display as a simple discount so we keep their display
+	// simple.
+	if ( product.is_renewal ) {
+		return null;
+	}
+
 	const tosData = responseCart.terms_of_service?.find( ( tos ) => {
 		if ( ! new RegExp( `product_id:${ product.product_id }` ).test( tos.key ) ) {
 			return false;
@@ -183,7 +194,10 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 		}
 		return true;
 	} )?.args;
-	const dueDate = tosData?.subscription_auto_renew_date;
+	const dueDate =
+		tosData && 'subscription_auto_renew_date' in tosData
+			? tosData.subscription_auto_renew_date
+			: undefined;
 	const dueAmount = tosData?.renewal_price_integer;
 	const renewAmount = tosData?.regular_renewal_price_integer;
 	if ( ! dueDate || ! dueAmount || ! renewAmount ) {
@@ -242,6 +256,7 @@ function LineItemCostOverride( {
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
+						signForPositive: true,
 					} ) }
 			</span>
 			<LineItemCostOverrideIntroOfferDueDate product={ product } />

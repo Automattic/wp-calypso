@@ -657,6 +657,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-subscribers',
+		paths: [ '/subscribers' ],
+		module: 'calypso/my-sites/subscribers',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'woocommerce-installation',
 		paths: [ '/woocommerce-installation' ],
 		module: 'calypso/my-sites/woocommerce',
@@ -723,8 +729,27 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-marketplace',
-		paths: [ '/marketplace', '/marketplace/assign-license' ],
+		paths: [
+			'/marketplace',
+			'/marketplace/products',
+			'/marketplace/hosting',
+			'/marketplace/assign-license',
+		],
 		module: 'calypso/a8c-for-agencies/sections/marketplace',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-purchases',
+		paths: [
+			'/purchases',
+			'/purchases/licenses',
+			'/purchases/billing',
+			'/purchases/payment-methods',
+			'/purchases/payment-methods/add',
+			'/purchases/invoices',
+		],
+		module: 'calypso/a8c-for-agencies/sections/purchases',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},

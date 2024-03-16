@@ -48,6 +48,7 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
+	MaterialIcon,
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -64,7 +65,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';

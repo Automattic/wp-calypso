@@ -1,3 +1,4 @@
+import * as AddOns from './add-ons';
 import * as Analyzer from './analyzer';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
@@ -15,6 +16,7 @@ import * as User from './user';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useSiteIntent } from './queries/use-site-intent';
+export { useSendInvites } from './users/use-send-invites';
 export * from './add-ons/types';
 export * from './starter-designs-queries';
 export * from './site/types';
@@ -25,8 +27,6 @@ export * from './plans/types';
 export * from './theme';
 export * from './user/types';
 export * from './wpcom-plans-ui/types';
-export * from './add-ons/use-add-on-checkout-link';
-export * from './add-ons/use-add-on-feature-slugs';
 export * from './queries/use-launchpad';
 export * from './queries/use-launchpad-navigator';
 export * from './queries/use-all-domains-query';
@@ -39,6 +39,7 @@ export * from './site-reset';
 const { SubscriptionManager } = Reader;
 
 export {
+	AddOns,
 	Analyzer,
 	User,
 	DomainSuggestions,
@@ -71,3 +72,4 @@ export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { SiteActions } from './site';
 export type { UserActions } from './user';
+export type { Member, UseQuery, UsersQuery } from './users/types';

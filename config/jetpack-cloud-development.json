@@ -75,6 +75,7 @@
 		"oauth": true,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
+		"subscriber-csv-upload": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
@@ -99,6 +100,7 @@
 		"jetpack-cloud-golden-token": true,
 		"jetpack-search": true,
 		"jetpack-social": true,
+		"jetpack-subscribers": true,
 		"scan": true,
 		"site-purchases": true
 	},

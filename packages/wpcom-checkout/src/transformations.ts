@@ -36,6 +36,7 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 	}
 	return {
 		id: 'coupon-line-item',
+		hasDeleteButton: ! responseCart.has_auto_renew_coupon_been_automatically_applied,
 		// translators: The label of the coupon line item in checkout, including the coupon code
 		label: String(
 			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )
@@ -142,16 +143,18 @@ function getDiscountReasonForIntroductoryOffer(
 	product: ResponseCartProduct,
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >,
-	allowFreeText: boolean
+	allowFreeText: boolean,
+	isPriceIncrease: boolean
 ): string {
-	return getIntroductoryOfferIntervalDisplay(
+	return getIntroductoryOfferIntervalDisplay( {
 		translate,
-		terms.interval_unit,
-		terms.interval_count,
-		product.item_subtotal_integer === 0 && allowFreeText,
-		'checkout',
-		terms.transition_after_renewal_count
-	);
+		intervalUnit: terms.interval_unit,
+		intervalCount: terms.interval_count,
+		isFreeTrial: product.item_subtotal_integer === 0 && allowFreeText,
+		isPriceIncrease,
+		context: 'checkout',
+		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+	} );
 }
 
 export interface CostOverrideForDisplay {
@@ -178,21 +181,11 @@ export interface LineItemCostOverrideForDisplay {
 	discountAmount?: number;
 }
 
-function isUserVisibleCostOverride(
-	costOverride: ResponseCartCostOverride,
-	product: ResponseCartProduct
-): boolean {
+function isUserVisibleCostOverride( costOverride: ResponseCartCostOverride ): boolean {
 	if ( costOverride.does_override_original_cost ) {
 		// We won't display original cost overrides since they are
 		// included in the original cost that's being displayed. They
 		// are not discounts.
-		return false;
-	}
-
-	if (
-		'introductory-offer' === costOverride.override_code &&
-		! canDisplayIntroductoryOfferDiscountForProduct( product )
-	) {
 		return false;
 	}
 	return true;
@@ -217,26 +210,43 @@ function makeSaleCostOverrideUnique(
 	return costOverride;
 }
 
+/**
+ * Replace introductory offer cost override text with wording specific to that
+ * offer, like "Discount for first 3 months" instead of "Introductory offer".
+ */
 function makeIntroductoryOfferCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean
 ): ResponseCartCostOverride {
-	// Replace introductory offer cost override text with wording specific to
-	// that offer.
-	if ( 'introductory-offer' === costOverride.override_code && product.introductory_offer_terms ) {
+	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
+		return costOverride;
+	}
+	const isPriceIncrease = costOverride.old_subtotal_integer < costOverride.new_subtotal_integer;
+
+	// Renewals get generic text because an introductory offer manual renewal
+	// can be hard to explain simply and saying "Discount for first 3 months"
+	// may not be accurate.
+	if ( product.is_renewal ) {
 		return {
 			...costOverride,
-			human_readable_reason: getDiscountReasonForIntroductoryOffer(
-				product,
-				product.introductory_offer_terms,
-				translate,
-				allowFreeText
-			),
+			human_readable_reason: isPriceIncrease
+				? translate( 'Prorated renewal' )
+				: translate( 'Prorated renewal discount' ),
 		};
 	}
-	return costOverride;
+
+	return {
+		...costOverride,
+		human_readable_reason: getDiscountReasonForIntroductoryOffer(
+			product,
+			product.introductory_offer_terms,
+			translate,
+			allowFreeText,
+			isPriceIncrease
+		),
+	};
 }
 
 function getDiscountForCostOverrideForDisplay( costOverride: ResponseCartCostOverride ): number {
@@ -292,7 +302,7 @@ export function filterCostOverridesForLineItem(
 
 	return (
 		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
 			// Hide coupon overrides because they will be displayed separately.
 			.filter( ( costOverride ) => costOverride.override_code !== 'coupon-discount' )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
@@ -300,6 +310,16 @@ export function filterCostOverridesForLineItem(
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
 			)
 			.map( ( costOverride ) => {
+				// Introductory offers which are renewals may have a prorated
+				// discount amount which is hard to display as a simple
+				// discount, so we will hide the discounted amount here.
+				if ( costOverride.override_code === 'introductory-offer' && product.is_renewal ) {
+					return {
+						humanReadableReason: costOverride.human_readable_reason,
+						overrideCode: costOverride.override_code,
+					};
+				}
+
 				// Introductory offer discounts with term lengths that differ from
 				// the term length of the product (eg: a 3 month discount for an
 				// annual plan) need to be displayed differently because the
@@ -363,7 +383,7 @@ export function filterAndGroupCostOverridesForDisplay(
 		const costOverrides = product?.cost_overrides ?? [];
 
 		costOverrides
-			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride, product ) )
+			.filter( ( costOverride ) => isUserVisibleCostOverride( costOverride ) )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
 				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, false )
@@ -412,19 +432,6 @@ function getCreditsUsedByCart( responseCart: ResponseCart ): number {
 
 function getYearlyVariantFromProduct( product: ResponseCartProduct ) {
 	return product.product_variants.find( ( variant ) => 12 === variant.bill_period_in_months );
-}
-
-/**
- * Introductory offer discounts can sometimes be misleading. If we want to hide
- * them for a product in checkout, we can do so in this function.
- */
-function canDisplayIntroductoryOfferDiscountForProduct( product: ResponseCartProduct ): boolean {
-	// Social Advanced has free trial that we don't consider an introductory
-	// offer. See https://github.com/Automattic/wp-calypso/pull/86353
-	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
-		return false;
-	}
-	return true;
 }
 
 /**

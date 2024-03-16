@@ -22,22 +22,28 @@
 		.form-fieldset {
 			margin-bottom: 24px;
 		}
-
-		button[type="submit"] {
-			margin-top: 16px;
-		}
 	}
 
 	&__repository {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 7px 7px 7px 14px;
-		font-size: $font-body;
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 2px;
-		background-color: #fff;
-		margin-bottom: 4px;
+		&-input {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 7px 7px 7px 14px;
+			font-size: $font-body;
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 2px;
+			background-color: #fff;
+			margin-bottom: 4px;
+
+			&--has-error {
+				border-color: var(--color-error);
+			}
+		}
+
+		.form-input-validation {
+			padding-bottom: 0;
+		}
 	}
 
 	&__branch-select {
@@ -46,17 +52,22 @@
 		align-items: center;
 
 		.form-select {
-			flex: 1;
+			width: 100%;
 		}
 	}
 
-	&__automatic-deploys-switch {
+	&__submit {
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		margin-top: 40px;
 
-		.components-form-toggle {
-			line-height: 1;
+		.button {
+			overflow: visible;
+		}
+
+		.form-setting-explanation {
+			margin: 0;
 		}
 	}
 }

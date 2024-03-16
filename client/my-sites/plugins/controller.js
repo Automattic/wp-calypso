@@ -1,10 +1,11 @@
 import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
+import { PluginsUpdateManager } from 'calypso/blocks/plugins-update-manager';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import { navigation } from 'calypso/my-sites/controller';
+import { navigation, sites } from 'calypso/my-sites/controller';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
@@ -108,6 +109,48 @@ export function plugins( context, next ) {
 
 	context.params.pluginFilter = filter;
 	renderPluginList( context, basePath );
+	next();
+}
+
+export function updatesManager( context, next ) {
+	const siteSlug = context?.params?.site_slug;
+	const scheduleId = context?.params?.schedule_id;
+
+	if ( ! siteSlug ) {
+		sites( context, next );
+		return;
+	}
+
+	switch ( context.params.action ) {
+		case 'create':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				context: 'create',
+				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
+
+		case 'edit':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				scheduleId,
+				context: 'edit',
+				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
+
+		case 'list':
+		default:
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				context: 'list',
+				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onEditSchedule: ( id ) =>
+					page.show( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
+			} );
+			break;
+	}
+
 	next();
 }
 

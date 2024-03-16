@@ -83,11 +83,16 @@ const getSupportedLanguages = ( supportType: string, locale: string ) => {
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
-export const HelpCenterContactForm = () => {
+type HelpCenterContactFormProps = {
+	onSubmit?: () => void;
+};
+
+export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const { search } = useLocation();
 	const sectionName = useSelector( getSectionName );
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
+	const { onSubmit } = props;
 	const overflow = params.get( 'overflow' ) === 'true';
 	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
 	const navigate = useNavigate();
@@ -283,6 +288,10 @@ export const HelpCenterContactForm = () => {
 		if ( wapuuFlow ) {
 			params.set( 'disable-gpt', 'true' );
 			params.set( 'show-gpt', 'false' );
+
+			if ( onSubmit ) {
+				onSubmit();
+			}
 		}
 
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;

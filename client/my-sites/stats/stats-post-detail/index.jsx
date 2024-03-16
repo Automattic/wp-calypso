@@ -216,7 +216,7 @@ class StatsPostDetail extends Component {
 
 					{ config.isEnabled( 'stats/utm-module' ) && (
 						<div className="stats-module-utm__post-detail">
-							<StatsModuleUTM postId={ postId } />
+							<StatsModuleUTM siteId={ siteId } postId={ postId } query={ { num: -1 } } />
 						</div>
 					) }
 

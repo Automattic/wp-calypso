@@ -12,20 +12,23 @@ type Props = {
 	title: ReactNode;
 	wide?: boolean;
 	withBorder?: boolean;
+	compact?: boolean;
 };
 
 export default function Layout( {
 	children,
 	className,
 	title,
-	wide = false,
-	withBorder = false,
+	wide,
+	withBorder,
+	compact,
 	sidebarNavigation,
 }: Props ) {
 	return (
 		<Main
 			className={ classNames( 'a4a-layout', className, {
 				'is-with-border': withBorder,
+				'is-compact': compact,
 			} ) }
 			fullWidthLayout={ wide }
 			wideLayout={ ! wide } // When we set to full width, we want to set this to false.

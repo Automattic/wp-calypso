@@ -4,7 +4,7 @@ import { createPurchaseObject } from '../lib/assembler';
 import useQueryKeysFactory from './lib/use-query-keys-factory';
 import type { RawPurchase, Purchase } from '../types';
 
-interface PurchasesIndex {
+export interface PurchasesIndex {
 	[ purchaseId: number ]: Purchase;
 }
 

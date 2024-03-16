@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -21,6 +22,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
+import { useIsGitHubDeploymentsAvailableQuery } from '../github-deployments/use-is-feature-available';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
@@ -47,6 +49,7 @@ const useSiteMenuItems = () => {
 	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
 	} );
+	const isDesktop = useBreakpoint( '>782px' );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -75,7 +78,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowMailboxes = ! isP2;
 
-	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
+	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 
@@ -115,16 +118,21 @@ const useSiteMenuItems = () => {
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
+	const { data: gitHubDeploymentsAvailable } = useIsGitHubDeploymentsAvailableQuery( {
+		siteId: selectedSiteId,
+	} );
+
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu();
 	}
 	if ( shouldShowGlobalSiteSidebar ) {
 		return globalSiteSidebarMenu( {
 			siteDomain,
-			shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+			shouldShowAddOns,
 			showSiteMonitoring: isAtomic,
 			selectedSiteSlug,
 			isStagingSite,
+			isDesktop,
 		} );
 	}
 
@@ -159,8 +167,9 @@ const useSiteMenuItems = () => {
 		shouldShowWooCommerce,
 		shouldShowThemes,
 		shouldShowMailboxes,
-		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
+		shouldShowAddOns,
 		showSiteMonitoring: isAtomic,
+		showGithubDeployments: gitHubDeploymentsAvailable?.available ?? false,
 	};
 
 	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );

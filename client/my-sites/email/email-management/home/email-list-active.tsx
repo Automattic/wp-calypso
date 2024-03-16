@@ -1,7 +1,6 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, MaterialIcon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';

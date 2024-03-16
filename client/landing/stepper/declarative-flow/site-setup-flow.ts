@@ -15,6 +15,7 @@ import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligibl
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE, STEPPER_INTERNAL_STORE } from '../stores';
+import { shouldRedirectToSiteMigration } from './helpers';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -44,6 +45,7 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
+	isSignupFlow: false,
 
 	useSideEffect( currentStep, navigate ) {
 		const selectedDesign = useSelect(
@@ -123,6 +125,9 @@ const siteSetupFlow: Flow = {
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
+
+		const origin = urlQueryParams.get( 'origin' );
+		const from = urlQueryParams.get( 'from' );
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -379,6 +384,16 @@ const siteSetupFlow: Flow = {
 				case 'importList':
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
+					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
+
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
+						return window.location.assign(
+							addQueryArgs(
+								{ siteSlug, siteId, from },
+								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+							)
+						);
+					}
 
 					if (
 						depUrl.startsWith( 'http' ) ||

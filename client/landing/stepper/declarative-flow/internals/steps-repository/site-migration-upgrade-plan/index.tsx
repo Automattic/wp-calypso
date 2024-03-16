@@ -30,6 +30,9 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 					plan: plan.getPathSlug ? plan.getPathSlug() : '',
 				} );
 			} }
+			onFreeTrialSelectionSuccess={ () => {
+				navigation.submit?.( { freeTrialSelected: true } );
+			} }
 			navigateToVerifyEmailStep={ () => {
 				navigation.submit?.( { verifyEmail: true } );
 			} }
@@ -43,8 +46,8 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 				stepName="site-migration-upgrade-plan"
 				shouldHideNavButtons={ false }
 				className="is-step-site-migration-upgrade-plan"
+				goBack={ navigation.goBack }
 				hideSkip={ true }
-				hideBack={ true }
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"

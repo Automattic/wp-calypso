@@ -1,4 +1,12 @@
 .site-preview__pane {
 	display: flex;
 	flex-direction: column;
+
+	.site-preview__tabs {
+		overflow: scroll;
+
+		.site-preview__tab {
+			overflow: visible;
+		}
+	}
 }

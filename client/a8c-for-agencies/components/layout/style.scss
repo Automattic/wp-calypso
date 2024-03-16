@@ -1,17 +1,33 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+html,
+.theme-a8c-for-agencies {
+	overflow: auto;
+}
+
 .main.a4a-layout {
+	background: var(--color-surface);
+	margin: 0;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	height: calc(100vh - 32px);
+
 	header.current-section {
+		margin-block-end: 16px;
+
 		button {
 			padding: 20px 8px;
 		}
 	}
 }
 
+.main.a4a-layout.is-compact {
+	padding-block-start: 28px;
+}
+
 .a4a-layout__container {
 	max-width: 100%;
-	min-height: calc(100vh - 123px);
+	max-height: 100%;
 	display: flex;
 	flex-direction: column;
 	margin: auto;
@@ -20,39 +36,58 @@
 
 .a4a-layout__body {
 	width: 100%;
-	margin-block-end: -32px;
-	flex: 1 1 100%;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		// We need these negative margin values because we want to make the container full-width,
-		// but our element is inside a limited-width parent.
-		margin-inline-start: -73px;
-		padding-inline: 73px;
-	}
+	overflow-y: auto;
+	padding-block-start: 16px;
+	padding-block-end: 32px;
 }
 
 .a4a-layout__top-wrapper,
-.a4a-layout__body-wrapper {
+.a4a-layout__body {
 	margin-inline: 0;
+	max-height: 100%;
 
 	> * {
-		max-width: 1500px;
-		margin-inline: auto !important;
+		padding-inline: 16px;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			max-width: 1500px;
+			margin-inline: auto !important;
+			padding-inline: 64px;
+		}
 	}
+}
+
+.a4a-layout__top-wrapper {
+	padding-block-start: 48px;
+}
+
+.main.a4a-layout.is-compact .a4a-layout__top-wrapper {
+	padding-block-start: 28px;
 }
 
 .main.a4a-layout.is-with-border {
 	@include breakpoint-deprecated( ">660px" ) {
-		.a4a-layout__top {
-			border-block-end: 1px solid var(--color-primary-5);
-		}
-
-		.a4a-layout__body {
-			background: rgba(255, 255, 255, 0.5);
-			padding-block: 16px;
+		.a4a-layout__top-wrapper {
+			border-block-end: 1px solid var(--color-neutral-5);
+			// If we don't have a navigation, we will require some spacing on the borders.
+			&:not(.has-navigation) {
+				padding-block-end: 48px;
+			}
 		}
 	}
 }
+
+.main.a4a-layout.is-with-border.is-compact {
+	@include breakpoint-deprecated( ">660px" ) {
+		.a4a-layout__top-wrapper {
+
+			&:not(.has-navigation) {
+				padding-block-end: 28px;
+			}
+		}
+	}
+}
+
 
 .a4a-layout__header {
 	display: flex;
@@ -68,10 +103,6 @@
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: wrap;
 
-		> * {
-			width: 100%;
-		}
-
 		> * + * {
 			margin-inline-start: 0;
 		}
@@ -79,8 +110,24 @@
 }
 
 .a4a-layout__header.has-actions > .a4a-layout__header-main {
-	@include breakpoint-deprecated( "660px-1280px" ) {
+	@include breakpoint-deprecated( "<1280px" ) {
 		margin-block-end: 16px;
+	}
+}
+
+.a4a-layout__header-actions {
+	width: 100%;
+	display: flex;
+
+	> * {
+		flex-grow: 1;
+	}
+
+	@include break-medium {
+		width: auto;
+		> * {
+			flex-grow: 0;
+		}
 	}
 }
 
@@ -140,7 +187,6 @@
 
 .a4a-layout__header-title {
 	font-size: 2.25rem;
-	margin-block-end: 8px;
 	font-weight: 600;
 	line-height: 1.2;
 }
@@ -148,7 +194,7 @@
 .a4a-layout__header-subtitle {
 	font-size: 1rem;
 	color: var(--color-neutral-60);
-	margin: 0;
+	margin: 8px 0 0 0;
 	font-weight: 400;
 	line-height: 1.2;
 }
@@ -200,8 +246,9 @@
 		z-index: 23;
 	}
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		margin-block-start: 32px;
+		margin-inline: -16px;
 	}
 }
 

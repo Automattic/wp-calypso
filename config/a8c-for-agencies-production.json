@@ -9,8 +9,8 @@
 	"site_name": "Automattic For Agencies",
 	"oauth_client_id": 95932,
 	"features": {
-		"a8c-for-agencies": true,
-		"oauth": true
+		"a8c-for-agencies": false,
+		"oauth": false
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -19,6 +19,6 @@
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f",
+	"theme_color": "#029CD7",
 	"hotjar_enabled": true
 }

@@ -16,6 +16,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
+import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -29,6 +30,7 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 	isNewSite,
 	getSitePlanSlug,
 	getSite,
@@ -72,6 +74,7 @@ export const QuickLinks = ( {
 	isFSEActive,
 	siteEditorUrl,
 	isAtomic,
+	adminInterface,
 } ) => {
 	const translate = useTranslate();
 	const [
@@ -86,6 +89,7 @@ export const QuickLinks = ( {
 	const hasBackups = getAllFeaturesForPlan( currentSitePlanSlug ).includes( 'backups' );
 	const hasBoost = site?.options?.jetpack_connection_active_plugins?.includes( 'jetpack-boost' );
 	const [ isAILogoGeneratorOpen, setIsAILogoGeneratorOpen ] = useState( false );
+	const advertisingUrl = useAdvertisingUrl();
 
 	const addNewDomain = () => {
 		trackAddDomainAction();
@@ -102,6 +106,11 @@ export const QuickLinks = ( {
 			/>
 		) : null;
 
+	const usesWpAdminInterface = adminInterface === 'wp-admin';
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
+
 	const quickLinks = (
 		<div className="quick-links__boxes">
 			{ isFSEActive && canManageSite ? (
@@ -116,7 +125,7 @@ export const QuickLinks = ( {
 				customizerLinks
 			) }
 			<ActionBox
-				href={ `/post/${ siteSlug }` }
+				href={ usesWpAdminInterface ? `${ siteAdminUrl }post-new.php` : `/post/${ siteSlug }` }
 				hideLinkIndicator
 				onClick={ trackWritePostAction }
 				label={ translate( 'Write blog post' ) }
@@ -124,7 +133,7 @@ export const QuickLinks = ( {
 			/>
 			{ isPromotePostActive && ! isWpcomStagingSite && (
 				<ActionBox
-					href={ `/advertising/${ siteSlug }` }
+					href={ advertisingUrl }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
@@ -133,7 +142,9 @@ export const QuickLinks = ( {
 			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
-					href={ `/comments/${ siteSlug }` }
+					href={
+						usesWpAdminInterface ? `${ siteAdminUrl }edit-comments.php` : `/comments/${ siteSlug }`
+					}
 					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
@@ -142,7 +153,11 @@ export const QuickLinks = ( {
 			) }
 			{ canEditPages && (
 				<ActionBox
-					href={ `/page/${ siteSlug }` }
+					href={
+						usesWpAdminInterface
+							? `${ siteAdminUrl }post-new.php?post_type=page`
+							: `/page/${ siteSlug }`
+					}
 					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
@@ -217,7 +232,9 @@ export const QuickLinks = ( {
 			{ canManageSite && (
 				<>
 					<ActionBox
-						href={ `/plugins/${ siteSlug }` }
+						href={
+							usesWpAdminInterface ? `${ siteAdminUrl }plugins.php` : `/plugins/${ siteSlug }`
+						}
 						hideLinkIndicator
 						onClick={ trackExplorePluginsAction }
 						label={ translate( 'Explore Plugins' ) }
@@ -265,7 +282,11 @@ export const QuickLinks = ( {
 			) }
 			{ isAtomic && hasBackups && (
 				<ActionBox
-					href={ `/backup/${ siteSlug }` }
+					href={
+						isGlobalSiteViewEnabled
+							? `https://jetpack.com/redirect/?source=calypso-backups&site=${ siteSlug }`
+							: `/backup/${ siteSlug }`
+					}
 					hideLinkIndicator
 					label={ translate( 'Restore a backup' ) }
 					iconComponent={ <JetpackLogo monochrome className="quick-links__action-box-icon" /> }
@@ -477,6 +498,7 @@ const mapStateToProps = ( state ) => {
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteEditorUrl: getSiteEditorUrl( state, siteId ),
+		adminInterface: getSiteOption( state, siteId, 'wpcom_admin_interface' ),
 	};
 };
 

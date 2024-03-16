@@ -7,7 +7,7 @@ import React, { useState, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -331,6 +331,20 @@ function StatsCommercialFlowOptOutForm( {
 	const isJetpackSupport: boolean = useSelector( ( state ) =>
 		Boolean( isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ) )
 	);
+	const commercialReasons = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'is_commercial_reasons' )
+	) as string[];
+	const COMMERCIAL_REASONS = {
+		ads: translate( 'Ads' ),
+		adsense: 'Adsense',
+		taboola: 'Taboola',
+		infolink: 'InfoLink',
+		exoclick: 'ExoClick',
+		'live-chat': translate( 'Live Chat' ),
+		'commercial-dext': translate( 'Commercial Domain Extension' ),
+		'contact-details': translate( 'Contact Details' ),
+		'manual-override': translate( 'Manual Override' ),
+	};
 
 	// Checkbox state
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -385,7 +399,18 @@ Thanks\n\n`;
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'If you think we misidentified your site as commercial, confirm the information below and we’ll take a look.'
+				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error, confirm the information below and let us know.',
+				{
+					args: {
+						reasons:
+							commercialReasons
+								?.map(
+									( reason: string ) =>
+										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? 'Unknown'
+								)
+								.join( ' and/or ' ) ?? 'Unknown',
+					},
+				}
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
 	const formButton = isCommercial ? translate( 'Request update' ) : translate( 'Continue' );

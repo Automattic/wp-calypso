@@ -40,7 +40,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -73,10 +73,11 @@ const EmailProvidersStackedComparison = ( {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: selectedDomainName,
-	} );
+	const hasLoadedDomains = useSelector( ( state ) =>
+		hasLoadedSiteDomains( state, selectedSite?.ID ?? null )
+	);
+
+	const domain = getSelectedDomain( { domains, selectedDomainName } );
 	const domainsWithForwards = getDomainsWithEmailForwards( domains );
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
@@ -185,7 +186,7 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
-	if ( ! domain && ! isDomainInCart ) {
+	if ( hasLoadedDomains && ! domain && ! isDomainInCart ) {
 		return null;
 	}
 

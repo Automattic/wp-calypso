@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-// import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -22,36 +22,29 @@ const StatsModuleDataQuery = ( {
 	metricLabel,
 	hideSummaryLink,
 	isLoading,
+	selectedOption,
+	toggleControl,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	// const gateStats = useSelector( ( state ) => shouldGateStats( state, siteId, statType ) );
 	const translate = useTranslate();
+	const [ showLoader, setShowLoader ] = useState( isLoading );
 
 	// Show error and loading based on the query
-	// const isLoading = false;
 	const hasError = false;
 
 	const displaySummaryLink = data && ! hideSummaryLink;
-	// const footerClass = classNames( 'stats-module__footer-actions', {
-	// 	'stats-module__footer-actions--summary': summary,
-	// } );
+
+	useEffect( () => {
+		setShowLoader( isLoading );
+	}, [ isLoading ] );
 
 	const getHref = () => {
-		// const { summary, period, path, siteSlug } = this.props;
-
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return (
-				'/stats/' +
-				period.period +
-				'/' +
-				path +
-				'/' +
-				siteSlug +
-				'?startDate=' +
-				period.startOf.format( 'YYYY-MM-DD' )
-			);
+			return `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.startOf.format(
+				'YYYY-MM-DD'
+			) }`;
 		}
 	};
 
@@ -80,20 +73,10 @@ const StatsModuleDataQuery = ( {
 					: undefined
 			}
 			error={ hasError && <ErrorPanel /> }
-			loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-			// splitHeader={ !! additionalColumns }
-			// mainItemLabel={ mainItemLabel }
-			// overlay={
-			// 	siteId &&
-			// 	statType &&
-			// 	gateStats && (
-			// 		<StatsCardUpsell
-			// 			className="stats-module__upsell"
-			// 			statType={ statType }
-			// 			siteId={ siteId }
-			// 		/>
-			// 	)
-			// }
+			loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
+			splitHeader
+			mainItemLabel={ selectedOption?.headerLabel }
+			toggleControl={ toggleControl }
 		/>
 	);
 };

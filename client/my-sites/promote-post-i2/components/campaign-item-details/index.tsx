@@ -1,22 +1,19 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import './style.scss';
-import {
-	Badge,
-	Button,
-	Dialog,
-	HorizontalBarList,
-	HorizontalBarListItem,
-} from '@automattic/components';
+import { Badge, Button, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useBreakpoint } from '@automattic/viewport-react';
-import { __, sprintf } from '@wordpress/i18n';
+import { Button as WPButton } from '@wordpress/components';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { Icon, chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import { useState } from 'react';
-import Breadcrumb, { Item } from 'calypso/components/breadcrumb';
+import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import { CampaignResponse } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
@@ -24,14 +21,16 @@ import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	canCancelCampaign,
+	formatAmount,
 	getAdvertisingDashboardPath,
+	getCampaignActiveDays,
+	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	formatCents,
 	formatNumber,
-	getCampaignDurationFormatted,
 	getCampaignEstimatedImpressions,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
@@ -70,18 +69,32 @@ const getExternalLinkIcon = ( fillColor?: string ) => (
 	</svg>
 );
 
+const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
+	<span className="campaign-item-details__tablet-icon">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M14 16L10 16V17.5H14V16Z" fill={ fillColor } />
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M5 6C5 4.89543 5.89543 4 7 4L17 4C18.1046 4 19 4.89543 19 6V18C19 19.1046 18.1046 20 17 20H7C5.89543 20 5 19.1046 5 18L5 6ZM7 5.5L17 5.5C17.2761 5.5 17.5 5.72386 17.5 6V18C17.5 18.2761 17.2761 18.5 17 18.5H7C6.72386 18.5 6.5 18.2761 6.5 18L6.5 6C6.5 5.72386 6.72386 5.5 7 5.5Z"
+				fill={ fillColor }
+			/>
+		</svg>
+	</span>
+);
+
 export default function CampaignItemDetails( props: Props ) {
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
-
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
-	const isSmallScreen = useBreakpoint( '<660px' );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const { campaign, isLoading, siteId } = props;
 	const campaignId = campaign?.campaign_id;
+	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
+	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
+	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const {
 		audience_list,
@@ -98,9 +111,10 @@ export default function CampaignItemDetails( props: Props ) {
 		billing_data,
 		display_delivery_estimate = '',
 		target_urn,
-		delivery_percent,
 		created_at,
 		format,
+		budget_cents,
+		type,
 	} = campaign || {};
 
 	const {
@@ -108,14 +122,15 @@ export default function CampaignItemDetails( props: Props ) {
 		clicks_total,
 		clickthrough_rate,
 		duration_days,
-		budget_left,
 		total_budget,
 		total_budget_used,
-		views_organic,
-		stats_enabled,
+		conversions_total,
+		conversion_value,
+		conversion_rate,
+		conversion_last_currency_found,
 	} = campaign_stats || {};
 
-	const { card_name, payment_method, subtotal, credits, total } = billing_data || {};
+	const { card_name, payment_method, credits, total } = billing_data || {};
 	const { title, clickUrl } = content_config || {};
 	const canDisplayPaymentSection =
 		( status === 'finished' || status === 'canceled' ) &&
@@ -135,33 +150,67 @@ export default function CampaignItemDetails( props: Props ) {
 
 	// Formatted labels
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
-	const durationFormatted = getCampaignDurationFormatted( start_date, end_date );
-	const totalBudgetFormatted = `$${ formatCents( total_budget || 0 ) }`;
-	const totalBudgetLeftFormatted = `$${ formatCents( budget_left || 0 ) } ${ __( 'left' ) }`;
-	const overallSpendingFormatted = `$${ formatCents( total_budget_used || 0 ) }`;
+	const clicksFormatted = clicks_total && clicks_total > 0 ? clicks_total : '-';
+	const totalBudgetFormatted = `$${ formatCents( total_budget || 0, 2 ) }`;
+	const overallSpendingPercentage =
+		total_budget_used && total_budget
+			? `${ ( ( total_budget_used / total_budget ) * 100 ).toFixed( 0 ) }%`
+			: '0%';
 	const deliveryEstimateFormatted = getCampaignEstimatedImpressions( display_delivery_estimate );
 	const campaignTitleFormatted = title || __( 'Untitled' );
 	const campaignCreatedFormatted = moment.utc( created_at ).format( 'MMMM DD, YYYY' );
 	const devicesListFormatted = devicesList ? `${ devicesList }` : __( 'All' );
+	const durationDateFormatted = getCampaignDurationFormatted( start_date, end_date );
+	const durationFormatted = duration_days
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', duration_days ),
+				formatNumber( duration_days, true )
+		  )
+		: '';
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
 	const topicsListFormatted = topicsList ? `${ topicsList }` : __( 'All' );
 	const impressionsTotal = formatNumber( impressions_total );
-	const subtotalFormatted = `$${ formatCents( subtotal || 0 ) }`;
 	const creditsFormatted = `$${ formatCents( credits || 0 ) }`;
-	const totalFormatted = `$${ formatCents( total || 0 ) }`;
+	const totalFormatted = `$${ formatCents( total || 0, 2 ) }`;
+	const dailyAverageSpending = budget_cents ? `${ ( budget_cents / 100 ).toFixed( 2 ) }` : '';
+	const conversionsTotalFormatted = conversions_total ? conversions_total : '-';
+	const conversionValueFormatted =
+		conversion_last_currency_found && conversion_value
+			? formatAmount(
+					conversion_value[ conversion_last_currency_found ],
+					conversion_last_currency_found
+			  )
+			: '-';
+	const conversionsRateFormatted = conversion_rate
+		? `${ ( conversion_rate * 100 ).toFixed( 2 ) }%`
+		: '-';
 
-	const navigationItems = [
-		{
-			label: translate( 'Advertising' ),
-			href: getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ),
-		},
-		{
-			label: campaignTitleFormatted || '',
-			href: getAdvertisingDashboardPath( `/campaigns/${ campaignId }/${ selectedSiteSlug }` ),
-		},
-	];
+	const activeDays = getCampaignActiveDays( start_date, end_date );
+	const activeDaysFormatted = activeDays
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', activeDays ),
+				formatNumber( activeDays, true )
+		  )
+		: '- ';
+	const daysLeft = duration_days ? duration_days - activeDays : 0;
+	const daysLeftFormatted =
+		status === 'active' && daysLeft
+			? /*translators: %s is the number of days left */
+			  sprintf( _n( '%s left', '%s left', daysLeft ), formatNumber( daysLeft, true ) )
+			: '';
+	const overallSpendingFormatted = activeDays
+		? `$${ formatCents( total_budget_used || 0, 2 ) }`
+		: '- ';
+	const overallSpendingPercentageFormatted = activeDays
+		? /* translators: overallSpendingPercentage is the percentage of the total budget used */
+		  translate( '%(overallSpendingPercentage)s of total budget', {
+				args: { overallSpendingPercentage: overallSpendingPercentage },
+		  } )
+		: '';
 
 	const adPreviewLabel =
 		// maybe we will need to edit this condition when we add more templates
@@ -174,6 +223,19 @@ export default function CampaignItemDetails( props: Props ) {
 				<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
 			</div>
 		);
+
+	const getDestinationLabel = () => {
+		switch ( type ) {
+			case 'post':
+				return translate( 'Post page' );
+			case 'page':
+				return translate( 'Page' );
+			case 'product':
+				return translate( 'Product page' );
+			default:
+				return translate( 'Post page' );
+		}
+	};
 
 	const icon = (
 		<span className="campaign-item-details__support-buttons-icon">
@@ -192,22 +254,6 @@ export default function CampaignItemDetails( props: Props ) {
 				/>
 			</svg>
 		</span>
-	);
-
-	const databars = [
-		{
-			label: translate( 'Ad' ),
-			value: clicks_total || 0,
-		},
-		{
-			label: translate( 'Organic' ),
-			value: views_organic || 0,
-		},
-	];
-
-	const databarTotal = databars.reduce(
-		( total, { value } ) => ( value > 0 ? total + value : total ), // Sum only positive values.
-		0
 	);
 
 	const cancelCampaignButtonText =
@@ -280,7 +326,17 @@ export default function CampaignItemDetails( props: Props ) {
 				<div>
 					<div className="campaign-item-breadcrumb">
 						{ ! isLoading ? (
-							<Breadcrumb items={ navigationItems as Item[] } compact={ isSmallScreen } />
+							<WPButton
+								className="campaign-item-details-back-button"
+								onClick={ () =>
+									page.show( getAdvertisingDashboardPath( `/campaigns/${ selectedSiteSlug }` ) )
+								}
+								target="_blank"
+								variant="link"
+							>
+								<Icon icon={ chevronLeft } size={ 16 } />
+								{ translate( 'Go Back' ) }
+							</WPButton>
 						) : (
 							<FlexibleSkeleton />
 						) }
@@ -322,17 +378,49 @@ export default function CampaignItemDetails( props: Props ) {
 					</div>
 				</div>
 
-				<div>
-					{ ! isLoading && ! isSmallScreen && (
-						<Button
-							className="campaign-item-promote-again-button"
-							primary
-							onClick={ onClickPromote }
-						>
-							{ translate( 'Promote again' ) }
-						</Button>
-					) }
-				</div>
+				{ ! isLoading && status && (
+					<div className="campaign-item-details__support-buttons-container">
+						<div className="campaign-item-details__support-buttons">
+							{ ! isLoading && status ? (
+								<>
+									<Button
+										className="contact-support-button"
+										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+										target="_blank"
+									>
+										{ icon }
+										<span className="contact-support-button-text">
+											{ translate( 'Contact Support' ) }
+										</span>
+									</Button>
+
+									{ ! canCancelCampaign( status ) && (
+										<WPButton
+											variant="primary"
+											className="promote-again-button"
+											disabled={ ! isLoadingBillingSummary && paymentBlocked }
+											onClick={ onClickPromote }
+										>
+											{ translate( 'Promote Again' ) }
+										</WPButton>
+									) }
+
+									{ canCancelCampaign( status ) && (
+										<Button
+											scary
+											className="cancel-campaign-button"
+											onClick={ () => setShowDeleteDialog( true ) }
+										>
+											{ cancelCampaignButtonText }
+										</Button>
+									) }
+								</>
+							) : (
+								<FlexibleSkeleton />
+							) }
+						</div>
+					</div>
+				) }
 			</header>
 			<hr className="campaign-item-details-header-line" />
 			<Main wideLayout className="campaign-item-details">
@@ -371,70 +459,167 @@ export default function CampaignItemDetails( props: Props ) {
 				<section className="campaign-item-details__wrapper">
 					<div className="campaign-item-details__main">
 						<div className="campaign-item-details__main-stats-container">
-							<div className="campaign-item-details__main-stats">
-								<div className="campaign-item-details__main-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Impressions' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">{ translate( 'Clicks' ) }</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? clicks_total : <FlexibleSkeleton /> }
-										</span>
-									</div>
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Click-through rate' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
-										</span>
+							<div className="campaign-item-details__main-stats-row">
+								<div>
+									<span className="campaign-item-details__label">{ translate( 'Duration' ) }</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? durationDateFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
+								<div>
+									<span className="campaign-item-details__label">
+										{ translate( 'Active for' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? activeDaysFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? daysLeftFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
+								<div>
+									<span className="campaign-item-details__label">
+										{ translate( 'Spent so far' ) }
+									</span>
+									<span className="campaign-item-details__text wp-brand-font">
+										{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
+									</span>
+									<span className="campaign-item-details__details">
+										{ ! isLoading ? overallSpendingPercentageFormatted : <FlexibleSkeleton /> }
+									</span>
+								</div>
+							</div>
+						</div>
+						{ status !== 'created' && (
+							<div className="campaign-item-details__main-stats-container">
+								<div className="campaign-item-details__main-stats">
+									<div className="campaign-item-details__main-stats-row">
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Impressions' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? impressionsTotal : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ translate( 'Clicks' ) }
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? clicksFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										<div>
+											<span className="campaign-item-details__label">
+												{ __( 'Click-through rate' ) }
+												<InfoPopover
+													className="campaign-item-data__info-button"
+													position="bottom right"
+												>
+													{ __( 'Click-through rate:' ) }
+													<br />
+													<span className="popover-title">
+														{ __(
+															'a metric used to measure the ratio of users who click on your ad to the number of total users view it.'
+														) }
+													</span>
+												</InfoPopover>
+											</span>
+											<span className="campaign-item-details__text wp-brand-font">
+												{ ! isLoading ? ctrFormatted : <FlexibleSkeleton /> }
+											</span>
+										</div>
+										{ isWooStore && status !== 'created' && (
+											<>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Conversion Value' ) }
+														<InfoPopover
+															className="campaign-item-data__info-button"
+															position="bottom right"
+														>
+															{ __( 'Conversion Value:' ) }
+															<br />
+															<span className="popover-title">
+																{ __(
+																	'assigns a monetary value associated with each conversion. Example: If each sale is worth $50, and you had 10 sales, your conversion value would be $500.'
+																) }
+															</span>
+														</InfoPopover>
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ ! isLoading ? conversionValueFormatted : <FlexibleSkeleton /> }
+													</span>
+												</div>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Conversions' ) }
+														<InfoPopover
+															className="campaign-item-data__info-button"
+															position="bottom right"
+														>
+															{ __( 'Conversions:' ) }
+															<br />
+															<span className="popover-title">
+																{ __(
+																	'show how many people made a purchase or completed a specific goal that aligns with the objectives of the campaign.'
+																) }
+															</span>
+														</InfoPopover>
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ ! isLoading ? conversionsTotalFormatted : <FlexibleSkeleton /> }
+													</span>
+												</div>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Conversion Rate' ) }
+														<InfoPopover
+															className="campaign-item-data__info-button"
+															position="bottom right"
+														>
+															{ __( 'Conversion Rate:' ) }
+															<br />
+															<span className="popover-title">
+																{ __(
+																	'shows the percentage of users who made a purchase (or completed a specific goal that aligns with the objectives of the campaign) out of the total number of users who clicked on the ad. Example: If your ad receives 100 clicks, and 5 people make a purchase, your conversion rate would be 5%.'
+																) }
+															</span>
+														</InfoPopover>
+													</span>
+													<span className="campaign-item-details__text wp-brand-font">
+														{ ! isLoading ? conversionsRateFormatted : <FlexibleSkeleton /> }
+													</span>
+												</div>
+											</>
+										) }
 									</div>
 								</div>
-								<div className="campaign-item-details__main-stats-row">
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Duration' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? durationFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? (
-												`${ duration_days } ${ translate( 'days' ) }`
-											) : (
-												<FlexibleSkeleton />
-											) }
-										</span>
-									</div>
+							</div>
+						) }
+						<div className="campaign-item-details__main-stats-container">
+							<div className="campaign-item-details__secondary-stats">
+								<div className="campaign-item-details__secondary-stats-row">
 									<div>
 										<span className="campaign-item-details__label">{ translate( 'Budget' ) }</span>
 										<span className="campaign-item-details__text wp-brand-font">
 											{ ! isLoading ? totalBudgetFormatted : <FlexibleSkeleton /> }
 										</span>
 										<span className="campaign-item-details__details">
-											{ ! isLoading ? totalBudgetLeftFormatted : <FlexibleSkeleton /> }
+											{ ! isLoading ? (
+												/* translators: Daily average spend. dailyAverageSpending is the budget */
+												translate( 'Daily av. spend: $%(dailyAverageSpending)s', {
+													args: { dailyAverageSpending: dailyAverageSpending },
+												} )
+											) : (
+												<FlexibleSkeleton />
+											) }
 										</span>
 									</div>
-									<div>
-										<span className="campaign-item-details__label">
-											{ translate( 'Overall spending ' ) }
-										</span>
-										<span className="campaign-item-details__text wp-brand-font">
-											{ ! isLoading ? overallSpendingFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="campaign-item-details__main-stats-container">
-							<div className="campaign-item-details__secondary-stats">
-								<div className="campaign-item-details__secondary-stats-row">
 									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Estimated impressions' ) }
@@ -442,71 +627,17 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__text wp-brand-font">
 											{ ! isLoading ? deliveryEstimateFormatted : <FlexibleSkeleton /> }
 										</span>
-										{ ! isLoading && delivery_percent && delivery_percent > 100 ? (
-											<span className="campaign-item-details__details">
-												{ sprintf(
-													/* translators: %s: percentage of delivery (i.e. 30%) */
-													translate( 'Delivered %s more than estimated' ),
-													`${ delivery_percent }%`
-												) }
-											</span>
-										) : null }
 									</div>
-									<div>
-										<div className="campaign-item-details__traffic-container-header">
-											<span className="campaign-item-details__label">
-												{ translate( 'Traffic breakdown' ) }
-											</span>
-
-											{ databarTotal > 0 && (
-												<span className="campaign-item-details__label">
-													{ translate( 'Visitors' ) }
-												</span>
-											) }
-										</div>
-										<div className="campaign-item-details__traffic-container-body">
-											{ isLoading && <FlexibleSkeleton /> }
-
-											{ ! isLoading && databarTotal === 0 && (
-												<div className="campaign-item-details__traffic-no-data">
-													{ stats_enabled
-														? translate( 'No data' )
-														: translate( 'Stats are disabled for this site' ) }
-												</div>
-											) }
-
-											{ ! isLoading && databarTotal > 0 && (
-												<>
-													<ul className="horizontal-bar-list">
-														{ ! isLoading ? (
-															<HorizontalBarList>
-																{ databars?.map( ( item, index ) => (
-																	<HorizontalBarListItem
-																		key={ `bar_${ index }` }
-																		data={ item }
-																		maxValue={ databarTotal }
-																		hasIndicator={ false }
-																		leftSideItem={ null }
-																		useShortLabel={ false }
-																		useShortNumber={ true }
-																		isStatic={ true }
-																		usePlainCard={ false }
-																		isLinkUnderlined={ false }
-																		leftGroupToggle={ true }
-																	/>
-																) ) }
-															</HorizontalBarList>
-														) : (
-															<FlexibleSkeleton />
-														) }
-													</ul>
-													<div className="campaign-item-details__details no-bottom-margin">
-														{ translate( 'Compares traffic when campaign was active' ) }
-													</div>
-												</>
-											) }
-										</div>
-									</div>
+								</div>
+								<div className="campaign-item-details__secondary-stats-interests-mobile">
+									<>
+										<span className="campaign-item-details__label">
+											{ translate( 'Interests' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+										</span>
+									</>
 								</div>
 
 								<div className="campaign-item-details__secondary-stats-row">
@@ -517,6 +648,24 @@ export default function CampaignItemDetails( props: Props ) {
 										<span className="campaign-item-details__details">
 											{ ! isLoading ? devicesListFormatted : <FlexibleSkeleton /> }
 										</span>
+									</div>
+									<div>
+										<span className="campaign-item-details__label">
+											{ translate( 'Languages' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
+										</span>
+									</div>
+									<div className="campaign-item-details-interests">
+										<span className="campaign-item-details__label">
+											{ translate( 'Interests' ) }
+										</span>
+										<span className="campaign-item-details__details">
+											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
+										</span>
+									</div>
+									<div>
 										<span className="campaign-item-details__label">
 											{ translate( 'Location' ) }
 										</span>
@@ -528,25 +677,9 @@ export default function CampaignItemDetails( props: Props ) {
 											) }
 										</span>
 									</div>
-									<div className="campaign-item-details__second-column">
+									<div className="campaign-item-details__destination">
 										<span className="campaign-item-details__label">
-											{ translate( 'Interests' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? topicsListFormatted : <FlexibleSkeleton /> }
-										</span>
-										<span className="campaign-item-details__label">
-											{ translate( 'Languages' ) }
-										</span>
-										<span className="campaign-item-details__details">
-											{ ! isLoading ? languagesListFormatted : <FlexibleSkeleton /> }
-										</span>
-									</div>
-								</div>
-								<div className="campaign-item-details__secondary-stats-row">
-									<div className="campaign-item-details__ad-destination">
-										<span className="campaign-item-details__label">
-											{ translate( 'Ad destination' ) }
+											{ translate( 'Destination' ) }
 										</span>
 										<div className="campaign-item-details__ad-destination-url-container">
 											{ ! isLoading ? (
@@ -555,7 +688,7 @@ export default function CampaignItemDetails( props: Props ) {
 													href={ clickUrl }
 													target="_blank"
 												>
-													{ clickUrl }
+													{ getDestinationLabel() }
 													{ getExternalLinkIcon() }
 												</Button>
 											) : (
@@ -571,26 +704,19 @@ export default function CampaignItemDetails( props: Props ) {
 								<div className="campaign-item-details__payment">
 									<div className="campaign-item-details__payment-row">
 										<div className="campaign-item-details__secondary-payment-row">
-											<div>
-												{ payment_method && card_name && (
-													<>
+											{ payment_method && card_name && (
+												<>
+													<div className="campaign-item-details__payment-method">
 														<span className="campaign-item-details__label">
 															{ translate( 'Payment method' ) }
 														</span>
 														<span>{ card_name }</span>
 														{ payment_method && <span>{ payment_method }</span> }
-													</>
-												) }
-											</div>
-											<div>
-												{ ! isNaN( subtotal || 0 ) ? (
-													<span className="campaign-item-details__label">
-														<div>{ translate( 'Subtotal' ) }</div>
-														<div className="amount">{ subtotalFormatted }</div>
-													</span>
-												) : (
-													[]
-												) }
+													</div>
+													<hr className="campaign-item-details-footer-line" />
+												</>
+											) }
+											<div className="campaign-item-details__total">
 												{ credits ? (
 													<span className="campaign-item-details__label">
 														<div>{ translate( 'Credits' ) }</div>
@@ -600,15 +726,15 @@ export default function CampaignItemDetails( props: Props ) {
 													[]
 												) }
 												{ ! isNaN( total || 0 ) ? (
-													<>
+													<div>
 														<span className="campaign-item-details__label">
-															<div>{ translate( 'Total paid' ) }</div>
+															<div>{ translate( 'Total' ) }</div>
 															<div className="amount">{ totalFormatted }</div>
 														</span>
 														<p className="campaign-item-details__payment-charges-disclosure">
 															{ translate( 'All charges inclusive of VAT, if any.' ) }
 														</p>
-													</>
+													</div>
 												) : (
 													[]
 												) }
@@ -625,35 +751,32 @@ export default function CampaignItemDetails( props: Props ) {
 						<div className="campaign-item-details__preview-container">
 							<div className="campaign-item-details__preview-header">
 								<div className="campaign-item-details__preview-header-title">
-									{ translate( 'Ad preview' ) }
+									{ translate( 'This ad is responsive' ) }
 								</div>
 								<div className="campaign-item-details__preview-header-label">
 									{ ! isLoading ? <>{ adPreviewLabel }</> : <FlexibleSkeleton /> }
 								</div>
 							</div>
-							{ isSmallScreen && <hr className="campaign-item-ad-header-line" /> }
 							<AdPreview
 								isLoading={ isLoading }
 								htmlCode={ creative_html || '' }
 								templateFormat={ format || '' }
 								width={ format === 'html5_v2' ? '100%' : '300px' }
 							/>
-							<p className="campaign-item-details__preview-disclosure">
-								{ translate(
-									'Depending on the platform, the ad may seem differently from the preview.'
-								) }
-							</p>
+							<div className="campaign-item-details__preview-disclosure">
+								{ getExternalTabletIcon() }
+								<span className="preview-disclosure-text">
+									{ translate(
+										'Depending on the platform, the ad may look different from the preview.'
+									) }
+								</span>
+							</div>
 						</div>
 
 						<div className="campaign-item-details__support-buttons-container">
-							<div className="campaign-item-details__support-buttons">
+							<div className="campaign-item-details__support-buttons-mobile">
 								{ ! isLoading && status ? (
 									<>
-										{ canCancelCampaign( status ) && (
-											<Button scary onClick={ () => setShowDeleteDialog( true ) }>
-												{ cancelCampaignButtonText }
-											</Button>
-										) }
 										<Button
 											className="contact-support-button"
 											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
@@ -662,6 +785,16 @@ export default function CampaignItemDetails( props: Props ) {
 											{ icon }
 											{ translate( 'Contact Support' ) }
 										</Button>
+
+										{ canCancelCampaign( status ) && (
+											<Button
+												scary
+												className="cancel-campaign-button"
+												onClick={ () => setShowDeleteDialog( true ) }
+											>
+												{ cancelCampaignButtonText }
+											</Button>
+										) }
 									</>
 								) : (
 									<FlexibleSkeleton />
@@ -688,7 +821,11 @@ export default function CampaignItemDetails( props: Props ) {
 									{ getExternalLinkIcon() }
 								</InlineSupportLink>
 								<div className="campaign-item-details__powered-by">
-									<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>
+									{ isWooStore ? (
+										<span>{ translate( 'Woo Blaze - Powered by Jetpack' ) }</span>
+									) : (
+										<span>{ translate( 'Blaze - Powered by Jetpack' ) }</span>
+									) }
 								</div>
 							</div>
 						</div>

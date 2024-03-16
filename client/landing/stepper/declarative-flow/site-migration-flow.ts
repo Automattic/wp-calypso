@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -15,15 +16,16 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const siteMigration: Flow = {
 	name: 'site-migration',
+	isSignupFlow: false,
 
 	useSteps() {
 		return [
+			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+			STEPS.BUNDLE_TRANSFER,
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.WAIT_FOR_ATOMIC,
-			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -124,6 +126,7 @@ const siteMigration: Flow = {
 			[]
 		);
 		const siteSlugParam = useSiteSlugParam();
+		const urlQueryParams = useQuery();
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
@@ -137,6 +140,25 @@ const siteMigration: Flow = {
 			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					const { from, platform } = providedDependencies as { from: string; platform: string };
+
+					if ( platform === 'wordpress' ) {
+						return navigate(
+							addQueryArgs(
+								{ from: from, siteSlug, siteId },
+								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+							)
+						);
+					}
+
+					return exitFlow(
+						addQueryArgs(
+							{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
+							'/setup/site-setup/importList'
+						)
+					);
+				}
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					// Switch to the normal Import flow.
 					if ( providedDependencies?.destination === 'import' ) {
@@ -155,38 +177,33 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug, {
+					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
 						siteId,
 						siteSlug,
 					} );
 				}
 
-				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
-					if ( providedDependencies?.error ) {
-						return navigate( STEPS.ERROR.slug );
-					}
+				case STEPS.BUNDLE_TRANSFER.slug: {
+					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
+				}
 
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+				case STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug: {
+					return navigate( STEPS.PROCESSING.slug, { pluginInstall: true } );
 				}
 
 				case STEPS.PROCESSING.slug: {
+					// Any process errors go to the error step.
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
-					}
-
-					if ( providedDependencies?.pluginsInstalled ) {
+					// If the plugin was installed successfully, go to the migration instructions.
+					if ( providedDependencies?.pluginInstall ) {
 						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 					}
-				}
 
-				case STEPS.WAIT_FOR_ATOMIC.slug: {
-					return navigate( STEPS.PROCESSING.slug, {
-						currentStep,
-					} );
+					// Otherwise processing has finished from the BundleTransfer step and we need to install the plugin.
+					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -196,7 +213,7 @@ const siteMigration: Flow = {
 								flags: 'onboarding/new-migration-flow',
 								siteSlug,
 							},
-							'/setup/site-migration/site-migration-instructions'
+							`/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);
 						goToCheckout( {
 							flowName: 'site-migration',
@@ -207,14 +224,16 @@ const siteMigration: Flow = {
 						} );
 						return;
 					}
+					if ( providedDependencies?.freeTrialSelected ) {
+						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+							siteId,
+							siteSlug,
+						} );
+					}
 					if ( providedDependencies?.verifyEmail ) {
 						// not yet implemented
 						return;
 					}
-				}
-
-				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug );
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
@@ -223,7 +242,22 @@ const siteMigration: Flow = {
 			}
 		}
 
-		return { submit, exitFlow };
+		const goBack = () => {
+			switch ( currentStep ) {
+				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+				}
+				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }` );
+				}
+			}
+		};
+
+		return { goBack, submit, exitFlow };
 	},
 };
 

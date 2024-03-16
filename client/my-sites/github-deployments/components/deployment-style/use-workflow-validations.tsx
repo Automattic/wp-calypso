@@ -1,10 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import {
-	CodePushExample,
-	UploadArtifactExample,
-	newWorkflowExample,
-} from './workflow-yaml-examples';
+import { codePushExample, uploadArtifactExample } from './workflow-yaml-examples';
 
 interface Validation {
 	label: string;
@@ -14,9 +10,13 @@ interface Validation {
 
 interface UseWorkflowValidationsParams {
 	branchName: string;
+	validYamlFile: string;
 }
 
-export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsParams ) => {
+export const useWorkflowValidations = ( {
+	branchName,
+	validYamlFile,
+}: UseWorkflowValidationsParams ) => {
 	const { __ } = useI18n();
 
 	const validations: Record< string, Validation > = useMemo( () => {
@@ -26,20 +26,20 @@ export const useWorkflowValidations = ( { branchName }: UseWorkflowValidationsPa
 				description: __(
 					'Ensure that your workflow file contains a valid YAML structure. Here’s an example:'
 				),
-				content: newWorkflowExample( branchName ),
+				content: validYamlFile,
 			},
 			triggered_on_push: {
 				label: __( 'The workflow is triggered on push' ),
 				description: __( 'Ensure that your workflow triggers on code push:' ),
-				content: CodePushExample( branchName ),
+				content: codePushExample( branchName ),
 			},
 			upload_artifact_with_required_name: {
-				label: __( 'The upload artifact has the required name' ),
+				label: __( 'The uploaded artifact has the required name' ),
 				description: __( "Ensure that your workflow uploads an artifact named 'wpcom'. Example:" ),
-				content: UploadArtifactExample(),
+				content: uploadArtifactExample(),
 			},
 		};
-	}, [ __, branchName ] );
+	}, [ __, branchName, validYamlFile ] );
 
 	return validations;
 };

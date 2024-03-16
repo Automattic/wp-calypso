@@ -1,8 +1,10 @@
+/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp'; // Import restricted
 
 interface APIFetchOptions {
 	global: boolean;
@@ -76,7 +78,7 @@ export const fetchLaunchpad = (
 	} );
 
 	return canAccessWpcomApis()
-		? wpcomRequest( {
+		? wpcom.req.get( {
 				path: requestUrl,
 				apiNamespace: 'wpcom/v2',
 				apiVersion: '2',

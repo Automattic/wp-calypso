@@ -2,7 +2,8 @@
 div.MuiPopover-root,
 div.MuiPickersPopper-root,
 div.MuiDialog-root,
-div.MuiModal-root {
+div.MuiModal-root,
+div.MuiAutocomplete-popper {
 	z-index: 99999;
 }
 

@@ -26,6 +26,7 @@ const designFirst: Flow = {
 	get title() {
 		return translate( 'Blog' );
 	},
+	isSignupFlow: true,
 	useSteps() {
 		return [
 			{

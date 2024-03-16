@@ -38,6 +38,7 @@ type WordAdSettings = {
 	};
 	ccpa_enabled: boolean;
 	ccpa_privacy_policy_url: string;
+	cmp_enabled: boolean;
 };
 
 const WordAdsPayments = () => {

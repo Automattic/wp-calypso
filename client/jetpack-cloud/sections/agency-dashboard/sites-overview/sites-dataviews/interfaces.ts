@@ -1,9 +1,17 @@
-import { Site } from '../types';
+import { Site, SiteData } from '../types';
+
+export interface SitesDataResponse {
+	sites: Array< Site >;
+	total: number;
+	perPage: number;
+	totalFavorites: number;
+}
 
 export interface SitesDataViewsProps {
-	data:
-		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
-		| undefined;
+	className?: string;
+	data: SitesDataResponse | undefined;
+	forceTourExampleSite?: boolean;
+	isLargeScreen: boolean;
 	isLoading: boolean;
 	onSitesViewChange: ( view: SitesViewState ) => void;
 	sitesViewState: SitesViewState;
@@ -30,4 +38,8 @@ export interface SitesViewState {
 	hiddenFields: string[];
 	layout: object;
 	selectedSite?: Site | undefined;
+}
+
+export interface SiteInfo extends SiteData {
+	id: number;
 }

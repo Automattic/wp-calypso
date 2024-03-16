@@ -8,6 +8,7 @@ import {
 	getDIFMTieredPriceDetails,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -21,7 +22,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { useSelector } from 'calypso/state';
 import {
@@ -295,7 +295,7 @@ export default function DIFMLanding( {
 	const planTitle = planObject?.getTitle();
 	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
 	const planStorageSlug = planObject?.get2023PricingGridSignupStorageOptions?.()?.[ 0 ].slug;
-	const planStorageString = planStorageSlug ? FEATURES_LIST[ planStorageSlug ]?.getTitle() : '';
+	const planStorageString = planStorageSlug ? getFeatureByKey( planStorageSlug )?.getTitle() : '';
 
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
 	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;

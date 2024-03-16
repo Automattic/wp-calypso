@@ -4,7 +4,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { canCurrentUser } from '../../state/selectors/can-current-user';
-import { CreateRepository } from './create-repository';
 import { GitHubDeploymentCreation } from './deployment-creation';
 import { GitHubDeploymentManagement } from './deployment-management';
 import { DeploymentRunsLogs } from './deployment-run-logs';
@@ -34,10 +33,7 @@ export const deploymentCreation: Callback = ( context, next ) => {
 				title="Create GitHub Deployments"
 				delay={ 500 }
 			/>
-			<GitHubDeploymentCreation
-				installationId={ parseInt( context.query.installation_id, 10 ) || undefined }
-				repositoryId={ parseInt( context.query.repository_id, 10 ) || undefined }
-			/>
+			<GitHubDeploymentCreation />
 		</>
 	);
 	next();
@@ -60,20 +56,6 @@ export const deploymentManagement: Callback = ( context, next ) => {
 				delay={ 500 }
 			/>
 			<GitHubDeploymentManagement codeDeploymentId={ codeDeploymentId } />
-		</>
-	);
-	next();
-};
-
-export const createNewRepository: Callback = ( context, next ) => {
-	context.primary = (
-		<>
-			<PageViewTracker
-				path="/github-deployments/:site/create-new-repository"
-				title="Create Repository"
-				delay={ 500 }
-			/>
-			<CreateRepository />
 		</>
 	);
 	next();

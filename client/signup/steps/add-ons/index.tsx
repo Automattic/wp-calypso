@@ -1,14 +1,13 @@
+import { AddOns as AddOnsStore } from '@automattic/data-stores';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import AddOnsGrid from 'calypso/my-sites/add-ons/components/add-ons-grid';
-import useAddOns from 'calypso/my-sites/add-ons/hooks/use-add-ons';
 import NavigationLink from 'calypso/signup/navigation-link';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch } from 'calypso/state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import type { AddOnMeta } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -24,7 +23,7 @@ interface Props {
 }
 interface AddOnsProps {
 	selectedAddOns: string[];
-	addOns: ( AddOnMeta | null )[];
+	addOns: ( AddOnsStore.AddOnMeta | null )[];
 	onToggleAllAddOns: () => void;
 	onAddAddOn: ( addOnSlug: string ) => void;
 	onRemoveAddOn: ( addOnSlug: string ) => void;
@@ -53,8 +52,10 @@ const AddOns = ( {
 	const translate = useTranslate();
 
 	const getAddOnSelectedStatus = useCallback(
-		( { productSlug }: AddOnMeta ) => {
-			const available = ! selectedAddOns.find( ( product: string ) => product === productSlug );
+		( { addOnMeta }: { addOnMeta: AddOnsStore.AddOnMeta } ) => {
+			const available = ! selectedAddOns.find(
+				( product: string ) => product === addOnMeta.productSlug
+			);
 			return {
 				available,
 				text: translate( 'Added to your plan' ),
@@ -87,7 +88,7 @@ const AddOns = ( {
 export default function AddOnsStep( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const addOns = useAddOns();
+	const addOns = AddOnsStore.useAddOns();
 
 	const [ selectedAddOns, setSelectedAddOns ] = useState< string[] >( [] );
 
@@ -112,7 +113,7 @@ export default function AddOnsStep( props: Props ) {
 			setSelectedAddOns(
 				addOns
 					.filter( ( addOn ) => null !== addOn )
-					.map( ( addOn ) => ( addOn as AddOnMeta ).productSlug )
+					.map( ( addOn ) => ( addOn as AddOnsStore.AddOnMeta ).productSlug )
 			);
 		}
 	}, [ addOns, selectedAddOns ] );

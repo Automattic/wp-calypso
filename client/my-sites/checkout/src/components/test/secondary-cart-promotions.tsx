@@ -41,6 +41,7 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
+								isPurchaseRenewal={ true }
 							/>
 						</ThemeProvider>
 					</ReduxProvider>
@@ -68,6 +69,7 @@ describe( 'SecondaryCartPromotions', () => {
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ mockAddItemToCart }
+								isPurchaseRenewal={ true }
 							/>
 						</ThemeProvider>
 					</ReduxProvider>

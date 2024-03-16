@@ -81,6 +81,19 @@ export interface P2ThumbnailElements {
 	header_image: string | null;
 }
 
+export interface SiteFeatures {
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	active: string[];
+	/**
+	 * We don't have a `FeatureSlug` yet defined globally
+	 * @todo Features are being migrated to calypso-products in other work. Update the type here when one exists
+	 */
+	available: Record< string, string[] >;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;
@@ -274,6 +287,7 @@ export interface SiteDetailsOptions {
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
 	is_commercial?: boolean | null;
+	is_commercial_reasons?: string[];
 	wpcom_admin_interface?: string;
 }
 
@@ -530,6 +544,7 @@ export enum MigrationStatus {
 	BACKING_UP_QUEUED = 'backing-up-queued',
 	RESTORING = 'restoring',
 	DONE = 'done',
+	DONE_USER = 'done-user',
 	ERROR = 'error',
 }
 
@@ -642,4 +657,20 @@ export interface AssembleSiteOptions {
 	globalStyles?: GlobalStyles;
 	canReplaceContent?: boolean;
 	siteSetupOption?: string;
+}
+
+/**
+ * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
+ */
+export interface RawSiteMediaStorage {
+	max_storage_bytes: number;
+	storage_used_bytes: number;
+}
+
+/**
+ * Site media storage transformed for frontend use
+ */
+export interface SiteMediaStorage {
+	maxStorageBytes: number;
+	storageUsedBytes: number;
 }

@@ -2,6 +2,9 @@ import { Button, FormLabel } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { GitHubRepositoryData } from '../../use-github-repositories-query';
 import { CodeHighlighter } from '../code-highlighter';
 import { useDeploymentStyleContext } from './context';
@@ -10,19 +13,36 @@ import { useWorkflowValidations } from './use-workflow-validations';
 import { WorkflowValidation } from './workflow-validation';
 
 interface WorkflowValidationWizardProps {
-	repository: GitHubRepositoryData;
+	repository: Pick< GitHubRepositoryData, 'owner' | 'name' >;
 	branchName: string;
 	workflow: Workflow;
+	validYamlFile: string;
 }
 
 export const WorkflowValidationWizard = ( {
 	repository,
 	branchName,
 	workflow,
+	validYamlFile,
 }: WorkflowValidationWizardProps ) => {
 	const { __ } = useI18n();
-	const validations = useWorkflowValidations( { branchName } );
+	const dispatch = useDispatch();
+	const validations = useWorkflowValidations( { branchName, validYamlFile } );
 	const { workflowCheckResult, isCheckingWorkflow, onWorkflowVerify } = useDeploymentStyleContext();
+
+	useEffect( () => {
+		if ( ! workflowCheckResult ) {
+			return;
+		} else if ( workflowCheckResult.conclusion === 'error' ) {
+			const checks: Record< string, string > = {};
+			workflowCheckResult.checked_items.forEach( ( check ) => {
+				checks[ check.validation_name ] = check.status;
+			} );
+			dispatch( recordTracksEvent( 'calypso_hosting_github_workflow_invalid', checks ) );
+		} else {
+			dispatch( recordTracksEvent( 'calypso_hosting_github_workflow_valid' ) );
+		}
+	}, [ workflowCheckResult?.conclusion ] );
 
 	const getWorkflowCheckDescription = () => {
 		if ( ! workflowCheckResult ) {
@@ -79,7 +99,10 @@ export const WorkflowValidationWizard = ( {
 				css={ { marginTop: '8px' } }
 				type="button"
 				className="button form-button"
-				onClick={ onWorkflowVerify }
+				onClick={ () => {
+					dispatch( recordTracksEvent( 'calypso_hosting_github_validate_workflow_click' ) );
+					onWorkflowVerify();
+				} }
 				disabled={ isCheckingWorkflow }
 				busy={ isCheckingWorkflow }
 			>

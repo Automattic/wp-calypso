@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
@@ -67,7 +68,11 @@ export class PlansStep extends Component {
 				isPurchasingItem: false,
 				stepSectionName: undefined,
 			},
-			{ domainItem }
+			// Since we're removing the paid domain, it means that the user chose to continue
+			// with a free domain. Because signupDomainOrigin should reflect the last domain
+			// selection status before they land on the checkout page, we switch the value
+			// to "free".
+			{ domainItem, signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.FREE }
 		);
 	};
 

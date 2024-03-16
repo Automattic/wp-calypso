@@ -1,9 +1,8 @@
-import { Count, Badge, Gridicon } from '@automattic/components';
+import { Count, Badge, Gridicon, MaterialIcon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isExternal } from 'calypso/lib/url';
@@ -29,6 +28,10 @@ export default function SidebarItem( props ) {
 		}
 	};
 
+	const handleNavigate = ( event ) => {
+		props.onNavigate?.( event, props.link );
+	};
+
 	const expandSectionIfSelected = () => {
 		const { expandSection, selected } = props;
 
@@ -45,7 +48,7 @@ export default function SidebarItem( props ) {
 		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
 			<a
 				className="sidebar__menu-link"
-				onClick={ props.onNavigate }
+				onClick={ handleNavigate }
 				href={ props.link }
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }

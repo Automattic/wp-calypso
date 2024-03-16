@@ -136,6 +136,16 @@
 	cursor: auto;
 }
 
+.horizontal-bar-list-item--no-bg {
+	.horizontal-bar-list-item-bar {
+		padding-left: 0;
+
+		&::before {
+			display: none;
+		}
+	}
+}
+
 .horizontal-bar-list-item--additional {
 	@include additional-columns-wrapper;
 }

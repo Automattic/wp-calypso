@@ -74,6 +74,7 @@ export function useCreateCreditCard( {
 	submitButtonContent,
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
+	hasExistingCardMethods,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -82,6 +83,7 @@ export function useCreateCreditCard( {
 	submitButtonContent: ReactNode;
 	initialUseForAllSubscriptions?: boolean;
 	allowUseForAllSubscriptions?: boolean;
+	hasExistingCardMethods?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo(
@@ -101,6 +103,7 @@ export function useCreateCreditCard( {
 						shouldShowTaxFields,
 						submitButtonContent,
 						allowUseForAllSubscriptions,
+						hasExistingCardMethods,
 				  } )
 				: null,
 		[
@@ -110,6 +113,7 @@ export function useCreateCreditCard( {
 			shouldShowTaxFields,
 			submitButtonContent,
 			allowUseForAllSubscriptions,
+			hasExistingCardMethods,
 		]
 	);
 	return stripeMethod;
@@ -465,6 +469,15 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const existingCardMethods = useCreateExistingCards( {
+		isStripeLoading,
+		stripeLoadingError,
+		storedCards,
+		submitButtonContent: <CheckoutSubmitButtonContent />,
+	} );
+
+	const hasExistingCardMethods = existingCardMethods && existingCardMethods.length > 0;
+
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
@@ -480,6 +493,7 @@ export default function useCreatePaymentMethods( {
 		shouldUseEbanx,
 		allowUseForAllSubscriptions,
 		submitButtonContent: <CheckoutSubmitButtonContent />,
+		hasExistingCardMethods,
 	} );
 
 	const freePaymentMethod = useCreateFree();
@@ -505,13 +519,6 @@ export default function useCreatePaymentMethods( {
 		razorpayLoadingError,
 		razorpayConfiguration,
 		cartKey,
-	} );
-
-	const existingCardMethods = useCreateExistingCards( {
-		isStripeLoading,
-		stripeLoadingError,
-		storedCards,
-		submitButtonContent: <CheckoutSubmitButtonContent />,
 	} );
 
 	// The order is the order of Payment Methods in Checkout.

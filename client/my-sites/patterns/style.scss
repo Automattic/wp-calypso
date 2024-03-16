@@ -1,8 +1,46 @@
-.is-section-patterns .layout__content {
-	background: #e5f4ff;
-}
+@import "@wordpress/base-styles/breakpoints";
 
-.patterns {
-	list-style-type: none;
-	padding: 20px;
+.is-section-patterns {
+	.layout__content {
+		padding: 0;
+
+		.masterbar {
+			// Makes sure the navigation bar header appears below the masterbar and notices
+			z-index: z-index("root", ".main") - 1;
+		}
+	}
+
+	.layout__primary {
+		.main {
+			padding-bottom: 0;
+		}
+	}
+
+	.is-logged-in {
+		.lpc-header-nav-wrapper {
+			padding-top: 32px;
+
+			@media ( max-width: $break-medium ) {
+				padding-top: 46px;
+			}
+		}
+	}
+
+	.has-no-sidebar {
+		.masterbar-menu {
+			.masterbar {
+				background: #1d2327;
+				border-bottom: 1px solid #1d2327;
+			}
+		}
+	}
+
+	.x-nav-link__logo svg path {
+		fill: var(--studio-white);
+	}
+
+	.x-nav-item,
+	.x-nav-link-chevron::before {
+		color: var(--studio-white);
+	}
 }

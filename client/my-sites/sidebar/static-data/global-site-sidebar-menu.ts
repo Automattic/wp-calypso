@@ -1,32 +1,40 @@
 import { translate } from 'i18n-calypso';
-
 /**
  * Menu items for the Global Site View sidebar.
  */
 export default function globalSiteSidebarMenu( {
-	shouldShowAddOns,
 	showSiteMonitoring,
 	siteDomain,
+	shouldShowAddOns,
 	selectedSiteSlug,
 	isStagingSite,
+	isDesktop,
 }: {
-	shouldShowAddOns: boolean;
 	showSiteMonitoring: boolean;
 	siteDomain: string;
+	shouldShowAddOns: boolean;
 	selectedSiteSlug: string;
 	isStagingSite: boolean;
+	isDesktop: boolean;
 } ) {
 	return [
 		{
-			icon: 'dashicons-arrow-left-alt2',
+			type: 'current-site',
+			url: `/home/${ siteDomain }`,
+			shouldHide: ! isDesktop,
+		},
+		{
+			slug: 'home',
+			title: translate( 'My Home' ),
+			type: 'menu-item',
+			url: `/home/${ siteDomain }`,
+			shouldHide: isDesktop,
+		},
+		{
 			slug: 'wp-admin',
 			title: translate( 'WP Admin' ),
 			url: `https://${ selectedSiteSlug }/wp-admin`,
 			className: 'sidebar__menu-item-wp-admin',
-		},
-		{
-			type: 'current-site',
-			url: `/home/${ siteDomain }`,
 		},
 		{
 			slug: 'upgrades',
@@ -37,7 +45,7 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			slug: 'Add-Ons',
-			title: translate( 'Add-Ons' ),
+			title: translate( 'Add-ons' ),
 			type: 'menu-item',
 			url: `/add-ons/${ siteDomain }`,
 			shouldHide: ! shouldShowAddOns,
@@ -66,7 +74,7 @@ export default function globalSiteSidebarMenu( {
 		},
 		{
 			slug: 'options-hosting-configuration-php',
-			title: translate( 'Hosting' ),
+			title: translate( 'Configuration' ),
 			type: 'menu-item',
 			url: `/hosting-config/${ siteDomain }`,
 		},
@@ -84,16 +92,16 @@ export default function globalSiteSidebarMenu( {
 			url: `/earn/${ siteDomain }`,
 		},
 		{
-			slug: 'options-podcasting-php',
-			title: translate( 'Podcasting' ),
-			type: 'menu-item',
-			url: `/settings/podcasting/${ siteDomain }`,
-		},
-		{
 			slug: 'subscribers',
 			title: translate( 'Subscribers' ),
 			type: 'menu-item',
 			url: `/subscribers/${ siteDomain }`,
+		},
+		{
+			slug: 'connections',
+			title: translate( 'Connections' ),
+			type: 'menu-item',
+			url: `/marketing/connections/${ siteDomain }`,
 		},
 		{
 			slug: 'settings-site',

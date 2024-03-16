@@ -8,5 +8,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/tests/*" ]
+	"exclude": [ "**/docs/*", "**/tests/*" ],
+	"references": [ { "path": "../search" }, { "path": "../data-stores" } ]
 }

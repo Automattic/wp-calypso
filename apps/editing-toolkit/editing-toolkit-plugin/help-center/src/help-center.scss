@@ -70,11 +70,13 @@ body.is-nav-unification {
 
 		svg {
 			position: absolute;
+			height: 20px;
+			width: 20px;
 			top: 0;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			padding: 4px 6px;
+			padding: 6px 8px;
 		}
 
 		&.unseen-notification {

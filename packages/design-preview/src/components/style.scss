@@ -136,6 +136,14 @@ $design-preview-sidebar-width: 311px;
 		transform: none !important;
 	}
 
+	.components-navigator-provider {
+		contain: none;
+	}
+
+	.components-navigator-screen {
+		will-change: auto;
+	}
+
 	@include break-large {
 		position: relative;
 		width: $design-preview-sidebar-width;
