@@ -1,0 +1,32 @@
+import { useLocale } from '@automattic/i18n-utils';
+import { translate } from 'i18n-calypso';
+import ReactDOM from 'react-dom';
+import surveyImage from 'calypso/assets/images/illustrations/github-deployments.svg';
+import SurveyModal from 'calypso/components/survey-modal';
+import { maybeSetDeploymentDone, shouldShowDeploymentSurvey } from './utils';
+
+export const GitHubDeploymentSurvey = () => {
+	const localeSlug = useLocale();
+
+	maybeSetDeploymentDone();
+
+	if ( localeSlug !== 'en' || ! shouldShowDeploymentSurvey() ) {
+		return null;
+	}
+
+	return ReactDOM.createPortal(
+		<SurveyModal
+			name="github-deployments"
+			url="https://automattic.survey.fm/github-deployments-survey?initiated-from=calypso"
+			title={ translate( 'Hey Developer!' ) }
+			description={ translate(
+				`Got a moment? How do you like using GitHub Deployments so far? Share your thoughts with us in our quick survey.`
+			) }
+			surveyImage={ surveyImage }
+			dismissText={ translate( 'Remind later' ) }
+			confirmText={ translate( 'Take survey' ) }
+			showOverlay={ false }
+		/>,
+		document.body
+	);
+};
