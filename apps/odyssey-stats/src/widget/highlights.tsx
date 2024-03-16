@@ -1,4 +1,5 @@
-import { formattedNumber, SegmentedControl } from '@automattic/components';
+import { SegmentedControl } from '@automattic/components';
+import { formatNumber } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -64,7 +65,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 			<p>{ item.title }</p>
 			<span>
 				{ translate( '%(views)s Views', {
-					args: { views: formattedNumber( item.views ) },
+					args: { views: formatNumber( item.views ) },
 				} ) }
 			</span>
 		</div>

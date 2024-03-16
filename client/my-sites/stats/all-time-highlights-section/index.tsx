@@ -1,11 +1,6 @@
-import {
-	Card,
-	ComponentSwapper,
-	formattedNumber,
-	percentCalculator,
-	ShortenedNumber,
-} from '@automattic/components';
+import { Card, ComponentSwapper, percentCalculator, ShortenedNumber } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/i18n-utils';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -171,7 +166,7 @@ export default function AllTimeHighlightsSection( {
 											className="highlight-card-info-item-count"
 											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 										>
-											{ formattedNumber( info.count ) }
+											{ formatNumber( info.count ) }
 										</span>
 									</div>
 								);
@@ -226,7 +221,7 @@ export default function AllTimeHighlightsSection( {
 											className="highlight-card-info-item-count"
 											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 										>
-											{ formattedNumber( info.count ) }
+											{ formatNumber( info.count ) }
 										</span>
 									</div>
 								);

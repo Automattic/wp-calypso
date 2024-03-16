@@ -1,5 +1,5 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
+import { formatNumber } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

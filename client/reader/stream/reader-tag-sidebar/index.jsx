@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { addLocaleToPathLocaleInFront, formatNumber } from '@automattic/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
@@ -33,7 +32,7 @@ const ReaderTagSidebar = ( {
 	const dispatch = useDispatch();
 	const isFollowing = useSelector( ( state ) => getReaderTagBySlug( state, tag )?.isFollowing );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const localeSlug = getLocaleSlug();
+	const localeSlug = translate.localeSlug;
 
 	const today = moment().subtract( 10, 'd' ).format( '--MM-DD' );
 	const { data: prompts } = useBloggingPrompts( primarySiteId, today, 10 );

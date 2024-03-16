@@ -1,4 +1,4 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { formatNumber } from '@automattic/i18n-utils';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';

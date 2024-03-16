@@ -3,7 +3,7 @@ import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import classnames from 'classnames';
 import { numberFormat } from 'i18n-calypso';
 import React, { useState } from 'react';
-import ShortenedNumber from '../number-formatters';
+import ShortenedNumber from '../shortened-number';
 import type { HorizontalBarListItemProps } from './types';
 
 import './style.scss';

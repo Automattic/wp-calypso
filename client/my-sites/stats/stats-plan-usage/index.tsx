@@ -1,4 +1,4 @@
-import { formattedNumber } from '@automattic/components';
+import { formatNumber } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -85,8 +85,8 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 				<div>
 					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views this month', {
 						args: {
-							numberOfUsage: formattedNumber( usage ),
-							numberOfLimit: formattedNumber( limit ),
+							numberOfUsage: formatNumber( usage ),
+							numberOfLimit: formatNumber( limit ),
 						},
 					} ) }
 				</div>

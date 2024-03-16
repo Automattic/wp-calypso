@@ -1,7 +1,8 @@
+import { formatNumber } from '@automattic/i18n-utils';
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { Card, ShortenedNumber, formattedNumber } from '../';
+import { Card, ShortenedNumber } from '../';
 import Popover from '../popover';
 
 type CountComparisonCardProps = {
@@ -79,7 +80,7 @@ export default function CountComparisonCard( {
 							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
-							{ differenceMagnitude <= 9999 && formattedNumber( differenceMagnitude ) }
+							{ differenceMagnitude <= 9999 && formatNumber( differenceMagnitude ) }
 							{ differenceMagnitude > 9999 && <ShortenedNumber value={ differenceMagnitude } /> }
 						</span>
 						{ percentage !== null && (
@@ -102,7 +103,7 @@ export default function CountComparisonCard( {
 								{ icon && <span className="highlight-card-tooltip-icon">{ icon }</span> }
 								{ heading && <span className="highlight-card-tooltip-heading">{ heading }</span> }
 							</span>
-							<span>{ formattedNumber( count ) }</span>
+							<span>{ formatNumber( count ) }</span>
 						</div>
 						{ note && <div className="highlight-card-tooltip-note">{ note }</div> }
 					</Popover>

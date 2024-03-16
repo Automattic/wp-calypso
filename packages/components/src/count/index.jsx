@@ -1,6 +1,6 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { formatNumber } from '@automattic/i18n-utils';
 import classnames from 'classnames';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import './style.scss';
@@ -16,7 +16,7 @@ export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...r
 			{ ...inheritProps }
 		>
 			{ compact
-				? formatNumber( count, getLocaleSlug() ) || numberFormat( count )
+				? formatNumber( count, translate.localeSlug ) || numberFormat( count )
 				: numberFormat( count ) }
 		</span>
 	);
