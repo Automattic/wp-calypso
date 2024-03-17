@@ -1,6 +1,5 @@
 import {
 	COUNTRIES_DOMAINS_FETCH,
-	COUNTRIES_PAYMENTS_FETCH,
 	COUNTRIES_SMS_FETCH,
 	COUNTRIES_WOOCOMMERCE_FETCH,
 } from 'calypso/state/action-types';
@@ -12,8 +11,6 @@ import 'calypso/state/data-layer/wpcom/woocommerce/countries/regions';
 import 'calypso/state/countries/init';
 
 export const fetchDomainCountries = () => ( { type: COUNTRIES_DOMAINS_FETCH } );
-
-export const fetchPaymentCountries = () => ( { type: COUNTRIES_PAYMENTS_FETCH } );
 
 export const fetchSmsCountries = () => ( { type: COUNTRIES_SMS_FETCH } );
 

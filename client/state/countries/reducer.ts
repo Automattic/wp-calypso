@@ -1,7 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	COUNTRIES_DOMAINS_UPDATED,
-	COUNTRIES_PAYMENTS_UPDATED,
 	COUNTRIES_SMS_UPDATED,
 	COUNTRIES_WOOCOMMERCE_UPDATED,
 } from 'calypso/state/action-types';
@@ -38,7 +37,6 @@ function createObjectReducer< TType extends Extract< keyof CountriesState, 'wooc
 
 const combinedReducer = combineReducers( {
 	domains: createListReducer< 'domains' >( COUNTRIES_DOMAINS_UPDATED ),
-	payments: createListReducer< 'payments' >( COUNTRIES_PAYMENTS_UPDATED ),
 	sms: createListReducer< 'sms' >( COUNTRIES_SMS_UPDATED ),
 	woocommerce: createObjectReducer< 'woocommerce' >( COUNTRIES_WOOCOMMERCE_UPDATED ),
 } );
