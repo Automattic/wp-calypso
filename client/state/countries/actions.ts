@@ -5,7 +5,6 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/domains/countries-list/index.js';
-import 'calypso/state/data-layer/wpcom/me/transactions/supported-countries';
 import 'calypso/state/data-layer/wpcom/meta/sms-country-codes';
 import 'calypso/state/data-layer/wpcom/woocommerce/countries/regions';
 import 'calypso/state/countries/init';
