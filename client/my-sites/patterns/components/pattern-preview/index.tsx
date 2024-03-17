@@ -4,6 +4,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import classNames from 'classnames';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import type { Pattern } from 'calypso/my-sites/patterns/types';
+import { ResizableBox } from '@wordpress/components';
 
 import './style.scss';
 
@@ -31,23 +32,39 @@ export function PatternPreview( {
 	}
 
 	return (
-		<div
-			className={ classNames( 'pattern-preview', {
-				'pattern-preview_category-gallery': isCategoryPreview,
-				'is-loading': ! renderedPattern,
-			} ) }
+		<ResizableBox
+			enable={ {
+				top: false,
+				right: true,
+				bottom: false,
+				left: false,
+				topRight: false,
+				bottomRight: false,
+				bottomLeft: false,
+				topLeft: false,
+			} }
+			handleWrapperClass={'pattern-preview__resizer'}
+			minWidth={500}
+			maxWidth={'100%'}
 		>
-			{ resizeObserver }
+			<div
+				className={classNames('pattern-preview', {
+					'pattern-preview_category-gallery': isCategoryPreview,
+					'is-loading': !renderedPattern,
+				})}
+			>
+				{resizeObserver}
 
-			<div className="pattern-preview__renderer">
-				<PatternRenderer
-					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
-					patternId={ patternId }
-					viewportWidth={ viewportWidth }
-				/>
+				<div className="pattern-preview__renderer">
+					<PatternRenderer
+						minHeight={nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined}
+						patternId={patternId}
+						viewportWidth={viewportWidth}
+					/>
+				</div>
+
+				<div className="pattern-preview__title">{pattern.title}</div>
 			</div>
-
-			<div className="pattern-preview__title">{ pattern.title }</div>
-		</div>
+		</ResizableBox>
 	);
 }

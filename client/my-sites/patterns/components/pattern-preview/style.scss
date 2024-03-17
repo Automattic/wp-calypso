@@ -33,3 +33,21 @@
 		display: none;
 	}
 }
+
+.pattern-preview__resizer .components-resizable-box__handle-right {
+	&::after {
+		background-color: #A7AAAD;
+		border-radius: 3px;
+		box-shadow: none;
+		height: 50px;
+		margin-right: -10px;
+		right: calc(50% - 5px);
+		width: 6px;
+	}
+
+	&:active::before,
+	&:hover::before {
+		animation: none;
+	}
+}
+
