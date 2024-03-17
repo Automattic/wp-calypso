@@ -30,6 +30,8 @@ export const fetch = ( action: AnyAction ) => {
 
 	// `num` is only for the period `day`.
 	const num = query.num || 1;
+	// `max` is probably set to 0 to fetch all results.
+	const max = query.max ?? 10;
 
 	// Calculate the number of days to query based on the period.
 	let days = num;
@@ -52,7 +54,7 @@ export const fetch = ( action: AnyAction ) => {
 				path: `/sites/${ siteId }/stats/utm/${ utmParam }`,
 				apiVersion: '1.1',
 				query: {
-					max: 10,
+					max: max,
 					date: query.date || new Date().toISOString().split( 'T' )[ 0 ],
 					days: days,
 					post_id: postId || '',
