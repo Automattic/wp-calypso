@@ -41,7 +41,9 @@ export const prepareTimestamp = (
 };
 
 export const convertHourTo24 = ( hour: string, period: string ): string => {
-	if ( period === 'pm' ) {
+	if ( period === 'am' ) {
+		return hour === '12' ? '0' : hour;
+	} else if ( period === 'pm' ) {
 		return hour === '12' ? '12' : ( parseInt( hour, 10 ) + 12 ).toString();
 	}
 

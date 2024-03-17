@@ -41,8 +41,8 @@ export function ScheduleFormFrequency( props: Props ) {
 
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( initFrequency );
 	const [ day, setDay ] = useState< string >( initDate.weekday().toString() );
-	const [ hour, setHour ] = useState< string >( ( initDate.hour() % 12 ).toString() );
-	const [ period, setPeriod ] = useState< string >( initDate.hours() < 12 ? 'am' : 'pm' );
+	const [ hour, setHour ] = useState< string >( initDate.format( 'h' ) ); // 'h' is for 12-hour format
+	const [ period, setPeriod ] = useState< string >( initDate.format( 'a' ) ); // 'a' is for am/pm
 
 	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
 	const [ fieldTouched, setFieldTouched ] = useState( false );
