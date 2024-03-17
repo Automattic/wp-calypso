@@ -18,10 +18,15 @@ import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 interface GenericThankYouProps {
 	purchases: ReceiptPurchase[];
+	isLoading: bool;
 	emailAddress?: string;
 }
 
-export default function GenericThankYou( { purchases, emailAddress }: GenericThankYouProps ) {
+export default function GenericThankYou( {
+	purchases,
+	isLoading,
+	emailAddress,
+}: GenericThankYouProps ) {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -110,6 +115,7 @@ export default function GenericThankYou( { purchases, emailAddress }: GenericTha
 			subtitle={ translate( 'All set! Ready to take your site even further?' ) }
 			products={ products }
 			footerDetails={ footerDetails.slice( 0, 2 ) }
+			isLoading={ isLoading }
 		/>
 	);
 }

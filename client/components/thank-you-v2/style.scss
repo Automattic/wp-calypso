@@ -33,4 +33,20 @@
 			}
 		}
 	}
+
+	&.is-loading {
+		.thank-you__header-title,
+		.thank-you__header-subtitle,
+		.thank-you__product,
+		.thank-you__footer-detail-button,
+		.thank-you__footer-detail-description,
+		.thank-you__footer-detail-title {
+			@include placeholder( --color-neutral-10 );
+		}
+
+		.thank-you__product-info,
+		.thank-you__product-actions {
+			visibility: hidden;
+		}
+	}
 }
