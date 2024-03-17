@@ -11,7 +11,7 @@ const countryListQueryKey = [ 'checkout-country-list' ];
 
 async function fetchCountryListForCheckout(): Promise< CountryListItem[] > {
 	return await wpcom.req.get( {
-		path: '/me/transactions/supported-countries/',
+		path: '/me/transactions/supported-countries',
 		apiVersion: '1.1',
 	} );
 }
