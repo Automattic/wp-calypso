@@ -52,6 +52,9 @@
 		min-width: 50%;
 		vertical-align: middle;
 	}
+	.components-form-toggle.is-checked .components-form-toggle__track {
+		background-color: var(--studio-jetpack-green-50);
+	}
 	&.has-bulk-management-active {
 		thead {
 			display: none;
@@ -87,10 +90,6 @@ td.plugin-common-table__actions {
 	@include break-huge() {
 		max-width: 150px;
 	}
-}
-
-.components-form-toggle.is-checked .components-form-toggle__track {
-	background-color: var(--studio-jetpack-green-50);
 }
 
 .plugin-common-table__plugin-icon {
