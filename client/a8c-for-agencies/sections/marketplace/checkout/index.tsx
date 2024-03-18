@@ -11,6 +11,7 @@ import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sideba
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { ShoppingCartItem } from '../types';
 import PricingSummary from './pricing-summary';
+import ProductInfo from './product-info';
 
 import './style.scss';
 
@@ -45,7 +46,18 @@ export default function Checkout() {
 
 			<LayoutBody>
 				<div className="checkout__container">
-					<div className="checkout__content">Checkout here</div>
+					<div className="checkout__main">
+						<h1 className="checkout__main-title">{ translate( 'Checkout' ) }</h1>
+
+						<div className="checkout__main-list">
+							{ selectedItems.map( ( items ) => (
+								<ProductInfo
+									key={ `product-info-${ items.product_id }-${ items.quantity }` }
+									product={ items }
+								/>
+							) ) }
+						</div>
+					</div>
 					<div className="checkout__aside">
 						<PricingSummary
 							items={ selectedItems }
