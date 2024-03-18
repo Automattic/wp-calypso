@@ -240,7 +240,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					safeLogError( {
 						message: ( error as Error ).message,
 						experimentName,
-						source: 'dangerouslyGetExperimentAssignment-error',
+						source: 'dangerouslyGetMaybeLoadedExperimentAssignment-error',
 					} );
 				}
 				return createFallbackExperimentAssignment( experimentName );
