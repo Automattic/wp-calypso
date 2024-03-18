@@ -20,6 +20,7 @@ const SurveyModal = ( {
 	description,
 	dismissText,
 	confirmText,
+	showOverlay = true,
 } ) => {
 	const cookieAge = 365 * 24 * 60 * 60; // 1 year
 	const userId = useSelector( getCurrentUserId );
@@ -27,7 +28,7 @@ const SurveyModal = ( {
 	href.searchParams.set( 'user-id', userId );
 
 	const [ hideNotice, setHideNotice ] = useState(
-		'dismissed' === cookie.parse( document.cookie )?.sso_survey
+		'dismissed' === cookie.parse( document.cookie )?.[ name ]
 	);
 
 	const setSurveyCookie = ( value, maxAge ) => {
@@ -66,21 +67,24 @@ const SurveyModal = ( {
 	}
 
 	return (
-		<div className={ classNames( 'modal-survey-notice', className ) }>
-			<Button className="modal-survey-notice__backdrop" onClick={ onClose } />
-			<div className="modal-survey-notice__popup">
+		<div
+			className={ classNames( 'modal-survey-notice', className ) }
+			style={ { pointerEvents: showOverlay ? 'auto' : 'none' } }
+		>
+			{ showOverlay && <Button className="modal-survey-notice__backdrop" onClick={ onClose } /> }
+			<div className="modal-survey-notice__popup" style={ { pointerEvents: 'auto' } }>
 				{ heading && (
 					<div className="modal-survey-notice__popup-head">
 						<div className="modal-survey-notice__popup-head-title">{ heading }</div>
 						<Button onClick={ onClose } className="modal-survey-notice__popup-head-close">
-							<Gridicon icon="cross" size={ 16 } />
+							<Gridicon icon="cross" size={ 24 } />
 						</Button>
 					</div>
 				) }
 
 				{ ! heading && (
 					<Button onClick={ onClose } className="modal-survey-notice__popup-head-close">
-						<Gridicon icon="cross" size={ 16 } />
+						<Gridicon icon="cross" size={ 24 } />
 					</Button>
 				) }
 
@@ -127,6 +131,7 @@ SurveyModal.propTypes = {
 	description: PropTypes.string.isRequired,
 	dismissText: PropTypes.string.isRequired,
 	confirmText: PropTypes.string.isRequired,
+	showOverlay: PropTypes.bool,
 };
 
 export default SurveyModal;
