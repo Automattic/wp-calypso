@@ -114,6 +114,7 @@ export const useCommandsArrayWpcom = ( {
 		const targetUrl = new URL( targetPath, window.location.origin );
 
 		//Check if the user is on the same page but is not looking at the right section
+		//If not, scroll the page to the right section
 		if ( currentPath === targetUrl.pathname && window.location.hash !== `#${ elementId }` ) {
 			window.location.hash = elementId;
 			const element = document.getElementById( elementId );
@@ -122,6 +123,7 @@ export const useCommandsArrayWpcom = ( {
 				element.scrollIntoView( { behavior: 'smooth' } );
 			}
 		} else {
+			//Use command navigation to ensure that track events get dispatched
 			commandNavigation( targetUrl.href )( commandParams );
 		}
 	};
@@ -394,8 +396,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage cache settings' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#cache` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#cache`;
+					navigateWithinSamePage( targetPath, 'cache', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
@@ -854,6 +858,7 @@ export const useCommandsArrayWpcom = ( {
 					const targetPath = `/hosting-config/${ param.site.slug }#staging-site`;
 					navigateWithinSamePage( targetPath, 'staging-site', param );
 				},
+				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
 		},
@@ -862,8 +867,10 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Change PHP version' ),
 			callback: setStateCallback( 'changePHPVersion', __( 'Select site to change PHP version' ) ),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#web-server-settings` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#web-server-settings`;
+					navigateWithinSamePage( targetPath, 'web-server-settings', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -883,10 +890,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to change admin interface style' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#admin-interface-style` )(
-						param
-					),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#admin-interface-style`;
+					navigateWithinSamePage( targetPath, 'admin-interface-style', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
