@@ -62,6 +62,18 @@ export async function recordAddToCart( cartItem ) {
 		];
 		debug( 'recordAddToCart: [Jetpack]', params );
 		window.fbq( ...params );
+
+		// Akismet
+		params = [
+			'trackSingle',
+			TRACKING_IDS.facebookAkismetInit,
+			'AddToCart',
+			{
+				product_slug: cartItem.product_slug,
+			},
+		];
+		debug( 'recordAddToCart: [Akismet]', params );
+		window.fbq( ...params );
 	}
 
 	// Bing
