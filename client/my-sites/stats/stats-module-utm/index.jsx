@@ -42,9 +42,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	// Fetch top posts for all UTM metric items.
 	const { topPosts } = useUTMMetricTopPostsQuery( siteId, selectedOption, metrics );
 
-	// TODO: Remove the "|| true" once internal sites are working.
-	// const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
-	const isSiteInternal = ( ! isFetchingUsage && usageData?.is_internal ) || true;
+	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isFetchingUTM;
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
@@ -97,8 +95,6 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		},
 	};
 
-	// Force disable the overlay for now.
-	const showUpgradeOverlay = false;
 	const showFooterWithDownloads = summary === true;
 
 	return (
@@ -112,7 +108,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>
 			) }
-			{ showUpgradeOverlay && ! isFetching && ! isAdvancedFeatureEnabled && (
+			{ ! isFetching && ! isAdvancedFeatureEnabled && (
 				// TODO: update the ghost card to only show the module name
 				<StatsCard
 					title="UTM"
