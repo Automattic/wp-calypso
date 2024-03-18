@@ -44,7 +44,7 @@ export function PatternPreview( {
 				topLeft: false,
 			} }
 			handleWrapperClass={'pattern-preview__resizer'}
-			minWidth={500}
+			minWidth={375}
 			maxWidth={'100%'}
 		>
 			<div
