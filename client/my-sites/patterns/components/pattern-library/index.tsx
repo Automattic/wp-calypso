@@ -17,6 +17,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
+import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
@@ -128,6 +129,8 @@ export const PatternLibrary = ( {
 
 	return (
 		<>
+			<PatternsPageViewTracker category={ category } searchTerm={ searchTerm } />
+
 			<DocumentHead title="WordPress Patterns - Category" />
 
 			<PatternsHeader
