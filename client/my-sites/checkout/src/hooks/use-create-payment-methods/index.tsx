@@ -18,7 +18,6 @@ import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
-	createRazorpayPaymentMethodStore,
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -39,6 +38,7 @@ import {
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
+import { useCachedContactDetails } from '../use-cached-contact-details';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
@@ -383,7 +383,9 @@ function useCreateRazorpay( {
 		debug( 'Razorpay disabled by configuration' );
 	}
 
-	const paymentMethodStore = useMemo( () => createRazorpayPaymentMethodStore(), [] );
+	const { responseCart } = useShoppingCart( cartKey );
+	const isLoggedOut = responseCart.cart_key === 'no-user';
+	const contactDetails = useCachedContactDetails( { isLoggedOut } );
 
 	const isRazorpayReady =
 		! isRazorpayLoading &&
@@ -396,11 +398,11 @@ function useCreateRazorpay( {
 			? createRazorpayMethod( {
 					razorpayConfiguration,
 					cartKey,
-					store: paymentMethodStore,
 					submitButtonContent: <CheckoutSubmitButtonContent />,
+					contactDetails: contactDetails,
 			  } )
 			: null;
-	}, [ razorpayConfiguration, isRazorpayReady, cartKey, paymentMethodStore ] );
+	}, [ razorpayConfiguration, isRazorpayReady, cartKey, contactDetails ] );
 }
 
 export default function useCreatePaymentMethods( {

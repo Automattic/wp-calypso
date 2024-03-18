@@ -11,10 +11,7 @@ import {
 	makeSuccessResponse,
 	isErrorResponse,
 } from '@automattic/composite-checkout';
-import {
-	ManagedContactDetails,
-	WPCOMTransactionEndpointResponseRedirect,
-} from '@automattic/wpcom-checkout';
+import { WPCOMTransactionEndpointResponseRedirect } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { LocalizeProps } from 'i18n-calypso';
 import { confirmRazorpayOrder } from 'calypso/lib/store-transactions';
@@ -59,6 +56,8 @@ export default async function razorpayProcessor(
 	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
 		transactionOptions;
 
+	const razorpayContactDetails = { phoneNumber: submitData.phoneNumber, email: submitData.email };
+
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name ?? '',
@@ -95,7 +94,7 @@ export default async function razorpayProcessor(
 				// comes from the transactions endpoint.
 				const razorpayOptions = combineRazorpayOptions(
 					transactionOptions.razorpayConfiguration,
-					transactionOptions.contactDetails,
+					razorpayContactDetails,
 					response as WPCOMTransactionEndpointResponseRedirect,
 					( result ) => resolve( { bd_order_id: response.order_id.toString(), ...result } )
 				);
@@ -163,7 +162,7 @@ function isValidTransactionOptions( options: unknown ): options is RazorpayTrans
 
 function combineRazorpayOptions(
 	razorpayConfiguration: RazorpayConfiguration,
-	contactDetails: ManagedContactDetails | undefined,
+	contactDetails: { phoneNumber?: string; email?: string },
 	txnResponse: WPCOMTransactionEndpointResponseRedirect,
 	handler: ( response: RazorpayModalResponse ) => void
 ): RazorpayOptions {
@@ -185,9 +184,8 @@ function combineRazorpayOptions(
 
 	debug( 'Constructing Razorpay prefill object using contact details', contactDetails );
 	const prefill = options.prefill ?? {};
-	prefill.contact =
-		prefill.contact ?? ( contactDetails ? contactDetails.phone?.value.replace( '.', '' ) : '' );
-	prefill.email = prefill.email ?? ( contactDetails ? contactDetails.email?.value : '' );
+	prefill.contact = prefill.contact ?? contactDetails?.phoneNumber?.replace( '.', '' ) ?? '';
+	prefill.email = prefill.email ?? contactDetails?.email ?? '';
 	options.prefill = prefill;
 
 	return options;
