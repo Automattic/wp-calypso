@@ -21,14 +21,14 @@ import getSites from 'calypso/state/selectors/get-sites';
 import { ShoppingCartContext } from '../context';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
-import LicensesForm from './licenses-form';
-import useSubmitForm from './licenses-form/hooks/use-submit-form';
+import ProductListing from './product-listing';
+import useSubmitForm from './product-listing/hooks/use-submit-form';
 import type { AssignLicenseProps, ShoppingCartItem } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-export default function IssueLicense( { siteId, suggestedProduct }: AssignLicenseProps ) {
+export default function ProductsOverview( { siteId, suggestedProduct }: AssignLicenseProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -49,7 +49,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 
 	const onDismissReviewLicensesModal = useCallback( () => {
 		setShowReviewLicenses( false );
-		dispatch( recordTracksEvent( 'calypso_a4a_issue_license_review_licenses_dimiss' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_products_overview_review_licenses_dimiss' ) );
 	}, [ dispatch ] );
 
 	const sites = useSelector( getSites );
@@ -80,7 +80,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 	return (
 		<>
 			<Layout
-				className={ classNames( 'issue-license' ) }
+				className={ classNames( 'products-overview' ) }
 				title={ translate( 'Product Marketplace' ) }
 				wide
 				withBorder
@@ -104,7 +104,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 
 				<LayoutBody>
 					<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-						<LicensesForm
+						<ProductListing
 							selectedSite={ selectedSite }
 							suggestedProduct={ suggestedProduct }
 							quantity={ selectedSize }
