@@ -1,7 +1,9 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -13,6 +15,7 @@ import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sideba
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
 import { ShoppingCartItem } from '../types';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
@@ -25,11 +28,43 @@ export default function Checkout() {
 
 	const { selectedItems, setSelectedItems } = useShoppingCart();
 
+	const [ selectedSite ] = useState< SiteDetails | null | undefined >( null ); // FIXME: Need to fetch from state
+
+	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
+	// track if the user purchases a different set of products.
+	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
+		?.toString()
+		.split( ',' );
+
+	const { isReady, submitForm } = useSubmitForm( selectedSite, suggestedProductSlugs );
+
+	const sortedSelectedItems = useMemo( () => {
+		return Object.values(
+			selectedItems.reduce(
+				( acc: Record< string, ShoppingCartItem[] >, item ) => (
+					( acc[ item.slug ] = ( acc[ item.slug ] || [] ).concat( item ) ), acc
+				),
+				{}
+			)
+		)
+			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
+			.flat();
+	}, [ selectedItems ] );
+
 	const onCheckout = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click' ) );
 
-		// FIXME: Issue license
-	}, [ dispatch ] );
+		submitForm( sortedSelectedItems );
+
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click', {
+				total_licenses: sortedSelectedItems.length,
+				items: sortedSelectedItems
+					?.map( ( item ) => `${ item.slug } x ${ item.quantity }` )
+					.join( ',' ),
+			} )
+		);
+	}, [ dispatch, sortedSelectedItems, submitForm ] );
 
 	const onEmptyCart = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_empty_cart_click' ) );
@@ -73,7 +108,7 @@ export default function Checkout() {
 						<h1 className="checkout__main-title">{ translate( 'Checkout' ) }</h1>
 
 						<div className="checkout__main-list">
-							{ selectedItems.map( ( items ) => (
+							{ sortedSelectedItems.map( ( items ) => (
 								<ProductInfo
 									key={ `product-info-${ items.product_id }-${ items.quantity }` }
 									product={ items }
@@ -83,30 +118,33 @@ export default function Checkout() {
 					</div>
 					<div className="checkout__aside">
 						<PricingSummary
-							items={ selectedItems }
+							items={ sortedSelectedItems }
 							onRemoveItem={ ( item: ShoppingCartItem ) => {
 								setSelectedItems(
-									selectedItems.filter( ( selectedItem ) => selectedItem !== item )
+									sortedSelectedItems.filter( ( selectedItem ) => selectedItem !== item )
 								);
 							} }
 						/>
 
 						<div className="checkout__aside-actions">
-							<Button variant="primary" onClick={ onCheckout } disabled={ ! selectedItems.length }>
+							<Button
+								primary
+								onClick={ onCheckout }
+								disabled={ ! sortedSelectedItems.length || ! isReady }
+								busy={ ! isReady }
+							>
 								{ translate( 'Purchase %(count)d plan', 'Purchase %(count)d plans', {
 									context: 'button label',
-									count: selectedItems.length,
+									count: sortedSelectedItems.length,
 									args: {
-										count: selectedItems.length,
+										count: sortedSelectedItems.length,
 									},
 								} ) }
 							</Button>
 
-							<Button variant="secondary" onClick={ onContinueShopping }>
-								{ translate( 'Continue shopping' ) }
-							</Button>
+							<Button onClick={ onContinueShopping }>{ translate( 'Continue shopping' ) }</Button>
 
-							<Button variant="link" onClick={ onEmptyCart }>
+							<Button borderless onClick={ onEmptyCart }>
 								{ translate( 'Empty cart' ) }
 							</Button>
 						</div>
