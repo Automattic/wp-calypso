@@ -55,14 +55,14 @@ const SurveyModal = ( {
 					<div className="modal-survey-notice__popup-head">
 						<div className="modal-survey-notice__popup-head-title">{ heading }</div>
 						<Button onClick={ onClose } className="modal-survey-notice__popup-head-close">
-							<Gridicon icon="cross" size={ 16 } />
+							<Gridicon icon="cross" size={ 24 } />
 						</Button>
 					</div>
 				) }
 
 				{ ! heading && (
 					<Button onClick={ onClose } className="modal-survey-notice__popup-head-close">
-						<Gridicon icon="cross" size={ 16 } />
+						<Gridicon icon="cross" size={ 24 } />
 					</Button>
 				) }
 
