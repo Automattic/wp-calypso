@@ -1,14 +1,15 @@
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { login } from 'calypso/lib/paths';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
 import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
@@ -41,8 +42,6 @@ const wooexpress: Flow = {
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const flowName = this.name;
-
 		// There is a race condition where useLocale is reporting english,
 		// despite there being a locale in the URL so we need to look it up manually.
 		// We also need to support both query param and path suffix localized urls
@@ -62,8 +61,6 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
-		const aff = queryParams.get( 'aff' );
-		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -76,40 +73,18 @@ const wooexpress: Flow = {
 			} catch {}
 		}
 
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-			const queryParams = new URLSearchParams();
-
-			if ( vendorId ) {
-				queryParams.set( 'vid', vendorId );
-			}
-
-			if ( aff ) {
-				queryParams.set( 'aff', aff );
-			}
-
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/wooexpress` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-
-			let queryString = `redirect_to=${ redirectTarget }`;
-
-			if ( queryParams.toString() ) {
-				queryString = `${ queryString }&${ queryParams.toString() }`;
-			}
-
-			const logInUrl = getLoginUrl( {
-				variationName: flowName,
-				locale,
+		const getLoginUrl = () => {
+			const redirectTo = addQueryArgs( '/setup/wooexpress', {
+				...Object.fromEntries( queryParams ),
 			} );
 
-			return `${ logInUrl }&${ queryString }`;
+			const logInUrl = login( {
+				locale,
+				redirectTo,
+				oauth2ClientId: queryParams.get( 'client_id' ) || undefined,
+			} );
+
+			return logInUrl;
 		};
 
 		// Despite sending a CHECKING state, this function gets called again with the
@@ -143,7 +118,7 @@ const wooexpress: Flow = {
 			}
 
 			if ( ! userIsLoggedIn ) {
-				const logInUrl = getStartUrl();
+				const logInUrl = getLoginUrl();
 				window.location.assign( logInUrl );
 			}
 		}, [] );
