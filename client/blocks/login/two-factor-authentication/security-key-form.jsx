@@ -52,7 +52,10 @@ class SecurityKeyForm extends Component {
 				className={ classNames( 'two-factor-authentication__verification-code-form-wrapper', {
 					isWoo: isWoo,
 				} ) }
-				onSubmit={ this.initiateSecurityKeyAuthentication }
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					this.initiateSecurityKeyAuthentication();
+				} }
 			>
 				<Card compact className="two-factor-authentication__verification-code-form">
 					{ ! this.state.isAuthenticating && (

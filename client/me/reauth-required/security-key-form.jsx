@@ -61,7 +61,12 @@ class SecurityKeyForm extends Component {
 		const { isAuthenticating } = this.state;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					this.initiateSecurityKeyAuthentication();
+				} }
+			>
 				<Card compact className="security-key-form__verification-code-form">
 					{ ! isAuthenticating ? (
 						<div>
