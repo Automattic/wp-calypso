@@ -143,7 +143,11 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 							/>
 						}
 					/>
-					{ showFooterWithDownloads && <ExportButton data={ data } /> }
+					{ showFooterWithDownloads && (
+						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+							<ExportButton data={ data } />
+						</div>
+					) }
 				</>
 			) }
 		</>
