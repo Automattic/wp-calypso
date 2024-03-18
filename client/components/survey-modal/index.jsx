@@ -1,6 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import classNames from 'classnames';
 import cookie from 'cookie';
 import PropTypes from 'prop-types';
@@ -10,6 +11,7 @@ import './style.scss';
 
 const SurveyModal = ( {
 	name,
+	eventName,
 	className,
 	url,
 	heading,
@@ -19,6 +21,7 @@ const SurveyModal = ( {
 	dismissText,
 	confirmText,
 } ) => {
+	const cookieAge = 365 * 24 * 60 * 60; // 1 year
 	const userId = useSelector( getCurrentUserId );
 	const href = new URL( url );
 	href.searchParams.set( 'user-id', userId );
@@ -35,9 +38,28 @@ const SurveyModal = ( {
 	};
 
 	const onClose = () => {
-		setSurveyCookie( 'dismissed', 365 * 24 * 60 * 60 ); // 1 year
+		setSurveyCookie( 'dismissed', cookieAge );
 		setHideNotice( true );
+
+		if ( eventName ) {
+			recordTracksEvent( `${ eventName }_survey_dismissed` );
+		}
 	};
+
+	const onConfirm = () => {
+		setSurveyCookie( 'dismissed', cookieAge );
+		setHideNotice( true );
+
+		if ( eventName ) {
+			recordTracksEvent( `${ eventName }_survey_clicked` );
+		}
+	};
+
+	useEffect( () => {
+		if ( eventName && ! hideNotice ) {
+			recordTracksEvent( `${ eventName }_survey_showed` );
+		}
+	}, [ recordTracksEvent ] );
 
 	if ( hideNotice ) {
 		return null;
@@ -83,7 +105,7 @@ const SurveyModal = ( {
 							href={ href.toString() }
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ onClose }
+							onClick={ onConfirm }
 						>
 							{ confirmText }
 						</Button>
@@ -96,6 +118,7 @@ const SurveyModal = ( {
 
 SurveyModal.propTypes = {
 	name: PropTypes.string.isRequired,
+	eventName: PropTypes.string,
 	className: PropTypes.string,
 	url: PropTypes.string.isRequired,
 	heading: PropTypes.string,
