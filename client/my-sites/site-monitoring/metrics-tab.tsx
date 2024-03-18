@@ -258,7 +258,7 @@ const useSuccessHttpCodeSeries = () => {
 	return { series, statusCodes };
 };
 
-const useClientErrorHttpCodeSeries = () => {
+const useErrorHttpCodeSeries = () => {
 	const { __ } = useI18n();
 	const series: HTTPCodeSerie[] = [
 		// most common 4xx errors
@@ -272,9 +272,9 @@ const useClientErrorHttpCodeSeries = () => {
 		},
 		{
 			statusCode: 401,
-			fill: 'rgba(235, 101, 148, 0.1)',
+			fill: 'rgba(140, 143, 148, 0.1)',
 			label: __( '401: Unauthorized' ),
-			stroke: 'rgba(235, 101, 148, 1)',
+			stroke: 'rgba(140, 143, 148, 1)',
 			showInLegend: true,
 			showInTooltip: true,
 		},
@@ -294,13 +294,23 @@ const useClientErrorHttpCodeSeries = () => {
 			showInLegend: true,
 			showInTooltip: true,
 		},
-		// remaining 4xx errors
+		// most common 5xx errors
+		{
+			statusCode: 500,
+			fill: 'rgba(235, 101, 148, 0.1)',
+			label: __( '500: Internal Server Error' ),
+			stroke: 'rgba(235, 101, 148, 1)',
+			showInLegend: true,
+			showInTooltip: true,
+		},
+		// label for other 4xx and 5xx errors
 		{
 			...seriesDefaultProps,
 			statusCode: 0,
-			label: __( 'Other 4xx errors' ),
+			label: __( 'Other 4xx and 5xx errors' ),
 			showInLegend: true,
 		},
+		// remaining 4xx errors
 		{
 			...seriesDefaultProps,
 			statusCode: 402,
@@ -421,58 +431,26 @@ const useClientErrorHttpCodeSeries = () => {
 			statusCode: 451,
 			label: __( '451: Unavailable For Legal Reasons' ),
 		},
-	];
-	const statusCodes = series.map( ( { statusCode } ) => statusCode );
-	return { series, statusCodes };
-};
-
-const useServerErrorHttpCodeSeries = () => {
-	const { __ } = useI18n();
-	const series: HTTPCodeSerie[] = [
-		// most common 5xx errors
-		{
-			statusCode: 500,
-			fill: 'rgba(242, 215, 107, 0.1)',
-			label: __( '500: Internal Server Error' ),
-			stroke: 'rgba(242, 215, 107, 1)',
-			showInLegend: true,
-			showInTooltip: true,
-		},
-		{
-			statusCode: 502,
-			fill: 'rgba(235, 101, 148, 0.1)',
-			label: __( '502: Bad Gateway' ),
-			stroke: 'rgba(235, 101, 148, 1)',
-			showInLegend: true,
-			showInTooltip: true,
-		},
-		{
-			statusCode: 503,
-			fill: 'rgba(104, 179, 232, 0.1)',
-			label: __( '503: Service Unavailable' ),
-			stroke: 'rgba(104, 179, 232, 1)',
-			showInLegend: true,
-			showInTooltip: true,
-		},
-		{
-			statusCode: 504,
-			fill: 'rgba(9, 181, 133, 0.1)',
-			label: __( '504: Gateway Timeout' ),
-			stroke: 'rgba(9, 181, 133, 1)',
-			showInLegend: true,
-			showInTooltip: true,
-		},
 		// remaining 5xx errors
-		{
-			...seriesDefaultProps,
-			statusCode: 0,
-			label: __( 'Other 5xx errors' ),
-			showInLegend: true,
-		},
 		{
 			...seriesDefaultProps,
 			statusCode: 501,
 			label: __( '501: Not Implemented' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 502,
+			label: __( '502: Bad Gateway' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 503,
+			label: __( '503: Service Unavailable' ),
+		},
+		{
+			...seriesDefaultProps,
+			statusCode: 504,
+			label: __( '504: Gateway Timeout' ),
 		},
 		{
 			...seriesDefaultProps,
@@ -530,15 +508,10 @@ export const MetricsTab = () => {
 		timeRange,
 		successHttpCodes.statusCodes
 	);
-	const clientErrorHttpCodes = useClientErrorHttpCodeSeries();
-	const { data: dataForClientErrorCodesChart } = useSiteMetricsStatusCodesData(
+	const errorHttpCodes = useErrorHttpCodeSeries();
+	const { data: dataForErrorCodesChart } = useSiteMetricsStatusCodesData(
 		timeRange,
-		clientErrorHttpCodes.statusCodes
-	);
-	const serverErrorHttpCodes = useServerErrorHttpCodeSeries();
-	const { data: dataForServerErrorCodesChart } = useSiteMetricsStatusCodesData(
-		timeRange,
-		serverErrorHttpCodes.statusCodes
+		errorHttpCodes.statusCodes
 	);
 
 	const startDate = moment( timeRange.start * 1000 );
@@ -653,33 +626,14 @@ export const MetricsTab = () => {
 			></SiteMonitoringLineChart>
 			<SiteMonitoringLineChart
 				timeRange={ timeRange }
-				title={ __( 'Unsuccessful HTTP responses with client errors (4xx)' ) }
-				subtitle={ __(
-					'Requests per minute that encountered errors related to request bad syntax or requests that can not be fulfilled.'
-				) }
-				data={ dataForClientErrorCodesChart as uPlot.AlignedData }
-				series={ clientErrorHttpCodes.series }
+				title={ __( 'Unsuccessful HTTP responses' ) }
+				subtitle={ __( 'Requests per minute that encountered errors or issues during processing' ) }
+				data={ dataForErrorCodesChart as uPlot.AlignedData }
+				series={ errorHttpCodes.series }
 				options={ {
 					plugins: [
 						timeHighlightPlugin( 'auto' ),
-						tooltipsPlugin( withSeries( HttpChartTooltip, clientErrorHttpCodes.series ), {
-							position: 'followCursor',
-						} ),
-					],
-				} }
-			></SiteMonitoringLineChart>
-			<SiteMonitoringLineChart
-				timeRange={ timeRange }
-				title={ __( 'Unsuccessful HTTP responses with server errors (5xx)' ) }
-				subtitle={ __(
-					'Requests per minute that encountered errors related to server processing.'
-				) }
-				data={ dataForServerErrorCodesChart as uPlot.AlignedData }
-				series={ serverErrorHttpCodes.series }
-				options={ {
-					plugins: [
-						timeHighlightPlugin( 'auto' ),
-						tooltipsPlugin( withSeries( HttpChartTooltip, serverErrorHttpCodes.series ), {
+						tooltipsPlugin( withSeries( HttpChartTooltip, errorHttpCodes.series ), {
 							position: 'followCursor',
 						} ),
 					],
