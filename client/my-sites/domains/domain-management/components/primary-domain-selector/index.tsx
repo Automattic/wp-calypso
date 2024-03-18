@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-import { FormLabel } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
+import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -116,12 +116,17 @@ const PrimaryDomainSelector = ( {
 	}
 
 	return (
-		<FormFieldset className="domains-set-primary-address">
-			<FormLabel htmlFor="primary-domain-selector" className="domains-set-primary-address__title">
+		<Card className="domains-set-primary-address">
+			<CardHeading
+				className="domains-set-primary-address__title"
+				isBold={ true }
+				size={ 16 }
+				tagName="h2"
+			>
 				{ translate( 'Primary site address' ) }
-			</FormLabel>
-			<div>
-				<FormSettingExplanation className="domains-set-primary-address__subtitle">
+			</CardHeading>
+			<>
+				<p className="domains-set-primary-address__subtitle">
 					{ translate(
 						'The current primary address set for this site is: {{strong}}%(selectedDomain)s{{/strong}}.',
 						{
@@ -178,9 +183,9 @@ const PrimaryDomainSelector = ( {
 								},
 							}
 						) }
-				</FormSettingExplanation>
+				</p>
 				{ validPrimaryDomains.length > 1 && (
-					<>
+					<FormFieldset className="domains-set-primary-address__fieldset">
 						<FormSelect
 							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
 							id="primary-domain-selector"
@@ -193,7 +198,6 @@ const PrimaryDomainSelector = ( {
 								</option>
 							) ) }
 						</FormSelect>
-
 						<FormButton
 							className="domains-set-primary-address__submit"
 							primary
@@ -203,10 +207,10 @@ const PrimaryDomainSelector = ( {
 						>
 							{ translate( 'Set as primary site address' ) }
 						</FormButton>
-					</>
+					</FormFieldset>
 				) }
-			</div>
-		</FormFieldset>
+			</>
+		</Card>
 	);
 };
 

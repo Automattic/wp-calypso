@@ -1,17 +1,15 @@
 .domains-set-primary-address {
-	&.form-fieldset {
-		margin-bottom: 2em;
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		padding: 24px;
+	&__title {
+		margin-top: 0;
 	}
-	&__title.form-label {
-		margin-bottom: 0.5em;
-		font-size: 1rem;
-		font-weight: 600;
+	&__subtitle {
+		color: var(--color-text-subtle);
+		margin-bottom: 0;
+		font-size: 0.875rem;
 	}
-	&__subtitle.form-setting-explanation {
-		font-style: normal;
-		margin-bottom: 1em;
+	&__fieldset.form-fieldset {
+		margin-top: 0.875rem;
+		margin-bottom: 0;
 	}
 	&__submit {
 		margin-left: 12px;
