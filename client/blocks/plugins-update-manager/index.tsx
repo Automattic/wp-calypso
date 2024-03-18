@@ -8,6 +8,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ScheduledUpdatesGate from 'calypso/components/scheduled-updates/scheduled-updates-gate';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -40,6 +41,14 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
+	const { data: plugins = [], isFetched: isPluginsFetched } = useCorePluginsQuery(
+		siteSlug,
+		true,
+		true
+	);
+	const siteHasEligiblePlugins =
+		isPluginsFetched && plugins.filter( ( plugin ) => ! plugin.is_managed ).length > 0;
+
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 	useEffect( () => {
 		recordTracksEvent( 'calypso_scheduled_updates_page_view', {
@@ -70,7 +79,11 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	}[ context ];
 
 	return (
-		<PluginUpdateManagerContextProvider siteSlug={ siteSlug }>
+		<PluginUpdateManagerContextProvider
+			siteSlug={ siteSlug }
+			siteHasEligiblePlugins={ siteHasEligiblePlugins }
+			siteHasEligiblePluginsLoading={ ! isPluginsFetched }
+		>
 			<DocumentHead title={ title } />
 			{ ! isSitePlansLoaded && <QuerySitePlans siteId={ siteId } /> }
 			<MainComponent wideLayout>
@@ -85,9 +98,9 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						<Button
 							__next40pxDefaultSize
 							icon={ plus }
-							variant={ canCreateSchedules ? 'primary' : 'secondary' }
+							variant={ canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary' }
 							onClick={ onCreateNewSchedule }
-							disabled={ ! canCreateSchedules }
+							disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 						>
 							{ translate( 'Add new schedule' ) }
 						</Button>

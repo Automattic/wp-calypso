@@ -2,7 +2,6 @@ import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
 import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form-frequency';
 import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form-plugins';
-import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
 	useEditUpdateScheduleMutation,
@@ -12,7 +11,6 @@ import {
 	ScheduleUpdates,
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
-import { useSetSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
 
@@ -27,13 +25,6 @@ export const ScheduleForm = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
-
-	const { data: plugins = [], isFetched: isPluginsFetched } = useCorePluginsQuery(
-		siteSlug,
-		true,
-		true
-	);
-	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
 
 	const serverSyncCallbacks = {
 		onSuccess: () => onSyncSuccess && onSyncSuccess(),
