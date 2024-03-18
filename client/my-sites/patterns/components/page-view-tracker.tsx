@@ -30,7 +30,7 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 		if ( category ) {
 			recordTracksEvent( 'calypso_pattern_library_filter', {
 				...commonProperties,
-				category: category,
+				category,
 			} );
 		}
 	}, [ category, isDevAccount, isLoggedIn, searchTerm ] );
