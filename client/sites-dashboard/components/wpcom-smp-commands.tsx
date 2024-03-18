@@ -113,21 +113,27 @@ export const useCommandsArrayWpcom = ( {
 		const currentPath = window.location.pathname;
 		const targetUrl = new URL( targetPath, window.location.origin );
 
-		//Check if the user is on the same page but is not looking at the right section
-		//If not, scroll the page to the right section
+		// Check if the user is on the same page but is not looking at the right section
+		// If not, scroll to the right section
 		if ( currentPath === targetUrl.pathname && window.location.hash !== `#${ elementId }` ) {
-			window.location.hash = elementId;
+			//Offset by the height of the navigation header from the top of the page
+			const fixedHeaderHeight = 72;
 			const element = document.getElementById( elementId );
 			if ( element ) {
+				const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+				const offsetPosition = elementPosition - fixedHeaderHeight;
+
+				window.location.hash = elementId;
 				commandParams.close();
-				element.scrollIntoView( { behavior: 'smooth' } );
+				window.scrollTo( {
+					top: offsetPosition,
+					behavior: 'smooth',
+				} );
 			}
 		} else {
-			//Use command navigation to ensure that track events get dispatched
 			commandNavigation( targetUrl.href )( commandParams );
 		}
 	};
-
 	const { setEdgeCache } = useSetEdgeCacheMutation();
 	//temporary patch to not add github deployments to the command palette if feature is not available, will be removed.
 	const selectedSiteId = useSelector( getSelectedSiteId );
