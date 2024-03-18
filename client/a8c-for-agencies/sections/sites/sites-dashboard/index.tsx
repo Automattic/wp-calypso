@@ -13,17 +13,15 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { mockedSites } from 'calypso/a8c-for-agencies/data/sites';
+import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import { JetpackPreviewPane } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-feature-previews/jetpack-preview-pane';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
-import {
-	SitesDataResponse,
-	SitesViewState,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useSelector } from 'calypso/state';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -35,6 +33,7 @@ import SitesDashboardContext from '../sites-dashboard-context';
 import './style.scss';
 
 export default function SitesDashboard() {
+	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 
 	//const { hideListing } = useContext( SitesDashboardContext );
@@ -89,25 +88,14 @@ export default function SitesDashboard() {
 		layout: {},
 		selectedSite: undefined,
 	} );
-	/*const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
 		sitesViewState.page,
 		filter,
 		sort,
 		sitesViewState.perPage
-	);*/
-	//-- Mock data --// todo: fetch the sites from the API endpoint
-	const data: SitesDataResponse = {
-		sites: mockedSites,
-		total: 5,
-		perPage: 50,
-		totalFavorites: 2,
-	};
-	const isError = false;
-	const refetch = () => {};
-	const isLoading = false;
-	//-- End Mock data --//
+	);
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -121,7 +109,6 @@ export default function SitesDashboard() {
 		if ( isLoading || isError ) {
 			return;
 		}
-
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
