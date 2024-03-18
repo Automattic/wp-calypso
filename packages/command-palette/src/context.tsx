@@ -1,35 +1,7 @@
-import { SiteExcerptData } from '@automattic/sites';
 import { FC, PropsWithChildren, createContext, useContext } from 'react';
-import { Command, CommandMenuGroupProps, useCommandsParams } from '.';
+import { CommandMenuGroupProps } from '.';
 
-const CommandMenuGroupContext = createContext< CommandMenuGroupProps >( {
-	currentSiteId: null,
-	search: '',
-	selectedCommandName: '',
-	setSelectedCommandName: function ( name: string ): void {
-		throw new Error( 'Function not implemented.' );
-	},
-	navigate: function ( path: string, openInNewTab?: boolean | undefined ): void {
-		throw new Error( 'Function not implemented.' );
-	},
-	useCommands: function ( options: useCommandsParams ): Command[] {
-		throw new Error( 'Function not implemented.' );
-	},
-	currentRoute: null,
-	useSites: function (): SiteExcerptData[] {
-		throw new Error( 'Function not implemented.' );
-	},
-	userCapabilities: {},
-	close: function ( commandName?: string | undefined, isExecuted?: boolean | undefined ): void {
-		throw new Error( 'Function not implemented.' );
-	},
-	setSearch: function ( search: string ): void {
-		throw new Error( 'Function not implemented.' );
-	},
-	setPlaceholderOverride: function ( placeholder: string ): void {
-		throw new Error( 'Function not implemented.' );
-	},
-} );
+const CommandMenuGroupContext = createContext< CommandMenuGroupProps | undefined >( undefined );
 
 export const CommandMenuGroupContextProvider: FC< PropsWithChildren< CommandMenuGroupProps > > = ( {
 	children,
