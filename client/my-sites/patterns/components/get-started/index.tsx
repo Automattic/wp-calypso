@@ -27,7 +27,7 @@ export function PatternsGetStarted() {
 						className="patterns-get-started__item"
 						href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/block-pattern/' ) }
 					>
-						<img src={ ImgBlockPatterns } alt="" className="patterns-get-started__item-image" />
+						<img className="patterns-get-started__item-image" src={ ImgBlockPatterns } alt="" />
 						<div className="patterns-get-started__item-name">Video tutorial</div>
 						<div className="patterns-get-started__item-description">Block Patterns</div>
 					</a>
@@ -36,7 +36,7 @@ export function PatternsGetStarted() {
 						className="patterns-get-started__item"
 						href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/page-layouts/' ) }
 					>
-						<img src={ ImgPageLayouts } alt="" className="patterns-get-started__item-image" />
+						<img className="patterns-get-started__item-image" src={ ImgPageLayouts } alt="" />
 						<div className="patterns-get-started__item-name">Video tutorial</div>
 						<div className="patterns-get-started__item-description">Use Pre-Made Page Layouts</div>
 					</a>
@@ -45,7 +45,7 @@ export function PatternsGetStarted() {
 						className="patterns-get-started__item"
 						href={ localizeUrl( 'https://wordpress.com/learn/webinars/compelling-homepages/' ) }
 					>
-						<img src={ ImgHomePage } alt="" className="patterns-get-started__item-image" />
+						<img className="patterns-get-started__item-image" src={ ImgHomePage } alt="" />
 						<div className="patterns-get-started__item-name">Free course</div>
 						<div className="patterns-get-started__item-description">Design Your Homepage</div>
 					</a>
