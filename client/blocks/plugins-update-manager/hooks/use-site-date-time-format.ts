@@ -23,11 +23,11 @@ export function useSiteDateTimeFormat( siteSlug: string ) {
 		return phpToMomentDatetimeFormat( moment( ts ), format );
 	};
 
-	const isAmPmPhpTimeFormat = ( formatString: string ) => {
+	const isAmPmPhpTimeFormat = () => {
 		// Regular expression to check for AM/PM indicators
 		const ampmRegex = /(a|A)/;
 
-		return ampmRegex.test( formatString );
+		return ampmRegex.test( timeFormat );
 	};
 
 	return {

@@ -43,56 +43,15 @@ export const DAY_OPTIONS = [
 	},
 ];
 
-export const HOUR_OPTIONS = [
-	{
-		label: '01',
-		value: '1',
-	},
-	{
-		label: '02',
-		value: '2',
-	},
-	{
-		label: '03',
-		value: '3',
-	},
-	{
-		label: '04',
-		value: '4',
-	},
-	{
-		label: '05',
-		value: '5',
-	},
-	{
-		label: '06',
-		value: '6',
-	},
-	{
-		label: '07',
-		value: '7',
-	},
-	{
-		label: '08',
-		value: '8',
-	},
-	{
-		label: '09',
-		value: '9',
-	},
-	{
-		label: '10',
-		value: '10',
-	},
-	{
-		label: '11',
-		value: '11',
-	},
-	{
-		label: '12',
-		value: '12',
-	},
-];
+export const HOUR_OPTIONS = [ ...Array( 12 ).keys() ].map( ( i ) => ( {
+	label: ( i + 1 ).toString().padStart( 2, '0' ),
+	value: ( i + 1 ).toString(),
+} ) );
+
+export const HOUR_OPTIONS_24 = [ ...Array( 24 ).keys() ].map( ( i ) => ( {
+	label: i.toString().padStart( 2, '0' ) + ':00',
+	value: i.toString(),
+} ) );
 
 export const PERIOD_OPTIONS = [
 	{

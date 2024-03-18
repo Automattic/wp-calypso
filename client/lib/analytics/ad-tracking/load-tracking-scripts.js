@@ -230,10 +230,18 @@ function initFacebook() {
 	// WP Facebook pixel
 	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
 
-	// Jetpack Facebook pixel
-	// Also initialize the FB pixel for Jetpack.
+	// Jetpack & Akismet Facebook pixel
+	// Also initialize the FB pixel for Jetpack & Akismet.
 	// However, disable auto-config for this secondary pixel ID.
 	// See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
-	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
-	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+	if ( isJetpackCheckout() ) {
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+		window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
+	}
+	if ( isAkismetCheckout() ) {
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookAkismetInit );
+		window.fbq( 'init', TRACKING_IDS.facebookAkismetInit, advancedMatching );
+		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
+	}
 }
