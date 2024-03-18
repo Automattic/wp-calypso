@@ -18,6 +18,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -32,6 +33,7 @@ import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { SitesGrid } from 'calypso/sites-dashboard/components/sites-grid';
 import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
@@ -195,6 +197,16 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	}, [ layoutFocus ] );
 
 	return null;
+}
+
+function GlobalSiteSelectorMenu() {
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only && site.is_wpcom_atomic //only show the atomic ones for the demo's sake
+	);
+	return (
+		<SitesGrid isLoading={ isLoading } sites={ allSites } className="global-site-selector-grid" />
+	);
 }
 
 class Layout extends Component {
@@ -403,8 +415,22 @@ class Layout extends Component {
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
+					{ /*
+					 * div structure to support animating openning of the site
+					 * see: https://untanglingcalypsop2.wordpress.com/2024/03/14/proposed-path-forward/
+					 */ }
+					{ ( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible ) && (
+						<div className="layout__global">
+							{ this.props.isGlobalSidebarVisible && this.props.primary }
+							{ this.props.isGlobalSiteSidebarVisible && (
+								<div className="layout__global-inner">
+									<GlobalSiteSelectorMenu />
+								</div>
+							) }
+						</div>
+					) }
 					<div id="primary" className="layout__primary">
-						{ this.props.primary }
+						{ ! this.props.isGlobalSidebarVisible && this.props.primary }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
