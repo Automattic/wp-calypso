@@ -194,7 +194,10 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 		}
 		return true;
 	} )?.args;
-	const dueDate = tosData?.subscription_auto_renew_date;
+	const dueDate =
+		tosData && 'subscription_auto_renew_date' in tosData
+			? tosData.subscription_auto_renew_date
+			: undefined;
 	const dueAmount = tosData?.renewal_price_integer;
 	const renewAmount = tosData?.regular_renewal_price_integer;
 	if ( ! dueDate || ! dueAmount || ! renewAmount ) {

@@ -13,7 +13,7 @@ type CategoryPillNavigationProps = {
 		link: string;
 	}[];
 	list: {
-		name: string;
+		id: string;
 		label?: string;
 		link: string;
 	}[];
@@ -95,10 +95,10 @@ export const CategoryPillNavigation = ( {
 					) }
 					{ list.map( ( category ) => (
 						<LocalizedLink
-							key={ category.name }
+							key={ category.id }
 							href={ category.link }
 							className={ classnames( 'category-pill-navigation__button', {
-								'is-active': category.name === selectedCategory,
+								'is-active': category.id === selectedCategory,
 							} ) }
 						>
 							{ category.label }
