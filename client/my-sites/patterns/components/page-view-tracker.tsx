@@ -14,32 +14,40 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
-	// `PageViewTracker` pushes a new event only when `path` changes, so we track
-	// `calypso_pattern_library_search` to have accurate data on which search terms are used
 	useEffect( () => {
+		const commonProperties = {
+			is_logged_in: isLoggedIn,
+			user_is_dev_account: isDevAccount ? '1' : '0',
+		};
+
 		if ( searchTerm ) {
 			recordTracksEvent( 'calypso_pattern_library_search', {
-				is_logged_in: isLoggedIn ? '1' : '0',
+				...commonProperties,
 				search_term: searchTerm,
-				user_is_dev_account: isDevAccount ? '1' : '0',
 			} );
 		}
-	}, [ isDevAccount, isLoggedIn, searchTerm ] );
+
+		if ( category ) {
+			recordTracksEvent( 'calypso_pattern_library_filter', {
+				...commonProperties,
+				category: category,
+			} );
+		}
+	}, [ category, isDevAccount, isLoggedIn, searchTerm ] );
 
 	let path: string = '';
-	const properties: Record< string, string > = {
-		is_logged_in: isLoggedIn ? '1' : '0',
+	const properties: Record< string, string | boolean > = {
+		is_logged_in: isLoggedIn,
 	};
 
 	if ( ! category ) {
-		path = searchTerm ? '/patterns/:search' : '/patterns';
+		path = '/patterns';
 	} else {
-		path = searchTerm ? '/patterns/:category/:search' : '/patterns/:category';
-		properties.category = category;
+		path = `/patterns/${ category }`;
 	}
 
 	if ( searchTerm ) {
-		properties.search_term = searchTerm;
+		path += '/:search';
 	}
 
 	return <PageViewTracker path={ path } properties={ properties } title="Pattern Library" />;
