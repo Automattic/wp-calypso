@@ -1,7 +1,7 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form.frequency';
-import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form.plugins';
+import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form-frequency';
+import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form-plugins';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
@@ -35,16 +35,15 @@ export const ScheduleForm = ( props: Props ) => {
 	);
 	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
 
+	const serverSyncCallbacks = {
+		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
+	};
+
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
-	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
-		onSuccess: () => onSyncSuccess && onSyncSuccess(),
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
-	} );
-	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
-		onSuccess: () => onSyncSuccess && onSyncSuccess(),
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
-	} );
+	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
 		scheduleForEdit?.args || []
