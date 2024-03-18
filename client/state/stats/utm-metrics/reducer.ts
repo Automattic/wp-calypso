@@ -20,7 +20,16 @@ import {
 import { schema } from './schema';
 import type { Reducer, AnyAction } from 'redux';
 
+const isValidNumber = ( string: string ): boolean => {
+	return ! isNaN( Number( string ) );
+};
+
 const isValidJSON = ( string: string ) => {
+	// Handle the case when the string is a number.
+	if ( isValidNumber( string ) ) {
+		return false;
+	}
+
 	try {
 		JSON.parse( string );
 
