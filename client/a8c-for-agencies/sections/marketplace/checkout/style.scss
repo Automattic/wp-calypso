@@ -9,6 +9,10 @@
 
 .checkout .a4a-layout__body {
 	padding: 0;
+
+	@include break-medium {
+		background: linear-gradient(to right, var(--color-surface) 0%, var(--color-surface) 70%, var(--color-neutral-0) 70%, var(--color-neutral-0) 100%);
+	}
 }
 
 .checkout__container {
@@ -116,4 +120,19 @@
 	align-items: stretch;
 	gap: 16px;
 	text-align: center;
+
+	> .components-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		min-height: 40px;
+		font-weight: 600;
+	}
+
+	> .components-button.is-link {
+		color: var(--color-black);
+		text-decoration: underline;
+		font-weight: 400;
+	}
 }
