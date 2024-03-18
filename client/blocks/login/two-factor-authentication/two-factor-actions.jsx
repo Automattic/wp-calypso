@@ -107,7 +107,7 @@ class TwoFactorActions extends Component {
 					) }
 
 					{ isBackupCodeAvailable && (
-						<Button data-e2e-link="2fa-otp-link" onClick={ this.recordBackupLinkClick }>
+						<Button onClick={ this.recordBackupLinkClick }>
 							{ translate( 'Continue with a backup code' ) }
 						</Button>
 					) }
