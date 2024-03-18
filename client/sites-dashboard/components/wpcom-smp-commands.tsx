@@ -105,11 +105,11 @@ export const useCommandsArrayWpcom = ( {
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 	const dispatch = useDispatch();
 
-	function navigateWithinSamePage(
+	const navigateWithinSamePage = (
 		targetPath: string,
 		elementId: string,
 		commandParams: Pick< CommandCallBackParams, 'close' | 'command' >
-	) {
+	) => {
 		const currentPath = window.location.pathname;
 		const targetUrl = new URL( targetPath, window.location.origin );
 
@@ -124,7 +124,7 @@ export const useCommandsArrayWpcom = ( {
 		} else {
 			commandNavigation( targetUrl.href )( commandParams );
 		}
-	}
+	};
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
 	//temporary patch to not add github deployments to the command palette if feature is not available, will be removed.
