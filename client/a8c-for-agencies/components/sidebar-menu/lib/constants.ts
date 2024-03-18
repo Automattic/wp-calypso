@@ -6,6 +6,7 @@ export const A4A_PLUGINS_LINK = '/plugins';
 export const A4A_MARKETPLACE_LINK = '/marketplace';
 export const A4A_MARKETPLACE_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }/products`;
 export const A4A_MARKETPLACE_HOSTING_LINK = `${ A4A_MARKETPLACE_LINK }/hosting`;
+export const A4A_MARKETPLACE_CHECKOUT_LINK = `${ A4A_MARKETPLACE_LINK }/checkout`;
 export const A4A_MARKETPLACE_ASSIGN_LICENSE_LINK = `${ A4A_MARKETPLACE_LINK }/assign-license`;
 export const A4A_PURCHASES_LINK = '/purchases';
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;

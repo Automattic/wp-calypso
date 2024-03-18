@@ -4,6 +4,7 @@ import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/componen
 import getSites from 'calypso/state/selectors/get-sites';
 import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
+import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
 import ProductsOverview from './products-overview';
 
@@ -21,6 +22,12 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 export const marketplaceHostingContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = <HostingOverview />;
+	next();
+};
+
+export const checkoutContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = <Checkout />;
 	next();
 };
 
