@@ -1,9 +1,14 @@
 import { useContext } from 'react';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import { PluginUpdateManagerContext } from '../context';
 
 export function useSiteHasEligiblePlugins() {
-	const { siteHasEligiblePlugins, siteHasEligiblePluginsLoading } = useContext(
-		PluginUpdateManagerContext
+	const { siteSlug } = useContext( PluginUpdateManagerContext );
+	const { data: plugins = [], isFetched: isPluginsFetched } = useCorePluginsQuery(
+		siteSlug,
+		true,
+		true
 	);
-	return { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading };
+	const siteHasEligiblePlugins = isPluginsFetched && plugins.length > 0;
+	return { siteHasEligiblePlugins, loading: ! isPluginsFetched };
 }
