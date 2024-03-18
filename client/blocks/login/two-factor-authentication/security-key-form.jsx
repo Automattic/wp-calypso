@@ -32,12 +32,10 @@ class SecurityKeyForm extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout( () => this.initiateSecurityKeyAuthentication(), 100 );
+		this.initiateSecurityKeyAuthentication();
 	}
 
-	initiateSecurityKeyAuthentication = ( event ) => {
-		event?.preventDefault();
-
+	initiateSecurityKeyAuthentication = () => {
 		const { onSuccess } = this.props;
 		this.setState( { isAuthenticating: true } );
 		this.props
