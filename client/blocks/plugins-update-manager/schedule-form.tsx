@@ -1,7 +1,7 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form.frequency';
-import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form.plugins';
+import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form-frequency';
+import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form-plugins';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
