@@ -102,7 +102,9 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 					<StatsModulePlaceholder isLoading />
 				</StatsCard>
 			) }
-			{ ! isFetching && ! isAdvancedFeatureEnabled && <StatsModuleUTMOverlay siteId={ siteId } /> }
+			{ ! isFetching && ! isAdvancedFeatureEnabled && (
+				<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
+			) }
 			{ ! isFetching && isAdvancedFeatureEnabled && (
 				<StatsModuleDataQuery
 					data={ data }

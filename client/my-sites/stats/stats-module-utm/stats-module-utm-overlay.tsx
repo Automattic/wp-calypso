@@ -9,9 +9,10 @@ import './stats-module-utm-overlay.scss';
 
 type StatsModuleUTMOverlayProps = {
 	siteId: number;
+	className?: string;
 };
 
-const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId } ) => {
+const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId, className } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) || '' );
 
 	const fakeData = [
@@ -49,7 +50,7 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
 			title="UTM"
-			className={ classNames( 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
+			className={ classNames( className, 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
 			moduleType="utm"
 			data={ fakeData }
 			mainItemLabel="Posts by Source / Medium"
