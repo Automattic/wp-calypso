@@ -99,7 +99,7 @@ export default function createExPlatClientReactHelpers(
 
 		const maybeExperimentAssignment =
 			exPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment( experimentName );
-		return [ !! maybeExperimentAssignment, maybeExperimentAssignment ];
+		return [ ! maybeExperimentAssignment, maybeExperimentAssignment ];
 	};
 
 	const Experiment = ( {
