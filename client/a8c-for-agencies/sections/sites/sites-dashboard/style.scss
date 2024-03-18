@@ -349,7 +349,7 @@
 
 		.sites-overview {
 			width: 400px;
-			flex-shrink: 0;
+			flex: unset;
 			overflow-x: auto;
 			overflow-y: hidden;
 			transition: all 0.2s;
