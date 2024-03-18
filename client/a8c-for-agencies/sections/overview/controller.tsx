@@ -7,7 +7,10 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import ContentSidebar from '../../components/content-sidebar';
 import MainSidebar from '../../components/sidebar-menu/main';
+import OverviewBody from './body';
+import OverviewSidebar from './sidebar';
 
 export const overviewContext: Callback = ( context, next ) => {
 	context.secondary = <MainSidebar path={ context.path } />;
@@ -20,7 +23,7 @@ export const overviewContext: Callback = ( context, next ) => {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<div>test</div>
+				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 		</Layout>
 	);
