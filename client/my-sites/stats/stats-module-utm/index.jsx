@@ -151,6 +151,9 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 };
 
 function ExportButton( { data } ) {
+	// Button set up.
+	const translate = useTranslate();
+	const buttonLabel = translate( 'Download data as CSV' );
 	const shouldDisableExport = data ? false : true;
 	const shouldDrawBorder = true;
 
@@ -207,7 +210,7 @@ function ExportButton( { data } ) {
 			disabled={ shouldDisableExport }
 			borderless={ shouldDrawBorder }
 		>
-			<Gridicon icon="cloud-download" /> Download this data bro!
+			<Gridicon icon="cloud-download" /> { buttonLabel }
 		</Button>
 	);
 }
