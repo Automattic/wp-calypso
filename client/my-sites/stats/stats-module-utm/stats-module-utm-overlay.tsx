@@ -52,6 +52,8 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 			className={ classNames( 'stats-module-utm-overlay', 'stats-module__card', 'utm' ) }
 			moduleType="utm"
 			data={ fakeData }
+			mainItemLabel="Posts by Source / Medium"
+			splitHeader
 			showMore={ {
 				label: 'View all',
 			} }
