@@ -1,4 +1,4 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { formatNumber } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';

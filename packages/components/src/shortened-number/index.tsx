@@ -1,4 +1,4 @@
-import formatNumber from './lib/format-number';
+import { formatNumber } from '@automattic/i18n-utils';
 
 export type ShortenedNumberProps = {
 	value: number | null;

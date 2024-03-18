@@ -50,8 +50,6 @@ export {
 	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
 } from './highlight-cards/weekly-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
-export { default as ShortenedNumber } from './number-formatters';
-export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
@@ -62,6 +60,7 @@ export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
+export { default as ShortenedNumber } from './shortened-number';
 export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
 export { default as ExternalLinkWithTracking } from './external-link/with-tracking';

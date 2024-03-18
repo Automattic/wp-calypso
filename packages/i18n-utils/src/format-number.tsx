@@ -2,15 +2,16 @@ import { memoize } from 'lodash';
 
 const warnOnce = memoize( console.warn ); // eslint-disable-line no-console
 
-export const DEFAULT_LOCALE =
+const DEFAULT_LOCALE =
 	( typeof window === 'undefined' ? null : window.navigator?.language ) ?? 'en-US';
-export const DEFAULT_OPTIONS = {
+
+const DEFAULT_OPTIONS = {
 	compactDisplay: 'short',
 	maximumFractionDigits: 1,
 	notation: 'compact',
 } as Intl.NumberFormatOptions;
 
-export default function formatNumber(
+export function formatNumber(
 	number: number | null,
 	locale = DEFAULT_LOCALE,
 	options = DEFAULT_OPTIONS
