@@ -5,27 +5,37 @@
 .checkout .a4a-layout__body,
 .checkout .a4a-layout__body-wrapper {
 	height: 100%;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
 }
 
 .checkout .a4a-layout__body {
 	padding: 0;
 
-	@include break-medium {
+	@include break-large {
 		background: linear-gradient(to right, var(--color-surface) 0%, var(--color-surface) 70%, var(--color-neutral-0) 70%, var(--color-neutral-0) 100%);
 	}
 }
 
 .checkout__container {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: stretch;
-	height: 100%;
+
+
+	@include break-large {
+		flex-direction: row;
+		height: 100%;
+	}
 
 }
 
 .checkout__main {
 	flex-grow: 1;
-	padding: 64px 64px 0 0;
+
+	@include break-large {
+		padding: 64px 64px 0 0;
+	}
 }
 
 .checkout__main-title {
@@ -42,9 +52,13 @@
 }
 
 .checkout__aside {
-	background: var(--color-neutral-0);
-	padding: 128px 48px;
-	max-width: 443px;
+	padding: 32px 0;
+
+	@include break-large {
+		max-width: 443px;
+		padding: 128px 48px;
+		background: var(--color-neutral-0);
+	}
 }
 
 .checkout__summary {
