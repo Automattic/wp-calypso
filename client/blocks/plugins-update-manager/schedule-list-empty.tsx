@@ -24,7 +24,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 				{ ( () => {
 					if ( ! siteHasEligiblePlugins && canCreateSchedules ) {
 						return translate(
-							'To set up schedules to manage your plugins, first you need to install plugins that are not managed by the plugin provider.'
+							'To set up schedules to update your plugins, first you need to install plugins that are not managed by the plugin provider.'
 						);
 					} else if ( ! canCreateSchedules ) {
 						return translate( 'This site is unable to schedule auto-updates for plugins.' );
