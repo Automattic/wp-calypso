@@ -187,7 +187,9 @@ export const PatternLibrary = ( {
 								isBlock
 								label=""
 								onChange={ ( value ) => {
-									const href = getCategoryUrlPath( category, value as PatternTypeFilter );
+									const href =
+										getCategoryUrlPath( category, value as PatternTypeFilter ) +
+										( isGridView ? '?grid=1' : '' );
 									page( href );
 								} }
 								value={ patternTypeFilter }
