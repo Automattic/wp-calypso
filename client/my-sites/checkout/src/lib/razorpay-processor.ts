@@ -184,8 +184,8 @@ function combineRazorpayOptions(
 
 	debug( 'Constructing Razorpay prefill object using contact details', contactDetails );
 	const prefill = options.prefill ?? {};
-	prefill.contact = prefill.contact ?? contactDetails?.phoneNumber?.replace( '.', '' ) ?? '';
-	prefill.email = prefill.email ?? contactDetails?.email ?? '';
+	prefill.contact = contactDetails?.phoneNumber?.replace( '.', '' ) ?? prefill.contact ?? '';
+	prefill.email = contactDetails?.email ?? prefill.email ?? '';
 	options.prefill = prefill;
 
 	return options;

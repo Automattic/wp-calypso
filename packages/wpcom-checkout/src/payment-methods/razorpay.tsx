@@ -61,25 +61,25 @@ function useSubscribeToEventEmitter( state: RazorpayPaymentMethodState ) {
 function usePrefillState( {
 	state,
 	contactDetails,
+	razorpayConfiguration,
 }: {
 	state: RazorpayPaymentMethodState;
 	contactDetails: PossiblyCompleteDomainContactDetails | null;
+	razorpayConfiguration: RazorpayConfiguration;
 } ): void {
 	// Don't try to pre-fill if the form has been edited. (Also prevents
 	// infinite loops.)
 	if ( state.isTouched ) {
 		return;
 	}
-
-	if ( ! contactDetails ) {
-		return;
-	}
-	if ( contactDetails.phone ) {
-		state.change( 'phoneNumber', contactDetails.phone );
-	}
-	if ( contactDetails.email ) {
-		state.change( 'email', contactDetails.email );
-	}
+	state.change(
+		'phoneNumber',
+		razorpayConfiguration.options.prefill?.contact ?? contactDetails?.phone ?? ''
+	);
+	state.change(
+		'email',
+		razorpayConfiguration.options.prefill?.email ?? contactDetails?.email ?? ''
+	);
 }
 
 export function createRazorpayMethod( {
@@ -107,7 +107,13 @@ export function createRazorpayMethod( {
 				state={ state }
 			/>
 		),
-		activeContent: <RazorpayFields state={ state } contactDetails={ contactDetails } />,
+		activeContent: (
+			<RazorpayFields
+				state={ state }
+				contactDetails={ contactDetails }
+				razorpayConfiguration={ razorpayConfiguration }
+			/>
+		),
 		inactiveContent: <RazorpaySummary />,
 		getAriaLabel: ( __ ) => __( 'Razorpay' ),
 	};
@@ -163,13 +169,15 @@ const RazorpayField = styled( Field )`
 function RazorpayFields( {
 	state,
 	contactDetails,
+	razorpayConfiguration,
 }: {
 	state: RazorpayPaymentMethodState;
 	contactDetails: PossiblyCompleteDomainContactDetails | null;
+	razorpayConfiguration: RazorpayConfiguration;
 } ) {
 	const { __ } = useI18n();
 	useSubscribeToEventEmitter( state );
-	usePrefillState( { state, contactDetails } );
+	usePrefillState( { state, contactDetails, razorpayConfiguration } );
 
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
