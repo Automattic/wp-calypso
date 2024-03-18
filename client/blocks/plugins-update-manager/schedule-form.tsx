@@ -35,16 +35,15 @@ export const ScheduleForm = ( props: Props ) => {
 	);
 	useSetSiteHasEligiblePlugins( plugins, isPluginsFetched );
 
+	const serverSyncCallbacks = {
+		onSuccess: () => onSyncSuccess && onSyncSuccess(),
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
+	};
+
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
-	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, {
-		onSuccess: () => onSyncSuccess && onSyncSuccess(),
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
-	} );
-	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, {
-		onSuccess: () => onSyncSuccess && onSyncSuccess(),
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
-	} );
+	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
 		scheduleForEdit?.args || []
