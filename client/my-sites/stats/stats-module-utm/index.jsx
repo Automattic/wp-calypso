@@ -1,4 +1,5 @@
-import { StatsCard } from '@automattic/components';
+import { Button, Gridicon, StatsCard } from '@automattic/components';
+import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -150,9 +151,65 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 };
 
 function ExportButton( { data } ) {
-	console.log( 'ExportButton: ', data );
+	const shouldDisableExport = data ? false : true;
+	const shouldDrawBorder = true;
 
-	return <p>button goes here</p>;
+	// Turns the working data into a flattened array of objects.
+	// Preserves the original data but updates the label for export.
+	const flattenDataForExport = ( originalData ) => {
+		const newData = [];
+		// Map the array of objects.
+		originalData.forEach( ( row ) => {
+			// Wrap label in quotes and push values.
+			let newLabel = `"${ row.label }"`;
+			newData.push( { label: newLabel, value: row.value } );
+			// Flatten children if present.
+			const children = row?.children;
+			if ( children ) {
+				const newChildren = children.map( ( child ) => {
+					newLabel = `"${ row.label } > ${ child.label }"`;
+					return { ...child, label: newLabel };
+				} );
+				newData.push( ...newChildren );
+			}
+		} );
+		return newData;
+	};
+
+	// Turns the flat array into a CSV string.
+	const prepareDataForDownload = ( flatData ) => {
+		const csvData = flatData
+			.map( ( row ) => {
+				return `${ row.label },${ row.value }`;
+			} )
+			.join( '\n' );
+
+		return csvData;
+	};
+
+	const initiateDownload = ( event ) => {
+		event.preventDefault();
+
+		// TODO: Provide a better default file name.
+		const fileName = 'my-data.csv';
+		const flattenedData = flattenDataForExport( data );
+		const csvData = prepareDataForDownload( flattenedData );
+		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+
+		saveAs( blob, fileName );
+	};
+
+	return (
+		<Button
+			className="stats-download-csv"
+			compact
+			onClick={ initiateDownload }
+			disabled={ shouldDisableExport }
+			borderless={ shouldDrawBorder }
+		>
+			<Gridicon icon="cloud-download" /> Download this data bro!
+		</Button>
+	);
 }
 
 export { StatsModuleUTM as default, StatsModuleUTM, OPTION_KEYS };
