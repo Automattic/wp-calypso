@@ -98,6 +98,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 
 	// Force disable the overlay for now.
 	const showUpgradeOverlay = false;
+	const showFooterWithDownloads = summary === true;
 
 	return (
 		<>
@@ -121,28 +122,37 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 				</StatsCard>
 			) }
 			{ ! isFetching && isAdvancedFeatureEnabled && (
-				<StatsModuleDataQuery
-					data={ data }
-					path="utm"
-					className={ classNames( className, 'stats-module-utm' ) }
-					moduleStrings={ moduleStrings.utm }
-					period={ period }
-					query={ query }
-					isLoading={ isFetching ?? true }
-					hideSummaryLink={ hideSummaryLink }
-					selectedOption={ optionLabels[ selectedOption ] }
-					toggleControl={
-						<UTMDropdown
-							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-							onSelect={ setSelectedOption }
-							selectOptions={ optionLabels }
-							selected={ selectedOption }
-						/>
-					}
-				/>
+				<>
+					<StatsModuleDataQuery
+						data={ data }
+						path="utm"
+						className={ classNames( className, 'stats-module-utm' ) }
+						moduleStrings={ moduleStrings.utm }
+						period={ period }
+						query={ query }
+						isLoading={ isFetching ?? true }
+						hideSummaryLink={ hideSummaryLink }
+						selectedOption={ optionLabels[ selectedOption ] }
+						toggleControl={
+							<UTMDropdown
+								buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+								onSelect={ setSelectedOption }
+								selectOptions={ optionLabels }
+								selected={ selectedOption }
+							/>
+						}
+					/>
+					{ showFooterWithDownloads && <ExportButton data={ data } /> }
+				</>
 			) }
 		</>
 	);
 };
+
+function ExportButton( { data } ) {
+	console.log( 'ExportButton: ', data );
+
+	return <p>button goes here</p>;
+}
 
 export { StatsModuleUTM as default, StatsModuleUTM, OPTION_KEYS };
