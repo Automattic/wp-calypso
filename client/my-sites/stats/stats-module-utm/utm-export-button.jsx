@@ -7,7 +7,6 @@ function UTMExportButton( { data } ) {
 	const translate = useTranslate();
 	const buttonLabel = translate( 'Download data as CSV' );
 	const shouldDisableExport = data && data.length !== 0 ? false : true;
-	const shouldDrawBorder = true;
 
 	// Turns the working data into a flattened array of objects.
 	// Preserves the original data but updates the label for export.
@@ -60,7 +59,7 @@ function UTMExportButton( { data } ) {
 			compact
 			onClick={ initiateDownload }
 			disabled={ shouldDisableExport }
-			borderless={ shouldDrawBorder }
+			borderless={ true }
 		>
 			<Gridicon icon="cloud-download" /> { buttonLabel }
 		</Button>
