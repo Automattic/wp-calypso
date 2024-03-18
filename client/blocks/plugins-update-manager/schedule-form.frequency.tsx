@@ -11,15 +11,11 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import {
-	DAILY_OPTION,
-	DAY_OPTIONS,
-	DEFAULT_HOUR,
-	HOUR_OPTIONS,
-	PERIOD_OPTIONS,
-	WEEKLY_OPTION,
-} from './schedule-form.const';
+import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
+import { useSiteSlug } from './hooks/use-site-slug';
+import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedule-form.const';
 import { prepareTimestamp } from './schedule-form.helper';
+import { ScheduleFormTime } from './schedule-form.time';
 
 type Frequency = 'daily' | 'weekly';
 
@@ -32,9 +28,12 @@ interface Props {
 	onChange?: ( frequency: Frequency, timestamp: number ) => void;
 }
 export function ScheduleFormFrequency( props: Props ) {
+	const siteSlug = useSiteSlug();
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { initTimestamp, initFrequency = 'daily', error, showError, onChange, onTouch } = props;
+	const { isAmPmPhpTimeFormat } = useSiteDateTimeFormat( siteSlug );
+	const isAmPmFormat = isAmPmPhpTimeFormat();
 
 	const initDate = initTimestamp
 		? moment( initTimestamp )
@@ -42,8 +41,8 @@ export function ScheduleFormFrequency( props: Props ) {
 
 	const [ frequency, setFrequency ] = useState< 'daily' | 'weekly' >( initFrequency );
 	const [ day, setDay ] = useState< string >( initDate.weekday().toString() );
-	const [ hour, setHour ] = useState< string >( ( initDate.hour() % 12 ).toString() );
-	const [ period, setPeriod ] = useState< string >( initDate.hours() < 12 ? 'am' : 'pm' );
+	const [ hour, setHour ] = useState< string >( initDate.format( 'h' ) ); // 'h' is for 12-hour format
+	const [ period, setPeriod ] = useState< string >( initDate.format( 'a' ) ); // 'a' is for am/pm
 
 	const [ timestamp, setTimestamp ] = useState( prepareTimestamp( frequency, day, hour, period ) );
 	const [ fieldTouched, setFieldTouched ] = useState( false );
@@ -69,24 +68,15 @@ export function ScheduleFormFrequency( props: Props ) {
 				{ frequency === 'daily' && (
 					<Flex gap={ 6 }>
 						<FlexBlock>
-							<div className="form-field">
-								<div className="time-controls">
-									<SelectControl
-										__next40pxDefaultSize
-										name="hour"
-										value={ hour }
-										options={ HOUR_OPTIONS }
-										onChange={ setHour }
-									/>
-									<SelectControl
-										__next40pxDefaultSize
-										name="period"
-										value={ period }
-										options={ PERIOD_OPTIONS }
-										onChange={ setPeriod }
-									/>
-								</div>
-							</div>
+							<ScheduleFormTime
+								initHour={ hour }
+								initPeriod={ period }
+								isAmPmFormat={ isAmPmFormat }
+								onChange={ ( hour, period ) => {
+									setHour( hour );
+									setPeriod( period );
+								} }
+							/>
 						</FlexBlock>
 					</Flex>
 				) }
@@ -113,24 +103,15 @@ export function ScheduleFormFrequency( props: Props ) {
 							</div>
 						</FlexItem>
 						<FlexBlock>
-							<div className="form-field">
-								<div className="time-controls">
-									<SelectControl
-										__next40pxDefaultSize
-										name="hour"
-										value={ hour }
-										options={ HOUR_OPTIONS }
-										onChange={ setHour }
-									/>
-									<SelectControl
-										__next40pxDefaultSize
-										name="period"
-										value={ period }
-										options={ PERIOD_OPTIONS }
-										onChange={ setPeriod }
-									/>
-								</div>
-							</div>
+							<ScheduleFormTime
+								initHour={ hour }
+								initPeriod={ period }
+								isAmPmFormat={ isAmPmFormat }
+								onChange={ ( hour, period ) => {
+									setHour( hour );
+									setPeriod( period );
+								} }
+							/>
 						</FlexBlock>
 					</Flex>
 				) }
