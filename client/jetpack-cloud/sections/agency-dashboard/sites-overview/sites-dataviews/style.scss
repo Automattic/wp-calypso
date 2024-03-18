@@ -77,6 +77,10 @@
 			vertical-align: middle;
 		}
 
+		td:has(.sites-dataviews__site) {
+			padding: 8px 16px 8px 4px;
+		}
+
 		.site-sort__clickable {
 			cursor: pointer;
 			padding-left: 1rem;
