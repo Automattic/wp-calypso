@@ -43,6 +43,7 @@ export function ThankYouTitanProduct( {
 
 		actions.push(
 			<Button
+				key="inbox"
 				variant="primary"
 				href={ inboxPath }
 				onClick={ () => {
@@ -58,13 +59,17 @@ export function ThankYouTitanProduct( {
 		);
 
 		actions.push(
-			<Button variant="secondary" href={ emailManagementPath }>
+			<Button key="manage-mail" variant="secondary" href={ emailManagementPath }>
 				{ translate( 'Manage email' ) }
 			</Button>
 		);
 	} else {
 		actions.push(
-			<Button href={ getTitanSetUpMailboxPath( siteSlug, domainName ) } variant="primary">
+			<Button
+				key="set-up-mailbox"
+				href={ getTitanSetUpMailboxPath( siteSlug, domainName ) }
+				variant="primary"
+			>
 				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
