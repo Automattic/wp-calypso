@@ -63,6 +63,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 					<Button
 						className="shopping-cart__menu-checkout-button"
 						onClick={ onCheckout }
+						disabled={ ! items.length }
 						variant="primary"
 					>
 						{ translate( 'Checkout' ) }
