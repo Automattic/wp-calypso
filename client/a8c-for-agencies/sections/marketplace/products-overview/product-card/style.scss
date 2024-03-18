@@ -45,10 +45,6 @@ button.product-card__select-button {
 	font-weight: 600;
 	line-height: 1.1;
 	max-height: 36px;
-
-	&.is-primary {
-		background: var(--color-primary-40);
-	}
 }
 
 @mixin product-card-block__details {
