@@ -221,7 +221,7 @@
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
-		"fsevents": "^2.3.2"
+		"fsevents": "^2.3.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
