@@ -22,11 +22,10 @@ class SecurityKeyForm extends Component {
 	};
 
 	componentDidMount() {
-		setTimeout( () => this.initiateSecurityKeyAuthentication(), 100 );
+		this.initiateSecurityKeyAuthentication();
 	}
 
-	initiateSecurityKeyAuthentication = ( event, retryRequest = true ) => {
-		event?.preventDefault();
+	initiateSecurityKeyAuthentication = ( retryRequest = true ) => {
 		this.setState( { isAuthenticating: true, showError: false } );
 
 		this.props.twoStepAuthorization
@@ -37,7 +36,7 @@ class SecurityKeyForm extends Component {
 				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
 					this.props.twoStepAuthorization.fetch( () => {
 						if ( retryRequest ) {
-							this.initiateSecurityKeyAuthentication( event, false );
+							this.initiateSecurityKeyAuthentication( false );
 						} else {
 							// We only retry once, so let's show the original error.
 							this.setState( { isAuthenticating: false, showError: true } );
