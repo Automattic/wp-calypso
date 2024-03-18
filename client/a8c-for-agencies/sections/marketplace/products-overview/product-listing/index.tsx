@@ -4,8 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
-import LicenseMultiProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-multi-product-card';
-import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { getSupportedBundleSizes } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
 import {
 	getIncompatibleProducts,
@@ -15,6 +13,8 @@ import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ShoppingCartContext } from '../../context';
+import MultiProductCard from '../multi-product-card';
+import ProductCard from '../product-card';
 import useSubmitForm from './hooks/use-submit-form';
 import ProductFilterSearch from './product-filter-search';
 import ProductListingSection from './sections';
@@ -227,7 +227,7 @@ export default function ProductListing( {
 	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
 		return products.map( ( productOption ) =>
 			Array.isArray( productOption ) ? (
-				<LicenseMultiProductCard
+				<MultiProductCard
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
@@ -248,8 +248,7 @@ export default function ProductListing( {
 					quantity={ quantity }
 				/>
 			) : (
-				<LicenseProductCard
-					isMultiSelect
+				<ProductCard
 					key={ productOption.slug }
 					product={ productOption }
 					onSelectProduct={ onSelectProduct }
