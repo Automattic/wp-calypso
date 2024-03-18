@@ -39,7 +39,6 @@ export const ScheduleListEmpty = ( props: Props ) => {
 					return (
 						<Button
 							__next40pxDefaultSize
-							icon={ plus }
 							variant={ canCreateSchedules ? 'primary' : 'secondary' }
 							onClick={ () => {
 								window.location.href = managePluginsUrl;
