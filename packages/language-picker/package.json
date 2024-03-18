@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@automattic/languages": "workspace:^",
 		"@automattic/search": "workspace:^",
-		"@babel/runtime": "^7.23.9",
+		"@babel/runtime": "^7.24.0",
 		"@wordpress/base-styles": "^4.44.0",
 		"@wordpress/components": "^27.1.0",
 		"@wordpress/i18n": "^4.53.0",
