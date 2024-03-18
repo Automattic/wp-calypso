@@ -8,6 +8,7 @@ import creditCardPlaceholderImage from 'calypso/assets/images/upgrades/cc-placeh
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
+import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
@@ -108,6 +109,7 @@ const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	visa: creditCardVisaImage,
 	paypal_express: payPalImage,
 	paypal: payPalImage,
+	razorpay: razorpayImage,
 };
 
 const CREDIT_CARD_DEFAULT_PATH = creditCardPlaceholderImage;
