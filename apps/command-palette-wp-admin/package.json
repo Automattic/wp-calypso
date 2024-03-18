@@ -42,7 +42,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.3.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^5.4.0",
 		"gettext-parser": "^6.0.0",
 		"lodash": "^4.17.21",
 		"mkdirp": "^1.0.4",

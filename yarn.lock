@@ -147,7 +147,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.3.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.4.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     classnames: "npm:^2.3.2"
@@ -278,7 +278,7 @@ __metadata:
     "@babel/core": "npm:^7.23.9"
     "@types/webpack-env": "npm:^1.18.4"
     "@wordpress/browserslist-config": "npm:^5.36.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.3.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.4.0"
     autoprefixer: "npm:^10.2.5"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.8.2"
@@ -554,7 +554,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^9.23.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.3.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.4.0"
     "@wordpress/dom-ready": "npm:^3.53.0"
     "@wordpress/i18n": "npm:^4.53.0"
     calypso: "workspace:^"
@@ -1382,7 +1382,7 @@ __metadata:
     "@wordpress/icons": "npm:^9.44.0"
     "@wordpress/is-shallow-equal": "npm:^4.53.0"
     "@wordpress/primitives": "npm:^3.51.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.35.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.36.0"
     classnames: "npm:^2.3.2"
     lodash: "npm:^4.17.21"
     moment: "npm:^2.26.0"
@@ -1438,7 +1438,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^4.44.0"
     "@wordpress/data": "npm:^9.23.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.3.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.4.0"
     "@wordpress/icons": "npm:^9.44.0"
     autoprefixer: "npm:^10.2.5"
     babel-jest: "npm:^29.6.1"
@@ -2064,7 +2064,7 @@ __metadata:
     "@wordpress/components": "npm:^27.1.0"
     "@wordpress/compose": "npm:^6.30.0"
     "@wordpress/data": "npm:^9.23.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.3.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.4.0"
     "@wordpress/dom-ready": "npm:^3.53.0"
     "@wordpress/edit-post": "npm:^7.30.0"
     "@wordpress/edit-site": "npm:^5.30.0"
@@ -2169,7 +2169,7 @@ __metadata:
     "@wordpress/data": "npm:^9.23.0"
     "@wordpress/data-controls": "npm:^3.22.0"
     "@wordpress/date": "npm:^4.53.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.3.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.4.0"
     "@wordpress/dom-ready": "npm:^3.53.0"
     "@wordpress/edit-post": "npm:^7.30.0"
     "@wordpress/element": "npm:^5.30.0"
@@ -2188,7 +2188,7 @@ __metadata:
     "@wordpress/plugins": "npm:^6.21.0"
     "@wordpress/primitives": "npm:^3.51.0"
     "@wordpress/private-apis": "npm:^0.35.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.35.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.36.0"
     "@wordpress/rich-text": "npm:^6.30.0"
     "@wordpress/server-side-render": "npm:^4.30.0"
     "@wordpress/url": "npm:^3.54.0"
@@ -9411,14 +9411,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dependency-extraction-webpack-plugin@npm:5.3.0":
-  version: 5.3.0
-  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:5.3.0"
+"@wordpress/dependency-extraction-webpack-plugin@npm:5.4.0":
+  version: 5.4.0
+  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:5.4.0"
   dependencies:
     json2php: "npm:^0.0.7"
   peerDependencies:
     webpack: ^5.0.0
-  checksum: a95e305a468e155234c9086aff84ee2665d78a8d0113ba081697e2a1989ff4254a6f74015530a7ecc3b1b2e6d6b30e74f0e05fd4e1bf89a67c08dccffcd37b6d
+  checksum: f5bc3d952b4dc6a7b9defe4d484d36c7a52231c86d867591fc77c6d0edaf9cac7086475f79e3d62816d144bd10c662d4bd5b371e620966c14a402eec170f6d41
   languageName: node
   linkType: hard
 
@@ -10010,12 +10010,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/readable-js-assets-webpack-plugin@npm:2.35.0":
-  version: 2.35.0
-  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:2.35.0"
+"@wordpress/readable-js-assets-webpack-plugin@npm:2.36.0":
+  version: 2.36.0
+  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:2.36.0"
   peerDependencies:
     webpack: ^4.8.3 || ^5.0.0
-  checksum: 0536018675bffe5c7d178666c1af13070fcfc2de1dd47bb11df201b22c4540a5a54ee39b7b9366fb02b6bdc0b6f1253a430d319f8c70a21e50e4d89ae1dde824
+  checksum: fc41ef4aabbac9b0aab5e5fafebae48fa35ef10c85a1a7780ff32d5f4ec98f9f5932582d0210526d1eb8e10b2e65c976952928ae61b8dc78b2537a99d766f7fc
   languageName: node
   linkType: hard
 
@@ -18522,7 +18522,7 @@ __metadata:
     "@wordpress/data": "npm:^9.23.0"
     "@wordpress/element": "npm:^5.30.0"
     "@wordpress/i18n": "npm:^4.53.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.35.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.36.0"
     classnames: "npm:^2.3.2"
     copy-webpack-plugin: "npm:^10.2.4"
     glob: "npm:^7.1.6"
