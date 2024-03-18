@@ -10,6 +10,7 @@ import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCommandsParams } from './commands/types';
 import useSingleSiteCommands from './commands/use-single-site-commands';
+import { CommandMenuGroupContextProvider, useCommandMenuGroupContext } from './context';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
 	Command as PaletteCommand,
@@ -20,7 +21,7 @@ import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
 
-interface CommandMenuGroupProps
+export interface CommandMenuGroupProps
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
 	currentSiteId: number | null;
 	search: string;
@@ -96,22 +97,23 @@ const StyledCommandsFooter = styled.div( {
 	color: 'var(--studio-gray-50)',
 } );
 
-export function CommandMenuGroup( {
-	currentSiteId,
-	search,
-	close,
-	setSearch,
-	setPlaceholderOverride,
-	selectedCommandName,
-	setSelectedCommandName,
-	setFooterMessage,
-	setEmptyListNotice,
-	navigate,
-	useCommands,
-	currentRoute,
-	useSites,
-	userCapabilities,
-}: CommandMenuGroupProps ) {
+export function CommandMenuGroup() {
+	const {
+		currentSiteId,
+		search,
+		close,
+		setSearch,
+		setPlaceholderOverride,
+		selectedCommandName,
+		setSelectedCommandName,
+		setFooterMessage,
+		setEmptyListNotice,
+		navigate,
+		useCommands,
+		currentRoute,
+		useSites,
+		userCapabilities,
+	} = useCommandMenuGroupContext();
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
 		selectedCommandName,
@@ -188,19 +190,11 @@ export function CommandMenuGroup( {
 
 interface CommandInputProps {
 	isOpen: boolean;
-	search: string;
-	setSearch: ( search: string ) => void;
-	selectedCommandName: string;
 	placeholder?: string;
 }
 
-function CommandInput( {
-	isOpen,
-	search,
-	setSearch,
-	placeholder,
-	selectedCommandName,
-}: CommandInputProps ) {
+function CommandInput( { isOpen, placeholder }: CommandInputProps ) {
+	const { search, setSearch, selectedCommandName } = useCommandMenuGroupContext();
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
@@ -373,71 +367,67 @@ const CommandPalette = ( {
 	};
 
 	return (
-		<Modal
-			className="commands-command-menu"
-			overlayClassName="commands-command-menu__overlay"
-			onRequestClose={ closeAndReset }
-			__experimentalHideHeader
+		<CommandMenuGroupContextProvider
+			currentSiteId={ currentSiteId }
+			search={ search }
+			close={ ( commandName, isExecuted ) => {
+				close( commandName, isExecuted );
+				reset();
+			} }
+			setSearch={ setSearch }
+			setPlaceholderOverride={ setPlaceholderOverride }
+			selectedCommandName={ selectedCommandName }
+			setSelectedCommandName={ setSelectedCommandName }
+			setFooterMessage={ setFooterMessage }
+			setEmptyListNotice={ setEmptyListNotice }
+			navigate={ navigate }
+			useCommands={ useCommands }
+			currentRoute={ currentRoute }
+			useSites={ useSites }
+			userCapabilities={ userCapabilities }
 		>
-			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command
-					label={ __( 'Command palette', __i18n_text_domain__ ) }
-					onKeyDown={ onKeyDown }
-					filter={ commandFilter }
-				>
-					<div className="commands-command-menu__header">
-						{ selectedCommandName ? (
-							<BackButton
-								type="button"
-								onClick={ () => goBackToRootCommands( false ) }
-								aria-label={ __( 'Go back to the previous screen', __i18n_text_domain__ ) }
-							>
-								<Icon icon={ backIcon } />
-							</BackButton>
-						) : (
-							<Icon icon={ inputIcon } />
-						) }
-						<CommandInput
-							selectedCommandName={ selectedCommandName }
-							search={ search }
-							setSearch={ setSearch }
-							isOpen={ isOpen }
-							placeholder={ placeHolderOverride }
-						/>
-					</div>
-					<Command.List ref={ commandListRef }>
-						<StyledCommandsEmpty>
-							<NotFoundMessage
-								selectedCommandName={ selectedCommandName }
-								search={ search }
-								emptyListNotice={ emptyListNotice }
-								currentRoute={ currentRoute }
-							/>
-						</StyledCommandsEmpty>
-						<CommandMenuGroup
-							currentSiteId={ currentSiteId }
-							search={ search }
-							close={ ( commandName, isExecuted ) => {
-								close( commandName, isExecuted );
-								reset();
-							} }
-							setSearch={ setSearch }
-							setPlaceholderOverride={ setPlaceholderOverride }
-							selectedCommandName={ selectedCommandName }
-							setSelectedCommandName={ setSelectedCommandName }
-							setFooterMessage={ setFooterMessage }
-							setEmptyListNotice={ setEmptyListNotice }
-							navigate={ navigate }
-							useCommands={ useCommands }
-							currentRoute={ currentRoute }
-							useSites={ useSites }
-							userCapabilities={ userCapabilities }
-						/>
-					</Command.List>
-				</Command>
-				{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
-			</StyledCommandsMenuContainer>
-		</Modal>
+			<Modal
+				className="commands-command-menu"
+				overlayClassName="commands-command-menu__overlay"
+				onRequestClose={ closeAndReset }
+				__experimentalHideHeader
+			>
+				<StyledCommandsMenuContainer className="commands-command-menu__container">
+					<Command
+						label={ __( 'Command palette', __i18n_text_domain__ ) }
+						onKeyDown={ onKeyDown }
+						filter={ commandFilter }
+					>
+						<div className="commands-command-menu__header">
+							{ selectedCommandName ? (
+								<BackButton
+									type="button"
+									onClick={ () => goBackToRootCommands( false ) }
+									aria-label={ __( 'Go back to the previous screen', __i18n_text_domain__ ) }
+								>
+									<Icon icon={ backIcon } />
+								</BackButton>
+							) : (
+								<Icon icon={ inputIcon } />
+							) }
+							<CommandInput isOpen={ isOpen } placeholder={ placeHolderOverride } />
+						</div>
+						<Command.List ref={ commandListRef }>
+							<StyledCommandsEmpty>
+								<NotFoundMessage
+									selectedCommandName={ selectedCommandName }
+									search={ search }
+									emptyListNotice={ emptyListNotice }
+									currentRoute={ currentRoute }
+								/>
+							</StyledCommandsEmpty>
+							<CommandMenuGroup />
+						</Command.List>
+					</Command>
+					{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
+				</StyledCommandsMenuContainer>
+			</Modal>
+		</CommandMenuGroupContextProvider>
 	);
 };
 
