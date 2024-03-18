@@ -711,7 +711,6 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
-		wpcom_admin_interface: 'calypso',
 		admin_url: '',
 	};
 
@@ -733,7 +732,6 @@ const getFormSettings = ( settings ) => {
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
-		wpcom_admin_interface: settings.wpcom_admin_interface ?? 'calypso',
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
