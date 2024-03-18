@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -20,9 +20,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
-jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
@@ -31,8 +29,6 @@ jest.mock( 'calypso/components/happiness-support', () => () => (
 	<div data-testid="happiness-support" />
 ) );
 jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wordpress-logo" /> );
-jest.mock( '../premium-plan-details', () => () => 'premium-plan-details' );
-jest.mock( '../business-plan-details', () => () => <div data-testid="business-plan-details" /> );
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
 jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 	<div data-testid="component--plan-only-thank-you" />
@@ -95,74 +91,6 @@ describe( 'CheckoutThankYou', () => {
 			expect( screen.getByTestId( 'wordpress-logo' ) ).toBeVisible();
 		} );
 	} );
-
-	describe( 'Simplified page', () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [ { productSlug: PLAN_BUSINESS }, [] ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_BUSINESS,
-		};
-
-		test( 'Should display a full version when isSimplified is missing', () => {
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } />
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'business-plan-details' ) ).toBeVisible();
-			expect( screen.queryByTestId( 'happiness-support' ) ).toBeVisible();
-			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
-				expect.objectContaining( { isSimplified: undefined } ),
-				expect.anything()
-			);
-		} );
-
-		test( 'Should display a simplified version when isSimplified is set to true', () => {
-			render(
-				<Provider store={ store }>
-					<CheckoutThankYou { ...props } isSimplified />
-				</Provider>
-			);
-			expect( screen.queryByTestId( 'business-plan-details' ) ).not.toBeInTheDocument();
-			expect( screen.queryByTestId( 'happiness-support' ) ).not.toBeInTheDocument();
-			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
-				expect.objectContaining( { isSimplified: true } ),
-				expect.anything()
-			);
-		} );
-
-		test( 'Should pass props down to CheckoutThankYou', () => {
-			render(
-				<CheckoutThankYou
-					{ ...props }
-					isSimplified={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
-					upgradeIntent="plugins"
-				/>
-			);
-			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					siteUnlaunchedBeforeUpgrade: true,
-					upgradeIntent: 'plugins',
-				} ),
-				expect.anything()
-			);
-		} );
-	} );
-
 	it( 'renders the failed purchases content if there are failed purchases', async () => {
 		const props = {
 			...defaultProps,
@@ -193,7 +121,7 @@ describe( 'CheckoutThankYou', () => {
 		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {
+	it( 'renders the <PlanOnlyThankYou> component if the purchases include a Jetpack plan', async () => {
 		const props = {
 			...defaultProps,
 			receiptId: 12,
@@ -219,7 +147,7 @@ describe( 'CheckoutThankYou', () => {
 			</Provider>
 		);
 
-		expect( await screen.findByText( 'component--jetpack-plan-details' ) ).toBeInTheDocument();
+		expect( await screen.getByTestId( 'component--plan-only-thank-you' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the <PlanOnlyThankYou> component if the purchases include a Personal plan', async () => {

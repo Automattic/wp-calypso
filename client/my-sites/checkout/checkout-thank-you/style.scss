@@ -663,6 +663,15 @@
 	}
 }
 
+.is-section-checkout-thank-you {
+	background: var(--studio-white);
+
+	.layout__content {
+		padding-right: 0;
+		padding-left: 0;
+	}
+}
+
 .is-section-checkout-pending .empty-content__title,
 .is-section-checkout-thank-you .empty-content__title {
 	font-size: $font-title-small;

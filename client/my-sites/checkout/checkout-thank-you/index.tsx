@@ -1,23 +1,15 @@
 import {
-	isBlogger,
-	isBusiness,
 	isChargeback,
 	isCredits,
 	isDelayedDomainTransfer,
-	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
-	isP2Plus,
-	isPersonal,
 	isPlan,
-	isPremium,
-	isPro,
 	isSiteRedirect,
 	isStarter,
 	isThemePurchase,
@@ -77,33 +69,22 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import BloggerPlanDetails from './blogger-plan-details';
-import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
-import DomainMappingDetails from './domain-mapping-details';
-import DomainRegistrationDetails from './domain-registration-details';
-import DomainThankYou from './domains/domain-thank-you';
-import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import JetpackPlanDetails from './jetpack-plan-details';
-import PersonalPlanDetails from './personal-plan-details';
-import PremiumPlanDetails from './premium-plan-details';
-import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import SiteRedirectDetails from './site-redirect-details';
-import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
 	getDomainPurchase,
-	getDomainPurchaseTypeAndPredicate,
 	isBulkDomainTransfer,
 	isDomainOnly,
 	isSearch,
@@ -113,7 +94,6 @@ import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 import type { UserData } from 'calypso/lib/user/user';
-import type { DomainThankYouType } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
 
@@ -520,41 +500,24 @@ export class CheckoutThankYou extends Component<
 	};
 
 	render() {
-		const { translate, email, domainOnlySiteFlow, receiptId, selectedFeature } = this.props;
+		const { translate, email, receiptId, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! this.props.isSimplified;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
-		let wasDomainProduct = false;
-		let wasGSuiteOrGoogleWorkspace = false;
 		let wasTitanEmailOnlyProduct = false;
-		let wasTitanEmailProduct = false;
-		let wasDomainOnly = false;
 		let wasBulkDomainTransfer = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
-			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
-			wasDomainProduct = purchases.some(
-				( purchase ) =>
-					isDomainMapping( purchase ) ||
-					isDomainTransfer( purchase ) ||
-					isDomainRegistration( purchase )
-			);
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
-			wasDomainOnly =
-				domainOnlySiteFlow &&
-				purchases.every(
-					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
-				);
 			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
 		}
 
@@ -586,7 +549,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-		if ( isRefactoredForThankYouV2( this.props ) ) {
+		if ( purchases.length > 0 && isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
@@ -636,12 +599,13 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
+			} else {
+				pageContent = <GenericThankYou purchases={ purchases } emailAddress={ email } />;
 			}
 
 			if ( pageContent ) {
 				const siteId = this.props.selectedSite?.ID;
 				const siteSlug = this.props.selectedSite?.slug;
-
 				return (
 					<Main className="checkout-thank-you is-redesign-v2">
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
@@ -681,32 +645,6 @@ export class CheckoutThankYou extends Component<
 					<PlanThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainProduct && ! wasBulkDomainTransfer ) {
-			const [ purchaseType, predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
-			const [ domainPurchase, domainName ] = findPurchaseAndDomain( purchases, predicate );
-
-			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
-				predicate,
-				purchases
-			);
-
-			const emailFallback = email ? email : this.props.user?.email ?? '';
-			const siteSlug = this.props.domainOnlySiteFlow ? domainName : this.props.selectedSiteSlug;
-			const domains = purchases.filter( predicate ).map( ( purchase ) => purchase?.meta );
-
-			return (
-				<DomainThankYou
-					domain={ domainName ?? '' }
-					domains={ domains }
-					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
-					hasProfessionalEmail={ wasTitanEmailProduct }
-					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }
-					selectedSiteSlug={ siteSlug ?? '' }
-					isDomainOnly={ this.props.domainOnlySiteFlow }
-					selectedSiteId={ this.props.domainOnlySiteFlow ? domainPurchase?.blogId : undefined }
-					type={ purchaseType as DomainThankYouType }
-				/>
-			);
 		}
 
 		if (
@@ -733,20 +671,6 @@ export class CheckoutThankYou extends Component<
 				) }
 			</Main>
 		);
-	}
-
-	getProfessionalEmailPurchaseFromPurchases(
-		purchaseTypePredicate: FindPredicate,
-		purchases: ReceiptPurchase[]
-	) {
-		const titanMailPurchases = purchases.filter(
-			( product ) => isTitanMail( product ) && purchaseTypePredicate( product )
-		);
-		if ( titanMailPurchases.length > 0 ) {
-			return titanMailPurchases[ 0 ];
-		}
-
-		return null;
 	}
 
 	startTransfer = ( event: { preventDefault: () => void } ) => {
@@ -784,67 +708,12 @@ export class CheckoutThankYou extends Component<
 			return [ 'failed-purchase-details' ];
 		}
 
-		// Check if it is the bulk domain transfer flow
-		if ( isBulkDomainTransfer( purchases ) ) {
-			return [
-				'domain-transfer-details',
-				...findPurchaseAndDomain( purchases, isDomainRegistration ),
-			];
-		}
-
-		if ( purchases.some( isJetpackPlan ) ) {
-			return [ 'jetpack-plan-details', purchases.find( isJetpackPlan ) ];
-		}
-		if ( purchases.some( isBlogger ) ) {
-			return [ 'blogger-plan-details', purchases.find( isBlogger ) ];
-		}
-		if ( purchases.some( isPersonal ) ) {
-			return [ 'personal-plan-details', purchases.find( isPersonal ) ];
-		}
-		if ( purchases.some( isStarter ) ) {
-			return [ 'starter-plan-details', purchases.find( isStarter ) ];
-		}
-		if ( purchases.some( isPremium ) ) {
-			return [ 'premium-plan-details', purchases.find( isPremium ) ];
-		}
-		if ( purchases.some( isBusiness ) ) {
-			return [ 'business-plan-details', purchases.find( isBusiness ) ];
-		}
-		if ( purchases.some( isPro ) ) {
-			return [ 'pro-plan-details', purchases.find( isPro ) ];
-		}
-		if ( purchases.some( isEcommerce ) ) {
-			return [ 'ecommerce-plan-details', purchases.find( isEcommerce ) ];
-		}
-		if ( purchases.some( isDomainRegistration ) ) {
-			return [
-				'domain-registration-details',
-				...findPurchaseAndDomain( purchases, isDomainRegistration ),
-			];
-		}
-		if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
-			return [
-				'google-apps-details',
-				...findPurchaseAndDomain( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace ),
-			];
-		}
-		if ( purchases.some( isDomainMapping ) ) {
-			return [ 'domain-mapping-details', ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
-		}
 		if ( purchases.some( isSiteRedirect ) ) {
 			return [ 'site-redirect-details', ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
 		}
-		if ( purchases.some( isDomainTransfer ) ) {
-			return [ false, ...findPurchaseAndDomain( purchases, isDomainTransfer ) ];
-		}
-		if ( purchases.some( isTitanMail ) ) {
-			return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
-		}
+
 		if ( purchases.some( isChargeback ) ) {
 			return [ 'chargeback-details', purchases.find( isChargeback ) ];
-		}
-		if ( purchases.some( isP2Plus ) ) {
-			return [ 'p2-plus-details', purchases.find( isP2Plus ) ];
 		}
 
 		return [];
@@ -999,117 +868,19 @@ function PurchaseDetailsWrapper(
 	const purchases = getPurchases( props );
 	const failedPurchases = getFailedPurchases( props );
 	const hasFailedPurchases = failedPurchases.length > 0;
-	const [ component, primaryPurchase, domain ] = props.componentAndPrimaryPurchaseAndDomain;
-	const primaryPurchaseSupportUrl = primaryPurchase?.registrarSupportUrl ?? null;
-	const isGenericReceipt = ! props.receiptId;
-	const registrarSupportUrl =
-		! component || isGenericReceipt || hasFailedPurchases ? null : primaryPurchaseSupportUrl;
-	const isRootDomainWithUs = primaryPurchase?.isRootDomainWithUs ?? false;
+	const [ domain ] = props.componentAndPrimaryPurchaseAndDomain;
 
 	if ( hasFailedPurchases ) {
 		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
 	}
 
-	if ( purchases.some( isJetpackPlan ) ) {
-		return (
-			<JetpackPlanDetails
-				customizeUrl={ props.customizeUrl }
-				domain={ domain }
-				purchases={ purchases }
-				failedPurchases={ failedPurchases }
-				isRootDomainWithUs={ isRootDomainWithUs }
-				registrarSupportUrl={ registrarSupportUrl }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isBlogger ) ) {
-		return (
-			<BloggerPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isPersonal ) ) {
-		return (
-			<PersonalPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isStarter ) ) {
-		return (
-			<StarterPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isPremium ) && props.selectedSite ) {
-		return (
-			<PremiumPlanDetails
-				customizeUrl={ props.customizeUrl }
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isBusiness ) && props.selectedSite ) {
-		return (
-			<BusinessPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isPro ) && props.selectedSite ) {
-		return (
-			<ProPlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isEcommerce ) && props.selectedSite ) {
-		return (
-			<EcommercePlanDetails
-				purchases={ purchases }
-				selectedSite={ props.selectedSite }
-				selectedFeature={ getFeatureByKey( props.selectedFeature ) }
-				sitePlans={ props.sitePlans }
-			/>
-		);
-	}
-	if ( purchases.some( isDomainRegistration ) && domain && props.selectedSite ) {
-		return (
-			<DomainRegistrationDetails
-				purchases={ purchases }
-				domain={ domain }
-				selectedSite={ props.selectedSite }
-			/>
-		);
-	}
-	if ( purchases.some( isDomainMapping ) ) {
-		return <DomainMappingDetails domain={ domain } isRootDomainWithUs={ isRootDomainWithUs } />;
-	}
 	if ( purchases.some( isSiteRedirect ) && domain && props.selectedSite ) {
 		return <SiteRedirectDetails domain={ domain } selectedSite={ props.selectedSite } />;
 	}
+
 	if ( purchases.some( isChargeback ) && props.selectedSite ) {
 		return <ChargebackDetails selectedSite={ props.selectedSite } />;
 	}
+
 	return null;
 }
