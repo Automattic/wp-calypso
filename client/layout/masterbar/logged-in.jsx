@@ -675,6 +675,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderPopupSearch() }
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
+							{ config.isEnabled( 'layout/dotcom-nav-redesign' ) && this.renderMenu() }
 							{ this.renderMySites() }
 							{ this.renderReader( false ) }
 							{ this.renderLanguageSwitcher() }
@@ -684,7 +685,7 @@ class MasterbarLoggedIn extends Component {
 							{ this.renderCart() }
 							{ this.renderNotifications() }
 							{ loadHelpCenterIcon && this.renderHelpCenter() }
-							{ this.renderMenu() }
+							{ ! config.isEnabled( 'layout/dotcom-nav-redesign' ) && this.renderMenu() }
 						</div>
 					</Masterbar>
 				</>
