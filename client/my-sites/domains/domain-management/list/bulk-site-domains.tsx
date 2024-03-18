@@ -99,7 +99,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<PrimaryDomainSelector
 					domains={ data?.domains }
 					site={ site }
-					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					onSetPrimaryDomain={ async (
 						domain: string,
 						onComplete: () => void,

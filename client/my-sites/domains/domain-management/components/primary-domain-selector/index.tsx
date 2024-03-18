@@ -8,13 +8,15 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useSelector } from 'calypso/state';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import type { DomainData, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 type PrimaryDomainSelectorProps = {
 	domains: undefined | DomainData[];
-	userCanSetPrimaryDomains: boolean;
 	site: undefined | null | SiteDetails;
 	onSetPrimaryDomain: ( domain: string, onComplete: () => void, type: string ) => void;
 };
@@ -22,7 +24,6 @@ type PrimaryDomainSelectorProps = {
 const PrimaryDomainSelector = ( {
 	domains,
 	site,
-	userCanSetPrimaryDomains,
 	onSetPrimaryDomain,
 }: PrimaryDomainSelectorProps ) => {
 	const [ selectedDomain, setSelectedDomain ] = useState< undefined | string >( undefined );
@@ -30,6 +31,10 @@ const PrimaryDomainSelector = ( {
 	const [ isSettingPrimaryDomain, setIsSettingPrimaryDomain ] = useState< boolean >( false );
 
 	const translate = useTranslate();
+
+	const primaryWithPlanOnly = useSelector( ( state ) =>
+		currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	);
 
 	useEffect( () => {
 		if ( domains?.length ) {
@@ -47,16 +52,16 @@ const PrimaryDomainSelector = ( {
 	}
 
 	const isOnFreePlan = site?.plan?.is_free ?? false;
+	const canUserSetPrimaryDomainOnThisSite = ! ( primaryWithPlanOnly && isOnFreePlan );
 
 	const shouldUpgradeToMakeDomainPrimary = ( domain: DomainData ): boolean => {
 		return (
-			! userCanSetPrimaryDomains &&
-			isOnFreePlan &&
+			! canUserSetPrimaryDomainOnThisSite &&
 			( domain.type === 'registered' || domain.type === 'mapping' ) &&
 			! domain.current_user_can_create_site_from_domain_only &&
 			! domain.wpcom_domain &&
 			! domain.is_wpcom_staging_domain &&
-			( site?.plan?.features.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false )
+			( site?.plan?.features?.active.includes( FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ) ?? false )
 		);
 	};
 
@@ -100,11 +105,15 @@ const PrimaryDomainSelector = ( {
 		onSetPrimaryDomain( selectedDomain, () => setIsSettingPrimaryDomain( false ), domain.type );
 	};
 
-	const trackUpgradeClick = () => {
+	const trackUpgradeClick = ( isPlanUpgrade: boolean = false ) => {
 		recordTracksEvent( 'calypso_primary_site_address_nudge_cta_click', {
-			cta_name: 'add_custom_domain',
+			cta_name: isPlanUpgrade ? 'buy_a_plan' : 'add_custom_domain',
 		} );
 	};
+
+	if ( validPrimaryDomains.length > 0 && ! selectedDomain ) {
+		setSelectedDomain( validPrimaryDomains[ 0 ].domain );
+	}
 
 	return (
 		<FormFieldset className="domains-set-primary-address">
@@ -122,38 +131,58 @@ const PrimaryDomainSelector = ( {
 							},
 						}
 					) }{ ' ' }
-					{ validPrimaryDomains.length > 1
-						? translate(
-								'You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
-										),
-									},
-								}
-						  )
-						: translate(
-								'Before you can change the primary site address you have to add a new custom domain. Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}} or {{mapDomainLink}}map{{/mapDomainLink}} a domain you already own.',
-								{
-									components: {
-										domainSearchLink: (
-											<a
-												href={ '/domains/add/use-my-domain/' + primaryDomain }
-												onClick={ trackUpgradeClick }
-											/>
-										),
-										mapDomainLink: (
-											<a href={ '/domains/add/' + primaryDomain } onClick={ trackUpgradeClick } />
-										),
-									},
-								}
-						  ) }
+					{ ! canUserSetPrimaryDomainOnThisSite &&
+						translate(
+							"Your site plan doesn't allow to set a custom domain as a primary site address. {{planUpgradeLink}}Upgrade your plan{{/planUpgradeLink}}.",
+							{
+								components: {
+									planUpgradeLink: (
+										<a
+											href={ '/plans/' + primaryDomain }
+											onClick={ () => trackUpgradeClick( true ) }
+										/>
+									),
+								},
+							}
+						) }
+					{ validPrimaryDomains.length > 1 &&
+						canUserSetPrimaryDomainOnThisSite &&
+						translate(
+							'You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink supportContext="primary-site-address" showIcon={ false } />
+									),
+								},
+							}
+						) }
+					{ validPrimaryDomains.length < 1 &&
+						canUserSetPrimaryDomainOnThisSite &&
+						translate(
+							'Before changing your primary site address you must {{domainSearchLink}}register{{/domainSearchLink}} or {{mapDomainLink}}connect{{/mapDomainLink}} a new custom domain.',
+							{
+								components: {
+									domainSearchLink: (
+										<a
+											href={ '/domains/add/use-my-domain/' + primaryDomain }
+											onClick={ () => trackUpgradeClick( false ) }
+										/>
+									),
+									mapDomainLink: (
+										<a
+											href={ '/domains/add/' + primaryDomain }
+											onClick={ () => trackUpgradeClick( false ) }
+										/>
+									),
+								},
+							}
+						) }
 				</FormSettingExplanation>
 				{ validPrimaryDomains.length > 1 && (
 					<>
 						<FormSelect
-							disabled={ isSettingPrimaryDomain }
+							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
 							id="primary-domain-selector"
 							onChange={ onSelectChange }
 							value={ selectedDomain }
@@ -169,7 +198,7 @@ const PrimaryDomainSelector = ( {
 							className="domains-set-primary-address__submit"
 							primary
 							busy={ isSettingPrimaryDomain }
-							disabled={ isSettingPrimaryDomain }
+							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
 							onClick={ onSubmit }
 						>
 							{ translate( 'Set as primary site address' ) }
