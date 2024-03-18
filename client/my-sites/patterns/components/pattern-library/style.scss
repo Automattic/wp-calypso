@@ -71,13 +71,8 @@
 
 	.pattern-library__toggle-option--list-view,
 	.pattern-library__toggle-option--grid-view {
-		min-width: 34px;
 		padding: 0 8px;
 		color: var(--studio-black);
-
-		div {
-			font-size: 0;
-		}
 
 		&[aria-checked="true"] {
 			color: var(--studio-white);

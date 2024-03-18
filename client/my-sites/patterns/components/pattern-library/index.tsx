@@ -118,7 +118,7 @@ export const PatternLibrary = ( {
 			category.pagePatternCount === 0 ? PatternTypeFilter.REGULAR : patternTypeFilter;
 
 		return {
-			name: category.name,
+			id: category.name,
 			label: category.label,
 			link:
 				getCategoryUrlPath( category.name, patternTypeFilterFallback, false ) +
