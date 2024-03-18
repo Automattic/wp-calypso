@@ -31,7 +31,6 @@ import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-a
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
 import {
@@ -49,6 +48,7 @@ import {
 	getProductsByBillingSlug,
 	getProductsList,
 	getMarketplaceProducts,
+	getProductBillingSlugByThemeId,
 } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -603,7 +603,10 @@ async function addExternalManagedThemeToCart(
 	callback,
 	providedDependencies
 ) {
-	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
+	const products = getProductsByBillingSlug(
+		state,
+		getProductBillingSlugByThemeId( state, themeId )
+	);
 
 	if ( undefined === products || products.length === 0 ) {
 		// @TODO What kind of logging should we add here? For now it just bails the code.
