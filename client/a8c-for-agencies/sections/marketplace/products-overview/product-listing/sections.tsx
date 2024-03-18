@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { ReactNode } from 'react';
 
 type Props = {
+	icon: ReactNode;
 	title: string;
 	description: string;
 	children: ReactNode;
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export default function ProductListingSection( {
+	icon,
 	title,
 	description,
 	children,
@@ -17,8 +19,8 @@ export default function ProductListingSection( {
 	return (
 		<div className={ classNames( 'product-listing__section', { 'is-two-columns': isTwoColumns } ) }>
 			<h2 className="product-listing__section-title">
+				{ icon }
 				<span>{ title }</span>
-				<hr />
 			</h2>
 			<p className="product-listing__section-description">{ description }</p>
 

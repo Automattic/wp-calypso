@@ -1,4 +1,5 @@
 // FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
+import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -283,7 +284,8 @@ export default function ProductListing( {
 
 			{ plans.length > 0 && (
 				<ProductListingSection
-					title={ translate( 'Plans' ) }
+					icon={ <JetpackLogo size={ 26 } /> }
+					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
@@ -295,7 +297,8 @@ export default function ProductListing( {
 
 			{ products.length > 0 && (
 				<ProductListingSection
-					title={ translate( 'Products' ) }
+					icon={ <JetpackLogo size={ 26 } /> }
+					title={ translate( 'Jetpack Products' ) }
 					description={ translate(
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
@@ -306,6 +309,7 @@ export default function ProductListing( {
 
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
+					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
 						'You must have WooCommerce installed to utilize these paid extensions.'
@@ -317,7 +321,8 @@ export default function ProductListing( {
 
 			{ backupAddons.length > 0 && (
 				<ProductListingSection
-					title={ translate( 'VaultPress Backup Add-ons' ) }
+					icon={ <JetpackLogo size={ 26 } /> }
+					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
 					description={ translate(
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
