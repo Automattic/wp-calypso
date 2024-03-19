@@ -280,9 +280,7 @@ export default function CampaignItemDetails( props: Props ) {
 			  );
 
 	const shouldShowStats =
-		! is_evergreen &&
-		!! ui_status &&
-		! [ 'created', 'rejected', 'scheduled' ].includes( ui_status );
+		!! ui_status && ! [ 'created', 'rejected', 'scheduled' ].includes( ui_status );
 
 	const buttons = [
 		{
