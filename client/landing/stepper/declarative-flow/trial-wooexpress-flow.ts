@@ -61,6 +61,8 @@ const wooexpress: Flow = {
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const profilerData = queryParams.get( 'profilerdata' );
+		const aff = queryParams.get( 'aff' );
+		const vendorId = queryParams.get( 'vid' );
 
 		if ( profilerData ) {
 			try {
@@ -78,12 +80,21 @@ const wooexpress: Flow = {
 				...Object.fromEntries( queryParams ),
 			} );
 
-			const logInUrl = login( {
+			let logInUrl = login( {
 				locale,
 				redirectTo,
 				oauth2ClientId: queryParams.get( 'client_id' ) || undefined,
 			} );
 
+			if ( aff ) {
+				logInUrl = addQueryArgs( logInUrl, { aff } );
+			}
+
+			if ( vendorId ) {
+				logInUrl = addQueryArgs( logInUrl, {
+					vid: vendorId,
+				} );
+			}
 			return logInUrl;
 		};
 
