@@ -602,6 +602,8 @@ export interface ResponseCartProductExtra {
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	receipt_for_domain?: number;
+	domain_registration_agreement_url?: string;
+	legal_agreements?: never[] | Record< string, string >;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
