@@ -17,17 +17,27 @@ export const useUpdateScheduleQuery = (
 	siteSlug: SiteSlug,
 	isEligibleForFeature: boolean
 ): UseQueryResult< ScheduleUpdates[] > => {
+	const select = ( data: ScheduleUpdates[] ) => {
+		return data.sort( ( a, b ) => {
+			if ( a.timestamp === undefined || b.timestamp === undefined ) {
+				return 0;
+			}
+			// Sort other objects based on timestamp
+			return a.timestamp - b.timestamp;
+		} );
+	};
+
 	return useQuery( {
 		queryKey: [ 'schedule-updates', siteSlug ],
 		queryFn: () =>
-			wpcomRequest< { [ key: string ]: Partial< ScheduleUpdates > } >( {
+			wpcomRequest< { [ key: string ]: ScheduleUpdates } >( {
 				path: `/sites/${ siteSlug }/update-schedules`,
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 			} ).then( ( response ) =>
 				Object.keys( response ).map( ( id ) => ( {
-					id,
 					...response[ id ],
+					id,
 				} ) )
 			),
 		meta: {
@@ -36,13 +46,6 @@ export const useUpdateScheduleQuery = (
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
 		refetchOnWindowFocus: false,
-		select: ( data: ScheduleUpdates[] ) =>
-			data.sort( ( a, b ) => {
-				if ( a.timestamp === undefined || b.timestamp === undefined ) {
-					return 0;
-				}
-				// Sort other objects based on timestamp
-				return a.timestamp - b.timestamp;
-			} ),
+		select,
 	} );
 };
