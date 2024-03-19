@@ -88,6 +88,39 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		( allDomains || [] ).length > 1 &&
 		[ ...new Set( ( allDomains || [] ).map( ( domain ) => domain.blog_id ) ) ].length > 1;
 
+	const onSetPrimaryDomain = async (
+		domain: string,
+		onComplete: () => void,
+		type: string
+	): Promise< void > => {
+		if ( site ) {
+			dispatch(
+				recordGoogleEvent(
+					'Domain Management',
+					'Changed Primary Domain in Site Domains',
+					'Domain Name',
+					domain
+				)
+			);
+			dispatch(
+				recordTracksEvent( 'calypso_domain_management_settings_change_primary_domain_dropdown', {
+					section: type,
+					mode: 'dropdown',
+				} )
+			);
+			try {
+				await dispatch( setPrimaryDomain( site.ID, domain ) );
+				dispatch( showUpdatePrimaryDomainSuccessNotice( domain ) );
+				page.replace( domainManagementList( domain ) );
+				await refetch();
+			} catch ( error ) {
+				dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
+			} finally {
+				onComplete();
+			}
+		}
+	};
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
@@ -99,41 +132,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<PrimaryDomainSelector
 					domains={ data?.domains }
 					site={ site }
-					onSetPrimaryDomain={ async (
-						domain: string,
-						onComplete: () => void,
-						type: string
-					): Promise< void > => {
-						if ( site ) {
-							dispatch(
-								recordGoogleEvent(
-									'Domain Management',
-									'Changed Primary Domain in Site Domains',
-									'Domain Name',
-									domain
-								)
-							);
-							dispatch(
-								recordTracksEvent(
-									'calypso_domain_management_settings_change_primary_domain_dropdown',
-									{
-										section: type,
-										mode: 'dropdown',
-									}
-								)
-							);
-							try {
-								await dispatch( setPrimaryDomain( site.ID, domain ) );
-								dispatch( showUpdatePrimaryDomainSuccessNotice( domain ) );
-								page.replace( domainManagementList( domain ) );
-								await refetch();
-							} catch ( error ) {
-								dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
-							} finally {
-								onComplete();
-							}
-						}
-					} }
+					onSetPrimaryDomain={ onSetPrimaryDomain }
 				/>
 				<DomainsTable
 					isLoadingDomains={ isLoading }

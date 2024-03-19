@@ -43,6 +43,7 @@ const PrimaryDomainSelector = ( {
 			} );
 			if ( primary ) {
 				setPrimaryDomain( primary.domain );
+				setSelectedDomain( undefined );
 			}
 		}
 	}, [ domains ] );
@@ -69,15 +70,12 @@ const PrimaryDomainSelector = ( {
 		return (
 			domain.can_set_as_primary &&
 			! domain.aftermarket_auction &&
-			domain.points_to_wpcom &&
 			! shouldUpgradeToMakeDomainPrimary( domain ) &&
 			! domain.primary_domain
 		);
 	} );
 
-	const hasWpcomStagingDomain = validPrimaryDomains.find(
-		( domain ) => domain.is_wpcom_staging_domain
-	);
+	const hasWpcomStagingDomain = domains.find( ( domain ) => domain.is_wpcom_staging_domain );
 
 	if ( hasWpcomStagingDomain ) {
 		validPrimaryDomains = validPrimaryDomains.filter( ( domain ) => {
@@ -102,7 +100,14 @@ const PrimaryDomainSelector = ( {
 		}
 
 		setIsSettingPrimaryDomain( true );
-		onSetPrimaryDomain( selectedDomain, () => setIsSettingPrimaryDomain( false ), domain.type );
+		onSetPrimaryDomain(
+			selectedDomain,
+			() => {
+				setIsSettingPrimaryDomain( false );
+				setSelectedDomain( undefined );
+			},
+			domain.type
+		);
 	};
 
 	const trackUpgradeClick = ( isPlanUpgrade: boolean = false ) => {
