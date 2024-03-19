@@ -1,6 +1,46 @@
 import { FC, PropsWithChildren, createContext, useContext } from 'react';
-import { CommandCallBackParams } from './use-command-palette';
+import { useCommandsParams } from './commands/types';
+import { Command as PaletteCommand, CommandCallBackParams } from './use-command-palette';
 import { CommandPaletteProps } from '.';
+import type { SiteExcerptData } from '@automattic/sites';
+
+export interface CommandPaletteContext {
+	currentRoute: string | null;
+	currentSiteId: number | null;
+	isOpenGlobal?: boolean;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	onClose?: () => void;
+	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+	useSites?: () => SiteExcerptData[];
+}
+
+const CommandPaletteContext = createContext< CommandPaletteContext | undefined >( undefined );
+
+export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPaletteContext > > = ( {
+	children,
+	currentRoute,
+	currentSiteId,
+	navigate,
+	useCommands,
+	userCapabilities,
+	useSites,
+} ) => {
+	return (
+		<CommandPaletteContext.Provider
+			value={ {
+				currentRoute,
+				currentSiteId,
+				navigate,
+				useCommands,
+				userCapabilities,
+				useSites,
+			} }
+		>
+			{ children }
+		</CommandPaletteContext.Provider>
+	);
+};
 
 export interface CommandMenuGroupContext
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' >,
