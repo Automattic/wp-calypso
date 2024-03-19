@@ -54,7 +54,7 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 		path = `/patterns/${ category }`;
 	}
 
-	if ( searchTerm ) {
+	if ( debouncedSeachTerm ) {
 		path += '/:search';
 	}
 

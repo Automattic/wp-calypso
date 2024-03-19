@@ -113,7 +113,6 @@ export const PatternLibrary = ( {
 			<PatternsHeader
 				description="Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster."
 				initialSearchTerm={ searchTerm }
-				key={ searchFormKey }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
