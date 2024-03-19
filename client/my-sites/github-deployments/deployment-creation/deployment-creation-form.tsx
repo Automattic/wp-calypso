@@ -85,8 +85,15 @@ export const GitHubDeploymentCreationForm = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const reduxDispatch = useDispatch();
 	const { createDeployment } = useCreateCodeDeployment( siteId, {
-		onSuccess: () => {
+		onSuccess: ( data ) => {
 			reduxDispatch( successNotice( __( 'Deployment created.' ), noticeOptions ) );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
+					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
+					is_automated: data?.is_automated,
+					workflow_path: data?.workflow_path,
+				} )
+			);
 			onConnected();
 		},
 		onError: ( error ) => {
@@ -103,16 +110,6 @@ export const GitHubDeploymentCreationForm = ( {
 						...noticeOptions,
 					}
 				)
-			);
-		},
-		onSettled: ( data, error ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
-					connected: ! error,
-					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
-					is_automated: data?.is_automated,
-					workflow_path: data?.workflow_path,
-				} )
 			);
 		},
 	} );
