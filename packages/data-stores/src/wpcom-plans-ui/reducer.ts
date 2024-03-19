@@ -20,8 +20,8 @@ const selectedStorageOptionForPlans: Reducer<
 	WpcomPlansUIAction
 > = ( state, action ) => {
 	if ( action.type === 'WPCOM_PLANS_UI_SET_SELECTED_STORAGE_OPTION_FOR_PLAN' ) {
-		// @ts-expect-error TS is unhappy if we index by a null or undefined value. We, however
-		// expect siteId to be null here before site creation ( like during onboarding ).
+		// @ts-expect-error TS is unhappy if we index an object by a null or an undefined value. We, however,
+		// expect siteId to be null or undefined here before site creation ( Ex. during onboarding ).
 		return { ...state, [ action.siteId ]: { [ action.planSlug ]: action.addOnSlug } };
 	}
 	return state;
