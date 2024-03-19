@@ -36,5 +36,13 @@ export const useUpdateScheduleQuery = (
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
 		refetchOnWindowFocus: false,
+		select: ( data: ScheduleUpdates[] ) =>
+			data.sort( ( a, b ) => {
+				if ( a.timestamp === undefined || b.timestamp === undefined ) {
+					return 0;
+				}
+				// Sort other objects based on timestamp
+				return a.timestamp - b.timestamp;
+			} ),
 	} );
 };
