@@ -131,9 +131,10 @@ export const useCommandsArrayWpcom = ( {
 				} );
 			}
 		} else {
-			commandNavigation( targetUrl.href )( commandParams );
+			commandNavigation( targetPath )( commandParams );
 		}
 	};
+
 	const { setEdgeCache } = useSetEdgeCacheMutation();
 	//temporary patch to not add github deployments to the command palette if feature is not available, will be removed.
 	const selectedSiteId = useSelector( getSelectedSiteId );
