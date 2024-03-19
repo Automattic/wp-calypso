@@ -12,7 +12,7 @@ import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
-import { Icon } from '@wordpress/icons';
+import { Icon, chevronRightSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -37,7 +37,6 @@ import { sortPlans } from '../../lib/sort-plan-properties';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
-import DropdownIcon from '../icons/dropdown';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
@@ -259,12 +258,6 @@ const RowTitleCell = styled.div< {
 const PlanSelector = styled.header`
 	position: relative;
 
-	.plan-comparison-grid__title {
-		.gridicon {
-			margin-inline-start: 6px;
-		}
-	}
-
 	.plan-comparison-grid__title-select {
 		appearance: none;
 		-moz-appearance: none;
@@ -284,6 +277,24 @@ const PlanSelector = styled.header`
 
 		&:focus ~ .plan-comparison-grid__title {
 			outline: thin dotted;
+		}
+	}
+
+	.plan-comparison-grid__title--is-select-trigger {
+		display: flex;
+	}
+
+	.plan-comparison-grid__title-icon {
+		position: relative;
+		top: -2px;
+		left: -2px;
+		width: 1px;
+		height: 1px;
+		overflow: visible;
+
+		svg {
+			fill: var( --color-link );
+			transform: rotate( 90deg );
 		}
 	}
 `;
@@ -435,13 +446,18 @@ const ComparisonGridHeaderCell = ( {
 						} ) }
 					</select>
 				) }
-				<h4 className="plan-comparison-grid__title">
-					<span>{ gridPlan.planTitle }</span>
-					<Icon
-						icon={ DropdownIcon }
-						size={ 26 }
-						visibility={ showPlanSelect ? 'visible' : 'hidden' }
-					/>
+				<h4
+					className={ classNames(
+						'plan-comparison-grid__title',
+						showPlanSelect && 'plan-comparison-grid__title--is-select-trigger'
+					) }
+				>
+					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
+					{ showPlanSelect && (
+						<span className="plan-comparison-grid__title-icon">
+							<Icon icon={ chevronRightSmall } size={ 30 } />
+						</span>
+					) }
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
