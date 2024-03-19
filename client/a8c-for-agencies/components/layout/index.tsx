@@ -1,7 +1,8 @@
 import classNames from 'classnames';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import LayoutColumn from './column';
 
 import './style.scss';
 
@@ -24,6 +25,13 @@ export default function Layout( {
 	compact,
 	sidebarNavigation,
 }: Props ) {
+	const hasLayoutColumns = React.Children.toArray( children ).some(
+		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
+	);
+	const layoutContainerClassname = hasLayoutColumns
+		? 'a4a-layout-with-columns__container'
+         : 'a4a-layout__container';
+
 	return (
 		<Main
 			className={ classNames( 'a4a-layout', className, {
@@ -36,7 +44,7 @@ export default function Layout( {
 			<DocumentHead title={ title } />
 			{ sidebarNavigation }
 
-			<div className="a4a-layout__container">{ children }</div>
+			<div className={ layoutContainerClassname }>{ children }</div>
 		</Main>
 	);
 }

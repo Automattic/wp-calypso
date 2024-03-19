@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
@@ -166,66 +167,66 @@ export default function SitesDashboard() {
 	return (
 		<Layout
 			title="Sites"
-			className="sites-dashboard"
+			className={ classNames(
+				'sites-dashboard',
+				'sites-dashboard__layout',
+				! sitesViewState.selectedSite && 'preview-hidden'
+			) }
 			wide
 			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<div
-				className={ classNames(
-					'sites-dashboard__layout',
-					! sitesViewState.selectedSite && 'preview-hidden'
-				) }
-			>
-				<div className="sites-overview">
-					<LayoutTop withNavigation>
-						<LayoutHeader>
-							<Title>{ translate( 'Sites' ) }</Title>
-							<Actions>
-								{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
-								<SiteTopHeaderButtons />
-							</Actions>
-						</LayoutHeader>
-						<LayoutNavigation { ...selectedItemProps }>
-							<NavigationTabs { ...selectedItemProps } items={ navItems } />
-						</LayoutNavigation>
-					</LayoutTop>
+			<LayoutColumn className="sites-overview" wide>
+				<LayoutTop withNavigation>
+					<LayoutHeader>
+						<Title>{ translate( 'Sites' ) }</Title>
+						<Actions>
+							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
+							<SiteTopHeaderButtons />
+						</Actions>
+					</LayoutHeader>
+					<LayoutNavigation { ...selectedItemProps }>
+						<NavigationTabs { ...selectedItemProps } items={ navItems } />
+					</LayoutNavigation>
+				</LayoutTop>
 
-					<DashboardDataContext.Provider
-						value={ {
-							verifiedContacts: {
-								emails: verifiedContacts?.emails ?? [],
-								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-								refetchIfFailed: () => {
-									if ( fetchContactFailed ) {
-										refetchContacts();
-									}
-									return;
-								},
+				<DashboardDataContext.Provider
+					value={ {
+						verifiedContacts: {
+							emails: verifiedContacts?.emails ?? [],
+							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+							refetchIfFailed: () => {
+								if ( fetchContactFailed ) {
+									refetchContacts();
+								}
+								return;
 							},
-							products: products ?? [],
-							isLargeScreen: isLargeScreen || false,
-						} }
-					>
-						<SitesDataViews
-							className="sites-overview__content"
-							data={ data }
-							isLoading={ isLoading }
-							isLargeScreen={ isLargeScreen || false }
-							onSitesViewChange={ onSitesViewChange }
-							sitesViewState={ sitesViewState }
-						/>
-					</DashboardDataContext.Provider>
-				</div>
-				{ sitesViewState.selectedSite && (
+						},
+						products: products ?? [],
+						isLargeScreen: isLargeScreen || false,
+					} }
+				>
+					<SitesDataViews
+						className="sites-overview__content"
+						data={ data }
+						isLoading={ isLoading }
+						isLargeScreen={ isLargeScreen || false }
+						onSitesViewChange={ onSitesViewChange }
+						sitesViewState={ sitesViewState }
+					/>
+				</DashboardDataContext.Provider>
+			</LayoutColumn>
+
+			{ sitesViewState.selectedSite && (
+				<LayoutColumn wide>
 					<JetpackPreviewPane
 						site={ sitesViewState.selectedSite }
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }
 					/>
-				) }
-			</div>
+				</LayoutColumn>
+			) }
 		</Layout>
 	);
 }
