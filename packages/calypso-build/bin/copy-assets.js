@@ -52,6 +52,13 @@ const copyAssets = ( args ) => () => {
 	}
 };
 
+const resolveShortPath = ( filePath ) => {
+	if ( filePath.includes( 'wp-calypso' ) ) {
+		return filePath.split( 'wp-calypso/' )[ 1 ];
+	}
+	return filePath;
+};
+
 const isWatched = process.argv.some( ( arg ) => arg.includes( '--watch' ) );
 const copyAssetsFn = copyAssets( process.argv );
 let debounceTimeout;
@@ -64,14 +71,18 @@ if ( ! isWatched ) {
 		ignored: [ `${ dir }/**/test/**`, outputDirESM, outputDirCJS ],
 		persistent: true,
 	} );
-	console.log( `Copy assets is watching for change in ${ dir }` );
-	console.log( 'Watching for changes in the following files:' );
-	watchedFiles.forEach( ( file ) => console.log( `${ file }` ) );
+	console.log(
+		`Copy assets is watching for changes in package ${ resolveShortPath(
+			dir
+		) } for the following file paths \n`
+	);
+	watchedFiles.forEach( ( file ) => console.log( `👀 ==> ${ resolveShortPath( file ) }` ) );
 	watcher.on( 'change', ( changedPath ) => {
 		clearTimeout( debounceTimeout );
 		debounceTimeout = setTimeout( () => {
-			const [ , shortPath ] = changedPath.split( 'wp-calypso/' );
-			console.log( `File ${ shortPath } has been changed, triggering copy assets` );
+			console.log(
+				`File ${ resolveShortPath( changedPath ) } has been changed, triggering copy assets`
+			);
 			copyAssetsFn();
 		}, 500 );
 	} );
