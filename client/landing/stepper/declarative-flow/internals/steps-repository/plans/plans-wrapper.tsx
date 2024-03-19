@@ -23,6 +23,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router';
+import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -82,6 +83,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const site = useSite();
 	const siteId = site?.ID;
+	const currentPath = window.location.pathname + window.location.search;
+
+	useSaveHostingFlowPathStep( flowName, currentPath );
 
 	useEffect( () => {
 		if ( ! selectedSiteId && siteId ) {
