@@ -6,9 +6,20 @@ import './style.scss';
 
 export const PatternGalleryServer: PatternGalleryFC = ( { isGridView, patterns = [] } ) => {
 	return (
-		<div className={ classNames( 'pattern-gallery', { 'pattern-gallery--grid': isGridView } ) }>
+		<div
+			className={ classNames( 'pattern-gallery', {
+				'pattern-gallery--grid': isGridView,
+			} ) }
+		>
 			{ patterns?.map( ( pattern ) => (
-				<PatternPreviewPlaceholder key={ pattern.ID } pattern={ pattern } />
+				<PatternPreviewPlaceholder
+					className={ classNames( {
+						'pattern-preview--grid': isGridView,
+						'pattern-preview--list': ! isGridView,
+					} ) }
+					key={ pattern.ID }
+					pattern={ pattern }
+				/>
 			) ) }
 		</div>
 	);
