@@ -15,25 +15,26 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
 	useEffect( () => {
-		const commonProperties = {
-			is_logged_in: isLoggedIn,
-			user_is_dev_account: isDevAccount ? '1' : '0',
-		};
+		if ( category ) {
+			recordTracksEvent( 'calypso_pattern_library_filter', {
+				category,
+				is_logged_in: isLoggedIn,
+				user_is_dev_account: isDevAccount ? '1' : '0',
+			} );
+		}
+	}, [ category, isDevAccount, isLoggedIn ] );
 
+	useEffect( () => {
 		if ( searchTerm ) {
 			recordTracksEvent( 'calypso_pattern_library_search', {
-				...commonProperties,
+				category,
+				is_logged_in: isLoggedIn,
+				user_is_dev_account: isDevAccount ? '1' : '0',
 				search_term: searchTerm,
 			} );
 		}
-
-		if ( category ) {
-			recordTracksEvent( 'calypso_pattern_library_filter', {
-				...commonProperties,
-				category,
-			} );
-		}
-	}, [ category, isDevAccount, isLoggedIn, searchTerm ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isDevAccount, isLoggedIn, searchTerm ] );
 
 	let path: string = '';
 	const properties: Record< string, string | boolean > = {
