@@ -14,7 +14,7 @@ export interface DomainRegistrationHstsProps {
 	cart: ResponseCart;
 }
 
-export interface DomainRegistrationConnectedHstsProps {
+interface DomainRegistrationConnectedHstsProps {
 	productsList: Record< string, ProductListItem >;
 }
 
