@@ -46,6 +46,7 @@ export default function SitesDashboard() {
 	const {
 		selectedSiteUrl,
 		selectedSiteFeature,
+		setSelectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 	} = useContext( SitesDashboardContext );
@@ -164,8 +165,10 @@ export default function SitesDashboard() {
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			// We reset the feature to its default upon closing, instead of setting it to undefined. This way, when users switch sites while a site is selected, the feature remains consistent.
+			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
 		}
-	}, [ sitesViewState, setSitesViewState ] );
+	}, [ sitesViewState, setSelectedSiteFeature ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
