@@ -7,6 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -15,6 +16,7 @@ const UpsellNudgeNotice = () => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 
 	const getWpcomUpgradeNudge = () => {
 		const titleText = translate(
@@ -68,7 +70,7 @@ const UpsellNudgeNotice = () => {
 		);
 	};
 
-	return isJetpack ? getJetpackMigrateNudge() : getWpcomUpgradeNudge();
+	return isJetpack && ! isAtomic ? getJetpackMigrateNudge() : getWpcomUpgradeNudge();
 };
 
 export default UpsellNudgeNotice;
