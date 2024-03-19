@@ -42,7 +42,7 @@
 		"new-github-issue-url": "^0.2.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"redux": "^4.2.1"
+		"redux": "^5.0.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",

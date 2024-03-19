@@ -51,7 +51,7 @@
 	"peerDependencies": {
 		"@wordpress/data": "^9.23.0",
 		"react": "^18.2.0",
-		"redux": "^4.2.1"
+		"redux": "^5.0.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

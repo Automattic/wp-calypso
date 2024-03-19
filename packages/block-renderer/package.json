@@ -49,7 +49,7 @@
 		"@wordpress/element": "^5.30.0",
 		"@wordpress/i18n": "^4.53.0",
 		"debug": "^4.3.3",
-		"redux": "^4.2.1"
+		"redux": "^5.0.1"
 	},
 	"private": true
 }
