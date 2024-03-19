@@ -33,6 +33,9 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 				search_term: searchTerm,
 			} );
 		}
+
+		// We want to avoid resubmitting the `calypso_pattern_library_search` event whenever
+		// `category` changes, which is why we deliberately don't include it in the dependency array
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isDevAccount, isLoggedIn, searchTerm ] );
 
