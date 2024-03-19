@@ -17,6 +17,7 @@ import {
 	useCommandPalette,
 } from './use-command-palette';
 import type { SiteExcerptData } from '@automattic/sites';
+import './style.scss';
 import '@wordpress/commands/build-style/style.css';
 
 interface CommandMenuGroupProps

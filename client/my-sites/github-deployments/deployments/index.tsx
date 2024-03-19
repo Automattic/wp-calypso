@@ -4,6 +4,7 @@ import ActionPanel from 'calypso/components/action-panel';
 import HeaderCake from 'calypso/components/header-cake';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { GitHubDeploymentSurvey } from '../components/deployments-survey';
 import { GitHubLoadingPlaceholder } from '../components/loading-placeholder';
 import { PageShell } from '../components/page-shell';
 import { GitHubDeploymentCreationForm } from '../deployment-creation/deployment-creation-form';
@@ -23,7 +24,12 @@ export function GitHubDeployments() {
 
 	const renderContent = () => {
 		if ( deployments?.length ) {
-			return <GitHubDeploymentsList deployments={ deployments } />;
+			return (
+				<>
+					<GitHubDeploymentsList deployments={ deployments } />
+					<GitHubDeploymentSurvey />
+				</>
+			);
 		}
 
 		if ( isLoading ) {

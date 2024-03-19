@@ -16,6 +16,7 @@ import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedule
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
@@ -31,6 +32,8 @@ export const ScheduleList = ( props: Props ) => {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 	const { isEligibleForFeature, loading: isEligibleForFeatureLoading } = useIsEligibleForFeature();
+	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
+		useSiteHasEligiblePlugins();
 
 	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
@@ -38,7 +41,7 @@ export const ScheduleList = ( props: Props ) => {
 
 	const {
 		data: schedules = [],
-		isLoading,
+		isLoading: isLoadingSchedules,
 		isFetched,
 		refetch,
 	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
@@ -52,8 +55,15 @@ export const ScheduleList = ( props: Props ) => {
 		isEligibleForFeature
 	);
 
+	const isLoading =
+		isLoadingSchedules ||
+		isLoadingCanCreateSchedules ||
+		isEligibleForFeatureLoading ||
+		siteHasEligiblePluginsLoading;
+
 	const showScheduleListEmpty =
 		( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
+		( ! siteHasEligiblePlugins && ! siteHasEligiblePluginsLoading ) ||
 		( isFetched &&
 			! isLoadingCanCreateSchedules &&
 			( schedules.length === 0 || ! canCreateSchedules ) );
@@ -100,10 +110,8 @@ export const ScheduleList = ( props: Props ) => {
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
-					{ ( isLoading || isLoadingCanCreateSchedules || isEligibleForFeatureLoading ) && (
-						<Spinner />
-					) }
-					{ showScheduleListEmpty && (
+					{ isLoading && <Spinner /> }
+					{ ! isLoading && showScheduleListEmpty && (
 						<ScheduleListEmpty
 							onCreateNewSchedule={ onCreateNewSchedule }
 							canCreateSchedules={ canCreateSchedules }
@@ -111,6 +119,7 @@ export const ScheduleList = ( props: Props ) => {
 					) }
 					{ isFetched &&
 						! isLoadingCanCreateSchedules &&
+						siteHasEligiblePlugins &&
 						schedules.length > 0 &&
 						canCreateSchedules && (
 							<>
