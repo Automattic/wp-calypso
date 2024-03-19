@@ -11,6 +11,7 @@ import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 import UTMDropdown from './stats-module-utm-dropdown';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
+import UTMExportButton from './utm-export-button';
 
 const OPTION_KEYS = {
 	SOURCE_MEDIUM: 'utm_source,utm_medium',
@@ -91,6 +92,8 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		},
 	};
 
+	const showFooterWithDownloads = summary === true;
+
 	return (
 		<>
 			{ isFetching && (
@@ -106,25 +109,32 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 				<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
 			) }
 			{ ! isFetching && isAdvancedFeatureEnabled && (
-				<StatsModuleDataQuery
-					data={ data }
-					path="utm"
-					className={ classNames( className, 'stats-module-utm' ) }
-					moduleStrings={ moduleStrings.utm }
-					period={ period }
-					query={ query }
-					isLoading={ isFetching ?? true }
-					hideSummaryLink={ hideSummaryLink }
-					selectedOption={ optionLabels[ selectedOption ] }
-					toggleControl={
-						<UTMDropdown
-							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-							onSelect={ setSelectedOption }
-							selectOptions={ optionLabels }
-							selected={ selectedOption }
-						/>
-					}
-				/>
+				<>
+					<StatsModuleDataQuery
+						data={ data }
+						path="utm"
+						className={ classNames( className, 'stats-module-utm' ) }
+						moduleStrings={ moduleStrings.utm }
+						period={ period }
+						query={ query }
+						isLoading={ isFetching ?? true }
+						hideSummaryLink={ hideSummaryLink }
+						selectedOption={ optionLabels[ selectedOption ] }
+						toggleControl={
+							<UTMDropdown
+								buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+								onSelect={ setSelectedOption }
+								selectOptions={ optionLabels }
+								selected={ selectedOption }
+							/>
+						}
+					/>
+					{ showFooterWithDownloads && (
+						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+							<UTMExportButton data={ data } />
+						</div>
+					) }
+				</>
 			) }
 		</>
 	);
