@@ -10,31 +10,16 @@ import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCommandsParams } from './commands/types';
 import useSingleSiteCommands from './commands/use-single-site-commands';
-import { CommandMenuGroupContextProvider, useCommandMenuGroupContext } from './context';
-import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
-	Command as PaletteCommand,
-	CommandCallBackParams,
-	useCommandPalette,
-} from './use-command-palette';
+	CommandMenuGroupContext,
+	CommandMenuGroupContextProvider,
+	useCommandMenuGroupContext,
+} from './context';
+import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
+import { Command as PaletteCommand, useCommandPalette } from './use-command-palette';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
-
-export interface CommandMenuGroupProps
-	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
-	currentSiteId: number | null;
-	search: string;
-	selectedCommandName: string;
-	setSelectedCommandName: ( name: string ) => void;
-	setFooterMessage?: ( message: string ) => void;
-	setEmptyListNotice?: ( message: string ) => void;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	currentRoute: string | null;
-	useSites: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
-}
 
 const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {
@@ -283,7 +268,7 @@ const CommandPalette = ( {
 			current_route: currentRoute,
 		} );
 	}, [ currentRoute ] );
-	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
+	const close = useCallback< CommandMenuGroupContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
 			setIsOpenLocal( false );
 			onClose();

@@ -1,9 +1,28 @@
 import { FC, PropsWithChildren, createContext, useContext } from 'react';
-import { CommandMenuGroupProps } from '.';
+import { useCommandsParams } from './commands/types';
+import { Command as PaletteCommand, CommandCallBackParams } from './use-command-palette';
+import type { SiteExcerptData } from '@automattic/sites';
 
-const CommandMenuGroupContext = createContext< CommandMenuGroupProps | undefined >( undefined );
+export interface CommandMenuGroupContext
+	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
+	currentSiteId: number | null;
+	search: string;
+	selectedCommandName: string;
+	setSelectedCommandName: ( name: string ) => void;
+	setFooterMessage?: ( message: string ) => void;
+	setEmptyListNotice?: ( message: string ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
+	currentRoute: string | null;
+	useSites: () => SiteExcerptData[];
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+}
 
-export const CommandMenuGroupContextProvider: FC< PropsWithChildren< CommandMenuGroupProps > > = ( {
+const CommandMenuGroupContext = createContext< CommandMenuGroupContext | undefined >( undefined );
+
+export const CommandMenuGroupContextProvider: FC<
+	PropsWithChildren< CommandMenuGroupContext >
+> = ( {
 	children,
 	close,
 	currentRoute,
@@ -44,7 +63,7 @@ export const CommandMenuGroupContextProvider: FC< PropsWithChildren< CommandMenu
 	);
 };
 
-export const useCommandMenuGroupContext = (): CommandMenuGroupProps => {
+export const useCommandMenuGroupContext = () => {
 	const context = useContext( CommandMenuGroupContext );
 
 	if ( ! context ) {
