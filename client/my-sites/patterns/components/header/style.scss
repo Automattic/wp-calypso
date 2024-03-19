@@ -30,8 +30,9 @@
 			font-size: rem(18px);
 			letter-spacing: 0.4px;
 			line-height: 1.4;
-			width: 450px;
 			padding-bottom: 32px;
+			text-wrap: pretty;
+			width: 450px;
 		}
 
 		.patterns-header__search-input {

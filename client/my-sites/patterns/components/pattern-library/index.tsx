@@ -83,7 +83,7 @@ export const PatternLibrary = ( {
 	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm ?? '' );
-	const { data: categories } = usePatternCategories( locale );
+	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
@@ -113,7 +113,7 @@ export const PatternLibrary = ( {
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
-	const categoryNavList = categories?.map( ( category ) => {
+	const categoryNavList = categories.map( ( category ) => {
 		const patternTypeFilterFallback =
 			category.pagePatternCount === 0 ? PatternTypeFilter.REGULAR : patternTypeFilter;
 
@@ -131,44 +131,39 @@ export const PatternLibrary = ( {
 			<DocumentHead title="WordPress Patterns - Category" />
 
 			<PatternsHeader
-				description={
-					category
-						? 'Introduce yourself or your brand to visitors.'
-						: 'Hundreds of expertly designed, fully responsive patterns allow you to craft a beautiful site in minutes.'
-				}
-				key={ searchFormKey }
+				description="Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster."
 				initialSearchTerm={ searchTerm }
+				key={ searchFormKey }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title={ category ? `${ category } patterns` : 'Build your perfect site with patterns' }
+				title="It’s Easier With Patterns"
 			/>
 
-			{ ! isHomePage && categoryNavList && (
-				<div className="pattern-library__pill-navigation">
-					<CategoryPillNavigation
-						selectedCategory={ category }
-						buttons={ [
-							{
-								icon: <Icon icon={ iconStar } size={ 30 } />,
-								label: 'Discover',
-								link: addLocaleToPathLocaleInFront( '/patterns' ),
-							},
-							{
-								icon: <Icon icon={ iconCategory } size={ 26 } />,
-								label: 'All Categories',
-								link: '/222',
-							},
-						] }
-						list={ categoryNavList }
-					/>
-				</div>
-			) }
+			<div className="pattern-library__pill-navigation">
+				<CategoryPillNavigation
+					selectedCategory={ category }
+					buttons={ [
+						{
+							icon: <Icon icon={ iconStar } size={ 30 } />,
+							label: 'Discover',
+							link: addLocaleToPathLocaleInFront( '/patterns' ),
+							isActive: isHomePage,
+						},
+						{
+							icon: <Icon icon={ iconCategory } size={ 26 } />,
+							label: 'All Categories',
+							link: '/222',
+						},
+					] }
+					list={ categoryNavList }
+				/>
+			</div>
 
 			{ isHomePage && (
 				<CategoryGallery
-					title="Ship faster with patterns"
-					description="Choose from a huge library of patterns to build any page you need."
+					title="Ship faster, ship more"
+					description="Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time."
 					categories={ categories }
 					patternTypeFilter={ PatternTypeFilter.REGULAR }
 				/>
@@ -236,7 +231,7 @@ export const PatternLibrary = ( {
 			{ isHomePage && (
 				<CategoryGallery
 					title="Beautifully curated page layouts"
-					description="Entire pages built of patterns, ready to be added to your site."
+					description="Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right."
 					categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
 					patternTypeFilter={ PatternTypeFilter.PAGES }
 				/>
