@@ -60,43 +60,47 @@ const metricsParser = (
 	// or set to an empty object.
 	const stopFurtherRequest = !! topPosts;
 
-	return combinedKeys.map( ( combinedKey: string ) => {
-		const parsedKeys = isValidJSONArray( combinedKey )
-			? JSON.parse( combinedKey )
-			: [ combinedKey ];
-		const value = UTMValues[ combinedKey ];
-		const posts = topPosts && combinedKey in topPosts ? topPosts[ combinedKey ] : [];
+	return combinedKeys
+		.sort( ( keyA: string, keyB: string ) => {
+			return UTMValues[ keyB ] - UTMValues[ keyA ];
+		} )
+		.map( ( combinedKey: string ) => {
+			const parsedKeys = isValidJSONArray( combinedKey )
+				? JSON.parse( combinedKey )
+				: [ combinedKey ];
+			const value = UTMValues[ combinedKey ];
+			const posts = topPosts && combinedKey in topPosts ? topPosts[ combinedKey ] : [];
 
-		const data = {
-			label: parsedKeys[ 0 ],
-			value,
-		} as UTMMetricItem;
+			const data = {
+				label: parsedKeys[ 0 ],
+				value,
+			} as UTMMetricItem;
 
-		// Show the label for two UTM parameters: `utm_source,utm_medium`.
-		if ( parsedKeys[ 1 ] ) {
-			data.label += ` / ${ parsedKeys[ 1 ] }`;
-		}
+			// Show the label for two UTM parameters: `utm_source,utm_medium`.
+			if ( parsedKeys[ 1 ] ) {
+				data.label += ` / ${ parsedKeys[ 1 ] }`;
+			}
 
-		// Show the label for three UTM parameters: `utm_campaign,utm_source,utm_medium`.
-		if ( parsedKeys[ 2 ] ) {
-			data.label += ` / ${ parsedKeys[ 2 ] }`;
-		}
+			// Show the label for three UTM parameters: `utm_campaign,utm_source,utm_medium`.
+			if ( parsedKeys[ 2 ] ) {
+				data.label += ` / ${ parsedKeys[ 2 ] }`;
+			}
 
-		// Prepare top posts of each UTM parameter value.
-		if ( posts.length ) {
-			data.children = topPostsParser( posts, siteSlug );
-		}
+			// Prepare top posts of each UTM parameter value.
+			if ( posts.length ) {
+				data.children = topPostsParser( posts, siteSlug );
+			}
 
-		// Set no `paramValues` to prevent top post requests.
-		if ( stopFurtherRequest ) {
-			return data;
-		}
+			// Set no `paramValues` to prevent top post requests.
+			if ( stopFurtherRequest ) {
+				return data;
+			}
 
-		return {
-			...data,
-			paramValues: combinedKey,
-		};
-	} );
+			return {
+				...data,
+				paramValues: combinedKey,
+			};
+		} );
 };
 
 /**
