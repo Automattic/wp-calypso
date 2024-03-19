@@ -297,7 +297,7 @@
 		max-width: none;
 	}
 
-	.sites-dashboard__layout:not(.preview-hidden) {
+	.sites-dashboard__layout:not(.preview-hidden) &:not(.site-preview__pane) {
 
 		.section-nav {
 			display: none;
@@ -327,6 +327,10 @@
 			width: 86%;
 			margin-right: 6px;
 		}
+	}
+
+	.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
+		display: none;
 	}
 
 	.sites-dashboard__layout {
