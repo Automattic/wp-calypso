@@ -1559,6 +1559,7 @@ __metadata:
     "@wordpress/warning": "npm:^2.54.0"
     classnames: "npm:^2.3.2"
     i18n-calypso: "workspace:^"
+    npm-run-all: "npm:^4.1.5"
     react-intersection-observer: "npm:^9.4.3"
     react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
@@ -12752,7 +12753,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.4.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.4.0, chokidar@npm:^3.4.2, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -32614,6 +32615,7 @@ __metadata:
     calypso-codemods: "workspace:^"
     chalk: "npm:^4.1.2"
     check-node-version: "npm:^4.0.2"
+    chokidar: "npm:^3.6.0"
     chroma-js: "npm:^2.1.2"
     cmdk: "npm:^0.2.0"
     config: "npm:^3.3.6"

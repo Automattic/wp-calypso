@@ -31,8 +31,10 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "sb dev"
+		"storybook": "sb dev",
+		"watch:tsc": "tsc --build ./tsconfig.json --watch",
+		"watch:assets": "copy-assets --watch",
+		"watch": "npm-run-all --parallel watch:tsc watch:assets"
 	},
 	"dependencies": {
 		"@automattic/calypso-products": "workspace:^",
@@ -71,6 +73,7 @@
 		"@testing-library/jest-dom": "^6.4.2",
 		"@testing-library/react": "^14.2.1",
 		"@testing-library/user-event": "^14.5.2",
+		"npm-run-all": "^4.1.5",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
 		"webpack": "^5.90.3"

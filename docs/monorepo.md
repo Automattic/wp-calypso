@@ -105,6 +105,23 @@ If your package requires compilation, the `package.json` `build` script should c
 - If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
 - If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"build": "transpile && copy-assets"`.
 
+
+#### Watching asset changes
+If you also need to watch asset changes in your package you can add the following lines, make sure to add `npm-run-all` to your devDependencies
+```	
+		"watch:tsc": "tsc --build ./tsconfig.json --watch",
+		"watch:assets": "copy-assets --watch",
+		"watch": "npm-run-all --parallel watch:tsc watch:assets"
+```
+This will concurrently watch for tsc changes as well as [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) changes.
+ Next running the following command should watch your changes
+`yarn workspace @automattic/plans-grid-next watch` 
+
+If not you can simply do 
+`yarn workspace @automattic/plans-grid-next copy-assets --watch` 
+
+
+
 `package.json` is linted using ESLint. Run `yarn eslint packages/*/package.json apps/*/package.json` to validate them.
 
 If you need exceptions to linting rules, add a `./eslintrc.js` file to your app/package and disable the relevant rules.

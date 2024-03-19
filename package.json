@@ -251,6 +251,7 @@
 		"bunyan": "^1.8.15",
 		"chalk": "^4.1.2",
 		"check-node-version": "^4.0.2",
+		"chokidar": "^3.6.0",
 		"chroma-js": "^2.1.2",
 		"css-loader": "^6.10.0",
 		"doctrine": "^3.0.0",
