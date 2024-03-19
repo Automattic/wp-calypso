@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import ShoppingCartMenuItem from '../shopping-cart/shopping-cart-menu/item';
-import { ShoppingCartItem } from '../types';
+import type { ShoppingCartItem } from '../types';
 
 type Props = {
 	items: ShoppingCartItem[];

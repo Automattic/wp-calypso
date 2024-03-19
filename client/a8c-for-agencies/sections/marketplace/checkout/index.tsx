@@ -16,9 +16,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
-import { ShoppingCartItem } from '../types';
 import PricingSummary from './pricing-summary';
 import ProductInfo from './product-info';
+import type { ShoppingCartItem } from '../types';
 
 import './style.scss';
 
@@ -26,7 +26,7 @@ export default function Checkout() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedItems, setSelectedItems } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem, onClearCart } = useShoppingCart();
 
 	const [ selectedSite ] = useState< SiteDetails | null | undefined >( null ); // FIXME: Need to fetch from state
 
@@ -40,7 +40,7 @@ export default function Checkout() {
 
 	const sortedSelectedItems = useMemo( () => {
 		return Object.values(
-			selectedItems.reduce(
+			selectedCartItems.reduce(
 				( acc: Record< string, ShoppingCartItem[] >, item ) => (
 					( acc[ item.slug ] = ( acc[ item.slug ] || [] ).concat( item ) ), acc
 				),
@@ -49,7 +49,7 @@ export default function Checkout() {
 		)
 			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
 			.flat();
-	}, [ selectedItems ] );
+	}, [ selectedCartItems ] );
 
 	const onCheckout = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_checkout_click' ) );
@@ -68,9 +68,9 @@ export default function Checkout() {
 
 	const onEmptyCart = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_empty_cart_click' ) );
-		setSelectedItems( [] );
+		onClearCart();
 		page( A4A_MARKETPLACE_LINK );
-	}, [ dispatch, setSelectedItems ] );
+	}, [ dispatch, onClearCart ] );
 
 	const onContinueShopping = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_continue_shopping_click' ) );
@@ -117,14 +117,7 @@ export default function Checkout() {
 						</div>
 					</div>
 					<div className="checkout__aside">
-						<PricingSummary
-							items={ sortedSelectedItems }
-							onRemoveItem={ ( item: ShoppingCartItem ) => {
-								setSelectedItems(
-									sortedSelectedItems.filter( ( selectedItem ) => selectedItem !== item )
-								);
-							} }
-						/>
+						<PricingSummary items={ sortedSelectedItems } onRemoveItem={ onRemoveCartItem } />
 
 						<div className="checkout__aside-actions">
 							<Button
