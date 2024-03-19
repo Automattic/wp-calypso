@@ -1,6 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { ResizableBox } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -17,11 +18,12 @@ export const ASPECT_RATIO = 7 / 4;
 type PatternPreviewProps = {
 	className?: string;
 	canCopy?: boolean;
+	isResizable?: boolean;
 	pattern: Pattern | null;
 	viewportWidth?: number;
 };
 
-export function PatternPreview( {
+function PatternPreviewFragment( {
 	className,
 	canCopy = true,
 	pattern,
@@ -97,5 +99,37 @@ export function PatternPreview( {
 				) }
 			</div>
 		</div>
+	);
+}
+
+export function PatternPreview( props: PatternPreviewProps ) {
+	const { isResizable, pattern } = props;
+
+	if ( ! pattern ) {
+		return null;
+	}
+
+	if ( ! isResizable ) {
+		return <PatternPreviewFragment { ...props } />;
+	}
+
+	return (
+		<ResizableBox
+			enable={ {
+				top: false,
+				right: true,
+				bottom: false,
+				left: false,
+				topRight: false,
+				bottomRight: false,
+				bottomLeft: false,
+				topLeft: false,
+			} }
+			handleWrapperClass="pattern-preview__resizer"
+			minWidth={ 375 }
+			maxWidth="100%"
+		>
+			<PatternPreviewFragment { ...props } />
+		</ResizableBox>
 	);
 }
