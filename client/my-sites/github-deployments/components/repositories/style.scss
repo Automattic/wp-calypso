@@ -45,6 +45,11 @@
 		p:last-of-type {
 			line-height: 20px;
 		}
+		a.is-primary {
+			svg {
+				margin-left: 4px;
+			}
+		}
 	}
 }
 
