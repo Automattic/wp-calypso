@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from 'react';
+import { useRef, useEffect, useReducer } from 'react';
 import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
@@ -67,7 +67,7 @@ export default function createExPlatClientReactHelpers(
 		// Manual updates to ensure rerendering when we want it:
 		// https://legacy.reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate
 		const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
-		const [ previousExperimentName ] = useState( experimentName );
+		const previousExperimentNameRef = useRef( experimentName );
 
 		useEffect( () => {
 			let isSubscribed = true;
@@ -84,8 +84,8 @@ export default function createExPlatClientReactHelpers(
 		}, [ experimentName, options.isEligible ] );
 
 		if (
-			experimentName !== previousExperimentName &&
-			! previousExperimentName.startsWith( 'explat_test' )
+			experimentName !== previousExperimentNameRef.current &&
+			! previousExperimentNameRef.current.startsWith( 'explat_test' )
 		) {
 			exPlatClient.config.logError( {
 				message: '[ExPlat] useExperiment: experimentName should never change between renders!',
