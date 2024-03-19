@@ -516,6 +516,7 @@ const PlansFeaturesMain = ( {
 			coupon,
 			selectedSiteId: siteId,
 			withDiscount,
+			intent,
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
@@ -574,6 +575,7 @@ const PlansFeaturesMain = ( {
 		withDiscount,
 		getPlanTypeDestination,
 		onPlanIntervalUpdate,
+		intent,
 	] );
 
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );

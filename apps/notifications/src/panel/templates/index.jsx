@@ -164,6 +164,7 @@ class Layout extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.redraw );
+		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	navigateByDirection = ( direction ) => {

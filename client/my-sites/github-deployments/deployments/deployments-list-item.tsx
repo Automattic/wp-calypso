@@ -42,6 +42,7 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		deployment.id,
 		{
 			onSuccess: () => {
+				dispatch( recordTracksEvent( 'calypso_hosting_github_manual_deployment_run_success' ) );
 				dispatch( successNotice( __( 'Deployment run created.' ), noticeOptions ) );
 			},
 			onError: ( error ) => {
@@ -60,13 +61,6 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 							...noticeOptions,
 						}
 					)
-				);
-			},
-			onSettled: ( _, error ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_github_manual_deployment_run_success', {
-						connected: ! error,
-					} )
 				);
 			},
 		}

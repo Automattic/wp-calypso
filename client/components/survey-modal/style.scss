@@ -25,7 +25,7 @@
 		width: 416px;
 		max-width: calc(100% - 50px);
 		z-index: 2;
-		border-radius: 2px;
+		border-radius: 4px 4px 0 0;
 		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
 		overflow: hidden;
 
@@ -54,13 +54,15 @@
 
 		> .modal-survey-notice__popup-head-close {
 			position: absolute;
-			right: 0;
+			right: 8px;
+			top: 8px;
 		}
 
 		.modal-survey-notice__popup-img {
 			background: #0675c4;
-			padding-bottom: 57.9%;
-			height: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
 			img {
 				width: 100%;

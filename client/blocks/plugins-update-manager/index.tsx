@@ -3,6 +3,7 @@ import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
+import { useSiteHasEligiblePlugins } from 'calypso/blocks/plugins-update-manager/hooks/use-site-has-eligible-plugins';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
@@ -39,6 +40,8 @@ export const PluginsUpdateManager = ( props: Props ) => {
 
 	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
+
+	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins( siteSlug );
 
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 	useEffect( () => {
@@ -85,9 +88,9 @@ export const PluginsUpdateManager = ( props: Props ) => {
 						<Button
 							__next40pxDefaultSize
 							icon={ plus }
-							variant={ canCreateSchedules ? 'primary' : 'secondary' }
+							variant={ canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary' }
 							onClick={ onCreateNewSchedule }
-							disabled={ ! canCreateSchedules }
+							disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 						>
 							{ translate( 'Add new schedule' ) }
 						</Button>

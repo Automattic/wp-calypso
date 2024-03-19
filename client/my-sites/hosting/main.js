@@ -44,6 +44,7 @@ import {
 import { useIsGitHubDeploymentsAvailableQuery } from '../github-deployments/use-is-feature-available';
 import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
+import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
 import { GitHubDeploymentsCard } from './github-deployments-card';
 import HostingActivateStatus from './hosting-activate-status';
@@ -51,7 +52,6 @@ import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
-import SiteAdminInterfaceCard from './site-admin-interface-card';
 import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
@@ -145,7 +145,7 @@ const MainCards = ( {
 		},
 		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterfaceCard siteId={ siteId } />,
+			content: <SiteAdminInterface siteId={ siteId } isHosting />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
