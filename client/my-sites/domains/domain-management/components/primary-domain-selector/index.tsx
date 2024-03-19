@@ -150,7 +150,7 @@ const PrimaryDomainSelector = ( {
 								},
 							}
 						) }
-					{ validPrimaryDomains.length > 1 &&
+					{ validPrimaryDomains.length > 0 &&
 						canUserSetPrimaryDomainOnThisSite &&
 						translate(
 							'You can change it by selecting a different address from the list below. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
@@ -184,7 +184,7 @@ const PrimaryDomainSelector = ( {
 							}
 						) }
 				</p>
-				{ validPrimaryDomains.length > 1 && (
+				{ validPrimaryDomains.length > 0 && (
 					<FormFieldset className="domains-set-primary-address__fieldset">
 						<FormSelect
 							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
