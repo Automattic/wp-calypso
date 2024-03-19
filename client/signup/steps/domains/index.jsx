@@ -1308,6 +1308,8 @@ export class RenderDomainsStep extends Component {
 		let backLabelText;
 		let isExternalBackUrl = false;
 
+		const hideBack = flowName === 'domain' || ! userSiteCount;
+
 		const previousStepBackUrl = this.getPreviousStepUrl();
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
@@ -1360,7 +1362,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<StepWrapper
-				hideBack={ flowName === 'domain' }
+				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
 				backUrl={ backUrl }
