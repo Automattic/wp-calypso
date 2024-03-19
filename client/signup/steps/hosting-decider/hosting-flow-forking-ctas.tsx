@@ -2,8 +2,8 @@ import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useIsCurrentlyHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
-import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
-import { TRACK_SOURCE_NAME, MEDIA_QUERIES } from '../utils';
+import { useSitesDashboardImportSiteUrl } from '../../../sites-dashboard/hooks/use-sites-dashboard-import-site-url';
+import { TRACK_SOURCE_NAME, MEDIA_QUERIES } from '../../../sites-dashboard/utils';
 
 interface HostingFlowCTAProps {
 	heading?: string;

@@ -28,7 +28,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'hosting-decider' ],
 			destination: getHostingFlowDestination,
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
 			lastModified: '2023-07-18',

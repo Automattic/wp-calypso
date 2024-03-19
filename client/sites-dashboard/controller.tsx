@@ -11,7 +11,7 @@ import MySitesNavigation from 'calypso/my-sites/navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { hideMasterbar } from 'calypso/state/ui/actions';
-import { HostingFlowForkingPage } from './components/hosting-flow-forking-page';
+import { HostingFlowForkingPage } from '../signup/steps/hosting-decider/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
