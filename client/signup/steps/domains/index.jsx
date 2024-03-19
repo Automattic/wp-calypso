@@ -1308,7 +1308,12 @@ export class RenderDomainsStep extends Component {
 		let backLabelText;
 		let isExternalBackUrl = false;
 
-		const hideBack = flowName === 'domain' || ! userSiteCount;
+		// Hide "Back" button in domains step if the user has no sites.
+		const shouldHideBack =
+			! userSiteCount &&
+			this.props.positionInFlow === 1 &&
+			[ 'onboarding', 'onboarding-pm' ].includes( flowName );
+		const hideBack = flowName === 'domain' || shouldHideBack;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
 		const [ sitesBackLabelText, defaultBackUrl ] =
