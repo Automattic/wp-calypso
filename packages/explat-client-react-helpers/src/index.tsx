@@ -66,8 +66,7 @@ export default function createExPlatClientReactHelpers(
 
 		// Manual updates to ensure rerendering when we want it:
 		// https://legacy.reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const [ _ignored, forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
+		const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 		const [ previousExperimentName ] = useState( experimentName );
 
 		useEffect( () => {
