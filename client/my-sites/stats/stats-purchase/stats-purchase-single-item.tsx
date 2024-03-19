@@ -362,34 +362,14 @@ function StatsCommercialFlowOptOutForm( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
 
-		// No need to translate this as we'd prefer customer communication to be in English.
-		const subject = 'Jetpack Stats Commercial Classification Dispute';
-		const message = `Hi Jetpack Team,\n
-I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
-I can confirm that,
-- I don't have ads on my site.
-- I don't sell products/services on my site.
-- I don't promote a business on my site.
-- I don't solicit donations or sponsorships on my site.\n
-Could you please take a look at my site and update the classification if necessary?\n
-Thanks\n\n`;
-
-		// For Jetpack sites, link to https://jetpack.com/contact-support/ with pre-filled form.
+		// For Jetpack sites, open the Jetpack support form. Do not prefill.
 		if ( isJetpackSupport ) {
-			window.open(
-				`https://jetpack.com/contact-support/?assistant=false&url=${ siteSlug }&subject=${ encodeURIComponent(
-					subject
-				) }&message=${ encodeURIComponent( message ) }`
-			);
+			window.open( `https://jetpack.com/contact-support/?url=${ siteSlug }` );
 			return;
 		}
 
-		// TODO: Assess whether this is appropriate escalation approach for Dotcom sites.
-		const mailTo = 'help@wordpress.com';
-		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
-			subject
-		) }&body=${ encodeURIComponent( message ) }`;
-		window.open( emailHref );
+		// For Dotcom sites, open the Dotcom help page.
+		window.open( 'https://wordpress.com/help' );
 	};
 
 	const isFormSubmissionDisabled = () => {
@@ -413,7 +393,7 @@ Thanks\n\n`;
 				}
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
-	const formButton = isCommercial ? translate( 'Request update' ) : translate( 'Continue' );
+	const formButton = isCommercial ? translate( 'Contact support' ) : translate( 'Continue' );
 	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
 
 	return (

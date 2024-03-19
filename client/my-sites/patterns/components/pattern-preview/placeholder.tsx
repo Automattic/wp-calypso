@@ -1,14 +1,24 @@
+import classNames from 'classnames';
 import type { Pattern } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-type PatternPreviewPlaceholderProps = { pattern: Pattern | null };
+type PatternPreviewPlaceholderProps = {
+	className?: string;
+	pattern: Pattern | null;
+};
 
-export function PatternPreviewPlaceholder( { pattern }: PatternPreviewPlaceholderProps ) {
+export function PatternPreviewPlaceholder( {
+	className,
+	pattern,
+}: PatternPreviewPlaceholderProps ) {
 	return (
-		<div className="pattern-preview is-loading">
+		<div className={ classNames( 'pattern-preview is-loading', className ) }>
 			<div className="pattern-preview__renderer" />
-			<div className="pattern-preview__title">{ pattern?.title }</div>
+
+			<div className="pattern-preview__header">
+				<div className="pattern-preview__title">{ pattern?.title }</div>
+			</div>
 		</div>
 	);
 }

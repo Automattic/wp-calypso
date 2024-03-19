@@ -68,7 +68,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 								>
 									<div className="patterns-category-gallery__item-preview-inner">
 										<PatternPreview
-											isCategoryPreview
+											className="pattern-preview--category-gallery"
 											pattern={
 												patternTypeFilter === PatternTypeFilter.PAGES
 													? category.pagePreviewPattern
