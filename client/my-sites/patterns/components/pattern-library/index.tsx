@@ -11,12 +11,12 @@ import {
 	category as iconCategory,
 	menu as iconMenu,
 } from '@wordpress/icons';
-import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
+import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
@@ -77,10 +77,6 @@ export const PatternLibrary = ( {
 	searchTerm: urlQuerySearchTerm,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
-	// Helps prevent resetting the search input if a search term was provided through the URL
-	const isInitialRender = useRef( true );
-	// Helps reset the search input when navigating between categories
-	const [ searchFormKey, setSearchFormKey ] = useState( category );
 
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm ?? '' );
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -90,26 +86,6 @@ export const PatternLibrary = ( {
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
-
-	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
-	useEffect( () => {
-		if ( ! urlQuerySearchTerm ) {
-			setSearchTerm( '' );
-			setSearchFormKey( Math.random().toString() );
-		}
-	}, [ urlQuerySearchTerm ] );
-
-	// Resets the search term whenever the category changes
-	useEffect( () => {
-		if ( isInitialRender.current ) {
-			isInitialRender.current = false;
-		} else {
-			setSearchTerm( '' );
-			setSearchFormKey( category );
-		}
-	}, [ category ] );
-
-	const isHomePage = ! category && ! searchTerm;
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
@@ -126,14 +102,17 @@ export const PatternLibrary = ( {
 		};
 	} );
 
+	const isHomePage = ! category && ! searchTerm;
+
 	return (
 		<>
+			<PatternsPageViewTracker category={ category } searchTerm={ searchTerm } />
+
 			<DocumentHead title="WordPress Patterns - Category" />
 
 			<PatternsHeader
 				description="Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster."
 				initialSearchTerm={ searchTerm }
-				key={ searchFormKey }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
