@@ -10,12 +10,12 @@ import {
 	getIncompatibleProducts,
 	isIncompatibleProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/incompatible-products';
-import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/licenses-form/hooks/use-product-and-plans';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ShoppingCartContext } from '../../context';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
+import useProductAndPlans from './hooks/use-product-and-plans';
 import useSubmitForm from './hooks/use-submit-form';
 import ProductFilterSearch from './product-filter-search';
 import ProductListingSection from './sections';
@@ -55,7 +55,6 @@ export default function ProductListing( {
 		selectedSite,
 		selectedBundleSize: quantity,
 		productSearchQuery,
-		usePublicQuery: true, // FIXME: Fix this when we have the API endpoint for A4A
 	} );
 
 	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
