@@ -9,12 +9,13 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 
 export default function Overview() {
 	const translate = useTranslate();
+	const title = translate( 'Agency HQ Overview' );
 
 	return (
-		<Layout title="Overview" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ translate( 'Agency HQ Overview' ) }</Title>
+					<Title>{ title }</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
