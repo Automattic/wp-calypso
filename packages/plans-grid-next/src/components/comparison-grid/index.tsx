@@ -46,9 +46,9 @@ import type {
 	GridPlan,
 	ComparisonGridProps,
 	PlanActionOverrides,
-	PlanActions,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
+	PlanActions,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -384,7 +384,7 @@ const ComparisonGridHeaderCell = ( {
 	currentSitePlanSlug,
 	isLaunchPage,
 	planActionOverrides,
-	onPlanCtaClick,
+	planActions,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
@@ -414,6 +414,8 @@ const ComparisonGridHeaderCell = ( {
 		'popular-badge-is-stuck': isStuck,
 	} );
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
+
+	const onPlanCtaClick = planActions?.[ planSlug ] || ( () => {} );
 
 	return (
 		<Cell className={ headerClasses } textAlign="start">
@@ -477,7 +479,7 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				onUpgradeClick={ ( overridePlanSlug ) => onPlanCtaClick( overridePlanSlug ?? planSlug ) }
+				onPlanCtaClick={ onPlanCtaClick }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
@@ -504,8 +506,8 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			isFooter,
 			onPlanChange,
 			currentSitePlanSlug,
-			onPlanCtaClick,
 			planActionOverrides,
+			planActions,
 			selectedPlan,
 			isHiddenInMobile,
 			showRefundPeriod,
@@ -550,9 +552,9 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						onPlanChange={ onPlanChange }
 						displayedGridPlans={ displayedGridPlans }
 						currentSitePlanSlug={ currentSitePlanSlug }
-						onPlanCtaClick={ onPlanCtaClick }
 						isLaunchPage={ isLaunchPage }
 						planActionOverrides={ planActionOverrides }
+						planActions={ planActions }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }
@@ -990,7 +992,7 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, selectedSiteId } = usePlansGridContext();
+	const { gridPlans } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -1101,8 +1103,6 @@ const ComparisonGrid = ( {
 	// 100px is the padding of the footer row
 	const [ bottomHeaderRef, isBottomHeaderInView ] = useInView( { rootMargin: '-100px' } );
 
-	const onPlanCtaClick = ( planSlug: PlanSlug ) => planActions?.[ planSlug ];
-
 	/**
 	 * Search for "any" plan with a highlight label, not just the visible ones.
 	 * This will keep the grid static while user interacts (selects different plans to compare).
@@ -1130,8 +1130,8 @@ const ComparisonGrid = ( {
 							isLaunchPage={ isLaunchPage }
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
-							onPlanCtaClick={ onPlanCtaClick }
 							planActionOverrides={ planActionOverrides }
+							planActions={ planActions }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
@@ -1163,8 +1163,8 @@ const ComparisonGrid = ( {
 					isFooter={ true }
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
-					onPlanCtaClick={ onPlanCtaClick }
 					planActionOverrides={ planActionOverrides }
+					planActions={ planActions }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
 					isStuck={ false }
