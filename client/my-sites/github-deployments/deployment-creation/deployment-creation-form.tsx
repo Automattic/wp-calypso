@@ -85,8 +85,15 @@ export const GitHubDeploymentCreationForm = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const reduxDispatch = useDispatch();
 	const { createDeployment } = useCreateCodeDeployment( siteId, {
-		onSuccess: () => {
+		onSuccess: ( data ) => {
 			reduxDispatch( successNotice( __( 'Deployment created.' ), noticeOptions ) );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
+					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
+					is_automated: data?.is_automated,
+					workflow_path: data?.workflow_path,
+				} )
+			);
 			onConnected();
 		},
 		onError: ( error ) => {
@@ -105,16 +112,6 @@ export const GitHubDeploymentCreationForm = ( {
 				)
 			);
 		},
-		onSettled: ( data, error ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_hosting_github_create_deployment_success', {
-					connected: ! error,
-					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
-					is_automated: data?.is_automated,
-					workflow_path: data?.workflow_path,
-				} )
-			);
-		},
 	} );
 
 	return (
@@ -124,7 +121,10 @@ export const GitHubDeploymentCreationForm = ( {
 				key={ repository?.id ?? 'none' }
 				repository={ repository }
 				initialValues={ initialValues }
-				changeRepository={ () => dispatch( { type: 'open-repository-picker' } ) }
+				changeRepository={ () => {
+					reduxDispatch( recordTracksEvent( 'calypso_hosting_github_repository_picker_click' ) );
+					dispatch( { type: 'open-repository-picker' } );
+				} }
 				onSubmit={ ( {
 					externalRepositoryId,
 					branchName,
@@ -146,6 +146,7 @@ export const GitHubDeploymentCreationForm = ( {
 			<RepositorySelectionDialog
 				isVisible={ isRepositoryPickerOpen }
 				onChange={ ( installation, repository ) => {
+					reduxDispatch( recordTracksEvent( 'calypso_hosting_github_select_repository_click' ) );
 					dispatch( { type: 'select-repository', installation, repository } );
 				} }
 				onClose={ () => dispatch( { type: 'close-repository-picker' } ) }

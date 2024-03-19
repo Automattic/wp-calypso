@@ -5,13 +5,14 @@ import moment from 'moment';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSiteOptions, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
+import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
@@ -27,6 +28,7 @@ interface PlanOnlyThankYouProps {
 	errorNotice: ( text: string, noticeOptions?: object ) => void;
 	removeNotice: ( noticeId: string ) => void;
 	successNotice: ( text: string, noticeOptions?: object ) => void;
+	transferComplete?: boolean;
 }
 
 const isMonthsOld = ( months: number, rawDate?: string ) => {
@@ -44,6 +46,7 @@ const PlanOnlyThankYou = ( {
 	errorNotice,
 	removeNotice,
 	successNotice,
+	transferComplete,
 }: PlanOnlyThankYouProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -191,16 +194,31 @@ const PlanOnlyThankYou = ( {
 		},
 	} );
 
+	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId as number ) );
+
 	return (
-		<ThankYouV2
-			title={ translate( 'Get the best out of your site' ) }
-			subtitle={ preventWidows( subtitle ) }
-			headerButtons={ headerButtons }
-			products={
-				<ThankYouPlanProduct purchase={ primaryPurchase } siteSlug={ siteSlug } siteId={ siteId } />
+		<>
+			{
+				// If an ecommerce site is verified and completely transferred,
+				// automatically log the user into the wp-admin.
+				isWpComEcommercePlan( primaryPurchase.productSlug ) &&
+					transferComplete &&
+					isEmailVerified && <WpAdminAutoLogin site={ { URL: siteUrl } } delay={ 0 } />
 			}
-			footerDetails={ footerDetails }
-		/>
+			<ThankYouV2
+				title={ translate( 'Get the best out of your site' ) }
+				subtitle={ preventWidows( subtitle ) }
+				headerButtons={ headerButtons }
+				products={
+					<ThankYouPlanProduct
+						purchase={ primaryPurchase }
+						siteSlug={ siteSlug }
+						siteId={ siteId }
+					/>
+				}
+				footerDetails={ footerDetails }
+			/>
+		</>
 	);
 };
 

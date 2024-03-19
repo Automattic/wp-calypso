@@ -82,11 +82,13 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const users =
 		usersData?.users
 			?.map( ( user ) => ( { user, checked: true } ) )
-			?.filter(
-				( userItem ) =>
+			?.filter( ( userItem ) => {
+				const allowedRoles = getRoleFilterValues?.map( ( role ) => role.value ).flat();
+				return (
 					userItem.user?.linked_user_ID !== userId &&
-					getRoleFilterValues.map( ( role ) => role.value ).includes( getRole( userItem.user ) )
-			) || [];
+					allowedRoles?.includes( getRole( userItem.user ) )
+				);
+			} ) || [];
 
 	const totalUsers = usersData?.total ? usersData?.total - 1 : null;
 	const loadedPages = usersData?.pages || [];
@@ -222,52 +224,46 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 			setUserListFilters( { ...userListFilters, searchQuery: query } );
 		};
 
-		const roles = [
-			{
-				value: 'subscriber',
-				label: translate( 'Subscriber' ),
-			},
-			{
-				value: 'contributor',
-				label: translate( 'Contributor' ),
-			},
-			{
-				value: 'author',
-				label: translate( 'Author' ),
-			},
-			{
-				value: 'editor',
-				label: translate( 'Editor' ),
-			},
-			{
-				value: 'administrator',
-				label: translate( 'Administrator' ),
-			},
-		];
-
 		const renderRoleFilterItems = () => {
-			const onRoleFilterClick = ( role: string ) => {
+			const onRoleFilterClick = ( role: { value: string[]; label: string } ) => {
 				let updatedSelectedRoleFilters = [ ...userListFilters.selectedRoleFilters ];
-				if ( ! updatedSelectedRoleFilters.includes( role ) ) {
-					updatedSelectedRoleFilters.push( role );
+
+				if ( role.value.length > 1 ) {
+					role.value.forEach( ( roleValue: string ) => {
+						if ( ! updatedSelectedRoleFilters.includes( roleValue ) ) {
+							updatedSelectedRoleFilters.push( roleValue );
+						} else {
+							updatedSelectedRoleFilters = updatedSelectedRoleFilters.filter(
+								( selectedRole ) => selectedRole !== roleValue
+							);
+						}
+					} );
+				} else if ( ! updatedSelectedRoleFilters.includes( role.value[ 0 ] ) ) {
+					updatedSelectedRoleFilters.push( role.value[ 0 ] );
 				} else {
-					updatedSelectedRoleFilters = updatedSelectedRoleFilters.filter( ( x ) => x !== role );
+					updatedSelectedRoleFilters = updatedSelectedRoleFilters.filter(
+						( x ) => x !== role.value[ 0 ]
+					);
 				}
+
 				setUserListFilters( {
 					...userListFilters,
 					selectedRoleFilters: updatedSelectedRoleFilters,
 				} );
 			};
-			return roles.map( ( role ) => {
-				const isSelected = userListFilters.selectedRoleFilters.includes( role.value );
+			return getRoleFilterValues.map( ( role, index ) => {
+				const isSelected =
+					userListFilters?.selectedRoleFilters?.filter( ( selectedRole ) =>
+						role.value.includes( selectedRole )
+					).length > 0;
 
 				return (
 					<MenuItem
 						value={ role.value }
-						onClick={ () => onRoleFilterClick( role.value ) }
-						icon={ userListFilters?.selectedRoleFilters?.includes( role.value ) ? check : null }
+						onClick={ () => onRoleFilterClick( role ) }
+						icon={ isSelected ? check : null }
 						isSelected={ isSelected }
-						key={ role.value }
+						key={ index }
 						role="menuitemcheckbox"
 					>
 						{ role.label }

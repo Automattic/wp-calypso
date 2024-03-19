@@ -6,22 +6,12 @@ import type { Dispatch, SetStateAction } from 'react';
 export const QUERY_PARAM_SEARCH = 's';
 
 /**
- * Retrieve a query parameter value from the URL
- */
-function getQueryParam( key: string ) {
-	if ( typeof window !== 'undefined' ) {
-		const params = new URLSearchParams( window.location.search );
-		return params.get( key ) ?? '';
-	}
-
-	return '';
-}
-
-/**
  * Set up search form state and URL-related `useEffect` callbacks
  */
-export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< string > > ] {
-	const [ searchTerm, setSearchTerm ] = useState( getQueryParam( QUERY_PARAM_SEARCH ) );
+export function usePatternSearchTerm(
+	initialSearchTerm: string
+): [ string, Dispatch< SetStateAction< string > > ] {
+	const [ searchTerm, setSearchTerm ] = useState( initialSearchTerm );
 
 	// Updates the URL of the page whenever the search term changes
 	useEffect( () => {
@@ -40,7 +30,8 @@ export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< stri
 	// Updates the search term whenever the URL of the page changes
 	useEffect( () => {
 		function onPopstate() {
-			setSearchTerm( getQueryParam( QUERY_PARAM_SEARCH ) );
+			const params = new URLSearchParams( window.location.search );
+			setSearchTerm( params.get( QUERY_PARAM_SEARCH ) ?? '' );
 		}
 
 		window.addEventListener( 'popstate', onPopstate );
@@ -57,7 +48,7 @@ export function usePatternSearchTerm(): [ string, Dispatch< SetStateAction< stri
  * Filter patterns by looking at their titles, descriptions and category names
  */
 export function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) {
-	const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
+	const lowerCaseSearchTerms = searchTerm.toLowerCase().trim().split( /\s+/ );
 
 	return patterns.filter( ( pattern ) => {
 		const patternCategories = Object.values( pattern.categories ).map(
@@ -68,6 +59,9 @@ export function filterPatternsByTerm( patterns: Pattern[], searchTerm: string ) 
 			( x ): x is NonNullable< typeof x > => Boolean( x )
 		);
 
-		return fields.some( ( field ) => field.toLowerCase().includes( lowerCaseSearchTerm ) );
+		// If any of the fields matches all parts of the search term, return true
+		return fields.some( ( field ) =>
+			lowerCaseSearchTerms.every( ( term ) => field.toLowerCase().includes( term ) )
+		);
 	} );
 }

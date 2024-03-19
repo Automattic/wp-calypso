@@ -18,6 +18,7 @@ const SortingButton = styled( Button )( {
 	alignSelf: 'stretch',
 	flexDirection: 'row-reverse',
 	gap: '4px',
+	marginInlineEnd: '-12px',
 	whiteSpace: 'nowrap',
 } );
 
