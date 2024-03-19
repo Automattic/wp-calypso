@@ -4,9 +4,11 @@ import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import ShoppingCart from '../shopping-cart';
 
 export default function Hosting() {
 	const translate = useTranslate();
@@ -22,6 +24,11 @@ export default function Hosting() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ translate( 'Marketplace' ) }</Title>
+
+					<Actions>
+						{ /* FIXME: We will need to have shared state for shopping cart items */ }
+						<ShoppingCart items={ [] } onRemoveItem={ () => {} } onCheckout={ () => {} } />
+					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
 
