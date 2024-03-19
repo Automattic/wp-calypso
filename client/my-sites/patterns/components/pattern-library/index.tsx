@@ -148,6 +148,7 @@ export const PatternLibrary = ( {
 							icon: <Icon icon={ iconStar } size={ 30 } />,
 							label: 'Discover',
 							link: addLocaleToPathLocaleInFront( '/patterns' ),
+							isActive: isHomePage,
 						},
 						{
 							icon: <Icon icon={ iconCategory } size={ 26 } />,
