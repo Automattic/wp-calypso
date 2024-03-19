@@ -753,6 +753,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'a8c-for-agencies-signup',
+		paths: [ '/signup' ],
+		module: 'calypso/a8c-for-agencies/sections/signup',
+		group: 'a8c-for-agencies',
+	},
 ];
 
 module.exports = sections;
