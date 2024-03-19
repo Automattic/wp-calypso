@@ -18,7 +18,6 @@ const render = ( el ) =>
 			preferences: {
 				remoteValues: {
 					'sites-sorting': 'alphabetically-asc',
-					'sites-management-dashboard-display-mode': 'tile',
 				},
 			},
 		},
