@@ -98,7 +98,7 @@ export const StorageAddOnDropdown = ( {
 	} );
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) =>
-			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ?? 0 ),
+			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ),
 		[ planSlug ]
 	);
 	const defaultStorageOption = useDefaultStorageOption( {
@@ -111,7 +111,7 @@ export const StorageAddOnDropdown = ( {
 			setSelectedStorageOptionForPlan( {
 				addOnSlug: defaultStorageOption,
 				planSlug,
-				siteId: selectedSiteId ?? 0,
+				siteId: selectedSiteId,
 			} );
 		}
 	}, [] );
@@ -151,7 +151,7 @@ export const StorageAddOnDropdown = ( {
 
 			if ( addOnSlug ) {
 				onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
-				setSelectedStorageOptionForPlan( { addOnSlug, planSlug, siteId: selectedSiteId ?? 0 } );
+				setSelectedStorageOptionForPlan( { addOnSlug, planSlug, siteId: selectedSiteId } );
 			}
 		},
 		[ onStorageAddOnClick, planSlug, setSelectedStorageOptionForPlan ]

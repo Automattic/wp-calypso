@@ -13,7 +13,7 @@ export type UpgradeClickHandler = (
 interface Props {
 	gridPlans: GridPlan[]; // TODO clk: to be removed, grabbed from context
 	onUpgradeClick?: UpgradeClickHandler;
-	selectedSiteId: number;
+	selectedSiteId?: number | null;
 }
 
 const useUpgradeClickHandler = ( { gridPlans, onUpgradeClick, selectedSiteId }: Props ) => {

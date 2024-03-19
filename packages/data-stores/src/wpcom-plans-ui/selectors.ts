@@ -5,7 +5,7 @@ export const isDomainUpsellDialogShown = ( state: State ) => !! state.showDomain
 export const getSelectedStorageOptionForPlan = (
 	state: State,
 	planSlug: PlanSlug,
-	siteId: number
-) => state.selectedStorageOptionForPlans?.[ siteId ]?.[ planSlug ];
-export const getSelectedStorageOptions = ( state: State, siteId: number ) =>
-	state.selectedStorageOptionForPlans?.[ siteId ];
+	siteId?: number | null
+) => ( siteId ? state.selectedStorageOptionForPlans?.[ siteId ]?.[ planSlug ] : null );
+export const getSelectedStorageOptions = ( state: State, siteId?: number | null ) =>
+	siteId ? state.selectedStorageOptionForPlans?.[ siteId ] : null;

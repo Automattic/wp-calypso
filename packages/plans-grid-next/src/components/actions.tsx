@@ -232,7 +232,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	const { gridPlansIndex, selectedSiteId } = usePlansGridContext();
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) =>
-			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ?? 0 ),
+			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ),
 		[ planSlug ]
 	);
 	const {

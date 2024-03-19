@@ -1093,7 +1093,7 @@ const ComparisonGrid = ( {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
-		selectedSiteId: selectedSiteId ?? 0,
+		selectedSiteId: selectedSiteId,
 	} );
 
 	/**

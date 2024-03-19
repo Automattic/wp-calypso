@@ -18,7 +18,7 @@ export const setSelectedStorageOptionForPlan = ( {
 }: {
 	addOnSlug: WPComStorageAddOnSlug;
 	planSlug: PlanSlug;
-	siteId: number;
+	siteId?: number | null;
 } ) =>
 	( {
 		type: 'WPCOM_PLANS_UI_SET_SELECTED_STORAGE_OPTION_FOR_PLAN',

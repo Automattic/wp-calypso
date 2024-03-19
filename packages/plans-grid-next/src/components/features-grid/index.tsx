@@ -247,7 +247,7 @@ const FeaturesGrid = ( {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
-		selectedSiteId: selectedSiteId ?? 0,
+		selectedSiteId: selectedSiteId,
 	} );
 
 	const spotlightPlanProps = {
