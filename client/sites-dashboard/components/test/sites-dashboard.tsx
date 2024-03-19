@@ -12,6 +12,10 @@ import userSettings from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from '../../../test-helpers/testing-library';
 import { SitesDashboard } from '../sites-dashboard';
 
+jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
+	hasSiteStatsQueryFailed: jest.fn().mockImplementation( () => true ),
+} ) );
+
 const render = ( el ) =>
 	renderWithProvider( el, {
 		initialState: {
