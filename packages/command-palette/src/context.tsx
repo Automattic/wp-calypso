@@ -1,7 +1,6 @@
 import { FC, PropsWithChildren, createContext, useContext } from 'react';
 import { useCommandsParams } from './commands/types';
 import { Command as PaletteCommand, CommandCallBackParams } from './use-command-palette';
-import { CommandPaletteProps } from '.';
 import type { SiteExcerptData } from '@automattic/sites';
 
 export interface CommandPaletteContext {
@@ -22,6 +21,7 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 	currentRoute,
 	currentSiteId,
 	navigate,
+	onClose,
 	useCommands,
 	userCapabilities,
 	useSites,
@@ -32,6 +32,7 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 				currentRoute,
 				currentSiteId,
 				navigate,
+				onClose,
 				useCommands,
 				userCapabilities,
 				useSites,
@@ -42,17 +43,20 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 	);
 };
 
+export const useCommandPaletteContext = () => {
+	const context = useContext( CommandPaletteContext );
+
+	if ( ! context ) {
+		throw new Error(
+			'useCommandPaletteContext must be used within a CommandPaletteContextProvider'
+		);
+	}
+
+	return context;
+};
+
 export interface CommandMenuGroupContext
-	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' >,
-		Pick<
-			CommandPaletteProps,
-			| 'currentRoute'
-			| 'currentSiteId'
-			| 'navigate'
-			| 'useCommands'
-			| 'useSites'
-			| 'userCapabilities'
-		> {
+	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
 	search: string;
 	selectedCommandName: string;
 	setEmptyListNotice?: ( message: string ) => void;
@@ -67,9 +71,6 @@ export const CommandMenuGroupContextProvider: FC<
 > = ( {
 	children,
 	close,
-	currentRoute,
-	currentSiteId,
-	navigate,
 	search,
 	selectedCommandName,
 	setEmptyListNotice,
@@ -77,17 +78,11 @@ export const CommandMenuGroupContextProvider: FC<
 	setPlaceholderOverride,
 	setSearch,
 	setSelectedCommandName,
-	useCommands,
-	userCapabilities,
-	useSites,
 } ) => {
 	return (
 		<CommandMenuGroupContext.Provider
 			value={ {
 				close,
-				currentRoute,
-				currentSiteId,
-				navigate,
 				search,
 				selectedCommandName,
 				setEmptyListNotice,
@@ -95,9 +90,6 @@ export const CommandMenuGroupContextProvider: FC<
 				setPlaceholderOverride,
 				setSearch,
 				setSelectedCommandName,
-				useCommands,
-				userCapabilities,
-				useSites,
 			} }
 		>
 			{ children }

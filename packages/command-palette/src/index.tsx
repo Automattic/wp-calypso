@@ -13,7 +13,10 @@ import useSingleSiteCommands from './commands/use-single-site-commands';
 import {
 	CommandMenuGroupContext,
 	CommandMenuGroupContextProvider,
+	CommandPaletteContext,
+	CommandPaletteContextProvider,
 	useCommandMenuGroupContext,
+	useCommandPaletteContext,
 } from './context';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { Command as PaletteCommand, useCommandPalette } from './use-command-palette';
@@ -84,7 +87,6 @@ const StyledCommandsFooter = styled.div( {
 
 export function CommandMenuGroup() {
 	const {
-		currentSiteId,
 		search,
 		close,
 		setSearch,
@@ -93,12 +95,9 @@ export function CommandMenuGroup() {
 		setSelectedCommandName,
 		setFooterMessage,
 		setEmptyListNotice,
-		navigate,
-		useCommands,
-		currentRoute,
-		useSites,
-		userCapabilities,
 	} = useCommandMenuGroupContext();
+	const { currentSiteId, navigate, useCommands, currentRoute, useSites, userCapabilities } =
+		useCommandPaletteContext();
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
 		selectedCommandName,
@@ -245,16 +244,8 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.', __i18n_text_domain__ ) }</>;
 };
 
-const CommandPalette = ( {
-	currentSiteId,
-	navigate,
-	useCommands,
-	currentRoute,
-	isOpenGlobal,
-	onClose = () => {},
-	useSites = () => [],
-	userCapabilities = {},
-}: CommandPaletteProps ) => {
+const CommandPalette = () => {
+	const { currentRoute, isOpenGlobal, onClose } = useCommandPaletteContext();
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -353,7 +344,6 @@ const CommandPalette = ( {
 
 	return (
 		<CommandMenuGroupContextProvider
-			currentSiteId={ currentSiteId }
 			search={ search }
 			close={ ( commandName, isExecuted ) => {
 				close( commandName, isExecuted );
@@ -365,11 +355,6 @@ const CommandPalette = ( {
 			setSelectedCommandName={ setSelectedCommandName }
 			setFooterMessage={ setFooterMessage }
 			setEmptyListNotice={ setEmptyListNotice }
-			navigate={ navigate }
-			useCommands={ useCommands }
-			currentRoute={ currentRoute }
-			useSites={ useSites }
-			userCapabilities={ userCapabilities }
 		>
 			<Modal
 				className="commands-command-menu"
@@ -416,7 +401,33 @@ const CommandPalette = ( {
 	);
 };
 
-export default CommandPalette;
+const CommandPaletteWithProvider = ( {
+	currentSiteId,
+	navigate,
+	useCommands,
+	currentRoute,
+	isOpenGlobal,
+	onClose = () => {},
+	useSites = () => [],
+	userCapabilities = {},
+}: CommandPaletteContext ) => {
+	return (
+		<CommandPaletteContextProvider
+			currentSiteId={ currentSiteId }
+			navigate={ navigate }
+			useCommands={ useCommands }
+			currentRoute={ currentRoute }
+			isOpenGlobal={ isOpenGlobal }
+			onClose={ onClose }
+			useSites={ useSites }
+			userCapabilities={ userCapabilities }
+		>
+			<CommandPalette />
+		</CommandPaletteContextProvider>
+	);
+};
+
+export default CommandPaletteWithProvider;
 export type { Command, CommandCallBackParams } from './use-command-palette';
 export type { useCommandsParams } from './commands/types';
 export { useSingleSiteCommands };
