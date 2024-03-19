@@ -12,6 +12,7 @@ import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
+import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -36,6 +37,7 @@ import { sortPlans } from '../../lib/sort-plan-properties';
 import { getStorageStringFromFeature } from '../../util';
 import PlanFeatures2023GridActions from '../actions';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
+import DropdownIcon from '../icons/dropdown';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
@@ -57,19 +59,6 @@ import type {
 	WPComStorageAddOnSlug,
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
-
-function DropdownIcon() {
-	return (
-		<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none" viewBox="0 -5 26 24">
-			<path
-				fill="#0675C4"
-				fillRule="evenodd"
-				d="M18 10.5L13 15l-5-4.5L9.224 9 13 12.399 16.776 9 18 10.5z"
-				clipRule="evenodd"
-			></path>
-		</svg>
-	);
-}
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
@@ -448,7 +437,11 @@ const ComparisonGridHeaderCell = ( {
 				) }
 				<h4 className="plan-comparison-grid__title">
 					<span>{ gridPlan.planTitle }</span>
-					{ showPlanSelect && <DropdownIcon /> }
+					<Icon
+						icon={ DropdownIcon }
+						size={ 26 }
+						visibility={ showPlanSelect ? 'visible' : 'hidden' }
+					/>
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice

@@ -46,6 +46,7 @@
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/data": "^9.24.0",
 		"@wordpress/element": "^5.31.0",
+		"@wordpress/icons": "^9.45.0",
 		"@wordpress/url": "^3.55.0",
 		"@wordpress/warning": "^2.54.0",
 		"classnames": "^2.3.2",
