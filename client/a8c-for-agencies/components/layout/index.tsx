@@ -28,9 +28,9 @@ export default function Layout( {
 	const hasLayoutColumns = React.Children.toArray( children ).some(
 		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
 	);
-	const layoutContainerClassname = ! hasLayoutColumns
-		? 'a4a-layout__container'
-		: 'a4a-layout-with-columns__container';
+	const layoutContainerClassname = hasLayoutColumns
+		? 'a4a-layout-with-columns__container'
+         : 'a4a-layout__container';
 
 	return (
 		<Main
