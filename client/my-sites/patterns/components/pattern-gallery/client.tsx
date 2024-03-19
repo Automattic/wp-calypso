@@ -14,7 +14,11 @@ import './style.scss';
 
 const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
 
-export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns = [] } ) => {
+export const PatternGalleryClient: PatternGalleryFC = ( {
+	getPatternPermalink,
+	isGridView,
+	patterns = [],
+} ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
@@ -43,6 +47,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns =
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
 							} ) }
+							getPatternPermalink={ getPatternPermalink }
 							key={ pattern.ID }
 							pattern={ pattern }
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }

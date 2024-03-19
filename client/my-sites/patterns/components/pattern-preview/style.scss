@@ -2,6 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/components/src/styles/typography";
 
+@keyframes pattern-preview-target {
+	from {
+		box-shadow: 0 0 0 2px #3858e9;
+	}
+
+	to {
+		box-shadow: 0 0 0 2px #3858e900;
+	}
+}
+
 .pattern-preview {
 	display: flex;
 	flex-direction: column;
@@ -16,6 +26,10 @@
 		display: grid;
 		flex: 1;
 		overflow: hidden;
+	}
+
+	&:target .pattern-preview__renderer {
+		animation: 0.8s linear 3.5s backwards pattern-preview-target;
 	}
 
 	&.is-loading .pattern-preview__renderer {
@@ -35,7 +49,15 @@
 	}
 
 	.pattern-preview__title {
+		font-size: inherit;
+		line-height: inherit;
+		padding-bottom: 0;
 		padding-top: 4px;
+		text-align: left;
+
+		&:hover {
+			color: inherit;
+		}
 	}
 
 	.pattern-preview__copy,

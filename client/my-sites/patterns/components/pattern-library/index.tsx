@@ -26,6 +26,7 @@ import {
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import {
 	PatternTypeFilter,
+	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
@@ -46,7 +47,7 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	} );
 }
 
-const handleSettingView = ( value: 'grid' | 'list' ) => {
+function handleSettingView( value: 'grid' | 'list' ) {
 	const searchParams = new URLSearchParams( location.search );
 
 	if ( value === 'grid' ) {
@@ -57,7 +58,31 @@ const handleSettingView = ( value: 'grid' | 'list' ) => {
 
 	const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
 	page( location.pathname + paramsString );
-};
+}
+
+// We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
+// it will be more confusing for users to land in grid view when they have a single-pattern permalink
+function getPatternPermalink(
+	pattern: Pattern | undefined,
+	activeCategory: string,
+	patternTypeFilter: PatternTypeFilter,
+	categories: Category[]
+) {
+	if ( ! pattern ) {
+		const url = new URL( location.pathname, location.origin );
+		return url.toString();
+	}
+
+	// Get the first pattern category that is also included in the `usePatternCategories` data
+	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
+		categories.find( ( { name } ) => name === categorySlug )
+	);
+	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternTypeFilter );
+
+	const url = new URL( pathname, location.origin );
+	url.hash = `#pattern-${ pattern.ID }`;
+	return url.toString();
+}
 
 type PatternLibraryProps = {
 	category: string;
@@ -201,7 +226,13 @@ export const PatternLibrary = ( {
 						</ToggleGroupControl>
 					</div>
 
-					<PatternGallery patterns={ patterns } isGridView={ isGridView } />
+					<PatternGallery
+						getPatternPermalink={ ( pattern ) =>
+							getPatternPermalink( pattern, category, patternTypeFilter, categories )
+						}
+						isGridView={ isGridView }
+						patterns={ patterns }
+					/>
 				</PatternLibraryBody>
 			) }
 
