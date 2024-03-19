@@ -123,7 +123,7 @@ export default function WPCheckoutOrderReview( {
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	removeCouponAndClearField: RemoveCouponAndClearField;
