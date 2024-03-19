@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { ShoppingCartItem } from '../../types';
+import type { ShoppingCartItem } from '../../types';
 
 type ItemProps = {
 	item: ShoppingCartItem;

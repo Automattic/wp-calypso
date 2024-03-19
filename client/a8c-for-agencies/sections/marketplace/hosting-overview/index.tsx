@@ -10,12 +10,11 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
-import { ShoppingCartItem } from '../types';
 
 export default function Hosting() {
 	const translate = useTranslate();
 
-	const { selectedItems, setSelectedItems } = useShoppingCart();
+	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
 
 	return (
 		<Layout
@@ -31,12 +30,8 @@ export default function Hosting() {
 
 					<Actions>
 						<ShoppingCart
-							items={ selectedItems }
-							onRemoveItem={ ( item: ShoppingCartItem ) => {
-								setSelectedItems(
-									selectedItems.filter( ( selectedItem ) => selectedItem !== item )
-								);
-							} }
+							items={ selectedCartItems }
+							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
 								/* FIXME: redirect to checkout page */
 							} }

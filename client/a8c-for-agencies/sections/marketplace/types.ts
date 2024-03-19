@@ -6,8 +6,8 @@ export type ShoppingCartItem = APIProductFamilyProduct & {
 };
 
 export interface ShoppingCartContext {
-	selectedItems: ShoppingCartItem[];
-	setSelectedItems: ( items: ShoppingCartItem[] ) => void;
+	selectedCartItems: ShoppingCartItem[];
+	setSelectedCartItems: ( items: ShoppingCartItem[] ) => void;
 }
 
 export interface AssignLicenseProps {

@@ -1,12 +1,12 @@
 import { getQueryArg } from '@wordpress/url';
 import { useCallback, useEffect, useState } from 'react';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { ShoppingCartItem } from '../types';
+import type { ShoppingCartItem } from '../types';
 
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 
 export default function useShoppingCart() {
-	const [ selectedItems, setSelectedItems ] = useState< ShoppingCartItem[] >( [] );
+	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
 
 	const { data } = useProductsQuery( true );
 
@@ -50,7 +50,7 @@ export default function useShoppingCart() {
 				}
 			} );
 
-			setSelectedItems( loadedItems );
+			setSelectedCartItems( loadedItems );
 		}
 	}, [ data ] );
 
@@ -59,11 +59,21 @@ export default function useShoppingCart() {
 			SELECTED_ITEMS_SESSION_STORAGE_KEY,
 			items.map( ( item ) => `${ item.slug }:${ item.quantity }` ).join( ',' )
 		);
-		setSelectedItems( items );
+		setSelectedCartItems( items );
 	}, [] );
 
+	const onRemoveCartItem = useCallback(
+		( item: ShoppingCartItem ) => {
+			setAndCacheSelectedItems(
+				selectedCartItems.filter( ( selectedCartItem ) => selectedCartItem !== item )
+			);
+		},
+		[ selectedCartItems, setAndCacheSelectedItems ]
+	);
+
 	return {
-		selectedItems,
-		setSelectedItems: setAndCacheSelectedItems,
+		selectedCartItems,
+		setSelectedCartItems: setAndCacheSelectedItems,
+		onRemoveCartItem,
 	};
 }

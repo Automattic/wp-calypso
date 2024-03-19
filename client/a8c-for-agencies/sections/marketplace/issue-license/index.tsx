@@ -32,7 +32,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedItems, setSelectedItems } = useShoppingCart();
+	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
@@ -54,7 +54,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 
 	const sites = useSelector( getSites );
 
-	const showStickyContent = useBreakpoint( '>660px' ) && selectedItems.length > 0;
+	const showStickyContent = useBreakpoint( '>660px' ) && selectedCartItems.length > 0;
 
 	useEffect( () => {
 		if ( siteId && sites.length > 0 ) {
@@ -66,7 +66,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 	// Group licenses by slug and sort them by quantity
 	const getGroupedLicenses = useCallback( () => {
 		return Object.values(
-			selectedItems.reduce(
+			selectedCartItems.reduce(
 				( acc: Record< string, ShoppingCartItem[] >, item ) => (
 					( acc[ item.slug ] = ( acc[ item.slug ] || [] ).concat( item ) ), acc
 				),
@@ -75,7 +75,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 		)
 			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
 			.flat();
-	}, [ selectedItems ] );
+	}, [ selectedCartItems ] );
 
 	return (
 		<>
@@ -92,12 +92,8 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 
 						<Actions>
 							<ShoppingCart
-								items={ selectedItems }
-								onRemoveItem={ ( item: ShoppingCartItem ) => {
-									setSelectedItems(
-										selectedItems.filter( ( selectedItem ) => selectedItem !== item )
-									);
-								} }
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
 								onCheckout={ () => {
 									/* FIXME: redirect to checkout page */
 								} }
@@ -107,7 +103,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 				</LayoutTop>
 
 				<LayoutBody>
-					<ShoppingCartContext.Provider value={ { setSelectedItems, selectedItems } }>
+					<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 						<LicensesForm
 							selectedSite={ selectedSite }
 							suggestedProduct={ suggestedProduct }

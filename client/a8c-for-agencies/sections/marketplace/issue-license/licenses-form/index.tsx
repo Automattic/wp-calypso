@@ -15,10 +15,10 @@ import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ShoppingCartContext } from '../../context';
-import { ShoppingCartItem } from '../../types';
 import useSubmitForm from './hooks/use-submit-form';
 import ProductFilterSearch from './product-filter-search';
 import LicensesFormSection from './sections';
+import type { ShoppingCartItem } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
@@ -37,7 +37,7 @@ export default function LicensesForm( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedItems, setSelectedItems } = useContext( ShoppingCartContext );
+	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
@@ -90,9 +90,9 @@ export default function LicensesForm( {
 			: null;
 
 		if ( allProductsAndBundles ) {
-			setSelectedItems( allProductsAndBundles );
+			setSelectedCartItems( allProductsAndBundles );
 		}
-	}, [ setSelectedItems, data ] );
+	}, [ setSelectedCartItems, data ] );
 
 	useEffect( () => {
 		if ( isLoadingProducts ) {
@@ -104,8 +104,8 @@ export default function LicensesForm( {
 	const incompatibleProducts = useMemo(
 		() =>
 			// Only check for incompatible products if we have a selected site.
-			selectedSite ? getIncompatibleProducts( selectedItems, filteredProductsAndBundles ) : [],
-		[ filteredProductsAndBundles, selectedItems, selectedSite ]
+			selectedSite ? getIncompatibleProducts( selectedCartItems, filteredProductsAndBundles ) : [],
+		[ filteredProductsAndBundles, selectedCartItems, selectedSite ]
 	);
 
 	const handleSelectBundleLicense = useCallback(
@@ -114,12 +114,12 @@ export default function LicensesForm( {
 				...product,
 				quantity,
 			};
-			const index = selectedItems.findIndex(
+			const index = selectedCartItems.findIndex(
 				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
 			);
 			if ( index === -1 ) {
 				// Item doesn't exist, add it
-				setSelectedItems( [ ...selectedItems, productBundle ] );
+				setSelectedCartItems( [ ...selectedCartItems, productBundle ] );
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_marketplace_issue_license_select_product', {
 						product: product.slug,
@@ -128,7 +128,7 @@ export default function LicensesForm( {
 				);
 			} else {
 				// Item exists, remove it
-				setSelectedItems( selectedItems.filter( ( _, i ) => i !== index ) );
+				setSelectedCartItems( selectedCartItems.filter( ( _, i ) => i !== index ) );
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_marketplace_issue_license_unselect_product', {
 						product: product.slug,
@@ -137,7 +137,7 @@ export default function LicensesForm( {
 				);
 			}
 		},
-		[ dispatch, quantity, selectedItems, setSelectedItems ]
+		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
 	const onSelectProduct = useCallback(
@@ -150,8 +150,8 @@ export default function LicensesForm( {
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
 			if ( replace ) {
-				setSelectedItems(
-					selectedItems.map( ( item ) => {
+				setSelectedCartItems(
+					selectedCartItems.map( ( item ) => {
 						if ( item.slug === replace.slug && item.quantity === quantity ) {
 							return { ...product, quantity };
 						}
@@ -178,19 +178,19 @@ export default function LicensesForm( {
 				handleSelectBundleLicense( product );
 			}
 		},
-		[ dispatch, handleSelectBundleLicense, quantity, selectedItems, setSelectedItems ]
+		[ dispatch, handleSelectBundleLicense, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
-			selectedItems.some(
+			selectedCartItems.some(
 				( item ) =>
 					( Array.isArray( slug ) ? slug.includes( item.slug ) : item.slug === slug ) &&
 					item.quantity === quantity
 			),
-		[ quantity, selectedItems ]
+		[ quantity, selectedCartItems ]
 	);
 
 	const onProductSearch = useCallback(
@@ -232,7 +232,7 @@ export default function LicensesForm( {
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
 					selectedOption={ productOption.find( ( option ) =>
-						selectedItems.find(
+						selectedCartItems.find(
 							( item ) => item.slug === option.slug && item.quantity === quantity
 						)
 					) }
