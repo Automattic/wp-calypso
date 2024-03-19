@@ -592,6 +592,10 @@ export interface CartLocation {
 	city?: string;
 }
 
+export type DomainLegalAgreementUrl = string;
+export type DomainLegalAgreementTitle = string;
+export type DomainLegalAgreements = Record< DomainLegalAgreementUrl, DomainLegalAgreementTitle >;
+
 export interface ResponseCartProductExtra {
 	context?: string;
 	source?: string;
@@ -602,6 +606,8 @@ export interface ResponseCartProductExtra {
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	receipt_for_domain?: number;
+	domain_registration_agreement_url?: string;
+	legal_agreements?: never[] | DomainLegalAgreements;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.

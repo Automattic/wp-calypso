@@ -58,7 +58,7 @@ export interface Command {
 	subLabel?: string;
 	searchLabel?: string;
 	callback: ( params: CommandCallBackParams ) => void;
-	context?: string[];
+	context?: string[] | { path: string; match: string }[];
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
@@ -268,8 +268,19 @@ export const useCommandPalette = ( {
 
 	// Logic for root commands
 	// Filter out commands that have context
-	const commandHasContext = ( paths: string[] = [] ): boolean =>
-		paths.some( ( path ) => currentRoute?.includes( path ) ) ?? false;
+	const commandHasContext = (
+		paths: string[] | { path: string; match: string }[] = []
+	): boolean => {
+		return paths.some( ( pathItem ) => {
+			if ( typeof pathItem === 'string' ) {
+				return currentRoute?.includes( pathItem ) ?? false;
+			}
+
+			return pathItem.match === 'exact'
+				? currentRoute === pathItem.path
+				: currentRoute?.includes( pathItem.path ) ?? false;
+		} );
+	};
 
 	// Sort commands with contextual commands ranking higher than general in a given context
 	const sortedCommands = commands.sort( ( a, b ) => {
