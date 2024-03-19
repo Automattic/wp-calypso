@@ -85,14 +85,13 @@ export function PatternPreview( {
 						} }
 						text={ pattern?.html ?? '' }
 						primary
-						transparent={ ! canCopy }
 					>
 						{ copyButtonText }
 					</ClipboardButton>
 				) }
 
 				{ ! canCopy && (
-					<Button className="pattern-preview__get-access" borderless transparent>
+					<Button className="pattern-preview__get-access" transparent>
 						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
 					</Button>
 				) }
