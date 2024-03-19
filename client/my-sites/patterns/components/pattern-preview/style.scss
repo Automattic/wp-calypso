@@ -23,13 +23,19 @@
 	}
 
 	.pattern-preview__header {
-		align-items: center;
-		color: var(--Gray-Gray-100, #101517);
+		align-items: start;
 		display: flex;
 		font-family: $font-sf-pro-display;
 		gap: 16px;
 		justify-content: space-between;
 		line-height: 1.3;
+		// Account for possibility of title wrapping over two rows, in which case we want the
+		// entire `.pattern-gallery--grid` row to align correctly
+		min-height: 3rem;
+	}
+
+	.pattern-preview__title {
+		padding-top: 4px;
 	}
 
 	.pattern-preview__copy,
@@ -76,6 +82,18 @@
 }
 
 .pattern-preview--list {
+	.pattern-preview__header {
+		min-height: auto;
+	}
+
+	.pattern-preview__title {
+		padding-top: 8px;
+
+		@include break-huge {
+			font-size: rem(20px);
+		}
+	}
+
 	.pattern-preview__copy,
 	.pattern-preview__get-access {
 		padding: 8px 14px;
@@ -83,12 +101,6 @@
 
 	.pattern-preview__get-access {
 		padding-left: 12px;
-	}
-
-	.pattern-preview__title {
-		@include break-huge {
-			font-size: rem(20px);
-		}
 	}
 }
 
