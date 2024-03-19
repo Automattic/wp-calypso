@@ -77,6 +77,14 @@ export default function Checkout() {
 		page( A4A_MARKETPLACE_LINK );
 	}, [ dispatch ] );
 
+	const onRemoveItem = useCallback(
+		( item: ShoppingCartItem ) => {
+			dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_remove_item_click' ) );
+			onRemoveCartItem( item );
+		},
+		[ dispatch, onRemoveCartItem ]
+	);
+
 	return (
 		<Layout
 			className="checkout"
@@ -117,7 +125,7 @@ export default function Checkout() {
 						</div>
 					</div>
 					<div className="checkout__aside">
-						<PricingSummary items={ sortedSelectedItems } onRemoveItem={ onRemoveCartItem } />
+						<PricingSummary items={ sortedSelectedItems } onRemoveItem={ onRemoveItem } />
 
 						<div className="checkout__aside-actions">
 							<Button
