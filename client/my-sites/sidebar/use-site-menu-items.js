@@ -164,7 +164,6 @@ const useSiteMenuItems = () => {
 		shouldShowMailboxes,
 		shouldShowAddOns,
 		showSiteMonitoring: isAtomic,
-		showGithubDeployments: isAtomic,
 	};
 
 	return menuItemsWithNewsletterSettings ?? buildFallbackResponse( fallbackDataOverrides );
