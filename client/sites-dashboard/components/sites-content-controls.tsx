@@ -7,7 +7,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
 import { MEDIA_QUERIES } from '../utils';
-import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
@@ -89,8 +88,7 @@ type SitesContentControlsProps = {
 	onQueryParamChange?: ( params: Partial< SitesDashboardQueryParams > ) => void;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
-} & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
-	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
+} & ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
 /**
  * Updates one or more query param used by the sites dashboard, causing a page navigation.
@@ -117,8 +115,6 @@ export const SitesContentControls = ( {
 	onQueryParamChange = handleQueryParamChange,
 	statuses,
 	selectedStatus,
-	displayMode,
-	onDisplayModeChange,
 	sitesSorting,
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
@@ -186,12 +182,6 @@ export const SitesContentControls = ( {
 						sitesSorting={ sitesSorting }
 						onSitesSortingChange={ onSitesSortingChange }
 					/>
-					{ onDisplayModeChange && (
-						<SitesDisplayModeSwitcher
-							displayMode={ displayMode }
-							onDisplayModeChange={ onDisplayModeChange }
-						/>
-					) }
 				</VisibilityControls>
 			</DisplayControls>
 		</FilterBar>

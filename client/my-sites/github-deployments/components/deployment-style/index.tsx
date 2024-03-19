@@ -60,7 +60,8 @@ export const DeploymentStyle = ( {
 				<h3>{ __( 'Pick your deployment mode' ) }</h3>
 				<SupportInfo
 					popoverClassName="github-deployments-deployments-style-popover"
-					link="https://docs.github.com/en/actions/using-workflows"
+					// @todo Move to contextLinks
+					link="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
 					privacyLink={ false }
 				>
 					{ supportMessage }

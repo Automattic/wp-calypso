@@ -93,3 +93,38 @@ export const getRoleBadgeText = ( role: string | undefined ) => {
 
 	return text;
 };
+
+export const getRoleFilterValues: { value: string[]; label: string }[] = [
+	{
+		value: [ 'super-admin' ],
+		label: translate( 'Super Admin' ),
+	},
+	{
+		value: [ 'administrator' ],
+		label: translate( 'Admin' ),
+	},
+	{
+		value: [ 'editor' ],
+		label: translate( 'Editor' ),
+	},
+	{
+		value: [ 'author' ],
+		label: translate( 'Author' ),
+	},
+	{
+		value: [ 'contributor' ],
+		label: translate( 'Contributor' ),
+	},
+	{
+		value: [ 'follower' ],
+		label: translate( 'Follower' ),
+	},
+	{
+		value: [ 'email-subscriber' ],
+		label: translate( 'Email subscriber' ),
+	},
+	{
+		value: [ 'viewer', 'subscriber' ],
+		label: translate( 'Viewer' ),
+	},
+];

@@ -1,3 +1,10 @@
+import {
+	isBiennially,
+	isDIFMProduct,
+	isMonthlyProduct,
+	isTriennially,
+	isYearly,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import {
@@ -7,8 +14,8 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
-	LineItemBillingInterval,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	doesIntroductoryOfferHavePriceIncrease,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -54,7 +61,7 @@ const CostOverridesListStyle = styled.div`
 		color: #787c82;
 	}
 
-	& .cost-overrides-list-item__reason {
+	& .cost-overrides-list-item__reason--is-discount {
 		color: #008a20;
 	}
 
@@ -98,9 +105,16 @@ export function CostOverridesList( {
 		<CostOverridesListStyle>
 			{ ! showOnlyCoupons &&
 				nonCouponOverrides.map( ( costOverride ) => {
+					const isPriceIncrease = costOverride.discountAmount < 0;
 					return (
 						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason">
+							<span
+								className={
+									isPriceIncrease
+										? 'cost-overrides-list-item__reason'
+										: 'cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount'
+								}
+							>
 								{ costOverride.humanReadableReason }
 							</span>
 							<span className="cost-overrides-list-item__discount">
@@ -116,7 +130,7 @@ export function CostOverridesList( {
 				couponOverrides.map( ( costOverride ) => {
 					return (
 						<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-							<span className="cost-overrides-list-item__reason">
+							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 								{ couponCode.length > 0
 									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
 									: costOverride.humanReadableReason }
@@ -137,12 +151,12 @@ export function CostOverridesList( {
 							className="cost-overrides-list-item cost-overrides-list-item--coupon"
 							key={ costOverride.humanReadableReason }
 						>
-							<span className="cost-overrides-list-item__reason">
+							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 								{ couponCode.length > 0
 									? translate( 'Coupon: %(couponCode)s', { args: { couponCode } } )
 									: costOverride.humanReadableReason }
 							</span>
-							<span className="cost-overrides-list-item__discount">
+							<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 								{ formatCurrency( -costOverride.discountAmount, currency, {
 									isSmallestUnit: true,
 									signForPositive: true,
@@ -167,14 +181,26 @@ export function CostOverridesList( {
 	);
 }
 
-function LineItemCostOverrideIntroOfferDueDate( { product }: { product: ResponseCartProduct } ) {
+/**
+ * Introductory offers sometimes have complex pricing plans that are not easy
+ * to display as a simple discount. This component displays more details about
+ * certain offers.
+ */
+function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseCartProduct } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
-	if ( ! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) ) {
+
+	// We only want to display this info for introductory offers which have
+	// pricing that is difficult to display as a simple discount. Currently
+	// that is offers with different term lengths or price increases.
+	if (
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) &&
+		! doesIntroductoryOfferHavePriceIncrease( product )
+	) {
 		return null;
 	}
 
@@ -194,12 +220,17 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 		}
 		return true;
 	} )?.args;
-	const dueDate = tosData?.subscription_auto_renew_date;
+	const dueDate =
+		tosData && 'subscription_auto_renew_date' in tosData
+			? tosData.subscription_auto_renew_date
+			: undefined;
 	const dueAmount = tosData?.renewal_price_integer;
 	const renewAmount = tosData?.regular_renewal_price_integer;
 	if ( ! dueDate || ! dueAmount || ! renewAmount ) {
 		return null;
 	}
+
+	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
 
 	return (
 		<div>
@@ -214,20 +245,21 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Billed %(dueDate)s: %(price)s', {
-					args: {
-						dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
-							dateStyle: 'long',
-						} ),
-						price: formatCurrency( dueAmount, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				{ shouldShowDueDate &&
+					translate( 'Billed %(dueDate)s: %(price)s', {
+						args: {
+							dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
+								dateStyle: 'long',
+							} ),
+							price: formatCurrency( dueAmount, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
 			</div>
 			<div>
-				<LineItemBillingInterval product={ product } />{ ' ' }
+				<IntroOfferBillingInterval product={ product } />{ ' ' }
 				<span>
 					{ formatCurrency( renewAmount, product.currency, {
 						isSmallestUnit: true,
@@ -239,6 +271,34 @@ function LineItemCostOverrideIntroOfferDueDate( { product }: { product: Response
 	);
 }
 
+export function IntroOfferBillingInterval( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+
+	if ( isDIFMProduct( product ) ) {
+		return <span>{ translate( 'One-time fee' ) }</span>;
+	}
+
+	if ( product.is_included_for_100yearplan ) {
+		return null;
+	}
+
+	if ( isMonthlyProduct( product ) ) {
+		return <span>{ translate( 'Billed every month' ) }</span>;
+	}
+
+	if ( isYearly( product ) ) {
+		return <span>{ translate( 'Billed every year' ) }</span>;
+	}
+
+	if ( isBiennially( product ) ) {
+		return <>{ translate( 'Billed every two years' ) }</>;
+	}
+
+	if ( isTriennially( product ) ) {
+		return <>{ translate( 'Billed every three years' ) }</>;
+	}
+}
+
 function LineItemCostOverride( {
 	costOverride,
 	product,
@@ -246,9 +306,19 @@ function LineItemCostOverride( {
 	costOverride: LineItemCostOverrideForDisplay;
 	product: ResponseCartProduct;
 } ) {
+	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
+	if ( isPriceIncrease ) {
+		return (
+			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
+				<LineItemIntroOfferCostOverrideDetail product={ product } />
+			</div>
+		);
+	}
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
-			<span className="cost-overrides-list-item__reason">{ costOverride.humanReadableReason }</span>
+			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
+				{ costOverride.humanReadableReason }
+			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
@@ -256,7 +326,7 @@ function LineItemCostOverride( {
 						signForPositive: true,
 					} ) }
 			</span>
-			<LineItemCostOverrideIntroOfferDueDate product={ product } />
+			<LineItemIntroOfferCostOverrideDetail product={ product } />
 		</div>
 	);
 }

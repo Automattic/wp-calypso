@@ -138,85 +138,87 @@ export const GitHubConnectionForm = ( {
 				}
 			} }
 		>
-			<div className="github-deployments-connect-repository__configs">
-				<FormFieldset className="github-deployments-connect-repository__repository">
-					<FormLabel>{ __( 'Repository' ) }</FormLabel>
-					<div
-						className={ classNames( 'github-deployments-connect-repository__repository-input', {
-							'github-deployments-connect-repository__repository-input--has-error':
-								displayMissingRepositoryError,
-						} ) }
-					>
-						{ repository ? (
-							<ExternalLink
-								href={ `https://github.com/${ repository.owner }/${ repository.name }` }
-							>
-								{ repository.owner }/{ repository.name }
-							</ExternalLink>
-						) : (
-							<FormSettingExplanation css={ { margin: 0 } }>
-								{ __( 'No repository selected' ) }
-							</FormSettingExplanation>
-						) }
-						{ changeRepository && (
-							<Button compact onClick={ changeRepository }>
-								{ __( 'Select repository' ) }
-							</Button>
-						) }
-					</div>
-					{ displayMissingRepositoryError && (
-						<FormInputValidation isError text={ __( 'Please select a repository' ) } />
-					) }
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="branch">{ __( 'Deployment branch' ) }</FormLabel>
-					<div className="github-deployments-connect-repository__branch-select">
-						<FormSelect
-							id="branch"
-							disabled={ isFetchingBranches }
-							onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
-								setBranch( event.target.value )
-							}
-							value={ branch }
+			<div className="github-deployments-connect-repository__content">
+				<div className="github-deployments-connect-repository__configs">
+					<FormFieldset className="github-deployments-connect-repository__repository">
+						<FormLabel>{ __( 'Repository' ) }</FormLabel>
+						<div
+							className={ classNames( 'github-deployments-connect-repository__repository-input', {
+								'github-deployments-connect-repository__repository-input--has-error':
+									displayMissingRepositoryError,
+							} ) }
 						>
-							{ branchOptions.map( ( branchOption ) => (
-								<option key={ branchOption } value={ branchOption }>
-									{ branchOption }
-								</option>
-							) ) }
-						</FormSelect>
-						{ isFetchingBranches && <Spinner /> }
-					</div>
-				</FormFieldset>
-				<TargetDirInput onChange={ setDestPath } value={ destPath } />
-				<AutomatedDeploymentsToggle
-					onChange={ setIsAutoDeploy }
-					value={ isAutoDeploy }
-					hasWorkflowPath={ !! workflowPath }
-				/>
-				<div className="github-deployments-connect-repository__submit">
-					<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
-						{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
-					</Button>
-
-					{ deploymentId && (
-						<FormSettingExplanation>
-							{ __( 'Changes will be applied in the next deployment run.' ) }
-						</FormSettingExplanation>
-					) }
+							{ repository ? (
+								<ExternalLink
+									href={ `https://github.com/${ repository.owner }/${ repository.name }` }
+								>
+									{ repository.owner }/{ repository.name }
+								</ExternalLink>
+							) : (
+								<FormSettingExplanation css={ { margin: '0 !important' } }>
+									{ __( 'No repository selected' ) }
+								</FormSettingExplanation>
+							) }
+							{ changeRepository && (
+								<Button compact onClick={ changeRepository }>
+									{ __( 'Select repository' ) }
+								</Button>
+							) }
+						</div>
+						{ displayMissingRepositoryError && (
+							<FormInputValidation isError text={ __( 'Please select a repository' ) } />
+						) }
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="branch">{ __( 'Deployment branch' ) }</FormLabel>
+						<div className="github-deployments-connect-repository__branch-select">
+							<FormSelect
+								id="branch"
+								disabled={ isFetchingBranches }
+								onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
+									setBranch( event.target.value )
+								}
+								value={ branch }
+							>
+								{ branchOptions.map( ( branchOption ) => (
+									<option key={ branchOption } value={ branchOption }>
+										{ branchOption }
+									</option>
+								) ) }
+							</FormSelect>
+							{ isFetchingBranches && <Spinner /> }
+						</div>
+					</FormFieldset>
+					<TargetDirInput onChange={ setDestPath } value={ destPath } />
+					<AutomatedDeploymentsToggle
+						onChange={ setIsAutoDeploy }
+						value={ isAutoDeploy }
+						hasWorkflowPath={ !! workflowPath }
+					/>
 				</div>
+				<DeploymentStyle
+					isDisabled={ ! repository || isFetchingBranches }
+					branchName={ branch }
+					repository={ repository }
+					workflowPath={ workflowPath }
+					onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
+					workflowCheckResult={ workflowCheckResult }
+					isCheckingWorkflow={ isCheckingWorkflow }
+					onWorkflowVerify={ checkWorkflow }
+					useComposerWorkflow={ !! useComposerWorkflow }
+				/>
 			</div>
-			<DeploymentStyle
-				isDisabled={ ! repository || isFetchingBranches }
-				branchName={ branch }
-				repository={ repository }
-				workflowPath={ workflowPath }
-				onChooseWorkflow={ ( filePath ) => setWorkflowPath( filePath ) }
-				workflowCheckResult={ workflowCheckResult }
-				isCheckingWorkflow={ isCheckingWorkflow }
-				onWorkflowVerify={ checkWorkflow }
-				useComposerWorkflow={ !! useComposerWorkflow }
-			/>
+			<div className="github-deployments-connect-repository__submit">
+				<Button type="submit" primary busy={ isPending } disabled={ isPending || submitDisabled }>
+					{ deploymentId ? __( 'Update' ) : __( 'Connect' ) }
+				</Button>
+
+				{ deploymentId && (
+					<FormSettingExplanation>
+						{ __( 'Changes will be applied in the next deployment run.' ) }
+					</FormSettingExplanation>
+				) }
+			</div>
 		</form>
 	);
 };

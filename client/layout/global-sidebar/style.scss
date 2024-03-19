@@ -231,6 +231,23 @@ $brand-text: "SF Pro Text", $sans;
 			}
 		}
 
+		.sidebar__footer-language-switcher {
+			align-items: center;
+			color: var(--studio-gray-5);
+			cursor: pointer;
+			display: flex;
+			height: 32px;
+			gap: 6px;
+			padding: 6px;
+			justify-content: center;
+			margin-inline-start: auto;
+		}
+
+
+		&:has(.sidebar__footer-language-switcher) {
+			background: var(--studio-orange);
+		}
+
 		.sidebar__item-help,
 		.sidebar__footer-link,
 		.sidebar__footer-wpadmin {
@@ -250,6 +267,7 @@ $brand-text: "SF Pro Text", $sans;
 			}
 		}
 
+		.sidebar__footer-language-switcher,
 		.sidebar__footer-link,
 		.sidebar__item-help {
 			&:hover {

@@ -7,7 +7,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -29,6 +29,8 @@ import type {
 	RemoveProductFromCart,
 	ReplaceProductInCart,
 	CouponStatus,
+	SetCouponFieldVisible,
+	RemoveCouponAndClearField,
 } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
@@ -52,6 +54,13 @@ const CouponLinkWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
 
 const CouponAreaWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
 	padding-bottom: ${ ( props ) => ( props.shouldUseCheckoutV2 ? '12px' : 'inherit' ) };
+	${ ( props ) => ( props.shouldUseCheckoutV2 ? '' : 'padding: 0 24px;' ) }
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-inline-start: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '40px' ) };
+		padding-inline-end: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '0' ) };
+	}
+	padding-top: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '48px' ) };
+	align-self: stretch;
 `;
 
 const CouponField = styled( Coupon )``;
@@ -102,6 +111,9 @@ const SitePreviewWrapper = styled.div`
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
+	removeCouponAndClearField,
+	isCouponFieldVisible,
+	setCouponFieldVisible,
 	replaceProductInCart,
 	couponFieldStateProps,
 	onChangeSelection,
@@ -114,14 +126,16 @@ export default function WPCheckoutOrderReview( {
 	replaceProductInCart?: ReplaceProductInCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
+	removeCouponAndClearField: RemoveCouponAndClearField;
+	isCouponFieldVisible: boolean;
+	setCouponFieldVisible: SetCouponFieldVisible;
 	siteUrl?: string;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const cartKey = useCartKey();
-	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
+	const { responseCart, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const reduxDispatch = useDispatch();
 	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
@@ -159,12 +173,6 @@ export default function WPCheckoutOrderReview( {
 
 	// This is what will be displayed at the top of checkout prefixed by "Site: ".
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
-
-	const removeCouponAndClearField = () => {
-		couponFieldStateProps.setCouponFieldValue( '' );
-		setCouponFieldVisible( false );
-		return removeCoupon();
-	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
@@ -220,7 +228,7 @@ export default function WPCheckoutOrderReview( {
 					/>
 				</WPOrderReviewSection>
 
-				{ ! isAkismetCheckout() && (
+				{ ! isAkismetCheckout() && shouldUseCheckoutV2 && (
 					<CouponFieldArea
 						isCouponFieldVisible={ isCouponFieldVisible }
 						setCouponFieldVisible={ setCouponFieldVisible }
@@ -234,7 +242,7 @@ export default function WPCheckoutOrderReview( {
 	);
 }
 
-function CouponFieldArea( {
+export function CouponFieldArea( {
 	isCouponFieldVisible,
 	setCouponFieldVisible,
 	isPurchaseFree,

@@ -31,7 +31,8 @@ export const ScheduleCreate = ( props: Props ) => {
 	const translate = useTranslate();
 	const { createMonitor } = useCreateMonitor( siteSlug );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
-	const siteHasEligiblePlugins = useSiteHasEligiblePlugins();
+	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
+		useSiteHasEligiblePlugins();
 	const { onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
@@ -52,6 +53,13 @@ export const ScheduleCreate = ( props: Props ) => {
 			onNavBack && onNavBack();
 		}
 	}, [ isFetched ] );
+
+	// Redirect back to list when no eligible plugins are installed
+	useEffect( () => {
+		if ( ! siteHasEligiblePlugins && ! siteHasEligiblePluginsLoading ) {
+			onNavBack && onNavBack();
+		}
+	}, [ siteHasEligiblePlugins, siteHasEligiblePluginsLoading ] );
 
 	const onSyncSuccess = () => {
 		recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
@@ -78,7 +86,7 @@ export const ScheduleCreate = ( props: Props ) => {
 						}
 					) }
 					onClick={ () => {
-						page.redirect( `/plugins/${ siteSlug }` );
+						page.show( `/plugins/${ siteSlug }` );
 					} }
 				/>
 			) }

@@ -24,20 +24,22 @@ export function useCreateMonitor( siteSlug: SiteSlug ) {
 			true
 		)( ( args: { type: string } ) => {
 			if ( args.type === JETPACK_MODULE_ACTIVATE_SUCCESS ) {
-				createMonitorSettings( {
-					urls: [
-						{
-							// The home URL needs to be one of the URLs monitored.
-							check_interval: CRON_CHECK_INTERVAL,
-							monitor_url: siteUrl,
-						},
-						{
-							// Monitoring the wp-cron.php file to ensure that the cron jobs are running.
-							check_interval: CRON_CHECK_INTERVAL,
-							monitor_url: siteUrl + '/wp-cron.php',
-						},
-					],
-				} as UpdateMonitorSettings );
+				setTimeout( () => {
+					createMonitorSettings( {
+						urls: [
+							{
+								// The home URL needs to be one of the URLs monitored.
+								check_interval: CRON_CHECK_INTERVAL,
+								monitor_url: siteUrl,
+							},
+							{
+								// Monitoring the wp-cron.php file to ensure that the cron jobs are running.
+								check_interval: CRON_CHECK_INTERVAL,
+								monitor_url: siteUrl + '/wp-cron.php',
+							},
+						],
+					} as UpdateMonitorSettings );
+				}, 3000 );
 			}
 		} );
 	};

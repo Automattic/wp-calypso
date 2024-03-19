@@ -1,19 +1,22 @@
+import { Gridicon } from '@automattic/components';
 import { useSendInvites } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
-import { Button, CheckboxControl } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { Button, CheckboxControl, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { Fragment, useEffect, useState } from '@wordpress/element';
+import { check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Pagination from 'calypso/components/pagination';
+import Search from 'calypso/components/search';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ImportedUserItem from './imported-user-item';
-import { getRole } from './utils';
+import { getRole, getRoleFilterValues } from './utils';
 import type { UsersQuery, Member, SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -73,11 +76,50 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	const { data: usersData, fetchNextPage, hasNextPage } = usersQuery;
 	const { isPending: isSubmittingInvites, mutateAsync: sendInvites } = useSendInvites( site?.ID );
 
-	const users = usersData?.users?.map( ( user ) => ( { user, checked: true } ) ) || [];
+	// Get initial user data
+	// Remove current user (admin) from the list
+	// Remove users with roles that are not allowed to be imported
+	const users =
+		usersData?.users
+			?.map( ( user ) => ( { user, checked: true } ) )
+			?.filter( ( userItem ) => {
+				const allowedRoles = getRoleFilterValues?.map( ( role ) => role.value ).flat();
+				return (
+					userItem.user?.linked_user_ID !== userId &&
+					allowedRoles?.includes( getRole( userItem.user ) )
+				);
+			} ) || [];
+
 	const totalUsers = usersData?.total ? usersData?.total - 1 : null;
 	const loadedPages = usersData?.pages || [];
 	const [ usersList, setUsersList ] = useState( users );
 	const [ checkedUsersNumber, setCheckedUsersNumber ] = useState( totalUsers || 0 );
+	const [ filteredUsers, setFilteredUsers ] = useState<
+		{
+			user: Member;
+			checked: boolean;
+		}[]
+	>( [] );
+
+	const [ userListFilters, setUserListFilters ] = useState< {
+		selectedRoleFilters: string[];
+		searchQuery: string;
+	} >( {
+		selectedRoleFilters: [],
+		searchQuery: '',
+	} );
+
+	const filteredUsersList = filteredUsers.length ? filteredUsers : [];
+	const usersListToDisplay =
+		( userListFilters.selectedRoleFilters.length || userListFilters.searchQuery ) &&
+		filteredUsersList
+			? filteredUsersList
+			: usersList;
+	const totalUsersToDisplay =
+		( userListFilters.selectedRoleFilters.length || userListFilters.searchQuery ) &&
+		filteredUsersList?.length > 0
+			? filteredUsersList.length
+			: totalUsers;
 
 	const [ page, setPage ] = useState( 1 );
 	const perPage = 6;
@@ -108,11 +150,14 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		onSubmit?.();
 	};
 
-	const onChangeChecked = ( index: number ) => ( checked: boolean ) => {
+	const onChangeChecked = ( user: Member ) => ( checked: boolean ) => {
 		const updatedUsersList = [ ...usersList ];
-		updatedUsersList[ index ].checked = checked;
-		setUsersList( updatedUsersList );
-		setCheckedUsersNumber( updatedUsersList.filter( ( x ) => x.checked )?.length );
+		const findIndex = updatedUsersList.findIndex( ( userItem ) => userItem.user?.ID === user?.ID );
+		if ( findIndex !== -1 ) {
+			updatedUsersList[ findIndex ].checked = checked;
+			setUsersList( updatedUsersList );
+			setCheckedUsersNumber( updatedUsersList.filter( ( x ) => x.checked )?.length );
+		}
 	};
 
 	const renderToggleAllUsers = () => {
@@ -137,13 +182,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		);
 	};
 
-	const renderUser = (
-		listUser: {
-			user: Member;
-			checked: boolean;
-		},
-		index: number
-	) => {
+	const renderUser = ( listUser: { user: Member; checked: boolean } ) => {
 		const { user, checked } = listUser;
 		const isExternalContributor =
 			externalContributors && externalContributors.includes( user?.linked_user_ID ?? user?.ID );
@@ -156,7 +195,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 				key={ `${ listUser?.user?.ID }-${ listUser?.checked }` }
 				user={ user }
 				isChecked={ checked }
-				onChangeChecked={ onChangeChecked( index ) }
+				onChangeChecked={ onChangeChecked( user ) }
 				isExternalContributor={ isExternalContributor }
 				isP2Guest={ isP2Guest }
 			/>
@@ -180,23 +219,120 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 		}
 	};
 
+	const renderUsersListFilters = () => {
+		const searchUsers = ( query: string ) => {
+			setUserListFilters( { ...userListFilters, searchQuery: query } );
+		};
+
+		const renderRoleFilterItems = () => {
+			const onRoleFilterClick = ( role: { value: string[]; label: string } ) => {
+				let updatedSelectedRoleFilters = [ ...userListFilters.selectedRoleFilters ];
+
+				if ( role.value.length > 1 ) {
+					role.value.forEach( ( roleValue: string ) => {
+						if ( ! updatedSelectedRoleFilters.includes( roleValue ) ) {
+							updatedSelectedRoleFilters.push( roleValue );
+						} else {
+							updatedSelectedRoleFilters = updatedSelectedRoleFilters.filter(
+								( selectedRole ) => selectedRole !== roleValue
+							);
+						}
+					} );
+				} else if ( ! updatedSelectedRoleFilters.includes( role.value[ 0 ] ) ) {
+					updatedSelectedRoleFilters.push( role.value[ 0 ] );
+				} else {
+					updatedSelectedRoleFilters = updatedSelectedRoleFilters.filter(
+						( x ) => x !== role.value[ 0 ]
+					);
+				}
+
+				setUserListFilters( {
+					...userListFilters,
+					selectedRoleFilters: updatedSelectedRoleFilters,
+				} );
+			};
+			return getRoleFilterValues.map( ( role, index ) => {
+				const isSelected =
+					userListFilters?.selectedRoleFilters?.filter( ( selectedRole ) =>
+						role.value.includes( selectedRole )
+					).length > 0;
+
+				return (
+					<MenuItem
+						value={ role.value }
+						onClick={ () => onRoleFilterClick( role ) }
+						icon={ isSelected ? check : null }
+						isSelected={ isSelected }
+						key={ index }
+						role="menuitemcheckbox"
+					>
+						{ role.label }
+					</MenuItem>
+				);
+			} );
+		};
+
+		return (
+			<div className="import__user-migration-user-list-filters">
+				<Search
+					onSearch={ ( query: string ) => searchUsers( query ) }
+					delaySearch
+					placeholder={ translate( 'Search' ) }
+				/>
+				<div className="import__user-migration-user-list-role-filter">
+					<DropdownMenu
+						icon={ <Gridicon icon="filter" size={ 24 } /> }
+						label={ translate( 'Filter by role' ) }
+					>
+						{ () => (
+							<Fragment>
+								<MenuGroup label={ translate( 'Role' ) }>{ renderRoleFilterItems() }</MenuGroup>
+							</Fragment>
+						) }
+					</DropdownMenu>
+				</div>
+			</div>
+		);
+	};
+
 	const renderUsersList = () => {
 		const start = ( page - 1 ) * perPage;
 		const end = start + perPage;
+
+		if ( usersListToDisplay.length === 0 ) {
+			return (
+				<div className="import__user-migration-users">
+					<div className="import__user-migration-user-list-no-users">
+						{ translate( 'No users found' ) }
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<div className="import__user-migration-users">
-				{ usersList.slice( start, end ).map( ( user, index ) => {
-					const originalIndex = start + index;
-					return renderUser( user, originalIndex );
+				{ usersListToDisplay.slice( start, end ).map( ( user ) => {
+					return renderUser( user );
 				} ) }
 			</div>
 		);
 	};
 
 	const renderCurrentPageInfo = () => {
-		const currentPageFirstItemIndex = ( page - 1 ) * perPage + 1;
-		const currentPageLastItemIndex =
-			page * perPage >= usersList.length ? usersList.length : page * perPage;
+		let currentPageFirstItemIndex = ( page - 1 ) * perPage + 1;
+		let currentPageLastItemIndex =
+			page * perPage >= usersListToDisplay.length ? usersListToDisplay.length : page * perPage;
+		let totalUsers = totalUsersToDisplay;
+
+		if (
+			( userListFilters.searchQuery || userListFilters.selectedRoleFilters.length ) &&
+			usersListToDisplay.length === 0
+		) {
+			currentPageFirstItemIndex = 0;
+			currentPageLastItemIndex = 0;
+			totalUsers = 0;
+		}
+
 		return (
 			<div className="import__user-migration-user-list-pagination-info">
 				{ currentPageFirstItemIndex }-{ currentPageLastItemIndex } of { totalUsers } items
@@ -213,7 +349,7 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					compact={ true }
 					page={ page }
 					perPage={ perPage }
-					total={ usersList.length }
+					total={ usersListToDisplay.length }
 					pageClick={ onPageClick }
 					nextLabel=" "
 					prevLabel=" "
@@ -226,47 +362,38 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 	};
 
 	useEffect( () => {
-		let filteredUserData = usersData;
-		// We need to remove the current admin user from the list
-		if ( userId && filteredUserData?.users ) {
-			filteredUserData = {
-				...filteredUserData,
-				users: filteredUserData?.users?.filter( ( userItem ) => {
-					return userItem?.linked_user_ID !== userId;
-				} ),
-			};
-		}
+		let updatedUsersList = [ ...usersList ];
+		if ( userListFilters.searchQuery ) {
+			updatedUsersList = updatedUsersList.filter( ( user ) => {
+				const userEmail =
+					( typeof user.user?.email === 'string' && user.user?.email?.toLowerCase() ) || '';
+				const userLogin = user.user?.login?.toLowerCase();
+				const userName = user.user?.name?.toLowerCase();
+				const userNiceName = user.user?.nice_name?.toLowerCase();
+				const userQuery = userListFilters.searchQuery.toLowerCase();
+				const currentAdmin = user.user?.linked_user_ID === userId;
 
-		const updatedUsers = filteredUserData?.users?.map( ( userItem ) => userItem );
-		const storedUsers = usersList?.map( ( userItem ) => userItem.user );
-
-		if ( JSON.stringify( updatedUsers ) !== JSON.stringify( storedUsers ) ) {
-			let updatedUsersList = updatedUsers?.map( ( user ) => ( { user, checked: true } ) ) || [];
-			const storedUsersList = usersList;
-
-			if ( userId && updatedUsersList ) {
-				updatedUsersList = updatedUsersList.filter( ( userItem ) => {
-					return userItem?.user?.linked_user_ID !== userId;
-				} );
-			}
-
-			// Update the checked status of the users to maintain the correct value
-			updatedUsersList = updatedUsersList?.map( ( userItem ) => {
-				const userId = userItem?.user?.ID;
-				const userExists = storedUsersList?.find(
-					( storedUser ) => storedUser?.user?.ID === userId
+				return (
+					! currentAdmin &&
+					( userEmail.includes( userQuery ) ||
+						userLogin.includes( userQuery ) ||
+						userName.includes( userQuery ) ||
+						userNiceName.includes( userQuery ) )
 				);
-				userItem.checked = userExists ? userExists?.checked : true;
-
-				return userItem;
 			} );
-
-			const updatedCheckedUsersNumber = updatedUsersList?.filter( ( x ) => x.checked )?.length;
-
-			setUsersList( updatedUsersList );
-			setCheckedUsersNumber( updatedCheckedUsersNumber );
 		}
-	}, [ userId, usersData, usersList ] );
+
+		if ( userListFilters.selectedRoleFilters.length ) {
+			updatedUsersList = updatedUsersList.filter( ( user ) => {
+				return userListFilters.selectedRoleFilters.includes( getRole( user.user ) );
+			} );
+		}
+		setFilteredUsers( updatedUsersList );
+
+		if ( userListFilters.searchQuery || userListFilters.selectedRoleFilters.length ) {
+			setPage( 1 );
+		}
+	}, [ userListFilters, usersList, userId ] );
 
 	return (
 		<div className="import__user-migration">
@@ -295,8 +422,9 @@ const ImportUsers = ( { site, onSubmit }: Props ) => {
 					) }
 				</SubTitle>
 			</div>
-			{ usersList.length > 0 && totalUsers && (
+			{ usersListToDisplay && totalUsers && (
 				<div className="import__user-migration-user-list">
+					{ renderUsersListFilters() }
 					{ renderToggleAllUsers() }
 					{ renderUsersList() }
 					{ renderPagination() }
