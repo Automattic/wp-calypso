@@ -278,39 +278,36 @@ function CheckoutSidebarNudge( {
 	}
 
 	/**
-	 * TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
-	 * V2 checkout handles monthly products in the CheckoutSidebarPlanUpsell so this condition is not needed
+	 * TODO !hasMonthlyProduct can likely be removed after Jetpack refactors their sidebar nudge
+	 * to account for monthly products like CheckoutSidebarPlanUpsell does
 	 */
-	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
-		return (
-			<CheckoutSidebarNudgeWrapper>
-				{ ! ( productsWithVariants.length > 1 ) && (
-					<>
-						<CheckoutSidebarPlanUpsell />
-						<JetpackAkismetCheckoutSidebarPlanUpsell />
-					</>
-				) }
-				{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
-					<SecondaryCartPromotions
-						responseCart={ responseCart }
-						addItemToCart={ addItemToCart }
-						isCartPendingUpdate={ isCartPendingUpdate }
-						isPurchaseRenewal={ isPurchaseRenewal }
-					/>
-				) }
-				{ shouldUseCheckoutV2 && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						siteId={ siteId }
-						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-						onChangeSelection={ changeSelection }
-					/>
-				) }
-			</CheckoutSidebarNudgeWrapper>
-		);
-	}
 
-	return null;
+	return (
+		<CheckoutSidebarNudgeWrapper>
+			{ ! ( productsWithVariants.length > 1 ) && (
+				<>
+					<CheckoutSidebarPlanUpsell />
+					{ ! hasMonthlyProduct && <JetpackAkismetCheckoutSidebarPlanUpsell /> }
+				</>
+			) }
+			{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
+				<SecondaryCartPromotions
+					responseCart={ responseCart }
+					addItemToCart={ addItemToCart }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isPurchaseRenewal={ isPurchaseRenewal }
+				/>
+			) }
+			{ shouldUseCheckoutV2 && (
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					isCartUpdating={ FormStatus.VALIDATING === formStatus }
+					onChangeSelection={ changeSelection }
+				/>
+			) }
+		</CheckoutSidebarNudgeWrapper>
+	);
 }
 
 export default function CheckoutMainContent( {
