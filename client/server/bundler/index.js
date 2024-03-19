@@ -35,6 +35,20 @@ function middleware( app ) {
 		} );
 	}
 
+	// Add a progress logging function to the ProgressPlugin
+	new compiler.webpack.ProgressPlugin( ( percentage, message ) => {
+		const width = 40; // width of progress bar
+		const pos = Math.floor( percentage * width );
+
+		// create progress bar
+		const progressBar = '[' + '#'.repeat( pos ) + ' '.repeat( width - pos ) + ']';
+
+		// print progress bar
+		process.stderr.write(
+			`\rProgress: ${ ( percentage * 100 ).toFixed( 2 ) }% ${ progressBar } ${ message }`
+		);
+	} ).apply( compiler );
+
 	compiler.hooks.done.tap( 'Calypso', function () {
 		built = true;
 
