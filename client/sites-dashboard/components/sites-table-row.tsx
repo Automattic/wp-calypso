@@ -11,6 +11,7 @@ import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
 import {
@@ -112,6 +113,11 @@ const StatsColumnStyled = styled( Column )`
 	text-align: center;
 `;
 
+const BadgeDIFM = styled.span`
+	color: var( --studio-gray-100 );
+	white-space: break-spaces;
+`;
+
 const StatsOffIndicator = () => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const tooltipRef = useRef( null );
@@ -143,6 +149,8 @@ const StatsOffIndicator = () => {
 };
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
+	const isDIFMInProgress = useSelector( ( state ) => isDIFMLiteInProgress( state, site.ID ) );
+
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -215,8 +223,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<TransferNoticeWrapper { ...result } />
 						) : (
 							<>
-								{ translatedStatus }
-								<SiteLaunchNag site={ site } />
+								<div>
+									{ translatedStatus }
+									<SiteLaunchNag site={ site } />
+								</div>
+								{ isDIFMInProgress && (
+									<BadgeDIFM className="site__badge">{ __( 'Built By Express' ) }</BadgeDIFM>
+								) }
 							</>
 						)
 					}
