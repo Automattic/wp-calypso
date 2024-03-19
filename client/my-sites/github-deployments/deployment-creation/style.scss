@@ -1,14 +1,20 @@
 .repository-selection-dialog {
 	width: 622px;
-	height: 470px;
+	height: fit-content;
 	display: flex;
 	flex-direction: column;
+	padding: 32px;
 
 	h1 {
-		margin-bottom: 0.25rem !important;
+		margin-bottom: 8px !important;
 	}
 
 	.formatted-header {
 		margin-bottom: 24px !important;
 	}
+
+}
+
+.dialog__action-buttons-close {
+	padding: 32px;
 }

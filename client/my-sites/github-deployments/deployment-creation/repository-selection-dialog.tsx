@@ -27,8 +27,9 @@ export const RepositorySelectionDialog = ( {
 			shouldCloseOnOverlayClick
 			shouldCloseOnEsc
 			onClose={ onClose }
+			className="repository-selection-dialog"
 		>
-			<div className="repository-selection-dialog">
+			<div>
 				<FormattedHeader
 					align="left"
 					headerText={ __( 'Select repository' ) }
