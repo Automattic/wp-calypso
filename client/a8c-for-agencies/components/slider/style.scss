@@ -59,6 +59,7 @@
 	position: relative;
 	margin-block-start: -4px;
 	display: flex;
+	align-items: flex-start;
 	justify-content: space-between;
 }
 
@@ -69,6 +70,7 @@
 	align-items: center;
 	flex-direction: column;
 	justify-content: center;
+	gap: 4px;
 }
 
 .a4a-slider__marker-line {
@@ -77,9 +79,24 @@
 	background-color: var(--color-neutral-10);
 }
 
+.a4a-slider__label-container {
+	text-align: right;
+}
+
+.a4a-slider__sub {
+	margin-block-start: 4px;
+}
+
 .a4a-slider__label,
+.a4a-slider__sub,
 .a4a-slider__marker {
 	font-size: 0.875rem;
 	font-weight: 500;
 	line-height: 1.1;
+}
+
+
+.a4a-slider__sub,
+.a4a-slider__marker-sub {
+	color: var(--color-success);
 }
