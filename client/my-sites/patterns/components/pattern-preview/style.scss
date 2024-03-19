@@ -37,33 +37,37 @@
 		--default-color: #3858e9;
 		--hover-color: #1d35b4;
 
-		&.is-primary {
-			background-color: var(--default-color);
-			border-color: var(--default-color);
-			font-size: rem(13px);
+		flex-shrink: 0;
+		font-size: rem(13px);
+		line-height: 1.6;
+		padding: 4px 8px;
+	}
 
-			&:enabled:hover,
-			&:focus {
-				background-color: var(--hover-color);
-				border-color: var(--hover-color);
-			}
-		}
+	.pattern-preview__copy {
+		background-color: var(--default-color);
+		border-color: var(--default-color);
 
-		&.is-borderless {
-			color: var(--default-color);
-			font: inherit;
-			padding: 0;
-
-			&:enabled:hover {
-				color: var(--hover-color);
-			}
+		&:enabled:hover,
+		&:focus {
+			background-color: var(--hover-color);
+			border-color: var(--hover-color);
 		}
 	}
 
 	.pattern-preview__get-access {
 		align-items: center;
+		border: 1px solid currentColor;
+		color: var(--default-color);
 		display: flex;
+		font-family: inherit;
 		gap: 4px;
+		padding-left: 5px;
+
+		&:enabled:hover,
+		&:focus {
+			border-color: currentColor;
+			color: var(--hover-color);
+		}
 
 		path {
 			fill: currentColor;
@@ -72,8 +76,13 @@
 }
 
 .pattern-preview--list {
-	@include break-huge {
-		flex-direction: column-reverse;
+	.pattern-preview__copy,
+	.pattern-preview__get-access {
+		padding: 8px 14px;
+	}
+
+	.pattern-preview__get-access {
+		padding-left: 12px;
 	}
 
 	.pattern-preview__title {

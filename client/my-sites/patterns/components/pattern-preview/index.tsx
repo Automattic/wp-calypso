@@ -79,14 +79,13 @@ export function PatternPreview( {
 
 				{ canCopy && (
 					<ClipboardButton
-						borderless={ ! isPreviewLarge }
 						className="pattern-preview__copy"
 						onCopy={ () => {
 							setIsCopied( true );
 						} }
 						text={ pattern?.html ?? '' }
-						primary={ isPreviewLarge }
-						transparent={ ! isPreviewLarge }
+						primary
+						transparent={ ! canCopy }
 					>
 						{ copyButtonText }
 					</ClipboardButton>
