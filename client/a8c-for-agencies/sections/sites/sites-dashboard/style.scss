@@ -336,13 +336,7 @@
 		display: none;
 	}
 
-	.sites-dashboard__layout {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		gap: 16px;
-		max-height: calc(100vh - 32px);
-		min-height: calc(100vh - 32px);
+	&.sites-dashboard__layout {
 
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
