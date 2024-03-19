@@ -10,8 +10,8 @@ import {
 } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
-import { useSelect } from '@wordpress/data';
-import { useMemo, useState } from 'react';
+import { dispatch, useSelect } from '@wordpress/data';
+import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
 import { usePrefillCheckoutContactForm } from 'calypso/my-sites/checkout/src/hooks/use-prefill-checkout-contact-form';
@@ -21,8 +21,8 @@ import {
 	createTestReduxStore,
 	mockCartEndpoint,
 	mockCachedContactDetailsEndpoint,
+	mockGetSupportedCountriesEndpoint,
 } from './util';
-import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/lib/explat' );
 ( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
@@ -34,13 +34,12 @@ const paymentMethods = [];
 const paymentProcessors = {};
 
 function MyTestWrapper( {
-	countries,
+	queryClient,
 	reduxStore,
 }: {
-	countries: CountryListItem[];
+	queryClient: QueryClient;
 	reduxStore: ReturnType< typeof createTestReduxStore >;
 } ) {
-	const queryClient = useMemo( () => new QueryClient(), [] );
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
@@ -54,7 +53,7 @@ function MyTestWrapper( {
 								stepId="contact-form"
 								titleContent={ <em>Contact step</em> }
 								isCompleteCallback={ () => false }
-								activeStepContent={ <MyTestContent countries={ countries } /> }
+								activeStepContent={ <MyTestContent /> }
 							/>
 							<CheckoutStep
 								stepId="payment-method-step"
@@ -74,13 +73,12 @@ function MyTestWrapper( {
 	);
 }
 
-function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
+function MyTestContent() {
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
 	usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors: () => null,
-		overrideCountryList: countries,
 	} );
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
@@ -123,16 +121,23 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 	);
 }
 
-describe( 'useCachedDomainContactDetails', () => {
+describe( 'usePrefillCheckoutContactForm', () => {
+	beforeEach( () => {
+		dispatch( CHECKOUT_STORE ).reset();
+		jest.clearAllMocks();
+	} );
+
 	it( 'sends the postal code and country from the contact details endpoint to the checkout data store for country with postal code', async () => {
 		const countryCode = 'US';
 		const postalCode = '10001';
+		mockGetSupportedCountriesEndpoint( countryList );
 		mockCachedContactDetailsEndpoint( {
 			country_code: countryCode,
 			postal_code: postalCode,
 		} );
 		const reduxStore = createTestReduxStore();
-		render( <MyTestWrapper countries={ countryList } reduxStore={ reduxStore } /> );
+		const queryClient = new QueryClient();
+		render( <MyTestWrapper reduxStore={ reduxStore } queryClient={ queryClient } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( `Form Country: ${ countryCode }` ) ).toBeInTheDocument();
 			expect( screen.queryByText( `Form Postal: ${ postalCode }` ) ).toBeInTheDocument();
@@ -142,12 +147,14 @@ describe( 'useCachedDomainContactDetails', () => {
 	it( 'sends the country from the contact details endpoint to the checkout data store for country without postal code', async () => {
 		const countryCode = 'CW';
 		const postalCode = '10001';
+		mockGetSupportedCountriesEndpoint( countryList );
 		mockCachedContactDetailsEndpoint( {
 			country_code: countryCode,
 			postal_code: postalCode,
 		} );
 		const reduxStore = createTestReduxStore();
-		render( <MyTestWrapper countries={ countryList } reduxStore={ reduxStore } /> );
+		const queryClient = new QueryClient();
+		render( <MyTestWrapper reduxStore={ reduxStore } queryClient={ queryClient } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( `Form Country: ${ countryCode }` ) ).toBeInTheDocument();
 			expect( screen.queryByText( `Form Postal: ${ postalCode }` ) ).not.toBeInTheDocument();
@@ -157,12 +164,14 @@ describe( 'useCachedDomainContactDetails', () => {
 	it( 'does not send the country from the contact details endpoint to the checkout data store if countries have not loaded', async () => {
 		const countryCode = 'US';
 		const postalCode = '10001';
+		mockGetSupportedCountriesEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: countryCode,
 			postal_code: postalCode,
 		} );
 		const reduxStore = createTestReduxStore();
-		render( <MyTestWrapper countries={ [] } reduxStore={ reduxStore } /> );
+		const queryClient = new QueryClient();
+		render( <MyTestWrapper reduxStore={ reduxStore } queryClient={ queryClient } /> );
 		await expect( screen.findByText( 'Form Country: US' ) ).toNeverAppear();
 		await expect( screen.findByText( 'Form Postal: 10001' ) ).toNeverAppear();
 	} );

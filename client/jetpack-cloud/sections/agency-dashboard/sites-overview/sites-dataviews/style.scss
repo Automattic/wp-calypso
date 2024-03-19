@@ -77,6 +77,11 @@
 			vertical-align: middle;
 		}
 
+		td:has(.sites-dataviews__site) {
+			padding: 8px 16px 8px 4px;
+			width: 20%;
+		}
+
 		.site-sort__clickable {
 			cursor: pointer;
 			padding-left: 1rem;
@@ -93,6 +98,7 @@
 			}
 		}
 	}
+
 	ul.dataviews-view-list {
 		li:hover {
 			background: var(--studio-gray-0);
@@ -122,19 +128,31 @@
 }
 
 .sites-dataviews__site-name {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: flex-start;
+	display: inline-block;
+	text-align: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
 	white-space: nowrap;
+	width: 180px;
 	font-weight: 500;
 	font-size: rem(14px);
 }
 
 .sites-dataviews__site-url {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 	font-size: rem(12px);
 	color: var(--studio-gray-60);
 	font-weight: 400;
+}
+
+.preview-hidden {
+	@media (min-width: 2040px) {
+		.sites-dataviews__site-name {
+			width: 250px;
+		}
+	}
 }
 
 .sites-dataviews__actions {

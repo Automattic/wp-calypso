@@ -27,6 +27,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 					category={ context.params.category }
 					categoryGallery={ CategoryGalleryClient }
 					isGridView={ !! context.query.grid }
+					key={ context.params.category }
 					patternGallery={ PatternGalleryClient }
 					patternTypeFilter={
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR

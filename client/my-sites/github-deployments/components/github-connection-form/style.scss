@@ -1,10 +1,13 @@
 .github-deployments-connect-repository {
-	display: flex;
-	justify-content: space-between;
-	gap: 58px;
 
-	> * {
-		flex: 1;
+	&__content {
+		display: flex;
+		justify-content: space-between;
+		gap: 58px;
+
+		> div {
+			flex: 1;
+		}
 	}
 
 	.form-label {
@@ -60,7 +63,7 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		margin-top: 40px;
+		margin-top: 16px;
 
 		.button {
 			overflow: visible;

@@ -47,3 +47,4 @@ function MyComponent() {
 - `description` - (string) Description text
 - `dismissText` - (string) Text for the dismiss button
 - `confirmText` - (string) Text for the confirm button
+- `showOverlay` - _optional_ (bool) A boolean that determines if the backdrop overlay is shown. 
