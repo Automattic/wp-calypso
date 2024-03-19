@@ -201,18 +201,12 @@ function CommandInput( { isOpen, placeholder }: CommandInputProps ) {
 }
 
 interface NotFoundMessageProps {
-	selectedCommandName: string;
-	search: string;
 	emptyListNotice?: string;
-	currentRoute: string | null;
 }
 
-const NotFoundMessage = ( {
-	selectedCommandName,
-	search,
-	emptyListNotice,
-	currentRoute,
-}: NotFoundMessageProps ) => {
+const NotFoundMessage = ( { emptyListNotice }: NotFoundMessageProps ) => {
+	const { selectedCommandName, search } = useCommandMenuGroupContext();
+	const { currentRoute } = useCommandPaletteContext();
 	const trackNotFoundDebounced = useDebounce( () => {
 		recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
 			current_route: currentRoute,
@@ -371,12 +365,7 @@ const CommandPalette = () => {
 						</div>
 						<Command.List ref={ commandListRef }>
 							<StyledCommandsEmpty>
-								<NotFoundMessage
-									selectedCommandName={ selectedCommandName }
-									search={ search }
-									emptyListNotice={ emptyListNotice }
-									currentRoute={ currentRoute }
-								/>
+								<NotFoundMessage emptyListNotice={ emptyListNotice } />
 							</StyledCommandsEmpty>
 							<CommandMenuGroup />
 						</Command.List>
