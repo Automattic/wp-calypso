@@ -115,7 +115,7 @@ export const useCommandsArrayWpcom = ( {
 
 		// Check if the user is on the same page but is not looking at the right section
 		// If not, scroll to the right section
-		if ( currentPath === targetUrl.pathname && window.location.hash !== `#${ elementId }` ) {
+		if ( currentPath === targetUrl.pathname ) {
 			//Offset by the height of the navigation header from the top of the page
 			const fixedHeaderHeight = 72;
 			const element = document.getElementById( elementId );
