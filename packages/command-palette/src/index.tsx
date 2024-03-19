@@ -210,7 +210,7 @@ interface NotFoundMessageProps {
 	currentRoute: string | null;
 }
 
-interface CommandPaletteProps {
+export interface CommandPaletteProps {
 	currentSiteId: number | null;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
