@@ -79,6 +79,7 @@ p.product-listing__description {
 	flex-wrap: wrap;
 	gap: 16px;
 	margin: 16px 0 32px;
+	justify-content: space-between;
 }
 
 .select-dropdown.is-compact.product-listing__product-filter-select {
@@ -155,4 +156,8 @@ p.product-listing__description {
 		font-weight: 400;
 		color: var(--color-text);
 	}
+}
+
+.product-listing__volume-price-selector {
+	min-width: 430px;
 }
