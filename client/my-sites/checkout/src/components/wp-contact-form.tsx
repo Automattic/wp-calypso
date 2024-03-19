@@ -61,7 +61,6 @@ export default function WPContactForm( {
 	usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors,
 		isLoggedOut: isLoggedOutCart,
-		overrideCountryList: countriesList,
 	} );
 
 	return (

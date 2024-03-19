@@ -11,7 +11,6 @@ import {
 	fetchStripeConfiguration,
 	fetchRazorpayConfiguration,
 	siteId,
-	countryList,
 	mockSetCartEndpointWith,
 	createTestReduxStore,
 } from './index';
@@ -51,7 +50,6 @@ export function MockCheckout( {
 							<CheckoutMain
 								siteId={ useUndefinedSiteId ? undefined : siteId }
 								siteSlug="foo.com"
-								overrideCountryList={ countryList }
 								{ ...additionalProps }
 							/>
 						</RazorpayHookProvider>
