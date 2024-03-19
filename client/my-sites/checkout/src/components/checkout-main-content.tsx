@@ -556,6 +556,7 @@ export default function CheckoutMainContent( {
 								{ shouldUseCheckoutV2 && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
+										replaceProductInCart={ replaceProductInCart }
 										couponFieldStateProps={ couponFieldStateProps }
 										removeCouponAndClearField={ removeCouponAndClearField }
 										isCouponFieldVisible={ isCouponFieldVisible }
