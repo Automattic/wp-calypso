@@ -234,7 +234,11 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 		return null;
 	}
 
-	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
+	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+		product.cost_overrides,
+		product.introductory_offer_terms,
+		product.months_per_bill_period
+	);
 
 	return (
 		<div>
