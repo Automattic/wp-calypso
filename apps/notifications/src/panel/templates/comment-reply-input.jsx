@@ -47,7 +47,6 @@ class CommentReplyInput extends Component {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 		window.removeEventListener( 'keydown', this.handleCtrlEnter, false );
 
-		debug( 'unmount - Enable shortcuts' );
 		this.props.enableKeyboardShortcuts();
 	}
 
@@ -92,7 +91,6 @@ class CommentReplyInput extends Component {
 	handleChange = ( event ) => {
 		const textarea = this.replyInput.current;
 
-		debug( 'handle change - disable shortcuts' );
 		this.props.disableKeyboardShortcuts();
 
 		this.setState( {
@@ -110,7 +108,6 @@ class CommentReplyInput extends Component {
 	};
 
 	handleClick = () => {
-		debug( 'handle click - disable shortcuts' );
 		this.props.disableKeyboardShortcuts();
 
 		if ( ! this.state.hasClicked ) {
@@ -121,12 +118,10 @@ class CommentReplyInput extends Component {
 	};
 
 	handleFocus = () => {
-		debug( 'handle focus - disable shortcuts' );
 		this.props.disableKeyboardShortcuts();
 	};
 
 	handleBlur = () => {
-		debug( 'handle blur - Enable shortcuts' );
 		this.props.enableKeyboardShortcuts();
 
 		// Reset the field if there's no valid user input
@@ -214,7 +209,6 @@ class CommentReplyInput extends Component {
 					/* Flag submission failure */
 					this.props.global.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
 
-					debug( 'handle submit 1 - Enable shortcuts' );
 					this.props.enableKeyboardShortcuts();
 					this.props.global.toggleNavigation( true );
 
@@ -247,7 +241,6 @@ class CommentReplyInput extends Component {
 
 			this.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
 
-			debug( 'handle submit 2 - Enable shortcuts' );
 			this.props.enableKeyboardShortcuts();
 			this.props.global.toggleNavigation( true );
 
