@@ -15,6 +15,7 @@ import FilterBarController from './filter-bar-controller';
 import NavButton from './nav-button';
 import Note from './note';
 import NoteList from './note-list';
+const debug = require( 'debug' )( 'notifications:layout' );
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -84,6 +85,7 @@ class Layout extends Component {
 				lastInputWasKeyboard: false,
 			};
 		}
+		debug( 'mount - Enable shortcuts' );
 		this.props.enableKeyboardShortcuts();
 
 		window.addEventListener( 'keydown', this.handleKeyDown, false );
@@ -291,6 +293,7 @@ class Layout extends Component {
 	};
 
 	toggleNavigation = ( navigationEnabled ) => {
+		debug( 'toggleNav. enabled?', navigationEnabled );
 		return 'boolean' === typeof navigationEnabled && this.setState( { navigationEnabled } );
 	};
 
