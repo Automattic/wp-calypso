@@ -23,7 +23,7 @@ type TableProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -46,7 +46,7 @@ const Table = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
+	onPlanCtaClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
@@ -128,7 +128,7 @@ const Table = ( {
 							isLaunchPage={ isLaunchPage }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
-							onUpgradeClick={ onUpgradeClick }
+							onPlanCtaClick={ onPlanCtaClick }
 						/>
 					) }
 				</StickyContainer>

@@ -1,5 +1,4 @@
 import { Plans, AddOns } from '@automattic/data-stores';
-import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -8,7 +7,6 @@ import type {
 	FeatureObject,
 	StorageOption,
 } from '@automattic/calypso-products';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 /******************
@@ -76,7 +74,6 @@ export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
 	};
 	currentPlan?: {
 		text?: TranslateResult;
@@ -86,6 +83,13 @@ export interface PlanActionOverrides {
 		postButtonText?: TranslateResult;
 	};
 }
+
+// TODO: Remove PlanActions?
+export type PlanActions = {
+	[ planSlug in PlanSlug ]?: PlanAction;
+};
+
+export type PlanAction = ( isFreeTrialPlan?: boolean ) => void;
 
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
@@ -109,6 +113,7 @@ export interface CommonGridProps {
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
 	planActionOverrides?: PlanActionOverrides;
+	planActions?: PlanActions;
 
 	// Value of the `?feature=` query param, so we can highlight a given feature and hide plans without it.
 	selectedFeature?: string;
@@ -117,7 +122,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick?: UpgradeClickHandler;
 	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
@@ -144,31 +148,18 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	// TODO: Fix type
+	getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
-		className?: string;
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	ComparisonGridProps & { className?: string };
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit<
-		FeaturesGridProps,
-		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
-	> & {
-		className?: string;
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' > & { className?: string };
 
 /************************
  * PlanTypeSelector Types:

@@ -1,6 +1,6 @@
 import { FeatureList, PlanSlug, TERMS_LIST } from '@automattic/calypso-products';
 import { AddOnMeta, Plans } from '@automattic/data-stores';
-import { GridPlan, HiddenPlans, PlansIntent } from '../../types';
+import { GridPlan, HiddenPlans, PlanAction, PlansIntent } from '../../types';
 import { UseFreeTrialPlanSlugs } from './use-grid-plans';
 
 export interface UseGridPlansParams {
@@ -8,6 +8,14 @@ export interface UseGridPlansParams {
 	coupon?: string;
 	eligibleForFreeHostingTrial?: boolean;
 	hasRedeemedDomainCredit?: boolean;
+	getActionCallback: (
+		planSlug: PlanSlug,
+		options?: {
+			cartItemForPlan?: { product_slug: PlanSlug } | null;
+			storageAddOnsForPlan?: ( AddOnMeta | null )[] | null;
+			freeTrialPlanSlug?: PlanSlug;
+		}
+	) => PlanAction;
 	hiddenPlans?: HiddenPlans;
 	intent?: PlansIntent;
 	isDisplayingPlansNeededForFeature?: boolean;

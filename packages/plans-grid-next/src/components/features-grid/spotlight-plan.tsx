@@ -21,8 +21,8 @@ type SpotlightPlanProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
+	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;
 	options?: {
@@ -37,7 +37,7 @@ const SpotlightPlan = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
-	onUpgradeClick,
+	onPlanCtaClick,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	showUpgradeableStorage,
@@ -78,7 +78,7 @@ const SpotlightPlan = ( {
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
-				onUpgradeClick={ onUpgradeClick }
+				onPlanCtaClick={ onPlanCtaClick }
 			/>
 		</div>
 	);

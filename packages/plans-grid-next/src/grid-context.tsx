@@ -11,6 +11,8 @@ interface PlansGridContext {
 	allFeaturesList: FeatureList;
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+		// TODO: Fix type
+		getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
@@ -22,6 +24,7 @@ const PlansGridContextProvider = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	getActionCallback,
 	recordTracksEvent,
 	allFeaturesList,
 	siteId,
@@ -44,7 +47,7 @@ const PlansGridContextProvider = ( {
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,
-				helpers: { useCheckPlanAvailabilityForPurchase, recordTracksEvent },
+				helpers: { useCheckPlanAvailabilityForPurchase, getActionCallback, recordTracksEvent },
 				coupon,
 			} }
 		>

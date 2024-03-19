@@ -15,7 +15,7 @@ type TopButtonsProps = {
 	currentSitePlanSlug?: string | null;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
-	onUpgradeClick: ( planSlug: PlanSlug ) => void;
+	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	renderedGridPlans: GridPlan[];
 	options?: {
@@ -28,7 +28,7 @@ const TopButtons = ( {
 	currentSitePlanSlug,
 	isInSignup,
 	isLaunchPage,
-	onUpgradeClick,
+	onPlanCtaClick,
 	options,
 	planActionOverrides,
 	renderedGridPlans,
@@ -72,9 +72,7 @@ const TopButtons = ( {
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						isMonthlyPlan={ isMonthlyPlan }
-						onUpgradeClick={ ( overridePlanSlug ) =>
-							onUpgradeClick( overridePlanSlug ?? planSlug )
-						}
+						onPlanCtaClick={ onPlanCtaClick( planSlug ) }
 						planSlug={ planSlug }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						buttonText={ buttonText }
