@@ -58,5 +58,9 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 		path += '/:search';
 	}
 
-	return <PageViewTracker path={ path } properties={ properties } title="Pattern Library" />;
+	const key = path + debouncedSeachTerm;
+
+	return (
+		<PageViewTracker key={ key } path={ path } properties={ properties } title="Pattern Library" />
+	);
 }
