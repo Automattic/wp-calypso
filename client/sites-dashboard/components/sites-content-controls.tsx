@@ -117,8 +117,6 @@ export const SitesContentControls = ( {
 	onQueryParamChange = handleQueryParamChange,
 	statuses,
 	selectedStatus,
-	displayMode,
-	onDisplayModeChange,
 	sitesSorting,
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
@@ -186,12 +184,6 @@ export const SitesContentControls = ( {
 						sitesSorting={ sitesSorting }
 						onSitesSortingChange={ onSitesSortingChange }
 					/>
-					{ onDisplayModeChange && (
-						<SitesDisplayModeSwitcher
-							displayMode={ displayMode }
-							onDisplayModeChange={ onDisplayModeChange }
-						/>
-					) }
 				</VisibilityControls>
 			</DisplayControls>
 		</FilterBar>
