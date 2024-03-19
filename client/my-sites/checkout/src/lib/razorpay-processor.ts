@@ -42,9 +42,19 @@ export default async function razorpayProcessor(
 	transactionOptions: PaymentProcessorOptions,
 	translate: LocalizeProps[ 'translate' ]
 ): Promise< PaymentProcessorResponse > {
-	if ( ! isValidTransactionData( submitData ) ) {
-		throw new Error( 'Required purchase data is missing' );
+	debug( 'Process Razorpay payment' );
+
+	// Validate input
+	if ( submitData == null || typeof submitData !== 'object' ) {
+		throw new Error( 'submitData must be an object' );
 	}
+	const validationResult = validateRazorpaySubmitData( submitData );
+	debug( { validationResult: validationResult } );
+	if ( 'error' in validationResult ) {
+		debug( 'Submit data failed validation:' + validationResult.error );
+		return makeErrorResponse( validationResult.error );
+	}
+	const razorpayContactDetails = validationResult;
 	if ( ! isValidTransactionOptions( transactionOptions ) ) {
 		throw new Error( 'Required processor options are missing' );
 	}
@@ -56,11 +66,9 @@ export default async function razorpayProcessor(
 	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
 		transactionOptions;
 
-	const razorpayContactDetails = { phoneNumber: submitData.phoneNumber, email: submitData.email };
-
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
-		name: submitData.name ?? '',
+		name: 'name' in submitData && typeof submitData.name === 'string' ? submitData.name : '',
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		domainDetails: getDomainDetails( contactDetails, {
@@ -148,8 +156,26 @@ export default async function razorpayProcessor(
 		} );
 }
 
-function isValidTransactionData( submitData: unknown ): submitData is RazorpayTransactionRequest {
-	return true;
+type RazorpaySubmitData = {
+	phoneNumber: string;
+	email: string;
+};
+
+function validateRazorpaySubmitData( submitData: object ): RazorpaySubmitData | { error: string } {
+	if ( ! ( 'phoneNumber' in submitData ) ) {
+		return { error: 'Please enter a phone number.' };
+	}
+	if ( ! ( 'email' in submitData ) ) {
+		return { error: 'Please enter an email address.' };
+	}
+	const { phoneNumber, email } = submitData;
+	if ( typeof phoneNumber !== 'string' || ! phoneNumber.length ) {
+		return { error: 'Please enter a phone number.' };
+	}
+	if ( typeof email !== 'string' || ! email.length || ! email.includes( '@' ) ) {
+		return { error: 'Please enter a valid email address.' };
+	}
+	return { phoneNumber, email };
 }
 
 function isValidTransactionOptions( options: unknown ): options is RazorpayTransactionRequest {
@@ -183,6 +209,10 @@ function combineRazorpayOptions(
 	options.modal = modal;
 
 	debug( 'Constructing Razorpay prefill object using contact details', contactDetails );
+	// Note that we prefer to use data from the payment method form fields if present,
+	// then use data from the config endpoint as a backup. The form fields are prefilled
+	// with the config endpoint data. We also validate that the form fields are not empty,
+	// so in practice this code should never have to fall back on the config endpoint data.
 	const prefill = options.prefill ?? {};
 	prefill.contact = contactDetails?.phoneNumber?.replace( '.', '' ) ?? prefill.contact ?? '';
 	prefill.email = contactDetails?.email ?? prefill.email ?? '';

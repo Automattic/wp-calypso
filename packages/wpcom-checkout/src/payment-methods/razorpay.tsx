@@ -182,6 +182,10 @@ function RazorpayFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
+	const isPhoneNumberError = state.isTouched && state.data.phoneNumber.length === 0;
+	const isEmailError =
+		state.isTouched && ( state.data.email.length === 0 || ! state.data.email.includes( '@' ) );
+
 	return (
 		<RazorpayFormWrapper>
 			<RazorpayField
@@ -193,8 +197,8 @@ function RazorpayFields( {
 				onChange={ ( value: string ) => {
 					state.change( 'phoneNumber', value );
 				} }
-				isError={ state.isTouched && state.data.phoneNumber.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
+				isError={ isPhoneNumberError }
+				errorMessage={ __( 'Please enter a valid phone number.' ) }
 				disabled={ isDisabled }
 			/>
 			<RazorpayField
@@ -206,29 +210,12 @@ function RazorpayFields( {
 				onChange={ ( value: string ) => {
 					state.change( 'email', value );
 				} }
-				isError={ state.isTouched && state.data.email.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
+				isError={ isEmailError }
+				errorMessage={ __( 'Please enter a valid email address.' ) }
 				disabled={ isDisabled }
 			/>
 		</RazorpayFormWrapper>
 	);
-}
-
-function isFormValid( state: RazorpayPaymentMethodState ): boolean {
-	const customerPhone = state.data.phoneNumber;
-	const customerEmail = state.data.email;
-
-	if ( ! customerPhone.length ) {
-		// Touch the field so it displays a validation error
-		state.change( 'phoneNumber', '' );
-	}
-	if ( ! customerEmail.length ) {
-		state.change( 'email', '' );
-	}
-	if ( ! customerPhone.length || ! customerEmail.length ) {
-		return false;
-	}
-	return true;
 }
 
 export function RazorpaySubmitButton( {
@@ -261,16 +248,14 @@ export function RazorpaySubmitButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ ( ev ) => {
-				if ( isFormValid( state ) ) {
-					ev.preventDefault();
-					debug( 'Initiate razorpay payment' );
-					onClick( {
-						razorpayConfiguration,
-						cartKey,
-						phoneNumber: state.data.phoneNumber,
-						email: state.data.email,
-					} );
-				}
+				ev.preventDefault();
+				debug( 'Initiate razorpay payment' );
+				onClick( {
+					razorpayConfiguration,
+					cartKey,
+					phoneNumber: state.data.phoneNumber,
+					email: state.data.email,
+				} );
 			} }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
