@@ -124,7 +124,7 @@ class SocialLoginForm extends Component {
 		let redirectTo = this.props.redirectTo;
 
 		// load persisted redirect_to url from session storage, needed for redirect_to to work with GitHub redirect flow
-		if ( socialService === 'github' && ! redirectTo ) {
+		if ( ! redirectTo ) {
 			redirectTo = window.sessionStorage.getItem( 'login_redirect_to' );
 		}
 
