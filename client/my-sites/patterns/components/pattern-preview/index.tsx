@@ -1,6 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { ResizableBox } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -8,7 +9,6 @@ import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import type { Pattern } from 'calypso/my-sites/patterns/types';
-import { ResizableBox } from '@wordpress/components';
 
 import './style.scss';
 
@@ -109,8 +109,8 @@ export function PatternPreview( props: PatternPreviewProps ) {
 		return null;
 	}
 
-	if (!isResizable) {
-		return <PatternPreviewFragment {...props} />;
+	if ( ! isResizable ) {
+		return <PatternPreviewFragment { ...props } />;
 	}
 
 	return (
@@ -126,10 +126,10 @@ export function PatternPreview( props: PatternPreviewProps ) {
 				topLeft: false,
 			} }
 			handleWrapperClass="pattern-preview__resizer"
-			minWidth={375}
+			minWidth={ 375 }
 			maxWidth="100%"
 		>
-			<PatternPreviewFragment {...props} />
+			<PatternPreviewFragment { ...props } />
 		</ResizableBox>
 	);
 }

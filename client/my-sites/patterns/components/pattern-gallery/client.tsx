@@ -37,7 +37,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns =
 				>
 					{ patterns.map( ( pattern, i ) => (
 						<PatternPreview
-							isResizable={!isGridView}
+							isResizable={ ! isGridView }
 							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
