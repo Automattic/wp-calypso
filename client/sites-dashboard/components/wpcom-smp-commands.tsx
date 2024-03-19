@@ -702,7 +702,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open SFTP/SSH credentials' )
 			),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#admin-interface-style`;
+					navigateWithinSamePage( targetPath, 'sftp-credentials', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
