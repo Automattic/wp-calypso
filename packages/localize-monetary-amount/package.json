@@ -1,0 +1,38 @@
+{
+	"name": "@automattic/localize-monetary-amount",
+	"version": "1.0.0",
+	"description": "Batteries included localized currency formatting",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "types/index.d.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "npx rimraf dist types",
+		"prepublish": "npm run clean",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json"
+	},
+	"files": [
+		"dist",
+		"src",
+		"types"
+	],
+	"keywords": [
+		"localization",
+		"currency",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/localize-monetary-amount"
+	},
+	"author": "@automattic",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/localized-monetary-amount#readme"
+}
