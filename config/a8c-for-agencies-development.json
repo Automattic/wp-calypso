@@ -25,7 +25,8 @@
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,
-		"a8c-for-agencies-purchases": true
+		"a8c-for-agencies-purchases": true,
+		"a8c-for-agencies-signup": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
