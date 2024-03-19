@@ -6,6 +6,9 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import ContentSidebar from 'calypso/jetpack-cloud/components/content-sidebar';
+import OverviewBody from './body';
+import OverviewSidebar from './sidebar';
 
 export default function Overview() {
 	const translate = useTranslate();
@@ -19,7 +22,7 @@ export default function Overview() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<div>test</div>
+				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 		</Layout>
 	);
