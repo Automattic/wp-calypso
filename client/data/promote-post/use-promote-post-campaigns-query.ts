@@ -56,23 +56,43 @@ export type CampaignResponse = {
 };
 
 export type Order = {
-	order_id: number;
-	order_key: string;
-	customer_id: number;
-	status: string;
+	id: number;
+	orderKey: string;
+	userId: number;
+	customerId: number;
+	status: 'COMPLETED' | 'PENDING' | 'FAILED' | string;
 	currency: string;
 	total: string;
-	total_tax: string;
-	payment_method: string;
-	failed_payment_counter: number;
-	payment_method_title: string;
-	date_created_gmt: string | null;
-	date_modified_gmt: string | null;
-	date_completed_gmt: string | null;
-	date_paid_gmt: string | null;
-	created_at: string;
-	updated_at: string;
-	user_id: number;
+	totalTax: string;
+	paymentMethod: string;
+	failedPaymentCounter: number;
+	paymentMethodTitle: string;
+	dateCreatedGmt: string;
+	dateModifiedGmt: string;
+	dateCompletedGmt: string;
+	datePaidGmt: string;
+	createdAt: string;
+	updatedAt: string;
+	lineItems: LineItem[];
+	feeItems: FeeItem[];
+	credits: number;
+	subtotal: number;
+};
+
+type LineItem = {
+	id: number;
+	orderId: number;
+	campaignId: number;
+	name: string;
+	subtotal: string;
+	total: string;
+};
+
+type FeeItem = {
+	id: number;
+	orderId: number;
+	name: string;
+	total: string;
 };
 
 const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {

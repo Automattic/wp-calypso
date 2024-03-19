@@ -158,7 +158,8 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const weeklyBudgetFormatted = `$${ formatCents( weeklyBudget || 0, 2 ) }`;
 	const weeklySpend =
-		total_budget_used && billing_data ? total_budget_used - billing_data?.total : 0;
+		total_budget_used && billing_data ? Math.max( 0, total_budget_used - billing_data?.total ) : 0;
+
 	const weeklySpendFormatted = `$${ formatCents( weeklySpend, 2 ) }`;
 
 	const weeklySpendingPercentage =
@@ -185,13 +186,6 @@ export default function CampaignItemDetails( props: Props ) {
 		is_evergreen,
 		campaign?.ui_status
 	);
-	const durationFormatted = duration_days
-		? sprintf(
-				/* translators: %s is the duration in days */
-				_n( '%s day', '%s days', duration_days ),
-				formatNumber( duration_days, true )
-		  )
-		: '';
 	const languagesListFormatted = languagesList
 		? `${ languagesList }`
 		: translate( 'All languages' );
@@ -214,9 +208,19 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const activeDays = getCampaignActiveDays( start_date, end_date );
 
+	// Since we don't know the end of the campaign, for evergreen we show total so far
+	const durationDays = is_evergreen ? activeDays : duration_days;
+	const durationFormatted = durationDays
+		? sprintf(
+				/* translators: %s is the duration in days */
+				_n( '%s day', '%s days', durationDays ),
+				formatNumber( durationDays, true )
+		  )
+		: '';
+
 	const budgetRemainingFormatted =
 		total_budget && total_budget_used
-			? `$${ formatCents( ( total_budget - total_budget_used ) / 100, 2 ) }`
+			? `$${ formatCents( total_budget - total_budget_used, 2 ) }`
 			: '';
 	const overallSpendingFormatted = activeDays
 		? `$${ formatCents( total_budget_used || 0, 2 ) }`
@@ -765,9 +769,25 @@ export default function CampaignItemDetails( props: Props ) {
 										) }
 										{ orders && orders.length > 0
 											? orders.map( ( order: Order, index: number ) => {
-													const { total, created_at } = order;
-													const formatDuration = ( created_at: string ) => {
-														const originalDate = moment( created_at );
+													const { lineItems, createdAt } = order;
+
+													// Only sum the total of the line items that belong to the current
+													// campaign (orders can have multiple campaigns)
+													let campaignTotal = 0;
+													lineItems.forEach( ( item ) => {
+														if ( item.campaignId === campaignId ) {
+															campaignTotal += +item.total;
+														}
+													} );
+
+													// Format the total to display it
+													const campaignTotalFormatted = formatCents( campaignTotal, 2 );
+
+													// Format the date for display
+													const formatDuration = ( createdAt: string ) => {
+														const originalDate = moment( createdAt );
+
+														// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
 														const weekBefore = originalDate.clone().subtract( 7, 'days' );
 
 														return `${ weekBefore.format( 'MMM, D' ) } - ${ originalDate.format(
@@ -775,17 +795,19 @@ export default function CampaignItemDetails( props: Props ) {
 														) }`;
 													};
 
-													const durationFormatted = formatDuration( created_at );
+													const durationFormatted = formatDuration( createdAt );
 
 													return (
 														<div key={ index } className="campaign-item-details__weekly-orders-row">
 															<div className="campaign-item-details__weekly-label">
-																{ translate( 'Weekly spent' ) }
+																{ is_evergreen ? __( 'Weekly spent' ) : __( 'Weekly total' ) }
 															</div>
 															<div className="campaign-item-details__weekly-duration">
 																{ durationFormatted }
 															</div>
-															<div className="campaign-item-details__weekly-amount">${ total }</div>
+															<div className="campaign-item-details__weekly-amount">
+																${ campaignTotalFormatted }
+															</div>
 														</div>
 													);
 											  } )
@@ -824,6 +846,8 @@ export default function CampaignItemDetails( props: Props ) {
 															<div className="amount">{ totalFormatted }</div>
 														</span>
 														<p className="campaign-item-details__payment-charges-disclosure">
+															{ translate( 'Promotional codes are not included.' ) }
+															<br />
 															{ translate( 'All charges inclusive of VAT, if any.' ) }
 														</p>
 													</div>
