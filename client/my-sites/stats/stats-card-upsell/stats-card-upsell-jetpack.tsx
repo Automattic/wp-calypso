@@ -13,7 +13,6 @@ import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 
 interface Props {
 	className: string;
-	statType: string;
 	siteSlug: string;
 	buttonComponent?: ReactNode;
 }

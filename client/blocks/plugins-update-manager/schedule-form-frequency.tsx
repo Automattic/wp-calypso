@@ -13,9 +13,9 @@ import { useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
+import { ScheduleFormTime } from './schedule-form-time';
 import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedule-form.const';
 import { prepareTimestamp } from './schedule-form.helper';
-import { ScheduleFormTime } from './schedule-form.time';
 
 type Frequency = 'daily' | 'weekly';
 

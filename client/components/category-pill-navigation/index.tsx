@@ -11,6 +11,7 @@ type CategoryPillNavigationProps = {
 		icon: React.ReactElement< typeof Icon >;
 		label: string;
 		link: string;
+		isActive?: boolean;
 	}[];
 	list: {
 		id: string;
@@ -84,7 +85,9 @@ export const CategoryPillNavigation = ( {
 								<LocalizedLink
 									key={ button.label }
 									href={ button.link }
-									className="category-pill-navigation__button"
+									className={ classnames( 'category-pill-navigation__button', {
+										'is-active': button.isActive,
+									} ) }
 								>
 									{ button.icon }
 									{ button.label }

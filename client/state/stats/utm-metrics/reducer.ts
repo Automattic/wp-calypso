@@ -20,11 +20,11 @@ import {
 import { schema } from './schema';
 import type { Reducer, AnyAction } from 'redux';
 
-const isValidJSON = ( string: string ) => {
+const isValidJSONArray = ( string: string ) => {
 	try {
-		JSON.parse( string );
+		const parsed = JSON.parse( string );
 
-		return true;
+		return Array.isArray( parsed );
 	} catch ( e ) {
 		return false;
 	}
@@ -61,7 +61,9 @@ const metricsParser = (
 	const stopFurtherRequest = !! topPosts;
 
 	return combinedKeys.map( ( combinedKey: string ) => {
-		const parsedKeys = isValidJSON( combinedKey ) ? JSON.parse( combinedKey ) : [ combinedKey ];
+		const parsedKeys = isValidJSONArray( combinedKey )
+			? JSON.parse( combinedKey )
+			: [ combinedKey ];
 		const value = UTMValues[ combinedKey ];
 		const posts = topPosts && combinedKey in topPosts ? topPosts[ combinedKey ] : [];
 

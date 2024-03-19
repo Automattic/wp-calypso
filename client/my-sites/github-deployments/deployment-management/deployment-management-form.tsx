@@ -37,8 +37,15 @@ export const GitHubDeploymentManagementForm = ( {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const { updateDeployment } = useUpdateCodeDeployment( siteId, codeDeployment.id, {
-		onSuccess: () => {
+		onSuccess: ( data ) => {
 			dispatch( successNotice( __( 'Deployment updated.' ), noticeOptions ) );
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_github_update_deployment_success', {
+					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
+					is_automated: data?.is_automated,
+					workflow_path: data?.workflow_path,
+				} )
+			);
 			onUpdated();
 		},
 		onError: ( error ) => {
@@ -55,16 +62,6 @@ export const GitHubDeploymentManagementForm = ( {
 						...noticeOptions,
 					}
 				)
-			);
-		},
-		onSettled: ( data, error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_github_update_deployment_success', {
-					connected: ! error,
-					deployment_type: data ? getDeploymentTypeFromPath( data.target_dir ) : null,
-					is_automated: data?.is_automated,
-					workflow_path: data?.workflow_path,
-				} )
 			);
 		},
 	} );

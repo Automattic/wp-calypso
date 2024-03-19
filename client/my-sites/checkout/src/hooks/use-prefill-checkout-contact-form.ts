@@ -11,19 +11,15 @@ import { convertErrorToString } from '../lib/analytics';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { useCachedContactDetails } from './use-cached-contact-details';
 import useCountryList from './use-country-list';
-import type {
-	CountryListItem,
-	PossiblyCompleteDomainContactDetails,
-} from '@automattic/wpcom-checkout';
+import type { PossiblyCompleteDomainContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:use-prefill-checkout-contact-form' );
 
 function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
-	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void,
-	overrideCountryList?: CountryListItem[]
+	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void
 ): boolean {
-	const countriesList = useCountryList( overrideCountryList );
+	const countriesList = useCountryList();
 	const reduxDispatch = useReduxDispatch();
 	const setStepCompleteStatus = useSetStepComplete();
 	const [ isComplete, setComplete ] = useState( false );
@@ -129,16 +125,13 @@ function useCachedContactDetailsForCheckoutForm(
 export function usePrefillCheckoutContactForm( {
 	setShouldShowContactDetailsValidationErrors,
 	isLoggedOut,
-	overrideCountryList,
 }: {
 	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void;
 	isLoggedOut?: boolean;
-	overrideCountryList?: CountryListItem[];
 } ): void {
 	const cachedContactDetails = useCachedContactDetails( { isLoggedOut } );
 	useCachedContactDetailsForCheckoutForm(
 		cachedContactDetails,
-		setShouldShowContactDetailsValidationErrors,
-		overrideCountryList
+		setShouldShowContactDetailsValidationErrors
 	);
 }

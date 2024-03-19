@@ -33,6 +33,7 @@
 /client/state/gsuite-users @Automattic/letero
 
 # Payments
+/client/lib/checkout/ @Automattic/shilling
 /client/me/purchases/add-new-payment-method/ @Automattic/shilling
 /client/me/purchases/billing-history/ @Automattic/shilling
 /client/me/purchases/manage-purchase/ @Automattic/shilling

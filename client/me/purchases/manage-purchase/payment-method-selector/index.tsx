@@ -14,7 +14,6 @@ import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -218,7 +217,6 @@ export default function PaymentMethodSelector( {
 					'is-jetpack-cloud': isJetpackCloud(),
 				} ) }
 			>
-				<QueryPaymentCountries />
 				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 				) }

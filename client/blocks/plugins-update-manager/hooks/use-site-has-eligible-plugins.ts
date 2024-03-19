@@ -1,18 +1,15 @@
-import { useContext, useEffect } from 'react';
-import { CorePluginsResponse } from 'calypso/data/plugins/use-core-plugins-query';
+import { useContext } from 'react';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import { PluginUpdateManagerContext } from '../context';
 
-export function useSetSiteHasEligiblePlugins( data: CorePluginsResponse, isFetched: boolean ) {
-	const { setSiteHasEligiblePlugins } = useContext( PluginUpdateManagerContext );
-	useEffect( () => {
-		if ( isFetched && ! data.filter( ( plugin ) => ! plugin.is_managed ).length ) {
-			setSiteHasEligiblePlugins( false );
-			return;
-		}
-	}, [ data, isFetched ] );
-}
-
-export function useSiteHasEligiblePlugins() {
-	const { siteHasEligiblePlugins } = useContext( PluginUpdateManagerContext );
-	return siteHasEligiblePlugins;
+export function useSiteHasEligiblePlugins( siteSlug?: string ) {
+	const { siteSlug: contextSiteSlug } = useContext( PluginUpdateManagerContext );
+	const slug = siteSlug || contextSiteSlug;
+	const { data: plugins = [], isFetched: isPluginsFetched } = useCorePluginsQuery(
+		slug,
+		true,
+		true
+	);
+	const siteHasEligiblePlugins = isPluginsFetched && plugins.length > 0;
+	return { siteHasEligiblePlugins, loading: ! isPluginsFetched };
 }

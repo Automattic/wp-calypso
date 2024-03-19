@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
+import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
@@ -13,17 +14,15 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { mockedSites } from 'calypso/a8c-for-agencies/data/sites';
+import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import { JetpackPreviewPane } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-feature-previews/jetpack-preview-pane';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
-import {
-	SitesDataResponse,
-	SitesViewState,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useSelector } from 'calypso/state';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -35,6 +34,7 @@ import SitesDashboardContext from '../sites-dashboard-context';
 import './style.scss';
 
 export default function SitesDashboard() {
+	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 
 	//const { hideListing } = useContext( SitesDashboardContext );
@@ -89,25 +89,14 @@ export default function SitesDashboard() {
 		layout: {},
 		selectedSite: undefined,
 	} );
-	/*const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
 		sitesViewState.page,
 		filter,
 		sort,
 		sitesViewState.perPage
-	);*/
-	//-- Mock data --// todo: fetch the sites from the API endpoint
-	const data: SitesDataResponse = {
-		sites: mockedSites,
-		total: 5,
-		perPage: 50,
-		totalFavorites: 2,
-	};
-	const isError = false;
-	const refetch = () => {};
-	const isLoading = false;
-	//-- End Mock data --//
+	);
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -121,7 +110,6 @@ export default function SitesDashboard() {
 		if ( isLoading || isError ) {
 			return;
 		}
-
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
@@ -179,66 +167,66 @@ export default function SitesDashboard() {
 	return (
 		<Layout
 			title="Sites"
-			className="sites-dashboard"
+			className={ classNames(
+				'sites-dashboard',
+				'sites-dashboard__layout',
+				! sitesViewState.selectedSite && 'preview-hidden'
+			) }
 			wide
 			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<div
-				className={ classNames(
-					'sites-dashboard__layout',
-					! sitesViewState.selectedSite && 'preview-hidden'
-				) }
-			>
-				<div className="sites-overview">
-					<LayoutTop withNavigation>
-						<LayoutHeader>
-							<Title>{ translate( 'Sites' ) }</Title>
-							<Actions>
-								{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
-								<SiteTopHeaderButtons />
-							</Actions>
-						</LayoutHeader>
-						<LayoutNavigation { ...selectedItemProps }>
-							<NavigationTabs { ...selectedItemProps } items={ navItems } />
-						</LayoutNavigation>
-					</LayoutTop>
+			<LayoutColumn className="sites-overview" wide>
+				<LayoutTop withNavigation>
+					<LayoutHeader>
+						<Title>{ translate( 'Sites' ) }</Title>
+						<Actions>
+							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
+							<SiteTopHeaderButtons />
+						</Actions>
+					</LayoutHeader>
+					<LayoutNavigation { ...selectedItemProps }>
+						<NavigationTabs { ...selectedItemProps } items={ navItems } />
+					</LayoutNavigation>
+				</LayoutTop>
 
-					<DashboardDataContext.Provider
-						value={ {
-							verifiedContacts: {
-								emails: verifiedContacts?.emails ?? [],
-								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-								refetchIfFailed: () => {
-									if ( fetchContactFailed ) {
-										refetchContacts();
-									}
-									return;
-								},
+				<DashboardDataContext.Provider
+					value={ {
+						verifiedContacts: {
+							emails: verifiedContacts?.emails ?? [],
+							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+							refetchIfFailed: () => {
+								if ( fetchContactFailed ) {
+									refetchContacts();
+								}
+								return;
 							},
-							products: products ?? [],
-							isLargeScreen: isLargeScreen || false,
-						} }
-					>
-						<SitesDataViews
-							className="sites-overview__content"
-							data={ data }
-							isLoading={ isLoading }
-							isLargeScreen={ isLargeScreen || false }
-							onSitesViewChange={ onSitesViewChange }
-							sitesViewState={ sitesViewState }
-						/>
-					</DashboardDataContext.Provider>
-				</div>
-				{ sitesViewState.selectedSite && (
+						},
+						products: products ?? [],
+						isLargeScreen: isLargeScreen || false,
+					} }
+				>
+					<SitesDataViews
+						className="sites-overview__content"
+						data={ data }
+						isLoading={ isLoading }
+						isLargeScreen={ isLargeScreen || false }
+						onSitesViewChange={ onSitesViewChange }
+						sitesViewState={ sitesViewState }
+					/>
+				</DashboardDataContext.Provider>
+			</LayoutColumn>
+
+			{ sitesViewState.selectedSite && (
+				<LayoutColumn wide>
 					<JetpackPreviewPane
 						site={ sitesViewState.selectedSite }
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }
 					/>
-				) }
-			</div>
+				</LayoutColumn>
+			) }
 		</Layout>
 	);
 }

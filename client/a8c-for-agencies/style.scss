@@ -101,6 +101,13 @@
 	}
 }
 
+// Various screens dont use a sidebar.
+.theme-a8c-for-agencies .layout.has-no-sidebar {
+	.layout__content {
+		padding-left: 16px;
+	}
+}
+
 .theme-a8c-for-agencies .layout__secondary {
 	border-inline-end: initial;
 

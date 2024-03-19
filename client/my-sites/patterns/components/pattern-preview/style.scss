@@ -1,3 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/components/src/styles/typography";
+
 .pattern-preview {
 	display: flex;
 	flex-direction: column;
@@ -18,18 +22,114 @@
 		aspect-ratio: 7 / 4;
 	}
 
-	.pattern-preview__title {
+	.pattern-preview__header {
+		align-items: start;
+		display: flex;
+		font-family: $font-sf-pro-display;
+		gap: 16px;
+		justify-content: space-between;
+		line-height: 1.3;
+		// Account for possibility of title wrapping over two rows, in which case we want the
+		// entire `.pattern-gallery--grid` row to align correctly
 		min-height: 3rem;
+	}
+
+	.pattern-preview__title {
+		padding-top: 4px;
+	}
+
+	.pattern-preview__copy,
+	.pattern-preview__get-access {
+		--default-color: #3858e9;
+		--hover-color: #1d35b4;
+
+		flex-shrink: 0;
+		font-size: rem(13px);
+		line-height: 1.6;
+		padding: 4px 8px;
+	}
+
+	.pattern-preview__copy {
+		background-color: var(--default-color);
+		border-color: var(--default-color);
+
+		&:enabled:hover,
+		&:focus {
+			background-color: var(--hover-color);
+			border-color: var(--hover-color);
+		}
+	}
+
+	.pattern-preview__get-access {
+		align-items: center;
+		border: 1px solid currentColor;
+		color: var(--default-color);
+		display: flex;
+		font-family: inherit;
+		gap: 4px;
+		padding-left: 5px;
+
+		&:enabled:hover,
+		&:focus {
+			border-color: currentColor;
+			color: var(--hover-color);
+		}
+
+		path {
+			fill: currentColor;
+		}
 	}
 }
 
-.pattern-preview_category-gallery {
+.pattern-preview--list {
+	.pattern-preview__header {
+		min-height: auto;
+	}
+
+	.pattern-preview__title {
+		padding-top: 8px;
+
+		@include break-huge {
+			font-size: rem(20px);
+		}
+	}
+
+	.pattern-preview__copy,
+	.pattern-preview__get-access {
+		padding: 8px 14px;
+	}
+
+	.pattern-preview__get-access {
+		padding-left: 12px;
+	}
+}
+
+.pattern-preview--category-gallery {
 	.pattern-preview__renderer {
 		border-radius: 0;
 		box-shadow: none;
 	}
 
-	.pattern-preview__title {
+	.pattern-preview__header {
 		display: none;
 	}
 }
+
+.pattern-preview__resizer .components-resizable-box__handle-right {
+	&::after {
+		background-color: #a7aaad;
+		border-radius: 3px;
+		box-shadow: none;
+		height: 50px;
+		margin-right: -10px;
+		right: calc(50% - 5px);
+		top: calc(50% - 8px - 3rem);
+		width: 6px;
+	}
+
+	&:active::before,
+	&:hover::before {
+		animation: none;
+	}
+}
+

@@ -92,6 +92,10 @@
 	&.is-active {
 		background: var(--Blueberry, #3858e9);
 		color: var(--studio-white);
+
+		svg {
+			fill: var(--studio-white);
+		}
 	}
 }
 
