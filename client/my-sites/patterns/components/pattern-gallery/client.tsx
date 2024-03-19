@@ -28,6 +28,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( { isGridView, patterns =
 				<div className={ classNames( 'pattern-gallery', { 'pattern-gallery--grid': isGridView } ) }>
 					{ patterns.map( ( pattern ) => (
 						<PatternPreview
+							isResizable={!isGridView}
 							key={ pattern.ID }
 							pattern={ pattern }
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
