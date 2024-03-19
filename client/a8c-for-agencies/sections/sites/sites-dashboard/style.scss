@@ -89,7 +89,7 @@
 			padding-bottom: 8px;
 
 			& > :first-child {
-				margin-left: 8px;
+				margin-inline-start: 8px;
 			}
 
 			.components-input-control {
@@ -120,11 +120,11 @@
 		}
 
 		tr td:first-child {
-			padding-left: 8px;
+			padding-inline-start: 8px;
 		}
 
 		tr td:last-child {
-			padding-right: 8px;
+			padding-inline-end: 8px;
 		}
 
 		.dataviews-view-table-wrapper {
@@ -407,11 +407,11 @@
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
-							margin-left: 64px;
+							margin-inline-start: 64px;
 						}
 
 						& > :last-child {
-							margin-right: 64px;
+							margin-inline-end: 64px;
 						}
 					}
 				}
