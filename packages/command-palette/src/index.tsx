@@ -8,7 +8,6 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useCommandsParams } from './commands/types';
 import useSingleSiteCommands from './commands/use-single-site-commands';
 import {
 	CommandMenuGroupContext,
@@ -19,8 +18,7 @@ import {
 	useCommandPaletteContext,
 } from './context';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
-import { Command as PaletteCommand, useCommandPalette } from './use-command-palette';
-import type { SiteExcerptData } from '@automattic/sites';
+import { useCommandPalette } from './use-command-palette';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
 
@@ -207,17 +205,6 @@ interface NotFoundMessageProps {
 	search: string;
 	emptyListNotice?: string;
 	currentRoute: string | null;
-}
-
-export interface CommandPaletteProps {
-	currentSiteId: number | null;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	currentRoute: string | null;
-	isOpenGlobal?: boolean;
-	onClose?: () => void;
-	useSites?: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 const NotFoundMessage = ( {
