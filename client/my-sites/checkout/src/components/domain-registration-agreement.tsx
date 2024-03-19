@@ -8,11 +8,17 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { DomainLegalAgreementUrl, ResponseCart } from '@automattic/shopping-cart';
 import type { LocalizeProps } from 'i18n-calypso';
 
 export interface DomainRegistrationAgreementProps {
 	cart: ResponseCart;
+}
+
+interface AgreementForDisplay {
+	name: string;
+	url: string;
+	domains: string[];
 }
 
 class DomainRegistrationAgreement extends Component<
@@ -22,18 +28,18 @@ class DomainRegistrationAgreement extends Component<
 		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
 
-	renderAgreementLinkForList = ( url: string, name: string, domains: string[] ) => {
+	renderAgreementLinkForList = ( agreement: AgreementForDisplay ) => {
 		return this.props.translate(
 			'View the {{domainRegistrationAgreementLink}}%(legalAgreementName)s{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
 			{
 				args: {
-					domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
-					legalAgreementName: name,
+					domainsList: agreement.domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
+					legalAgreementName: agreement.name,
 				},
 				components: {
 					domainRegistrationAgreementLink: (
 						<a
-							href={ url }
+							href={ agreement.url }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ this.recordRegistrationAgreementClick }
@@ -44,37 +50,35 @@ class DomainRegistrationAgreement extends Component<
 		);
 	};
 
-	renderMultipleAgreements = (
-		agreementsList: { url: string; name: string; domains: string[] }[]
-	) => {
+	renderMultipleAgreements = ( agreementsList: AgreementForDisplay[] ) => {
 		const preamble = this.props.translate(
 			'You agree to the following domain name registration legal agreements:'
 		);
 		return (
 			<Fragment>
 				<p>{ preamble }</p>
-				{ agreementsList.map( ( { url, name, domains } ) => (
-					<p key={ url + domains.length }>
-						{ this.renderAgreementLinkForList( url, name, domains ) }
+				{ agreementsList.map( ( agreement ) => (
+					<p key={ agreement.url + agreement.domains.length }>
+						{ this.renderAgreementLinkForList( agreement ) }
 					</p>
 				) ) }
 			</Fragment>
 		);
 	};
 
-	renderSingleAgreement = ( { url, domains }: { url: string; domains: string[] } ) => {
+	renderSingleAgreement = ( agreement: AgreementForDisplay ) => {
 		return (
 			<p>
 				{ this.props.translate(
 					'You agree to the {{domainRegistrationAgreementLink}}Domain Registration Agreement{{/domainRegistrationAgreementLink}} for %(domainsList)s.',
 					{
 						args: {
-							domainsList: domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
+							domainsList: agreement.domains.join( ', ' ).replace( /, ([^,]*)$/, ' and $1' ),
 						},
 						components: {
 							domainRegistrationAgreementLink: (
 								<a
-									href={ url }
+									href={ agreement.url }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ this.recordRegistrationAgreementClick }
@@ -101,42 +105,36 @@ class DomainRegistrationAgreement extends Component<
 		}
 	};
 
-	getDomainsByRegistrationAgreement() {
+	getDomainsByRegistrationAgreement(): AgreementForDisplay[] {
 		const { cart, translate } = this.props;
 		const domainItems = getDomainRegistrations( cart );
 		domainItems.push( ...getDomainTransfers( cart ) );
 
 		return Object.values(
 			domainItems.reduce(
-				(
-					agreements: Record< string, { name: string; url: string; domains: string[] } >,
-					domainItem
-				) => {
+				( agreements: Record< DomainLegalAgreementUrl, AgreementForDisplay >, domainItem ) => {
 					if (
 						domainItem?.extra?.legal_agreements &&
+						// legal_agreements is an array when it's empty due to PHP > JSON encoding.
+						! Array.isArray( domainItem.extra.legal_agreements ) &&
 						Object.keys( domainItem.extra.legal_agreements ).length > 0
 					) {
-						Object.keys( domainItem.extra.legal_agreements ).forEach( ( url ) => {
-							if ( agreements[ url as keyof typeof agreements ] ) {
-								agreements[ url as keyof typeof agreements ].domains.push( domainItem.meta );
+						const domainAgreements = domainItem.extra.legal_agreements;
+						Object.keys( domainAgreements ).forEach( ( url ) => {
+							if ( agreements[ url ] ) {
+								agreements[ url ].domains.push( domainItem.meta );
 							} else {
-								const legalAgreements: Record< string, string > = ( () => {
-									if ( ! domainItem.extra.legal_agreements ) {
-										return {};
-									}
-									if ( ! Array.isArray( domainItem.extra.legal_agreements ) ) {
-										return {};
-									}
-									return domainItem.extra.legal_agreements;
-								} )();
 								agreements[ url ] = {
-									name: legalAgreements[ url as keyof typeof legalAgreements ],
+									name: domainAgreements[ url ],
 									url,
 									domains: [ domainItem.meta ],
 								};
 							}
 						} );
-					} else if ( domainItem?.extra?.domain_registration_agreement_url ) {
+						return agreements;
+					}
+
+					if ( domainItem.extra.domain_registration_agreement_url ) {
 						const url = domainItem?.extra?.domain_registration_agreement_url;
 						if ( agreements?.[ url ] ) {
 							agreements[ url ].domains.push( domainItem.meta );
@@ -147,18 +145,20 @@ class DomainRegistrationAgreement extends Component<
 								domains: [ domainItem.meta ],
 							};
 						}
+						return agreements;
+					}
+
+					// This block should never be hit, but since some tests
+					// depend on incorrect behaviour we need to keep it.
+					const url = 'undefined';
+					if ( agreements?.[ url ] ) {
+						agreements[ url ].domains.push( domainItem.meta );
 					} else {
-						// This else should never be hit, but since some tests depend on incorrect behaviour we need to keep it
-						const url = 'undefined';
-						if ( agreements?.[ url ] ) {
-							agreements[ url ].domains.push( domainItem.meta );
-						} else {
-							agreements[ url ] = {
-								name: translate( 'Domain Registration Agreement' ),
-								url: url,
-								domains: [ domainItem.meta ],
-							};
-						}
+						agreements[ url ] = {
+							name: translate( 'Domain Registration Agreement' ),
+							url: url,
+							domains: [ domainItem.meta ],
+						};
 					}
 					return agreements;
 				},
