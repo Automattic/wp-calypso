@@ -153,13 +153,13 @@ export default function SitesDashboard() {
 			selectedSiteFeature !== A4A_SITES_DASHBOARD_DEFAULT_FEATURE // If the selected feature is the default one, we can leave the url a little cleaner.
 		) {
 			page.replace(
-				'/sites/' + category + '/' + sitesViewState.selectedSite.url + '/' + selectedSiteFeature
+				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
 			);
 		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace( '/sites/' + category + '/' + sitesViewState.selectedSite.url );
+			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }` );
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( '/sites/' + category );
+			page.replace( `/sites/${ category }` );
 		} else {
 			page.replace( '/sites' );
 		}
