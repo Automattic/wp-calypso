@@ -13,6 +13,9 @@
 }
 
 .pattern-preview {
+	--button-color-default: #3858e9;
+	--button-color-hover: #1d35b4;
+
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -28,12 +31,15 @@
 		overflow: hidden;
 	}
 
-	&:target .pattern-preview__renderer {
+	&:target .pattern-preview__renderer,
+	&.is-targeted .pattern-preview__renderer {
 		animation: 0.8s linear 3.5s backwards pattern-preview-target;
 	}
 
 	&.is-loading .pattern-preview__renderer {
 		aspect-ratio: 7 / 4;
+		animation-play-state: paused;
+		width: 100%;
 	}
 
 	.pattern-preview__header {
@@ -56,15 +62,12 @@
 		text-align: left;
 
 		&:hover {
-			color: inherit;
+			color: var(--button-color-default);
 		}
 	}
 
 	.pattern-preview__copy,
 	.pattern-preview__get-access {
-		--default-color: #3858e9;
-		--hover-color: #1d35b4;
-
 		flex-shrink: 0;
 		font-size: rem(13px);
 		line-height: 1.6;
@@ -72,20 +75,20 @@
 	}
 
 	.pattern-preview__copy {
-		background-color: var(--default-color);
-		border-color: var(--default-color);
+		background-color: var(--button-color-default);
+		border-color: var(--button-color-default);
 
 		&:enabled:hover,
 		&:focus {
-			background-color: var(--hover-color);
-			border-color: var(--hover-color);
+			background-color: var(--button-color-hover);
+			border-color: var(--button-color-hover);
 		}
 	}
 
 	.pattern-preview__get-access {
 		align-items: center;
 		border: 1px solid currentColor;
-		color: var(--default-color);
+		color: var(--button-color-default);
 		display: flex;
 		font-family: inherit;
 		gap: 4px;
@@ -94,7 +97,7 @@
 		&:enabled:hover,
 		&:focus {
 			border-color: currentColor;
-			color: var(--hover-color);
+			color: var(--button-color-hover);
 		}
 
 		path {

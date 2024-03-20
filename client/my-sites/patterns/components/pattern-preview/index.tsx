@@ -55,13 +55,16 @@ function PatternPreviewFragment( {
 }: PatternPreviewProps ) {
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
+
+	const idAttr = `pattern-${ pattern?.ID }`;
+
 	const { renderedPatterns } = usePatternsRendererContext();
 	const patternId = encodePatternId( pattern?.ID ?? 0 );
 	const renderedPattern = renderedPatterns[ patternId ];
 	const [ resizeObserver, nodeSize ] = useResizeObserver();
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	const titleTooltipText = isPermalinkCopied ? 'Copied' : 'Copy link';
+	const titleTooltipText = isPermalinkCopied ? 'Copied link to pattern' : 'Copy link to pattern';
 
 	let copyButtonText = isPreviewLarge ? 'Copy pattern' : 'Copy';
 
@@ -80,8 +83,11 @@ function PatternPreviewFragment( {
 		<div
 			className={ classNames( 'pattern-preview', className, {
 				'is-loading': ! renderedPattern,
+				// For some reason, the CSS `:target` selector has trouble with the transition from
+				// SSR markup to client-side React code, which is why we need the `is-targeted` class
+				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
-			id={ `pattern-${ pattern.ID }` }
+			id={ idAttr }
 		>
 			{ resizeObserver }
 
@@ -94,7 +100,7 @@ function PatternPreviewFragment( {
 			</div>
 
 			<div className="pattern-preview__header">
-				<Tooltip placement="top" text={ titleTooltipText }>
+				<Tooltip delay={ 300 } placement="top" text={ titleTooltipText }>
 					<ClipboardButton
 						borderless
 						className="pattern-preview__title"
