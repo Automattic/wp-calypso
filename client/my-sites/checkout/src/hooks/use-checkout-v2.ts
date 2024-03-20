@@ -1,5 +1,7 @@
 import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { useExperiment } from 'calypso/lib/explat';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
@@ -16,10 +18,11 @@ let cachedExperimentAssignment: 'treatment' | 'control' | undefined;
 
 export function useCheckoutV2(): 'loading' | 'treatment' | 'control' {
 	const isCheckoutSection = useSelector( getSectionName ) === 'checkout';
+	const isWPcomCheckout = ! isJetpackCheckout() && ! isAkismetCheckout();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_launch_checkout_v2',
-		{ isEligible: isCheckoutSection && ! hasCheckoutVersion( '2' ) }
+		{ isEligible: isCheckoutSection && isWPcomCheckout && ! hasCheckoutVersion( '2' ) }
 	);
 
 	if ( cachedExperimentAssignment ) {
