@@ -37,6 +37,7 @@ import {
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
 } from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
+import SiteNotifications from '../sites-notifications';
 
 import './style.scss';
 
@@ -224,6 +225,8 @@ export default function SitesDashboard() {
 						<NavigationTabs { ...selectedItemProps } items={ navItems } />
 					</LayoutNavigation>
 				</LayoutTop>
+
+				<SiteNotifications />
 
 				<DashboardDataContext.Provider
 					value={ {
