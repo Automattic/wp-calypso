@@ -44,7 +44,18 @@ export default function A4ASlider( { className, options, onChange, value, label,
 				<div className="a4a-slider__marker-container">
 					{ options.map( ( option, index ) => {
 						return (
-							<div className="a4a-slider__marker" key={ `slider-option-${ index }` }>
+							<div
+								className="a4a-slider__marker"
+								key={ `slider-option-${ index }` }
+								role="button"
+								tabIndex={ -1 }
+								onClick={ () => onChange?.( options[ index ] ) }
+								onKeyDown={ ( event ) => {
+									if ( event.key === 'Enter' ) {
+										onChange?.( options[ index ] );
+									}
+								} }
+							>
 								<div className="a4a-slider__marker-line"></div>
 								<div className="a4a-slider__marker-label">{ option.label }</div>
 								{ option.sub && <div className="a4a-slider__marker-sub">{ option.sub }</div> }
