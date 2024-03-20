@@ -78,6 +78,7 @@ export default async function existingCardProcessor(
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		subdivisionCode: contactDetails?.state?.value,
+		isForBusiness: contactDetails?.isForBusiness,
 		domainDetails,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId,

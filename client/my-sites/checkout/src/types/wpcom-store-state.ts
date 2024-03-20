@@ -619,6 +619,7 @@ function prepareValidationRequestContactSection( details: ManagedContactDetails 
 		),
 		state: details.state?.value,
 		vat_id: details.vatId?.value,
+		is_for_business: details.isForBusiness,
 	};
 }
 
