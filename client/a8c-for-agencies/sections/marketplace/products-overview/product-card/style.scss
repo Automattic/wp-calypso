@@ -35,6 +35,12 @@
 		background: var(--studio-white);
 		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
 	}
+
+	.components-button.is-primary {
+		background-color: var(--color-accent-60);
+		border-color: var(--color-accent-60);
+		color: var(--color-text-inverted);
+	}
 }
 
 button.product-card__select-button {
