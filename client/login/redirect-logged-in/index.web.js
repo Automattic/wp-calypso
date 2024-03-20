@@ -1,4 +1,3 @@
-import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
@@ -31,8 +30,8 @@ export default function redirectLoggedIn( context, next ) {
 	if ( userLoggedIn ) {
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
-		let url = safeProtocolUrl( context?.query?.redirect_to );
-		if ( ! url || url === 'http:' || isExternalUrl( url ) ) {
+		let url = context?.query?.redirect_to;
+		if ( ! url || isExternalUrl( url ) ) {
 			url = '/';
 		}
 		window.location = url;
