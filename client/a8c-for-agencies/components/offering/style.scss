@@ -1,0 +1,92 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+
+.a4a-offering-card__wrapper {
+	padding-top: 16px;
+
+	.a4a-offering-card__title {
+		font-weight: 500;
+		font-size: 1rem;
+		line-height: 24px;
+		color: var(--studio-gray-100);
+	}
+
+	.a4a-offering-card__description {
+		font-weight: 400;
+		font-size: 0.875rem;
+		line-height: 20px;
+		color: var(--studio-gray-60);
+		margin-bottom: 16px;
+	}
+
+	.a4a-offering-item__card {
+		border-radius: 4px;
+
+		.a4a-offering-item__title-container {
+			display: flex;
+			align-items: center;
+
+			.a4a-offering-item__title {
+				color: var(--studio-gray-100);
+				font-weight: 500;
+				font-size: 1rem;
+				margin-left: 10px;
+			}
+		}
+
+		.a4a-offering-item__description {
+			color: var(--studio-gray-60);
+			font-weight: 400;
+			font-size: 0.875rem;
+		}
+
+		.foldable-card__content {
+			border: none;
+			padding-top: 0;
+		}
+	}
+
+	.a4a-offering-item__card-list {
+		display: grid;
+		gap: 16px;
+
+		margin: 8px 0 16px 0;
+		padding: 0;
+
+		list-style-type: none;
+
+		@include break-large {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.a4a-offering-item__card-list-item {
+		color: var(--studio-gray-80);
+		display: flex;
+		align-items: center;
+		font-size: 0.875rem;
+		line-height: 20px;
+	}
+
+	.a4a-offering-item__icon-container {
+		margin-right: 10px;
+
+		.a4a-offering-item__gridicon {
+			fill: var(--color-primary-20);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	.a4a-offering-item__button {
+		background-color: #0088bf;
+		fill: var(--color-primary-60);
+		border-radius: 4px;
+		color: var(--studio-white);
+		font-weight: 500;
+		font-size: 0.875rem;
+	}
+}
+
