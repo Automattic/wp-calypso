@@ -18,7 +18,10 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
-import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import {
+	getEnvStatsFeatureSupportChecks,
+	useIsJetpackSite,
+} from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
@@ -246,7 +249,8 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isPostHomepage = postId === 0;
 
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
-	const isUTMModuleEnabled = config.isEnabled( 'stats/utm-module' ) && supportsUTMStats;
+	const isUTMModuleEnabled =
+		config.isEnabled( 'stats/utm-module' ) && supportsUTMStats && useIsJetpackSite( siteId );
 
 	return {
 		post: getSitePost( state, siteId, postId ),

@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
 import version_compare from 'calypso/lib/version-compare';
+import { useSelector } from 'calypso/state';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 
 const version_greater_than_or_equal = (
@@ -10,7 +12,11 @@ const version_greater_than_or_equal = (
 	return !! ( ! isOdysseyStats || ( version && version_compare( version, compareVersion, '>=' ) ) );
 };
 
-export default function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
+const useIsJetpackSite = ( siteId: number | null ) => {
+	return useSelector( ( state ) => isJetpackSite( state, siteId ) );
+};
+
+function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 
@@ -47,3 +53,9 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 		),
 	};
 }
+
+export {
+	getEnvStatsFeatureSupportChecks as default,
+	getEnvStatsFeatureSupportChecks,
+	useIsJetpackSite,
+};

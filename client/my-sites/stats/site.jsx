@@ -39,7 +39,10 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getJetpackStatsAdminVersion, isJetpackSite } from 'calypso/state/sites/selectors';
-import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import {
+	getEnvStatsFeatureSupportChecks,
+	useIsJetpackSite,
+} from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { requestModuleSettings } from 'calypso/state/stats/module-settings/actions';
 import { getModuleSettings } from 'calypso/state/stats/module-settings/selectors';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -741,7 +744,8 @@ export default connect(
 
 		const { supportsPlanUsage, supportsEmailStats, supportsUTMStats } =
 			getEnvStatsFeatureSupportChecks( state, siteId );
-		const isUTMModuleEnabled = config.isEnabled( 'stats/utm-module' ) && supportsUTMStats;
+		const isUTMModuleEnabled =
+			config.isEnabled( 'stats/utm-module' ) && supportsUTMStats && useIsJetpackSite( siteId );
 
 		return {
 			canUserViewStats,
