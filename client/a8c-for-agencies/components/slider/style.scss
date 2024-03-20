@@ -15,6 +15,7 @@
 	-webkit-appearance: none;
 	appearance: none;
 	background: transparent;
+	height: 50px;
 	width: 100%;
 	margin: 0;
 	padding: 0;
@@ -57,7 +58,7 @@
 
 .a4a-slider__marker-container {
 	position: relative;
-	margin-block-start: -4px;
+	margin-block-start: -24px;
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;

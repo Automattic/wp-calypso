@@ -41,7 +41,7 @@ p.product-listing__section-description {
 	gap: 16px;
 	grid-template-columns: 1fr;
 
-	@include break-xlarge {
+	@include break-large {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
