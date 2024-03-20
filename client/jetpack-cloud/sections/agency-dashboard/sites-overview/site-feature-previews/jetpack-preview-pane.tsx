@@ -56,7 +56,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedFeatureId,
 				setSelectedFeatureId,
-				<JetpackBackupPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				<JetpackBackupPreview />
 			),
 			createFeaturePreview(
 				'jetpack_scan',
