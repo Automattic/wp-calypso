@@ -931,7 +931,7 @@ a.masterbar__quick-language-switcher {
 		}
 
 		.masterbar--is-jetpack & {
-			transform: none;
+			transform: translateY(0.5px);
 		}
 
 		.masterbar--is-akismet & {
