@@ -94,16 +94,18 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		};
 	};
 
-	const handleInviteSuccess = ( site_id: number ) => {
-		dispatch( requestSiteInvites( site_id ) );
+	const handleInviteSuccess = ( siteId: number ) => {
+		dispatch( requestSiteInvites( siteId ) );
 		displayNotice( translate( 'Invitation sent successfully' ) );
-		dispatch( recordTracksEvent( 'calypso_sso_user_invite_success', { site_id } ) );
+		dispatch( recordTracksEvent( 'calypso_sso_user_invite_success', { site_id: siteId } ) );
 	};
 
-	const handleInviteError = ( site_id: number, error: unknown ) => {
+	const handleInviteError = ( siteId: number, error: unknown ) => {
 		displayNotice( translate( 'The invitation sending has failed.' ), 'is-error' );
 		const error_message = error instanceof Error ? error.message : 'error sending invite';
-		dispatch( recordTracksEvent( 'calypso_sso_user_invite_error', { site_id, error_message } ) );
+		dispatch(
+			recordTracksEvent( 'calypso_sso_user_invite_error', { site_id: siteId, error_message } )
+		);
 	};
 
 	const onSendInvite = async ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
