@@ -461,4 +461,13 @@
 			}
 		}
 	}
+
+	.backup__page {
+		.daily-backup-status__restore-button,
+		.status-card__no-backup-last-backup,
+		.activity-card__toolbar--reverse,
+		.backup-date-picker {
+			display: none;
+		}
+	}
 }
