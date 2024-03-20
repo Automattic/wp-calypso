@@ -57,7 +57,7 @@ export async function hydrateBrowserState(
 
 					return storePersistedStateItem( storeKey, state );
 				},
-				SERIALIZE_THROTTLE * 20,
+				SERIALIZE_THROTTLE,
 				{ leading: false, trailing: true }
 			),
 			restoreClient: () => getPersistedStateItem( storeKey ),
