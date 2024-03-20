@@ -62,7 +62,7 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			// from what we recommend on the dashboard
 			dispatch(
 				recordTracksEvent(
-					'calypso_a4a_issue_multiple_licenses_changed_selection_after_dashboard_visit'
+					'calypso_a4a_marketplace_issue_multiple_licenses_changed_selection_after_dashboard_visit'
 				)
 			);
 		},
