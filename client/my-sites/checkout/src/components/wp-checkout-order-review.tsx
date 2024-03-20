@@ -68,7 +68,8 @@ const CouponField = styled( Coupon )``;
 const CouponEnableButton = styled.button< { shouldUseCheckoutV2: boolean } >`
 	cursor: pointer;
 	text-decoration: underline;
-	color: ${ ( props ) => props.theme.colors.textColorLight };
+	color: ${ ( props ) =>
+		props.shouldUseCheckoutV2 ? props.theme.colors.highlight : props.theme.colors.textColorLight };
 
 	&.wp-checkout-order-review__show-coupon-field-button {
 		${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 12px` : `font-size: 14px;` ) }
