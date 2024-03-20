@@ -30,9 +30,11 @@ export function items( state = {}, action ) {
 
 				postsByKey[ global_ID ] = {
 					...post,
-					feed_item_IDs: feed_item_IDs.length
-						? [ ...new Set( [ ...feed_item_IDs, feed_item_ID ] ) ]
-						: [ feed_item_ID ],
+					...( feed_item_ID && {
+						feed_item_IDs: feed_item_IDs.length
+							? [ ...new Set( [ ...feed_item_IDs, feed_item_ID ] ) ]
+							: [ feed_item_ID ],
+					} ),
 				};
 			} );
 
