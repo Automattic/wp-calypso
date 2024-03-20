@@ -71,9 +71,14 @@ export default function useShoppingCart() {
 		[ selectedCartItems, setAndCacheSelectedItems ]
 	);
 
+	const onClearCart = useCallback( () => {
+		setAndCacheSelectedItems( [] );
+	}, [ setAndCacheSelectedItems ] );
+
 	return {
 		selectedCartItems,
 		setSelectedCartItems: setAndCacheSelectedItems,
 		onRemoveCartItem,
+		onClearCart,
 	};
 }

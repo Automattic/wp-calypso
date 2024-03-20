@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -8,6 +9,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 
@@ -33,7 +35,7 @@ export default function Hosting() {
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
-								/* FIXME: redirect to checkout page */
+								page( A4A_MARKETPLACE_CHECKOUT_LINK );
 							} }
 						/>
 					</Actions>

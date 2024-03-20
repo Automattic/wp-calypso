@@ -733,6 +733,7 @@ const sections = [
 			'/marketplace',
 			'/marketplace/products',
 			'/marketplace/hosting',
+			'/marketplace/checkout',
 			'/marketplace/assign-license',
 		],
 		module: 'calypso/a8c-for-agencies/sections/marketplace',
