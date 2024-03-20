@@ -63,8 +63,8 @@ export function PatternsGetStarted() {
 							className="patterns-get-started__item-image"
 							src={ imagePreviewPublish }
 							alt=""
-							width="1177"
-							height="643"
+							width="1137"
+							height="639"
 							loading="lazy"
 						/>
 						<div className="patterns-get-started__item-name">Free course</div>
