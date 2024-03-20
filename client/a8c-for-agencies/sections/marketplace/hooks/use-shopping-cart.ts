@@ -1,6 +1,6 @@
 import { getQueryArg } from '@wordpress/url';
 import { useCallback, useEffect, useState } from 'react';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import type { ShoppingCartItem } from '../types';
 
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
@@ -8,7 +8,7 @@ const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 export default function useShoppingCart() {
 	const [ selectedCartItems, setSelectedCartItems ] = useState< ShoppingCartItem[] >( [] );
 
-	const { data } = useProductsQuery( true );
+	const { data } = useProductsQuery();
 
 	useEffect( () => {
 		const hasSuggestedProductSlug = getQueryArg( window.location.href, 'product_slug' )
