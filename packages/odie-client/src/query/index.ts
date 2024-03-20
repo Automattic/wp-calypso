@@ -14,7 +14,8 @@ const buildSendChatMessage = async (
 	message: Message,
 	botNameSlug: OdieAllowedBots,
 	chat_id?: number | null,
-	version?: string | null
+	version?: string | null,
+	selectedSiteId?: number | null
 ) => {
 	const baseApiPath = '/help-center/odie/chat/';
 	const wpcomBaseApiPath = '/odie/chat/';
@@ -30,19 +31,24 @@ const buildSendChatMessage = async (
 			: `${ wpcomBaseApiPath }${ botNameSlug }`;
 
 	return canAccessWpcomApis()
-		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version )
+		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version, selectedSiteId )
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message, version },
+				data: { message, version, context: { selectedSiteId } },
 		  } );
 };
 
-function odieWpcomSendSupportMessage( message: Message, path: string, version?: string | null ) {
+function odieWpcomSendSupportMessage(
+	message: Message,
+	path: string,
+	version?: string | null,
+	selectedSiteId?: number | null
+) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content, version },
+		body: { message: message.content, version, context: { selectedSiteId } },
 	} );
 }
 
@@ -70,8 +76,16 @@ export const useOdieSendMessage = (): UseMutationResult<
 	{ message: Message },
 	{ internal_message_id: string }
 > => {
-	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId, version } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		botNameSlug,
+		setIsLoading,
+		addMessage,
+		updateMessage,
+		odieClientId,
+		selectedSiteId,
+		version,
+	} = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 
@@ -83,7 +97,13 @@ export const useOdieSendMessage = (): UseMutationResult<
 	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
 			broadcastOdieMessage( message, odieClientId );
-			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id, version );
+			return buildSendChatMessage(
+				{ ...message },
+				botNameSlug,
+				chat.chat_id,
+				version,
+				selectedSiteId
+			);
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
