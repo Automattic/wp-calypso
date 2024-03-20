@@ -65,14 +65,9 @@ export const HostingFlowForkingPage = ( props: StepProps ) => {
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
-				margin: 0,
+				margin: '10vh 35px 10px',
 				padding: 0,
 				gap: '32px',
-				[ MEDIA_QUERIES.small ]: {
-					width: '100%',
-					maxWidth: '100%',
-					alignItems: 'flex-start',
-				},
 			} }
 		>
 			<div
