@@ -172,11 +172,11 @@ export function CommandMenuGroup() {
 
 interface CommandInputProps {
 	isOpen: boolean;
-	placeholder?: string;
 }
 
-function CommandInput( { isOpen, placeholder }: CommandInputProps ) {
-	const { search, setSearch, selectedCommandName } = useCommandMenuGroupContext();
+function CommandInput( { isOpen }: CommandInputProps ) {
+	const { placeHolderOverride, search, selectedCommandName, setSearch } =
+		useCommandMenuGroupContext();
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
@@ -194,7 +194,7 @@ function CommandInput( { isOpen, placeholder }: CommandInputProps ) {
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
-			placeholder={ placeholder || __( 'Search for commands', __i18n_text_domain__ ) }
+			placeholder={ placeHolderOverride || __( 'Search for commands', __i18n_text_domain__ ) }
 			aria-activedescendant={ itemId }
 		/>
 	);
@@ -327,6 +327,7 @@ const CommandPalette = () => {
 				reset();
 			} }
 			emptyListNotice={ emptyListNotice }
+			placeHolderOverride={ placeHolderOverride }
 			selectedCommandName={ selectedCommandName }
 			setEmptyListNotice={ setEmptyListNotice }
 			setFooterMessage={ setFooterMessage }
@@ -358,7 +359,7 @@ const CommandPalette = () => {
 							) : (
 								<Icon icon={ inputIcon } />
 							) }
-							<CommandInput isOpen={ isOpen } placeholder={ placeHolderOverride } />
+							<CommandInput isOpen={ isOpen } />
 						</div>
 						<Command.List ref={ commandListRef }>
 							<StyledCommandsEmpty>
