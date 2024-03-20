@@ -40,7 +40,7 @@ function useTimeoutToResetBoolean(
 type PatternPreviewProps = {
 	className?: string;
 	canCopy?: boolean;
-	getPatternPermalink: PatternGalleryProps[ 'getPatternPermalink' ];
+	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
 	viewportWidth?: number;
