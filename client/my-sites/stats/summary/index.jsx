@@ -12,10 +12,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import {
-	getEnvStatsFeatureSupportChecks,
-	useIsJetpackSite,
-} from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
@@ -386,8 +383,7 @@ export default connect( ( state, { context, postId } ) => {
 	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
-	const isUTMModuleEnabled =
-		isEnabled( 'stats/utm-module' ) && supportsUTMStats && useIsJetpackSite( siteId );
+	const isUTMModuleEnabled = isEnabled( 'stats/utm-module' ) && supportsUTMStats;
 
 	return {
 		siteId: getSelectedSiteId( state ),

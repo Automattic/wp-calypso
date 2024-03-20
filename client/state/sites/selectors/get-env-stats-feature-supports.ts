@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import version_compare from 'calypso/lib/version-compare';
-import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 
@@ -12,13 +11,10 @@ const version_greater_than_or_equal = (
 	return !! ( ! isOdysseyStats || ( version && version_compare( version, compareVersion, '>=' ) ) );
 };
 
-const useIsJetpackSite = ( siteId: number | null ) => {
-	return useSelector( ( state ) => isJetpackSite( state, siteId ) );
-};
-
-function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
+export default function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
+	const isSiteJetpack = isJetpackSite( state, siteId );
 
 	return {
 		supportsHighlightsSettings: version_greater_than_or_equal(
@@ -46,16 +42,10 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats: version_greater_than_or_equal(
-			statsAdminVersion,
-			'0.17.0-alpha',
-			isOdysseyStats
-		),
+		supportsUTMStats:
+			// TODO: Make UTM stats available for internal Simple sites.
+			// UTM stats are only available for Jetpack and Atomic sites for now.
+			isSiteJetpack &&
+			version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ),
 	};
 }
-
-export {
-	getEnvStatsFeatureSupportChecks as default,
-	getEnvStatsFeatureSupportChecks,
-	useIsJetpackSite,
-};
