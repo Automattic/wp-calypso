@@ -103,33 +103,6 @@ function PatternPreviewFragment( {
 			</div>
 
 			<div className="pattern-preview__header">
-				<div className="pattern-preview__title">{ pattern.title }</div>
-
-				{ canCopy && (
-					<ClipboardButton
-						className="pattern-preview__copy"
-						onCopy={ () => {
-							setIsPatternCopied( true );
-						} }
-						text={ pattern?.html ?? '' }
-						primary
-					>
-						{ copyButtonText }
-					</ClipboardButton>
-				) }
-
-				{ ! canCopy && (
-					<Button
-						className="pattern-preview__get-access"
-						transparent
-						onClick={ () => setIsAuthModalOpen( true ) }
-					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
-					</Button>
-				) }
-			</div>
-
-			<div className="pattern-preview__header">
 				<Tooltip delay={ 300 } placement="top" text={ titleTooltipText }>
 					<ClipboardButton
 						borderless
