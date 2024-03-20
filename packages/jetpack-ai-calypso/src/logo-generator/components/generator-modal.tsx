@@ -30,6 +30,7 @@ import { HistoryCarousel } from './history-carousel';
 import { LogoPresenter } from './logo-presenter';
 import { Prompt } from './prompt';
 import { UpgradeScreen } from './upgrade-screen';
+import { VisitSiteBanner } from './visit-site-banner';
 import './generator-modal.scss';
 /**
  * Types
@@ -59,6 +60,8 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 		useLogoGenerator();
 	const { featureFetchError, firstLogoPromptFetchError, clearErrors } = useRequestErrors();
 	const siteId = siteDetails?.ID;
+	const siteURL = siteDetails?.URL;
+	const [ logoAccepted, setLogoAccepted ] = useState( false );
 
 	const getFeature = useCallback( async () => {
 		setLoadingState( 'loadingFeature' );
@@ -147,15 +150,20 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	}, [ setContext, context, loadLogoHistory, siteId, initializeModal ] );
 
 	const closeModal = () => {
+		onClose();
 		setLoadingState( null );
 		setNeedsFeature( false );
 		setNeedsMoreRequests( false );
 		clearErrors();
+		setLogoAccepted( false );
 		recordTracksEvent( EVENT_MODAL_CLOSE, { context, placement: EVENT_PLACEMENT_QUICK_LINKS } );
-		onClose();
 	};
 
 	const handleApplyLogo = () => {
+		setLogoAccepted( true );
+	};
+
+	const handleCloseAndReload = () => {
 		closeModal();
 
 		setTimeout( () => {
@@ -212,21 +220,41 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 	} else {
 		body = (
 			<>
-				<Prompt initialPrompt={ initialPrompt } />
-				<LogoPresenter logo={ selectedLogo } onApplyLogo={ handleApplyLogo } />
-				<HistoryCarousel />
-				<div className="jetpack-ai-logo-generator__footer">
-					<Button
-						variant="link"
-						className="jetpack-ai-logo-generator__feedback-button"
-						href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
-						target="_blank"
-						onClick={ handleFeedbackClick }
-					>
-						<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
-						<Icon icon={ external } className="icon" />
-					</Button>
-				</div>
+				{ ! logoAccepted && <Prompt initialPrompt={ initialPrompt } /> }
+				<LogoPresenter
+					logo={ selectedLogo }
+					onApplyLogo={ handleApplyLogo }
+					logoAccepted={ logoAccepted }
+				/>
+				{ logoAccepted ? (
+					<div className="jetpack-ai-logo-generator__accept">
+						<VisitSiteBanner siteURL={ siteURL } onVisitBlankTarget={ handleCloseAndReload } />
+						<div className="jetpack-ai-logo-generator__accept-actions">
+							<Button variant="link" onClick={ handleCloseAndReload }>
+								{ __( 'Close and refresh', 'jetpack' ) }
+							</Button>
+							<Button href={ siteURL } variant="primary">
+								{ __( 'Visit site', 'jetpack' ) }
+							</Button>
+						</div>
+					</div>
+				) : (
+					<>
+						<HistoryCarousel />
+						<div className="jetpack-ai-logo-generator__footer">
+							<Button
+								variant="link"
+								className="jetpack-ai-logo-generator__feedback-button"
+								href="https://jetpack.com/redirect/?source=jetpack-ai-feedback"
+								target="_blank"
+								onClick={ handleFeedbackClick }
+							>
+								<span>{ __( 'Provide feedback', 'jetpack' ) }</span>
+								<Icon icon={ external } className="icon" />
+							</Button>
+						</div>
+					</>
+				) }
 			</>
 		);
 	}
@@ -236,7 +264,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			{ isOpen && (
 				<Modal
 					className="jetpack-ai-logo-generator-modal"
-					onRequestClose={ closeModal }
+					onRequestClose={ logoAccepted ? handleCloseAndReload : closeModal }
 					shouldCloseOnClickOutside={ false }
 					shouldCloseOnEsc={ false }
 					title={ __( 'Jetpack AI Logo Generator', 'jetpack' ) }
