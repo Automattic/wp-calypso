@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
@@ -16,7 +17,10 @@ import { site, plugin, paidPlugin } from './utils/constants';
 
 const initialReduxState = {
 	siteConnection: { items: { [ site.ID ]: true } },
-	sites: { items: { [ site.ID ]: site } },
+	sites: {
+		items: { [ site.ID ]: site },
+		features: { [ site.ID ]: { data: { active: [ WPCOM_FEATURES_INSTALL_PLUGINS ] } } },
+	},
 	currentUser: {
 		capabilities: {},
 	},
