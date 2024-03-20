@@ -34,6 +34,7 @@ type OdieAssistantContextInterface = {
 	lastNudge: Nudge | null;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
+	selectedSiteId?: number | null;
 	setChat: ( chat: Chat ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
@@ -92,6 +93,7 @@ type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
+	selectedSiteId?: number | null;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
@@ -105,6 +107,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
+	selectedSiteId,
 	version = null,
 	children,
 } ) => {
@@ -227,6 +230,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isVisible,
 				lastNudge,
 				odieClientId,
+				selectedSiteId,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,

@@ -39,15 +39,15 @@
 
 	--color-primary: var(--studio-automattic-60);
 	--color-primary-40: var(--studio-automattic-40);
-	--color-accent: var(--studio-automattic-60);
+	--color-accent: var(--studio-automattic-40);
 	--color-accent-60: var(--studio-automattic-60);
 	--color-accent-70: var(--studio-automattic-70);
 }
 
 .theme-a8c-for-agencies {
 	.button.is-primary {
-		background-color: var(--studio-automattic-60);
-		border-color: var(--studio-automattic-60);
+		background-color: var(--studio-automattic-40);
+		border-color: var(--studio-automattic-40);
 	}
 
 	.button.is-borderless:focus,
@@ -98,6 +98,13 @@
 		.layout__content {
 			padding: 16px 16px 16px calc(var(--sidebar-width-max));
 		}
+	}
+}
+
+// Various screens dont use a sidebar.
+.theme-a8c-for-agencies .layout.has-no-sidebar {
+	.layout__content {
+		padding-left: 16px;
 	}
 }
 

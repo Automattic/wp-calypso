@@ -6,17 +6,17 @@
 	padding-block-start: 0;
 
 	@media (min-width: $break-large) {
-		.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
+		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
 			font-size: 1.25rem;
 			font-weight: 500;
 		}
-		.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
+		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
 			display: none;
 		}
 	}
 
 	@media (max-width: $break-large) {
-		.sites-dashboard__layout {
+		&.sites-dashboard__layout {
 			.sites-overview {
 				overflow: hidden;
 
@@ -86,7 +86,11 @@
 		}
 
 		.dataviews-filters__view-actions {
-			padding: 8px;
+			padding-bottom: 8px;
+
+			& > :first-child {
+				margin-inline-start: 8px;
+			}
 
 			.components-input-control {
 				flex-grow: 1;
@@ -116,11 +120,11 @@
 		}
 
 		tr td:first-child {
-			padding-left: 8px;
+			padding-inline-start: 8px;
 		}
 
 		tr td:last-child {
-			padding-right: 8px;
+			padding-inline-end: 8px;
 		}
 
 		.dataviews-view-table-wrapper {
@@ -142,7 +146,7 @@
 	}
 
 	@media (max-width: $break-wide) {
-		.sites-dashboard__layout:not(.preview-hidden) {
+		&.sites-dashboard__layout:not(.preview-hidden) {
 			flex-direction: column;
 			gap: 0;
 
@@ -162,8 +166,7 @@
 	}
 
 	@media (min-width: $break-wide) {
-		.sites-dashboard__layout:not(.preview-hidden) {
-
+		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
 				overflow-y: hidden;
@@ -297,7 +300,7 @@
 		max-width: none;
 	}
 
-	.sites-dashboard__layout:not(.preview-hidden) {
+	&.sites-dashboard__layout:not(.preview-hidden) {
 
 		.section-nav {
 			display: none;
@@ -329,14 +332,7 @@
 		}
 	}
 
-	.sites-dashboard__layout {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: nowrap;
-		gap: 16px;
-		max-height: calc(100vh - 32px);
-		min-height: calc(100vh - 32px);
-
+	&.sites-dashboard__layout {
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
 		}
@@ -387,13 +383,9 @@
 			}
 		}
 
-		.a4a-layout__container {
-			width: 100%;
-		}
-
 		.sites-overview {
 			width: 400px;
-			flex-shrink: 0;
+			flex: unset;
 			overflow-x: auto;
 			overflow-y: hidden;
 			transition: all 0.2s;
@@ -405,8 +397,7 @@
 			}
 
 			.sites-overview__content {
-				margin-top: 16px;
-				padding-inline: 64px;
+				margin-top: 24px;
 			}
 		}
 
@@ -450,6 +441,16 @@
 				.sites-overview {
 					padding: 0;
 					overflow-x: auto;
+
+					.dataviews-filters__view-actions {
+						& > :first-child {
+							margin-inline-start: 64px;
+						}
+
+						& > :last-child {
+							margin-inline-end: 64px;
+						}
+					}
 				}
 			}
 		}
@@ -458,6 +459,15 @@
 			.sites-overview__page-heading {
 				display: none;
 			}
+		}
+	}
+
+	.backup__page {
+		.daily-backup-status__restore-button,
+		.status-card__no-backup-last-backup,
+		.activity-card__toolbar--reverse,
+		.backup-date-picker {
+			display: none;
 		}
 	}
 }

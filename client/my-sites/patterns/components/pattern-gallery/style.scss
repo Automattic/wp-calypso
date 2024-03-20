@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .pattern-gallery {
 	display: grid;
 	gap: 48px;
@@ -5,4 +7,8 @@
 .pattern-gallery--grid {
 	gap: 16px 24px;
 	grid-template-columns: repeat(3, 1fr);
+
+	@media ( max-width: $break-medium ) {
+		grid-template-columns: 1fr;
+	}
 }

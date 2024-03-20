@@ -42,16 +42,19 @@ import {
 } from 'calypso/data/hosting/use-cache';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
-import { useIsGitHubDeploymentsAvailableQuery } from 'calypso/my-sites/github-deployments/use-is-feature-available';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
+import {
+	generateSiteInterfaceLink,
+	isCustomDomain,
+	isNotAtomicJetpack,
+	isP2Site,
+	siteUsesWpAdminInterface,
+} from '../utils';
 import type {
 	Command,
 	CommandCallBackParams,
@@ -105,12 +108,37 @@ export const useCommandsArrayWpcom = ( {
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 	const dispatch = useDispatch();
 
+	const navigateWithinSamePage = (
+		targetPath: string,
+		elementId: string,
+		commandParams: Pick< CommandCallBackParams, 'close' | 'command' >
+	) => {
+		const currentPath = window.location.pathname;
+		const targetUrl = new URL( targetPath, window.location.origin );
+
+		// Check if the user is on the same page but is not looking at the right section
+		// If not, scroll to the right section
+		if ( currentPath === targetUrl.pathname ) {
+			//Offset by the height of the navigation header from the top of the page
+			const fixedHeaderHeight = 72;
+			const element = document.getElementById( elementId );
+			if ( element ) {
+				const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+				const offsetPosition = elementPosition - fixedHeaderHeight;
+
+				window.location.hash = elementId;
+				commandParams.close();
+				window.scrollTo( {
+					top: offsetPosition,
+					behavior: 'smooth',
+				} );
+			}
+		} else {
+			commandNavigation( targetPath )( commandParams );
+		}
+	};
+
 	const { setEdgeCache } = useSetEdgeCacheMutation();
-	//temporary patch to not add github deployments to the command palette if feature is not available, will be removed.
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const { data } = useIsGitHubDeploymentsAvailableQuery( {
-		siteId: selectedSiteId || 0,
-	} );
 
 	const displayNotice = (
 		message: string,
@@ -288,10 +316,6 @@ export const useCommandsArrayWpcom = ( {
 		'source-command-palette': 'true',
 	} ).toString() }`;
 
-	const isAtomic = useSelector( ( state ) => {
-		return ( siteId: number ) => isSiteWpcomAtomic( state, siteId );
-	} );
-
 	const commands: Command[] = [
 		{
 			name: 'viewMySites',
@@ -373,8 +397,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage cache settings' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#cache` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#cache`;
+					navigateWithinSamePage( targetPath, 'cache', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
@@ -670,7 +696,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open SFTP/SSH credentials' )
 			),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#admin-interface-style`;
+					navigateWithinSamePage( targetPath, 'sftp-credentials', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
@@ -696,7 +725,13 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open Jetpack Stats' ),
 			callback: setStateCallback( 'openJetpackStats', __( 'Select site to open Jetpack Stats' ) ),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/stats/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
+						calypso: '/stats',
+						wpAdmin: '/admin.php?page=stats',
+					} );
+					commandNavigation( link )( param );
+				},
 			},
 			icon: statsIcon,
 		},
@@ -710,7 +745,14 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'openActivityLog', __( 'Select site to open activity log' ) ),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/activity-log/${ param.site.slug }` )( param ),
+				onClick: ( param ) =>
+					commandNavigation(
+						`${
+							siteUsesWpAdminInterface( param.site )
+								? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
+								: '/activity-log/'
+						}${ param.site.slug }`
+					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
@@ -724,9 +766,11 @@ export const useCommandsArrayWpcom = ( {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
 				onClick: ( param ) =>
 					commandNavigation(
-						`${ isAtomic( param.site.ID ) ? 'https://cloud.jetpack.com' : '' }/backup/${
-							param.site.slug
-						}`
+						`${
+							siteUsesWpAdminInterface( param.site )
+								? 'https://jetpack.com/redirect/?source=calypso-backups&site='
+								: '/backup/'
+						}${ param.site.slug }`
 					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
@@ -746,34 +790,30 @@ export const useCommandsArrayWpcom = ( {
 			},
 			icon: statsIcon,
 		},
-		...( data?.available
-			? [
-					{
-						name: 'openGitHubDeployments',
-						label: __( 'Open GitHub Deployments' ),
-						callback: setStateCallback(
-							'openGitHubDeployments',
-							__( 'Select site to open GitHub Deployments' )
-						),
-						searchLabel: [
-							_x( 'open github deployments', 'Keyword for the Open GitHub Deployments command' ),
-							_x( 'github', 'Keyword for the Open GitHub Deployments command' ),
-							_x( 'deployments', 'Keyword for the Open GitHub Deployments command' ),
-						].join( ' ' ),
-						siteFunctions: {
-							onClick: (
-								param: Pick< CommandCallBackParams, 'close' | 'command' > & {
-									site: SiteExcerptData;
-								}
-							) => {
-								return commandNavigation( `/github-deployments/${ param.site.slug }` )( param );
-							},
-							...siteFilters.hostingEnabled,
-						},
-						icon: <GitHubIcon width={ 18 } height={ 18 } />,
-					},
-			  ]
-			: [] ),
+		{
+			name: 'openGitHubDeployments',
+			label: __( 'Open GitHub Deployments' ),
+			callback: setStateCallback(
+				'openGitHubDeployments',
+				__( 'Select site to open GitHub Deployments' )
+			),
+			searchLabel: [
+				_x( 'open github deployments', 'Keyword for the Open GitHub Deployments command' ),
+				_x( 'github', 'Keyword for the Open GitHub Deployments command' ),
+				_x( 'deployments', 'Keyword for the Open GitHub Deployments command' ),
+			].join( ' ' ),
+			siteFunctions: {
+				onClick: (
+					param: Pick< CommandCallBackParams, 'close' | 'command' > & {
+						site: SiteExcerptData;
+					}
+				) => {
+					return commandNavigation( `/github-deployments/${ param.site.slug }` )( param );
+				},
+				...siteFilters.hostingEnabled,
+			},
+			icon: <GitHubIcon width={ 18 } height={ 18 } />,
+		},
 		{
 			name: 'openPHPLogs',
 			label: __( 'Open PHP logs' ),
@@ -829,8 +869,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage staging sites' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#staging-site` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#staging-site`;
+					navigateWithinSamePage( targetPath, 'staging-site', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -840,8 +882,10 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Change PHP version' ),
 			callback: setStateCallback( 'changePHPVersion', __( 'Select site to change PHP version' ) ),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#web-server-settings` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#web-server-settings`;
+					navigateWithinSamePage( targetPath, 'web-server-settings', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -861,10 +905,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to change admin interface style' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#admin-interface-style` )(
-						param
-					),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#admin-interface-style`;
+					navigateWithinSamePage( targetPath, 'admin-interface-style', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
@@ -1349,8 +1393,13 @@ export const useCommandsArrayWpcom = ( {
 			),
 			siteFunctions: {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-				onClick: ( param ) =>
-					commandNavigation( `/settings/newsletter/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
+						calypso: '/settings/newsletter',
+						wpAdmin: '/admin.php?page=jetpack#/newsletter',
+					} );
+					commandNavigation( link )( param );
+				},
 			},
 			icon: settingsIcon,
 		},

@@ -2,20 +2,20 @@
 @import "@wordpress/base-styles/mixins";
 @import "../../mixins.scss";
 
-.licenses-form__placeholder {
+.product-listing__placeholder {
 	@include placeholder( --color-neutral-10 );
 	height: 43px;
 }
 
-.licenses-form__section {
+.product-listing__section {
 	margin-block-end: 32px;
 }
 
-h2.licenses-form__section-title {
+h2.product-listing__section-title {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 18px;
+	gap: 10px;
 	margin-block-end: 10px;
 	font-size: rem(20px);
 	font-weight: 600;
@@ -29,14 +29,14 @@ h2.licenses-form__section-title {
 	}
 }
 
-p.licenses-form__section-description {
+p.product-listing__section-description {
 	font-size: rem(14px);
 	font-weight: 400;
 	line-height: 1.2;
 	margin-block-end: 32px;
 }
 
-.licenses-form__section-content {
+.product-listing__section-content {
 	display: grid;
 	gap: 16px;
 	grid-template-columns: 1fr;
@@ -50,13 +50,13 @@ p.licenses-form__section-description {
 	}
 }
 
-.licenses-form__section.is-two-columns .licenses-form__section-content {
+.product-listing__section.is-two-columns .product-listing__section-content {
 	@include break-wide {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
-p.licenses-form__description {
+p.product-listing__description {
 	flex: 1 1 auto;
 	align-self: flex-end;
 	margin: 1rem 0;
@@ -68,20 +68,20 @@ p.licenses-form__description {
 	}
 }
 
-.licenses-form__select-license {
+.product-listing__select-license {
 	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
 	border-width: 1.5px !important;
 	border-color: transparent;
 }
 
-.licenses-form__actions {
+.product-listing__actions {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
 	margin: 16px 0 32px;
 }
 
-.select-dropdown.is-compact.licenses-form__product-filter-select {
+.select-dropdown.is-compact.product-listing__product-filter-select {
 	flex-basis: 100%;
 	height: 46px;
 
@@ -131,7 +131,7 @@ p.licenses-form__description {
 	}
 }
 
-.licenses-form__product-filter-search {
+.product-listing__filter-search {
 	flex-basis: 100%;
 
 	@include break-xlarge {

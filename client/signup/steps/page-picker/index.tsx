@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -7,9 +8,10 @@ import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PurchaseModal from 'calypso/my-sites/checkout/purchase-modal';
@@ -43,6 +45,7 @@ import {
 	useTranslatedPageTitles,
 } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import useLongFetchingDetection from 'calypso/site-profiler/hooks/use-long-fetching-detection';
 import { useDispatch, useSelector } from 'calypso/state';
 import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -492,6 +495,43 @@ function DIFMPagePicker( props: StepProps ) {
 		setSelectedPages( ( selectedPages ) => selectedPages.slice() );
 	};
 
+	const isCheckoutButtonBusy =
+		( isExistingSite &&
+			( isProductsLoading ||
+				isCartPendingUpdate ||
+				isCartLoading ||
+				isCartUpdateStarted ||
+				isLoadingIsEligibleForOneClickCheckout ) ) ||
+		isCheckoutPressed;
+
+	const isBusyForWhile = useLongFetchingDetection( 'difm-page-picker', isCheckoutButtonBusy, 5000 );
+
+	const hasLogged = useRef< boolean >( false );
+	useEffect( () => {
+		if ( isBusyForWhile && ! hasLogged.current ) {
+			hasLogged.current = true;
+			const message =
+				'Page Picker Infinite Loading state:' +
+				` isProductsLoading: ${ isProductsLoading }` +
+				` isCartPendingUpdate: ${ isCartPendingUpdate }` +
+				` isCartLoading: ${ isCartLoading }` +
+				` isCartUpdateStarted: ${ isCartUpdateStarted }` +
+				` isLoadingIsEligibleForOneClickCheckout: ${ isLoadingIsEligibleForOneClickCheckout }`;
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			} );
+		}
+	}, [
+		isBusyForWhile,
+		isCartLoading,
+		isCartPendingUpdate,
+		isCartUpdateStarted,
+		isLoadingIsEligibleForOneClickCheckout,
+		isProductsLoading,
+	] );
+
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
 	} );
@@ -580,15 +620,7 @@ function DIFMPagePicker( props: StepProps ) {
 			headerButton={
 				<StyledButton
 					disabled={ isFormattedCurrencyLoading }
-					busy={
-						( isExistingSite &&
-							( isProductsLoading ||
-								isCartPendingUpdate ||
-								isCartLoading ||
-								isCartUpdateStarted ||
-								isLoadingIsEligibleForOneClickCheckout ) ) ||
-						isCheckoutPressed
-					}
+					busy={ isCheckoutButtonBusy }
 					primary
 					onClick={ submitPickedPages }
 				>

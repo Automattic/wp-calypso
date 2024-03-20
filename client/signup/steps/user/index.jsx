@@ -115,6 +115,10 @@ function isOauth2RedirectValid( oauth2Redirect ) {
 		return true;
 	}
 
+	if ( oauth2Redirect.startsWith( '/setup/wooexpress' ) ) {
+		return true;
+	}
+
 	try {
 		const url = new URL( oauth2Redirect );
 		return url.host === 'public-api.wordpress.com';
