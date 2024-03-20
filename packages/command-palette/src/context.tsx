@@ -8,10 +8,10 @@ export interface CommandPaletteContext {
 	currentSiteId: number | null;
 	isOpenGlobal?: boolean;
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	onClose: () => void;
+	onClose?: () => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
-	useSites: () => SiteExcerptData[];
+	userCapabilities?: { [ key: number ]: { [ key: string ]: boolean } };
+	useSites?: () => SiteExcerptData[];
 }
 
 const CommandPaletteContext = createContext< CommandPaletteContext | undefined >( undefined );

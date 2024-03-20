@@ -243,7 +243,7 @@ const CommandPalette = () => {
 	const close = useCallback< CommandMenuGroupContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
 			setIsOpenLocal( false );
-			onClose();
+			onClose?.();
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {
 				// For nested commands the command.name would be the siteId
 				// For root commands the selectedCommandName would be empty

@@ -76,8 +76,8 @@ interface useCommandPaletteOptions {
 	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => Command[];
 	currentRoute: string | null;
-	useSites: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+	useSites?: () => SiteExcerptData[];
+	userCapabilities?: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 interface SiteToActionParameters {
