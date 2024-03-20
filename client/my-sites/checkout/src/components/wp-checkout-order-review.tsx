@@ -59,7 +59,7 @@ const CouponAreaWrapper = styled.div< { shouldUseCheckoutV2: boolean } >`
 		padding-inline-start: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '40px' ) };
 		padding-inline-end: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '0' ) };
 	}
-	padding-top: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '48px' ) };
+	padding-top: ${ ( props ) => ( props.shouldUseCheckoutV2 ? 'initial' : '28px' ) };
 	align-self: stretch;
 `;
 
@@ -68,7 +68,7 @@ const CouponField = styled( Coupon )``;
 const CouponEnableButton = styled.button< { shouldUseCheckoutV2: boolean } >`
 	cursor: pointer;
 	text-decoration: underline;
-	color: ${ ( props ) => props.theme.colors.highlight };
+	color: ${ ( props ) => props.theme.colors.textColorLight };
 
 	&.wp-checkout-order-review__show-coupon-field-button {
 		${ ( props ) => ( props.shouldUseCheckoutV2 ? `font-size: 12px` : `font-size: 14px;` ) }
@@ -287,13 +287,12 @@ export function CouponFieldArea( {
 	return (
 		<CouponAreaWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
 			<CouponLinkWrapper shouldUseCheckoutV2={ shouldUseCheckoutV2 }>
-				{ translate( 'Have a coupon? ' ) }{ ' ' }
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"
 					onClick={ () => setCouponFieldVisible( true ) }
 					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				>
-					{ translate( 'Add a coupon code' ) }
+					{ translate( 'Have a coupon?' ) }
 				</CouponEnableButton>
 			</CouponLinkWrapper>
 		</CouponAreaWrapper>

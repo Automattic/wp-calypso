@@ -959,7 +959,7 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	padding: 32px 20px 0 24px;
 	width: 100%;
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 32px 20px 0 40px;
+		padding: 12px 20px 0 40px;
 	}
 `;
 
