@@ -1,12 +1,12 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
@@ -14,11 +14,10 @@ import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 interface Props {
 	className: string;
 	siteSlug: string;
-	buttonComponent?: ReactNode;
+	tracksEvent?: string;
 }
 
-// TODO: avoid making UTM call and show a ghost element instead
-const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug } ) => {
+const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug, tracksEvent } ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const copyText = translate(
@@ -45,7 +44,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug } ) =>
 
 		// publish an event
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_utm_upgrade_clicked` );
+		recordTracksEvent( `${ event_from }_${ tracksEvent }` );
 
 		// redirect to the Purchase page
 		setTimeout(
