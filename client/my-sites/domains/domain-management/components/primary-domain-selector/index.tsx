@@ -188,12 +188,13 @@ const PrimaryDomainSelector = ( {
 				{ validPrimaryDomains.length > 0 && (
 					<FormFieldset className="domains-set-primary-address__fieldset">
 						<FormSelect
+							className="domains-set-primary-address__select"
 							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
 							id="primary-domain-selector"
 							onChange={ onSelectChange }
 							value={ selectedDomain }
 						>
-							<option value="">Select a domain</option>
+							<option value="">{ translate( 'Select a domain' ) }</option>
 							{ validPrimaryDomains.map( ( domain ) => (
 								<option key={ domain.domain } value={ domain.domain }>
 									{ domain.domain }
