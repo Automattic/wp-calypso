@@ -65,7 +65,8 @@
 		}
 
 		@media ( max-width: $break-wide ) {
-			display: none;
+			width: 0;
+			padding: 0;
 		}
 	}
 }
