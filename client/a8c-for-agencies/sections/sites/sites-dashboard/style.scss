@@ -10,7 +10,7 @@
 	padding-block-start: 0;
 
 	.dataviews-view-table-wrapper {
-		height: calc(100vh - 265px);
+		height: calc(100vh - 265px); /* It subtracts the header height to allow scrolling in this block */
 		overflow-y: auto;
 	}
 
@@ -263,7 +263,7 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				height: calc(100vh - 165px);
+				height: calc(100vh - 165px); /* It subtracts the header height to allow scrolling in this block */
 
 				li {
 					padding: 8px 24px;
