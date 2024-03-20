@@ -148,7 +148,7 @@ export const PaymentMethodSummary = ( {
 		return <>{ email || '' }</>;
 	}
 	if ( type === PARTNER_RAZORPAY ) {
-		return <>{ translate( 'Razorpay' ) }</>;
+		return <>{ translate( 'Unified Payments Interface (UPI)' ) }</>;
 	}
 	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {
