@@ -43,13 +43,18 @@ import {
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { generateSiteInterfaceLink, isCustomDomain, isNotAtomicJetpack, isP2Site } from '../utils';
+import {
+	generateSiteInterfaceLink,
+	isCustomDomain,
+	isNotAtomicJetpack,
+	isP2Site,
+	siteUsesWpAdminInterface,
+} from '../utils';
 import type {
 	Command,
 	CommandCallBackParams,
@@ -280,10 +285,6 @@ export const useCommandsArrayWpcom = ( {
 		'disable-gpt': 'true',
 		'source-command-palette': 'true',
 	} ).toString() }`;
-
-	const isAtomic = useSelector( ( state ) => {
-		return ( siteId: number ) => isSiteWpcomAtomic( state, siteId );
-	} );
 
 	const commands: Command[] = [
 		{
@@ -689,7 +690,13 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Open Jetpack Stats' ),
 			callback: setStateCallback( 'openJetpackStats', __( 'Select site to open Jetpack Stats' ) ),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/stats/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
+						calypso: '/stats',
+						wpAdmin: '/admin.php?page=stats',
+					} );
+					commandNavigation( link )( param );
+				},
 			},
 			icon: statsIcon,
 		},
@@ -703,7 +710,14 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: setStateCallback( 'openActivityLog', __( 'Select site to open activity log' ) ),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/activity-log/${ param.site.slug }` )( param ),
+				onClick: ( param ) =>
+					commandNavigation(
+						`${
+							siteUsesWpAdminInterface( param.site )
+								? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
+								: '/activity-log/'
+						}${ param.site.slug }`
+					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
 			},
@@ -717,9 +731,11 @@ export const useCommandsArrayWpcom = ( {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
 				onClick: ( param ) =>
 					commandNavigation(
-						`${ isAtomic( param.site.ID ) ? 'https://cloud.jetpack.com' : '' }/backup/${
-							param.site.slug
-						}`
+						`${
+							siteUsesWpAdminInterface( param.site )
+								? 'https://jetpack.com/redirect/?source=calypso-backups&site='
+								: '/backup/'
+						}${ param.site.slug }`
 					)( param ),
 				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
 				filterNotice: __( 'Only listing sites with Jetpack Backup enabled.' ),
@@ -1338,8 +1354,13 @@ export const useCommandsArrayWpcom = ( {
 			),
 			siteFunctions: {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-				onClick: ( param ) =>
-					commandNavigation( `/settings/newsletter/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const link = generateSiteInterfaceLink( param.site, {
+						calypso: '/settings/newsletter',
+						wpAdmin: '/admin.php?page=jetpack#/newsletter',
+					} );
+					commandNavigation( link )( param );
+				},
 			},
 			icon: settingsIcon,
 		},
