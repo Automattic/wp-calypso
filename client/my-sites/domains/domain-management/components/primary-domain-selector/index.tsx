@@ -26,8 +26,8 @@ const PrimaryDomainSelector = ( {
 	site,
 	onSetPrimaryDomain,
 }: PrimaryDomainSelectorProps ) => {
-	const [ selectedDomain, setSelectedDomain ] = useState< undefined | string >( undefined );
-	const [ primaryDomain, setPrimaryDomain ] = useState< undefined | string >( undefined );
+	const [ selectedDomain, setSelectedDomain ] = useState< string >( '' );
+	const [ primaryDomain, setPrimaryDomain ] = useState< string >( '' );
 	const [ isSettingPrimaryDomain, setIsSettingPrimaryDomain ] = useState< boolean >( false );
 
 	const translate = useTranslate();
@@ -43,7 +43,7 @@ const PrimaryDomainSelector = ( {
 			} );
 			if ( primary ) {
 				setPrimaryDomain( primary.domain );
-				setSelectedDomain( undefined );
+				setSelectedDomain( '' );
 			}
 		}
 	}, [ domains ] );
@@ -104,7 +104,7 @@ const PrimaryDomainSelector = ( {
 			selectedDomain,
 			() => {
 				setIsSettingPrimaryDomain( false );
-				setSelectedDomain( undefined );
+				setSelectedDomain( '' );
 			},
 			domain.type
 		);
@@ -115,10 +115,6 @@ const PrimaryDomainSelector = ( {
 			cta_name: isPlanUpgrade ? 'buy_a_plan' : 'add_custom_domain',
 		} );
 	};
-
-	if ( validPrimaryDomains.length > 0 && ! selectedDomain ) {
-		setSelectedDomain( validPrimaryDomains[ 0 ].domain );
-	}
 
 	return (
 		<Card className="domains-set-primary-address">
@@ -175,13 +171,13 @@ const PrimaryDomainSelector = ( {
 								components: {
 									domainSearchLink: (
 										<a
-											href={ '/domains/add/use-my-domain/' + primaryDomain }
+											href={ '/domains/add/' + primaryDomain }
 											onClick={ () => trackUpgradeClick( false ) }
 										/>
 									),
 									mapDomainLink: (
 										<a
-											href={ '/domains/add/' + primaryDomain }
+											href={ '/domains/add/use-my-domain/' + primaryDomain }
 											onClick={ () => trackUpgradeClick( false ) }
 										/>
 									),
@@ -197,6 +193,7 @@ const PrimaryDomainSelector = ( {
 							onChange={ onSelectChange }
 							value={ selectedDomain }
 						>
+							<option value="">Select a domain</option>
 							{ validPrimaryDomains.map( ( domain ) => (
 								<option key={ domain.domain } value={ domain.domain }>
 									{ domain.domain }
@@ -207,7 +204,9 @@ const PrimaryDomainSelector = ( {
 							className="domains-set-primary-address__submit"
 							primary
 							busy={ isSettingPrimaryDomain }
-							disabled={ isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite }
+							disabled={
+								isSettingPrimaryDomain || ! canUserSetPrimaryDomainOnThisSite || ! selectedDomain
+							}
 							onClick={ onSubmit }
 						>
 							{ translate( 'Set as primary site address' ) }

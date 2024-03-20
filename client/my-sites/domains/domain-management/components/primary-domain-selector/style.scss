@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .domains-set-primary-address {
 	&__title {
 		margin-top: 0;
@@ -12,7 +14,13 @@
 		margin-bottom: 0;
 	}
 	&__submit {
-		margin-left: 12px;
 		margin-right: 0;
+		margin-top: 12px;
+		display: block;
+		@media ( min-width: $break-large ) {
+			display: inline-block;
+			margin-top: 0;
+			margin-left: 12px;
+		}
 	}
 }
