@@ -131,7 +131,11 @@ function PatternPreviewFragment( {
 				) }
 
 				{ ! canCopy && (
-					<Button className="pattern-preview__get-access" transparent>
+					<Button
+						className="pattern-preview__get-access"
+						onClick={ () => setIsAuthModalOpen( true ) }
+						transparent
+					>
 						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
 					</Button>
 				) }
