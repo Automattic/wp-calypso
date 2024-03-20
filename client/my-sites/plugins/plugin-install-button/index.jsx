@@ -1,7 +1,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -17,9 +21,10 @@ import {
 	getProductSlugByPeriodVariation,
 	getSaasRedirectUrl,
 } from 'calypso/lib/plugins/utils';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -65,18 +70,40 @@ export class PluginInstallButton extends Component {
 		const {
 			isEmbed,
 			siteId,
+			selectedSite,
+			billingPeriod,
 			isInstalling,
 			plugin,
+			canInstallPlugins,
+			siteIsWpcomAtomic,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
+			productToBeInstalled: setProductToBeInstalled,
 		} = this.props;
 
 		if ( isInstalling ) {
 			return;
 		}
 
-		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
-		this.props.installPlugin( siteId, plugin );
+		// Installation URL if needed
+		const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
+
+		if ( canInstallPlugins && siteIsWpcomAtomic ) {
+			this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
+			this.props.installPlugin( siteId, plugin );
+		} else if ( canInstallPlugins && ! siteIsWpcomAtomic ) {
+			setProductToBeInstalled( plugin.slug, selectedSite.slug );
+			return page( installPluginURL );
+		} else {
+			setProductToBeInstalled( plugin.slug, selectedSite.slug );
+			// We also need to add a business plan to the cart.
+			return page(
+				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
+					selectedSite?.plan,
+					billingPeriod
+				) }?redirect_to=${ installPluginURL }#step2`
+			);
+		}
 
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
@@ -118,12 +145,6 @@ export class PluginInstallButton extends Component {
 					args: { site: selectedSite.title },
 				}
 			);
-		}
-
-		if ( ! isMainNetworkSite( selectedSite ) ) {
-			return translate( 'Only the main site on a multi-site installation can install plugins.', {
-				args: { site: selectedSite.title },
-			} );
 		}
 
 		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
@@ -209,7 +230,11 @@ export class PluginInstallButton extends Component {
 			<span className="plugin-install-button__install embed">
 				<Button href={ buttonLink }>
 					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-					<Gridicon icon="plugins" size={ 18 } />
+					{ canInstallPurchasedPlugins ? (
+						<Gridicon icon="cart" size={ 18 } />
+					) : (
+						<Gridicon icon="plugins" size={ 18 } />
+					) }
 					{ canInstallPurchasedPlugins
 						? translate( 'Purchase and activate' )
 						: translate( 'Upgrade and activate' ) }
@@ -219,7 +244,8 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
+		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud, canInstallPlugins } =
+			this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -235,7 +261,7 @@ export class PluginInstallButton extends Component {
 									<Gridicon icon="plugins" size={ 18 } />
 								</>
 							) }
-							{ translate( 'Install' ) }
+							{ canInstallPlugins ? translate( 'Install' ) : translate( 'Upgrade and activate' ) }
 						</Button>
 					) }
 				</span>
@@ -302,8 +328,8 @@ export class PluginInstallButton extends Component {
 			);
 		}
 
-		if ( ! selectedSite.canUpdateFiles ) {
-			const disabledInfo = this.getDisabledInfo();
+		const disabledInfo = this.getDisabledInfo();
+		if ( ! selectedSite.canUpdateFiles && disabledInfo ) {
 			return disabledInfo ? (
 				<PluginInstallNotice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
 					{ disabledInfo }
@@ -370,6 +396,7 @@ export default connect(
 				siteId,
 				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			),
+			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			productsList: getProductsList( state ),
 		};
 	},
@@ -378,5 +405,6 @@ export default connect(
 		removePluginStatuses,
 		recordGoogleEvent,
 		recordTracksEvent,
+		productToBeInstalled,
 	}
 )( localize( PluginInstallButton ) );
