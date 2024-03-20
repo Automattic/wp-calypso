@@ -249,6 +249,7 @@ export const PatternLibrary = ( {
 						}
 						isGridView={ isGridView }
 						patterns={ patterns }
+						patternTypeFilter={ patternTypeFilter }
 					/>
 				</PatternLibraryBody>
 			) }

@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .pattern-gallery {
 	display: grid;
@@ -6,9 +7,23 @@
 }
 .pattern-gallery--grid {
 	gap: 16px 24px;
-	grid-template-columns: repeat(3, 1fr);
 
-	@media ( max-width: $break-medium ) {
-		grid-template-columns: 1fr;
+	@include break-medium {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+.pattern-gallery--grid.pattern-gallery--pages {
+	display: block;
+
+	@include break-medium {
+		column-count: 2;
+	}
+
+	@include break-huge {
+		column-count: 3;
 	}
 }
