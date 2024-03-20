@@ -43,6 +43,8 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 			isOdysseyStats
 		),
 		supportsUTMStats:
+			// TODO: Remove the flag check once UTM stats are released.
+			config.isEnabled( 'stats/utm-module' ) &&
 			// TODO: Make UTM stats available for internal Simple sites.
 			// UTM stats are only available for Jetpack and Atomic sites for now.
 			isSiteJetpack &&

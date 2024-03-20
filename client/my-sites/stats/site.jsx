@@ -209,7 +209,7 @@ class StatsSite extends Component {
 			moduleSettings,
 			supportsPlanUsage,
 			supportsEmailStats,
-			isUTMModuleEnabled,
+			supportsUTMStats,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
@@ -428,7 +428,7 @@ class StatsSite extends Component {
 							className={ classNames( 'stats__flexible-grid-item--full' ) }
 						/>
 
-						{ isUTMModuleEnabled && (
+						{ supportsUTMStats && (
 							<>
 								<StatsModuleUTM
 									siteId={ siteId }
@@ -479,13 +479,13 @@ class StatsSite extends Component {
 								statType="statsTopAuthors"
 								className={ classNames(
 									{
-										'stats__author-views': ! isUTMModuleEnabled,
-										'stats__flexible-grid-item--one-third--two-spaces': ! isUTMModuleEnabled,
-										'stats__flexible-grid-item--half--large': ! isUTMModuleEnabled,
+										'stats__author-views': ! supportsUTMStats,
+										'stats__flexible-grid-item--one-third--two-spaces': ! supportsUTMStats,
+										'stats__flexible-grid-item--half--large': ! supportsUTMStats,
 									},
 									{
-										'stats__flexible-grid-item--half': isUTMModuleEnabled,
-										'stats__flexible-grid-item--half--large': isUTMModuleEnabled,
+										'stats__flexible-grid-item--half': supportsUTMStats,
+										'stats__flexible-grid-item--half--large': supportsUTMStats,
 									},
 									'stats__flexible-grid-item--full--medium'
 								) }
@@ -503,21 +503,21 @@ class StatsSite extends Component {
 							className={ classNames(
 								{
 									'stats__flexible-grid-item--one-third--two-spaces':
-										! this.isModuleHidden( 'authors' ) && ! isUTMModuleEnabled,
+										! this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
 									'stats__flexible-grid-item--half--large':
-										! this.isModuleHidden( 'authors' ) && ! isUTMModuleEnabled,
+										! this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
 									'stats__flexible-grid-item--half':
-										this.isModuleHidden( 'authors' ) && ! isUTMModuleEnabled,
+										this.isModuleHidden( 'authors' ) && ! supportsUTMStats,
 								},
 								{
-									'stats__flexible-grid-item--one-third--two-spaces': isUTMModuleEnabled,
-									'stats__flexible-grid-item--half--large': isUTMModuleEnabled,
+									'stats__flexible-grid-item--one-third--two-spaces': supportsUTMStats,
+									'stats__flexible-grid-item--half--large': supportsUTMStats,
 								},
 								'stats__flexible-grid-item--full--medium'
 							) }
 						/>
 
-						{ ! isUTMModuleEnabled && (
+						{ ! supportsUTMStats && (
 							<StatsModule
 								path="clicks"
 								moduleStrings={ moduleStrings.clicks }
@@ -546,17 +546,17 @@ class StatsSite extends Component {
 								showSummaryLink
 								className={ classNames(
 									{
-										'stats__flexible-grid-item--half': ! isUTMModuleEnabled,
+										'stats__flexible-grid-item--half': ! supportsUTMStats,
 									},
 									{
-										'stats__flexible-grid-item--one-third--two-spaces': isUTMModuleEnabled,
-										'stats__flexible-grid-item--half--large': isUTMModuleEnabled,
+										'stats__flexible-grid-item--one-third--two-spaces': supportsUTMStats,
+										'stats__flexible-grid-item--half--large': supportsUTMStats,
 									},
 									'stats__flexible-grid-item--full--medium'
 								) }
 							/>
 						) }
-						{ supportsEmailStats && ! isUTMModuleEnabled && (
+						{ supportsEmailStats && ! supportsUTMStats && (
 							<StatsModuleEmails
 								period={ this.props.period }
 								query={ query }
@@ -585,12 +585,12 @@ class StatsSite extends Component {
 									useShortLabel={ true }
 									className={ classNames(
 										{
-											'stats__flexible-grid-item--half': ! isUTMModuleEnabled,
-											'stats__flexible-grid-item--full--large': ! isUTMModuleEnabled,
+											'stats__flexible-grid-item--half': ! supportsUTMStats,
+											'stats__flexible-grid-item--full--large': ! supportsUTMStats,
 										},
 										{
-											'stats__flexible-grid-item--one-third--two-spaces': isUTMModuleEnabled,
-											'stats__flexible-grid-item--half--large': isUTMModuleEnabled,
+											'stats__flexible-grid-item--one-third--two-spaces': supportsUTMStats,
+											'stats__flexible-grid-item--half--large': supportsUTMStats,
 										},
 										'stats__flexible-grid-item--full--medium'
 									) }
@@ -741,7 +741,6 @@ export default connect(
 
 		const { supportsPlanUsage, supportsEmailStats, supportsUTMStats } =
 			getEnvStatsFeatureSupportChecks( state, siteId );
-		const isUTMModuleEnabled = config.isEnabled( 'stats/utm-module' ) && supportsUTMStats;
 
 		return {
 			canUserViewStats,
@@ -759,7 +758,7 @@ export default connect(
 			statsAdminVersion,
 			supportsEmailStats,
 			supportsPlanUsage,
-			isUTMModuleEnabled,
+			supportsUTMStats,
 		};
 	},
 	{

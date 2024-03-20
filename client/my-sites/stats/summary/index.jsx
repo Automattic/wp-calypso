@@ -57,7 +57,7 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, isUTMModuleEnabled } = this.props;
+		const { translate, statsQueryOptions, siteId, supportsUTMStats } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -333,7 +333,7 @@ class StatsSummary extends Component {
 				backLink = `/stats/traffic/`;
 				path = 'utm';
 				statType = 'statsUTM';
-				summaryView = isUTMModuleEnabled ? (
+				summaryView = supportsUTMStats ? (
 					<>
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleUTM
@@ -383,13 +383,12 @@ export default connect( ( state, { context, postId } ) => {
 	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
-	const isUTMModuleEnabled = isEnabled( 'stats/utm-module' ) && supportsUTMStats;
 
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		upsellModalView,
-		isUTMModuleEnabled,
+		supportsUTMStats,
 	};
 } )( localize( StatsSummary ) );

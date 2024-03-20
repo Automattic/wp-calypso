@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
@@ -153,7 +152,7 @@ class StatsPostDetail extends Component {
 			siteSlug,
 			showViewLink,
 			previewUrl,
-			isUTMModuleEnabled,
+			supportsUTMStats,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -216,7 +215,7 @@ class StatsPostDetail extends Component {
 						</>
 					) }
 
-					{ isUTMModuleEnabled && (
+					{ supportsUTMStats && (
 						<div className="stats-module-utm__post-detail">
 							<StatsModuleUTM siteId={ siteId } postId={ postId } query={ { num: -1, max: 0 } } />
 						</div>
@@ -246,7 +245,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isPostHomepage = postId === 0;
 
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
-	const isUTMModuleEnabled = config.isEnabled( 'stats/utm-module' ) && supportsUTMStats;
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -259,7 +257,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
-		isUTMModuleEnabled,
+		supportsUTMStats,
 	};
 } );
 
