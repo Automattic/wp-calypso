@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -32,11 +32,14 @@ export function JetpackPreviewPane( {
 		if ( site ) {
 			dispatch( setSelectedSiteId( site.blog_id ) );
 		}
-	}, [ site ] );
+	}, [ dispatch, site ] );
 
-	const trackEvent = ( eventName: string ) => {
-		recordEvent( eventName );
-	};
+	const trackEvent = useCallback(
+		( eventName: string ) => {
+			recordEvent( eventName );
+		},
+		[ recordEvent ]
+	);
 
 	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
