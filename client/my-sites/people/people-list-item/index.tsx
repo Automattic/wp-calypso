@@ -8,6 +8,7 @@ import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/imp
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
@@ -93,19 +94,16 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		};
 	};
 
-	const handleInviteSuccess = ( siteId: number ) => {
-		dispatch( requestSiteInvites( siteId ) );
+	const handleInviteSuccess = ( site_id: number ) => {
+		dispatch( requestSiteInvites( site_id ) );
 		displayNotice( translate( 'Invitation sent successfully' ) );
-		dispatch(
-			composeAnalytics( recordGoogleEvent( 'calypso_sso_user_invite_success', { siteId } ) )
-		);
+		dispatch( recordTracksEvent( 'calypso_sso_user_invite_success', { site_id } ) );
 	};
 
-	const handleInviteError = ( siteId: number ) => {
+	const handleInviteError = ( site_id: number, error: unknown ) => {
 		displayNotice( translate( 'The invitation sending has failed.' ), 'is-error' );
-		dispatch(
-			composeAnalytics( recordGoogleEvent( 'calypso_sso_user_invite_error', { siteId } ) )
-		);
+		const error_message = error instanceof Error ? error.message : 'error sending invite';
+		dispatch( recordTracksEvent( 'calypso_sso_user_invite_error', { site_id, error_message } ) );
 	};
 
 	const onSendInvite = async ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
@@ -118,12 +116,14 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		}
 		const { email } = user;
 		const userRoles = getRole( user );
-		const response = ( await sendInvites( [
-			{ email_or_username: email as string, role: userRoles },
-		] ) ) as [ sendInvitesResponse ];
-
-		const success = response && response[ 0 ]?.success;
-		success ? handleInviteSuccess( siteId ) : handleInviteError( siteId );
+		try {
+			( await sendInvites( [ { email_or_username: email as string, role: userRoles } ] ) ) as [
+				sendInvitesResponse,
+			];
+			handleInviteSuccess( siteId );
+		} catch ( error ) {
+			handleInviteError( siteId, error );
+		}
 	};
 
 	const renderInviteButton = () => {
