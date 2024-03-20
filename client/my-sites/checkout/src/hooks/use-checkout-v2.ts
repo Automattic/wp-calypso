@@ -1,7 +1,11 @@
 import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { useExperiment } from 'calypso/lib/explat';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { useSelector } from 'calypso/state';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 
 // The `isLoadingExperimentAssignment` return value of useExperiment is not
 // stable across multiple calls; each instance runs its own `useEffect` which
@@ -15,11 +19,22 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 let cachedExperimentAssignment: 'treatment' | 'control' | undefined;
 
 export function useCheckoutV2(): 'loading' | 'treatment' | 'control' {
-	const isCheckoutSection = useSelector( getSectionName ) === 'checkout';
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isJetpackNotAtomic = useSelector(
+		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
+	);
+
+	const isWPcomCheckout =
+		useSelector( getSectionName ) === 'checkout' &&
+		! isJetpackCheckout() &&
+		! isAkismetCheckout() &&
+		! isJetpackNotAtomic;
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_launch_checkout_v2',
-		{ isEligible: isCheckoutSection && ! hasCheckoutVersion( '2' ) }
+		{
+			isEligible: isWPcomCheckout && ! hasCheckoutVersion( '2' ),
+		}
 	);
 
 	if ( cachedExperimentAssignment ) {
