@@ -2,27 +2,22 @@ import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 
-function UTMExportButton( { data } ) {
+function UTMExportButton( { data, fileName } ) {
 	// Button set up.
 	const translate = useTranslate();
 	const buttonLabel = translate( 'Download data as CSV' );
 	const shouldDisableExport = data && data.length !== 0 ? false : true;
 
-	// Turns the working data into a flattened array of objects.
-	// Preserves the original data but updates the label for export.
+	// Flatten the data into a shallow array.
+	// Children gain a "context" property to indicate their parent label.
 	const flattenDataForExport = ( originalData ) => {
 		const newData = [];
-		// Map the array of objects.
 		originalData.forEach( ( row ) => {
-			// Wrap label in quotes and push values.
-			let newLabel = `"${ row.label }"`;
-			newData.push( { label: newLabel, value: row.value } );
-			// Flatten children if present.
+			newData.push( row );
 			const children = row?.children;
 			if ( children ) {
 				const newChildren = children.map( ( child ) => {
-					newLabel = `"${ row.label } > ${ child.label }"`;
-					return { ...child, label: newLabel };
+					return { ...child, context: row.label };
 				} );
 				newData.push( ...newChildren );
 			}
@@ -31,10 +26,16 @@ function UTMExportButton( { data } ) {
 	};
 
 	// Turns the flat array into a CSV string.
+	// Processes the label before export.
 	const prepareDataForDownload = ( flatData ) => {
 		const csvData = flatData
 			.map( ( row ) => {
-				return `${ row.label },${ row.value }`;
+				// Label should include parent context if present.
+				// ie: "parent label > child label" -- including surrounding quotes.
+				let label = row?.context ? `${ row.context } > ${ row.label }` : row.label;
+				label = label.replace( /"/g, '""' );
+				// Return the label and value.
+				return `"${ label }",${ row.value }`;
 			} )
 			.join( '\n' );
 
@@ -44,8 +45,6 @@ function UTMExportButton( { data } ) {
 	const initiateDownload = ( event ) => {
 		event.preventDefault();
 
-		// TODO: Provide a better default file name.
-		const fileName = 'my-data.csv';
 		const flattenedData = flattenDataForExport( data );
 		const csvData = prepareDataForDownload( flattenedData );
 		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
