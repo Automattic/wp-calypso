@@ -1,10 +1,66 @@
-import EmptyContent from 'calypso/components/empty-content';
+import { Button } from '@automattic/components';
+import { IMPORT_HOSTED_SITE_FLOW, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
 import { MEDIA_QUERIES } from '../../../sites-dashboard/utils';
-import { CreateSiteCTA, MigrateSiteCTA } from './hosting-flow-forking-ctas';
+import { StepProps } from '.';
 
-export const HostingFlowForkingPage = () => {
+type HostingFlowCTAProps = {
+	heading?: string;
+	description: string;
+	label: string;
+	onClick: () => void;
+};
+
+export const HostingFlowCTA = ( { description, label, onClick }: HostingFlowCTAProps ) => {
 	return (
-		<EmptyContent
+		<div
+			css={ {
+				display: 'flex',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				[ MEDIA_QUERIES.small ]: {
+					alignItems: 'flex-start',
+					flexDirection: 'column',
+					gap: '20px',
+				},
+			} }
+		>
+			<div
+				css={ {
+					marginRight: '32px',
+				} }
+			>
+				<span
+					css={ {
+						textAlign: 'left',
+						whiteSpace: 'nowrap',
+						color: 'var(--studio-gray-100)',
+					} }
+				>
+					{ description }
+				</span>
+			</div>
+			<Button onClick={ onClick } primary>
+				{ label }
+			</Button>
+		</div>
+	);
+};
+
+export const HostingFlowForkingPage = ( props: StepProps ) => {
+	const translate = useTranslate();
+	const onClick = (
+		stepperHostingFlow: typeof NEW_HOSTED_SITE_FLOW | typeof IMPORT_HOSTED_SITE_FLOW
+	) => {
+		props.submitSignupStep(
+			{
+				stepName: props.stepName,
+			},
+			{ stepperHostingFlow }
+		);
+	};
+	return (
+		<div
 			css={ {
 				display: 'flex',
 				flexDirection: 'column',
@@ -18,8 +74,6 @@ export const HostingFlowForkingPage = () => {
 					alignItems: 'flex-start',
 				},
 			} }
-			title=""
-			illustration=""
 		>
 			<div
 				css={ {
@@ -31,7 +85,11 @@ export const HostingFlowForkingPage = () => {
 					},
 				} }
 			>
-				<CreateSiteCTA />
+				<HostingFlowCTA
+					description={ translate( 'Build a new site from scratch' ) }
+					label={ translate( 'Create a site' ) }
+					onClick={ () => onClick( NEW_HOSTED_SITE_FLOW ) }
+				/>
 				<div
 					css={ {
 						margin: '32px 0',
@@ -48,8 +106,12 @@ export const HostingFlowForkingPage = () => {
 						},
 					} }
 				/>
-				<MigrateSiteCTA />
+				<HostingFlowCTA
+					description={ translate( 'Bring a site to WordPress.com' ) }
+					label={ translate( 'Migrate a site' ) }
+					onClick={ () => onClick( IMPORT_HOSTED_SITE_FLOW ) }
+				/>
 			</div>
-		</EmptyContent>
+		</div>
 	);
 };

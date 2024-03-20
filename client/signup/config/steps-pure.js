@@ -268,6 +268,7 @@ export function generateSteps( {
 		},
 		'hosting-decider': {
 			stepName: 'hosting-decider',
+			providesDependencies: [ 'stepperHostingFlow' ],
 		},
 		'plans-hosting': {
 			stepName: 'plans',

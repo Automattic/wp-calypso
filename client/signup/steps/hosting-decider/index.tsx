@@ -4,8 +4,16 @@ import { useSelector } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { HostingFlowForkingPage } from './hosting-flow-forking-page';
+export type StepProps = {
+	stepSectionName: string | null;
+	stepName: string;
+	flowName: string;
+	goToStep: () => void;
+	goToNextStep: () => void;
+	submitSignupStep: ( step: any, dependencies: any ) => void;
+};
 
-export default function HostingDecider( props ) {
+export default function HostingDecider( props: StepProps ) {
 	const translate = useTranslate();
 	const siteCount = useSelector( getCurrentUserSiteCount );
 	const headerText =
@@ -16,7 +24,7 @@ export default function HostingDecider( props ) {
 			fallbackHeaderText={ headerText }
 			subHeaderText=""
 			fallbackSubHeaderText=""
-			stepContent={ <HostingFlowForkingPage /> }
+			stepContent={ <HostingFlowForkingPage { ...props } /> }
 			hideSkip
 			{ ...props }
 		/>
