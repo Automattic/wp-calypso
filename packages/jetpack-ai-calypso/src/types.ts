@@ -15,6 +15,7 @@ export interface LogoPresenterProps {
 	logo?: Logo;
 	loading?: boolean;
 	onApplyLogo: () => void;
+	logoAccepted?: boolean;
 }
 
 export type SaveToMediaLibraryProps = {
