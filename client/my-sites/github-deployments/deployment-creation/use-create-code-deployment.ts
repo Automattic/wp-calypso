@@ -16,6 +16,8 @@ export interface MutationVariables {
 interface MutationResponse {
 	message: string;
 	target_dir: string;
+	workflow_path?: string;
+	is_automated: boolean;
 }
 
 interface MutationError {

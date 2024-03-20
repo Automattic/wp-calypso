@@ -1,6 +1,11 @@
 @import "@wordpress/base-styles/variables";
 
 .site-migration-instructions {
+	.step-container {
+		padding: 0 1.5rem;
+		max-width: 654px;
+	}
+
 	.site-migration-instructions__list {
 		li {
 			margin-bottom: 0.5rem;
@@ -17,7 +22,7 @@
 		transition: height 0.75s ease;
 
 		&.expanded {
-			height: 130px;
+			height: auto;
 		}
 
 		&.error {
@@ -37,16 +42,16 @@
 	.site-migration-instructions__migration-key {
 		display: flex;
 		justify-content: space-between;
-		margin-top: 0.5rem;
+		align-items: center;
+		margin: 0.5rem 0.75rem 0 0;
 		max-width: 100%;
+		background: var(--color-neutral-0);
+		padding: 0.75rem;
 	}
 
 	.site-migration-instructions__migration-key .site-migration-instructions__key {
-		background: var(--color-neutral-0);
-		display: inline-block;
-		margin-right: 0.75rem;
-		padding: 0.75rem 1rem;
-		width: 375px;
+		width: 340px;
+		margin-right: 0.5rem;
 		overflow-x: scroll;
 	}
 }

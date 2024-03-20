@@ -197,7 +197,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'see site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
 				_x( 'browse site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/:site' ],
+			context: [ '/wp-admin' ],
 			callback: commandNavigation( ':site' ),
 			icon: seenIcon,
 		},
@@ -213,7 +213,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
 				_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( '/wp-admin' ),
 			icon: dashboardIcon,
 		},
@@ -261,10 +260,8 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 				_x( 'wp-cli', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( '/hosting-config/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
 			filterP2: true,
 			icon: settingsIcon,
 		},
@@ -289,7 +286,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 					__i18n_text_domain__
 				),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( '/hosting-config/:site#database-access' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			siteType: SiteType.ATOMIC,
@@ -304,7 +300,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'display name', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
 				_x( 'gravatar', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( `/me` ),
 			icon: profileIcon,
 		},
@@ -396,7 +391,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'add new site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
 				_x( 'create site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( 'https://wordpress.com/start/domains?source=command-palette' ),
 			icon: plusIcon,
 		},
@@ -432,14 +426,12 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'subscriptions', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
 				_x( 'upgrades', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( `/me/purchases` ),
 			icon: creditCardIcon,
 		},
 		{
 			name: 'registerDomain',
 			label: __( 'Register new domain', __i18n_text_domain__ ),
-			context: [ '/sites' ],
 			callback: commandNavigation( `/start/domain/domain-only?ref=command-palette` ),
 			icon: domainsIcon,
 		},
@@ -457,7 +449,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'subdomains', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
 				_x( 'whois', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( `/domains/manage` ),
 			icon: domainsIcon,
 		},
@@ -474,7 +465,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'mx', 'Keyword for the Manage DNS records command', __i18n_text_domain__ ),
 				_x( 'txt', 'Keyword for the Manage DNS records command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			isCustomDomain: true,
 			callback: commandNavigation( `/domains/manage/:site/dns/:site` ),
@@ -507,7 +497,9 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'openJetpackStats',
 			label: __( 'Open Jetpack Stats', __i18n_text_domain__ ),
-			callback: commandNavigation( '/stats/:site' ),
+			callback: commandNavigation(
+				shouldUseWpAdmin ? '/wp-admin/admin.php?page=stats' : '/stats/:site'
+			),
 			icon: statsIcon,
 		},
 		{
@@ -526,7 +518,13 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				),
 				_x( 'audit log', 'Keyword for the Open activity log command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/activity-log/:site' ),
+			callback: commandNavigation(
+				`${
+					shouldUseWpAdmin
+						? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
+						: '/activity-log/'
+				}:site`
+			),
 			filterP2: true,
 			icon: acitvityLogIcon,
 		},
@@ -534,7 +532,11 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			name: 'openJetpackBackup',
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
 			callback: commandNavigation(
-				`${ siteType === SiteType.ATOMIC ? 'https://cloud.jetpack.com' : '' }/backup/:site`
+				`${
+					shouldUseWpAdmin
+						? 'https://jetpack.com/redirect/?source=calypso-backups&site='
+						: '/backup/'
+				}:site`
 			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
@@ -621,7 +623,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'manageStagingSites',
 			label: __( 'Manage staging sites', __i18n_text_domain__ ),
-			context: [ '/hosting-config' ],
 			searchLabel: [
 				_x(
 					'manage staging sites',
@@ -690,7 +691,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'create post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 				_x( 'write post', 'Keyword for the Add new post command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/posts' ],
+			context: [ { path: '/wp-admin/edit.php', match: 'exact' } ],
 			callback: commandNavigation( shouldUseWpAdmin ? '/wp-admin/post-new.php' : '/post/:site' ),
 			capability: SiteCapabilities.EDIT_POSTS,
 			icon: plusIcon,
@@ -750,7 +751,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'create page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
 				_x( 'write page', 'Keyword for the Add new page command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/pages' ],
+			context: [ '/wp-admin/edit.php?post_type=page' ],
 			callback: commandNavigation(
 				shouldUseWpAdmin ? '/wp-admin/post-new.php?post_type=page' : '/page/:site'
 			),
@@ -838,7 +839,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'change plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
 				_x( 'add plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/sites' ],
 			callback: commandNavigation( '/plans/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			filterP2: true,
@@ -898,7 +898,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'import subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 				_x( 'upload subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			context: [ '/subscribers' ],
 			callback: commandNavigation( '/subscribers/:site#add-subscribers' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: subscriberIcon,
@@ -913,7 +912,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'downloadSubscribers',
 			label: __( 'Download subscribers as CSV', __i18n_text_domain__ ),
-			context: [ '/subscribers' ],
 			callback: commandNavigation(
 				'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:siteId&blog_subscribers=csv&type=all',
 				{ openInNewTab: true }
@@ -924,7 +922,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'import',
 			label: __( 'Import content to the site', __i18n_text_domain__ ),
-			context: [ '/posts' ],
+			context: [ { path: '/wp-admin/edit.php', match: 'exact' } ],
 			callback: commandNavigation( '/import/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: downloadIcon,
@@ -942,7 +940,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'manageSettingsGeneral',
 			label: __( 'Manage general settings', __i18n_text_domain__ ),
-			context: [ '/settings' ],
+			context: [ '/wp-admin/options-' ],
 			callback: commandNavigation(
 				shouldUseWpAdmin ? '/wp-admin/options-general.php' : '/settings/general/:site'
 			),
@@ -952,7 +950,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'manageSettingsWriting',
 			label: __( 'Manage writing settings', __i18n_text_domain__ ),
-			context: [ '/settings' ],
+			context: [ '/wp-admin/options-' ],
 			callback: commandNavigation(
 				shouldUseWpAdmin ? '/wp-admin/options-writing.php' : '/settings/writing/:site'
 			),
@@ -962,7 +960,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'manageSettingsReading',
 			label: __( 'Manage reading settings', __i18n_text_domain__ ),
-			context: [ '/settings' ],
+			context: [ '/wp-admin/options-' ],
 			callback: commandNavigation(
 				shouldUseWpAdmin ? '/wp-admin/options-reading.php' : '/settings/reading/:site'
 			),
@@ -972,7 +970,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'manageSettingsDiscussion',
 			label: __( 'Manage discussion settings', __i18n_text_domain__ ),
-			context: [ '/settings' ],
+			context: [ '/wp-admin/options-' ],
 			callback: commandNavigation(
 				shouldUseWpAdmin ? '/wp-admin/options-discussion.php' : '/settings/discussion/:site'
 			),
@@ -982,15 +980,19 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		{
 			name: 'manageSettingsNewsletter',
 			label: __( 'Manage newsletter settings', __i18n_text_domain__ ),
-			context: [ '/settings' ],
-			callback: commandNavigation( '/settings/newsletter/:site' ),
+			context: [ '/wp-admin/options-' ],
+			callback: commandNavigation(
+				shouldUseWpAdmin
+					? '/wp-admin/admin.php?page=jetpack#/newsletter'
+					: '/settings/newsletter/:site'
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
 		},
 		{
 			name: 'manageSettingsPodcast',
 			label: __( 'Manage podcast settings', __i18n_text_domain__ ),
-			context: [ '/settings' ],
+			context: [ '/wp-admin/options-' ],
 			callback: commandNavigation( '/settings/podcasting/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
@@ -1047,6 +1049,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			searchLabel: command.searchLabel,
 			callback: command.callback,
 			icon: command.icon,
+			context: command.context,
 		} ) );
 };
 

@@ -2,17 +2,16 @@ import { StatsCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
 import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
-import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
 import statsStrings from '../stats-strings';
 import UTMDropdown from './stats-module-utm-dropdown';
+import StatsModuleUTMOverlay from './stats-module-utm-overlay';
+import UTMExportButton from './utm-export-button';
 
 const OPTION_KEYS = {
 	SOURCE_MEDIUM: 'utm_source,utm_medium',
@@ -26,7 +25,6 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	// Check if blog is internal.
 	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
@@ -35,6 +33,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const { isFetching: isFetchingUTM, metrics } = useUTMMetricsQuery(
 		siteId,
 		selectedOption,
+		query,
 		postId
 	);
 	// Fetch top posts for all UTM metric items.
@@ -93,6 +92,8 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		},
 	};
 
+	const showFooterWithDownloads = summary === true;
+
 	return (
 		<>
 			{ isFetching && (
@@ -105,35 +106,35 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 				</StatsCard>
 			) }
 			{ ! isFetching && ! isAdvancedFeatureEnabled && (
-				// TODO: update the ghost card to only show the module name
-				<StatsCard
-					title="UTM"
-					className={ classNames( className, 'stats-module-utm', 'stats-module__card', 'utm' ) }
-					isNew
-				>
-					<StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } />
-				</StatsCard>
+				<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
 			) }
 			{ ! isFetching && isAdvancedFeatureEnabled && (
-				<StatsModuleDataQuery
-					data={ data }
-					path="utm"
-					className={ classNames( className, 'stats-module-utm' ) }
-					moduleStrings={ moduleStrings.utm }
-					period={ period }
-					query={ query }
-					isLoading={ isFetching ?? true }
-					hideSummaryLink={ hideSummaryLink }
-					selectedOption={ optionLabels[ selectedOption ] }
-					toggleControl={
-						<UTMDropdown
-							buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-							onSelect={ setSelectedOption }
-							selectOptions={ optionLabels }
-							selected={ selectedOption }
-						/>
-					}
-				/>
+				<>
+					<StatsModuleDataQuery
+						data={ data }
+						path="utm"
+						className={ classNames( className, 'stats-module-utm' ) }
+						moduleStrings={ moduleStrings.utm }
+						period={ period }
+						query={ query }
+						isLoading={ isFetching ?? true }
+						hideSummaryLink={ hideSummaryLink }
+						selectedOption={ optionLabels[ selectedOption ] }
+						toggleControl={
+							<UTMDropdown
+								buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+								onSelect={ setSelectedOption }
+								selectOptions={ optionLabels }
+								selected={ selectedOption }
+							/>
+						}
+					/>
+					{ showFooterWithDownloads && (
+						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+							<UTMExportButton data={ data } />
+						</div>
+					) }
+				</>
 			) }
 		</>
 	);

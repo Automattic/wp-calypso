@@ -73,8 +73,11 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 
-	// All URLs in the A4A Purchases start with 'purchases' will need to compare at the second position.
-	if ( isEnabled( 'a8c-for-agencies' ) && pathIncludes( currentPath, 'purchases', 1 ) ) {
+	// All URLs in the A4A Purchases start with 'purchases' or 'marketplace' will need to compare at the second position.
+	if (
+		isEnabled( 'a8c-for-agencies' ) &&
+		( pathIncludes( currentPath, 'purchases', 1 ) || pathIncludes( currentPath, 'marketplace', 1 ) )
+	) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 

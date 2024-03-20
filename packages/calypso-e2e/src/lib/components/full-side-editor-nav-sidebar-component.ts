@@ -91,7 +91,10 @@ export class FullSiteEditorNavSidebarComponent {
 	 */
 	async clickNavButtonByExactText( text: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		await editorParent.getByRole( 'button', { name: text, exact: true } ).click();
+		await editorParent
+			.getByLabel( 'Navigation' )
+			.getByRole( 'button', { name: text, exact: true } )
+			.click();
 	}
 
 	/**

@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import ImgBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/block-patterns.svg';
 import ImgHomePage from 'calypso/my-sites/patterns/components/get-started/images/home-page.svg';
@@ -6,51 +7,50 @@ import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 
 import './style.scss';
 
-export const PatternsGetStarted = () => {
+export function PatternsGetStarted() {
 	return (
 		<PatternsSection
-			title="Get started with patterns"
-			description="Our favorite how-to guides to get you started with patterns."
-			theme="dark"
 			bodyFullWidth
+			description="Take a look at our how-to guides to get started with patterns."
+			theme="dark"
+			title="All about patterns"
 		>
 			<div className="patterns-get-started__buttons">
-				<Button className="patterns-get-started__buttons-build" href="#">
+				<Button className="patterns-get-started__start-button" href="/start">
 					Build a site
 				</Button>
 			</div>
 
 			<div className="patterns-get-started__list">
 				<div className="patterns-get-started__list-inner">
-					<a className="patterns-get-started__item" href="aaa">
-						<img
-							src={ ImgBlockPatterns }
-							alt="VIDEO TUTORIAL"
-							className="patterns-get-started__item-image"
-						/>
-						<div className="patterns-get-started__item-name">VIDEO TUTORIAL</div>
+					<a
+						className="patterns-get-started__item"
+						href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/block-pattern/' ) }
+					>
+						<img className="patterns-get-started__item-image" src={ ImgBlockPatterns } alt="" />
+						<div className="patterns-get-started__item-name">Video tutorial</div>
 						<div className="patterns-get-started__item-description">Block Patterns</div>
 					</a>
-					<a className="patterns-get-started__item" href="aaa">
-						<img
-							src={ ImgPageLayouts }
-							alt="VIDEO TUTORIAL"
-							className="patterns-get-started__item-image"
-						/>
-						<div className="patterns-get-started__item-name">VIDEO TUTORIAL</div>
+
+					<a
+						className="patterns-get-started__item"
+						href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/page-layouts/' ) }
+					>
+						<img className="patterns-get-started__item-image" src={ ImgPageLayouts } alt="" />
+						<div className="patterns-get-started__item-name">Video tutorial</div>
 						<div className="patterns-get-started__item-description">Use Pre-Made Page Layouts</div>
 					</a>
-					<a className="patterns-get-started__item" href="aaa">
-						<img
-							src={ ImgHomePage }
-							alt="FREE COURSE"
-							className="patterns-get-started__item-image"
-						/>
-						<div className="patterns-get-started__item-name">FREE COURSE</div>
+
+					<a
+						className="patterns-get-started__item"
+						href={ localizeUrl( 'https://wordpress.com/learn/webinars/compelling-homepages/' ) }
+					>
+						<img className="patterns-get-started__item-image" src={ ImgHomePage } alt="" />
+						<div className="patterns-get-started__item-name">Free course</div>
 						<div className="patterns-get-started__item-description">Design Your Homepage</div>
 					</a>
 				</div>
 			</div>
 		</PatternsSection>
 	);
-};
+}

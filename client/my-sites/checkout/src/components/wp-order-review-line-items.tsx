@@ -43,11 +43,9 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< {
-	shouldUseCheckoutV2?: boolean;
-} >`
+const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
+	margin: 24px 0 0 0;
 	padding: 0;
 `;
 
@@ -84,7 +82,7 @@ export function WPOrderReviewLineItems( {
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -160,23 +158,19 @@ export function WPOrderReviewLineItems( {
 					new_quantity: newQuantity,
 				} )
 			);
-			replaceProductInCart &&
-				replaceProductInCart( uuid, {
-					product_slug: productSlug,
-					product_id: productId,
-					quantity: newQuantity,
-				} ).catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-				} );
+			replaceProductInCart( uuid, {
+				product_slug: productSlug,
+				product_id: productId,
+				quantity: newQuantity,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		},
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
 	return (
-		<WPOrderReviewList
-			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-		>
+		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.uuid }

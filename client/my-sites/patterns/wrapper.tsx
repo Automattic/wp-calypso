@@ -1,24 +1,13 @@
 import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import Main from 'calypso/components/main';
-import { PatternsCategoryPage } from 'calypso/my-sites/patterns/pages/category';
-import { PatternsHomePage } from 'calypso/my-sites/patterns/pages/home';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-type PatternsWrapperProps = {
-	category: string;
-	isGridView?: boolean;
-	patternGallery: PatternGalleryFC;
-};
+type PatternsWrapperProps = React.PropsWithChildren< unknown >;
 
-export const PatternsWrapper = ( {
-	category,
-	isGridView,
-	patternGallery: PatternGallery,
-}: PatternsWrapperProps ) => {
+export const PatternsWrapper = ( { children }: PatternsWrapperProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	return (
@@ -26,15 +15,7 @@ export const PatternsWrapper = ( {
 			{ isLoggedIn && <UniversalNavbarHeader isLoggedIn /> }
 
 			<Main isLoggedOut fullWidthLayout>
-				{ ! category ? (
-					<PatternsHomePage isGridView={ isGridView } patternGallery={ PatternGallery } />
-				) : (
-					<PatternsCategoryPage
-						category={ category }
-						isGridView={ isGridView }
-						patternGallery={ PatternGallery }
-					/>
-				) }
+				{ children }
 			</Main>
 
 			{ isLoggedIn && <UniversalNavbarFooter isLoggedIn /> }

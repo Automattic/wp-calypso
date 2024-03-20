@@ -729,7 +729,13 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-marketplace',
-		paths: [ '/marketplace', '/marketplace/assign-license' ],
+		paths: [
+			'/marketplace',
+			'/marketplace/products',
+			'/marketplace/hosting',
+			'/marketplace/checkout',
+			'/marketplace/assign-license',
+		],
 		module: 'calypso/a8c-for-agencies/sections/marketplace',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
@@ -747,6 +753,12 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/purchases',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-signup',
+		paths: [ '/signup' ],
+		module: 'calypso/a8c-for-agencies/sections/signup',
+		group: 'a8c-for-agencies',
 	},
 ];
 

@@ -10,8 +10,42 @@ import {
 } from 'calypso/state/stats/utm-metrics/actions';
 import type { AnyAction } from 'redux';
 
+const getDaysOfMonthFromDate = ( date: string ): number => {
+	const dateObj = new Date( date );
+	const year = dateObj.getFullYear();
+	const month = dateObj.getMonth() + 1;
+
+	return new Date( year, month, 0 ).getDate();
+};
+
+const daysInYearFromDate = ( date: string ) => {
+	const dateObj = new Date( date );
+	const year = dateObj.getFullYear();
+
+	return ( year % 4 === 0 && year % 100 > 0 ) || year % 400 === 0 ? 366 : 365;
+};
+
 export const fetch = ( action: AnyAction ) => {
-	const { siteId, utmParam, postId } = action;
+	const { siteId, utmParam, postId, query = {} } = action;
+
+	// `num` is only for the period `day`.
+	const num = query.num || 1;
+	// `max` is probably set to 0 to fetch all results.
+	const max = query.max ?? 10;
+
+	// Calculate the number of days to query based on the period.
+	let days = num;
+	switch ( query.period ) {
+		case 'week':
+			days = 7;
+			break;
+		case 'month':
+			days = getDaysOfMonthFromDate( query.date );
+			break;
+		case 'year':
+			days = daysInYearFromDate( query.date );
+			break;
+	}
 
 	return [
 		http(
@@ -20,11 +54,12 @@ export const fetch = ( action: AnyAction ) => {
 				path: `/sites/${ siteId }/stats/utm/${ utmParam }`,
 				apiVersion: '1.1',
 				query: {
-					max: 10,
-					// Today's date in yyyy-mm-dd format.
-					date: new Date().toISOString().split( 'T' )[ 0 ],
-					days: 7,
+					max: max,
+					date: query.date || new Date().toISOString().split( 'T' )[ 0 ],
+					days: days,
 					post_id: postId || '',
+					// Only query top posts if postId is not provided or 0.
+					query_top_posts: ! postId ? true : false,
 				},
 			},
 			action
@@ -58,12 +93,12 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/utm-metrics/index.js', {
 	[ STATS_UTM_METRICS_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
-			onSuccess: ( { siteId, postId }: AnyAction, data: object ) => {
+			onSuccess: ( { siteId, postId, siteSlug }: AnyAction, data: object ) => {
 				if ( postId ) {
 					return receiveMetricsByPost( siteId, postId, data );
 				}
 
-				return receiveMetrics( siteId, data );
+				return receiveMetrics( siteId, data, siteSlug );
 			},
 			onError: ( { siteId }: AnyAction ) => requestMetricsFail( siteId ),
 			// fromApi,

@@ -21,7 +21,7 @@ function CommandPaletteApp() {
 		return;
 	}
 
-	const currentRoute = window.location.pathname;
+	const currentRoute = window.location.pathname + window.location.search;
 
 	const navigate = ( path, openInNewTab ) => {
 		let url = path;

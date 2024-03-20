@@ -81,7 +81,7 @@ import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
-import WPCheckoutOrderReview from './wp-checkout-order-review';
+import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
@@ -252,6 +252,10 @@ function CheckoutSidebarNudge( {
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
 
+	const productsWithVariants = responseCart?.products?.filter(
+		( product ) => product.product_variants?.length > 1 && product.is_domain_registration === false
+	);
+
 	if ( isWcMobile ) {
 		return null;
 	}
@@ -274,35 +278,36 @@ function CheckoutSidebarNudge( {
 	}
 
 	/**
-	 * TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
-	 * V2 checkout handles monthly products in the CheckoutSidebarPlanUpsell so this condition is not needed
+	 * TODO !hasMonthlyProduct can likely be removed after Jetpack refactors their sidebar nudge
+	 * to account for monthly products like CheckoutSidebarPlanUpsell does
 	 */
-	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
-		return (
-			<CheckoutSidebarNudgeWrapper>
-				<CheckoutSidebarPlanUpsell />
-				<JetpackAkismetCheckoutSidebarPlanUpsell />
-				{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
-					<SecondaryCartPromotions
-						responseCart={ responseCart }
-						addItemToCart={ addItemToCart }
-						isCartPendingUpdate={ isCartPendingUpdate }
-						isPurchaseRenewal={ isPurchaseRenewal }
-					/>
-				) }
-				{ shouldUseCheckoutV2 && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						siteId={ siteId }
-						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-						onChangeSelection={ changeSelection }
-					/>
-				) }
-			</CheckoutSidebarNudgeWrapper>
-		);
-	}
 
-	return null;
+	return (
+		<CheckoutSidebarNudgeWrapper>
+			{ ! ( productsWithVariants.length > 1 ) && (
+				<>
+					<CheckoutSidebarPlanUpsell />
+					{ ! hasMonthlyProduct && <JetpackAkismetCheckoutSidebarPlanUpsell /> }
+				</>
+			) }
+			{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
+				<SecondaryCartPromotions
+					responseCart={ responseCart }
+					addItemToCart={ addItemToCart }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isPurchaseRenewal={ isPurchaseRenewal }
+				/>
+			) }
+			{ shouldUseCheckoutV2 && (
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					isCartUpdating={ FormStatus.VALIDATING === formStatus }
+					onChangeSelection={ changeSelection }
+				/>
+			) }
+		</CheckoutSidebarNudgeWrapper>
+	);
 }
 
 export default function CheckoutMainContent( {
@@ -350,6 +355,8 @@ export default function CheckoutMainContent( {
 		updateLocation,
 		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
+		removeCoupon,
+		couponStatus,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
@@ -426,6 +433,15 @@ export default function CheckoutMainContent( {
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
 	const [ is100YearPlanTermsAccepted, setIs100YearPlanTermsAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
+	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
+
+	const isPurchaseFree = responseCart.total_cost_integer === 0;
+
+	const removeCouponAndClearField = () => {
+		couponFieldStateProps.setCouponFieldValue( '' );
+		setCouponFieldVisible( false );
+		return removeCoupon();
+	};
 
 	const updateCachedContactDetails = useUpdateCachedContactDetails();
 
@@ -540,7 +556,11 @@ export default function CheckoutMainContent( {
 								{ shouldUseCheckoutV2 && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
+										replaceProductInCart={ replaceProductInCart }
 										couponFieldStateProps={ couponFieldStateProps }
+										removeCouponAndClearField={ removeCouponAndClearField }
+										isCouponFieldVisible={ isCouponFieldVisible }
+										setCouponFieldVisible={ setCouponFieldVisible }
 										onChangeSelection={ changeSelection }
 										siteUrl={ siteUrl }
 										createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -582,6 +602,9 @@ export default function CheckoutMainContent( {
 									removeProductFromCart={ removeProductFromCart }
 									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
+									removeCouponAndClearField={ removeCouponAndClearField }
+									isCouponFieldVisible={ isCouponFieldVisible }
+									setCouponFieldVisible={ setCouponFieldVisible }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
 									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -713,6 +736,15 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
+					{ ! isAkismetCheckout() && ! shouldUseCheckoutV2 && (
+						<CouponFieldArea
+							isCouponFieldVisible={ isCouponFieldVisible }
+							setCouponFieldVisible={ setCouponFieldVisible }
+							isPurchaseFree={ isPurchaseFree }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
 						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }

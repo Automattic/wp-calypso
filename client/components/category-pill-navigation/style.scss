@@ -31,13 +31,14 @@
 	}
 
 	.category-pill-navigation__arrow {
+		display: block;
 		width: 44px;
 		height: 44px;
 		position: absolute;
 		left: 0;
 		top: 0;
 		z-index: 2;
-		background: var(--studio-white) url(./images/arrow.svg) no-repeat center center;
+		background: var(--studio-white);
 		transform: rotate(180deg);
 		cursor: pointer;
 
@@ -91,6 +92,10 @@
 	&.is-active {
 		background: var(--Blueberry, #3858e9);
 		color: var(--studio-white);
+
+		svg {
+			fill: var(--studio-white);
+		}
 	}
 }
 

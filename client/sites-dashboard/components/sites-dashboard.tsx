@@ -29,8 +29,6 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
-import { useSitesDisplayMode } from './sites-display-mode-switcher';
-import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -93,15 +91,6 @@ const DashboardHeading = styled.h1( {
 const sitesMarginTable = css( {
 	backgroundColor: 'var( --studio-white )',
 	marginBlockStart: '14px',
-	marginInline: 0,
-	marginBlockEnd: '1.5em',
-	[ MEDIA_QUERIES.small ]: {
-		marginBlockStart: '0',
-	},
-} );
-
-const sitesMargin = css( {
-	marginBlockStart: '32px',
 	marginInline: 0,
 	marginBlockEnd: '1.5em',
 	[ MEDIA_QUERIES.small ]: {
@@ -192,8 +181,6 @@ export function SitesDashboard( {
 		( site ) => ! site.options?.is_domain_only
 	);
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
-	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
 	const elementRef = useRef( window );
 
 	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
@@ -278,31 +265,20 @@ export function SitesDashboard( {
 										initialSearch={ search }
 										statuses={ statuses }
 										selectedStatus={ selectedStatus }
-										displayMode={ displayMode }
-										onDisplayModeChange={ setDisplayMode }
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 									/>
 								) }
-								{ userPreferencesLoaded && (
+								{ hasSitesSortingPreferenceLoaded && (
 									<>
 										{ paginatedSites.length > 0 || isLoading ? (
 											<>
-												{ displayMode === 'list' && (
-													<SitesTable
-														isLoading={ isLoading }
-														sites={ paginatedSites }
-														className={ sitesMarginTable }
-													/>
-												) }
-												{ displayMode === 'tile' && (
-													<SitesGrid
-														isLoading={ isLoading }
-														sites={ paginatedSites }
-														className={ sitesMargin }
-													/>
-												) }
+												<SitesTable
+													isLoading={ isLoading }
+													sites={ paginatedSites }
+													className={ sitesMarginTable }
+												/>
 												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 													<PageBodyBottomContainer>
 														<Pagination

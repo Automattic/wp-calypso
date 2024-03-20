@@ -61,11 +61,7 @@ import type {
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type {
-	CountryListItem,
-	CheckoutPaymentMethodSlug,
-	SitelessCheckoutType,
-} from '@automattic/wpcom-checkout';
+import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
@@ -75,7 +71,6 @@ export interface CheckoutMainProps {
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
 	productSourceFromUrl?: string;
-	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
@@ -115,7 +110,6 @@ export default function CheckoutMain( {
 	siteId,
 	productAliasFromUrl,
 	productSourceFromUrl,
-	overrideCountryList,
 	redirectTo,
 	feature,
 	plan,
@@ -193,7 +187,7 @@ export default function CheckoutMain( {
 		isUserComingFromLoginForm,
 	} );
 
-	const countriesList = useCountryList( overrideCountryList );
+	const countriesList = useCountryList();
 
 	const {
 		productsForCart,

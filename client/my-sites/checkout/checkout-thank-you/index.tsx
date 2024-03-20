@@ -23,6 +23,7 @@ import {
 	isThemePurchase,
 	isTitanMail,
 	shouldFetchSitePlans,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
@@ -37,12 +38,10 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isExternal } from 'calypso/lib/url';
 import {
 	domainManagementList,
@@ -78,7 +77,6 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import BloggerPlanDetails from './blogger-plan-details';
 import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
@@ -96,6 +94,7 @@ import ProPlanDetails from './pro-plan-details';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
@@ -573,8 +572,22 @@ export class CheckoutThankYou extends Component<
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
+		// Continue to show the TransferPending progress bar until both the Atomic transfer is complete
+		// _and_ we've verified WooCommerce is finished installed.
+		if (
+			wasEcommercePlanPurchased &&
+			( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled )
+		) {
+			return (
+				<TransferPending
+					orderId={ this.props.receiptId }
+					siteId={ this.props.selectedSite?.ID ?? 0 }
+				/>
+			);
+		}
+
 		/** REFACTORED REDESIGN */
-		if ( isRefactoredForThankYouV2( this.props ) ) {
+		if ( this.isDataLoaded() && isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
@@ -595,6 +608,7 @@ export class CheckoutThankYou extends Component<
 					<PlanOnlyThankYou
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
+						transferComplete={ this.props.transferComplete }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
@@ -623,6 +637,8 @@ export class CheckoutThankYou extends Component<
 				pageContent = (
 					<GoogleWorkspaceSetUpThankYou purchase={ gSuiteOrExtraLicenseOrGoogleWorkspace } />
 				);
+			} else {
+				pageContent = <GenericThankYou purchases={ purchases } emailAddress={ email } />;
 			}
 
 			if ( pageContent ) {
@@ -638,7 +654,7 @@ export class CheckoutThankYou extends Component<
 						<MasterbarStyled
 							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
 							backText={ translate( 'Back to dashboard' ) }
-							canGoBack={ !! siteId }
+							canGoBack={ !! siteId && ! wasEcommercePlanPurchased }
 							showContact
 						/>
 
@@ -649,30 +665,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** LEGACY - The ultimate goal is to remove everything below */
-		if ( wasEcommercePlanPurchased ) {
-			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
-			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
-				return (
-					<TransferPending
-						orderId={ this.props.receiptId }
-						siteId={ this.props.selectedSite?.ID ?? 0 }
-					/>
-				);
-			}
-
-			return (
-				<Main className="checkout-thank-you">
-					{ this.props.transferComplete && this.props.isEmailVerified && (
-						<WpAdminAutoLogin
-							site={ { URL: `https://${ this.props.site?.wpcom_url }` } }
-							delay={ 0 }
-						/>
-					) }
-					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-					<AtomicStoreThankYouCard siteId={ this.props.selectedSite?.ID ?? 0 } />
-				</Main>
-			);
-		} else if ( delayedTransferPurchase ) {
+		if ( delayedTransferPurchase ) {
 			const planProps = {
 				action: (
 					// eslint-disable-next-line

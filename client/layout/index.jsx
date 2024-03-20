@@ -9,6 +9,7 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -384,7 +385,10 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'a8c-for-agencies' ) && (
-					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+					<>
+						<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+						<QueryAgencies />
+					</>
 				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">

@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -49,7 +50,7 @@ const SiteMigrationInstructions: Step = function () {
 			recordTracksEvent( 'calypso_migration_instructions_key_retrieved' );
 		} catch ( error ) {
 			setSiteMigrationKeyError( error as string );
-			recordTracksEvent( 'calypso_migration_instructions_key_error', { error } );
+			recordTracksEvent( 'calypso_migration_instructions_key_error' );
 		}
 	};
 
@@ -71,9 +72,10 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					<div
-						className={ `site-migration-instructions__list-migration-key-item ${
-							siteMigrationKey ? 'expanded' : ''
-						}${ siteMigrationKeyError ? 'error' : '' }` }
+						className={ classNames( 'site-migration-instructions__list-migration-key-item', {
+							expanded: siteMigrationKey,
+							error: siteMigrationKeyError,
+						} ) }
 					>
 						{ ! siteMigrationKey && (
 							<>
@@ -122,7 +124,6 @@ const SiteMigrationInstructions: Step = function () {
 											: siteMigrationKey }
 									</code>
 									<Button
-										primary
 										onClick={ () => {
 											setHideSiteMigrationKey( ! hideSiteMigrationKey );
 										} }
@@ -132,7 +133,7 @@ const SiteMigrationInstructions: Step = function () {
 									</Button>
 									<ClipboardButton
 										text={ siteMigrationKey }
-										className="site-migration-instructions__copy-key-button is-primary"
+										className="site-migration-instructions__copy-key-button is-secondary"
 										onCopy={ onCopy }
 									>
 										{ buttonTextCopy ? translate( 'Copied!' ) : translate( 'Copy key' ) }
@@ -188,19 +189,14 @@ const SiteMigrationInstructions: Step = function () {
 				className="is-step-site-migration-instructions"
 				hideSkip={ true }
 				hideBack={ true }
-				isHorizontalLayout={ true }
 				formattedHeader={
 					<>
 						<FormattedHeader
 							id="site-migration-instructions-header"
-							headerText={ translate( 'Migrate your site' ) }
-							align="left"
+							headerText={ translate( 'Ready to migrate your site?' ) }
+							align="center"
 						/>
-						<p>
-							{ translate(
-								'Move your existing WordPress site to WordPress.com. Follow these steps to get started.'
-							) }
-						</p>
+						<p>{ translate( 'Follow these steps to get started.' ) }</p>
 					</>
 				}
 				stepContent={ stepContent }

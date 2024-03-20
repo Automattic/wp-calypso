@@ -73,7 +73,7 @@ export default function LicensesOverview( {
 			/>
 			{ /*  TODO: <FETCH_LICENSES_HERE /> */ }
 			<LicensesOverviewContext.Provider value={ context }>
-				<LayoutTop>
+				<LayoutTop withNavigation>
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						<Actions>

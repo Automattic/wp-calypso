@@ -1,8 +1,8 @@
-.patterns {
+.pattern-gallery {
 	display: grid;
+	gap: 48px;
 }
-
-.patterns_grid {
-	gap: 24px;
+.pattern-gallery--grid {
+	gap: 16px 24px;
 	grid-template-columns: repeat(3, 1fr);
 }

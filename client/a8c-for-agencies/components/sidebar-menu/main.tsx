@@ -9,6 +9,7 @@ import {
 	A4A_MARKETPLACE_LINK,
 	A4A_PURCHASES_LINK,
 	A4A_LICENSES_LINK,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from './lib/constants';
 import { createItem } from './lib/utils';
 
@@ -50,12 +51,13 @@ export default function ( { path }: Props ) {
 			},
 			{
 				icon: tag,
-				path: '/',
-				link: A4A_MARKETPLACE_LINK,
+				path: A4A_MARKETPLACE_LINK,
+				link: A4A_MARKETPLACE_PRODUCTS_LINK,
 				title: translate( 'Marketplace' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',
 				},
+				withChevron: true,
 			},
 			{
 				icon: currencyDollar,

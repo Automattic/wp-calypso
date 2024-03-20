@@ -9,15 +9,10 @@ const InviteStatus = ( {
 	handleDelete,
 	resendSuccess,
 	requestingResend,
-	inviteWasDeleted,
 	deletingInvite,
 } ) => {
 	const translate = useTranslate();
 	const { isPending } = invite;
-
-	if ( invite && inviteWasDeleted ) {
-		return null;
-	}
 
 	return (
 		<div
