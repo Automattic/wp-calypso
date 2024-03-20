@@ -194,7 +194,7 @@
 		"user-management-revamp": true,
 		"videomaker-trial": true,
 		"woop": false,
-		"woo/passwordless": false,
+		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true

@@ -154,9 +154,14 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWoo( email: string, username: string, password: string ): Promise< NewUserResponse > {
+		const isWooPasswordless = await this.page.evaluate( `configData.features['woo/passwordless']` );
+
 		await this.page.fill( selectors.emailInput, email );
-		await this.page.fill( selectors.usernameInput, username );
-		await this.page.fill( selectors.passwordInput, password );
+
+		if ( ! isWooPasswordless ) {
+			await this.page.fill( selectors.usernameInput, username );
+			await this.page.fill( selectors.passwordInput, password );
+		}
 
 		const [ , response ] = await Promise.all( [
 			this.page.waitForURL( /.*woo\.com*/ ),
