@@ -25,4 +25,5 @@ export interface SitePreviewPaneProps {
 	className?: string;
 	isSmallScreen?: boolean;
 	hasError?: boolean;
+	initialSelectedFeatureId?: string;
 }
