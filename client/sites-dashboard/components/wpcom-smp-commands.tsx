@@ -108,6 +108,36 @@ export const useCommandsArrayWpcom = ( {
 	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
 	const dispatch = useDispatch();
 
+	const navigateWithinSamePage = (
+		targetPath: string,
+		elementId: string,
+		commandParams: Pick< CommandCallBackParams, 'close' | 'command' >
+	) => {
+		const currentPath = window.location.pathname;
+		const targetUrl = new URL( targetPath, window.location.origin );
+
+		// Check if the user is on the same page but is not looking at the right section
+		// If not, scroll to the right section
+		if ( currentPath === targetUrl.pathname ) {
+			//Offset by the height of the navigation header from the top of the page
+			const fixedHeaderHeight = 72;
+			const element = document.getElementById( elementId );
+			if ( element ) {
+				const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+				const offsetPosition = elementPosition - fixedHeaderHeight;
+
+				window.location.hash = elementId;
+				commandParams.close();
+				window.scrollTo( {
+					top: offsetPosition,
+					behavior: 'smooth',
+				} );
+			}
+		} else {
+			commandNavigation( targetPath )( commandParams );
+		}
+	};
+
 	const { setEdgeCache } = useSetEdgeCacheMutation();
 
 	const displayNotice = (
@@ -367,8 +397,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage cache settings' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#cache` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#cache`;
+					navigateWithinSamePage( targetPath, 'cache', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: cacheIcon,
@@ -664,7 +696,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to open SFTP/SSH credentials' )
 			),
 			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#admin-interface-style`;
+					navigateWithinSamePage( targetPath, 'sftp-credentials', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: keyIcon,
@@ -834,8 +869,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to manage staging sites' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#staging-site` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#staging-site`;
+					navigateWithinSamePage( targetPath, 'staging-site', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -845,8 +882,10 @@ export const useCommandsArrayWpcom = ( {
 			label: __( 'Change PHP version' ),
 			callback: setStateCallback( 'changePHPVersion', __( 'Select site to change PHP version' ) ),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#web-server-settings` )( param ),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#web-server-settings`;
+					navigateWithinSamePage( targetPath, 'web-server-settings', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: toolIcon,
@@ -866,10 +905,10 @@ export const useCommandsArrayWpcom = ( {
 				__( 'Select site to change admin interface style' )
 			),
 			siteFunctions: {
-				onClick: ( param ) =>
-					commandNavigation( `/hosting-config/${ param.site.slug }#admin-interface-style` )(
-						param
-					),
+				onClick: ( param ) => {
+					const targetPath = `/hosting-config/${ param.site.slug }#admin-interface-style`;
+					navigateWithinSamePage( targetPath, 'admin-interface-style', param );
+				},
 				...siteFilters.hostingEnabled,
 			},
 			icon: pageIcon,
