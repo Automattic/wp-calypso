@@ -47,7 +47,7 @@ const Row = styled.tr`
 const Column = styled.td< { tabletHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
-	padding-inline-end: 24px;
+	padding-inline-end: 12px;
 	vertical-align: middle;
 	font-size: 14px;
 	line-height: 20px;
