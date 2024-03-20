@@ -84,6 +84,7 @@ const wooexpress: Flow = {
 				locale,
 				redirectTo,
 				oauth2ClientId: queryParams.get( 'client_id' ) || undefined,
+				wccomFrom: queryParams.get( 'wccom-from' ) || undefined,
 			} );
 
 			if ( aff ) {
