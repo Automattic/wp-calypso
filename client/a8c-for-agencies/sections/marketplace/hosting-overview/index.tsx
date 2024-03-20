@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -8,10 +9,14 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
 
 export default function Hosting() {
 	const translate = useTranslate();
+
+	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
 
 	return (
 		<Layout
@@ -26,8 +31,13 @@ export default function Hosting() {
 					<Title>{ translate( 'Marketplace' ) }</Title>
 
 					<Actions>
-						{ /* FIXME: We will need to have shared state for shopping cart items */ }
-						<ShoppingCart items={ [] } onRemoveItem={ () => {} } onCheckout={ () => {} } />
+						<ShoppingCart
+							items={ selectedCartItems }
+							onRemoveItem={ onRemoveCartItem }
+							onCheckout={ () => {
+								page( A4A_MARKETPLACE_CHECKOUT_LINK );
+							} }
+						/>
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>

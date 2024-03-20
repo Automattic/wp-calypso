@@ -10,7 +10,7 @@ export default function ProductFilterSearch( { onProductSearch, onClick }: Props
 	const translate = useTranslate();
 
 	return (
-		<div className="licenses-form__product-filter-search">
+		<div className="product-listing__filter-search">
 			<Search
 				onClick={ onClick }
 				onSearch={ onProductSearch }

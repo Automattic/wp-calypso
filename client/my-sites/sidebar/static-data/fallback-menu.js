@@ -39,7 +39,6 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAddOns = false,
 	showSiteMonitoring = false,
-	showGithubDeployments = false,
 } = {} ) {
 	let mailboxes = [];
 	if ( shouldShowMailboxes ) {
@@ -518,17 +517,13 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
-				...( showGithubDeployments
-					? [
-							{
-								parent: 'tools.php',
-								slug: 'tools-github-deployments',
-								title: translate( 'GitHub Deployments' ),
-								type: 'submenu-item',
-								url: `/github-deployments/${ siteDomain }`,
-							},
-					  ]
-					: [] ),
+				{
+					parent: 'tools.php',
+					slug: 'tools-github-deployments',
+					title: translate( 'GitHub Deployments' ),
+					type: 'submenu-item',
+					url: `/github-deployments/${ siteDomain }`,
+				},
 				...( showSiteMonitoring
 					? [
 							{

@@ -1,11 +1,10 @@
 // FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
+import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
-import LicenseMultiProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-multi-product-card';
-import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { getSupportedBundleSizes } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
 import {
 	getIncompatibleProducts,
@@ -14,30 +13,32 @@ import {
 import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/licenses-form/hooks/use-product-and-plans';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import IssueLicenseContext from '../context';
+import { ShoppingCartContext } from '../../context';
+import MultiProductCard from '../multi-product-card';
+import ProductCard from '../product-card';
 import useSubmitForm from './hooks/use-submit-form';
 import ProductFilterSearch from './product-filter-search';
-import LicensesFormSection from './sections';
-import type { SelectedLicenseProp } from '../types';
+import ProductListingSection from './sections';
+import type { ShoppingCartItem } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
-interface LicensesFormProps {
+interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
 	quantity?: number;
 }
 
-export default function LicensesForm( {
+export default function ProductListing( {
 	selectedSite,
 	suggestedProduct,
 	quantity = 1,
-}: LicensesFormProps ) {
+}: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedLicenses, setSelectedLicenses } = useContext( IssueLicenseContext );
+	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
 
@@ -73,7 +74,7 @@ export default function LicensesForm( {
 		const allProductsAndBundles = parsedItems?.length
 			? ( parsedItems
 					.map( ( item ) => {
-						// Add licenses & bundles that are supported
+						// Add products & bundles that are supported
 						const product = filteredProductsAndBundlesRef.current.find(
 							( product ) => product.slug === item.slug
 						);
@@ -86,13 +87,13 @@ export default function LicensesForm( {
 						}
 						return null;
 					} )
-					.filter( Boolean ) as SelectedLicenseProp[] )
+					.filter( Boolean ) as ShoppingCartItem[] )
 			: null;
 
 		if ( allProductsAndBundles ) {
-			setSelectedLicenses( allProductsAndBundles );
+			setSelectedCartItems( allProductsAndBundles );
 		}
-	}, [ setSelectedLicenses, data ] );
+	}, [ setSelectedCartItems, data ] );
 
 	useEffect( () => {
 		if ( isLoadingProducts ) {
@@ -104,8 +105,8 @@ export default function LicensesForm( {
 	const incompatibleProducts = useMemo(
 		() =>
 			// Only check for incompatible products if we have a selected site.
-			selectedSite ? getIncompatibleProducts( selectedLicenses, filteredProductsAndBundles ) : [],
-		[ filteredProductsAndBundles, selectedLicenses, selectedSite ]
+			selectedSite ? getIncompatibleProducts( selectedCartItems, filteredProductsAndBundles ) : [],
+		[ filteredProductsAndBundles, selectedCartItems, selectedSite ]
 	);
 
 	const handleSelectBundleLicense = useCallback(
@@ -114,30 +115,30 @@ export default function LicensesForm( {
 				...product,
 				quantity,
 			};
-			const index = selectedLicenses.findIndex(
+			const index = selectedCartItems.findIndex(
 				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
 			);
 			if ( index === -1 ) {
 				// Item doesn't exist, add it
-				setSelectedLicenses( [ ...selectedLicenses, productBundle ] );
+				setSelectedCartItems( [ ...selectedCartItems, productBundle ] );
 				dispatch(
-					recordTracksEvent( 'calypso_a4a_marketplace_issue_license_select_product', {
+					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
 						product: product.slug,
 						quantity,
 					} )
 				);
 			} else {
 				// Item exists, remove it
-				setSelectedLicenses( selectedLicenses.filter( ( _, i ) => i !== index ) );
+				setSelectedCartItems( selectedCartItems.filter( ( _, i ) => i !== index ) );
 				dispatch(
-					recordTracksEvent( 'calypso_a4a_marketplace_issue_license_unselect_product', {
+					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
 						product: product.slug,
 						quantity,
 					} )
 				);
 			}
 		},
-		[ dispatch, quantity, selectedLicenses, setSelectedLicenses ]
+		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
 	const onSelectProduct = useCallback(
@@ -150,8 +151,8 @@ export default function LicensesForm( {
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
 			if ( replace ) {
-				setSelectedLicenses(
-					selectedLicenses.map( ( item ) => {
+				setSelectedCartItems(
+					selectedCartItems.map( ( item ) => {
 						if ( item.slug === replace.slug && item.quantity === quantity ) {
 							return { ...product, quantity };
 						}
@@ -162,14 +163,14 @@ export default function LicensesForm( {
 
 				// Unselecting the current selected variant
 				dispatch(
-					recordTracksEvent( 'calypso_a4a_marketplace_issue_license_unselect_product', {
+					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
 						product: replace.slug,
 						quantity,
 					} )
 				);
 
 				dispatch(
-					recordTracksEvent( 'calypso_a4a_marketplace_issue_license_select_product', {
+					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
 						product: product.slug,
 						quantity,
 					} )
@@ -178,26 +179,26 @@ export default function LicensesForm( {
 				handleSelectBundleLicense( product );
 			}
 		},
-		[ dispatch, handleSelectBundleLicense, quantity, selectedLicenses, setSelectedLicenses ]
+		[ dispatch, handleSelectBundleLicense, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
 	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
-			selectedLicenses.some(
-				( license ) =>
-					( Array.isArray( slug ) ? slug.includes( license.slug ) : license.slug === slug ) &&
-					license.quantity === quantity
+			selectedCartItems.some(
+				( item ) =>
+					( Array.isArray( slug ) ? slug.includes( item.slug ) : item.slug === slug ) &&
+					item.quantity === quantity
 			),
-		[ quantity, selectedLicenses ]
+		[ quantity, selectedCartItems ]
 	);
 
 	const onProductSearch = useCallback(
 		( value: string ) => {
 			setProductSearchQuery( value );
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_issue_license_search_submit', { value } )
+				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_search_submit', { value } )
 			);
 		},
 		[ dispatch ]
@@ -206,7 +207,7 @@ export default function LicensesForm( {
 	const onClickVariantOption = useCallback(
 		( product: APIProductFamilyProduct ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_issue_license_variant_option_click', {
+				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_variant_option_click', {
 					product: product.slug,
 				} )
 			);
@@ -216,7 +217,9 @@ export default function LicensesForm( {
 
 	const trackClickCallback = useCallback(
 		( component: string ) => () =>
-			dispatch( recordTracksEvent( `calypso_a4a_marketplace_issue_license_${ component }_click` ) ),
+			dispatch(
+				recordTracksEvent( `calypso_a4a_marketplace_products_overview_${ component }_click` )
+			),
 		[ dispatch ]
 	);
 
@@ -225,15 +228,15 @@ export default function LicensesForm( {
 	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
 		return products.map( ( productOption ) =>
 			Array.isArray( productOption ) ? (
-				<LicenseMultiProductCard
+				<MultiProductCard
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ productOption }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
 					selectedOption={ productOption.find( ( option ) =>
-						selectedLicenses.find(
-							( license ) => license.slug === option.slug && license.quantity === quantity
+						selectedCartItems.find(
+							( item ) => item.slug === option.slug && item.quantity === quantity
 						)
 					) }
 					isDisabled={
@@ -246,8 +249,7 @@ export default function LicensesForm( {
 					quantity={ quantity }
 				/>
 			) : (
-				<LicenseProductCard
-					isMultiSelect
+				<ProductCard
 					key={ productOption.slug }
 					product={ productOption }
 					onSelectProduct={ onSelectProduct }
@@ -263,17 +265,17 @@ export default function LicensesForm( {
 
 	if ( isLoadingProducts ) {
 		return (
-			<div className="licenses-form">
-				<div className="licenses-form__placeholder" />
+			<div className="product-listing">
+				<div className="product-listing__placeholder" />
 			</div>
 		);
 	}
 
 	return (
-		<div className="licenses-form">
+		<div className="product-listing">
 			<QueryProductsList currency="USD" />
 
-			<div className="licenses-form__actions">
+			<div className="product-listing__actions">
 				<ProductFilterSearch
 					onProductSearch={ onProductSearch }
 					onClick={ trackClickCallback( 'search' ) }
@@ -281,48 +283,52 @@ export default function LicensesForm( {
 			</div>
 
 			{ plans.length > 0 && (
-				<LicensesFormSection
-					title={ translate( 'Plans' ) }
+				<ProductListingSection
+					icon={ <JetpackLogo size={ 26 } /> }
+					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
 					isTwoColumns
 				>
 					{ getProductCards( plans ) }
-				</LicensesFormSection>
+				</ProductListingSection>
 			) }
 
 			{ products.length > 0 && (
-				<LicensesFormSection
-					title={ translate( 'Products' ) }
+				<ProductListingSection
+					icon={ <JetpackLogo size={ 26 } /> }
+					title={ translate( 'Jetpack Products' ) }
 					description={ translate(
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
 				>
 					{ getProductCards( products ) }
-				</LicensesFormSection>
+				</ProductListingSection>
 			) }
 
 			{ wooExtensions.length > 0 && (
-				<LicensesFormSection
+				<ProductListingSection
+					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
 						'You must have WooCommerce installed to utilize these paid extensions.'
 					) }
 				>
 					{ getProductCards( wooExtensions ) }
-				</LicensesFormSection>
+				</ProductListingSection>
 			) }
 
 			{ backupAddons.length > 0 && (
-				<LicensesFormSection
-					title={ translate( 'VaultPress Backup Add-ons' ) }
+				<ProductListingSection
+					icon={ <JetpackLogo size={ 26 } /> }
+					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
 					description={ translate(
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
 				>
 					{ getProductCards( backupAddons ) }
-				</LicensesFormSection>
+				</ProductListingSection>
 			) }
 		</div>
 	);

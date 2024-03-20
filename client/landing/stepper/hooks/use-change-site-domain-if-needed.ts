@@ -5,12 +5,12 @@ import { useSiteData } from './use-site-data';
 
 const FREE_DOMAIN_SUFFIX = '.wordpress.com';
 
-const useChangeSiteDomain = () => {
+const useChangeSiteDomainIfNeeded = () => {
 	const dispatch = useDispatch();
 	const { siteId, siteSlug } = useSiteData();
 
-	const changeSiteDomain = async ( domain: string ) => {
-		if ( domain === siteSlug || ! domain.endsWith( FREE_DOMAIN_SUFFIX ) ) {
+	const changeSiteDomainIfNeeded = async ( domain: string ) => {
+		if ( ! siteSlug || domain === siteSlug || ! domain.endsWith( FREE_DOMAIN_SUFFIX ) ) {
 			return;
 		}
 
@@ -28,7 +28,7 @@ const useChangeSiteDomain = () => {
 		);
 	};
 
-	return changeSiteDomain;
+	return changeSiteDomainIfNeeded;
 };
 
-export default useChangeSiteDomain;
+export default useChangeSiteDomainIfNeeded;

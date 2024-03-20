@@ -9,10 +9,6 @@ import { GitHubDeploymentManagement } from './deployment-management';
 import { DeploymentRunsLogs } from './deployment-run-logs';
 import { GitHubDeployments } from './deployments';
 import { indexPage } from './routes';
-import {
-	GitHubDeploymentsAvailableResponse,
-	gitHubDeploymentsAvailableQueryOptions,
-} from './use-is-feature-available';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {
@@ -110,16 +106,5 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 		return;
 	}
 
-	context.queryClient
-		.fetchQuery( gitHubDeploymentsAvailableQueryOptions( { siteId } ) )
-		.then( ( result: GitHubDeploymentsAvailableResponse ) => {
-			if ( result.available ) {
-				next();
-			} else {
-				context.page.replace( `/home/${ siteSlug }` );
-			}
-		} )
-		.catch( () => {
-			context.page.replace( `/home/${ siteSlug }` );
-		} );
+	next();
 };

@@ -29,7 +29,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
-import useAssignLicensesToSite from '../issue-license/hooks/use-assign-licenses-to-site';
+import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
 
 import './styles.scss';

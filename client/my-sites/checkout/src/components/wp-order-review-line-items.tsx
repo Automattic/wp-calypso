@@ -82,7 +82,7 @@ export function WPOrderReviewLineItems( {
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -158,14 +158,13 @@ export function WPOrderReviewLineItems( {
 					new_quantity: newQuantity,
 				} )
 			);
-			replaceProductInCart &&
-				replaceProductInCart( uuid, {
-					product_slug: productSlug,
-					product_id: productId,
-					quantity: newQuantity,
-				} ).catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-				} );
+			replaceProductInCart( uuid, {
+				product_slug: productSlug,
+				product_id: productId,
+				quantity: newQuantity,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		},
 		[ replaceProductInCart, reduxDispatch ]
 	);
