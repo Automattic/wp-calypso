@@ -13,6 +13,7 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
@@ -49,16 +50,23 @@ const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderP
 		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
 	};
 
+	const paidNewsletterUrl = isJetpackCloud()
+		? 'https://jetpack.com/support/newsletter/paid-newsletters/'
+		: 'https://wordpress.com/support/paid-newsletters/';
+
 	const subtitleOptions = {
 		components: {
 			link: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) }
+					href={ localizeUrl( paidNewsletterUrl ) }
 					target="blank"
 					onClick={ ( event ) => {
-						event.preventDefault();
-						openHelpCenter();
+						if ( ! isJetpackCloud() ) {
+							event.preventDefault();
+							openHelpCenter();
+						}
 					} }
+					rel="noreferrer"
 				/>
 			),
 		},
