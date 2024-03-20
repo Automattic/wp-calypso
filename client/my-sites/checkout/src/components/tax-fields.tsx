@@ -9,7 +9,6 @@ import {
 import styled from '@emotion/styled';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, type ChangeEvent, type ReactElement } from 'react';
 import {
 	getStateLabelText,
 	STATE_SELECT_TEXT,
@@ -24,6 +23,7 @@ import type {
 	ManagedContactDetails,
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
+import type { ChangeEvent, ReactElement } from 'react';
 
 const GridRow = styled.div`
 	display: -ms-grid;
@@ -59,9 +59,7 @@ export default function TaxFields( {
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
-	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
-	// TODO: this should be part of the contact info so it will get saved and prepopulated
-	const [ isForBusiness, setIsForBusiness ] = useState( false );
+	const { postalCode, countryCode, city, state, organization, address1, isForBusiness } = taxInfo;
 	const arePostalCodesSupported =
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
@@ -265,8 +263,22 @@ export default function TaxFields( {
 				label={ translate( 'Is this purchase for business?', { textOnly: true } ) }
 				checked={ isForBusiness }
 				disabled={ isDisabled }
-				onChange={ () => {
-					setIsForBusiness( ( currentValue ) => ! currentValue );
+				onChange={ ( newValue ) => {
+					onChange(
+						updateOnChangePayload(
+							{
+								countryCode,
+								postalCode,
+								city,
+								state,
+								organization,
+								address: address1,
+								isForBusiness: newValue,
+							},
+							arePostalCodesSupported,
+							taxRequirements
+						)
+					);
 				} }
 			/>
 		);
@@ -297,6 +309,7 @@ function updateOnChangePayload(
 		state: ManagedContactDetails[ 'state' ] | undefined;
 		organization: ManagedContactDetails[ 'organization' ] | undefined;
 		address: ManagedContactDetails[ 'address1' ] | undefined;
+		isForBusiness?: ManagedContactDetails[ 'isForBusiness' ] | undefined;
 	},
 	arePostalCodesSupported: boolean,
 	taxRequirements: CountryTaxRequirements
@@ -308,6 +321,7 @@ function updateOnChangePayload(
 		state: taxRequirements.subdivision ? taxInfo.state : undefined,
 		organization: taxRequirements.organization ? taxInfo.organization : undefined,
 		address1: taxRequirements.address ? taxInfo.address : undefined,
+		isForBusiness: taxInfo.isForBusiness,
 	};
 }
 
