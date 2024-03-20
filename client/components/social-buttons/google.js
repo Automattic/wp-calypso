@@ -6,9 +6,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
-import wpcom from 'calypso/lib/wp';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
@@ -56,16 +56,15 @@ class GoogleSocialButton extends Component {
 		this.hideError = this.hideError.bind( this );
 	}
 
-	async fetchNonce() {
-		return wpcom.req.get( `/generate-authorization-nonce`, {
-			apiNamespace: 'wpcom/v2',
-		} );
-	}
-
 	componentDidMount() {
 		const initialize = async () => {
 			try {
-				const response = await this.fetchNonce();
+				const response = await wpcomRequest( {
+					path: '/generate-authorization-nonce',
+					apiNamespace: 'wpcom/v2',
+					apiVersion: '2',
+					method: 'GET',
+				} );
 				const nonce = response.nonce;
 				this.setState( { nonce } );
 
