@@ -114,6 +114,7 @@ export default function SitesDashboard() {
 			setSitesViewState( ( prevState ) => ( {
 				...prevState,
 				selectedSite: site,
+				type: 'list',
 			} ) );
 		}
 	}, [ data, isError, isLoading, selectedSiteUrl ] );
