@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.a4a-layout__top-wrapper:not(.preview-hidden) {
+	padding-block-start: 24px;
+}
+
 .main.a4a-layout.sites-dashboard {
 	background: inherit;
 	padding-block-start: 0;
@@ -161,6 +165,7 @@
 
 			.sites-overview {
 				width: unset;
+				display: none;
 			}
 		}
 	}
@@ -302,9 +307,6 @@
 
 	&.sites-dashboard__layout:not(.preview-hidden) {
 
-		.section-nav {
-			display: none;
-		}
 
 		.a4a-layout__top-wrapper {
 			padding-block-start: 16px;
@@ -332,7 +334,12 @@
 		}
 	}
 
+	&.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
+		display: none;
+	}
+
 	&.sites-dashboard__layout {
+
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
 		}
