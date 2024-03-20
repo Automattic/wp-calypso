@@ -47,7 +47,8 @@ type CategoryGalleryProps = {
 
 export type CategoryGalleryFC = React.FC< CategoryGalleryProps >;
 
-type PatternGalleryProps = {
+export type PatternGalleryProps = {
+	getPatternPermalink?( pattern: Pattern ): string;
 	isGridView?: boolean;
 	patterns?: Pattern[];
 };
