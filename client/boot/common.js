@@ -417,6 +417,12 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+	onDisablePersistence( () => {
+		// Clear the query cache
+		queryClient.removeQueries();
+		queryClient.clear();
+		queryClient.setDefaultOptions( { queries: { cacheTime: 0 } } );
+	} );
 	setupLocale( currentUser, reduxStore );
 	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );
