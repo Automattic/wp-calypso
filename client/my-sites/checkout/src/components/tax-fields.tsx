@@ -7,7 +7,9 @@ import {
 	CountryTaxRequirements,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState, type ChangeEvent, type ReactElement } from 'react';
 import {
 	getStateLabelText,
 	STATE_SELECT_TEXT,
@@ -22,7 +24,6 @@ import type {
 	ManagedContactDetails,
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
-import type { ChangeEvent, ReactElement } from 'react';
 
 const GridRow = styled.div`
 	display: -ms-grid;
@@ -59,6 +60,8 @@ export default function TaxFields( {
 } ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
+	// TODO: this should be part of the contact info so it will get saved and prepopulated
+	const [ isForBusiness, setIsForBusiness ] = useState( false );
 	const arePostalCodesSupported =
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
@@ -67,6 +70,19 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryTaxRequirements( countriesList, countryCode?.value )
 			: {};
+	const isUnitedStateWithBusinessOption = ( () => {
+		const zipCode = postalCode?.value ? parseInt( postalCode.value, 10 ) : 0;
+		if ( zipCode >= 43000 && zipCode <= 45999 ) {
+			// Ohio; OH
+			return true;
+		}
+		if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
+			// Connecticut; CT
+			return true;
+		}
+		return false;
+	} )();
+	const isBusinessCheckboxNeeded = countryCode?.value === 'US' && isUnitedStateWithBusinessOption;
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
 	const fields: ReactElement[] = [
@@ -239,6 +255,19 @@ export default function TaxFields( {
 					);
 				} }
 				autoComplete="address"
+			/>
+		);
+	}
+	if ( isBusinessCheckboxNeeded ) {
+		fields.push(
+			<CheckboxControl
+				id={ section + '-business-checkbox' }
+				label={ translate( 'Is this purchase for business?', { textOnly: true } ) }
+				checked={ isForBusiness }
+				disabled={ isDisabled }
+				onChange={ () => {
+					setIsForBusiness( ( currentValue ) => ! currentValue );
+				} }
 			/>
 		);
 	}
