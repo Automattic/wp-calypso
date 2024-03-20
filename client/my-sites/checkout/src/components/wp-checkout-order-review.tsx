@@ -9,7 +9,7 @@ import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import { hasDIFMProduct, hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -123,7 +123,7 @@ export default function WPCheckoutOrderReview( {
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangeSelection?: OnChangeItemVariant;
 	removeCouponAndClearField: RemoveCouponAndClearField;
@@ -180,19 +180,24 @@ export default function WPCheckoutOrderReview( {
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
+	const isDIFMInCart = hasDIFMProduct( responseCart );
 
 	return (
 		<>
 			{ /*
 			 * Only show the site preview for WPCOM domains that have a site connected to the site id
 			 * */ }
-			{ shouldUseCheckoutV2 && selectedSiteData && wpcomDomain && ! isSignupCheckout && (
-				<div className="checkout-site-preview">
-					<SitePreviewWrapper>
-						<SitePreview showEditSite={ false } showSiteDetails={ false } />
-					</SitePreviewWrapper>
-				</div>
-			) }
+			{ shouldUseCheckoutV2 &&
+				selectedSiteData &&
+				wpcomDomain &&
+				! isSignupCheckout &&
+				! isDIFMInCart && (
+					<div className="checkout-site-preview">
+						<SitePreviewWrapper>
+							<SitePreview showEditSite={ false } showSiteDetails={ false } />
+						</SitePreviewWrapper>
+					</div>
+				) }
 			<div
 				className={ joinClasses( [
 					className,

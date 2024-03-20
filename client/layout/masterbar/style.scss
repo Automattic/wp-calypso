@@ -921,6 +921,8 @@ a.masterbar__quick-language-switcher {
 		line-height: 1.2em;
 		font-size: 0.75rem;
 		margin-left: 5px;
+		position: relative;
+		top: -0.5px;
 
 		@include breakpoint-deprecated( ">480px" ) {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -929,7 +931,7 @@ a.masterbar__quick-language-switcher {
 		}
 
 		.masterbar--is-jetpack & {
-			transform: translateY(-1px);
+			transform: translateY(0.5px);
 		}
 
 		.masterbar--is-akismet & {

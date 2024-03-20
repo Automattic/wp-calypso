@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import {
 	getProductSlugFromLicenseKey,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import useAssignLicenseMutation from '../../hooks/use-assign-license-mutation';
 import type {
 	ProductInfo,
@@ -25,7 +25,7 @@ const useAssignLicensesToSite = (
 	assignLicensesToSite: ( licenseKeys: string[] ) => Promise< PurchasedProductsInfo >;
 	isReady: boolean;
 } => {
-	const products = useProductsQuery( true );
+	const products = useProductsQuery();
 	const assignLicense = useAssignLicenseMutation( {
 		onError: options.onError ?? NO_OP,
 	} );
