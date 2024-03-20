@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 
-function UTMExportButton( { data } ) {
+function UTMExportButton( { data, fileName } ) {
 	// Button set up.
 	const translate = useTranslate();
 	const buttonLabel = translate( 'Download data as CSV' );
@@ -45,8 +45,6 @@ function UTMExportButton( { data } ) {
 	const initiateDownload = ( event ) => {
 		event.preventDefault();
 
-		// TODO: Provide a better default file name.
-		const fileName = 'my-data.csv';
 		const flattenedData = flattenDataForExport( data );
 		const csvData = prepareDataForDownload( flattenedData );
 		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );

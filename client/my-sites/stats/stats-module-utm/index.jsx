@@ -2,6 +2,8 @@ import { StatsCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
@@ -25,6 +27,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const moduleStrings = statsStrings();
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	// Check if blog is internal.
 	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
@@ -93,6 +96,9 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	};
 
 	const showFooterWithDownloads = summary === true;
+	const fileNameForExport = showFooterWithDownloads
+		? generateFileNameForDownload( siteSlug, period )
+		: '';
 
 	return (
 		<>
@@ -131,7 +137,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 					/>
 					{ showFooterWithDownloads && (
 						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-							<UTMExportButton data={ data } />
+							<UTMExportButton data={ data } fileName={ fileNameForExport } />
 						</div>
 					) }
 				</>
@@ -139,5 +145,26 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		</>
 	);
 };
+
+function generateFileNameForDownload( siteSlug, period ) {
+	// Build a filename for the CSV export button.
+	// The "format('L')" method can return strings that are not safe for the file system.
+	// While the "saveAs" function handles this, we do it here for correctness.
+	// We prefer '-' for word boundries, and '_' within words/dates.
+	// This allows text editing shortcuts to work properly.
+	//
+	// example output: jetpack.com-utm-day-03_20_2024-03_20_2024.csv
+	//
+	const newFileName =
+		[
+			siteSlug,
+			'utm',
+			period.period,
+			period.startOf.format( 'L' ),
+			period.endOf.format( 'L' ),
+		].join( '-' ) + '.csv';
+
+	return newFileName.replace( /\//g, '_' );
+}
 
 export { StatsModuleUTM as default, StatsModuleUTM, OPTION_KEYS };
