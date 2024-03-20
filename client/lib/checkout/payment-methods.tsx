@@ -10,7 +10,9 @@ import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
+export const PARTNER_RAZORPAY = 'razorpay';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
+export const UPI_PARTNERS = [ PARTNER_RAZORPAY ];
 
 /**
  * A saved payment method (card or PayPal agreement).
@@ -75,6 +77,10 @@ export interface StoredPaymentMethodStripeSource extends StoredPaymentMethodBase
 	bic: string;
 }
 
+export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
+	payment_partner: 'razorpay';
+}
+
 export interface StoredPaymentMethodTaxLocation {
 	country_code?: string;
 	postal_code?: string;
@@ -91,8 +97,11 @@ export const isPaymentAgreement = (
 ): method is StoredPaymentMethodPayPal =>
 	PAYMENT_AGREEMENTS_PARTNERS.includes( method.payment_partner );
 
+export const isUpiMethod = ( method: StoredPaymentMethod ): method is StoredPaymentMethodRazorpay =>
+	UPI_PARTNERS.includes( method.payment_partner );
+
 export const isCreditCard = ( method: StoredPaymentMethod ): method is StoredPaymentMethodCard =>
-	! isPaymentAgreement( method );
+	! isPaymentAgreement( method ) && ! isUpiMethod( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;
