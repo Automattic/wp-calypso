@@ -11,6 +11,7 @@ import {
 	getPersistedStateItem,
 	loadPersistedState,
 	storePersistedStateItem,
+	removePersistedStateItem,
 } from 'calypso/state/persisted-state';
 import { shouldDehydrateQuery } from './should-dehydrate-query';
 import type { DebouncedFunc } from '@wordpress/compose';
@@ -18,18 +19,33 @@ import type { DebouncedFunc } from '@wordpress/compose';
 type ThrotthledPersister = {
 	persistClient: DebouncedFunc< ( state: PersistedClient ) => Promise< unknown > >;
 } & Omit< Persister, 'persistClient' >;
+type HydrateBrowserStateReturn = {
+	persister?: ThrotthledPersister;
+	unsubscribePersister: () => void;
+	removePersistedState: () => void;
+};
+type CreateQueryClientReturn = {
+	queryClient: QueryClient;
+	unsubscribePersister: () => void;
+	removePersistedState: () => void;
+};
 
-export async function createQueryClient( userId?: number ): Promise< QueryClient > {
+let hasUnsubscribedFromPersister = false;
+
+export async function createQueryClient( userId?: number ): Promise< CreateQueryClientReturn > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
-	const persister = await hydrateBrowserState( queryClient, userId );
+	const { persister, unsubscribePersister, removePersistedState } = await hydrateBrowserState(
+		queryClient,
+		userId
+	);
 
 	if ( typeof window !== 'undefined' ) {
 		// Persist the cache to local storage before the browser is unloaded
 		window.addEventListener( 'beforeunload', () => {
-			if ( persister ) {
+			if ( persister && shouldPersist() && ! hasUnsubscribedFromPersister ) {
 				// flush the debouncer so the next persist is immediate
 				persister.persistClient.flush();
 				persistQueryClient( { queryClient, persister: persister as unknown as Persister } );
@@ -37,13 +53,20 @@ export async function createQueryClient( userId?: number ): Promise< QueryClient
 		} );
 	}
 
-	return queryClient;
+	const unsubscribePersisterWrapper = () => {
+		// because we create a new persistQueryClient for the beforeunload we need a way to track the unsubscribe from
+		// the regular persistQueryClient so we don't persist on beforeunload when unsubscribed
+		hasUnsubscribedFromPersister = true;
+		unsubscribePersister();
+	};
+
+	return { queryClient, unsubscribePersister: unsubscribePersisterWrapper, removePersistedState };
 }
 
 export async function hydrateBrowserState(
 	queryClient: QueryClient,
 	userId: number | undefined
-): Promise< ThrotthledPersister | void > {
+): Promise< HydrateBrowserStateReturn > {
 	if ( shouldPersist() ) {
 		const storeKey = `query-state-${ userId ?? 'logged-out' }`;
 		const persister = {
@@ -65,7 +88,7 @@ export async function hydrateBrowserState(
 				// not implemented
 			},
 		};
-		await persistQueryClient( {
+		const [ unsubscribePersister ] = persistQueryClient( {
 			queryClient,
 			persister,
 			maxAge: MAX_AGE,
@@ -74,8 +97,14 @@ export async function hydrateBrowserState(
 			},
 		} );
 
-		return persister;
+		const removePersistedState = () => {
+			removePersistedStateItem( storeKey );
+		};
+
+		return { persister, unsubscribePersister, removePersistedState };
 	}
+
+	return { unsubscribePersister: () => {}, removePersistedState: () => {} };
 }
 
 export function hydrateServerState( queryClient: QueryClient, dehydratedState?: unknown ): void {

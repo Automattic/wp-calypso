@@ -216,6 +216,24 @@ function idbRemove(): Promise< void > {
 	} );
 }
 
+function idbRemoveKey( key: string ): Promise< void > {
+	return new Promise( ( resolve, reject ) => {
+		getDB().then( ( db ) => {
+			if ( ! db ) {
+				reject( new Error( 'IndexedDB not initialized' ) );
+				return;
+			}
+
+			const transaction = db.transaction( [ STORE_NAME ], 'readwrite' );
+			const store = transaction.objectStore( STORE_NAME );
+
+			const deleteRequest = store.delete( key );
+			deleteRequest.onsuccess = () => resolve();
+			deleteRequest.onerror = ( event ) => reject( event );
+		} );
+	} );
+}
+
 async function idbSafariReset() {
 	if ( idbWriteBlock ) {
 		return idbWriteBlock;
@@ -347,6 +365,25 @@ export async function setStoredItem< T >( key: string, value: T ): Promise< void
 	}
 
 	return await idbSet( key, value );
+}
+
+/**
+ * Remove a stored item.
+ * @param key The key of the item to remove.
+ * @returns A promise that resolves when the item is removed.
+ */
+export async function removeStoredItem( key: string ): Promise< void > {
+	if ( shouldBypass ) {
+		return;
+	}
+
+	const idbSupported = await supportsIDB();
+	if ( ! idbSupported ) {
+		window.localStorage.removeItem( key );
+		return;
+	}
+
+	await idbRemoveKey( key );
 }
 
 /**
