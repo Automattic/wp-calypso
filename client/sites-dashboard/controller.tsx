@@ -8,12 +8,8 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { hideMasterbar } from 'calypso/state/ui/actions';
-import { HostingFlowForkingPage } from '../signup/steps/hosting-decider/hosting-flow-forking-page';
 import { SitesDashboard } from './components/sites-dashboard';
-import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
@@ -48,69 +44,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	next();
 }
 
-export function maybeSitesDashboard( context: PageJSContext, next: () => void ) {
-	if ( context.query[ 'hosting-flow' ] ) {
-		return hostingFlowForkingPage( context, next );
-	}
-
-	return sitesDashboard( context, next );
-}
-
-function hostingFlowForkingPage( context: PageJSContext, next: () => void ) {
-	context.store.dispatch( hideMasterbar() );
-	const siteCount = getCurrentUser( context.store.getState() )?.site_count ?? 0;
-
-	const hostingFlowForkingPageGlobalStyles = css`
-		body.is-group-sites-dashboard {
-			background: #fff;
-
-			.layout__primary {
-				margin: 100px 24px;
-			}
-
-			.layout__content {
-				padding: 0 !important; /* this is overriden by other styles being injected on the page */
-				min-height: auto; /* browsing a different page might inject this style on the page */
-			}
-
-			.button.is-primary {
-				min-width: 160px;
-				background-color: var( --studio-blue-50 );
-				border-color: var( --studio-blue-50 );
-			}
-
-			.button.is-primary:active:not( :disabled ),
-			.button.is-primary:hover:not( :disabled ),
-			.button.is-primary:focus:not( :disabled ) {
-				background-color: var( --studio-blue-60 );
-				border-color: var( --studio-blue-60 );
-				box-shadow: 0 0 0 2px var( --studio-blue-60 );
-			}
-
-			${ MEDIA_QUERIES.mediumOrLarger } {
-				height: 100vh;
-
-				.wpcom-site {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				}
-			}
-		}
-	`;
-
-	context.primary = (
-		<>
-			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
-			<Global styles={ hostingFlowForkingPageGlobalStyles } />
-			<HostingFlowForkingPage siteCount={ siteCount } />
-		</>
-	);
-
-	return next();
-}
-
-function sitesDashboard( context: PageJSContext, next: () => void ) {
+export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	let sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #ffffff;
