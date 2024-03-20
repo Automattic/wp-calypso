@@ -18,12 +18,12 @@ import ReviewLicenses from 'calypso/jetpack-cloud/sections/partner-portal/primar
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import { ShoppingCartContext } from '../context';
+import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
-import IssueLicenseContext from './context';
 import LicensesForm from './licenses-form';
 import useSubmitForm from './licenses-form/hooks/use-submit-form';
-import type { SelectedLicenseProp } from './types';
-import type { AssignLicenseProps } from '../types';
+import type { AssignLicenseProps, ShoppingCartItem } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -32,7 +32,8 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ selectedLicenses, setSelectedLicenses ] = useState< SelectedLicenseProp[] >( [] );
+	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
+
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 	const [ showReviewLicenses, setShowReviewLicenses ] = useState< boolean >( false );
 
@@ -53,7 +54,7 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 
 	const sites = useSelector( getSites );
 
-	const showStickyContent = useBreakpoint( '>660px' ) && selectedLicenses.length > 0;
+	const showStickyContent = useBreakpoint( '>660px' ) && selectedCartItems.length > 0;
 
 	useEffect( () => {
 		if ( siteId && sites.length > 0 ) {
@@ -65,16 +66,16 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 	// Group licenses by slug and sort them by quantity
 	const getGroupedLicenses = useCallback( () => {
 		return Object.values(
-			selectedLicenses.reduce(
-				( acc: Record< string, SelectedLicenseProp[] >, license ) => (
-					( acc[ license.slug ] = ( acc[ license.slug ] || [] ).concat( license ) ), acc
+			selectedCartItems.reduce(
+				( acc: Record< string, ShoppingCartItem[] >, item ) => (
+					( acc[ item.slug ] = ( acc[ item.slug ] || [] ).concat( item ) ), acc
 				),
 				{}
 			)
 		)
 			.map( ( group ) => group.sort( ( a, b ) => a.quantity - b.quantity ) )
 			.flat();
-	}, [ selectedLicenses ] );
+	}, [ selectedCartItems ] );
 
 	return (
 		<>
@@ -91,12 +92,8 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 
 						<Actions>
 							<ShoppingCart
-								items={ selectedLicenses }
-								onRemoveItem={ ( item: SelectedLicenseProp ) => {
-									setSelectedLicenses( ( licenses ) =>
-										licenses.filter( ( license ) => license !== item )
-									);
-								} }
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
 								onCheckout={ () => {
 									/* FIXME: redirect to checkout page */
 								} }
@@ -106,13 +103,13 @@ export default function IssueLicense( { siteId, suggestedProduct }: AssignLicens
 				</LayoutTop>
 
 				<LayoutBody>
-					<IssueLicenseContext.Provider value={ { setSelectedLicenses, selectedLicenses } }>
+					<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 						<LicensesForm
 							selectedSite={ selectedSite }
 							suggestedProduct={ suggestedProduct }
 							quantity={ selectedSize }
 						/>
-					</IssueLicenseContext.Provider>
+					</ShoppingCartContext.Provider>
 				</LayoutBody>
 			</Layout>
 			{ showReviewLicenses && (
