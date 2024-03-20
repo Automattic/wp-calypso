@@ -57,10 +57,11 @@ export const useCommandPaletteContext = () => {
 
 export interface CommandMenuGroupContext
 	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
+	emptyListNotice: string;
 	search: string;
 	selectedCommandName: string;
-	setEmptyListNotice?: ( message: string ) => void;
-	setFooterMessage?: ( message: string ) => void;
+	setEmptyListNotice: ( message: string ) => void;
+	setFooterMessage: ( message: string ) => void;
 	setSelectedCommandName: ( name: string ) => void;
 }
 
@@ -71,6 +72,7 @@ export const CommandMenuGroupContextProvider: FC<
 > = ( {
 	children,
 	close,
+	emptyListNotice,
 	search,
 	selectedCommandName,
 	setEmptyListNotice,
@@ -83,6 +85,7 @@ export const CommandMenuGroupContextProvider: FC<
 		<CommandMenuGroupContext.Provider
 			value={ {
 				close,
+				emptyListNotice,
 				search,
 				selectedCommandName,
 				setEmptyListNotice,

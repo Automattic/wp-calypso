@@ -200,12 +200,8 @@ function CommandInput( { isOpen, placeholder }: CommandInputProps ) {
 	);
 }
 
-interface NotFoundMessageProps {
-	emptyListNotice?: string;
-}
-
-const NotFoundMessage = ( { emptyListNotice }: NotFoundMessageProps ) => {
-	const { selectedCommandName, search } = useCommandMenuGroupContext();
+const NotFoundMessage = () => {
+	const { emptyListNotice, search, selectedCommandName } = useCommandMenuGroupContext();
 	const { currentRoute } = useCommandPaletteContext();
 	const trackNotFoundDebounced = useDebounce( () => {
 		recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
@@ -330,12 +326,13 @@ const CommandPalette = () => {
 				close( commandName, isExecuted );
 				reset();
 			} }
-			setSearch={ setSearch }
-			setPlaceholderOverride={ setPlaceholderOverride }
+			emptyListNotice={ emptyListNotice }
 			selectedCommandName={ selectedCommandName }
-			setSelectedCommandName={ setSelectedCommandName }
-			setFooterMessage={ setFooterMessage }
 			setEmptyListNotice={ setEmptyListNotice }
+			setFooterMessage={ setFooterMessage }
+			setPlaceholderOverride={ setPlaceholderOverride }
+			setSearch={ setSearch }
+			setSelectedCommandName={ setSelectedCommandName }
 		>
 			<Modal
 				className="commands-command-menu"
@@ -365,7 +362,7 @@ const CommandPalette = () => {
 						</div>
 						<Command.List ref={ commandListRef }>
 							<StyledCommandsEmpty>
-								<NotFoundMessage emptyListNotice={ emptyListNotice } />
+								<NotFoundMessage />
 							</StyledCommandsEmpty>
 							<CommandMenuGroup />
 						</Command.List>
