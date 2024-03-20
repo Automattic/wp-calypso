@@ -20,6 +20,24 @@
 			display: none;
 		}
 	}
+
+	.sidebar__menu-link {
+		svg.sidebar__menu-icon {
+			fill: var(--color-sidebar-text);
+		}
+
+		&:hover,
+		&:focus {
+			svg.sidebar__menu-icon {
+				fill: var(--color-sidebar-menu-selected-text);
+			}
+		}
+	}
+
+
+	.selected .sidebar__menu-link svg.sidebar__menu-icon {
+		fill: var(--color-sidebar-menu-selected-text);
+	}
 }
 
 .is-sidebar-collapsed .sidebar {

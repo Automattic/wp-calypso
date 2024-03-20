@@ -141,8 +141,10 @@
 	.sidebar__heading,
 	.sidebar__menu-link {
 		/* Hover styles */
-		&:hover {
-			.sidebar__menu-icon.sidebar_svg-add {
+		&:hover,
+		&:focus {
+			.sidebar__menu-icon.sidebar_svg-add,
+			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
 				g {
 					fill: var(--color-sidebar-menu-hover-text);
 				}
