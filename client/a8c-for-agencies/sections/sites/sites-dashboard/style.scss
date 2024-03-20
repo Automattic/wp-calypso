@@ -9,6 +9,11 @@
 	background: inherit;
 	padding-block-start: 0;
 
+	.dataviews-view-table-wrapper {
+		height: calc(100vh - 265px);
+		overflow-y: auto;
+	}
+
 	@media (min-width: $break-large) {
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
 			font-size: 1.25rem;
