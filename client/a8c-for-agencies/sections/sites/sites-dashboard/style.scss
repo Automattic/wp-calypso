@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.a4a-layout__top-wrapper:not(.preview-hidden) {
+	padding-block-start: 24px;
+}
+
 .main.a4a-layout.sites-dashboard {
 	background: inherit;
 	padding-block-start: 0;
@@ -301,11 +305,8 @@
 		max-width: none;
 	}
 
-	.sites-dashboard__layout:not(.preview-hidden) &:not(.site-preview__pane) {
+	&.sites-dashboard__layout:not(.preview-hidden) {
 
-		.section-nav {
-			display: none;
-		}
 
 		.a4a-layout__top-wrapper {
 			padding-block-start: 16px;
@@ -333,7 +334,7 @@
 		}
 	}
 
-	.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
+	&.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
 		display: none;
 	}
 
@@ -465,6 +466,15 @@
 			.sites-overview__page-heading {
 				display: none;
 			}
+		}
+	}
+
+	.backup__page {
+		.daily-backup-status__restore-button,
+		.status-card__no-backup-last-backup,
+		.activity-card__toolbar--reverse,
+		.backup-date-picker {
+			display: none;
 		}
 	}
 }
