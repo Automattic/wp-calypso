@@ -257,6 +257,8 @@
 				list-style: none;
 				margin: 0;
 				padding: 0;
+				overflow-y: auto;
+				height: calc(100vh - 165px);
 
 				li {
 					padding: 8px 24px;
