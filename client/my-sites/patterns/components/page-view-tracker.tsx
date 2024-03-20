@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useDebounce } from 'use-debounce';
+import { useEffect, useState } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -14,9 +13,19 @@ type PatternsPageViewTrackerProps = {
 export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const [ debouncedSeachTerm, setDebouncedSearchTerm ] = useState( searchTerm );
+
 	// We debounce the search term because search happens instantaneously, without the user
 	// submitting the search form
-	const [ debouncedSeachTerm ] = useDebounce( searchTerm, 1500 );
+	useEffect( () => {
+		const timeoutId = window.setTimeout( () => {
+			setDebouncedSearchTerm( searchTerm );
+		}, 1500 );
+
+		return () => {
+			window.clearTimeout( timeoutId );
+		};
+	}, [ searchTerm ] );
 
 	useEffect( () => {
 		if ( category ) {
