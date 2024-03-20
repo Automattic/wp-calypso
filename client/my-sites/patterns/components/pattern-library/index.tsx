@@ -63,16 +63,11 @@ function handleSettingView( value: 'grid' | 'list' ) {
 // We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
 // it will be more confusing for users to land in grid view when they have a single-pattern permalink
 function getPatternPermalink(
-	pattern: Pattern | undefined,
+	pattern: Pattern,
 	activeCategory: string,
 	patternTypeFilter: PatternTypeFilter,
 	categories: Category[]
 ) {
-	if ( ! pattern ) {
-		const url = new URL( location.pathname, location.origin );
-		return url.toString();
-	}
-
 	// Get the first pattern category that is also included in the `usePatternCategories` data
 	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
 		categories.find( ( { name } ) => name === categorySlug )
