@@ -1,5 +1,28 @@
-import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+
+/**
+ * For this context, we consider external URLs that are NOT:
+ * - Relative paths (`/test`)
+ * - Absolute URLs on https://wordpress.com/*
+ * @param {string} url URL to check
+ * @returns {boolean}
+ */
+function isExternalUrl( url ) {
+	if ( url.startsWith( '/' ) ) {
+		return false;
+	}
+
+	try {
+		const urlObject = new URL( url );
+		if ( urlObject.hostname === 'wordpress.com' && urlObject.protocol === 'https:' ) {
+			return false;
+		}
+	} catch {
+		return true;
+	}
+
+	return true;
+}
 
 export default function redirectLoggedIn( context, next ) {
 	const userLoggedIn = isUserLoggedIn( context.store.getState() );
@@ -7,8 +30,8 @@ export default function redirectLoggedIn( context, next ) {
 	if ( userLoggedIn ) {
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
-		let url = safeProtocolUrl( context?.query?.redirect_to );
-		if ( ! url || url === 'http:' ) {
+		let url = context?.query?.redirect_to;
+		if ( ! url || isExternalUrl( url ) ) {
 			url = '/';
 		}
 		window.location = url;
