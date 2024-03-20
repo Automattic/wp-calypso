@@ -43,7 +43,7 @@ const GitHubLoginButton = ( {
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
 
-	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial );
+	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
 	const authError = useSelector( ( state: AppState ) => {
 		const path = state?.route?.path?.current;
 		const { initial, current } = state?.route?.query ?? {};
