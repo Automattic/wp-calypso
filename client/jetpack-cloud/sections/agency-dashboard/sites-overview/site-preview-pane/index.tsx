@@ -59,16 +59,18 @@ export default function SitePreviewPane( {
 		visible: feature.tab.visible,
 	} ) );
 
+	const navItems = featureTabs.map( ( featureTab ) => (
+		<NavItem { ...featureTab }>{ featureTab.label }</NavItem>
+	) );
+
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
-			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
-				<NavTabs selectedText={ selectedFeature.tab.label }>
-					{ featureTabs.map( ( featureTab ) => (
-						<NavItem { ...featureTab }>{ featureTab.label }</NavItem>
-					) ) }
-				</NavTabs>
-			</SectionNav>
+			{ navItems && navItems.length > 0 ? (
+				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+					<NavTabs selectedText={ selectedFeature.tab.label }>{ navItems }</NavTabs>
+				</SectionNav>
+			) : null }
 			{ selectedFeature.preview }
 		</div>
 	);
