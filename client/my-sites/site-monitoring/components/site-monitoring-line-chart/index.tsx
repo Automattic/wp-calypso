@@ -35,6 +35,7 @@ interface SeriesProp {
 	stroke: string;
 	scale?: string;
 	unit?: string;
+	showInLegend?: boolean;
 }
 
 export function formatChartHour( date: Date ): string {
@@ -226,6 +227,20 @@ export const SiteMonitoringLineChart = ( {
 						legendContainer?.current.append( el );
 					}
 				},
+			},
+			hooks: {
+				init: [
+					( uPlot ) => {
+						[ ...uPlot.root.querySelectorAll< HTMLElement >( '.u-legend .u-series' ) ].forEach(
+							( el, i ) => {
+								const serie = uPlot.series[ i ] as SeriesProp;
+								if ( ! serie.showInLegend ) {
+									el.style.display = 'none';
+								}
+							}
+						);
+					},
+				],
 			},
 		};
 
