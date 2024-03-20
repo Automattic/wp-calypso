@@ -27,10 +27,11 @@ import {
 	AgencyDashboardFilterMap,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -42,6 +43,7 @@ import './style.scss';
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
+	const dispatch = useDispatch();
 
 	const {
 		selectedSiteUrl,
@@ -160,7 +162,11 @@ export default function SitesDashboard() {
 		} else {
 			page.replace( '/sites' );
 		}
-	}, [ sitesViewState.selectedSite, selectedSiteFeature, category, setCategory ] );
+
+		if ( sitesViewState.selectedSite ) {
+			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
+		}
+	}, [ sitesViewState.selectedSite, selectedSiteFeature, category, setCategory, dispatch ] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
