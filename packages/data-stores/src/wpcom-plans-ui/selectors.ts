@@ -9,7 +9,7 @@ export const getSelectedStorageOptionForPlan = (
 ) => {
 	// @ts-expect-error TS is unhappy if we index an object by a null or an undefined value. We, however,
 	// expect siteId to be null or undefined here before site creation ( Ex. during onboarding ).
-	return state.selectedStorageOptionForPlans?.[ siteId ][ planSlug ];
+	return state.selectedStorageOptionForPlans?.[ siteId ]?.[ planSlug ];
 };
 export const getSelectedStorageOptions = ( state: State, siteId?: number | null ) => {
 	// @ts-expect-error TS is unhappy if we index an object by a null or an undefined value. We, however,
