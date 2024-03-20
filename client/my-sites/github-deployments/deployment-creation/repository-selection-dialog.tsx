@@ -29,7 +29,13 @@ export const RepositorySelectionDialog = ( {
 			onClose={ onClose }
 			className="repository-selection-dialog"
 		>
-			<div>
+			<div
+				css={ {
+					display: 'flex',
+					flexDirection: 'column',
+					flexGrow: 1,
+				} }
+			>
 				<FormattedHeader
 					align="left"
 					headerText={ __( 'Select repository' ) }
