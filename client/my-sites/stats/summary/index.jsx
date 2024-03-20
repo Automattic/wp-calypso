@@ -12,6 +12,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
@@ -56,7 +57,7 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId } = this.props;
+		const { translate, statsQueryOptions, siteId, isUTMModuleEnabled } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -332,7 +333,7 @@ class StatsSummary extends Component {
 				backLink = `/stats/traffic/`;
 				path = 'utm';
 				statType = 'statsUTM';
-				summaryView = isEnabled( 'stats/utm-module' ) ? (
+				summaryView = isUTMModuleEnabled ? (
 					<>
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleUTM
@@ -380,10 +381,15 @@ class StatsSummary extends Component {
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+
+	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const isUTMModuleEnabled = isEnabled( 'stats/utm-module' ) && supportsUTMStats;
+
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		upsellModalView,
+		isUTMModuleEnabled,
 	};
 } )( localize( StatsSummary ) );
