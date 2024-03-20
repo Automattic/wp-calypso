@@ -46,7 +46,7 @@ export default function A4ASlider( { className, options, onChange, value, label,
 						return (
 							<div
 								className="a4a-slider__marker"
-								key={ `slider-option-${ index }` }
+								key={ `slider-option-${ option.value }` }
 								role="button"
 								tabIndex={ -1 }
 								onClick={ () => onChange?.( options[ index ] ) }

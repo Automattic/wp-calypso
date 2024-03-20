@@ -159,5 +159,9 @@ p.product-listing__description {
 }
 
 .product-listing__volume-price-selector {
-	min-width: 430px;
+	min-width: 100%;
+
+	@include break-medium {
+		min-width: 430px;
+	}
 }

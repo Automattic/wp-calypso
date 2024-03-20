@@ -1,4 +1,6 @@
 
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .a4a-slider {
 	display: flex;
@@ -81,7 +83,12 @@
 }
 
 .a4a-slider__label-container {
+	display: none;
 	text-align: right;
+
+	@include break-medium {
+		display: block;
+	}
 }
 
 .a4a-slider__sub {
