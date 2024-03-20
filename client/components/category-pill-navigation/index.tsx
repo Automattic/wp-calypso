@@ -13,18 +13,18 @@ type CategoryPillNavigationProps = {
 		link: string;
 		isActive?: boolean;
 	}[];
-	list: {
+	categories: {
 		id: string;
 		label?: string;
 		link: string;
 	}[];
-	selectedCategory: string;
+	selectedCategoryId: string;
 };
 
 export const CategoryPillNavigation = ( {
 	buttons,
-	list,
-	selectedCategory,
+	categories,
+	selectedCategoryId,
 }: CategoryPillNavigationProps ) => {
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
@@ -96,12 +96,12 @@ export const CategoryPillNavigation = ( {
 							<div className="category-pill-navigation__button-divider" />
 						</>
 					) }
-					{ list.map( ( category ) => (
+					{ categories.map( ( category ) => (
 						<LocalizedLink
 							key={ category.id }
 							href={ category.link }
 							className={ classnames( 'category-pill-navigation__button', {
-								'is-active': category.id === selectedCategory,
+								'is-active': category.id === selectedCategoryId,
 							} ) }
 						>
 							{ category.label }
