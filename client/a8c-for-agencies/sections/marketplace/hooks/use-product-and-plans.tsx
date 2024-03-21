@@ -17,7 +17,7 @@ import {
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
 } from '../constants';
-import isPressableHostingProduct from '../lib/is-pressable-hosting-product';
+import { isPressableHostingProduct } from '../lib/hosting';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
