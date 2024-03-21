@@ -42,7 +42,7 @@ export default function JetpackSiteConnected() {
 			dispatch( successNotice( successNotification ) );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_sites_jetpack_connected_notice_shown', {
-					siteUrl: jetpackConnectedSite,
+					site_url: jetpackConnectedSite,
 				} )
 			);
 		}
