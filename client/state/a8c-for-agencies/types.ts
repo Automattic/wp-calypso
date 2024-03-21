@@ -7,12 +7,6 @@ export interface APIError {
 	message: string;
 	data?: any;
 }
-export interface APIAgency {
-	id: number;
-	name: string;
-	url: string;
-}
-
 export interface Agency {
 	id: number;
 	name: string;
