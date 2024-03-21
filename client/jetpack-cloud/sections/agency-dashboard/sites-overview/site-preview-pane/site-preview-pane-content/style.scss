@@ -4,7 +4,6 @@
 	padding: 48px;
 	text-align: center;
 	overflow-y: auto;
-	height: calc(100vh - 285px); /* It subtracts the header height to allow scrolling in this block */
 
 	.expanded-card {
 		max-width: 320px;

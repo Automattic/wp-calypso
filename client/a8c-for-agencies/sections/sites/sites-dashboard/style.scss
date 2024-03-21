@@ -179,7 +179,6 @@
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
-				overflow-y: hidden;
 
 				.a4a-layout__viewport {
 					padding-inline: 16px;
@@ -263,7 +262,7 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				height: calc(100vh - 165px); /* It subtracts the header height to allow scrolling in this block */
+				max-height: calc(100vh - 165px); /* It subtracts the header height to allow scrolling in this block */
 
 				li {
 					padding: 8px 24px;
@@ -400,11 +399,8 @@
 		.sites-overview {
 			width: 400px;
 			flex: unset;
-			overflow-x: auto;
-			overflow-y: hidden;
 			transition: all 0.2s;
 			background: var(--studio-white);
-			border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 			.site-set-favorite__favorite-icon {
 				position: relative;
@@ -435,7 +431,7 @@
 			width: auto;
 			transition: flex-grow 0.2s;
 			background: var(--studio-white);
-			overflow: hidden;
+			max-height: calc(100vh - 32px);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
 		}
 
