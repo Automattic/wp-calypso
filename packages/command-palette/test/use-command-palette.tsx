@@ -73,21 +73,6 @@ const commandsWithViewMySiteResult = [
 	},
 ];
 
-const commandsWithViewMySiteOnSitesResult = [
-	{
-		name: 'getHelp',
-		label: 'Get help',
-	},
-	{
-		name: 'clearCache',
-		label: 'Clear cache',
-	},
-	{
-		name: 'enableEdgeCache',
-		label: 'Enable edge cache',
-	},
-];
-
 const commandsWithContext = [
 	{
 		callback,
