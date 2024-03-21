@@ -102,34 +102,32 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
-	const handleViewChange = useCallback(
-		( view: 'grid' | 'list' ) => {
-			const searchParams = new URLSearchParams( location.search );
-			const currentView = searchParams.get( 'grid' ) === '1' ? 'grid' : 'list';
+	const handleViewChange = ( view: 'grid' | 'list' ) => {
+		const currentView = isGridView ? 'grid' : 'list';
 
-			// Let's only handle this if the view changes
-			if ( currentView === view ) {
-				return;
-			}
+		// Let's only handle this if the view changes
+		if ( currentView === view ) {
+			return;
+		}
 
-			recordTracksEvent( 'calypso_pattern_library_view_switch', {
-				category,
-				is_logged_in: isLoggedIn,
-				type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
-				user_is_dev_account: isDevAccount ? '1' : '0',
-				view,
-			} );
+		recordTracksEvent( 'calypso_pattern_library_view_switch', {
+			category,
+			is_logged_in: isLoggedIn,
+			type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view,
+		} );
 
-			searchParams.delete( 'grid' );
-			if ( view === 'grid' ) {
-				searchParams.set( 'grid', '1' );
-			}
+		const url = new URL( window.location.href );
+		url.searchParams.delete( 'grid' );
 
-			const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
-			page( location.pathname + paramsString );
-		},
-		[ category, isDevAccount, isLoggedIn, patternTypeFilter ]
-	);
+		if ( view === 'grid' ) {
+			url.searchParams.set( 'grid', '1' );
+		}
+
+		// Removing the origin ensures that a full refresh is not attempted
+		page( url.href.replace( url.origin, '' ) );
+	};
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
