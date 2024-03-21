@@ -10,7 +10,7 @@ import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import type { AgencyDetailsPayload } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/types';
-import type { APIError } from 'calypso/state/partner-portal/types';
+import type { APIError } from 'calypso/state/a8c-for-agencies/types';
 
 import './style.scss';
 

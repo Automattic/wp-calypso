@@ -1,9 +1,9 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { APIError, APIPartner } from 'calypso/state/partner-portal/types';
+import { APIError, APIAgency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDetailsPayload } from '../types';
 
-function createAgency( details: AgencyDetailsPayload ): Promise< APIPartner > {
+function createAgency( details: AgencyDetailsPayload ): Promise< APIAgency > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency',
@@ -21,9 +21,9 @@ function createAgency( details: AgencyDetailsPayload ): Promise< APIPartner > {
 }
 
 export default function useCreateAgencyMutation< TContext = unknown >(
-	options?: UseMutationOptions< APIPartner, APIError, AgencyDetailsPayload, TContext >
-): UseMutationResult< APIPartner, APIError, AgencyDetailsPayload, TContext > {
-	return useMutation< APIPartner, APIError, AgencyDetailsPayload, TContext >( {
+	options?: UseMutationOptions< APIAgency, APIError, AgencyDetailsPayload, TContext >
+): UseMutationResult< APIAgency, APIError, AgencyDetailsPayload, TContext > {
+	return useMutation< APIAgency, APIError, AgencyDetailsPayload, TContext >( {
 		...options,
 		mutationFn: createAgency,
 	} );

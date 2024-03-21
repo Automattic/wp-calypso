@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useEffect } from 'react';
-import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
 import {
 	getActiveAgency,
@@ -17,7 +17,7 @@ export default function AgencySignup() {
 	useEffect( () => {
 		if ( agency ) {
 			// Redirect to the sites page if the user already has an agency record.
-			page.redirect( A4A_SITES_LINK );
+			page.redirect( A4A_OVERVIEW_LINK );
 		}
 	}, [ agency ] );
 
