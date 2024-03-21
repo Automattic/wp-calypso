@@ -12,7 +12,7 @@ import {
 	menu as iconMenu,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -92,11 +92,6 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate_not_yet = useTranslate();
 
-	// Helps prevent resetting the search input if a search term was provided through the URL
-	const isInitialRender = useRef( true );
-	// Helps reset the search input when navigating between categories
-	const [ searchFormKey, setSearchFormKey ] = useState( category );
-
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
@@ -108,25 +103,6 @@ export const PatternLibrary = ( {
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
-
-	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
-	useEffect( () => {
-		if ( ! urlQuerySearchTerm ) {
-			setSearchTerm( '' );
-			setSearchFormKey( Math.random().toString() );
-		}
-	}, [ urlQuerySearchTerm ] );
-
-	// Resets the search term whenever the category changes
-	useEffect( () => {
-		if ( isInitialRender.current ) {
-			isInitialRender.current = false;
-			return;
-		}
-
-		setSearchTerm( '' );
-		setSearchFormKey( category );
-	}, [ category ] );
 
 	const handleViewChange = ( view: 'grid' | 'list' ) => {
 		const currentView = isGridView ? 'grid' : 'list';
@@ -153,6 +129,10 @@ export const PatternLibrary = ( {
 		// Removing the origin ensures that a full refresh is not attempted
 		page( url.href.replace( url.origin, '' ) );
 	};
+
+	useEffect( () => {
+		setSearchTerm( urlQuerySearchTerm );
+	}, [ urlQuerySearchTerm, setSearchTerm ] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
@@ -188,8 +168,7 @@ export const PatternLibrary = ( {
 				description={ translate_not_yet(
 					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
 				) }
-				initialSearchTerm={ searchTerm }
-				key={ `${ searchFormKey }-search` }
+				searchTerm={ searchTerm }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
