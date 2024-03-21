@@ -9,14 +9,15 @@ import { isProductMatch } from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import isPressableHostingProduct from '../lib/is-pressable-hosting-product';
 import {
 	PRODUCT_FILTER_ALL,
 	PRODUCT_FILTER_PLANS,
+	PRODUCT_FILTER_PRESSABLE_PLANS,
 	PRODUCT_FILTER_PRODUCTS,
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
-} from '../products-overview/product-listing/constants';
+} from '../constants';
+import isPressableHostingProduct from '../lib/is-pressable-hosting-product';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
@@ -63,6 +64,12 @@ const getProductsAndPlansByFilter = (
 			return (
 				allProductsAndPlans?.filter( ( { family_slug } ) => isWooCommerceProduct( family_slug ) ) ||
 				[]
+			);
+		case PRODUCT_FILTER_PRESSABLE_PLANS:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) =>
+					isPressableHostingProduct( family_slug )
+				) || []
 			);
 	}
 
@@ -171,6 +178,10 @@ export default function useProductAndPlans( {
 				filteredProductsAndBundles
 			),
 			wooExtensions: getProductsAndPlansByFilter(
+				PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+				filteredProductsAndBundles
+			),
+			pressablePlans: getProductsAndPlansByFilter(
 				PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
 				filteredProductsAndBundles
 			),
