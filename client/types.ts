@@ -65,6 +65,7 @@ export interface Theme {
 interface MarketplaceThemeProductDetails {
 	product_id: number;
 	product_slug: string;
+	billing_product_slug: string;
 }
 
 interface ThemeCost {

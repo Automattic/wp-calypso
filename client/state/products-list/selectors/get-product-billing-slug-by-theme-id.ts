@@ -1,7 +1,5 @@
 import 'calypso/state/products-list/init';
-import { getProductBySlug } from 'calypso/state/products-list/selectors/get-product-by-slug';
 import { getTheme } from 'calypso/state/themes/selectors';
-import type { ProductListItem } from './get-products-list';
 import type { AppState, Theme } from 'calypso/types';
 
 /**
@@ -12,11 +10,10 @@ import type { AppState, Theme } from 'calypso/types';
  */
 export function getProductBillingSlugByThemeId( state: AppState, themeId: string ): string | null {
 	const theme: Theme | undefined = getTheme( state, 'wpcom', themeId );
-	const productSlugs = theme.product_details.map( ( product ) => product.product_slug );
 
-	const products: ProductListItem[] = productSlugs.map( ( productSlug ) => {
-		return getProductBySlug( state, productSlug );
-	} );
+	if ( theme?.product_details === undefined ) {
+		return `wp-mp-theme-${ themeId }`;
+	}
 
-	return products[ 0 ].billing_product_slug;
+	return theme?.product_details[ 0 ][ 'billing_product_slug' ];
 }
