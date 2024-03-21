@@ -379,6 +379,9 @@ $font-size: rem(14px);
 				&::before {
 					transition: none;
 				}
+				&.svg_all-sites {
+					margin: -2px 6px -2px -2px;
+				}
 			}
 
 			&:hover,
