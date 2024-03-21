@@ -84,29 +84,9 @@ const StyledCommandsFooter = styled.div( {
 } );
 
 export function CommandMenuGroup() {
-	const {
-		search,
-		close,
-		setSearch,
-		setPlaceholderOverride,
-		selectedCommandName,
-		setSelectedCommandName,
-		setFooterMessage,
-		setEmptyListNotice,
-	} = useCommandMenuGroupContext();
-	const { currentSiteId, navigate, useCommands, currentRoute, useSites, userCapabilities } =
-		useCommandPaletteContext();
-	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
-		currentSiteId,
-		selectedCommandName,
-		setSelectedCommandName,
-		search,
-		navigate,
-		useCommands,
-		currentRoute,
-		useSites,
-		userCapabilities,
-	} );
+	const { search, close, setSearch, setPlaceholderOverride, setFooterMessage, setEmptyListNotice } =
+		useCommandMenuGroupContext();
+	const { commands, filterNotice, emptyListNotice } = useCommandPalette();
 
 	useEffect( () => {
 		setFooterMessage?.( filterNotice ?? '' );
