@@ -68,7 +68,7 @@ export const CategoryPillNavigation = ( {
 			block: 'nearest',
 			inline: 'center',
 		} );
-	}, [ selectedCategory ] );
+	}, [ selectedCategoryId ] );
 
 	return (
 		<div className="category-pill-navigation">
