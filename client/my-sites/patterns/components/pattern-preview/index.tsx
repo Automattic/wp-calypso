@@ -1,7 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
@@ -140,13 +140,13 @@ function PatternPreviewFragment( {
 
 export function PatternPreview( props: PatternPreviewProps ) {
 	const { isResizable, pattern } = props;
-	const isDesktop = useDesktopBreakpoint();
+	const isMobile = useMobileBreakpoint();
 
 	if ( ! pattern ) {
 		return null;
 	}
 
-	if ( ! isResizable || ! isDesktop ) {
+	if ( ! isResizable || isMobile ) {
 		return <PatternPreviewFragment { ...props } />;
 	}
 
