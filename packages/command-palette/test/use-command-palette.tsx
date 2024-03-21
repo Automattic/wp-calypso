@@ -4,18 +4,28 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
+import {
+	CommandMenuGroupContextProvider,
+	CommandPaletteContext,
+	CommandPaletteContextProvider,
+} from '../src/context';
 import { useCommandPalette } from '../src/use-command-palette';
+
+const callback = () => {};
 
 const defaultCommands = [
 	{
+		callback,
 		name: 'getHelp',
 		label: 'Get help',
 	},
 	{
+		callback,
 		name: 'clearCache',
 		label: 'Clear cache',
 	},
 	{
+		callback,
 		name: 'enableEdgeCache',
 		label: 'Enable edge cache',
 	},
@@ -23,18 +33,22 @@ const defaultCommands = [
 
 const commandsWithViewMySite = [
 	{
+		callback,
 		name: 'getHelp',
 		label: 'Get help',
 	},
 	{
+		callback,
 		name: 'clearCache',
 		label: 'Clear cache',
 	},
 	{
+		callback,
 		name: 'viewMySites',
 		label: 'View my sites',
 	},
 	{
+		callback,
 		name: 'enableEdgeCache',
 		label: 'Enable edge cache',
 	},
@@ -76,16 +90,19 @@ const commandsWithViewMySiteOnSitesResult = [
 
 const commandsWithContext = [
 	{
+		callback,
 		name: 'getHelp',
 		label: 'Get help',
 		context: [ '/sites' ],
 	},
 	{
+		callback,
 		name: 'clearCache',
 		label: 'Clear cache',
 		context: [ '/sites' ],
 	},
 	{
+		callback,
 		name: 'enableEdgeCache',
 		label: 'Enable edge cache',
 		context: [ '/settings' ],
@@ -117,31 +134,47 @@ jest.mock( 'cmdk', () => ( {
 describe( 'useCommandPalette', () => {
 	const queryClient = new QueryClient();
 
-	const renderUseCommandPalette = ( { currentRoute = null, commands } ) =>
-		renderHook(
-			() =>
-				useCommandPalette( {
-					useCommands: () => commands,
-					currentSiteId: 1,
-					selectedCommandName: '',
-					setSelectedCommandName: () => {},
-					search: '',
-					navigate: () => {},
-					currentRoute,
-					useSites: () => [],
-					userCapabilities: {},
-				} ),
-			{
-				wrapper: ( { children } ) => (
-					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-				),
-			}
-		);
+	const renderUseCommandPalette = ( {
+		currentRoute = null,
+		commands,
+	}: {
+		currentRoute?: CommandPaletteContext[ 'currentRoute' ];
+		commands: ReturnType< CommandPaletteContext[ 'useCommands' ] >;
+	} ) =>
+		renderHook( () => useCommandPalette(), {
+			wrapper: ( { children } ) => (
+				<QueryClientProvider client={ queryClient }>
+					<CommandPaletteContextProvider
+						currentRoute={ currentRoute }
+						currentSiteId={ 1 }
+						navigate={ () => {} }
+						useCommands={ () => commands }
+						userCapabilities={ {} }
+						useSites={ () => [] }
+					>
+						<CommandMenuGroupContextProvider
+							emptyListNotice=""
+							placeHolderOverride=""
+							search=""
+							selectedCommandName=""
+							setEmptyListNotice={ () => {} }
+							setFooterMessage={ () => {} }
+							setSelectedCommandName={ () => {} }
+							close={ () => {} }
+							setSearch={ () => {} }
+							setPlaceholderOverride={ () => {} }
+						>
+							{ children }
+						</CommandMenuGroupContextProvider>
+					</CommandPaletteContextProvider>
+				</QueryClientProvider>
+			),
+		} );
 	it( 'should return the commands in the order that they are added to the commands array with no change', () => {
 		const { result } = renderUseCommandPalette( { commands: defaultCommands } );
-		expect( result.current.commands.map( ( { name, label } ) => ( { name, label } ) ) ).toEqual(
-			defaultCommands
-		);
+		expect(
+			result.current.commands.map( ( { name, label } ) => ( { callback, name, label } ) )
+		).toEqual( defaultCommands );
 	} );
 
 	it( 'should return the View My Sites command first before other commands from commandsWithViewMySite array when no context is specified', () => {
