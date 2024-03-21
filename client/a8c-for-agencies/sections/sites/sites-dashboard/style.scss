@@ -9,6 +9,10 @@
 	background: inherit;
 	padding-block-start: 0;
 
+	.site-preview-pane .a4a-layout-column__container {
+		display: flex;
+	}
+
 	.dataviews-view-table-wrapper {
 		height: calc(100vh - 265px); /* It subtracts the header height to allow scrolling in this block */
 		overflow-y: auto;
