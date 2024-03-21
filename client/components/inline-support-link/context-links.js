@@ -108,10 +108,12 @@ const contextLinks = {
 	'hosting-clear-cache': {
 		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/#1-clear-your-site-s-cache',
 		post_id: 164969,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-connect-to-ssh': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/ssh/',
 		post_id: 213309,
+		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-mysql': {
 		link: 'https://developer.wordpress.com/docs/developer-tools/database-access/',
