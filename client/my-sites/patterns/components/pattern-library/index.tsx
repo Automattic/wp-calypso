@@ -28,6 +28,7 @@ import {
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import {
 	PatternTypeFilter,
+	PatternView,
 	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
@@ -103,9 +104,10 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
-	const handleViewChange = ( view: 'grid' | 'list' ) => {
-		const currentView = isGridView ? 'grid' : 'list';
+	const type = patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout';
+	const currentView = isGridView ? 'grid' : 'list';
 
+	const handleViewChange = ( view: PatternView ) => {
 		if ( currentView === view ) {
 			return;
 		}
@@ -113,7 +115,7 @@ export const PatternLibrary = ( {
 		recordTracksEvent( 'calypso_pattern_library_view_switch', {
 			category,
 			is_logged_in: isLoggedIn,
-			type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
+			type,
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			view,
 		} );
@@ -148,7 +150,12 @@ export const PatternLibrary = ( {
 
 	return (
 		<>
-			<PatternsPageViewTracker category={ category } searchTerm={ searchTerm } />
+			<PatternsPageViewTracker
+				category={ category }
+				searchTerm={ searchTerm }
+				type={ type }
+				view={ currentView }
+			/>
 
 			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
 
