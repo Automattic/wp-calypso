@@ -22,6 +22,7 @@ import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
+import type { SyncSuccessParams } from './types';
 
 interface Props {
 	onNavBack?: () => void;
@@ -61,9 +62,11 @@ export const ScheduleCreate = ( props: Props ) => {
 		}
 	}, [ siteHasEligiblePlugins, siteHasEligiblePluginsLoading ] );
 
-	const onSyncSuccess = () => {
+	const onSyncSuccess = ( params: SyncSuccessParams ) => {
 		recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
 			site_slug: siteSlug,
+			frequency: params.frequency,
+			plugins_number: params.plugins.length,
 		} );
 
 		createMonitor();
