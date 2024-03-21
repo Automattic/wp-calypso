@@ -13,6 +13,7 @@ import {
 } from '@wordpress/icons';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
@@ -31,6 +32,9 @@ import {
 	type Pattern,
 	type PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 import './style.scss';
 
@@ -45,19 +49,6 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
-}
-
-function handleSettingView( value: 'grid' | 'list' ) {
-	const searchParams = new URLSearchParams( location.search );
-
-	if ( value === 'grid' ) {
-		searchParams.set( 'grid', '1' );
-	} else {
-		searchParams.delete( 'grid' );
-	}
-
-	const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
-	page( location.pathname + paramsString );
 }
 
 // We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
@@ -106,6 +97,35 @@ export const PatternLibrary = ( {
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
+
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+
+	const handleViewChange = ( view: 'grid' | 'list' ) => {
+		const currentView = isGridView ? 'grid' : 'list';
+
+		if ( currentView === view ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_pattern_library_view_switch', {
+			category,
+			is_logged_in: isLoggedIn,
+			type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view,
+		} );
+
+		const url = new URL( window.location.href );
+		url.searchParams.delete( 'grid' );
+
+		if ( view === 'grid' ) {
+			url.searchParams.set( 'grid', '1' );
+		}
+
+		// Removing the origin ensures that a full refresh is not attempted
+		page( url.href.replace( url.origin, '' ) );
+	};
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
@@ -212,13 +232,13 @@ export const PatternLibrary = ( {
 								className="pattern-library__toggle-option--list-view"
 								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 								value="list"
-								onClick={ () => handleSettingView( 'list' ) }
+								onClick={ () => handleViewChange( 'list' ) }
 							/>
 							<ToggleGroupControlOption
 								className="pattern-library__toggle-option--grid-view"
 								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 								value="grid"
-								onClick={ () => handleSettingView( 'grid' ) }
+								onClick={ () => handleViewChange( 'grid' ) }
 							/>
 						</ToggleGroupControl>
 					</div>
