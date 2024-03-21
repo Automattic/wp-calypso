@@ -1,14 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { CircularProgressBar } from '@automattic/components';
+import { Card, CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
+import { A4A_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
-import { JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME } from './constants';
 
-// import './style.scss';
+import './style.scss';
 
 export default function OverviewBodyNextSteps( { onDismiss = () => {} } ) {
 	const dispatch = useDispatch();
@@ -17,56 +16,54 @@ export default function OverviewBodyNextSteps( { onDismiss = () => {} } ) {
 	const preferences = useSelector( getAllRemotePreferences );
 
 	const checkTourCompletion = ( prefSlug: string ): boolean => {
-		if ( preferences && JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] ) {
-			return JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] in preferences;
+		if ( preferences && A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] ) {
+			return A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ prefSlug ] in preferences;
 		}
 		return false;
 	};
 
 	const resetTour = ( prefSlugs: string[] ): void => {
 		prefSlugs.forEach( ( slug ) => {
-			if ( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ] ) {
-				dispatch( savePreference( JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], null ) );
+			if ( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ] ) {
+				dispatch( savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], null ) );
 			}
 		} );
 	};
 
 	const tasks: Task[] = [
 		{
-			calypso_path: '/dashboard?tour=dashboard-walkthrough',
-			completed: checkTourCompletion( 'dashboardWalkthrough' ),
+			calypso_path: '/sites?tour=sites-walkthrough',
+			completed: checkTourCompletion( 'sitesWalkthrough' ),
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_get_familiar_click' ) );
-				resetTour( [ 'dashboardWalkthrough' ] );
+				resetTour( [ 'sitesWalkthrough' ] );
 			},
 			id: 'get_familiar',
 			title: translate( 'Get familiar with the sites management dashboard' ),
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: isEnabled( 'jetpack/manage-sites-v2-menu' )
-				? '/sites?tour=add-new-site'
-				: '/dashboard?tour=add-new-site',
-			completed: checkTourCompletion( 'addSiteStep1' ),
+			calypso_path: '/marketplace',
+			completed: checkTourCompletion( 'exploreMarketplace' ),
 			disabled: false,
 			actionDispatch: () => {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_overview_next_steps_explore_marketplace_click' )
 				);
-				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
+				resetTour( [ 'exploreMarketplace' ] );
 			},
 			id: 'explore_marketplace',
 			title: translate( 'Explore the marketplace' ),
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '/dashboard?tour=enable-monitor',
-			completed: checkTourCompletion( 'enableMonitorStep2' ),
+			calypso_path: '/sites?tour=add-new-site',
+			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
-				resetTour( [ 'enableMonitorStep1', 'enableMonitorStep2' ] );
+				resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
 			},
 			id: 'add_sites',
 			title: translate( 'Learn how to add new sites' ),
@@ -80,39 +77,41 @@ export default function OverviewBodyNextSteps( { onDismiss = () => {} } ) {
 	const isCompleted = completedTasks === numberOfTasks;
 
 	return (
-		<div className="next-steps">
-			<div className="next-steps__header">
-				<h2>{ isCompleted ? translate( '🎉 Congratulations!' ) : translate( 'Next Steps' ) }</h2>
-				<CircularProgressBar
-					size={ 32 }
-					enableDesktopScaling
-					numberOfSteps={ numberOfTasks }
-					currentStep={ completedTasks }
-				/>
+		<Card>
+			<div className="next-steps">
+				<div className="next-steps__header">
+					<h2>{ isCompleted ? translate( '🎉 Congratulations!' ) : translate( 'Next Steps' ) }</h2>
+					<CircularProgressBar
+						size={ 32 }
+						enableDesktopScaling
+						numberOfSteps={ numberOfTasks }
+						currentStep={ completedTasks }
+					/>
+				</div>
+				{ isCompleted && (
+					<p>
+						{ translate(
+							"Right now there's nothing left for you to do. We'll let you know when anything needs your attention."
+						) }{ ' ' }
+						<button
+							className="dismiss"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_dismiss_click' )
+								);
+								onDismiss();
+							} }
+						>
+							{ translate( 'Hide' ) }
+						</button>
+					</p>
+				) }
+				<Checklist>
+					{ tasks.map( ( task ) => (
+						<ChecklistItem task={ task } key={ task.id } />
+					) ) }
+				</Checklist>
 			</div>
-			{ isCompleted && (
-				<p>
-					{ translate(
-						"Right now there's nothing left for you to do. We'll let you know when anything needs your attention."
-					) }{ ' ' }
-					<button
-						className="dismiss"
-						onClick={ () => {
-							dispatch(
-								recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_dismiss_click' )
-							);
-							onDismiss();
-						} }
-					>
-						{ translate( 'Hide' ) }
-					</button>
-				</p>
-			) }
-			<Checklist>
-				{ tasks.map( ( task ) => (
-					<ChecklistItem task={ task } key={ task.id } />
-				) ) }
-			</Checklist>
-		</div>
+		</Card>
 	);
 }

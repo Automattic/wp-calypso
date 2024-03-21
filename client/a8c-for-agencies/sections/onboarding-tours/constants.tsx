@@ -1,16 +1,14 @@
 /**
  * Constant holding all preference names for our onboarding tours.
  */
-export const JETPACK_MANAGE_ONBOARDING_TOURS_PREFERENCE_NAME: Record< string, string > = {
-	addSiteStep1: 'jetpack-manage-site-dashboard-add-new-site-tour-step-1',
-	addSiteStep2: 'jetpack-manage-site-dashboard-add-new-site-tour-step-2',
-	enableMonitorStep1: 'jetpack-manage-site-dashboard-enable-monitor-tour-step-1',
-	enableMonitorStep2: 'jetpack-manage-site-dashboard-enable-monitor-tour-step-2',
-	dashboardWalkthrough: 'jetpack-manage-sites-overview-dashboard-walkthrough-tour',
-	pluginOverview: 'jetpack-manage-plugin-management-v2-plugin-overview-tour',
+export const A4A_ONBOARDING_TOURS_PREFERENCE_NAME: Record< string, string > = {
+	addSiteStep1: 'a4a-sites-add-new-site-tour-step-1',
+	addSiteStep2: 'a4a-sites-add-new-site-tour-step-2',
+	sitesWalkthrough: 'a4a-sites-tour',
+	exploreMarketplace: 'a4a-marketplace-tour',
 };
 
-export const JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE = [
+export const A4A_ONBOARDING_TOURS_EXAMPLE_SITE = [
 	{
 		site: {
 			value: {

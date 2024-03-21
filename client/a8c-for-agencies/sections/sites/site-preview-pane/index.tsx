@@ -86,7 +86,10 @@ export default function SitePreviewPane( {
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
-			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+			<SectionNav
+				className="preview-pane__navigation site-preview__tabs"
+				selectedText={ selectedFeature.tab.label }
+			>
 				{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
 					<NavTabs>{ navItems }</NavTabs>
 				) : null }

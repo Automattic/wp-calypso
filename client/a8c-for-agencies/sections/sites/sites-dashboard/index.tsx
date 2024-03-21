@@ -14,14 +14,15 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
+import SitesDataViews from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews';
+import SiteTopHeaderButtons from 'calypso/a8c-for-agencies/sections/sites/sites-top-header-buttons';
 import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
-import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilterMap,
@@ -32,6 +33,9 @@ import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import AddNewSiteTourStep1 from '../../onboarding-tours/add-new-site-tour-step-1';
+import AddNewSiteTourStep2 from '../../onboarding-tours/add-new-site-tour-step-2';
+import { sitesWalkthroughTour } from '../../onboarding-tours/sites-walkthrough-tour';
 import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
@@ -185,6 +189,13 @@ export default function SitesDashboard() {
 		}
 	}, [ refetch, jetpackSiteDisconnected ] );
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const shouldRenderSitesTour = true || urlParams.get( 'tour' ) === 'sites-walkthrough';
+	let tour = null;
+	if ( shouldRenderSitesTour ) {
+		tour = sitesWalkthroughTour;
+	}
+
 	// This is a basic representation of the feature families for now, with just the Overview tab.
 	const navItems = [
 		{
@@ -202,70 +213,73 @@ export default function SitesDashboard() {
 	};
 
 	return (
-		<Layout
-			title="Sites"
-			className={ classNames(
-				'sites-dashboard',
-				'sites-dashboard__layout',
-				! sitesViewState.selectedSite && 'preview-hidden'
-			) }
-			wide
-			withBorder={ ! sitesViewState.selectedSite }
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
-			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop withNavigation>
-					<LayoutHeader>
-						<Title>{ translate( 'Sites' ) }</Title>
-						<Actions>
-							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
-							<SiteTopHeaderButtons />
-						</Actions>
-					</LayoutHeader>
-					<LayoutNavigation { ...selectedItemProps }>
-						<NavigationTabs { ...selectedItemProps } items={ navItems } />
-					</LayoutNavigation>
-				</LayoutTop>
+		<GuidedTourContextProvider tour={ tour ?? undefined }>
+			<Layout
+				title="Sites"
+				className={ classNames(
+					'sites-dashboard',
+					'sites-dashboard__layout',
+					! sitesViewState.selectedSite && 'preview-hidden'
+				) }
+				wide
+				withBorder={ ! sitesViewState.selectedSite }
+				sidebarNavigation={ <MobileSidebarNavigation /> }
+			>
+				<LayoutColumn className="sites-overview" wide>
+					<LayoutTop withNavigation>
+						<LayoutHeader>
+							<Title>{ translate( 'Sites' ) }</Title>
+							<Actions>
+								<SiteTopHeaderButtons />
+							</Actions>
+						</LayoutHeader>
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					</LayoutTop>
 
-				<SiteNotifications />
+					<SiteNotifications />
+					<AddNewSiteTourStep1 />
 
-				<DashboardDataContext.Provider
-					value={ {
-						verifiedContacts: {
-							emails: verifiedContacts?.emails ?? [],
-							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-							refetchIfFailed: () => {
-								if ( fetchContactFailed ) {
-									refetchContacts();
-								}
-								return;
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
 							},
-						},
-						products: products ?? [],
-						isLargeScreen: isLargeScreen || false,
-					} }
-				>
-					<SitesDataViews
-						className="sites-overview__content"
-						data={ data }
-						isLoading={ isLoading }
-						isLargeScreen={ isLargeScreen || false }
-						onSitesViewChange={ onSitesViewChange }
-						sitesViewState={ sitesViewState }
-					/>
-				</DashboardDataContext.Provider>
-			</LayoutColumn>
-
-			{ sitesViewState.selectedSite && (
-				<LayoutColumn className="site-preview-pane" wide>
-					<OverviewFamily
-						site={ sitesViewState.selectedSite }
-						closeSitePreviewPane={ closeSitePreviewPane }
-						isSmallScreen={ ! isLargeScreen }
-						hasError={ isError }
-					/>
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<SitesDataViews
+							className="sites-overview__content"
+							data={ data }
+							isLoading={ isLoading }
+							isLargeScreen={ isLargeScreen || false }
+							onSitesViewChange={ onSitesViewChange }
+							sitesViewState={ sitesViewState }
+						/>
+						<AddNewSiteTourStep2 siteItems={ data?.sites } />
+					</DashboardDataContext.Provider>
 				</LayoutColumn>
-			) }
-		</Layout>
+
+				{ sitesViewState.selectedSite && (
+					<LayoutColumn className="site-preview-pane" wide>
+						<OverviewFamily
+							site={ sitesViewState.selectedSite }
+							closeSitePreviewPane={ closeSitePreviewPane }
+							isSmallScreen={ ! isLargeScreen }
+							hasError={ isError }
+						/>
+					</LayoutColumn>
+				) }
+			</Layout>
+		</GuidedTourContextProvider>
 	);
 }

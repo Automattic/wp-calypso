@@ -1,0 +1,21 @@
+.onboarding-tours__guided-tour {
+	.guided-tour__popover-heading {
+		font-size: rem(16px);
+	}
+
+	.guided-tour__popover-description {
+		font-size: rem(14px);
+	}
+
+	.guided-tour__popover-step-count,
+	.guided-tour__popover-footer-right-content .button {
+		font-size: rem(13px);
+	}
+
+	.button:not(.is-borderless) {
+		padding: 5px 16px;
+		background-color: var(--studio-jetpack-green-50);
+		border-color: var(--studio-jetpack-green-50);
+		color: var(--color-text-inverted);
+	}
+}
