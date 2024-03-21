@@ -11,7 +11,7 @@ import {
 	category as iconCategory,
 	menu as iconMenu,
 } from '@wordpress/icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
