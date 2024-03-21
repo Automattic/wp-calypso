@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -35,6 +35,13 @@ export default function SitePreviewPane( {
 	closeSitePreviewPane,
 	className,
 }: SitePreviewPaneProps ) {
+	const [ canDisplayNavTabs, setCanDisplayNavTabs ] = useState( false );
+	useEffect( () => {
+		setTimeout( () => {
+			setCanDisplayNavTabs( true );
+		}, 100 );
+	}, [] );
+
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
 		return null;
@@ -71,11 +78,11 @@ export default function SitePreviewPane( {
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
-			{ navItems && navItems.length > 0 ? (
-				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
-					<NavTabs selectedText={ selectedFeature.tab.label }>{ navItems }</NavTabs>
-				</SectionNav>
-			) : null }
+			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+				{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
+					<NavTabs>{ navItems }</NavTabs>
+				) : null }
+			</SectionNav>
 			{ selectedFeature.preview }
 		</div>
 	);
