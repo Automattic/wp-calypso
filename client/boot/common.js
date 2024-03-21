@@ -417,9 +417,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
-	onDisablePersistence( () => {
-		unsubscribePersister();
-	} );
+	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
 	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );
