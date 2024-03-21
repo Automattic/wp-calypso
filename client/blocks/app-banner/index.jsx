@@ -204,10 +204,10 @@ export class AppBanner extends Component {
 			</div>
 		);
 	};
-
 	render() {
 		if (
 			! this.props.shouldDisplayAppBanner ||
+			this.props.shouldShowWhatsNew ||
 			this.state.isDraftPostModalShown ||
 			this.state.isLaunchpadEnabled
 		) {

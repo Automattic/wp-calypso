@@ -20,7 +20,7 @@ export const useSeenWhatsNewAnnouncementsMutation = () => {
 		mutationFn: async ( seenAnnouncenmentIds: string[] ) => {
 			return canAccessWpcomApis()
 				? await wpcomRequest( {
-						path: `/whats-new/seen-announcement-ids-1`,
+						path: `/whats-new/seen-announcement-ids`,
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: {
@@ -29,7 +29,7 @@ export const useSeenWhatsNewAnnouncementsMutation = () => {
 				  } )
 				: await apiFetch( {
 						global: true,
-						path: `/wpcom/v2/whats-new/seen-announcement-ids-1`,
+						path: `/wpcom/v2/whats-new/seen-announcement-ids`,
 						method: 'POST',
 						data: { seen_announcement_ids: seenAnnouncenmentIds },
 				  } as APIFetchOptions );

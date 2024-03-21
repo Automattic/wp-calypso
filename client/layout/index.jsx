@@ -173,6 +173,26 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	return null;
 }
 
+function AppBannerLoader( siteId ) {
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
+		}
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
+
+	return (
+		<AsyncLoad
+			require="calypso/blocks/app-banner"
+			placeholder={ null }
+			shouldShowWhatsNew={ showWhatsNew }
+		/>
+	);
+}
+
 class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
@@ -396,9 +416,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
-				) }
+				{ config.isEnabled( 'layout/app-banner' ) && <AppBannerLoader /> }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
