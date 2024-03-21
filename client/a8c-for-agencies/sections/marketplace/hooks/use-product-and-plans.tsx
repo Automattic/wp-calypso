@@ -182,7 +182,7 @@ export default function useProductAndPlans( {
 				filteredProductsAndBundles
 			),
 			pressablePlans: getProductsAndPlansByFilter(
-				PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
+				PRODUCT_FILTER_PRESSABLE_PLANS,
 				filteredProductsAndBundles
 			),
 			suggestedProductSlugs,
