@@ -3,7 +3,7 @@
 
 
 .a4a-offering-card__wrapper {
-	padding-top: 16px;
+	padding-block-start: 16px;
 
 	.a4a-offering-card__title {
 		font-weight: 500;
@@ -17,7 +17,7 @@
 		font-size: 0.875rem;
 		line-height: 20px;
 		color: var(--studio-gray-60);
-		margin-bottom: 16px;
+		margin-block-end: 16px;
 	}
 
 	.a4a-offering-item__card {
@@ -31,7 +31,7 @@
 				color: var(--studio-gray-100);
 				font-weight: 500;
 				font-size: 1rem;
-				margin-left: 10px;
+				margin-inline-start: 10px;
 			}
 		}
 
@@ -43,7 +43,7 @@
 
 		.foldable-card__content {
 			border: none;
-			padding-top: 0;
+			padding-block-start: 0;
 		}
 	}
 
@@ -70,7 +70,7 @@
 	}
 
 	.a4a-offering-item__icon-container {
-		margin-right: 10px;
+		margin-inline-end: 10px;
 
 		.a4a-offering-item__gridicon {
 			fill: var(--color-primary-20);
