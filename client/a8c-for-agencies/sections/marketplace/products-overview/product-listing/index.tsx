@@ -11,13 +11,13 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/incompatible-products';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FilterSearch from '../../../../components/filter-search';
 import { ShoppingCartContext } from '../../context';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
 import useProductAndPlans from './hooks/use-product-and-plans';
 import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
-import ProductFilterSearch from './product-filter-search';
 import ProductListingSection from './sections';
 import VolumePriceSelector from './volume-price-selector';
 import type { ShoppingCartItem } from '../../types';
@@ -278,8 +278,9 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 			<QueryProductsList currency="USD" />
 
 			<div className="product-listing__actions">
-				<ProductFilterSearch
-					onProductSearch={ onProductSearch }
+				<FilterSearch
+					label={ translate( 'Search plans, products, add-ons, and extensions' ) }
+					onSearch={ onProductSearch }
 					onClick={ trackClickCallback( 'search' ) }
 				/>
 
