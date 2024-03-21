@@ -8,5 +8,4 @@ export interface AgencyDetailsPayload {
 	postalCode: string;
 	state: string;
 	tos?: 'consented';
-	referrer?: string;
 }

@@ -2,15 +2,15 @@ import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import AgencyDetailsForm from 'calypso/a8c-for-agencies/components/agency-details-form';
-import useCreatePartnerMutation from 'calypso/a8c-for-agencies/components/agency-details-form/hooks/use-create-partner-mutation';
+import AgencyDetailsForm from 'calypso/a8c-for-agencies/sections/signup/agency-details-form';
+import useCreatePartnerMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-partner-mutation';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import CardHeading from 'calypso/components/card-heading';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
-import type { AgencyDetailsPayload } from 'calypso/a8c-for-agencies/components/agency-details-form/types';
+import type { AgencyDetailsPayload } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/types';
 import type { APIError } from 'calypso/state/partner-portal/types';
 
 import './style.scss';

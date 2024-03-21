@@ -4,7 +4,7 @@ import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SearchableDropdown from '../searchable-dropdown';
+import SearchableDropdown from '../../../components/searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import { AgencyDetailsPayload } from './types';
 
@@ -28,11 +28,9 @@ interface Props {
 	includeTermsOfService?: boolean;
 	isLoading: boolean;
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
-	referrer?: string;
 	initialValues?: {
 		agencyName?: string;
 		businessUrl?: string;
-		partnerProgramOptIn?: boolean;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -49,7 +47,6 @@ export default function AgencyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
-	referrer,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
@@ -81,7 +78,6 @@ export default function AgencyDetailsForm( {
 			line2,
 			country,
 			postalCode,
-			referrer,
 			state: addressState,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
@@ -93,7 +89,6 @@ export default function AgencyDetailsForm( {
 			line2,
 			country,
 			postalCode,
-			referrer,
 			addressState,
 			includeTermsOfService,
 		]
