@@ -9,14 +9,14 @@ import { isProductMatch } from 'calypso/jetpack-cloud/sections/partner-portal/pr
 import { useSelector } from 'calypso/state';
 import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import isPressableHostingProduct from '../../../lib/is-pressable-hosting-product';
+import isPressableHostingProduct from '../lib/is-pressable-hosting-product';
 import {
 	PRODUCT_FILTER_ALL,
 	PRODUCT_FILTER_PLANS,
 	PRODUCT_FILTER_PRODUCTS,
 	PRODUCT_FILTER_VAULTPRESS_BACKUP_ADDONS,
 	PRODUCT_FILTER_WOOCOMMERCE_EXTENSIONS,
-} from '../constants';
+} from '../products-overview/product-listing/constants';
 import type { SiteDetails } from '@automattic/data-stores';
 
 // Plans and Products that we can merged into 1 card.
