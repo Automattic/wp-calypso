@@ -50,6 +50,7 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 		return undefined;
 	}
 	return {
+		isForBusiness: extra.is_for_business ?? false,
 		ca: {
 			lang: extra.ca?.lang,
 			legalType: extra.ca?.legal_type,
