@@ -36,6 +36,10 @@ export default function SitePreviewPane( {
 	className,
 }: SitePreviewPaneProps ) {
 	const [ canDisplayNavTabs, setCanDisplayNavTabs ] = useState( false );
+
+	// For future iterations lets consider something other than SectionNav due to the
+	// manipulation we need to make so that the navigation shows correctly on some smaller
+	// screens within the PreviewPane (hence the timeout).
 	useEffect( () => {
 		setTimeout( () => {
 			setCanDisplayNavTabs( true );
