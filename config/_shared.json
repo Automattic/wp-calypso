@@ -179,7 +179,8 @@
 		"jetpack-cloud-settings": false,
 		"jetpack-cloud-golden-token": false,
 		"jetpack-social": false,
-		"jetpack-subscribers": false
+		"jetpack-subscribers": false,
+		"jetpack-earn": false
 	},
 	"site_filter": [],
 	"theme": "default",

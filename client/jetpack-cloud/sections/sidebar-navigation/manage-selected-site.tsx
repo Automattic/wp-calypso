@@ -39,6 +39,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
+	JETPACK_CLOUD_EARN_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
 	JETPACK_CLOUD_SUBSCRIBERS_LINK,
@@ -142,6 +143,15 @@ const useMenuItems = ( {
 					trackEventName: 'calypso_jetpack_sidebar_subscribers_clicked',
 					enabled: isAdmin && isSectionNameEnabled( 'jetpack-subscribers' ) && ! isWPForTeamsSite,
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }` ),
+				},
+				{
+					icon: currencyDollar,
+					path: '/',
+					link: `${ JETPACK_CLOUD_EARN_LINK }/${ siteSlug }`,
+					title: translate( 'Earn' ),
+					trackEventName: 'calypso_jetpack_sidebar_earn_clicked',
+					enabled: isAdmin && isSectionNameEnabled( 'jetpack-earn' ) && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_EARN_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: settings,
