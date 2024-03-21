@@ -6,9 +6,9 @@ import {
 	render as clientRender,
 } from 'calypso/controller/index.web';
 import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
+import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { CATEGORY_NOT_FOUND } from 'calypso/my-sites/patterns/constants';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import {
 	PatternTypeFilter,
@@ -19,10 +19,20 @@ import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
 
+function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
+	context.primary = (
+		<PatternsWrapper>
+			<PatternsCategoryNotFound />
+		</PatternsWrapper>
+	);
+
+	next();
+}
+
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper category={ context.params.category }>
+			<PatternsWrapper>
 				<PatternLibrary
 					category={ context.params.category }
 					categoryGallery={ CategoryGalleryClient }
@@ -51,7 +61,9 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 				const categoryNames = categories.map( ( category ) => category.name );
 
 				if ( ! categoryNames.includes( params.category ) ) {
-					params.category = CATEGORY_NOT_FOUND;
+					renderCategoryNotFound( context, next );
+
+					return;
 				}
 			}
 

@@ -4,7 +4,6 @@ import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/l
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { CATEGORY_NOT_FOUND } from 'calypso/my-sites/patterns/constants';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
@@ -23,7 +22,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'renderPatterns' );
 
 	context.primary = (
-		<PatternsWrapper category={ context.params.category }>
+		<PatternsWrapper>
 			<PatternLibrary
 				category={ context.params.category }
 				categoryGallery={ CategoryGalleryServer }
@@ -43,7 +42,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'fetchCategoriesAndPatterns' );
 
-	const { cachedMarkup, queryClient, lang, params, res, store } = context;
+	const { cachedMarkup, queryClient, lang, params, store } = context;
 
 	// Bypasses fetching if the rendered page is cached, or if any query parameters were passed in the URL
 	if ( cachedMarkup || Object.keys( context.query ).length > 0 ) {
@@ -67,12 +66,10 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 			const categoryNames = categories.map( ( category ) => category.name );
 
 			if ( ! categoryNames.includes( params.category ) ) {
-				params.category = CATEGORY_NOT_FOUND;
-				res.status( 404 );
-
-				next();
-
-				return;
+				throw {
+					status: 404,
+					message: 'Category Not Found',
+				};
 			}
 
 			performanceMark( context, 'getPatterns', true );
