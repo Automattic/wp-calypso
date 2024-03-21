@@ -418,8 +418,6 @@ const boot = async ( currentUser, registerRoutes ) => {
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( () => {
-		queryClient.clear();
-		queryClient.setDefaultOptions( { queries: { cacheTime: 0 } } );
 		unsubscribePersister();
 	} );
 	setupLocale( currentUser, reduxStore );
