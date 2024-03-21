@@ -1,0 +1,5 @@
+{
+	"rules": {
+		"wpcalypso/i18n-translate-identifier": "off"
+	}
+}

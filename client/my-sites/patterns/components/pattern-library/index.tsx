@@ -11,6 +11,7 @@ import {
 	category as iconCategory,
 	menu as iconMenu,
 } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -88,6 +89,7 @@ export const PatternLibrary = ( {
 	searchTerm: urlQuerySearchTerm,
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
+	const translate_not_yet = useTranslate();
 
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm ?? '' );
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -148,15 +150,17 @@ export const PatternLibrary = ( {
 		<>
 			<PatternsPageViewTracker category={ category } searchTerm={ searchTerm } />
 
-			<DocumentHead title="WordPress Patterns - Category" />
+			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
 
 			<PatternsHeader
-				description="Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster."
+				description={ translate_not_yet(
+					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
+				) }
 				initialSearchTerm={ searchTerm }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title="It’s Easier With Patterns"
+				title={ translate_not_yet( 'It’s Easier With Patterns' ) }
 			/>
 
 			<div className="pattern-library__pill-navigation">
@@ -165,13 +169,13 @@ export const PatternLibrary = ( {
 					buttons={ [
 						{
 							icon: <Icon icon={ iconStar } size={ 30 } />,
-							label: 'Discover',
+							label: translate_not_yet( 'Discover' ),
 							link: addLocaleToPathLocaleInFront( '/patterns' ),
 							isActive: isHomePage,
 						},
 						{
 							icon: <Icon icon={ iconCategory } size={ 26 } />,
-							label: 'All Categories',
+							label: translate_not_yet( 'All Categories' ),
 							link: '/222',
 						},
 					] }
@@ -181,8 +185,10 @@ export const PatternLibrary = ( {
 
 			{ isHomePage && (
 				<CategoryGallery
-					title="Ship faster, ship more"
-					description="Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time."
+					title={ translate_not_yet( 'Ship faster, ship more' ) }
+					description={ translate_not_yet(
+						'Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time.'
+					) }
 					categories={ categories }
 					patternTypeFilter={ PatternTypeFilter.REGULAR }
 				/>
@@ -192,7 +198,12 @@ export const PatternLibrary = ( {
 				<PatternLibraryBody className="pattern-library">
 					<div className="pattern-library__header">
 						<h1 className="pattern-library__title">
-							{ searchTerm ? `${ patterns.length } patterns` : 'Patterns' }
+							{ searchTerm
+								? translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
+										count: patterns.length,
+										args: { count: patterns.length },
+								  } )
+								: translate_not_yet( 'Patterns' ) }
 						</h1>
 
 						{ category && (
@@ -210,13 +221,13 @@ export const PatternLibrary = ( {
 							>
 								<ToggleGroupControlOption
 									className="pattern-library__toggle-option"
-									label="Patterns"
+									label={ translate_not_yet( 'Patterns' ) }
 									value={ PatternTypeFilter.REGULAR }
 								/>
 								<ToggleGroupControlOption
 									className="pattern-library__toggle-option"
 									disabled={ categoryObject?.pagePatternCount === 0 }
-									label="Page layouts"
+									label={ translate_not_yet( 'Page layouts' ) }
 									value={ PatternTypeFilter.PAGES }
 								/>
 							</ToggleGroupControl>
@@ -257,8 +268,10 @@ export const PatternLibrary = ( {
 
 			{ isHomePage && (
 				<CategoryGallery
-					title="Beautifully curated page layouts"
-					description="Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right."
+					title={ translate_not_yet( 'Beautifully curated page layouts' ) }
+					description={ translate_not_yet(
+						'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
+					) }
 					categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
 					patternTypeFilter={ PatternTypeFilter.PAGES }
 				/>
