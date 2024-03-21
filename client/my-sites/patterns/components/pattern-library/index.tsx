@@ -115,6 +115,14 @@ export const PatternLibrary = ( {
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
 	const recordViewChange = ( view: 'grid' | 'list' ) => {
+		const searchParams = new URLSearchParams( location.search );
+		const previousView = searchParams.get( 'grid' ) === '1' ? 'grid' : 'list';
+
+		// Let's only track the change if the view changes
+		if ( previousView === view ) {
+			return;
+		}
+
 		recordTracksEvent( 'calypso_pattern_library_view_switch', {
 			category,
 			is_logged_in: isLoggedIn,
@@ -124,13 +132,8 @@ export const PatternLibrary = ( {
 		} );
 	};
 
-	const handleAndRecordViewChange = ( view: 'grid' | 'list' ) => {
-		const searchParams = new URLSearchParams( location.search );
-		const previousView = searchParams.get( 'grid' ) === '1' ? 'grid' : 'list';
-
-		if ( previousView !== view ) {
-			recordViewChange( view );
-		}
+	const trackAndHandleViewChange = ( view: 'grid' | 'list' ) => {
+		recordViewChange( view );
 
 		handleSettingView( view );
 	};
@@ -240,13 +243,13 @@ export const PatternLibrary = ( {
 								className="pattern-library__toggle-option--list-view"
 								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 								value="list"
-								onClick={ () => handleAndRecordViewChange( 'list' ) }
+								onClick={ () => trackAndHandleViewChange( 'list' ) }
 							/>
 							<ToggleGroupControlOption
 								className="pattern-library__toggle-option--grid-view"
 								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 								value="grid"
-								onClick={ () => handleAndRecordViewChange( 'grid' ) }
+								onClick={ () => trackAndHandleViewChange( 'grid' ) }
 							/>
 						</ToggleGroupControl>
 					</div>
