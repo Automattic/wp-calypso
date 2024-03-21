@@ -47,8 +47,7 @@ export default function SignupForm() {
 				} )
 			);
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ notificationId, createAgency.mutate, dispatch ]
+		[ notificationId, createAgency, dispatch ]
 	);
 
 	return (
