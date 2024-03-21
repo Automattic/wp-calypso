@@ -445,14 +445,7 @@ function DIFMPagePicker( props: StepProps ) {
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site' || siteSlug;
 
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
-	const {
-		isCartLoading,
-		isCartPendingUpdate,
-		isCartUpdateStarted,
-		isProductsLoading,
-		isFormattedCurrencyLoading,
-		effectiveCurrencyCode,
-	} = useCartForDIFM( selectedPages, isStoreFlow, isExistingSite );
+	const { isProductsLoading, effectiveCurrencyCode } = useCartForDIFM( selectedPages, isStoreFlow );
 
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	let difmTieredPriceDetails = null;
@@ -496,12 +489,7 @@ function DIFMPagePicker( props: StepProps ) {
 	};
 
 	const isCheckoutButtonBusy =
-		( isExistingSite &&
-			( isProductsLoading ||
-				isCartPendingUpdate ||
-				isCartLoading ||
-				isCartUpdateStarted ||
-				isLoadingIsEligibleForOneClickCheckout ) ) ||
+		( isExistingSite && ( isProductsLoading || isLoadingIsEligibleForOneClickCheckout ) ) ||
 		isCheckoutPressed;
 
 	const isBusyForWhile = useLongFetchingDetection( 'difm-page-picker', isCheckoutButtonBusy, 5000 );
@@ -513,9 +501,6 @@ function DIFMPagePicker( props: StepProps ) {
 			const message =
 				'Page Picker Infinite Loading state:' +
 				` isProductsLoading: ${ isProductsLoading }` +
-				` isCartPendingUpdate: ${ isCartPendingUpdate }` +
-				` isCartLoading: ${ isCartLoading }` +
-				` isCartUpdateStarted: ${ isCartUpdateStarted }` +
 				` isLoadingIsEligibleForOneClickCheckout: ${ isLoadingIsEligibleForOneClickCheckout }`;
 			logToLogstash( {
 				feature: 'calypso_client',
@@ -523,14 +508,7 @@ function DIFMPagePicker( props: StepProps ) {
 				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 			} );
 		}
-	}, [
-		isBusyForWhile,
-		isCartLoading,
-		isCartPendingUpdate,
-		isCartUpdateStarted,
-		isLoadingIsEligibleForOneClickCheckout,
-		isProductsLoading,
-	] );
+	}, [ isBusyForWhile, isLoadingIsEligibleForOneClickCheckout, isProductsLoading ] );
 
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
@@ -543,12 +521,7 @@ function DIFMPagePicker( props: StepProps ) {
 				{
 					components: {
 						br: <br />,
-						PriceWrapper:
-							difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
-								<span />
-							) : (
-								<Placeholder />
-							),
+						PriceWrapper: difmTieredPriceDetails?.perExtraPagePrice ? <span /> : <Placeholder />,
 					},
 					args: {
 						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
@@ -568,12 +541,7 @@ function DIFMPagePicker( props: StepProps ) {
 				{
 					components: {
 						br: <br />,
-						PriceWrapper:
-							difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
-								<span />
-							) : (
-								<Placeholder />
-							),
+						PriceWrapper: difmTieredPriceDetails?.perExtraPagePrice ? <span /> : <Placeholder />,
 					},
 					args: {
 						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
@@ -619,7 +587,7 @@ function DIFMPagePicker( props: StepProps ) {
 			isWideLayout={ false }
 			headerButton={
 				<StyledButton
-					disabled={ isFormattedCurrencyLoading }
+					disabled={ isProductsLoading }
 					busy={ isCheckoutButtonBusy }
 					primary
 					onClick={ submitPickedPages }
@@ -628,11 +596,7 @@ function DIFMPagePicker( props: StepProps ) {
 				</StyledButton>
 			}
 			headerContent={
-				<ShoppingCartForDIFM
-					selectedPages={ selectedPages }
-					isStoreFlow={ isStoreFlow }
-					isExistingSite={ isExistingSite }
-				/>
+				<ShoppingCartForDIFM selectedPages={ selectedPages } isStoreFlow={ isStoreFlow } />
 			}
 			{ ...props }
 		/>

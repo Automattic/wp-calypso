@@ -162,19 +162,13 @@ function DummyLineItem( {
 export default function ShoppingCartForDIFM( {
 	selectedPages,
 	isStoreFlow,
-	isExistingSite,
 }: {
 	selectedPages: string[];
 	isStoreFlow: boolean;
-	isExistingSite: boolean;
 } ) {
 	const translate = useTranslate();
-	const { items, total, effectiveCurrencyCode, isFormattedCurrencyLoading } = useCartForDIFM(
-		selectedPages,
-		isStoreFlow,
-		isExistingSite
-	);
-	return isFormattedCurrencyLoading || effectiveCurrencyCode === null ? (
+	const { items, total, effectiveCurrencyCode } = useCartForDIFM( selectedPages, isStoreFlow );
+	return effectiveCurrencyCode === null ? (
 		<LoadingContainer>
 			<LoadingLine key="plan-placeholder" />
 			<LoadingLine key="difm-placeholder" />
