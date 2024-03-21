@@ -55,8 +55,20 @@ export const CategoryPillNavigation = ( {
 	};
 
 	useEffect( () => {
+		if ( ! listRef.current ) {
+			return;
+		}
+
 		checkScrollArrows();
-	}, [] );
+
+		const target = listRef.current.querySelector( '.is-active' );
+
+		target?.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'nearest',
+			inline: 'center',
+		} );
+	}, [ selectedCategory ] );
 
 	return (
 		<div className="category-pill-navigation">

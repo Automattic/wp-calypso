@@ -24,7 +24,7 @@ export function usePatternSearchTerm(
 		}
 
 		if ( url.href !== location.href ) {
-			page.redirect( url.href );
+			page( url.href.replace( url.origin, '' ) );
 		}
 	}, [ searchTerm ] );
 
