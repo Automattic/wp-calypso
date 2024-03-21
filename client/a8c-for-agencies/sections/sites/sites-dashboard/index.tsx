@@ -218,7 +218,7 @@ export default function SitesDashboard() {
 			</LayoutColumn>
 
 			{ sitesViewState.selectedSite && (
-				<LayoutColumn wide>
+				<LayoutColumn className="site-preview-pane" wide>
 					<JetpackPreviewPane
 						site={ sitesViewState.selectedSite }
 						closeSitePreviewPane={ closeSitePreviewPane }
