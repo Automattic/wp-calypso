@@ -48,7 +48,7 @@ export default async function razorpayProcessor(
 	if ( submitData == null || typeof submitData !== 'object' ) {
 		throw new Error( 'submitData must be an object' );
 	}
-	const validationResult = validateRazorpaySubmitData( submitData );
+	const validationResult = validateRazorpaySubmitData( submitData, translate );
 	debug( { validationResult: validationResult } );
 	if ( 'error' in validationResult ) {
 		debug( 'Submit data failed validation:' + validationResult.error );
@@ -161,19 +161,22 @@ type RazorpaySubmitData = {
 	email: string;
 };
 
-function validateRazorpaySubmitData( submitData: object ): RazorpaySubmitData | { error: string } {
+function validateRazorpaySubmitData(
+	submitData: object,
+	translate: LocalizeProps[ 'translate' ]
+): RazorpaySubmitData | { error: string } {
 	if ( ! ( 'phoneNumber' in submitData ) ) {
-		return { error: 'Please enter a phone number.' };
+		return { error: translate( 'Please enter a phone number.' ) };
 	}
 	if ( ! ( 'email' in submitData ) ) {
-		return { error: 'Please enter an email address.' };
+		return { error: translate( 'Please enter an email address.' ) };
 	}
 	const { phoneNumber, email } = submitData;
 	if ( typeof phoneNumber !== 'string' || ! phoneNumber.length ) {
-		return { error: 'Please enter a phone number.' };
+		return { error: translate( 'Please enter a phone number.' ) };
 	}
 	if ( typeof email !== 'string' || ! email.length || ! email.includes( '@' ) ) {
-		return { error: 'Please enter a valid email address.' };
+		return { error: translate( 'Please enter a valid email address.' ) };
 	}
 	return { phoneNumber, email };
 }
