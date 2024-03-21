@@ -21,6 +21,7 @@ import { VatForm } from './vat-form';
 import type {
 	CountryListItem,
 	ManagedContactDetails,
+	ManagedContactDetailsTldExtraFieldsShape,
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
 import type { ChangeEvent, ReactElement } from 'react';
@@ -59,7 +60,7 @@ export default function TaxFields( {
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
-	const { postalCode, countryCode, city, state, organization, address1, isForBusiness } = taxInfo;
+	const { postalCode, countryCode, city, state, organization, address1, tldExtraFields } = taxInfo;
 	const arePostalCodesSupported =
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
@@ -95,6 +96,7 @@ export default function TaxFields( {
 							state,
 							organization,
 							address: address1,
+							isForBusiness: tldExtraFields?.isForBusiness,
 						},
 						arePostalCodesSupported,
 						taxRequirements
@@ -130,6 +132,7 @@ export default function TaxFields( {
 								state,
 								organization,
 								address: address1,
+								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -162,6 +165,7 @@ export default function TaxFields( {
 								state,
 								organization,
 								address: address1,
+								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -191,6 +195,7 @@ export default function TaxFields( {
 								state: { value: event.target.value, errors: [], isTouched: true },
 								organization,
 								address: address1,
+								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -218,6 +223,7 @@ export default function TaxFields( {
 								state,
 								organization: { value: newValue, errors: [], isTouched: true },
 								address: address1,
+								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -246,6 +252,7 @@ export default function TaxFields( {
 								state,
 								organization,
 								address: { value: newValue, errors: [], isTouched: true },
+								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -261,7 +268,7 @@ export default function TaxFields( {
 			<CheckboxControl
 				id={ section + '-business-checkbox' }
 				label={ translate( 'Is this purchase for business?', { textOnly: true } ) }
-				checked={ isForBusiness }
+				checked={ tldExtraFields?.isForBusiness ?? false }
 				disabled={ isDisabled }
 				onChange={ ( newValue ) => {
 					onChange(
@@ -309,7 +316,7 @@ function updateOnChangePayload(
 		state: ManagedContactDetails[ 'state' ] | undefined;
 		organization: ManagedContactDetails[ 'organization' ] | undefined;
 		address: ManagedContactDetails[ 'address1' ] | undefined;
-		isForBusiness?: ManagedContactDetails[ 'isForBusiness' ] | undefined;
+		isForBusiness?: ManagedContactDetailsTldExtraFieldsShape< boolean >[ 'isForBusiness' ];
 	},
 	arePostalCodesSupported: boolean,
 	taxRequirements: CountryTaxRequirements
@@ -321,7 +328,9 @@ function updateOnChangePayload(
 		state: taxRequirements.subdivision ? taxInfo.state : undefined,
 		organization: taxRequirements.organization ? taxInfo.organization : undefined,
 		address1: taxRequirements.address ? taxInfo.address : undefined,
-		isForBusiness: taxInfo.isForBusiness,
+		tldExtraFields: {
+			isForBusiness: taxInfo.isForBusiness ?? false,
+		},
 	};
 }
 
