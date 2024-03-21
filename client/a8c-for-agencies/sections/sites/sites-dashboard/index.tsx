@@ -23,12 +23,19 @@ import { JetpackPreviewPane } from 'calypso/jetpack-cloud/sections/agency-dashbo
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
-import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { useSelector } from 'calypso/state';
+import {
+	AgencyDashboardFilterMap,
+	Site,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
-import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import {
+	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
+	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+} from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
 
 import './style.scss';
@@ -36,13 +43,15 @@ import './style.scss';
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
+	const dispatch = useDispatch();
 
-	//const { hideListing } = useContext( SitesDashboardContext );
-	const { selectedCategory: category, setSelectedCategory: setCategory } =
-		useContext( SitesDashboardContext );
-
-	const { selectedSiteUrl } = useContext( SitesDashboardContext );
-	const { selectedSiteFeature } = useContext( SitesDashboardContext );
+	const {
+		selectedSiteUrl,
+		selectedSiteFeature,
+		setSelectedSiteFeature,
+		selectedCategory: category,
+		setSelectedCategory: setCategory,
+	} = useContext( SitesDashboardContext );
 
 	const filtersMap = useMemo< AgencyDashboardFilterMap[] >(
 		() => [
@@ -98,6 +107,18 @@ export default function SitesDashboard() {
 		sitesViewState.perPage
 	);
 
+	useEffect( () => {
+		if ( ! isLoading && ! isError && data && selectedSiteUrl ) {
+			const site = data.sites.find( ( site: Site ) => site.url === selectedSiteUrl );
+
+			setSitesViewState( ( prevState ) => ( {
+				...prevState,
+				selectedSite: site,
+				type: 'list',
+			} ) );
+		}
+	}, [ data, isError, isLoading, selectedSiteUrl ] );
+
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
 			setSitesViewState( sitesViewData );
@@ -123,24 +144,38 @@ export default function SitesDashboard() {
 
 	useEffect( () => {
 		// We need a category in the URL if we have a selected site
-		if ( selectedSiteUrl && ! category ) {
+		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		} else if ( category && selectedSiteUrl && selectedSiteFeature ) {
-			page.replace( '/sites/' + category + '/' + selectedSiteUrl + '/' + selectedSiteFeature );
-		} else if ( category && selectedSiteUrl ) {
-			page.replace( '/sites/' + category + '/' + selectedSiteUrl );
-		} else if ( category ) {
-			page.replace( '/sites/' + category );
+		} else if (
+			category &&
+			sitesViewState.selectedSite &&
+			selectedSiteFeature &&
+			selectedSiteFeature !== A4A_SITES_DASHBOARD_DEFAULT_FEATURE // If the selected feature is the default one, we can leave the url a little cleaner.
+		) {
+			page.replace(
+				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
+			);
+		} else if ( category && sitesViewState.selectedSite ) {
+			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }` );
+		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
+			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
+			page.replace( `/sites/${ category }` );
 		} else {
 			page.replace( '/sites' );
 		}
-	}, [ selectedSiteUrl, selectedSiteFeature, category, setCategory ] );
+
+		if ( sitesViewState.selectedSite ) {
+			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
+		}
+	}, [ sitesViewState.selectedSite, selectedSiteFeature, category, setCategory, dispatch ] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			// We reset the feature to its default upon closing, instead of setting it to undefined. This way, when users switch sites while a site is selected, the feature remains consistent.
+			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
 		}
-	}, [ sitesViewState, setSitesViewState ] );
+	}, [ sitesViewState, setSelectedSiteFeature ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
