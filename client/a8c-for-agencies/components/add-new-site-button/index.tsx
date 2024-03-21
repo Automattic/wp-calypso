@@ -19,7 +19,6 @@ type Props = {
 	onClickAddNewSite?: () => void;
 	onClickWpcomMenuItem?: () => void;
 	onClickJetpackMenuItem?: () => void;
-	onClickBluehostMenuItem?: () => void;
 	onClickUrlMenuItem?: () => void;
 };
 
