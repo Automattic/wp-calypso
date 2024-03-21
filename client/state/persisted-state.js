@@ -1,10 +1,5 @@
 import debugModule from 'debug';
-import {
-	getAllStoredItems,
-	setStoredItem,
-	clearStorage,
-	removeStoredItem,
-} from 'calypso/lib/browser-storage';
+import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
 
 const debug = debugModule( 'calypso:state' );
 
@@ -39,9 +34,4 @@ export function getPersistedStateItem( key ) {
 export async function storePersistedStateItem( key, state ) {
 	await setStoredItem( key, state );
 	stateCache[ key ] = state;
-}
-
-export async function removePersistedStateItem( key ) {
-	await removeStoredItem( key );
-	delete stateCache[ key ];
 }

@@ -11,7 +11,6 @@ import {
 	getPersistedStateItem,
 	loadPersistedState,
 	storePersistedStateItem,
-	removePersistedStateItem,
 } from 'calypso/state/persisted-state';
 import { shouldDehydrateQuery } from './should-dehydrate-query';
 import type { DebouncedFunc } from '@wordpress/compose';
@@ -22,44 +21,41 @@ type ThrotthledPersister = {
 type HydrateBrowserStateReturn = {
 	persister?: ThrotthledPersister;
 	unsubscribePersister: () => void;
-	removePersistedState: () => void;
 };
 type CreateQueryClientReturn = {
 	queryClient: QueryClient;
 	unsubscribePersister: () => void;
-	removePersistedState: () => void;
 };
-
-let hasUnsubscribedFromPersister = false;
 
 export async function createQueryClient( userId?: number ): Promise< CreateQueryClientReturn > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
-	const { persister, unsubscribePersister, removePersistedState } = await hydrateBrowserState(
-		queryClient,
-		userId
-	);
+	const { persister, unsubscribePersister } = await hydrateBrowserState( queryClient, userId );
+
+	const handleBeforeUnload = () => {
+		if ( persister && shouldPersist() ) {
+			// flush the debouncer so the last persist call is run
+			persister.persistClient.flush();
+		}
+	};
 
 	if ( typeof window !== 'undefined' ) {
-		// Persist the cache to local storage before the browser is unloade
-		window.addEventListener( 'beforeunload', () => {
-			if ( persister && shouldPersist() && ! hasUnsubscribedFromPersister ) {
-				// flush the debouncer so the last persist call is run
-				persister.persistClient.flush();
-			}
-		} );
+		// Persist the cache to local storage before the browser is unloaded
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
 	}
 
 	const unsubscribePersisterWrapper = () => {
-		// because we create a new persistQueryClient for the beforeunload we need a way to track the unsubscribe from
-		// the regular persistQueryClient so we don't persist on beforeunload when unsubscribed
-		hasUnsubscribedFromPersister = true;
+		// remove the unload event listener so that we don't persist beforeunload when it's not wanted
+		if ( typeof window !== 'undefined' ) {
+			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+		}
+
 		unsubscribePersister();
 	};
 
-	return { queryClient, unsubscribePersister: unsubscribePersisterWrapper, removePersistedState };
+	return { queryClient, unsubscribePersister: unsubscribePersisterWrapper };
 }
 
 export async function hydrateBrowserState(
@@ -87,7 +83,7 @@ export async function hydrateBrowserState(
 				// not implemented
 			},
 		};
-		const [ unsubscribePersister ] = persistQueryClient( {
+		const [ unsubscribePersister, restorePromise ] = persistQueryClient( {
 			queryClient,
 			persister,
 			maxAge: MAX_AGE,
@@ -96,14 +92,12 @@ export async function hydrateBrowserState(
 			},
 		} );
 
-		const removePersistedState = () => {
-			removePersistedStateItem( storeKey );
-		};
+		await restorePromise;
 
-		return { persister, unsubscribePersister, removePersistedState };
+		return { persister, unsubscribePersister };
 	}
 
-	return { unsubscribePersister: () => {}, removePersistedState: () => {} };
+	return { unsubscribePersister: () => {} };
 }
 
 export function hydrateServerState( queryClient: QueryClient, dehydratedState?: unknown ): void {
