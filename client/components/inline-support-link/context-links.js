@@ -96,7 +96,7 @@ const contextLinks = {
 		post_id: 98905,
 	},
 	'hosting-sftp': {
-		link: 'https://developer.wordpress.com/docs/developer-tools/sftp-ssh/',
+		link: 'https://developer.wordpress.com/docs/developer-tools/sftp/',
 		post_id: 99380,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
@@ -106,11 +106,11 @@ const contextLinks = {
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'hosting-clear-cache': {
-		link: 'https://wordpress.com/support/clear-your-sites-cache/',
+		link: 'https://developer.wordpress.com/docs/site-performance/global-edge-cache/#1-clear-your-site-s-cache',
 		post_id: 164969,
 	},
 	'hosting-connect-to-ssh': {
-		link: 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/',
+		link: 'https://developer.wordpress.com/docs/developer-tools/ssh/',
 		post_id: 213309,
 	},
 	'hosting-mysql': {
