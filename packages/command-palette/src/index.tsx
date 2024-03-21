@@ -89,11 +89,11 @@ export function CommandMenuGroup() {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette();
 
 	useEffect( () => {
-		setFooterMessage?.( filterNotice ?? '' );
+		setFooterMessage( filterNotice ?? '' );
 	}, [ setFooterMessage, filterNotice ] );
 
 	useEffect( () => {
-		setEmptyListNotice?.( emptyListNotice ?? '' );
+		setEmptyListNotice( emptyListNotice ?? '' );
 	}, [ setEmptyListNotice, emptyListNotice ] );
 
 	if ( ! commands.length ) {
