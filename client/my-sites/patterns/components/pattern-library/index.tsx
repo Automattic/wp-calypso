@@ -165,7 +165,7 @@ export const PatternLibrary = ( {
 
 			<div className="pattern-library__pill-navigation">
 				<CategoryPillNavigation
-					selectedCategory={ category }
+					selectedCategoryId={ category }
 					buttons={ [
 						{
 							icon: <Icon icon={ iconStar } size={ 30 } />,
@@ -179,7 +179,7 @@ export const PatternLibrary = ( {
 							link: '/222',
 						},
 					] }
-					list={ categoryNavList }
+					categories={ categoryNavList }
 				/>
 			</div>
 
