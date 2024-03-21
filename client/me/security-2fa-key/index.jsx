@@ -55,7 +55,7 @@ class Security2faKey extends Component {
 				let errorMessage = translate( 'The key could not be deleted. Please try again later.' );
 				if ( 'invalid_operation' === err.error ) {
 					errorMessage = translate(
-						`Unable to delete the last WordPress.com security key while enhanced account security is active. Deleting this key may result in losing access to your account. To delete the key, please disable enhanced account security first.`
+						`Unable to delete the last WordPress.com security key while enhanced account security is active. Deleting it may result in losing access to your account. If you still want to remove it, please disable enhanced account security.`
 					);
 				}
 				this.setState( {
