@@ -57,6 +57,7 @@ export const ScheduleEdit = ( props: Props ) => {
 			site_slug: siteSlug,
 			frequency: params.frequency,
 			plugins_number: params.plugins.length,
+			hours: params.hours,
 		} );
 
 		setSyncError( '' );

@@ -56,6 +56,7 @@ export const ScheduleForm = ( props: Props ) => {
 			onSyncSuccess( {
 				plugins: selectedPlugins,
 				frequency,
+				hours: new Date( timestamp * 1000 ).getHours(),
 			} ),
 		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
 	};
