@@ -1,5 +1,6 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
@@ -15,6 +16,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import {
@@ -116,7 +118,15 @@ function CustomerSection() {
 							"You haven't added any customers. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
 							{
 								components: {
-									learnMoreLink: (
+									learnMoreLink: isJetpackCloud() ? (
+										<a
+											href={ localizeUrl(
+												'https://jetpack.com/support/jetpack-blocks/payments-block/'
+											) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									) : (
 										<InlineSupportLink supportContext="payments_blocks" showIcon={ false } />
 									),
 								},
