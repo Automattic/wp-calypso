@@ -25,7 +25,9 @@ const version_greater_than_or_equal = (
 export default function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
-	const isSiteJetpack = isJetpackSite( state, siteId );
+	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
+		treatAtomicAsJetpackSite: false,
+	} );
 
 	return {
 		supportsHighlightsSettings: version_greater_than_or_equal(
@@ -54,12 +56,12 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 			isOdysseyStats
 		),
 		supportsUTMStats:
+			// TODO: Make UTM stats available for internal Simple sites.
 			isA8CSpecialBlog( siteId ) ||
 			// TODO: Remove the flag check once UTM stats are released.
 			( config.isEnabled( 'stats/utm-module' ) &&
-				// TODO: Make UTM stats available for internal Simple sites.
-				// UTM stats are only available for Jetpack and Atomic sites for now.
-				isSiteJetpack &&
+				// UTM stats are only available for Jetpack sites for now.
+				isSiteJetpackNotAtomic &&
 				version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ) ),
 	};
 }
