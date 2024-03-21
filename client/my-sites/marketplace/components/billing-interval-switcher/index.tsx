@@ -54,7 +54,7 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly' );
 	const annualLabel = translate( 'Annually' );
-	const saveLabel = translate( 'Save' );
+	const saveLabel = translate( 'Save', { context: 'save money' } );
 
 	const searchParams = new URLSearchParams( document.location.search );
 	const billingIntervalParam = searchParams.get( 'interval' );
