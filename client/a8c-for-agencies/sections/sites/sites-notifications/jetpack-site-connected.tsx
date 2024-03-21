@@ -19,7 +19,7 @@ export default function JetpackSiteConnected() {
 	useEffect( () => {
 		if ( jetpackConnectedSite ) {
 			setSuccessNotification( () =>
-				translate( '{{em}}%(jetpackConnectedSite)s{{/em}} was successfully connected', {
+				translate( '{{em}}%(jetpackConnectedSite)s{{/em}} was successfully connected to Jetpack', {
 					args: {
 						jetpackConnectedSite,
 					},
@@ -30,7 +30,7 @@ export default function JetpackSiteConnected() {
 				} )
 			);
 			setMostRecentConnectedSite( jetpackConnectedSite );
-			page.redirect(
+			page(
 				removeQueryArgs( window.location.pathname + window.location.search, 'site_connected' )
 			);
 		}
@@ -42,7 +42,7 @@ export default function JetpackSiteConnected() {
 			dispatch( successNotice( successNotification ) );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_sites_jetpack_connected_notice_shown', {
-					site_url: jetpackConnectedSite,
+					siteUrl: jetpackConnectedSite,
 				} )
 			);
 		}
