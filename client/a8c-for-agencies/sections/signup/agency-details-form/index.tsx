@@ -1,10 +1,10 @@
 import { Button, Gridicon, FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
+import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SearchableDropdown from '../../../components/searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import { AgencyDetailsPayload } from './types';
 
@@ -30,7 +30,7 @@ interface Props {
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 	initialValues?: {
 		agencyName?: string;
-		businessUrl?: string;
+		agencyUrl?: string;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -59,7 +59,7 @@ export default function AgencyDetailsForm( {
 	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
-	const [ businessUrl, setBusinessUrl ] = useState( initialValues.businessUrl ?? '' );
+	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -72,7 +72,7 @@ export default function AgencyDetailsForm( {
 	const payload: AgencyDetailsPayload = useMemo(
 		() => ( {
 			agencyName,
-			businessUrl,
+			agencyUrl,
 			city,
 			line1,
 			line2,
@@ -83,7 +83,7 @@ export default function AgencyDetailsForm( {
 		} ),
 		[
 			agencyName,
-			businessUrl,
+			agencyUrl,
 			city,
 			line1,
 			line2,
@@ -123,13 +123,13 @@ export default function AgencyDetailsForm( {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="businessUrl">{ translate( 'Business URL' ) }</FormLabel>
+					<FormLabel htmlFor="agencyUrl">{ translate( 'Business URL' ) }</FormLabel>
 					<FormTextInput
-						id="businessUrl"
-						name="businessUrl"
-						value={ businessUrl }
+						id="agencyUrl"
+						name="agencyUrl"
+						value={ agencyUrl }
 						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setBusinessUrl( event.target.value )
+							setAgencyUrl( event.target.value )
 						}
 						disabled={ isLoading }
 					/>

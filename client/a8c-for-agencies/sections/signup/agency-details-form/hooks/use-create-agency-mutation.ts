@@ -3,13 +3,13 @@ import wpcom from 'calypso/lib/wp';
 import { APIError, APIPartner } from 'calypso/state/partner-portal/types';
 import { AgencyDetailsPayload } from '../types';
 
-function createPartner( details: AgencyDetailsPayload ): Promise< APIPartner > {
+function createAgency( details: AgencyDetailsPayload ): Promise< APIPartner > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency',
 		body: {
 			agency_name: details.agencyName,
-			agency_url: details.businessUrl,
+			agency_url: details.agencyUrl,
 			address_line1: details.line1,
 			address_line2: details.line2,
 			address_city: details.city,
@@ -20,11 +20,11 @@ function createPartner( details: AgencyDetailsPayload ): Promise< APIPartner > {
 	} );
 }
 
-export default function useCreatePartnerMutation< TContext = unknown >(
+export default function useCreateAgencyMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIPartner, APIError, AgencyDetailsPayload, TContext >
 ): UseMutationResult< APIPartner, APIError, AgencyDetailsPayload, TContext > {
 	return useMutation< APIPartner, APIError, AgencyDetailsPayload, TContext >( {
 		...options,
-		mutationFn: createPartner,
+		mutationFn: createAgency,
 	} );
 }

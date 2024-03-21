@@ -1,6 +1,6 @@
 export interface AgencyDetailsPayload {
 	agencyName: string;
-	businessUrl: string;
+	agencyUrl: string;
 	city: string;
 	line1: string;
 	line2: string;
