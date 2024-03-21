@@ -26,7 +26,7 @@ export default function useHostingDescription( slug: string ): {
 			case 'wpcom-hosting':
 				name = 'Wordpress.com';
 				description = translate(
-					'IncUnbeatable uptime, unmetered bandwidth, and everything you need to streamline your development process, baked in. Perfect uptime. Fastest WP Bench score. A+ SSL grade.'
+					'Unbeatable uptime, unmetered bandwidth, and everything you need to streamline your development process, baked in. Perfect uptime. Fastest WP Bench score. A+ SSL grade.'
 				);
 				break;
 		}
