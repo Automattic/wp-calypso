@@ -14,9 +14,7 @@ export const PatternsWrapper = ( { children }: PatternsWrapperProps ) => {
 		<>
 			{ isLoggedIn && <UniversalNavbarHeader isLoggedIn /> }
 
-			<Main isLoggedOut={ ! isLoggedIn } fullWidthLayout>
-				{ children }
-			</Main>
+			<Main fullWidthLayout>{ children }</Main>
 
 			{ isLoggedIn && <UniversalNavbarFooter isLoggedIn /> }
 		</>
