@@ -1,9 +1,9 @@
-.host-listing__placeholder {
+.hosting-list__placeholder {
 	@include placeholder( --color-neutral-10 );
 	height: 43px;
 }
 
-.host-listing__actions {
+.hosting-list__actions {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
