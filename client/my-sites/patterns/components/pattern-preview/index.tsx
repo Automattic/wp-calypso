@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
+import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
 import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -62,6 +63,8 @@ function PatternPreviewFragment( {
 	const patternId = encodePatternId( pattern?.ID ?? 0 );
 	const renderedPattern = renderedPatterns[ patternId ];
 	const [ resizeObserver, nodeSize ] = useResizeObserver();
+	const [ isAuthModalOpen, setIsAuthModalOpen ] = useState( false );
+
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
 	const titleTooltipText = isPermalinkCopied ? 'Copied link to pattern' : 'Copy link to pattern';
@@ -128,11 +131,20 @@ function PatternPreviewFragment( {
 				) }
 
 				{ ! canCopy && (
-					<Button className="pattern-preview__get-access" transparent>
+					<Button
+						className="pattern-preview__get-access"
+						onClick={ () => setIsAuthModalOpen( true ) }
+						transparent
+					>
 						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
 					</Button>
 				) }
 			</div>
+
+			<PatternsGetAccessModal
+				isOpen={ isAuthModalOpen }
+				onClose={ () => setIsAuthModalOpen( false ) }
+			/>
 		</div>
 	);
 }
