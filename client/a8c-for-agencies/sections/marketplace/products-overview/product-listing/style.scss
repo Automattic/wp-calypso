@@ -7,55 +7,6 @@
 	height: 43px;
 }
 
-.product-listing__section {
-	margin-block-end: 32px;
-}
-
-h2.product-listing__section-title {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 10px;
-	margin-block-end: 10px;
-	font-size: rem(20px);
-	font-weight: 600;
-	line-height: 1.2;
-
-	hr {
-		color: var(--color-gray-5);
-		width: 1px;
-		flex-grow: 1;
-		margin: 0;
-	}
-}
-
-p.product-listing__section-description {
-	font-size: rem(14px);
-	font-weight: 400;
-	line-height: 1.2;
-	margin-block-end: 32px;
-}
-
-.product-listing__section-content {
-	display: grid;
-	gap: 16px;
-	grid-template-columns: 1fr;
-
-	@include break-large {
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	@include break-wide {
-		grid-template-columns: repeat(3, 1fr);
-	}
-}
-
-.product-listing__section.is-two-columns .product-listing__section-content {
-	@include break-wide {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
 p.product-listing__description {
 	flex: 1 1 auto;
 	align-self: flex-end;
