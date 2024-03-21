@@ -53,15 +53,20 @@ export default function SitePreviewPane( {
 		key: feature.id,
 		label: feature.tab.label,
 		selected: feature.tab.selected,
-		path: null,
 		onClick: feature.tab.onTabClick,
-		children: [],
 		visible: feature.tab.visible,
 	} ) );
 
-	const navItems = featureTabs.map( ( featureTab ) => (
-		<NavItem { ...featureTab }>{ featureTab.label }</NavItem>
-	) );
+	const navItems = featureTabs.map( ( featureTab ) => {
+		if ( ! featureTab.visible ) {
+			return null;
+		}
+		return (
+			<NavItem selected={ featureTab.selected } onClick={ featureTab.onClick }>
+				{ featureTab.label }
+			</NavItem>
+		);
+	} );
 
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
