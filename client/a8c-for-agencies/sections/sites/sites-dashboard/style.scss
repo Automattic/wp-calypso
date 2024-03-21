@@ -342,6 +342,10 @@
 			width: 86%;
 			margin-right: 6px;
 		}
+
+		.site-preview__open {
+			display: none;
+		}
 	}
 
 	&.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
