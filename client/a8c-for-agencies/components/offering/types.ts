@@ -9,6 +9,7 @@ export type OfferingItemProps = {
 	titleIcon: JSX.Element;
 	description: string;
 	highlights: string[];
+	expanded: boolean;
 	buttonTitle: string;
 	actionHandler: () => void;
 };

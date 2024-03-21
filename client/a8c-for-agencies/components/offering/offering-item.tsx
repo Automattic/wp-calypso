@@ -7,6 +7,7 @@ const OfferingItem: React.FC< OfferingItemProps > = ( {
 	description,
 	highlights,
 	buttonTitle,
+	expanded,
 	actionHandler,
 } ) => {
 	const header = (
@@ -19,7 +20,7 @@ const OfferingItem: React.FC< OfferingItemProps > = ( {
 	);
 
 	return (
-		<FoldableCard className="a4a-offering-item__card" header={ header } expanded>
+		<FoldableCard className="a4a-offering-item__card" header={ header } expanded={ expanded }>
 			<p className="a4a-offering-item__description">{ description }</p>
 			<ul className="a4a-offering-item__card-list">
 				{ highlights.map( ( highlightItemText ) => (

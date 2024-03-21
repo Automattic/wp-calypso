@@ -22,6 +22,7 @@ const OverviewBodyProducts = () => {
 						'Get advanced site stats and traffic insights.',
 					],
 					buttonTitle: 'View all Jetpack products',
+					expanded: true,
 					actionHandler: () => {},
 				},
 			] }
