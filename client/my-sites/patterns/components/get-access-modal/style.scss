@@ -17,10 +17,11 @@
 .patterns-get-access-modal__content {
 	position: relative;
 	padding-right: 400px;
-	background-image: url(./images/background.svg);
+	background-image: url(./images/background.png);
 	background-color: #1d2327;
 	background-repeat: no-repeat;
-	background-position: left 400px top;
+	background-position: right top;
+	background-size: 50% auto;
 
 	.patterns-get-access-modal__close {
 		position: absolute;
