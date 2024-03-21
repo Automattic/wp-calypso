@@ -128,8 +128,10 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 			handleInviteError( siteId, error );
 		}
 	};
-	const canUserInviteUsers = () => {
-		return site && userCan( 'promote_users', site );
+
+	const shouldShowInviteButton = ( isInvite: boolean | undefined ) => {
+		const canSendInvite = site && userCan( 'promote_users', site );
+		return canReceiveInvite() && ! isInvite && canSendInvite;
 	};
 	const renderInviteButton = () => {
 		return (
@@ -182,7 +184,6 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	} );
 
 	const tagName = canLinkToProfile() ? 'a' : 'span';
-	const inviteButton = canUserInviteUsers() ? renderInviteButton() : false;
 
 	return (
 		<CompactCard
@@ -201,7 +202,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 					showRole={ !! maybeGetCardLink() }
 				/>
 			</div>
-			{ canReceiveInvite() && ! isInvite && inviteButton }
+			{ shouldShowInviteButton( isInvite ) && renderInviteButton() }
 			{ onRemove && (
 				<div className="people-list-item__actions">
 					<Button
