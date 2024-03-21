@@ -38,7 +38,7 @@ class Security2faKey extends Component {
 
 	addKeyStart = ( event ) => {
 		event.preventDefault();
-		this.setState( { addingKey: true, errorMessage: false } );
+		this.setState( { addingKey: true, errorMessage: null } );
 	};
 
 	addKeyRegister = () => {
