@@ -11,6 +11,7 @@ import {
 	category as iconCategory,
 	menu as iconMenu,
 } from '@wordpress/icons';
+import { useCallback, useMemo } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -50,19 +51,6 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
 }
-
-const handleSettingView = ( value: 'grid' | 'list' ) => {
-	const searchParams = new URLSearchParams( location.search );
-
-	if ( value === 'grid' ) {
-		searchParams.set( 'grid', '1' );
-	} else {
-		searchParams.delete( 'grid' );
-	}
-
-	const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
-	page( location.pathname + paramsString );
-};
 
 // We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
 // it will be more confusing for users to land in grid view when they have a single-pattern permalink
@@ -114,29 +102,34 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
-	const recordViewChange = ( view: 'grid' | 'list' ) => {
-		const searchParams = new URLSearchParams( location.search );
-		const previousView = searchParams.get( 'grid' ) === '1' ? 'grid' : 'list';
+	const handleViewChange = useCallback(
+		( view: 'grid' | 'list' ) => {
+			const searchParams = new URLSearchParams( location.search );
+			const currentView = searchParams.get( 'grid' ) === '1' ? 'grid' : 'list';
 
-		// Let's only track the change if the view changes
-		if ( previousView === view ) {
-			return;
-		}
+			// Let's only handle this if the view changes
+			if ( currentView === view ) {
+				return;
+			}
 
-		recordTracksEvent( 'calypso_pattern_library_view_switch', {
-			category,
-			is_logged_in: isLoggedIn,
-			type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
-			user_is_dev_account: isDevAccount ? '1' : '0',
-			view,
-		} );
-	};
+			recordTracksEvent( 'calypso_pattern_library_view_switch', {
+				category,
+				is_logged_in: isLoggedIn,
+				type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
+				user_is_dev_account: isDevAccount ? '1' : '0',
+				view,
+			} );
 
-	const trackAndHandleViewChange = ( view: 'grid' | 'list' ) => {
-		recordViewChange( view );
+			searchParams.delete( 'grid' );
+			if ( view === 'grid' ) {
+				searchParams.set( 'grid', '1' );
+			}
 
-		handleSettingView( view );
-	};
+			const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
+			page( location.pathname + paramsString );
+		},
+		[ category, isDevAccount, isLoggedIn, patternTypeFilter ]
+	);
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
@@ -243,13 +236,13 @@ export const PatternLibrary = ( {
 								className="pattern-library__toggle-option--list-view"
 								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 								value="list"
-								onClick={ () => trackAndHandleViewChange( 'list' ) }
+								onClick={ () => handleViewChange( 'list' ) }
 							/>
 							<ToggleGroupControlOption
 								className="pattern-library__toggle-option--grid-view"
 								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 								value="grid"
-								onClick={ () => trackAndHandleViewChange( 'grid' ) }
+								onClick={ () => handleViewChange( 'grid' ) }
 							/>
 						</ToggleGroupControl>
 					</div>
