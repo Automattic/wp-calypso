@@ -24,7 +24,13 @@
 		display: flex;
 		gap: 16px;
 		align-items: center;
+		// Chrome, Edge, Firefox
 		scrollbar-width: none;
+
+		// Safari
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 
 	.category-pill-navigation__arrow {
