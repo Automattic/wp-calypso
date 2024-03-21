@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import './style.scss';
 
 type Props = {
-	icon: ReactNode;
+	icon?: ReactNode;
 	title: string;
 	description: string;
 	children: ReactNode;
