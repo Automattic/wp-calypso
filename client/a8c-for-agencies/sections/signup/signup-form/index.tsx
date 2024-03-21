@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -7,6 +6,7 @@ import useCreatePartnerMutation from 'calypso/a8c-for-agencies/sections/signup/a
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import CardHeading from 'calypso/components/card-heading';
 import { useDispatch } from 'calypso/state';
+import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
@@ -22,8 +22,7 @@ export default function SignupForm() {
 
 	const createPartner = useCreatePartnerMutation( {
 		onSuccess: () => {
-			// TODO: Fix this. Dispatch the correct action to update the partner state.
-			page.redirect( '/overview' );
+			dispatch( fetchAgencies() );
 		},
 		onError: ( error: APIError ) => {
 			let message = error.message;
