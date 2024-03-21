@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -35,6 +35,17 @@ export default function SitePreviewPane( {
 	closeSitePreviewPane,
 	className,
 }: SitePreviewPaneProps ) {
+	const [ canDisplayNavTabs, setCanDisplayNavTabs ] = useState( false );
+
+	// For future iterations lets consider something other than SectionNav due to the
+	// manipulation we need to make so that the navigation shows correctly on some smaller
+	// screens within the PreviewPane (hence the timeout).
+	useEffect( () => {
+		setTimeout( () => {
+			setCanDisplayNavTabs( true );
+		}, 150 );
+	}, [] );
+
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
 		return null;
@@ -53,21 +64,28 @@ export default function SitePreviewPane( {
 		key: feature.id,
 		label: feature.tab.label,
 		selected: feature.tab.selected,
-		path: null,
 		onClick: feature.tab.onTabClick,
-		children: [],
 		visible: feature.tab.visible,
 	} ) );
+
+	const navItems = featureTabs.map( ( featureTab ) => {
+		if ( ! featureTab.visible ) {
+			return null;
+		}
+		return (
+			<NavItem selected={ featureTab.selected } onClick={ featureTab.onClick }>
+				{ featureTab.label }
+			</NavItem>
+		);
+	} );
 
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
 			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
-				<NavTabs selectedText={ selectedFeature.tab.label }>
-					{ featureTabs.map( ( featureTab ) => (
-						<NavItem { ...featureTab }>{ featureTab.label }</NavItem>
-					) ) }
-				</NavTabs>
+				{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
+					<NavTabs>{ navItems }</NavTabs>
+				) : null }
 			</SectionNav>
 			{ selectedFeature.preview }
 		</div>

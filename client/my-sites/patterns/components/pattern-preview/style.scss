@@ -146,20 +146,23 @@
 }
 
 .pattern-preview__resizer .components-resizable-box__handle-right {
+	bottom: 3rem;
+	height: auto;
+	left: 100%;
+	right: initial;
+
 	&::after {
 		background-color: #a7aaad;
 		border-radius: 3px;
 		box-shadow: none;
 		height: 50px;
-		margin-right: -10px;
-		right: calc(50% - 5px);
-		top: calc(50% - 8px - 3rem);
+		right: calc(50% - 3px);
+		top: calc(50% - 8px);
 		width: 6px;
 	}
 
-	&:active::before,
-	&:hover::before {
-		animation: none;
+	&::before {
+		content: none;
 	}
 }
 

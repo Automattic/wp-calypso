@@ -12,6 +12,7 @@ import {
 	menu as iconMenu,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -86,12 +87,17 @@ export const PatternLibrary = ( {
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
-	searchTerm: urlQuerySearchTerm,
+	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate_not_yet = useTranslate();
 
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm ?? '' );
+	// Helps prevent resetting the search input if a search term was provided through the URL
+	const isInitialRender = useRef( true );
+	// Helps reset the search input when navigating between categories
+	const [ searchFormKey, setSearchFormKey ] = useState( category );
+
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
@@ -102,6 +108,25 @@ export const PatternLibrary = ( {
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+
+	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
+	useEffect( () => {
+		if ( ! urlQuerySearchTerm ) {
+			setSearchTerm( '' );
+			setSearchFormKey( Math.random().toString() );
+		}
+	}, [ urlQuerySearchTerm ] );
+
+	// Resets the search term whenever the category changes
+	useEffect( () => {
+		if ( isInitialRender.current ) {
+			isInitialRender.current = false;
+			return;
+		}
+
+		setSearchTerm( '' );
+		setSearchFormKey( category );
+	}, [ category ] );
 
 	const handleViewChange = ( view: 'grid' | 'list' ) => {
 		const currentView = isGridView ? 'grid' : 'list';
@@ -148,7 +173,14 @@ export const PatternLibrary = ( {
 
 	return (
 		<>
-			<PatternsPageViewTracker category={ category } searchTerm={ searchTerm } />
+			<PatternsPageViewTracker
+				category={ category }
+				key={ `${ category }-tracker` }
+				// We pass `urlQuerySearchTerm` instead of `searchTerm` since the former is
+				// immediately reset when navigating to a new category, whereas the latter is reset
+				// *after* the first render (which triggers an additional, incorrect, page view)
+				searchTerm={ urlQuerySearchTerm }
+			/>
 
 			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
 
@@ -157,6 +189,7 @@ export const PatternLibrary = ( {
 					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
 				) }
 				initialSearchTerm={ searchTerm }
+				key={ `${ searchFormKey }-search` }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
