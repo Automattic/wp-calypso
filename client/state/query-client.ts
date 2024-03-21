@@ -43,12 +43,11 @@ export async function createQueryClient( userId?: number ): Promise< CreateQuery
 	);
 
 	if ( typeof window !== 'undefined' ) {
-		// Persist the cache to local storage before the browser is unloaded
+		// Persist the cache to local storage before the browser is unloade
 		window.addEventListener( 'beforeunload', () => {
 			if ( persister && shouldPersist() && ! hasUnsubscribedFromPersister ) {
-				// flush the debouncer so the next persist is immediate
+				// flush the debouncer so the last persist call is run
 				persister.persistClient.flush();
-				persistQueryClient( { queryClient, persister: persister as unknown as Persister } );
 			}
 		} );
 	}
