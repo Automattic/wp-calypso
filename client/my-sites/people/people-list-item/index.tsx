@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
 import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
+import { userCan } from 'calypso/lib/site/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
@@ -127,7 +128,9 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 			handleInviteError( siteId, error );
 		}
 	};
-
+	const canUserInviteUsers = () => {
+		return site && userCan( 'promote_users', site );
+	};
 	const renderInviteButton = () => {
 		return (
 			<div className="people-list-item__invite-status">
@@ -179,7 +182,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	} );
 
 	const tagName = canLinkToProfile() ? 'a' : 'span';
-	const inviteButton = renderInviteButton();
+	const inviteButton = canUserInviteUsers() ? renderInviteButton() : false;
 
 	return (
 		<CompactCard
