@@ -259,7 +259,8 @@ const LoggedInPlansFeatureActionButton = ( {
 			return (
 				<PlanButton
 					planSlug={ planSlug }
-					onClick={ planActionOverrides.loggedInFreePlan.callback }
+					// TODO: Replace planActionOverrides
+					// onClick={ planActionOverrides.loggedInFreePlan.callback }
 					current={ current }
 				>
 					{ planActionOverrides.loggedInFreePlan.text }

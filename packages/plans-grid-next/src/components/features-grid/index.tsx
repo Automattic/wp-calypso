@@ -32,7 +32,7 @@ type MobileViewProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onPlanCtaClick: ( planSlug: PlanSlug ) => void;
+	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -154,7 +154,7 @@ type TabletViewProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onPlanCtaClick: ( planSlug: PlanSlug ) => void;
+	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -242,8 +242,9 @@ const FeaturesGrid = ( {
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
 }: FeaturesGridProps ) => {
-	const onPlanCtaClick = ( planSlug: PlanSlug ) => planActions?.[ planSlug ];
-
+	const onPlanCtaClick = ( planSlug: PlanSlug ) => {
+		return planActions?.[ planSlug ] || ( () => {} );
+	};
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,

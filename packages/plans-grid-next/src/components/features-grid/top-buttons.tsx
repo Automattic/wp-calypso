@@ -1,4 +1,5 @@
 import {
+	PlanSlug,
 	getPlan,
 	isBusinessTrial,
 	isWooExpressMediumPlan,
@@ -14,7 +15,7 @@ type TopButtonsProps = {
 	currentSitePlanSlug?: string | null;
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
-	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
+	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	planActionOverrides?: PlanActionOverrides;
 	renderedGridPlans: GridPlan[];
 	options?: {
@@ -71,7 +72,7 @@ const TopButtons = ( {
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						isMonthlyPlan={ isMonthlyPlan }
-						onPlanCtaClick={ onPlanCtaClick }
+						onPlanCtaClick={ onPlanCtaClick( planSlug ) }
 						planSlug={ planSlug }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						buttonText={ buttonText }
