@@ -1158,6 +1158,16 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		// Remove browser autofill styles.
+		input:-webkit-autofill,
+		input:-webkit-autofill:hover,
+		input:-webkit-autofill:focus,
+		input:-webkit-autofill:active {
+			-webkit-background-clip: text;
+			-webkit-box-shadow: 0 0 0 1000px #fff inset;
+			transition: background-color 5000s ease-in-out 0s;
+		}
+
 		.button.is-primary,
 		.login .button.is-primary,
 		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
@@ -1634,8 +1644,6 @@ $breakpoint-mobile: 660px;
 				p {
 					color: var(--studio-gray-60);
 					text-align: center;
-
-					font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 					font-size: rem(14px);
 					font-style: normal;
 					font-weight: 400;
