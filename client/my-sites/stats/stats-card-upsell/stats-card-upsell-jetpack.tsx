@@ -38,6 +38,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteSlug, track
 		const queryParams = new URLSearchParams();
 
 		queryParams.set( 'productType', 'commercial' );
+		queryParams.set( 'from', `${ tracksEvent }` );
 		if ( currentParams.has( 'irclickid' ) ) {
 			queryParams.set( 'irclickid', currentParams.get( 'irclickid' ) || '' );
 		}
