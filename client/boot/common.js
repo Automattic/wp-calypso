@@ -409,7 +409,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 
-	const queryClient = await createQueryClient( currentUser?.ID );
+	const { queryClient, unsubscribePersister } = await createQueryClient( currentUser?.ID );
 	const initialQueryState = getInitialQueryState();
 	hydrateServerState( queryClient, initialQueryState );
 
@@ -417,6 +417,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
 	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );

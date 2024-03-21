@@ -41,9 +41,6 @@ export const useSitePluginsQuery = (
 				apiVersion: '1.2',
 			} );
 		},
-		meta: {
-			persist: false,
-		},
 		enabled: !! siteIdOrSlug,
 		retry: false,
 		refetchOnWindowFocus: false,

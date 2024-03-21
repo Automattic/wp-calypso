@@ -53,7 +53,7 @@ declare const window: Window & {
 
 window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown as CurrentUser;
-	const queryClient = await createQueryClient( user.ID );
+	const { queryClient } = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
 
