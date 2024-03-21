@@ -211,6 +211,7 @@ export type RequestCartTaxData = null | {
 		organization?: string;
 		address?: string;
 		city?: string;
+		is_for_business?: boolean;
 	};
 };
 
@@ -324,6 +325,7 @@ export interface ResponseCartTaxData {
 		organization?: string;
 		address?: string;
 		city?: string;
+		is_for_business?: boolean;
 	};
 	display_taxes: boolean;
 }
@@ -592,6 +594,7 @@ export interface CartLocation {
 	organization?: string;
 	address?: string;
 	city?: string;
+	isForBusiness?: boolean;
 }
 
 export type DomainLegalAgreementUrl = string;
