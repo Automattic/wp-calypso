@@ -1,7 +1,7 @@
 import React from 'react';
 /**
  * SidebarCustomIcon -
- *   Handles Dashicons, SVGs, or image URLs and passes on the supplied props.
+ *   Handles Dashicons, SVGs, React components, or image URLs and passes on the supplied props.
  *   Returns null if icon is not supplied or undefined.
  *   Adds className="sidebar__menu-icon" to the supplied className.
  *
