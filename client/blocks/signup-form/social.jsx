@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -114,7 +115,22 @@ class SocialSignupForm extends Component {
 				window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
 			}
 		} catch ( error ) {
-			this.props.showErrorNotice( this.props.translate( 'Error accessing sessionStorage.' ) );
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Error accessing sessionStorage. {{a}}Please check your browser settings{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/browser-issues/' ) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				)
+			);
 		}
 	};
 
