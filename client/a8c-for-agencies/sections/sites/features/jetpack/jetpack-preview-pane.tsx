@@ -56,7 +56,7 @@ export function JetpackPreviewPane( {
 				JETPACK_BOOST_ID,
 				'Boost',
 				true,
-				selectedSiteFeature ?? JETPACK_BOOST_ID,
+				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			),
