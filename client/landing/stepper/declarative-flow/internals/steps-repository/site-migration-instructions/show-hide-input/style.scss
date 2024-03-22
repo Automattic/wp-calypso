@@ -1,0 +1,48 @@
+.show-hide-input {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	outline: solid 1px var(--studio-gray-10);
+	padding: 12px 8px;
+	border-radius: 4px;
+	gap: 10px;
+	height: 24px;
+	max-width: 456px;
+	margin-top: 8px;
+
+	&--hidden {
+		overflow-x: hidden;
+		user-select: none;
+	}
+
+	&__value {
+		overflow-x: scroll;
+		font-size: 0.875rem;
+		border: none;
+		outline: none;
+		width: 100%;
+	}
+
+	&:has(:focus) {
+		outline-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+		height: 24px;
+	}
+
+	&__visibility-button {
+		width: 20px;
+	}
+
+	&__copy-button {
+		padding: 12px 8px;
+		border-radius: 4px;
+	}
+}
