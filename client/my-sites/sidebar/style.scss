@@ -753,6 +753,23 @@ $font-size: rem(14px);
 				}
 			}
 		}
+
+		.sidebar__menu--selected.is-togglable:not(.is-toggle-open):not(:hover) {
+			.sidebar__heading {
+				background: var(--color-sidebar-menu-selected-background);
+				color: var(--color-sidebar-menu-selected-text);
+			}
+			.sidebar__expandable-arrow {
+				fill: var(--color-sidebar-menu-selected-text);
+			}
+			.sidebar__menu-icon g {
+				stroke: var(--color-sidebar-menu-selected-text);
+			}
+			.sidebar_svg-a8c g {
+				stroke: var(--color-sidebar-menu-selected-text);
+				fill: var(--color-sidebar-menu-selected-background);
+			}
+		}
 	}
 }
 
