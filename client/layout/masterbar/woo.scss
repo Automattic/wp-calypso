@@ -1349,6 +1349,10 @@ $breakpoint-mobile: 660px;
 
 			.auth-form__social-buttons-tos {
 				margin: 0;
+
+				@media ( max-width: $break-medium ) {
+					max-width: $max-width;
+				}
 			}
 
 			.login__lost-password-link {
