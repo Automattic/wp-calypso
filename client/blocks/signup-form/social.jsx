@@ -7,6 +7,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -108,8 +109,12 @@ class SocialSignupForm extends Component {
 	trackLoginAndRememberRedirect = ( service ) => {
 		this.trackSocialSignup( service );
 
-		if ( this.props.redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
-			window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
+		try {
+			if ( this.props.redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
+				window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
+			}
+		} catch ( error ) {
+			this.props.showErrorNotice( this.props.translate( 'Error accessing sessionStorage.' ) );
 		}
 	};
 
@@ -147,5 +152,5 @@ export default connect(
 				isWooCommerceCoreProfilerFlow( state ),
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, showErrorNotice: errorNotice }
 )( localize( SocialSignupForm ) );
