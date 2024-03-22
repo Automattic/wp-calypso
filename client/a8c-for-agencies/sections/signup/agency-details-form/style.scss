@@ -1,20 +1,16 @@
 .agency-details-form {
 
-	&__controls {
+	.agency-details-form__controls {
 		margin-top: 2rem;
 	}
 
-	&__business-address {
-		input {
-			margin-bottom: 10px !important;
-
-			&:last-child {
-				margin-bottom: 0 !important;
-			}
+	.agency-details-form__business-address {
+		#line1 {
+			margin-bottom: 10px;
 		}
 	}
 
-	&__tos p {
+	.agency-details-form__tos p {
 		margin: 45px 0 24px;
 		font-weight: 400;
 		font-size: 1rem;

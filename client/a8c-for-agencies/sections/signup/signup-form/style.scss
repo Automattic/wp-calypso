@@ -2,12 +2,12 @@
 	max-width: 720px;
 	padding: 56px 68px 68px;
 
-	&__logo {
+	.agency-signup-form__logo {
 		display: block;
 		margin-block-end: 52px;
 	}
 
-	&__heading {
+	.agency-signup-form__heading {
 		margin: 0 0 24px;
 		font-weight: 700;
 		font-size: 2rem;
@@ -15,7 +15,7 @@
 		color: var(--color-neutral-100);
 	}
 
-	&__subheading {
+	.agency-signup-form__subheading {
 		margin: 0 0 38px;
 		font-weight: 400;
 		font-size: 1rem;
