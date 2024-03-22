@@ -6,11 +6,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -56,6 +56,8 @@ const MigrateSubscribersModal = () => {
 	const selectedSourceSite = useSelector( ( state ) => getSite( state, selectedSourceSiteId ) );
 	const selectedSourceSiteName = selectedSourceSite?.name || selectedSourceSite?.URL || '';
 
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, targetSiteId ) );
+
 	useEffect( () => {
 		if ( showMigrateSubscribersModal ) {
 			recordTracksEvent( 'calypso_subscribers_migrate_subscribers_selection' );
@@ -66,7 +68,7 @@ const MigrateSubscribersModal = () => {
 		return null;
 	}
 
-	const migrateSubscribersUrl = isJetpackCloud()
+	const migrateSubscribersUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/newsletter/import-subscribers/#migrate-subscribers-from-a-word-press-com-site'
 		: 'https://wordpress.com/support/migrate-subscribers-from-another-site/';
 
