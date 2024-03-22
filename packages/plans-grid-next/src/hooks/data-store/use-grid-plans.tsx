@@ -27,7 +27,7 @@ import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { GridPlan, PlanAction, PlansIntent } from '../../types';
+import type { GridPlan, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -40,21 +40,11 @@ export type UseFreeTrialPlanSlugs = ( {
 	[ Type in PlanType ]?: PlanSlug;
 };
 
-export type GetPlanAction = (
-	planSlug: PlanSlug,
-	options?: {
-		cartItemForPlan?: { product_slug: PlanSlug } | null;
-		storageAddOnsForPlan?: ( AddOnMeta | null )[] | null;
-		freeTrialPlanSlug?: PlanSlug;
-	}
-) => PlanAction;
-
 interface Props {
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList: FeatureList;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
-	getPlanAction: GetPlanAction;
 	eligibleForFreeHostingTrial: boolean;
 	storageAddOns: ( AddOnMeta | null )[] | null;
 	selectedFeature?: string | null;
@@ -179,7 +169,6 @@ const usePlanTypesWithIntent = ( {
 const useGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
-	getPlanAction,
 	term = TERM_MONTHLY,
 	intent,
 	selectedPlan,
@@ -287,17 +276,8 @@ const useGridPlans = ( {
 
 		const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
-		// TODO: Verify that the usePlanAction params are still necessary to expose on a GridPlan
-		// TODO: Simplify interface for hook
-		const planAction = getPlanAction( planSlug, {
-			freeTrialPlanSlug,
-			cartItemForPlan,
-			storageAddOnsForPlan,
-		} );
-
 		return {
 			planSlug,
-			planAction,
 			freeTrialPlanSlug,
 			isVisible: planSlugsForIntent.includes( planSlug ),
 			tagline,

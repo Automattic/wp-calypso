@@ -426,7 +426,6 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	currentSitePlanSlug,
 	isInSignup,
 	isLaunchPage,
-	onPlanCtaClick,
 	planSlug,
 	buttonText,
 	planActionOverrides,
@@ -436,7 +435,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	visibleGridPlans,
 } ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex } = usePlansGridContext();
+	const {
+		gridPlansIndex,
+		helpers: { getActionCallback },
+	} = usePlansGridContext();
 	const {
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
@@ -446,6 +448,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		gridPlans: visibleGridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
+	const onPlanCtaClick = getActionCallback( gridPlansIndex[ planSlug ] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (

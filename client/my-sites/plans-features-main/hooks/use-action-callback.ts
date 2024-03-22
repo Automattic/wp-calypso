@@ -7,14 +7,14 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { AddOnMeta, WpcomPlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import type { PlansIntent } from '@automattic/plans-grid-next';
+import type { GridPlan, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
@@ -80,20 +80,9 @@ function useUpgradeHandler(
 	}, [] );
 
 	const addSelectedPlanAndStorageAddon = useCallback(
-		(
-			planSlug: PlanSlug,
-			{
-				cartItemForPlan,
-				storageAddOnsForPlan,
-				isFreeTrialPlan,
-				freeTrialPlanSlug,
-			}: {
-				isFreeTrialPlan?: boolean;
-				cartItemForPlan?: { product_slug: PlanSlug } | null;
-				storageAddOnsForPlan?: ( AddOnMeta | null )[] | null;
-				freeTrialPlanSlug?: PlanSlug;
-			}
-		) => {
+		( gridPlan: GridPlan, isFreeTrialPlan?: boolean ) => {
+			const { planSlug, freeTrialPlanSlug } = gridPlan;
+
 			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
 				const freeTrialCartItem = { product_slug: freeTrialPlanSlug };
 				processCartItems?.( [ freeTrialCartItem ], freeTrialPlanSlug );
@@ -101,6 +90,7 @@ function useUpgradeHandler(
 			}
 
 			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
+			const { cartItemForPlan, storageAddOnsForPlan } = gridPlan;
 			const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
 				return selectedStorageOption && addOn
 					? addOn.featureSlugs?.includes( selectedStorageOption )
@@ -128,15 +118,8 @@ function useUpgradeHandler(
 	);
 
 	return useCallback(
-		(
-			planSlug: PlanSlug,
-			options: {
-				cartItemForPlan?: { product_slug: PlanSlug } | null;
-				storageAddOnsForPlan?: ( AddOnMeta | null )[] | null;
-				freeTrialPlanSlug?: PlanSlug;
-			}
-		) => {
-			const { freeTrialPlanSlug } = options;
+		( gridPlan: GridPlan ) => {
+			const { planSlug, freeTrialPlanSlug } = gridPlan;
 
 			return ( isFreeTrialPlan?: boolean ) => {
 				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
@@ -148,7 +131,7 @@ function useUpgradeHandler(
 						saw_free_trial_offer: !! freeTrialPlanSlug,
 					} );
 				}
-				addSelectedPlanAndStorageAddon?.( planSlug, { ...options, isFreeTrialPlan } );
+				addSelectedPlanAndStorageAddon?.( gridPlan, isFreeTrialPlan );
 			};
 		},
 		[ sitePlanSlug, addSelectedPlanAndStorageAddon ]
@@ -156,7 +139,7 @@ function useUpgradeHandler(
 }
 
 // TODO: Verify that "Plan" is appropriate here. What about upsell modal CTAs? Consider renaming to something more generic.
-function usePlanAction(
+function useActionCallback(
 	intent?: PlansIntent | null,
 	flowName?: string | null,
 	sitePlanSlug?: PlanSlug | null,
@@ -199,31 +182,17 @@ function usePlanAction(
 		return [ managePlan, manageAddon, gotoVip ];
 	}, [] );
 
-	return (
-		planSlug?: PlanSlug,
-		options: {
-			cartItemForPlan?: { product_slug: PlanSlug } | null;
-			storageAddOnsForPlan?: ( AddOnMeta | null )[] | null;
-			freeTrialPlanSlug?: PlanSlug;
-		} = { cartItemForPlan: null, storageAddOnsForPlan: null, freeTrialPlanSlug: undefined }
-	) => {
-		let handler;
-
-		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-			handler = gotoVip;
+	return ( gridPlan: GridPlan ) => {
+		if ( isWpcomEnterpriseGridPlan( gridPlan.planSlug ) ) {
+			return gotoVip;
 		}
+
 		if ( sitePlanSlug && intent !== 'plans-p2' ) {
-			if ( isFreePlan( sitePlanSlug ) ) {
-				handler = manageAddon;
-			} else {
-				handler = managePlan;
-			}
-		} else {
-			handler = upgradeHandler( planSlug, options );
+			return isFreePlan( sitePlanSlug ) ? manageAddon : managePlan;
 		}
 
-		return handler;
+		return upgradeHandler( gridPlan );
 	};
 }
 
-export default usePlanAction;
+export default useActionCallback;

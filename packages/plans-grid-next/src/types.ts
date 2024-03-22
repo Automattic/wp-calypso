@@ -148,6 +148,8 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	// TODO: Fix type
+	getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

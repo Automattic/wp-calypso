@@ -65,11 +65,11 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
+import useActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
-import usePlanAction from './hooks/use-plan-action';
 import usePlanActions from './hooks/use-plan-actions';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -385,7 +385,7 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const getPlanAction = usePlanAction(
+	const getActionCallback = useActionCallback(
 		intent,
 		flowName,
 		sitePlanSlug,
@@ -398,7 +398,6 @@ const PlansFeaturesMain = ( {
 	const gridPlans = useGridPlans( {
 		allFeaturesList: getFeaturesList(),
 		useFreeTrialPlanSlugs,
-		getPlanAction,
 		selectedFeature,
 		term,
 		intent,
@@ -847,6 +846,7 @@ const PlansFeaturesMain = ( {
 									showUpgradeableStorage={ showUpgradeableStorage }
 									stickyRowOffset={ masterbarHeight }
 									useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+									getActionCallback={ getActionCallback }
 									allFeaturesList={ getFeaturesList() }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
@@ -909,6 +909,7 @@ const PlansFeaturesMain = ( {
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }
 												useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+												getActionCallback={ getActionCallback }
 												allFeaturesList={ getFeaturesList() }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
