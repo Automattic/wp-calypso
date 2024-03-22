@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -37,6 +37,16 @@ import SitesDashboardContext from '../sites-dashboard-context';
 
 import './style.scss';
 
+const filtersMap: AgencyDashboardFilterMap[] = [
+	{ filterType: 'all_issues', ref: 1 },
+	{ filterType: 'backup_failed', ref: 2 },
+	{ filterType: 'backup_warning', ref: 3 },
+	{ filterType: 'threats_found', ref: 4 },
+	{ filterType: 'site_disconnected', ref: 5 },
+	{ filterType: 'site_down', ref: 6 },
+	{ filterType: 'plugin_updates', ref: 7 },
+];
+
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
@@ -49,19 +59,6 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 	} = useContext( SitesDashboardContext );
-
-	const filtersMap = useMemo< AgencyDashboardFilterMap[] >(
-		() => [
-			{ filterType: 'all_issues', ref: 1 },
-			{ filterType: 'backup_failed', ref: 2 },
-			{ filterType: 'backup_warning', ref: 3 },
-			{ filterType: 'threats_found', ref: 4 },
-			{ filterType: 'site_disconnected', ref: 5 },
-			{ filterType: 'site_down', ref: 6 },
-			{ filterType: 'plugin_updates', ref: 7 },
-		],
-		[]
-	);
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const { data: products } = useProductsQuery();
