@@ -100,7 +100,7 @@
 		display: block;
 		font-style: italic;
 		font-size: $font-body-extra-small;
-		color: rgba(var(--color-sidebar-text-rgb), 0.6);
+		color: var(--color-sidebar-text-alternative);
 	}
 
 	.sidebar__separator {
