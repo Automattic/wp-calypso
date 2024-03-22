@@ -82,7 +82,10 @@ export const DeploymentCommitDetails = ( { deployment, run }: DeploymentCommitDe
 									fill="#50575E"
 								/>
 							</svg>
-							<span css={ { paddingLeft: '2px' } } title={ deployment.target_dir }>
+							<span
+								css={ { paddingLeft: '2px', whiteSpace: 'nowrap' } }
+								title={ deployment.target_dir }
+							>
 								{ path }
 							</span>
 						</span>
