@@ -8,10 +8,14 @@
 .sidebar .profile-gravatar {
 	flex-shrink: 0;
 	margin-top: 16px;
+
+	.profile-gravatar__user-secondary-info {
+		color: var(--color-sidebar-text-alternative);
+	}
 }
 
 .sidebar {
-	.sidebar__menu-icon {
+	.sidebar__menu-icon:not(.svg_all-sites) {
 		height: 20px;
 		width: 20px;
 	}
@@ -19,6 +23,23 @@
 		.gridicons-popout {
 			display: none;
 		}
+	}
+
+	.sidebar__menu-link {
+		svg.sidebar__menu-icon {
+			fill: var(--color-sidebar-text);
+		}
+
+		&:hover,
+		&:focus {
+			svg.sidebar__menu-icon {
+				fill: var(--color-sidebar-gridicon-fill);
+			}
+		}
+	}
+
+	.selected .sidebar__menu-link svg.sidebar__menu-icon {
+		fill: var(--color-sidebar-menu-selected-text);
 	}
 }
 

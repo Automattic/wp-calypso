@@ -969,6 +969,10 @@ a.masterbar__quick-language-switcher {
 		background-color: var(--color-sidebar-background);
 	}
 
+	.masterbar__item .gridicon {
+		fill: var(--color-sidebar-gridicon-fill);
+	}
+
 	.masterbar__item,
 	.site {
 		&:hover {
