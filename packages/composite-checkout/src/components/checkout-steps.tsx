@@ -577,7 +577,7 @@ export const SubmitButtonWrapper = styled.div`
 
 // Set right padding so that text doesn't overlap with inline help floating button.
 export const SubmitFooterWrapper = styled.div`
-	padding-right: 42px;
+	padding-right: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding-right: 0;

@@ -3,22 +3,26 @@ import styled from '@emotion/styled';
 import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
 
 const CheckoutMoneyBackGuaranteeWrapper = styled.div`
-	display: flex;
+	display: grid;
+	grid-template-columns: 20px 1fr 70px;
+	column-gap: 1em;
 	align-items: center;
-	margin: 1em 0;
-	align-self: flex-start;
-	margin: 1em 0 0;
-	justify-content: center;
+	margin: 1.5em 0 0;
 
 	& li {
 		list-style: none;
-		padding-left: 0;
 		font-size: 14px;
-		margin: 0;
-
+		margin-bottom: 0;
+		padding: 0;
 		svg {
 			display: none;
 		}
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		grid-template-columns: 20px minmax( 150px, max-content );
+		justify-content: center;
+		margin: 1.5em 0 0;
 	}
 `;
 
