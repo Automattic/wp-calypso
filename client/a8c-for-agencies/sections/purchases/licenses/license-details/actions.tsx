@@ -72,7 +72,7 @@ export default function LicenseDetailsActions( {
 				licenseType === LicenseType.Partner && (
 					<Button
 						compact
-						{ ...( downloadUrl.isPending ? { busy: true } : {} ) }
+						{ ...( status === 'pending' ? { busy: true } : {} ) }
 						onClick={ download }
 					>
 						{ translate( 'Download' ) }
