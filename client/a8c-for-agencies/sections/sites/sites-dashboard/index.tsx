@@ -32,10 +32,7 @@ import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import {
-	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
-	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
-} from '../constants';
+import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
 
 import './style.scss';
@@ -146,12 +143,7 @@ export default function SitesDashboard() {
 		// We need a category in the URL if we have a selected site
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		} else if (
-			category &&
-			sitesViewState.selectedSite &&
-			selectedSiteFeature &&
-			selectedSiteFeature !== A4A_SITES_DASHBOARD_DEFAULT_FEATURE // If the selected feature is the default one, we can leave the url a little cleaner.
-		) {
+		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
 			page.replace(
 				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
 			);
@@ -172,8 +164,6 @@ export default function SitesDashboard() {
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
-			// We reset the feature to its default upon closing, instead of setting it to undefined. This way, when users switch sites while a site is selected, the feature remains consistent.
-			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
 		}
 	}, [ sitesViewState, setSelectedSiteFeature ] );
 
