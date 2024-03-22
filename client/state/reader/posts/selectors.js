@@ -30,7 +30,7 @@ const getPostMapByPostKey = treeSelect(
 			// Edge case when the post matches multiple feed_item_IDs.
 			// Insert one entry per feed_item_ID to the post map.
 			// See: https://github.com/Automattic/wp-calypso/pull/88408
-			feed_item_IDs.map( ( feed_item_ID ) => {
+			feed_item_IDs.forEach( ( feed_item_ID ) => {
 				const postKey = keyForPost( { feed_ID: post.feed_ID, feed_item_ID } );
 				postMap[ keyToString( postKey ) ] = post;
 			} );
