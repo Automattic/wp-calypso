@@ -9,7 +9,8 @@ export type OfferingItemProps = {
 	titleIcon: JSX.Element;
 	description: string;
 	highlights: string[];
-	expanded: boolean;
+	expanded?: boolean;
+	clickableHeader?: boolean;
 	buttonTitle: string;
 	actionHandler: () => void;
 };

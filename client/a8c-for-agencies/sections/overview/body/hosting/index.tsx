@@ -3,6 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
+import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
 import PressableLogo from 'calypso/a8c-for-agencies/components/pressable-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -26,7 +27,7 @@ const OverviewBodyHosting = () => {
 		[ dispatch ]
 	);
 
-	const pressable = {
+	const pressable: OfferingItemProps = {
 		//translators: Title for the action card
 		title: translate( 'Pressable' ),
 		titleIcon: <PressableLogo size={ 24 } />,
@@ -50,7 +51,7 @@ const OverviewBodyHosting = () => {
 		},
 	};
 
-	const wpcom = {
+	const wpcom: OfferingItemProps = {
 		//translators: Title for the action card
 		title: translate( 'Wordpress.com' ),
 		titleIcon: <WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />,
