@@ -63,6 +63,25 @@ export const GitHubBrowseRepositoriesList = ( {
 		return <NoResults manageInstallationUrl={ installation.management_url } />;
 	}
 
+	const getRepositoryPermissionsNotice = () => {
+		const noticeText =
+			installation.repository_selection === 'all'
+				? __( 'Need to adjust permissions?' )
+				: __( 'Missing GitHub repositories?' );
+
+		const linkText =
+			installation.repository_selection === 'all'
+				? __( 'Update them on GitHub' )
+				: __( 'Adjust permissions on GitHub' );
+
+		return (
+			<p className="github-repositories-list-permissions-notice">
+				{ noticeText }{ ' ' }
+				<ExternalLink href={ installation.management_url }>{ linkText }</ExternalLink>
+			</p>
+		);
+	};
+
 	return (
 		<div className="github-repositories-list">
 			<GitHubRepositoryListTable
@@ -72,12 +91,7 @@ export const GitHubBrowseRepositoriesList = ( {
 				sortDirection={ direction }
 				onSortChange={ handleSortChange }
 			/>
-			<p className="github-repositories-list-permissions-notice">
-				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
-				<ExternalLink href={ installation.management_url }>
-					{ __( 'Adjust permissions on GitHub' ) }
-				</ExternalLink>
-			</p>
+			{ getRepositoryPermissionsNotice() }
 			<Pagination
 				page={ page }
 				perPage={ pageSize }
