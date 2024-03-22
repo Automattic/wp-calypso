@@ -52,7 +52,7 @@ object WPComTests : Project({
 	// Gutenberg Atomic Nightly
 	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
-	// Gutenberg Core 
+	// Gutenberg Core
 	buildType(gutenbergCoreE2eBuildType());
 
 	// E2E Tests for Jetpack Simple Deployment
@@ -113,10 +113,11 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 
 					# Install deps
 					npm ci
-					
+
 					# Build packages
 					npm run build:packages
 				""".trimIndent()
+				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
 			}
 
 			bashNodeScript {
@@ -135,6 +136,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					# Run suite.
 					npm run test:e2e:playwright
 				""".trimIndent()
+				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
 			}
 		}
 	})
@@ -250,7 +252,7 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		uuid = buildUuid
 		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -306,13 +308,13 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-	
+
 	return BuildType({
 		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
 		uuid = buildUuid
 		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
 		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
@@ -384,7 +386,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		uuid = buildUuid
 		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
 		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
-		
+
 		artifactRules = defaultE2eArtifactRules();
 
 		vcs {
