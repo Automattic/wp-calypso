@@ -87,7 +87,6 @@ export default function OverviewBodyIntroCards( { onFinish = () => {} } ) {
 					tracksPrefix="calypso_a4a_overview_intro_cards"
 					tracksFn={ tracksFn }
 					includeNextButton
-					includeFinishButton
 					onFinish={ onFinish }
 				>
 					<Card1 />
