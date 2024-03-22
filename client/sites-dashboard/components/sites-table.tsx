@@ -63,7 +63,7 @@ const SiteTh = styled.th( {
 } );
 
 const StatusTh = styled.th( {
-	width: '124px',
+	width: '140px',
 } );
 
 const StatsTh = styled.th( {
