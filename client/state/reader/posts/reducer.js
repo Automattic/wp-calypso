@@ -24,7 +24,7 @@ export function items( state = {}, action ) {
 
 			// Keep track of all the feed_item_ID that have the same global_ID.
 			// See: https://github.com/Automattic/wp-calypso/pull/88408
-			posts.map( ( post ) => {
+			posts.forEach( ( post ) => {
 				const { feed_item_IDs = [] } = state[ post.global_ID ] ?? {};
 				const { feed_item_ID, global_ID } = post;
 
