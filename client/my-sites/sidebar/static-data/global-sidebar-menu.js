@@ -1,4 +1,3 @@
-import { category, Icon } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -7,7 +6,6 @@ import { translate } from 'i18n-calypso';
 export default function globalSidebarMenu() {
 	return [
 		{
-			icon: <Icon icon={ category } className="sidebar__menu-icon svg_all-sites" size={ 24 } />,
 			slug: 'sites',
 			title: translate( 'Sites' ),
 			navigationLabel: translate( 'Manage all my sites' ),
@@ -15,7 +13,6 @@ export default function globalSidebarMenu() {
 			url: '/sites',
 		},
 		{
-			icon: 'dashicons-admin-site-alt3',
 			slug: 'domains',
 			title: translate( 'Domains' ),
 			navigationLabel: translate( 'Manage all domains' ),
