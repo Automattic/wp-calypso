@@ -9,6 +9,7 @@
 	height: 24px;
 	max-width: 456px;
 	margin-top: 8px;
+	transition: all 0.2s;
 
 	&--hidden {
 		overflow-x: hidden;
@@ -23,7 +24,8 @@
 		width: 100%;
 	}
 
-	&:has(:focus) {
+	&:has(:focus),
+	&:hover {
 		outline-color: var(--color-primary);
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
@@ -39,6 +41,11 @@
 
 	&__visibility-button {
 		width: 20px;
+		fill: #a7aaad;
+		transition: all 0.2s;
+		&:hover {
+			fill: #787c82;
+		}
 	}
 
 	&__copy-button {
