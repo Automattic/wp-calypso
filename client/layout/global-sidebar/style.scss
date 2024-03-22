@@ -149,6 +149,7 @@ $brand-text: "SF Pro Text", $sans;
 			.sidebar__expandable-content {
 				.sidebar__menu-link {
 					margin: 0;
+					color: var(--color-sidebar-submenu-text);
 				}
 
 				.reader-sidebar-tags__text-input {

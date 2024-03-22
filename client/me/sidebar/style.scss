@@ -8,6 +8,10 @@
 .sidebar .profile-gravatar {
 	flex-shrink: 0;
 	margin-top: 16px;
+
+	.profile-gravatar__user-secondary-info {
+		color: var(--color-sidebar-text);
+	}
 }
 
 .sidebar {
@@ -33,7 +37,6 @@
 			}
 		}
 	}
-
 
 	.selected .sidebar__menu-link svg.sidebar__menu-icon {
 		fill: var(--color-sidebar-menu-selected-text);
