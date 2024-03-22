@@ -72,18 +72,18 @@ export const GitHubBrowseRepositoriesList = ( {
 				sortDirection={ direction }
 				onSortChange={ handleSortChange }
 			/>
-			<Pagination
-				page={ page }
-				perPage={ pageSize }
-				total={ filteredRepositories.length }
-				pageClick={ setPage }
-			/>
 			<p className="github-repositories-list-permissions-notice">
 				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
 				<ExternalLink href={ installation.management_url }>
 					{ __( 'Adjust permissions on GitHub' ) }
 				</ExternalLink>
 			</p>
+			<Pagination
+				page={ page }
+				perPage={ pageSize }
+				total={ filteredRepositories.length }
+				pageClick={ setPage }
+			/>
 		</div>
 	);
 };
