@@ -12,7 +12,7 @@ export interface SitesDashboardContextInterface {
 	setSelectedSiteUrl: ( siteUrl: string ) => void;
 
 	selectedSiteFeature?: string;
-	setSelectedSiteFeature: ( siteFeature: string ) => void;
+	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;
