@@ -27,6 +27,7 @@ export const RepositorySelectionDialog = ( {
 			shouldCloseOnOverlayClick
 			shouldCloseOnEsc
 			onClose={ onClose }
+			additionalClassNames="github-deployments-dialog"
 			className="repository-selection-dialog"
 		>
 			<div
