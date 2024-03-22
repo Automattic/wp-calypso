@@ -19,7 +19,7 @@ export default function JetpackSiteConnected() {
 	useEffect( () => {
 		if ( jetpackConnectedSite ) {
 			setSuccessNotification( () =>
-				translate( '{{em}}%(jetpackConnectedSite)s{{/em}} was successfully connected to Jetpack', {
+				translate( '{{em}}%(jetpackConnectedSite)s{{/em}} was successfully connected', {
 					args: {
 						jetpackConnectedSite,
 					},
