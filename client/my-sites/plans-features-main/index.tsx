@@ -69,6 +69,7 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
+import usePlanAction from './hooks/use-plan-action';
 import usePlanActions from './hooks/use-plan-actions';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -362,9 +363,42 @@ const PlansFeaturesMain = ( {
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
+	const planActionCallback = ( planSlug: PlanSlug ): boolean => {
+		if (
+			sitePlanSlug &&
+			isFreePlan( sitePlanSlug ) &&
+			domainFromHomeUpsellFlow &&
+			intentFromProps !== 'plans-p2'
+		) {
+			showDomainUpsellDialog();
+			return true;
+		}
+
+		setLastClickedPlan( planSlug );
+
+		const displayedModal = resolveModal( planSlug );
+		if ( displayedModal ) {
+			setIsModalOpen( true );
+			return true;
+		}
+
+		return false;
+	};
+
+	const getPlanAction = usePlanAction(
+		intent,
+		flowName,
+		sitePlanSlug,
+		siteSlug,
+		withDiscount,
+		planActionCallback,
+		onUpgradeClick
+	);
+
 	const gridPlans = useGridPlans( {
 		allFeaturesList: getFeaturesList(),
 		useFreeTrialPlanSlugs,
+		getPlanAction,
 		selectedFeature,
 		term,
 		intent,
@@ -411,28 +445,6 @@ const PlansFeaturesMain = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 	} );
-
-	const planActionCallback = ( planSlug: PlanSlug ): boolean => {
-		if (
-			sitePlanSlug &&
-			isFreePlan( sitePlanSlug ) &&
-			domainFromHomeUpsellFlow &&
-			intentFromProps !== 'plans-p2'
-		) {
-			showDomainUpsellDialog();
-			return true;
-		}
-
-		setLastClickedPlan( planSlug );
-
-		const displayedModal = resolveModal( planSlug );
-		if ( displayedModal ) {
-			setIsModalOpen( true );
-			return true;
-		}
-
-		return false;
-	};
 
 	const comparisonGridPlanActions = usePlanActions(
 		gridPlansForComparisonGrid,
