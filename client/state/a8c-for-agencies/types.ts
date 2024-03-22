@@ -7,6 +7,7 @@ export interface APIError {
 	message: string;
 	data?: any;
 }
+
 export interface Agency {
 	id: number;
 	name: string;
