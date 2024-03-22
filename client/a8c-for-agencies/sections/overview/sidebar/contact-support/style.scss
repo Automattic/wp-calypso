@@ -1,0 +1,30 @@
+.overview__contact-support {
+	padding: 8px;
+	border-radius: 4px;
+
+	.foldable-card__header {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	#a4a-contact-support-jetpack-icon svg {
+		color: var(--color-jetpack);
+	}
+
+	#a4a-contact-support-woocommerce-icon svg {
+		color: var(--color-woocommerce);
+	}
+
+	#a4a-contact-support-pressable-icon svg {
+		margin: 3px;
+	}
+
+	#a4a-contact-support-wordpress-icon svg {
+		color: var(--color-wordpress-com);
+		margin: 3px;
+	}
+
+	.sidebar-v2__external-icon {
+		display: none;
+	}
+}
