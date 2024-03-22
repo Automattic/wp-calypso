@@ -44,7 +44,7 @@ export const DeploymentStarterMessage = ( { deployment }: DeploymentStarterMessa
 
 	return (
 		<td colSpan={ 4 }>
-			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>
+			<i className="github-deployments-list__starter-message">
 				{ deployment.is_automated
 					? sprintf(
 							// Translators: %(branch)s is the branch name of the repository, %(repo)s is the repository name
