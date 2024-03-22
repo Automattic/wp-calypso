@@ -14,7 +14,6 @@ import {
 } from 'calypso/my-sites/github-deployments/deployments/deployment-status';
 import { useCreateCodeDeploymentRun } from 'calypso/my-sites/github-deployments/deployments/use-create-code-deployment-run';
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
@@ -43,16 +42,9 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 		deployment.id,
 		{
 			onSuccess: () => {
-				dispatch( recordTracksEvent( 'calypso_hosting_github_manual_deployment_run_success' ) );
 				dispatch( successNotice( __( 'Deployment run created.' ), noticeOptions ) );
 			},
 			onError: ( error ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_hosting_github_manual_deployment_run_failed', {
-						reason: error.message,
-					} )
-				);
-
 				if ( error.code === 'invalid_workflow_file' ) {
 					dispatch(
 						errorNotice(
