@@ -220,12 +220,12 @@ class RequestLoginEmailForm extends Component {
 				</h1>
 				{ requestError && (
 					<Notice
-						duration={ 10000 }
+						// duration={ 10000 }
 						text={ errorText }
 						className="magic-login__request-login-email-form-notice"
-						showDismiss={ true }
+						showDismiss={ false }
 						onDismissClick={ this.onNoticeDismiss }
-						status="is-error"
+						status="is-transparent-info"
 					/>
 				) }
 				{ currentUser && currentUser.username && (
