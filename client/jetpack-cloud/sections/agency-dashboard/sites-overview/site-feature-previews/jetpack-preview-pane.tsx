@@ -4,7 +4,7 @@ import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitePreviewPane, { createFeaturePreview } from '../site-preview-pane';
 import { SitePreviewPaneProps } from '../site-preview-pane/types';
-import { JetpackActivityPreview } from './jetpack-activity';
+import { JetpackActivityPreview } from './activity';
 import { JetpackBackupPreview } from './jetpack-backup';
 import { JetpackBoostPreview } from './jetpack-boost';
 import { JetpackMonitorPreview } from './jetpack-monitor';
