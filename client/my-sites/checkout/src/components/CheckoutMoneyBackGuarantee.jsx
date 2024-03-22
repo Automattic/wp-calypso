@@ -19,10 +19,22 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 		}
 	}
 
+	.rtl & {
+		grid-template-columns: 20px 1fr;
+		padding: 10px 80px 10px 20px;
+
+		& li {
+			padding: 0;
+		}
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		grid-template-columns: 20px minmax( min-content, 300px ) 70px;
+	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		grid-template-columns: 20px minmax( 150px, max-content );
 		justify-content: center;
-		margin: 1.5em 0 0;
 	}
 `;
 
