@@ -10,6 +10,8 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 		body: {
 			agency_name: details.agencyName,
 			agency_url: details.agencyUrl,
+			number_sites: details.managedSites,
+			services_offered: details.servicesOffered,
 			address_line1: details.line1,
 			address_line2: details.line2,
 			address_city: details.city,

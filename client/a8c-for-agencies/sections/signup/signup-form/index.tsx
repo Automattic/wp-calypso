@@ -38,6 +38,8 @@ export default function SignupForm() {
 				recordTracksEvent( 'calypso_a4a_create_agency_submit', {
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
+					managed_sites: payload.managedSites,
+					services_offered: payload.servicesOffered,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,

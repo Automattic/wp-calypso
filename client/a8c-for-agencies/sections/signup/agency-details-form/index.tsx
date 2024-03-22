@@ -4,9 +4,13 @@ import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
+import type { ChangeList } from 'calypso/components/forms/multi-checkbox';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import { AgencyDetailsPayload } from './types';
+import type { FormEventHandler } from 'react';
 
 import './style.scss';
 
@@ -31,6 +35,8 @@ interface Props {
 	initialValues?: {
 		agencyName?: string;
 		agencyUrl?: string;
+		managedSites?: string;
+		servicesOffered?: string[];
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -60,6 +66,8 @@ export default function AgencyDetailsForm( {
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
 	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
+	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -73,6 +81,8 @@ export default function AgencyDetailsForm( {
 		() => ( {
 			agencyName,
 			agencyUrl,
+			managedSites,
+			servicesOffered,
 			city,
 			line1,
 			line2,
@@ -84,6 +94,8 @@ export default function AgencyDetailsForm( {
 		[
 			agencyName,
 			agencyUrl,
+			managedSites,
+			servicesOffered,
 			city,
 			line1,
 			line2,
@@ -106,6 +118,29 @@ export default function AgencyDetailsForm( {
 		},
 		[ showCountryFields, isLoading, onSubmit, payload ]
 	);
+
+	const getServicesOfferedOptions = () => {
+		return [
+			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
+			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
+			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
+			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
+			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+		];
+	};
+
+	// <FormSelect> complains if we "just" pass "setManagedSites" because it expects
+	// React.FormEventHandler, so this wrapper function is made to satisfy everything
+	// in an easily readable way.
+	const handleSetManagedSites: FormEventHandler = ( { target } ) => {
+		const value: string = ( target as HTMLSelectElement ).value;
+		setManagedSites( value );
+	};
+
+	// TODO: Fix the TS type for "services" here.
+	const handleSetServicesOffered = ( services: any ) => {
+		setServicesOffered( services.value );
+	};
 
 	return (
 		<div className="agency-details-form">
@@ -132,6 +167,39 @@ export default function AgencyDetailsForm( {
 							setAgencyUrl( event.target.value )
 						}
 						disabled={ isLoading }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="managed_sites">
+						{ translate( 'How many sites do you manage?' ) }
+					</FormLabel>
+					<FormSelect
+						name="managed_sites"
+						id="managed_sites"
+						value={ managedSites }
+						onChange={ handleSetManagedSites }
+					>
+						<option value="1-5">{ translate( '1–5' ) }</option>
+						<option value="6-20">{ translate( '6–20' ) }</option>
+						<option value="21-50">{ translate( '21–50' ) }</option>
+						<option value="51-100">{ translate( '51–100' ) }</option>
+						<option value="101-500">{ translate( '101–500' ) }</option>
+						<option value="500+">{ translate( '500+' ) }</option>
+					</FormSelect>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="services_offered">
+						{ translate( 'What services do you offer?', {
+							comment:
+								'Possible values are: "Strategy consulting", "Website design & development", "Performance optimization", "Digital strategy & marketing", "Maintenance & support plans".',
+						} ) }
+					</FormLabel>
+					<MultiCheckbox
+						id="services_offered"
+						name="services_offered"
+						checked={ servicesOffered }
+						options={ getServicesOfferedOptions() }
+						onChange={ handleSetServicesOffered }
 					/>
 				</FormFieldset>
 				<FormFieldset>

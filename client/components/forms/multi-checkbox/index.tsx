@@ -15,7 +15,7 @@ interface Option< T = OptionValue > {
 	label: string;
 }
 
-interface ChangeList< T = OptionValue > {
+export interface ChangeList< T = OptionValue > {
 	value: T[];
 }
 
