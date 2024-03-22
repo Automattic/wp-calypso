@@ -26,6 +26,23 @@ class StatsDownloadCsv extends Component {
 		borderless: PropTypes.bool,
 	};
 
+	processExportData = ( data ) => {
+		const { statType } = this.props;
+		if ( statType !== 'statsReferrers' ) {
+			return data;
+		}
+		// Work-around for a bug in the referrers data.
+		// Can include unexpected elements in the data array.
+		// Results in "[object Object]" in the CSV output.
+		// To avoid this, we only include the first two elements of each row.
+		return data.map( ( row ) => {
+			if ( Array.isArray( row ) ) {
+				return row.slice( 0, 2 );
+			}
+			return row;
+		} );
+	};
+
 	downloadCsv = ( event ) => {
 		event.preventDefault();
 		const { siteSlug, path, period, data } = this.props;
@@ -41,7 +58,7 @@ class StatsDownloadCsv extends Component {
 
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
-		const csvData = data
+		const csvData = this.processExportData( data )
 			.map( ( row ) => {
 				if ( Array.isArray( row ) ) {
 					return row.join( ',' );
