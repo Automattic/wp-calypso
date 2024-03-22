@@ -57,6 +57,14 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
 		--color-masterbar-text: var(--color-sidebar-gridicon-fill);
 	}
+
+	.layout__secondary {
+		overflow: initial;
+
+		.global-sidebar {
+			overflow: hidden;
+		}
+	}
 }
 
 // Local Vars
