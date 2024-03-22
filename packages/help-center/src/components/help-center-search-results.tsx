@@ -34,7 +34,7 @@ import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import PlaceholderLines from './placeholder-lines';
-import type { SearchResult } from '../types';
+import type { SearchResult, TailoredArticles } from '../types';
 
 interface SearchResultsSectionProps {
 	type: string;
@@ -131,15 +131,19 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const routeToQueryMapping = useContextBasedSearchMapping( currentRoute );
+	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute );
 
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || routeToQueryMapping,
+		debouncedQuery || contextSearch,
 		locale,
 		{},
-		sectionName
+		sectionName,
+		// We need to think about how to handle this if the locale has no tailoredIds
+		tailoredArticles?.find(
+			( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale
+		)
 	);
 
 	const searchResults = searchData ?? [];
