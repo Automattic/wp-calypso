@@ -1,3 +1,4 @@
+import React from 'react';
 /**
  * SidebarCustomIcon -
  *   Handles Dashicons, SVGs, or image URLs and passes on the supplied props.
@@ -13,6 +14,10 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 		return null;
 	}
 
+	if ( React.isValidElement( icon ) ) {
+		return icon;
+	}
+
 	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
 		const isSVG = icon.indexOf( 'data:image/svg+xml' ) === 0;
 		const imgStyle = `url("${ icon }")`;
@@ -24,9 +29,9 @@ const SidebarCustomIcon = ( { icon, ...rest } ) => {
 		return (
 			<span
 				className={ 'sidebar__menu-icon dashicons' + ( isSVG ? ' sidebar__menu-icon-img' : '' ) }
-				style={ imgStyles }
 				aria-hidden={ true }
 				{ ...rest }
+				style={ imgStyles }
 			/>
 		);
 	}
