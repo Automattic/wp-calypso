@@ -183,6 +183,10 @@
 					stroke: var(--color-sidebar-menu-hover-text);
 				}
 			}
+			.sidebar__menu-icon.sidebar_svg-a8c g {
+				stroke: var(--color-sidebar-menu-hover-text);
+				fill: var(--color-sidebar-menu-hover-background);
+			}
 		}
 		/* Default styles */
 		.sidebar__menu-icon.sidebar_svg-add {
