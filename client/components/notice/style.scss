@@ -74,6 +74,7 @@
 	&.is-transparent-info {
 		background: unset;
 		color: var(--color-error-40);
+		margin-bottom: 0;
 
 		&.is-compact {
 			.notice__icon-wrapper-drop {
