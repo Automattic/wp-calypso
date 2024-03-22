@@ -49,7 +49,7 @@ describe( 'updateBackupRetentionRequestStatus', () => {
 		).toEqual( { requestStatus: BACKUP_RETENTION_UPDATE_REQUEST.PENDING } );
 	} );
 
-	test( '1should return SUCCESS status when retention update request action gets completed successfully', () => {
+	test( 'should return SUCCESS status when retention update request action gets completed successfully', () => {
 		expect(
 			updateBackupRetentionRequestStatus( mockUpdateRequestInitiated, updateSuccessAction )
 		).toEqual( { requestStatus: BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS } );
