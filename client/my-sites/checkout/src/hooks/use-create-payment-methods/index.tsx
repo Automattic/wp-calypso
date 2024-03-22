@@ -38,6 +38,7 @@ import {
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createPixPaymentMethod } from '../../payment-methods/pix';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
+import { useCachedContactDetails } from '../use-cached-contact-details';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
@@ -382,6 +383,10 @@ function useCreateRazorpay( {
 		debug( 'Razorpay disabled by configuration' );
 	}
 
+	const { responseCart } = useShoppingCart( cartKey );
+	const isLoggedOut = responseCart.cart_key === 'no-user';
+	const contactDetails = useCachedContactDetails( { isLoggedOut } );
+
 	const isRazorpayReady =
 		! isRazorpayLoading &&
 		! razorpayLoadingError &&
@@ -394,9 +399,10 @@ function useCreateRazorpay( {
 					razorpayConfiguration,
 					cartKey,
 					submitButtonContent: <CheckoutSubmitButtonContent />,
+					contactDetails: contactDetails,
 			  } )
 			: null;
-	}, [ razorpayConfiguration, isRazorpayReady, cartKey ] );
+	}, [ razorpayConfiguration, isRazorpayReady, cartKey, contactDetails ] );
 }
 
 export default function useCreatePaymentMethods( {

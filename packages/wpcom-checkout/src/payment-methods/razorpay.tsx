@@ -1,23 +1,100 @@
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useState, useEffect } from 'react';
+import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import { PossiblyCompleteDomainContactDetails } from '../types';
 import type { RazorpayConfiguration } from '@automattic/calypso-razorpay';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'wpcom-checkout:razorpay-payment-method' );
 
+interface RazorpayPaymentMethodStateShape {
+	phoneNumber: string;
+	email: string;
+}
+
+type RazorpayPaymentMethodKey = keyof RazorpayPaymentMethodStateShape;
+
+type RazorpayStateSubscriber = () => void;
+
+class RazorpayPaymentMethodState {
+	data: RazorpayPaymentMethodStateShape = {
+		phoneNumber: '',
+		email: '',
+	};
+
+	subscribers: RazorpayStateSubscriber[] = [];
+
+	isTouched: boolean = false;
+
+	change = ( field: RazorpayPaymentMethodKey, newValue: string ): void => {
+		this.data[ field ] = newValue;
+		this.isTouched = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
+}
+
+function useSubscribeToEventEmitter( state: RazorpayPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
+}
+
+function usePrefillState( {
+	state,
+	contactDetails,
+	razorpayConfiguration,
+}: {
+	state: RazorpayPaymentMethodState;
+	contactDetails: PossiblyCompleteDomainContactDetails | null;
+	razorpayConfiguration: RazorpayConfiguration;
+} ): void {
+	// Don't try to pre-fill if the form has been edited. (Also prevents
+	// infinite loops.)
+	if ( state.isTouched ) {
+		return;
+	}
+	state.change(
+		'phoneNumber',
+		razorpayConfiguration.options.prefill?.contact ?? contactDetails?.phone ?? ''
+	);
+	state.change(
+		'email',
+		razorpayConfiguration.options.prefill?.email ?? contactDetails?.email ?? ''
+	);
+}
+
 export function createRazorpayMethod( {
 	razorpayConfiguration,
 	cartKey,
 	submitButtonContent,
+	contactDetails,
 }: {
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
+	contactDetails: PossiblyCompleteDomainContactDetails | null;
 } ): PaymentMethod {
+	const state = new RazorpayPaymentMethodState();
+
 	return {
 		id: 'razorpay',
 		paymentProcessorId: 'razorpay',
@@ -27,6 +104,14 @@ export function createRazorpayMethod( {
 				razorpayConfiguration={ razorpayConfiguration }
 				cartKey={ cartKey }
 				submitButtonContent={ submitButtonContent }
+				state={ state }
+			/>
+		),
+		activeContent: (
+			<RazorpayFields
+				state={ state }
+				contactDetails={ contactDetails }
+				razorpayConfiguration={ razorpayConfiguration }
 			/>
 		),
 		inactiveContent: <RazorpaySummary />,
@@ -52,18 +137,101 @@ export function RazorpaySummary() {
 	return <Fragment>{ __( 'Razorpay' ) }</Fragment>;
 }
 
+const RazorpayFormWrapper = styled.div`
+	padding: 16px;
+	position: relative;
+
+	::after {
+		display: block;
+		width: calc( 100% - 6px );
+		height: 1px;
+		content: '';
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
+		position: absolute;
+		top: 0;
+		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
+	}
+`;
+
+const RazorpayField = styled( Field )`
+	margin-top: 16px;
+
+	:first-of-type {
+		margin-top: 0;
+	}
+`;
+
+function RazorpayFields( {
+	state,
+	contactDetails,
+	razorpayConfiguration,
+}: {
+	state: RazorpayPaymentMethodState;
+	contactDetails: PossiblyCompleteDomainContactDetails | null;
+	razorpayConfiguration: RazorpayConfiguration;
+} ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	usePrefillState( { state, contactDetails, razorpayConfiguration } );
+
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	const isPhoneNumberError = state.isTouched && state.data.phoneNumber.length === 0;
+	const isEmailError =
+		state.isTouched && ( state.data.email.length === 0 || ! state.data.email.includes( '@' ) );
+
+	return (
+		<RazorpayFormWrapper>
+			<RazorpayField
+				id="razorpay-customer-phone"
+				type="tel"
+				autoComplete="tel"
+				label={ __( 'Phone number' ) }
+				value={ state.data.phoneNumber ?? '' }
+				onChange={ ( value: string ) => {
+					state.change( 'phoneNumber', value );
+				} }
+				isError={ isPhoneNumberError }
+				errorMessage={ __( 'Please enter a valid phone number.' ) }
+				disabled={ isDisabled }
+			/>
+			<RazorpayField
+				id="razorpay-customer-email"
+				type="email"
+				autoComplete="cc-email"
+				label={ __( 'Email address' ) }
+				value={ state.data.email ?? '' }
+				onChange={ ( value: string ) => {
+					state.change( 'email', value );
+				} }
+				isError={ isEmailError }
+				errorMessage={ __( 'Please enter a valid email address.' ) }
+				disabled={ isDisabled }
+			/>
+		</RazorpayFormWrapper>
+	);
+}
+
 export function RazorpaySubmitButton( {
 	disabled,
 	onClick,
 	razorpayConfiguration,
 	cartKey,
 	submitButtonContent,
+	state,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	razorpayConfiguration: RazorpayConfiguration;
 	cartKey: CartKey;
 	submitButtonContent: ReactNode;
+	state: RazorpayPaymentMethodState;
 } ) {
 	const { formStatus } = useFormStatus();
 
@@ -82,7 +250,12 @@ export function RazorpaySubmitButton( {
 			onClick={ ( ev ) => {
 				ev.preventDefault();
 				debug( 'Initiate razorpay payment' );
-				onClick( { razorpayConfiguration, cartKey } );
+				onClick( {
+					razorpayConfiguration,
+					cartKey,
+					phoneNumber: state.data.phoneNumber,
+					email: state.data.email,
+				} );
 			} }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
