@@ -355,6 +355,23 @@ $brand-text: "SF Pro Text", $sans;
 			border-color: inherit;
 		}
 	}
+
+	.sidebar__menu-link,
+	.sidebar__menu.is-togglable.is-toggle-open .sidebar__heading {
+		&:focus {
+			background-color: var(--color-sidebar-menu-hover-background);
+		}
+	}
+
+	.selected {
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable.is-toggle-open .sidebar__heading {
+			&:focus {
+				background-color: var(--color-sidebar-menu-selected-background);
+				box-shadow: 0 0 0 3px var(--color-sidebar-border);
+			}
+		}
+	}
 }
 
 .masterbar {

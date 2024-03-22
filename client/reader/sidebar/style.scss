@@ -143,8 +143,7 @@
 		/* Hover styles */
 		&:hover,
 		&:focus {
-			.sidebar__menu-icon.sidebar_svg-add,
-			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
+			.sidebar__menu-icon.sidebar_svg-add {
 				g {
 					fill: var(--color-sidebar-menu-hover-text);
 				}
