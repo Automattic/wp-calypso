@@ -4,19 +4,20 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { PatternType, PatternView } from '../types';
+import { getTracksPatternType } from '../lib/get-tracks-pattern-type';
+import { PatternTypeFilter, PatternView } from '../types';
 
 type PatternsPageViewTrackerProps = {
 	category: string;
 	searchTerm: string;
-	type: PatternType;
+	patternTypeFilter: PatternTypeFilter;
 	view: PatternView;
 };
 
 export function PatternsPageViewTracker( {
 	category,
 	searchTerm,
-	type,
+	patternTypeFilter,
 	view,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -41,9 +42,10 @@ export function PatternsPageViewTracker( {
 				category,
 				is_logged_in: isLoggedIn,
 				user_is_dev_account: isDevAccount ? '1' : '0',
+				type: getTracksPatternType( patternTypeFilter ),
 			} );
 		}
-	}, [ category, isDevAccount, isLoggedIn ] );
+	}, [ category, isDevAccount, isLoggedIn, patternTypeFilter ] );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_pattern_library_view', {
@@ -51,14 +53,14 @@ export function PatternsPageViewTracker( {
 			is_logged_in: isLoggedIn,
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			search_term: debouncedSearchTerm,
-			type,
+			type: getTracksPatternType( patternTypeFilter ),
 			view,
 		} );
 
 		// We want to avoid resubmitting the event whenever
 		// `category` changes, which is why we deliberately don't include it in the dependency array
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isDevAccount, isLoggedIn, debouncedSearchTerm, type, view ] );
+	}, [ isDevAccount, isLoggedIn, debouncedSearchTerm, patternTypeFilter, view ] );
 
 	let path: string = '';
 	const properties: Record< string, string | boolean > = {

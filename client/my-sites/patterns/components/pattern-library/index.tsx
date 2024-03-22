@@ -37,6 +37,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 
 import './style.scss';
 
@@ -104,7 +105,6 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
-	const type = patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout';
 	const currentView = isGridView ? 'grid' : 'list';
 
 	const handleViewChange = ( view: PatternView ) => {
@@ -115,7 +115,7 @@ export const PatternLibrary = ( {
 		recordTracksEvent( 'calypso_pattern_library_view_switch', {
 			category,
 			is_logged_in: isLoggedIn,
-			type,
+			type: getTracksPatternType( patternTypeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			view,
 		} );
@@ -153,7 +153,7 @@ export const PatternLibrary = ( {
 			<PatternsPageViewTracker
 				category={ category }
 				searchTerm={ searchTerm }
-				type={ type }
+				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
 			/>
 
