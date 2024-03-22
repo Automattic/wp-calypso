@@ -82,13 +82,21 @@ function getMessageForTermsOfServiceRecordUnknown(
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
 
-		const nextRenewalText = translate(
-			'The promotional period for your %(productName)s lasts from %(startDate)s to %(endDate)s. You will next be charged %(renewalPrice)s on %(renewalDate)s.',
+		const termLengthText = translate(
+			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
 			{
 				args: {
 					productName,
 					startDate,
 					endDate,
+				},
+			}
+		);
+
+		const nextRenewalText = translate(
+			'You will next be charged %(renewalPrice)s on %(renewalDate)s.',
+			{
+				args: {
 					renewalPrice,
 					renewalDate,
 				},
@@ -113,7 +121,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		} );
 
 		const emailNoticesText = translate(
-			'You will receive email notices %(numberOfDays)d days before renewals, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
+			'You will receive an email notice %(numberOfDays)d days before being billed, and can {{updatePaymentMethodLink}}update your payment method{{/updatePaymentMethodLink}} or {{manageSubscriptionLink}}manage your subscription{{/manageSubscriptionLink}} at any time.',
 			{
 				args: {
 					numberOfDays,
@@ -133,20 +141,50 @@ function getMessageForTermsOfServiceRecordUnknown(
 			}
 		);
 
+		const taxesNotIncludedText = translate( 'Prices do not include applicable taxes.' );
+
+		// No need to show the endOfPromotionChargeText if the price and date
+		// we are already showing as the next renewal info is the same as the
+		// end of promotion renewal info.
 		const shouldShowEndOfPromotionText =
-			args.subscription_auto_renew_date !== args.subscription_end_of_promotion_date ||
-			args.maybe_prorated_regular_renewal_price_integer !== args.renewal_price_integer;
+			// Show the endOfPromotionChargeText if the endDate differs from
+			// the renewalDate because it is about the endDate.
+			renewalDate !== endDate ||
+			// Show the endOfPromotionChargeText if the
+			// maybeProratedRegularPrice differs from the renewalPrice because
+			// it is about the maybeProratedRegularPrice.
+			renewalPrice !== maybeProratedRegularPrice;
+
+		const shouldShowRegularPriceNoticeText = ( () => {
+			// No need to show the regularPriceNoticeText if the price we are
+			// already showing as the next renewal price is the same as the
+			// regular renewal price, as long as there is no end of promotion
+			// text to mislead the reader into thinking it referrs to all
+			// renewals.
+			if ( ! shouldShowEndOfPromotionText && regularPrice === renewalPrice ) {
+				return false;
+			}
+			// No need to show the regularPriceNoticeText if the price we are
+			// already showing as the end of promotion renewal price is the
+			// same as the regular renewal price.
+			if ( shouldShowEndOfPromotionText && regularPrice === maybeProratedRegularPrice ) {
+				return false;
+			}
+			return true;
+		} )();
 
 		return (
 			<>
-				{ nextRenewalText } { shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
-				{ regularPriceNoticeText } { emailNoticesText }{ ' ' }
+				{ termLengthText } { nextRenewalText }{ ' ' }
+				{ shouldShowEndOfPromotionText && endOfPromotionChargeText }{ ' ' }
+				{ shouldShowRegularPriceNoticeText && regularPriceNoticeText } { taxesNotIncludedText }{ ' ' }
+				{ emailNoticesText }{ ' ' }
 			</>
 		);
 	}
 
 	return translate(
-		'At the end of the promotional period your %(productName)s will renew for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
+		'At the end of the promotional period your %(productName)s subscription will renew for %(maybeProratedRegularPrice)s. Subsequent renewals will be %(regularPrice)s. You can add or update your payment method at any time {{link}}here{{/link}}.',
 		{
 			args: {
 				productName,

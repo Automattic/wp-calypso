@@ -11,7 +11,7 @@ import { Icon, starEmpty as iconStar, category as iconCategory } from '@wordpres
 function render() {
 	return (
 		<CategoryPillNavigation
-			list={ Array.from( { length: 15 }, ( _, i ) => ( {
+			categories={ Array.from( { length: 15 }, ( _, i ) => ( {
 				id: `category-${ i }`,
 				label: `Category ${ i + 1 }`,
 				link: '#',
@@ -38,7 +38,7 @@ function render() {
 
 Below is a list of supported props.
 
-### `list`
+### `categories`
 An array of objects, each representing a navigation link:
 
 ```
@@ -50,11 +50,11 @@ An array of objects, each representing a navigation link:
 ```
 
 
-### `selectedCategory`
+### `selectedCategoryId`
 
 Type: `string`
 
-This property should match the `name` of one of the items in the `list` array to indicate the currently active category.
+This property should match the `id` of one of the items in the `categories` array to indicate the currently active category.
 
 ### `buttons`
 An optional array of additional link objects to prepend to the main list of links:

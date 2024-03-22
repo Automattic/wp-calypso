@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -31,13 +32,16 @@ export function JetpackPreviewPane( {
 		if ( site ) {
 			dispatch( setSelectedSiteId( site.blog_id ) );
 		}
-	}, [ site ] );
+	}, [ dispatch, site ] );
 
-	const trackEvent = ( eventName: string ) => {
-		recordEvent( eventName );
-	};
+	const trackEvent = useCallback(
+		( eventName: string ) => {
+			recordEvent( eventName );
+		},
+		[ recordEvent ]
+	);
 
-	const [ selectedFeatureId, setSelectedFeatureId ] = useState( 'jetpack_boost' );
+	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
 	// Jetpack features: Boost, Backup, Monitor, Stats
 	const features = useMemo(
@@ -46,40 +50,40 @@ export function JetpackPreviewPane( {
 				'jetpack_boost',
 				'Boost',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			),
 			createFeaturePreview(
 				'jetpack_backup',
 				'Backup',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackBackupPreview />
 			),
 			createFeaturePreview(
 				'jetpack_scan',
 				'Scan',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackScanPreview sideId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				'jetpack_monitor',
 				'Monitor',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			),
 			createFeaturePreview(
 				'jetpack_plugins',
 				translate( 'Plugins' ),
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackPluginsPreview
 					link={ '/plugins/manage/' + site.url }
 					linkLabel={ translate( 'Manage Plugins' ) }
@@ -92,20 +96,28 @@ export function JetpackPreviewPane( {
 				'jetpack_stats',
 				'Stats',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackStatsPreview site={ site } trackEvent={ trackEvent } />
 			),
 			createFeaturePreview(
 				'jetpack_activity',
 				translate( 'Activity' ),
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackActivityPreview isLoading={ ! selectedSiteId } />
 			),
 		],
-		[ site, selectedFeatureId, translate ]
+		[
+			selectedSiteFeature,
+			setSelectedSiteFeature,
+			site,
+			trackEvent,
+			hasError,
+			translate,
+			selectedSiteId,
+		]
 	);
 
 	return (

@@ -1,10 +1,12 @@
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'calypso/state';
+import wpcom from 'calypso/lib/wp';
+import { useSelector, useDispatch } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { License } from 'calypso/state/partner-portal/types';
+import formatLicenses from './lib/format-licenses';
 
 export default function useBundleLicenses(
 	parentLicenseId: number,
@@ -18,50 +20,7 @@ export default function useBundleLicenses(
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const showDummyData = config.isEnabled( 'a4a/mock-api-data' );
-
-	const getBundleLicenses = () => {
-		if ( showDummyData ) {
-			return {
-				items: [
-					{
-						licenseId: 1,
-						licenseKey: 'license-key',
-						product: 'dummy-product',
-						blogId: 1,
-						siteUrl: 'https://test.jurassic.ninja',
-						hasDownloads: true,
-						issuedAt: '2021-01-01',
-						attachedAt: '2021-01-01',
-						quantity: undefined,
-						revokedAt: null,
-						ownerType: 'jetpack_partner_key',
-						parentLicenseId: null,
-					},
-					{
-						licenseId: 2,
-						licenseKey: 'license-key-2',
-						product: 'dummy-product',
-						blogId: 1,
-						siteUrl: 'https://test.jurassic.ninja',
-						hasDownloads: true,
-						issuedAt: '2021-01-01',
-						attachedAt: '2021-01-01',
-						quantity: undefined,
-						revokedAt: null,
-						ownerType: 'jetpack_partner_key',
-						parentLicenseId: null,
-					},
-				],
-				total_items: 1,
-			};
-		}
-		return {
-			items: [],
-			total_pages: 0,
-		}; // FIXME: This is a placeholder for the actual API call.
-	};
+	const agencyId = useSelector( getActiveAgencyId );
 
 	const query = useQuery( {
 		queryKey: [
@@ -72,12 +31,29 @@ export default function useBundleLicenses(
 			page,
 			sortField,
 			sortDirection,
+			agencyId,
 		],
-		queryFn: () => getBundleLicenses(),
+		queryFn: () =>
+			wpcom.req.get(
+				{
+					apiNamespace: 'wpcom/v2',
+					path: '/jetpack-licensing/licenses',
+				},
+				{
+					...( agencyId && { agency_id: agencyId } ),
+					parent_id: parentLicenseId,
+					page,
+					per_page: perPage,
+					sort_field: sortField,
+					sort_direction: sortDirection,
+				}
+			),
 		select: ( data ) => ( {
 			total: data.total_items,
-			licenses: data.items,
+			licenses: formatLicenses( data.items ),
 		} ),
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
 	} );
 
 	const { isError, data, isLoading } = query;
@@ -104,11 +80,9 @@ export default function useBundleLicenses(
 			setTotal( data.total ?? 0 );
 
 			if ( page === 1 ) {
-				// FIXME: Remove the type assertion once the API is implemented.
-				setLicenses( data.licenses as License[] );
+				setLicenses( data.licenses );
 			} else {
-				// FIXME: Remove the type assertion once the API is implemented.
-				setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] as License[] );
+				setLicenses( ( licenses ) => [ ...licenses, ...data.licenses ] );
 			}
 		}
 	}, [ data, page ] );

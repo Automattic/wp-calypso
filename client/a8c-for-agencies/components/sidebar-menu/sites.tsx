@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { category, chevronLeft, formatListBulletsRTL, starEmpty } from '@wordpress/icons';
+import { category, chevronLeft, starEmpty, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
@@ -22,7 +22,7 @@ export default function ( { path }: Props ) {
 		return [
 			createItem(
 				{
-					icon: formatListBulletsRTL,
+					icon: warning,
 					path: A4A_SITES_LINK,
 					link: A4A_SITES_LINK_NEEDS_ATTENTION,
 					title: translate( 'Needs Attention' ),

@@ -197,6 +197,7 @@ export default function MultiProductCard( props: Props ) {
 							<Button
 								className="product-card__select-button"
 								variant={ isSelected ? 'secondary' : 'primary' }
+								tabIndex={ -1 }
 							>
 								{ isSelected && <Icon icon={ check } /> }
 								{ isSelected ? translate( 'Added' ) : translate( 'Add to cart' ) }

@@ -40,9 +40,6 @@ export const useUpdateScheduleQuery = (
 					id,
 				} ) )
 			),
-		meta: {
-			persist: false,
-		},
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
 		refetchOnWindowFocus: false,

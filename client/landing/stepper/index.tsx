@@ -86,7 +86,7 @@ window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
 
-	const queryClient = await createQueryClient( userId );
+	const { queryClient } = await createQueryClient( userId );
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );

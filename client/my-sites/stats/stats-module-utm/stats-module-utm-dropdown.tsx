@@ -1,10 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown, chevronUp, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useRef } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { OPTION_KEYS as SELECTED_OPTION_KEYS } from './';
 
 import './stats-module-utm-dropdown.scss';
@@ -41,6 +41,18 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 		togglePopoverOpened( ! popoverOpened );
 	};
 
+	const handleOptionSelection = ( key: string ) => {
+		onSelect( key );
+
+		// publish an event
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+		recordTracksEvent( `${ event_from }_stats_utm_dropdown_option_selected`, {
+			option: key,
+		} );
+
+		togglePopoverOpened( false );
+	};
+
 	return (
 		<div className={ classNames( className, BASE_CLASS_NAME ) }>
 			<Button onClick={ togglePopoverVisibility } ref={ infoReferenceElement }>
@@ -57,6 +69,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 				isVisible={ popoverOpened }
 				className={ `${ BASE_CLASS_NAME }__popover-wrapper` }
 				onClose={ () => togglePopoverOpened( false ) }
+				hideArrow
 			>
 				<ul className={ `${ BASE_CLASS_NAME }__popover-list` }>
 					{ Object.entries( selectOptions ).map( ( [ key, option ], index ) => {
@@ -71,13 +84,7 @@ const UTMDropdown: React.FC< UTMDropdownProps > = ( {
 									[ 'is-not-grouped' ]: ! option.isGrouped,
 								} ) }
 							>
-								<Button
-									key={ index }
-									onClick={ () => {
-										onSelect( key );
-										togglePopoverOpened( false );
-									} }
-								>
+								<Button key={ index } onClick={ () => handleOptionSelection( key ) }>
 									<span>{ option.selectLabel }</span>
 									{ isSelected && <Icon icon={ check } /> }
 								</Button>

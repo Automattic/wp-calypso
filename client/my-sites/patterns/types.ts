@@ -51,6 +51,10 @@ export type PatternGalleryProps = {
 	getPatternPermalink?( pattern: Pattern ): string;
 	isGridView?: boolean;
 	patterns?: Pattern[];
+	patternTypeFilter: PatternTypeFilter;
 };
 
 export type PatternGalleryFC = React.FC< PatternGalleryProps >;
+
+export type PatternType = 'pattern' | 'page-layout';
+export type PatternView = 'grid' | 'list';

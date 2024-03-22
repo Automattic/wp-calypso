@@ -239,6 +239,7 @@ const FeaturesGrid = ( {
 	paidDomainName,
 	hideUnavailableFeatures,
 	selectedFeature,
+	selectedSiteId,
 	generatedWPComSubdomain,
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
@@ -246,6 +247,7 @@ const FeaturesGrid = ( {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
+		selectedSiteId: selectedSiteId,
 	} );
 
 	const spotlightPlanProps = {

@@ -11,8 +11,11 @@ import {
 	category as iconCategory,
 	menu as iconMenu,
 } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
@@ -26,11 +29,16 @@ import {
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import {
 	PatternTypeFilter,
+	PatternView,
 	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 
 import './style.scss';
 
@@ -45,19 +53,6 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
-}
-
-function handleSettingView( value: 'grid' | 'list' ) {
-	const searchParams = new URLSearchParams( location.search );
-
-	if ( value === 'grid' ) {
-		searchParams.set( 'grid', '1' );
-	} else {
-		searchParams.delete( 'grid' );
-	}
-
-	const paramsString = searchParams.toString().length ? `?${ searchParams.toString() }` : '';
-	page( location.pathname + paramsString );
 }
 
 // We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
@@ -94,11 +89,17 @@ export const PatternLibrary = ( {
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
-	searchTerm: urlQuerySearchTerm,
+	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
+	const translate_not_yet = useTranslate();
 
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm ?? '' );
+	// Helps prevent resetting the search input if a search term was provided through the URL
+	const isInitialRender = useRef( true );
+	// Helps reset the search input when navigating between categories
+	const [ searchFormKey, setSearchFormKey ] = useState( category );
+
+	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
@@ -106,6 +107,54 @@ export const PatternLibrary = ( {
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
+
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+
+	const currentView = isGridView ? 'grid' : 'list';
+
+	const handleViewChange = ( view: PatternView ) => {
+		if ( currentView === view ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_pattern_library_view_switch', {
+			category,
+			is_logged_in: isLoggedIn,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view,
+		} );
+
+		const url = new URL( window.location.href );
+		url.searchParams.delete( 'grid' );
+
+		if ( view === 'grid' ) {
+			url.searchParams.set( 'grid', '1' );
+		}
+
+		// Removing the origin ensures that a full refresh is not attempted
+		page( url.href.replace( url.origin, '' ) );
+	};
+
+	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
+	useEffect( () => {
+		if ( ! urlQuerySearchTerm ) {
+			setSearchTerm( '' );
+			setSearchFormKey( Math.random().toString() );
+		}
+	}, [ urlQuerySearchTerm ] );
+
+	// Resets the search term whenever the category changes
+	useEffect( () => {
+		if ( isInitialRender.current ) {
+			isInitialRender.current = false;
+			return;
+		}
+
+		setSearchTerm( '' );
+		setSearchFormKey( category );
+	}, [ category ] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
@@ -126,43 +175,57 @@ export const PatternLibrary = ( {
 
 	return (
 		<>
-			<PatternsPageViewTracker category={ category } searchTerm={ searchTerm } />
+			<PatternsPageViewTracker
+				category={ category }
+				patternTypeFilter={ patternTypeFilter }
+				view={ currentView }
+				key={ `${ category }-tracker` }
+				// We pass `urlQuerySearchTerm` instead of `searchTerm` since the former is
+				// immediately reset when navigating to a new category, whereas the latter is reset
+				// *after* the first render (which triggers an additional, incorrect, page view)
+				searchTerm={ urlQuerySearchTerm }
+			/>
 
-			<DocumentHead title="WordPress Patterns - Category" />
+			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
 
 			<PatternsHeader
-				description="Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster."
+				description={ translate_not_yet(
+					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
+				) }
 				initialSearchTerm={ searchTerm }
+				key={ `${ searchFormKey }-search` }
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title="It’s Easier With Patterns"
+				title={ translate_not_yet( 'It’s Easier With Patterns' ) }
 			/>
 
 			<div className="pattern-library__pill-navigation">
 				<CategoryPillNavigation
-					selectedCategory={ category }
+					selectedCategoryId={ category }
 					buttons={ [
 						{
 							icon: <Icon icon={ iconStar } size={ 30 } />,
-							label: 'Discover',
+							label: translate_not_yet( 'Discover' ),
 							link: addLocaleToPathLocaleInFront( '/patterns' ),
 							isActive: isHomePage,
 						},
 						{
 							icon: <Icon icon={ iconCategory } size={ 26 } />,
-							label: 'All Categories',
+							label: translate_not_yet( 'All Categories' ),
 							link: '/222',
 						},
 					] }
-					list={ categoryNavList }
+					categories={ categoryNavList }
 				/>
 			</div>
 
 			{ isHomePage && (
 				<CategoryGallery
-					title="Ship faster, ship more"
-					description="Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time."
+					title={ translate_not_yet( 'Ship faster, ship more' ) }
+					description={ translate_not_yet(
+						'Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time.'
+					) }
 					categories={ categories }
 					patternTypeFilter={ PatternTypeFilter.REGULAR }
 				/>
@@ -172,7 +235,12 @@ export const PatternLibrary = ( {
 				<PatternLibraryBody className="pattern-library">
 					<div className="pattern-library__header">
 						<h1 className="pattern-library__title">
-							{ searchTerm ? `${ patterns.length } patterns` : 'Patterns' }
+							{ searchTerm
+								? translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
+										count: patterns.length,
+										args: { count: patterns.length },
+								  } )
+								: translate_not_yet( 'Patterns' ) }
 						</h1>
 
 						{ category && (
@@ -190,13 +258,13 @@ export const PatternLibrary = ( {
 							>
 								<ToggleGroupControlOption
 									className="pattern-library__toggle-option"
-									label="Patterns"
+									label={ translate_not_yet( 'Patterns' ) }
 									value={ PatternTypeFilter.REGULAR }
 								/>
 								<ToggleGroupControlOption
 									className="pattern-library__toggle-option"
 									disabled={ categoryObject?.pagePatternCount === 0 }
-									label="Page layouts"
+									label={ translate_not_yet( 'Page layouts' ) }
 									value={ PatternTypeFilter.PAGES }
 								/>
 							</ToggleGroupControl>
@@ -212,13 +280,13 @@ export const PatternLibrary = ( {
 								className="pattern-library__toggle-option--list-view"
 								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 								value="list"
-								onClick={ () => handleSettingView( 'list' ) }
+								onClick={ () => handleViewChange( 'list' ) }
 							/>
 							<ToggleGroupControlOption
 								className="pattern-library__toggle-option--grid-view"
 								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 								value="grid"
-								onClick={ () => handleSettingView( 'grid' ) }
+								onClick={ () => handleViewChange( 'grid' ) }
 							/>
 						</ToggleGroupControl>
 					</div>
@@ -229,6 +297,7 @@ export const PatternLibrary = ( {
 						}
 						isGridView={ isGridView }
 						patterns={ patterns }
+						patternTypeFilter={ patternTypeFilter }
 					/>
 				</PatternLibraryBody>
 			) }
@@ -237,8 +306,10 @@ export const PatternLibrary = ( {
 
 			{ isHomePage && (
 				<CategoryGallery
-					title="Beautifully curated page layouts"
-					description="Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right."
+					title={ translate_not_yet( 'Beautifully curated page layouts' ) }
+					description={ translate_not_yet(
+						'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
+					) }
 					categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
 					patternTypeFilter={ PatternTypeFilter.PAGES }
 				/>

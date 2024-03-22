@@ -3,7 +3,7 @@ import { Icon, starEmpty as iconStar, category as iconCategory } from '@wordpres
 import { FunctionComponent } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 
-const list = Array.from( { length: 15 }, ( _, i ) => ( {
+const categories = Array.from( { length: 15 }, ( _, i ) => ( {
 	id: `category-${ i }`,
 	label: `Category ${ i }`,
 	link: '#',
@@ -13,12 +13,12 @@ export const CategoryPillNavigationExample: FunctionComponent = () => {
 	return (
 		<div>
 			<Card>
-				<CategoryPillNavigation selectedCategory="category-2" list={ list } />
+				<CategoryPillNavigation selectedCategoryId="category-2" categories={ categories } />
 			</Card>
 
 			<Card>
 				<CategoryPillNavigation
-					selectedCategory="category-2"
+					selectedCategoryId="category-2"
 					buttons={ [
 						{
 							icon: <Icon icon={ iconStar } size={ 30 } />,
@@ -31,7 +31,7 @@ export const CategoryPillNavigationExample: FunctionComponent = () => {
 							link: '/',
 						},
 					] }
-					list={ list }
+					categories={ categories }
 				/>
 			</Card>
 		</div>

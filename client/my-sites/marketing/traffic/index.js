@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useEffect } from 'react';
@@ -16,7 +15,6 @@ import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mod
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
 import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
@@ -82,26 +80,6 @@ const SiteSettingsTraffic = ( {
 					require="calypso/my-sites/site-settings/seo-settings/form"
 					placeholder={ null }
 				/>
-			) }
-			{ isAdmin && (
-				<>
-					<SettingsSectionHeader
-						id="related-posts-settings"
-						title={ translate( 'Related posts' ) }
-					/>
-					<Card className="site-settings__card">
-						<em>
-							{ translate(
-								'Related posts configuration has moved to the {{a}}Settings > Reading{{/a}}.',
-								{
-									components: {
-										a: <a href={ `/settings/reading/${ siteSlug }#related-posts-settings` } />,
-									},
-								}
-							) }
-						</em>
-					</Card>
-				</>
 			) }
 			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
 				<CloudflareAnalyticsSettings />

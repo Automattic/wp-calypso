@@ -218,16 +218,6 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				{ requestError && (
-					<Notice
-						duration={ 10000 }
-						text={ errorText }
-						className="magic-login__request-login-email-form-notice"
-						showDismiss={ true }
-						onDismissClick={ this.onNoticeDismiss }
-						status="is-error"
-					/>
-				) }
 				{ currentUser && currentUser.username && (
 					<p>
 						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
@@ -254,6 +244,16 @@ class RequestLoginEmailForm extends Component {
 							placeholder={ inputPlaceholder }
 						/>
 						{ tosComponent }
+						{ requestError && (
+							<Notice
+								duration={ 10000 }
+								text={ errorText }
+								className="magic-login__request-login-email-form-notice"
+								showDismiss={ false }
+								onDismissClick={ this.onNoticeDismiss }
+								status="is-transparent-info"
+							/>
+						) }
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
 								{ submitButtonLabel || buttonLabel }

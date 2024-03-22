@@ -8,7 +8,7 @@ const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
 const isManageAllSitesPluginsPath = ( path ) =>
-	path.match( /^\/plugins\/(?:manage|active|inactive|updates)/ ) !== null;
+	path.match( /^\/plugins\/(?:manage|active|inactive|updates|scheduled-updates)/ ) !== null;
 
 /**
  * Checks if `currentPath` starts with the first fragment of `path`

@@ -58,7 +58,13 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 			showMore={ {
 				label: 'View all',
 			} }
-			overlay={ <StatsCardUpsellJetpack className="stats-module__upsell" siteSlug={ siteSlug } /> }
+			overlay={
+				<StatsCardUpsellJetpack
+					className="stats-module__upsell"
+					siteSlug={ siteSlug }
+					tracksEvent="stats_utm_upgrade_clicked"
+				/>
+			}
 		></StatsListCard>
 	);
 };

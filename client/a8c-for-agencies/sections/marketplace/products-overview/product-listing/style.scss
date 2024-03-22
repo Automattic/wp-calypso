@@ -41,7 +41,7 @@ p.product-listing__section-description {
 	gap: 16px;
 	grid-template-columns: 1fr;
 
-	@include break-xlarge {
+	@include break-large {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
@@ -79,6 +79,7 @@ p.product-listing__description {
 	flex-wrap: wrap;
 	gap: 16px;
 	margin: 16px 0 32px;
+	justify-content: space-between;
 }
 
 .select-dropdown.is-compact.product-listing__product-filter-select {
@@ -154,5 +155,13 @@ p.product-listing__description {
 		font-size: rem(13px);
 		font-weight: 400;
 		color: var(--color-text);
+	}
+}
+
+.product-listing__volume-price-selector {
+	min-width: 100%;
+
+	@include break-medium {
+		min-width: 430px;
 	}
 }

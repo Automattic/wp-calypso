@@ -1,3 +1,4 @@
+@import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap );
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
@@ -1158,6 +1159,17 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		// Remove autofill styles.
+		input:-webkit-autofill,
+		input:-webkit-autofill:hover,
+		input:-webkit-autofill:focus,
+		input:-webkit-autofill:active,
+		input[data-com-onepassword-filled="light"] {
+			-webkit-background-clip: text;
+			-webkit-box-shadow: 0 0 0 1000px #fff inset;
+			transition: background-color 5000s ease-in-out 0s;
+		}
+
 		.button.is-primary,
 		.login .button.is-primary,
 		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
@@ -1337,6 +1349,10 @@ $breakpoint-mobile: 660px;
 
 			.auth-form__social-buttons-tos {
 				margin: 0;
+
+				@media ( max-width: $break-medium ) {
+					max-width: $max-width;
+				}
 			}
 
 			.login__lost-password-link {
@@ -1468,7 +1484,7 @@ $breakpoint-mobile: 660px;
 				align-items: center;
 				align-self: stretch;
 				border-radius: 8px; // stylelint-disable-line scales/radii
-				border: 2px solid #dcdcde;
+				border: 1px solid #dcdcde;
 				height: 221px;
 				box-sizing: border-box;
 				padding: 32px 24px 16px 24px;
@@ -1634,8 +1650,6 @@ $breakpoint-mobile: 660px;
 				p {
 					color: var(--studio-gray-60);
 					text-align: center;
-
-					font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 					font-size: rem(14px);
 					font-style: normal;
 					font-weight: 400;

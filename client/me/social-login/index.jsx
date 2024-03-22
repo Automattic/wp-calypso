@@ -65,16 +65,14 @@ class SocialLogin extends Component {
 					/>
 				) }
 
-				{ config.isEnabled( 'login/github' ) && (
-					<SocialLoginService
-						service="github"
-						icon={ <GitHubIcon /> }
-						redirectUri={ redirectUri }
-						socialServiceResponse={
-							this.props.socialService === 'github' ? this.props.socialServiceResponse : null
-						}
-					/>
-				) }
+				<SocialLoginService
+					service="github"
+					icon={ <GitHubIcon /> }
+					redirectUri={ redirectUri }
+					socialServiceResponse={
+						this.props.socialService === 'github' ? this.props.socialServiceResponse : null
+					}
+				/>
 			</div>
 		);
 	}

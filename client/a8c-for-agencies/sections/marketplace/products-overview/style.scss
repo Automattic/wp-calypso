@@ -41,3 +41,20 @@
 	@include licensing-portal-bottom-action-bar;
 	padding: 14px;
 }
+
+
+.products-overview .a4a-layout__header {
+	.a4a-layout__header-actions {
+		justify-content: flex-end;
+
+		& > * {
+			flex-grow: 0;
+		}
+	}
+
+	@include breakpoint-deprecated( "<1280px" ) {
+		flex-wrap: nowrap;
+		justify-content: space-between;
+
+	}
+}

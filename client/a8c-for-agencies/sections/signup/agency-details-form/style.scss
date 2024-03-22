@@ -1,0 +1,24 @@
+.agency-details-form {
+
+	.agency-details-form__controls {
+		margin-block-start: 2rem;
+	}
+
+	.agency-details-form__business-address {
+		#line1 {
+			margin-block-end: 10px;
+		}
+	}
+
+	.agency-details-form__tos p {
+		margin: 45px 0 24px;
+		font-weight: 400;
+		font-size: 1rem;
+		line-height: 24px;
+		color: var(--color-neutral-100);
+	}
+
+	select {
+		width: 100%;
+	}
+}

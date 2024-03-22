@@ -125,7 +125,6 @@
 		"layout/wpcom-admin-interface": true,
 		"legal-updates-banner": true,
 		"livechat_solution": true,
-		"login/github": true,
 		"login/magic-login": true,
 		"login/react-lost-password-screen": true,
 		"login/social-first": true,

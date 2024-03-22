@@ -289,7 +289,7 @@ const SitesDataViews = ( {
 				fields={ fields }
 				view={ sitesViewState }
 				search={ true }
-				searchLabel={ translate( 'Search sites' ) }
+				searchLabel={ translate( 'Search for sites' ) }
 				getItemId={ ( item: SiteInfo ) => {
 					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
 					return item.id;

@@ -1,5 +1,10 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .shopping-cart {
-	margin-inline-end: 32px;
+	@include break-large {
+		margin-inline-end: 32px;
+	}
 }
 
 .badge.shopping-cart__button-badge {
