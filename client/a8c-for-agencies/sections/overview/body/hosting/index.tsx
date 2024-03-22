@@ -27,7 +27,8 @@ const OverviewBodyHosting = () => {
 	);
 
 	const pressable = {
-		title: 'Pressable',
+		//translators: Title for the action card
+		title: translate( 'Pressable' ),
 		titleIcon: <PressableLogo size={ 24 } />,
 		description: translate(
 			'Pressable offers world-class managed WordPress hosting for agencies with award-winning support, powerful site management, and flexible plans that scale with your business.'
@@ -50,7 +51,8 @@ const OverviewBodyHosting = () => {
 	};
 
 	const wpcom = {
-		title: 'Wordpress.com',
+		//translators: Title for the action card
+		title: translate( 'Wordpress.com' ),
 		titleIcon: <WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />,
 		description: translate(
 			'From one site to a thousand, build on a platform with perfect uptime, unlimited bandwidth, and the fastest WP Bench score.'
@@ -81,7 +83,7 @@ const OverviewBodyHosting = () => {
 		<Offering
 			title={ translate( 'Hosting' ) }
 			description={ translate(
-				'Choose from fully managed WordPress installations or hosting platforms you can customize.'
+				'Choose the hosting that suits your needs from our best-in-class offerings.'
 			) }
 			items={ [ pressable, wpcom ] }
 		/>
