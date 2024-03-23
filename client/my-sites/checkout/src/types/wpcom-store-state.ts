@@ -1,4 +1,4 @@
-import { isValueTruthy, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type {
 	DomainContactDetails,
 	CaDomainContactExtraDetails,
@@ -197,37 +197,37 @@ export function flattenManagedContactDetailsShape< A, B >(
 		x.countryCode ? f( x.countryCode ) : null,
 		x.fax ? f( x.fax ) : null,
 		x.vatId ? f( x.vatId ) : null,
-	].filter( isValueTruthy );
+	].filter( Boolean ) as B[];
 
 	const caValues =
 		x.tldExtraFields && x.tldExtraFields.ca
-			? [
+			? ( [
 					x.tldExtraFields.ca.lang ? f( x.tldExtraFields.ca.lang ) : null,
 					x.tldExtraFields.ca.legalType ? f( x.tldExtraFields.ca.legalType ) : null,
 					x.tldExtraFields.ca.ciraAgreementAccepted
 						? f( x.tldExtraFields.ca.ciraAgreementAccepted )
 						: null,
-			  ].filter( isValueTruthy )
+			  ].filter( Boolean ) as B[] )
 			: [];
 
 	const ukValues =
 		x.tldExtraFields && x.tldExtraFields.uk
-			? [
+			? ( [
 					x.tldExtraFields.uk.registrantType ? f( x.tldExtraFields.uk.registrantType ) : null,
 					x.tldExtraFields.uk.registrationNumber
 						? f( x.tldExtraFields.uk.registrationNumber )
 						: null,
 					x.tldExtraFields.uk.tradingName ? f( x.tldExtraFields.uk.tradingName ) : null,
-			  ].filter( isValueTruthy )
+			  ].filter( Boolean ) as B[] )
 			: [];
 
 	const frValues =
 		x.tldExtraFields && x.tldExtraFields.fr
-			? [
+			? ( [
 					x.tldExtraFields.fr.registrantType ? f( x.tldExtraFields.fr.registrantType ) : null,
 					x.tldExtraFields.fr.trademarkNumber ? f( x.tldExtraFields.fr.trademarkNumber ) : null,
 					x.tldExtraFields.fr.sirenSiret ? f( x.tldExtraFields.fr.sirenSiret ) : null,
-			  ].filter( isValueTruthy )
+			  ].filter( Boolean ) as B[] )
 			: [];
 
 	return values.concat( caValues, ukValues, frValues );
@@ -875,6 +875,7 @@ export const emptyManagedContactDetails: ManagedContactDetails = {
 	countryCode: getInitialManagedValue(),
 	fax: getInitialManagedValue(),
 	vatId: getInitialManagedValue(),
+	tldExtraFields: {},
 };
 
 export function getInitialWpcomStoreState(
