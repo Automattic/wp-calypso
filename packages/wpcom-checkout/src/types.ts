@@ -391,7 +391,6 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
 		trademarkNumber?: T;
 		sirenSiret?: T;
 	};
-	isForBusiness: boolean;
 };
 
 /*

@@ -83,7 +83,6 @@ export async function updateCartContactDetailsForCheckout(
 		organization,
 		address,
 		city: ( taxRequirements.city ? contactInfo.city?.value : undefined ) ?? '',
-		isForBusiness: contactInfo.tldExtraFields?.isForBusiness,
 	};
 	debug( 'updating cart with', cartLocationData );
 	return updateLocation( cartLocationData );

@@ -51,10 +51,7 @@ export function updateManagedContactDetailsShape< A, B >(
 	update: ManagedContactDetailsShape< A >,
 	data: ManagedContactDetailsShape< B >
 ): ManagedContactDetailsShape< B > {
-	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< B > = {
-		isForBusiness:
-			update.tldExtraFields?.isForBusiness ?? data.tldExtraFields?.isForBusiness ?? false,
-	};
+	const tldExtraFields: ManagedContactDetailsTldExtraFieldsShape< B > = {};
 
 	const combine = ( u: A | undefined, v: B | undefined ): B | undefined => {
 		if ( typeof u !== 'undefined' && typeof v !== 'undefined' ) {
@@ -573,9 +570,7 @@ function prepareFrDomainContactExtraDetailsErrors(
 export function prepareDomainContactValidationRequest(
 	details: ManagedContactDetails
 ): DomainContactValidationRequest {
-	const extra: DomainContactValidationRequestExtraFields = {
-		is_for_business: details.tldExtraFields?.isForBusiness,
-	};
+	const extra: DomainContactValidationRequestExtraFields = {};
 
 	if ( details.tldExtraFields?.ca ) {
 		extra.ca = {
@@ -678,7 +673,6 @@ export function formatDomainContactValidationResponse(
 		fax: response.messages?.fax,
 		vatId: response.messages?.vat_id,
 		tldExtraFields: {
-			isForBusiness: false, // This cannot have errors
 			ca: {
 				lang: response.messages?.extra?.ca?.lang,
 				legalType: response.messages?.extra?.ca?.legal_type,
@@ -717,7 +711,6 @@ function prepareManagedContactDetailsUpdate(
 		fax: rawFields.fax,
 		vatId: rawFields.vatId,
 		tldExtraFields: {
-			isForBusiness: rawFields.extra?.isForBusiness ?? false,
 			ca: {
 				lang: rawFields?.extra?.ca?.lang,
 				legalType: rawFields?.extra?.ca?.legalType,
@@ -863,10 +856,6 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 			postalCode: setValueUnlessTouched( newDetails.postalCode, oldDetails.postalCode ),
 			countryCode: setValueUnlessTouched( newDetails.countryCode, oldDetails.countryCode ),
 			fax: setValueUnlessTouched( newDetails.fax, oldDetails.fax ),
-			tldExtraFields: {
-				...oldDetails.tldExtraFields,
-				isForBusiness: newDetails.extra?.isForBusiness ?? false,
-			},
 		};
 	},
 };
@@ -886,9 +875,6 @@ export const emptyManagedContactDetails: ManagedContactDetails = {
 	countryCode: getInitialManagedValue(),
 	fax: getInitialManagedValue(),
 	vatId: getInitialManagedValue(),
-	tldExtraFields: {
-		isForBusiness: false,
-	},
 };
 
 export function getInitialWpcomStoreState(
