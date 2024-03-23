@@ -12380,7 +12380,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
     lru: "npm:^3.1.0"
-    lunr: "npm:^2.3.8"
+    lunr: "npm:^2.3.9"
     marked: "npm:^4.0.0"
     mock-fs: "npm:^5.2.0"
     mockdate: "npm:^2.0.5"
@@ -22178,10 +22178,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lunr@npm:^2.3.8":
-  version: 2.3.8
-  resolution: "lunr@npm:2.3.8"
-  checksum: 6838c0ac49480d14e10b9f431a3ab52155d2136c02ad45c423a930b98dacb906d3d75cea97bf0a3e427c2ca48e245fb3f2cfc48cb9e1e7a6b4ac0c56acc72286
+"lunr@npm:^2.3.9":
+  version: 2.3.9
+  resolution: "lunr@npm:2.3.9"
+  checksum: 77d7dbb4fbd602aac161e2b50887d8eda28c0fa3b799159cee380fbb311f1e614219126ecbbd2c3a9c685f1720a8109b3c1ca85cc893c39b6c9cc6a62a1d8a8b
   languageName: node
   linkType: hard
 
@@ -32652,7 +32652,7 @@ __metadata:
     loader-utils: "npm:^1.4.2"
     lodash: "npm:^4.17.21"
     lottie-web: "npm:^5.9.6"
-    lunr: "npm:^2.3.8"
+    lunr: "npm:^2.3.9"
     mixedindentlint: "npm:^1.2.0"
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"

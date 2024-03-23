@@ -279,7 +279,7 @@
 		"jest-environment-jsdom": "^29.7.0",
 		"jest-teamcity": "^1.11.0",
 		"loader-utils": "^1.4.2",
-		"lunr": "^2.3.8",
+		"lunr": "^2.3.9",
 		"mixedindentlint": "^1.2.0",
 		"mkdirp": "^1.0.4",
 		"ncp": "^2.0.0",
