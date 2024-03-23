@@ -41,6 +41,9 @@ export function IsForBusinessCheckbox() {
 			checked={ isChecked }
 			disabled={ isDisabled }
 			onChange={ ( newValue ) => {
+				if ( isDisabled ) {
+					return;
+				}
 				updateLocation( {
 					...convertTaxLocationToLocationUpdate( responseCart.tax.location ),
 					isForBusiness: newValue,
