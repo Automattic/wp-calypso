@@ -65,7 +65,7 @@ class CommentDisplaySettings extends Component {
 							id={ `${ selectedSiteId }-verbum-comments-blocks-toggle` }
 							checked={ !! fields.enable_blocks_comments }
 							onChange={ handleAutosavingToggle( 'enable_blocks_comments' ) }
-							disabled={ !! submittingForm }
+							disabled={ !! submittingForm || ! fields.enable_verbum_commenting }
 							label={ translate( 'Enable blocks in comments.' ) }
 						/>
 					</span>
