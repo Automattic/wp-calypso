@@ -2,7 +2,7 @@ import debugFactory from 'debug';
 import { getEmptyResponseCart } from './empty-carts';
 import type {
 	TempResponseCart,
-	CartLocation,
+	TaxLocationUpdate,
 	RequestCart,
 	RequestCartProduct,
 	ResponseCart,
@@ -113,9 +113,13 @@ export function removeCouponFromResponseCart( cart: TempResponseCart ): TempResp
 	};
 }
 
+/**
+ * Convert the `tax.location` data in a response cart to the data required by
+ * the `updateLocation()` cart action.
+ */
 export function convertTaxLocationToLocationUpdate(
 	location: ResponseCartTaxLocation
-): CartLocation {
+): TaxLocationUpdate {
 	return {
 		countryCode: location.country_code || undefined,
 		postalCode: location.postal_code || undefined,
@@ -128,8 +132,12 @@ export function convertTaxLocationToLocationUpdate(
 	};
 }
 
-export function convertCartLocationToTaxLocation(
-	location: CartLocation
+/**
+ * Convert the tax location data used by the `updateLocation()` cart action to
+ * the `tax.location` data in the response cart.
+ */
+export function convertLocationUpdateToTaxLocation(
+	location: TaxLocationUpdate
 ): ResponseCartTaxLocation {
 	return {
 		country_code: location.countryCode || undefined,
@@ -145,20 +153,20 @@ export function convertCartLocationToTaxLocation(
 
 export function addLocationToResponseCart(
 	cart: TempResponseCart,
-	location: CartLocation
+	location: TaxLocationUpdate
 ): TempResponseCart {
 	return {
 		...cart,
 		tax: {
 			...cart.tax,
-			location: convertCartLocationToTaxLocation( location ),
+			location: convertLocationUpdateToTaxLocation( location ),
 		},
 	};
 }
 
 export function doesCartLocationDifferFromResponseCartLocation(
 	cart: TempResponseCart,
-	location: CartLocation
+	location: TaxLocationUpdate
 ): boolean {
 	const {
 		countryCode: newCountryCode = '',
