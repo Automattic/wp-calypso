@@ -9,6 +9,7 @@ import type {
 	ResponseCartProduct,
 	GetCart,
 	CartKey,
+	ResponseCartTaxLocation,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:cart-functions' );
@@ -112,6 +113,36 @@ export function removeCouponFromResponseCart( cart: TempResponseCart ): TempResp
 	};
 }
 
+export function convertTaxLocationToLocationUpdate(
+	location: ResponseCartTaxLocation
+): CartLocation {
+	return {
+		countryCode: location.country_code || undefined,
+		postalCode: location.postal_code || undefined,
+		subdivisionCode: location.subdivision_code || undefined,
+		vatId: location.vat_id || undefined,
+		organization: location.organization || undefined,
+		address: location.address || undefined,
+		city: location.city || undefined,
+		isForBusiness: location.is_for_business || undefined,
+	};
+}
+
+export function convertCartLocationToTaxLocation(
+	location: CartLocation
+): ResponseCartTaxLocation {
+	return {
+		country_code: location.countryCode || undefined,
+		postal_code: location.postalCode || undefined,
+		subdivision_code: location.subdivisionCode || undefined,
+		vat_id: location.vatId || undefined,
+		organization: location.organization || undefined,
+		address: location.address || undefined,
+		city: location.city || undefined,
+		is_for_business: location.isForBusiness || undefined,
+	};
+}
+
 export function addLocationToResponseCart(
 	cart: TempResponseCart,
 	location: CartLocation
@@ -120,16 +151,7 @@ export function addLocationToResponseCart(
 		...cart,
 		tax: {
 			...cart.tax,
-			location: {
-				country_code: location.countryCode || undefined,
-				postal_code: location.postalCode || undefined,
-				subdivision_code: location.subdivisionCode || undefined,
-				vat_id: location.vatId || undefined,
-				organization: location.organization || undefined,
-				address: location.address || undefined,
-				city: location.city || undefined,
-				is_for_business: location.isForBusiness || undefined,
-			},
+			location: convertCartLocationToTaxLocation( location ),
 		},
 	};
 }

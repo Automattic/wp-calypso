@@ -316,17 +316,19 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	has_pending_payment?: boolean;
 }
 
+export interface ResponseCartTaxLocation {
+	country_code?: string;
+	postal_code?: string;
+	subdivision_code?: string;
+	vat_id?: string;
+	organization?: string;
+	address?: string;
+	city?: string;
+	is_for_business?: boolean;
+}
+
 export interface ResponseCartTaxData {
-	location: {
-		country_code?: string;
-		postal_code?: string;
-		subdivision_code?: string;
-		vat_id?: string;
-		organization?: string;
-		address?: string;
-		city?: string;
-		is_for_business?: boolean;
-	};
+	location: ResponseCartTaxLocation;
 	display_taxes: boolean;
 }
 
