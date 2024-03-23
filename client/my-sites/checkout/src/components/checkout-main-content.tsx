@@ -78,6 +78,7 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
+import { IsForBusinessCheckbox } from './is-for-business-checkbox';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -930,12 +931,28 @@ function CheckoutTermsAndCheckboxes( {
 	const has100YearPlan = cartHas100YearPlan( responseCart );
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
+	const isUnitedStateWithBusinessOption = ( () => {
+		if ( responseCart.tax.location.country_code !== 'US' ) {
+			return false;
+		}
+		const zipCode = parseInt( responseCart.tax.location.postal_code ?? '0', 10 );
+		if ( zipCode >= 43000 && zipCode <= 45999 ) {
+			// Ohio; OH
+			return true;
+		}
+		if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
+			// Connecticut; CT
+			return true;
+		}
+		return false;
+	} )();
 
 	const translate = useTranslate();
 
 	return (
 		<CheckoutTermsAndCheckboxesWrapper>
 			<BeforeSubmitCheckoutHeader />
+			{ isUnitedStateWithBusinessOption && <IsForBusinessCheckbox /> }
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
 					isAccepted={ is3PDAccountConsentAccepted }
