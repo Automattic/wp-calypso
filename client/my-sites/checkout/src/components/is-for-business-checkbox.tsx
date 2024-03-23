@@ -28,7 +28,7 @@ export function IsForBusinessCheckbox() {
 	} )();
 
 	const isChecked = responseCart.tax.location.is_for_business ?? false;
-	const isDisabled = formStatus !== FormStatus.READY && ! isLoading && ! isPendingUpdate;
+	const isDisabled = formStatus !== FormStatus.READY || isLoading || isPendingUpdate;
 
 	if ( ! isUnitedStateWithBusinessOption ) {
 		return null;
