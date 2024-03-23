@@ -7,7 +7,6 @@ import {
 	CountryTaxRequirements,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import {
 	getStateLabelText,
@@ -21,7 +20,6 @@ import { VatForm } from './vat-form';
 import type {
 	CountryListItem,
 	ManagedContactDetails,
-	ManagedContactDetailsTldExtraFieldsShape,
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
 import type { ChangeEvent, ReactElement } from 'react';
@@ -60,7 +58,7 @@ export default function TaxFields( {
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
-	const { postalCode, countryCode, city, state, organization, address1, tldExtraFields } = taxInfo;
+	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
 	const arePostalCodesSupported =
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
@@ -69,19 +67,6 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryTaxRequirements( countriesList, countryCode?.value )
 			: {};
-	const isUnitedStateWithBusinessOption = ( () => {
-		const zipCode = postalCode?.value ? parseInt( postalCode.value, 10 ) : 0;
-		if ( zipCode >= 43000 && zipCode <= 45999 ) {
-			// Ohio; OH
-			return true;
-		}
-		if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
-			// Connecticut; CT
-			return true;
-		}
-		return false;
-	} )();
-	const isBusinessCheckboxNeeded = countryCode?.value === 'US' && isUnitedStateWithBusinessOption;
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
 	const fields: ReactElement[] = [
@@ -96,7 +81,6 @@ export default function TaxFields( {
 							state,
 							organization,
 							address: address1,
-							isForBusiness: tldExtraFields?.isForBusiness,
 						},
 						arePostalCodesSupported,
 						taxRequirements
@@ -132,7 +116,6 @@ export default function TaxFields( {
 								state,
 								organization,
 								address: address1,
-								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -165,7 +148,6 @@ export default function TaxFields( {
 								state,
 								organization,
 								address: address1,
-								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -195,7 +177,6 @@ export default function TaxFields( {
 								state: { value: event.target.value, errors: [], isTouched: true },
 								organization,
 								address: address1,
-								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -223,7 +204,6 @@ export default function TaxFields( {
 								state,
 								organization: { value: newValue, errors: [], isTouched: true },
 								address: address1,
-								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -252,7 +232,6 @@ export default function TaxFields( {
 								state,
 								organization,
 								address: { value: newValue, errors: [], isTouched: true },
-								isForBusiness: tldExtraFields?.isForBusiness,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -260,33 +239,6 @@ export default function TaxFields( {
 					);
 				} }
 				autoComplete="address"
-			/>
-		);
-	}
-	if ( isBusinessCheckboxNeeded ) {
-		fields.push(
-			<CheckboxControl
-				id={ section + '-business-checkbox' }
-				label={ translate( 'Is this purchase for business?', { textOnly: true } ) }
-				checked={ tldExtraFields?.isForBusiness ?? false }
-				disabled={ isDisabled }
-				onChange={ ( newValue ) => {
-					onChange(
-						updateOnChangePayload(
-							{
-								countryCode,
-								postalCode,
-								city,
-								state,
-								organization,
-								address: address1,
-								isForBusiness: newValue,
-							},
-							arePostalCodesSupported,
-							taxRequirements
-						)
-					);
-				} }
 			/>
 		);
 	}
@@ -316,7 +268,6 @@ function updateOnChangePayload(
 		state: ManagedContactDetails[ 'state' ] | undefined;
 		organization: ManagedContactDetails[ 'organization' ] | undefined;
 		address: ManagedContactDetails[ 'address1' ] | undefined;
-		isForBusiness?: ManagedContactDetailsTldExtraFieldsShape< boolean >[ 'isForBusiness' ];
 	},
 	arePostalCodesSupported: boolean,
 	taxRequirements: CountryTaxRequirements
@@ -328,9 +279,6 @@ function updateOnChangePayload(
 		state: taxRequirements.subdivision ? taxInfo.state : undefined,
 		organization: taxRequirements.organization ? taxInfo.organization : undefined,
 		address1: taxRequirements.address ? taxInfo.address : undefined,
-		tldExtraFields: {
-			isForBusiness: taxInfo.isForBusiness ?? false,
-		},
 	};
 }
 
