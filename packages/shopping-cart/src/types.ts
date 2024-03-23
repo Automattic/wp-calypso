@@ -718,7 +718,6 @@ export type DomainContactDetails = {
 };
 
 export type DomainContactDetailsExtra = {
-	isForBusiness?: boolean;
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
