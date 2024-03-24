@@ -83,7 +83,7 @@ export function HelpCenterGPT( { onResponseReceived }: Props ) {
 		enabled: true,
 	} );
 
-	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
+	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em', 'img' ];
 
 	useEffect( () => {
 		if ( data?.response ) {
