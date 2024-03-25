@@ -6,8 +6,7 @@ import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholde
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
-import type { ChangeList } from 'calypso/components/forms/multi-checkbox';
+import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import { AgencyDetailsPayload } from './types';
 import type { FormEventHandler } from 'react';
@@ -32,6 +31,7 @@ interface Props {
 	includeTermsOfService?: boolean;
 	isLoading: boolean;
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
+	referer?: string | null;
 	initialValues?: {
 		agencyName?: string;
 		agencyUrl?: string;
@@ -52,6 +52,7 @@ export default function AgencyDetailsForm( {
 	isLoading,
 	initialValues = {},
 	onSubmit,
+	referer,
 	submitLabel,
 }: Props ) {
 	const translate = useTranslate();
@@ -66,7 +67,7 @@ export default function AgencyDetailsForm( {
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
 	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-20' );
 	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
 
 	const country = getCountry( countryValue, countryOptions );
@@ -89,6 +90,7 @@ export default function AgencyDetailsForm( {
 			country,
 			postalCode,
 			state: addressState,
+			referer,
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
@@ -102,6 +104,7 @@ export default function AgencyDetailsForm( {
 			country,
 			postalCode,
 			addressState,
+			referer,
 			includeTermsOfService,
 		]
 	);
@@ -137,8 +140,7 @@ export default function AgencyDetailsForm( {
 		setManagedSites( value );
 	};
 
-	// TODO: Fix the TS type for "services" here.
-	const handleSetServicesOffered = ( services: any ) => {
+	const handleSetServicesOffered = ( services: ChangeList< string > ) => {
 		setServicesOffered( services.value );
 	};
 
@@ -179,12 +181,9 @@ export default function AgencyDetailsForm( {
 						value={ managedSites }
 						onChange={ handleSetManagedSites }
 					>
-						<option value="1-5">{ translate( '1–5' ) }</option>
-						<option value="6-20">{ translate( '6–20' ) }</option>
-						<option value="21-50">{ translate( '21–50' ) }</option>
-						<option value="51-100">{ translate( '51–100' ) }</option>
-						<option value="101-500">{ translate( '101–500' ) }</option>
-						<option value="500+">{ translate( '500+' ) }</option>
+						<option value="1-20">{ translate( '1-20' ) }</option>
+						<option value="21-100">{ translate( '21–100' ) }</option>
+						<option value="101+">{ translate( '101+' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -199,7 +198,9 @@ export default function AgencyDetailsForm( {
 						name="services_offered"
 						checked={ servicesOffered }
 						options={ getServicesOfferedOptions() }
-						onChange={ handleSetServicesOffered }
+						// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
+						// the expected custom event type for `onChange` and the standard event types.
+						onChange={ handleSetServicesOffered as any }
 					/>
 				</FormFieldset>
 				<FormFieldset>

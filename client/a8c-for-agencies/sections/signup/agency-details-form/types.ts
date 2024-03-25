@@ -9,5 +9,6 @@ export interface AgencyDetailsPayload {
 	country: string;
 	postalCode: string;
 	state: string;
+	referer?: string | null;
 	tos?: 'consented';
 }

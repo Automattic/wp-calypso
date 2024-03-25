@@ -19,6 +19,9 @@ export default function SignupForm() {
 	const dispatch = useDispatch();
 	const notificationId = 'a4a-agency-signup-form';
 
+	const queryParams = new URLSearchParams( window.location.search );
+	const referer = queryParams.get( 'ref' );
+
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
 			dispatch( fetchAgencies() );
@@ -46,6 +49,7 @@ export default function SignupForm() {
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					referer: payload.referer,
 				} )
 			);
 		},
@@ -69,6 +73,7 @@ export default function SignupForm() {
 				isLoading={ createAgency.isPending }
 				onSubmit={ onSubmit }
 				submitLabel={ translate( 'Continue' ) }
+				referer={ referer }
 			/>
 		</Card>
 	);
