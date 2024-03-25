@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -536,6 +537,16 @@ class PurchaseItem extends Component {
 						src={ payPalImage }
 						alt={ purchase.payment.type }
 						className="purchase-item__paypal"
+					/>
+				);
+			}
+
+			if ( purchase.payment.type === 'razorpay' ) {
+				return (
+					<img
+						src={ razorpayImage }
+						alt={ purchase.payment.type }
+						className="purchase-item__razorpay"
 					/>
 				);
 			}
