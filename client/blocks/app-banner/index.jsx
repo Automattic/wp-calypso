@@ -204,6 +204,7 @@ export class AppBanner extends Component {
 			</div>
 		);
 	};
+
 	render() {
 		if (
 			! this.props.shouldDisplayAppBanner ||

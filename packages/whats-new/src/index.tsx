@@ -21,8 +21,8 @@ interface Props {
 
 const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {
 	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
-
 	const { mutate } = useSeenWhatsNewAnnouncementsMutation();
+
 	useEffect( () => {
 		// check for whether the announcement has been seen already.
 		if ( data && data.length ) {

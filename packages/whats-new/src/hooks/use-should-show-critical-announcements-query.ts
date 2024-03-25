@@ -1,12 +1,14 @@
+import { QueryObserverResult } from '@tanstack/react-query';
 import { useSeenWhatsNewAnnouncementsQuery } from './use-seen-whats-new-announcements-query';
 import { useWhatsNewAnnouncementsQuery } from './use-whats-new-announcements-query';
-
 /**
  * Queries the "whats new" announcements and the seen announcements to determine if there are any critical announcements that should be shown
  * @param siteId Id of the site to query
  * @returns Whether the critical announcements should be shown
  */
-export const useShouldShowCriticalAnnouncementsQuery = ( siteId: string ) => {
+export const useShouldShowCriticalAnnouncementsQuery = (
+	siteId: string
+): QueryObserverResult< boolean, Error > => {
 	const { data: whatsNewList, isLoading: isLoadingList } = useWhatsNewAnnouncementsQuery( siteId );
 	const { data: seenWhatsNewAnnouncements, isLoading: isLoadingSeen } =
 		useSeenWhatsNewAnnouncementsQuery();
@@ -14,7 +16,7 @@ export const useShouldShowCriticalAnnouncementsQuery = ( siteId: string ) => {
 	if ( isLoadingList || isLoadingSeen ) {
 		return {
 			isLoading: true,
-		};
+		} as QueryObserverResult< boolean, Error >;
 	}
 
 	if (
@@ -31,12 +33,12 @@ export const useShouldShowCriticalAnnouncementsQuery = ( siteId: string ) => {
 				return {
 					isLoading: false,
 					data: true,
-				};
+				} as QueryObserverResult< boolean, Error >;
 			}
 		}
 	}
 	return {
 		isLoading: false,
 		data: false,
-	};
+	} as QueryObserverResult< boolean, Error >;
 };
