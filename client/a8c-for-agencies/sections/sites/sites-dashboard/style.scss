@@ -147,6 +147,16 @@
 			padding-inline-end: 8px;
 		}
 
+		.site-preview__content {
+			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
+
+			.backup__page .main {
+				/* Prevents the backup page from overriding our padding and overflow settings. */
+				padding-bottom: 88px; /* 88px matches the padding from PR #39201. */
+				overflow: hidden;
+			}
+		}
+
 		.dataviews-view-table-wrapper {
 			overflow-y: auto;
 			max-height: calc(100vh - 465px); /* 465px is the size of all the content above the dataview, which includes our CTA elements, plus a 10px margin. */
