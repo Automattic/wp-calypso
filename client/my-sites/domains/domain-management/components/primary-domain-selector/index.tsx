@@ -210,7 +210,7 @@ const PrimaryDomainSelector = ( {
 							}
 							onClick={ onSubmit }
 						>
-							{ translate( 'Set as primary site address' ) }
+							{ translate( 'Set as primary' ) }
 						</FormButton>
 					</FormFieldset>
 				) }
