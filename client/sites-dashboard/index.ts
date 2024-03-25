@@ -4,7 +4,7 @@ import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import {
 	maybeRemoveCheckoutSuccessNotice,
 	sanitizeQueryParameters,
-	maybeSitesDashboard,
+	sitesDashboard,
 } from './controller';
 
 export default function () {
@@ -21,7 +21,7 @@ export default function () {
 		'/sites',
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
-		maybeSitesDashboard,
+		sitesDashboard,
 		makeLayout,
 		clientRender
 	);
