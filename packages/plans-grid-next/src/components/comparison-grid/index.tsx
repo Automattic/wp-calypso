@@ -384,7 +384,6 @@ const ComparisonGridHeaderCell = ( {
 	currentSitePlanSlug,
 	isLaunchPage,
 	planActionOverrides,
-	planActions,
 	planUpgradeCreditsApplicable,
 	showRefundPeriod,
 	isStuck,
@@ -414,8 +413,6 @@ const ComparisonGridHeaderCell = ( {
 		'popular-badge-is-stuck': isStuck,
 	} );
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
-
-	const onPlanCtaClick = planActions?.[ planSlug ] || ( () => {} );
 
 	return (
 		<Cell className={ headerClasses } textAlign="start">
@@ -479,7 +476,6 @@ const ComparisonGridHeaderCell = ( {
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
 				planSlug={ planSlug }
-				onPlanCtaClick={ onPlanCtaClick }
 				planActionOverrides={ planActionOverrides }
 				showMonthlyPrice={ false }
 				isStuck={ false }
@@ -981,7 +977,6 @@ const ComparisonGrid = ( {
 	isLaunchPage,
 	currentSitePlanSlug,
 	planActionOverrides,
-	planActions,
 	selectedPlan,
 	selectedFeature,
 	showUpgradeableStorage,
@@ -1131,7 +1126,6 @@ const ComparisonGrid = ( {
 							onPlanChange={ onPlanChange }
 							currentSitePlanSlug={ currentSitePlanSlug }
 							planActionOverrides={ planActionOverrides }
-							planActions={ planActions }
 							selectedPlan={ selectedPlan }
 							showRefundPeriod={ showRefundPeriod }
 							isStuck={ isStuck }
@@ -1164,7 +1158,6 @@ const ComparisonGrid = ( {
 					onPlanChange={ onPlanChange }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					planActionOverrides={ planActionOverrides }
-					planActions={ planActions }
 					selectedPlan={ selectedPlan }
 					showRefundPeriod={ showRefundPeriod }
 					isStuck={ false }

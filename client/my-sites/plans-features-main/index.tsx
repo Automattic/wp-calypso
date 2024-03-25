@@ -6,7 +6,7 @@ import {
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	WPComStorageAddOnSlug,
-	PLAN_FREE,
+	// PLAN_FREE,
 	type PlanSlug,
 	UrlFriendlyTermType,
 	isValidFeatureKey,
@@ -70,7 +70,6 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useFilterPlansForPlanFeatures from './hooks/use-filter-plans-for-plan-features';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
-import usePlanActions from './hooks/use-plan-actions';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -445,28 +444,6 @@ const PlansFeaturesMain = ( {
 		showLegacyStorageFeature,
 	} );
 
-	const comparisonGridPlanActions = usePlanActions(
-		gridPlansForComparisonGrid,
-		intent,
-		flowName,
-		sitePlanSlug,
-		siteSlug,
-		withDiscount,
-		planActionCallback,
-		onUpgradeClick
-	);
-
-	const featuresGridPlanActions = usePlanActions(
-		gridPlansForFeaturesGrid,
-		intent,
-		flowName,
-		sitePlanSlug,
-		siteSlug,
-		withDiscount,
-		planActionCallback,
-		onUpgradeClick
-	);
-
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
@@ -791,7 +768,9 @@ const PlansFeaturesMain = ( {
 							{
 								components: {
 									link: (
-										<Button onClick={ () => featuresGridPlanActions[ PLAN_FREE ]?.() } borderless />
+										// TODO: Fix onClick callback here
+										// <Button onClick={ () => featuresGridPlanActions[ PLAN_FREE ]?.() } borderless />
+										<Button borderless />
 									),
 								},
 							}
@@ -840,7 +819,6 @@ const PlansFeaturesMain = ( {
 									hideUnavailableFeatures={ hideUnavailableFeatures }
 									currentSitePlanSlug={ sitePlanSlug }
 									planActionOverrides={ planActionOverrides }
-									planActions={ featuresGridPlanActions }
 									intent={ intent }
 									showLegacyStorageFeature={ showLegacyStorageFeature }
 									showUpgradeableStorage={ showUpgradeableStorage }
@@ -904,7 +882,6 @@ const PlansFeaturesMain = ( {
 												hideUnavailableFeatures={ hideUnavailableFeatures }
 												currentSitePlanSlug={ sitePlanSlug }
 												planActionOverrides={ planActionOverrides }
-												planActions={ comparisonGridPlanActions }
 												intent={ intent }
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }
