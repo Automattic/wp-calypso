@@ -3,8 +3,8 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import WhatsNewGuide, { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
-import { useDispatch } from '@wordpress/data';
+import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
+import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
@@ -100,15 +100,40 @@ function SidebarScrollSynchronizer() {
 }
 
 function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
+	const { fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
 	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
 
+	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
+
 	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
+		fetchSeenWhatsNewAnnouncements();
+	}, [ fetchSeenWhatsNewAnnouncements ] );
+
+	const { seenWhatsNewAnnouncements } = useSelect( ( select ) => {
+		const helpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			seenWhatsNewAnnouncements: helpCenterSelect.getSeenWhatsNewAnnouncements(),
+		};
+	}, [] );
+
+	useEffect( () => {
+		if (
+			data &&
+			data.length > 0 &&
+			! isLoading &&
+			seenWhatsNewAnnouncements &&
+			typeof seenWhatsNewAnnouncements.indexOf === 'function'
+		) {
+			if ( config.isEnabled( 'layout/dotcom-nav-redesign' ) ) {
+				data.forEach( ( item ) => {
+					if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
+						setShowWhatsNew( true );
+						return;
+					}
+				} );
+			}
 		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
+	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
 
 	const handleClose = useCallback( () => {
 		setShowWhatsNew( false );
