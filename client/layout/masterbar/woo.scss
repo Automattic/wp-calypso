@@ -1719,6 +1719,9 @@ $breakpoint-mobile: 660px;
 				border: 0;
 				margin-bottom: 32px;
 				clip-path: none;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
 
 				.button {
 					min-height: 48px;
