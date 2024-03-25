@@ -133,7 +133,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	width: 180px;
+	width: calc(35vw); /* 35vw feels comfortable in small resolutions */
 	font-weight: 500;
 	font-size: rem(14px);
 }
