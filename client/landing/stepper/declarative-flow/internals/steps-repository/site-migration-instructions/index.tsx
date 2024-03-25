@@ -88,7 +88,7 @@ const SiteMigrationInstructions: Step = function () {
 								},
 							}
 						) }
-						<ShowHideInput value={ migrationKey } />
+						<ShowHideInput value={ migrationKey } className="site-migration-instructions__key" />
 					</li>
 				) }
 				{ isError && (

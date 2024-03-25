@@ -9,8 +9,9 @@ import './style.scss';
 
 interface Props {
 	value: string;
+	className?: string;
 }
-export const ShowHideInput: FC< Props > = ( { value } ) => {
+export const ShowHideInput: FC< Props > = ( { value, className } ) => {
 	const [ hide, setHide ] = useState( true );
 	const [ copied, setCopied ] = useState( false );
 	const inputRef = useRef< HTMLInputElement >( null );
@@ -46,7 +47,7 @@ export const ShowHideInput: FC< Props > = ( { value } ) => {
 
 	return (
 		<div
-			className={ classNames( 'show-hide-input', {
+			className={ classNames( 'show-hide-input', className, {
 				'show-hide-input--hidden': hide,
 			} ) }
 		>
@@ -54,6 +55,7 @@ export const ShowHideInput: FC< Props > = ( { value } ) => {
 				type="text"
 				className="show-hide-input__value"
 				readOnly
+				disabled={ hide }
 				value={ hide ? hiddenValue : value }
 				ref={ inputRef }
 			/>

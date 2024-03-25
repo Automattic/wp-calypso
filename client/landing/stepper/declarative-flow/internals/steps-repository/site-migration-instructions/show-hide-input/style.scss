@@ -3,17 +3,20 @@
 	justify-content: space-between;
 	align-items: center;
 	outline: solid 1px var(--studio-gray-10);
-	padding: 12px 8px;
+	padding: 8px;
 	border-radius: 4px;
 	gap: 10px;
-	height: 24px;
+	height: 28px;
 	max-width: 456px;
-	margin-top: 8px;
 	transition: all 0.2s;
 
 	&--hidden {
 		overflow-x: hidden;
 		user-select: none;
+
+		input {
+			background-color: transparent;
+		}
 	}
 
 	&__value {
@@ -36,7 +39,6 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 10px;
-		height: 24px;
 	}
 
 	&__visibility-button {
@@ -49,7 +51,8 @@
 	}
 
 	&__copy-button {
-		padding: 12px 8px;
+		padding: 0 8px;
+		height: 28px;
 		border-radius: 4px;
 	}
 }
