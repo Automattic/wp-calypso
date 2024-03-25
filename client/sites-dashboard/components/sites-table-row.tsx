@@ -24,6 +24,7 @@ import {
 } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
+import { SiteAdminLink } from './sites-site-admin-link';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
@@ -90,6 +91,10 @@ const ListTileTitle = styled.div`
 const ListTileSubtitle = styled.div`
 	display: flex;
 	align-items: center;
+
+	&:not( :last-child ) {
+		margin-block-end: 2px;
+	}
 `;
 
 const StatsOffIndicatorStyled = styled.div`
@@ -205,11 +210,18 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</ListTileTitle>
 					}
 					subtitle={
-						<ListTileSubtitle>
-							<SiteUrl href={ siteUrl } title={ siteUrl }>
-								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-							</SiteUrl>
-						</ListTileSubtitle>
+						<>
+							<ListTileSubtitle>
+								<SiteUrl href={ siteUrl } title={ siteUrl }>
+									<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+								</SiteUrl>
+							</ListTileSubtitle>
+							<ListTileSubtitle>
+								<SiteAdminLink href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+									{ __( 'WP Admin' ) }
+								</SiteAdminLink>
+							</ListTileSubtitle>
+						</>
 					}
 				/>
 			</Column>
