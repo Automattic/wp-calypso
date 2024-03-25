@@ -1,65 +1,49 @@
-import { Card, JetpackLogo, WordPressLogo, WooCommerceWooLogo } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@automattic/components';
+import { loadScript } from '@automattic/load-script';
 import { useTranslate } from 'i18n-calypso';
-import FoldableNav from 'calypso/a8c-for-agencies/components/foldable-nav';
-import { FoldableNavItem } from 'calypso/a8c-for-agencies/components/foldable-nav/types';
-import PressableLogo from 'calypso/a8c-for-agencies/components/pressable-logo';
+import { useEffect, useState } from 'react';
 
 import './style.scss';
 
 export default function OverviewSidebarContactSupport() {
 	const translate = useTranslate();
+	const [ isZendeskScriptLoaded, setIsZendeskScriptLoaded ] = useState( false );
 
-	const header = translate( 'Contact Support' );
-	const tracksName = 'calypso_a4a_overview_contact_support';
+	const openZendeskChat = () => {
+		window.zE( 'messenger', 'open' );
+		window.zE( 'messenger', 'show' );
+	};
 
-	const navItems: FoldableNavItem[] = [
-		{
-			icon: <JetpackLogo size={ 24 } />,
-			link: 'https://jetpack.com/contact-support/',
-			slug: 'jetpack',
-			id: 'a4a-contact-support-jetpack-icon',
-			title: translate( 'Jetpack' ),
-			trackEventName: 'calypso_a4a_overview_contact_support_jetpack_click',
-			isExternalLink: true,
-		},
-		{
-			icon: <WooCommerceWooLogo width={ 24 } />,
-			link: 'https://woo.com/contact-us/',
-			slug: 'woocommerce',
-			id: 'a4a-contact-support-woocommerce-icon',
-			title: translate( 'WooCommerce' ),
-			trackEventName: 'calypso_a4a_overview_contact_support_woocommerce_click',
-			isExternalLink: true,
-		},
-		{
-			icon: <PressableLogo size={ 18 } />,
-			link: 'https://my.pressable.com/',
-			slug: 'pressable',
-			id: 'a4a-contact-support-pressable-icon',
-			title: translate( 'Pressable' ),
-			trackEventName: 'calypso_a4a_overview_contact_support_pressable_click',
-			isExternalLink: true,
-		},
-		{
-			icon: <WordPressLogo size={ 18 } />,
-			link: localizeUrl( 'https://wordpress.com/support/contact/' ),
-			slug: 'wordpress',
-			id: 'a4a-contact-support-wordpress-icon',
-			title: translate( 'WordPress.com' ),
-			trackEventName: 'calypso_a4a_overview_contact_support_wordpress_click',
-			isExternalLink: true,
-		},
-	];
+	useEffect( () => {
+		if ( isZendeskScriptLoaded ) {
+			return;
+		}
+
+		const onZendeskScriptLoaded = ( retryCount = 0 ) => {
+			// Ensure the Zendesk script is loaded before trying to interact with it.
+			if ( typeof window.zE !== 'function' ) {
+				if ( retryCount < 5 ) {
+					setTimeout( onZendeskScriptLoaded, 250, ++retryCount );
+				}
+				return;
+			}
+			// Hide the chat widget by default.
+			window.zE( 'messenger', 'hide' );
+			setIsZendeskScriptLoaded( true );
+		};
+
+		loadScript(
+			'https://static.zdassets.com/ekr/snippet.js?key=faa5ee86-ed89-40dc-96f3-ff1d10389bcc',
+			onZendeskScriptLoaded,
+			{ id: 'ze-snippet' }
+		);
+	}, [ isZendeskScriptLoaded ] );
 
 	return (
-		<Card className="overview__contact-support">
-			<FoldableNav
-				header={ header }
-				navItems={ navItems }
-				tracksName={ tracksName }
-				expandedInit={ false }
-			/>
-		</Card>
+		<>
+			<Button className="overview__contact-support-button" onClick={ openZendeskChat }>
+				{ translate( 'Contact Support' ) }
+			</Button>
+		</>
 	);
 }

@@ -9,7 +9,6 @@ export interface Props {
 }
 
 export interface FoldableNavItem {
-	id?: string;
 	icon?: JSX.Element;
 	link: string;
 	slug: string;
