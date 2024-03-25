@@ -6,6 +6,7 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
@@ -80,12 +81,20 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	const titleTooltipText = isPermalinkCopied ? 'Copied link to pattern' : 'Copy link to pattern';
+	const translate_not_yet = useTranslate();
 
-	let copyButtonText = isPreviewLarge ? 'Copy pattern' : 'Copy';
+	const titleTooltipText = isPermalinkCopied
+		? translate_not_yet( 'Copied link to pattern' )
+		: translate_not_yet( 'Copy link to pattern' );
+
+	let copyButtonText = isPreviewLarge
+		? translate_not_yet( 'Copy pattern' )
+		: translate_not_yet( 'Copy' );
 
 	if ( isPatternCopied ) {
-		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
+		copyButtonText = isPreviewLarge
+			? translate_not_yet( 'Pattern copied!' )
+			: translate_not_yet( 'Copied' );
 	}
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
