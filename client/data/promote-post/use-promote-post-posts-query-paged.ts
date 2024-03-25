@@ -5,6 +5,7 @@ import {
 	useInfiniteQuery,
 	useQuery,
 } from '@tanstack/react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { SearchOptions } from 'calypso/my-sites/promote-post-i2/components/search-bar';
 import { PostQueryResult } from './types';
@@ -36,12 +37,17 @@ export const getSearchOptionsQueryParams = ( searchOptions: SearchOptions ) => {
 };
 
 async function queryPosts( siteId: number, queryparams: string ) {
-	return await wpcom.req.get( {
+	return await wpcomRequest< Response >( {
 		path: `/sites/${ siteId }/blaze/posts?${ queryparams }`,
-		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
-			? 'jetpack/v4/blaze-app'
-			: 'wpcom/v2',
+		apiNamespace: 'wpcom/v2',
 	} );
+
+	// return await wpcom.req.get( {
+	// 	path: `/sites/${ siteId }/blaze/posts?${ queryparams }`,
+	// 	apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
+	// 		? 'jetpack/v4/blaze-app'
+	// 		: 'wpcom/v2',
+	// } );
 }
 
 export const usePostsQueryStats = ( siteId: number, queryOptions = {} ) => {

@@ -268,9 +268,10 @@ export const requestDSP = async < T >(
 	const params = {
 		path,
 		method,
-		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
-			? 'jetpack/v4/blaze-app'
-			: 'wpcom/v2',
+		apiNamespace: 'wpcom/v2',
+		// config.isEnabled( 'is_running_in_jetpack_site' )
+		// 	? 'jetpack/v4/blaze-app'
+		// 	: 'wpcom/v2',
 		body,
 	};
 
