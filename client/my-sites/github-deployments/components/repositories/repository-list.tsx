@@ -64,20 +64,23 @@ export const GitHubBrowseRepositoriesList = ( {
 	}
 
 	const getRepositoryPermissionsNotice = () => {
-		const noticeText =
-			installation.repository_selection === 'all'
-				? __( 'Need to adjust permissions?' )
-				: __( 'Missing GitHub repositories?' );
-
-		const linkText =
-			installation.repository_selection === 'all'
-				? __( 'Update them on GitHub' )
-				: __( 'Adjust permissions on GitHub' );
+		if ( installation.repository_selection === 'all' ) {
+			return (
+				<p className="github-repositories-list-permissions-notice">
+					{ __( 'Need to adjust permissions?' ) }{ ' ' }
+					<ExternalLink href={ installation.management_url }>
+						{ __( 'Update them on GitHub' ) }
+					</ExternalLink>
+				</p>
+			);
+		}
 
 		return (
 			<p className="github-repositories-list-permissions-notice">
-				{ noticeText }{ ' ' }
-				<ExternalLink href={ installation.management_url }>{ linkText }</ExternalLink>
+				{ __( 'Missing GitHub repositories?' ) }{ ' ' }
+				<ExternalLink href={ installation.management_url }>
+					{ __( 'Adjust permissions on GitHub' ) }
+				</ExternalLink>
 			</p>
 		);
 	};
