@@ -8,10 +8,6 @@
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
-	.a4a-layout-column.sites-overview {
-		overflow: auto;
-	}
-
 	.site-preview-pane .a4a-layout-column__container {
 		display: flex;
 	}
@@ -268,6 +264,7 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
+				max-height: calc(100vh - 165px);
 
 				li {
 					padding: 8px 24px;

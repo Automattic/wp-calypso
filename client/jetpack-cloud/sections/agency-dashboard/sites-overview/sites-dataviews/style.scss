@@ -133,7 +133,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	width: calc(35vw); /* 35vw feels comfortable in small resolutions */
+	width: 180px;
 	font-weight: 500;
 	font-size: rem(14px);
 }
@@ -148,6 +148,12 @@
 }
 
 .preview-hidden {
+	@media (max-width: $break-large) {
+		.sites-dataviews__site-name {
+			width: calc(35vw);  /* 35vw provides a comfortable experience on small resolutions when the preview is hidden. */
+		}
+	}
+
 	@media (min-width: 2040px) {
 		.sites-dataviews__site-name {
 			width: 250px;
