@@ -10,6 +10,15 @@ export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, section
 	);
 };
 
+export const getShouldShowCollapsedGlobalSidebar = (
+	state: AppState,
+	siteId: number,
+	sectionGroup: string
+) => {
+	// Global Site View should be limited to classic interface users only for now.
+	return isGlobalSiteViewEnabled( state, siteId ) && sectionGroup === 'sites' && !! siteId;
+};
+
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
 	siteId: number,
