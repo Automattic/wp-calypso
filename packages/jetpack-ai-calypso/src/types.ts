@@ -39,6 +39,11 @@ export type SaveToMediaLibraryResponseProps = {
 	];
 };
 
+export type CheckMediaProps = {
+	siteId: string | number;
+	mediaId: Logo[ 'mediaId' ];
+};
+
 export type SetSiteLogoProps = {
 	siteId: string | number;
 	imageId: string | number;
@@ -68,5 +73,10 @@ export type TokenDataEndpointResponseProps = {
 };
 
 export type SaveToStorageProps = Logo & {
+	siteId: string;
+};
+
+export type RemoveFromStorageProps = {
+	mediaId: Logo[ 'mediaId' ];
 	siteId: string;
 };
