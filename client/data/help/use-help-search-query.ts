@@ -43,7 +43,7 @@ const fetchArticlesFromAPI = async ( queryString: string ): Promise< SearchResul
 const fetchArticlesFromWP = async ( articles: TailoredArticles ): Promise< SearchResult[] > => {
 	const { post_ids, blog_id, locale } = articles;
 	return await wpcomRequest( {
-		path: `help/article/articles`,
+		path: `help/articles`,
 		apiNamespace: 'wpcom/v2/',
 		apiVersion: '2',
 		method: 'PUT',
