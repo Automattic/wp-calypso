@@ -111,6 +111,20 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
+	const recordClickEvent = (
+		tracksEventName: string,
+		view: PatternView,
+		typeFilter: PatternTypeFilter
+	) => {
+		recordTracksEvent( tracksEventName, {
+			category,
+			is_logged_in: isLoggedIn,
+			type: getTracksPatternType( typeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view,
+		} );
+	};
+
 	const currentView = isGridView ? 'grid' : 'list';
 
 	const handleViewChange = ( view: PatternView ) => {
@@ -118,13 +132,7 @@ export const PatternLibrary = ( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_pattern_library_view_switch', {
-			category,
-			is_logged_in: isLoggedIn,
-			type: getTracksPatternType( patternTypeFilter ),
-			user_is_dev_account: isDevAccount ? '1' : '0',
-			view,
-		} );
+		recordClickEvent( 'calypso_pattern_library_view_switch', view, patternTypeFilter );
 
 		const url = new URL( window.location.href );
 		url.searchParams.delete( 'grid' );
@@ -252,6 +260,11 @@ export const PatternLibrary = ( {
 									const href =
 										getCategoryUrlPath( category, value as PatternTypeFilter ) +
 										( isGridView ? '?grid=1' : '' );
+									recordClickEvent(
+										'calypso_pattern_library_type_switch',
+										currentView,
+										value as PatternTypeFilter
+									);
 									page( href );
 								} }
 								value={ patternTypeFilter }
