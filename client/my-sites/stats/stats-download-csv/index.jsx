@@ -37,7 +37,7 @@ class StatsDownloadCsv extends Component {
 				period.period,
 				period.startOf.format( 'L' ),
 				period.endOf.format( 'L' ),
-			].join( '_' ) + '.csv';
+			].join( '-' ) + '.csv';
 
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
