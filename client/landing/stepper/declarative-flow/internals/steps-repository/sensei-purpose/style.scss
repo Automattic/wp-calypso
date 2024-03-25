@@ -11,7 +11,7 @@ $checked-color: #000;
 		background-color: $sensei-purple-50;
 	}
 	.step-container__header {
-		width: 444px;
+		width: 680px;
 		padding: 0 20px;
 		max-width: 100%;
 	}
@@ -19,7 +19,8 @@ $checked-color: #000;
 .sensei-setup-wizard {
 	&__purpose-container {
 		padding: 0 20px;
-		width: 444px;
+		margin-top: 10px;
+		width: 512px;
 		max-width: 100%;
 	}
 	&__purpose-list {

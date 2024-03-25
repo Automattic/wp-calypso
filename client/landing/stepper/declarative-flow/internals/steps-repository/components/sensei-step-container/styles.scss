@@ -56,6 +56,19 @@
 		}
 	}
 
+	.sensei-step-white {
+		background-color: $white;
+
+		.formatted-header .formatted-header__subtitle {
+			color: inherit;
+			text-align: center;
+		}
+
+		.sensei-button {
+			@include sensei-button;
+		}
+	}
+
 	@media (max-width: $breakpoint-mobile) {
 		.step-container__header .formatted-header .formatted-header__title,
 		.step-container__header .formatted-header .formatted-header__subtitle {
