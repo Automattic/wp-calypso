@@ -217,7 +217,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 								</SiteUrl>
 							</ListTileSubtitle>
 							<ListTileSubtitle>
-								<SiteAdminLink href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+								<SiteAdminLink href={ getSiteWpAdminUrl( site ) } title={ __( 'Visit WP Admin' ) }>
 									{ __( 'WP Admin' ) }
 								</SiteAdminLink>
 							</ListTileSubtitle>
