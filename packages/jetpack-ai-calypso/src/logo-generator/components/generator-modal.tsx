@@ -22,7 +22,7 @@ import {
 } from '../../constants';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
-import { isLogoHistoryEmpty } from '../lib/logo-storage';
+import { isLogoHistoryEmpty, clearDeletedMedia } from '../lib/logo-storage';
 import { STORE_NAME } from '../store';
 import { FeatureFetchFailureScreen } from './feature-fetch-failure-screen';
 import { FirstLoadScreen } from './first-load-screen';
@@ -127,6 +127,10 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 				return;
 			}
 
+			// Load the logo history and clear any deleted media.
+			await clearDeletedMedia( String( siteId ) );
+			loadLogoHistory( siteId );
+
 			// If there is any logo, we do not need to generate a first logo again.
 			if ( ! isLogoHistoryEmpty( String( siteId ) ) ) {
 				setLoadingState( null );
@@ -139,15 +143,14 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 			debug( 'Error fetching feature', error );
 			setLoadingState( null );
 		}
-	}, [ siteId, getFeature, siteDetails?.domain, generateFirstLogo ] );
+	}, [ getFeature, siteId, loadLogoHistory, generateFirstLogo, siteDetails?.domain ] );
 
 	const handleModalOpen = useCallback( async () => {
 		setContext( context );
 		recordTracksEvent( EVENT_MODAL_OPEN, { context, placement: EVENT_PLACEMENT_QUICK_LINKS } );
-		loadLogoHistory( siteId );
 
 		initializeModal();
-	}, [ setContext, context, loadLogoHistory, siteId, initializeModal ] );
+	}, [ setContext, context, initializeModal ] );
 
 	const closeModal = () => {
 		onClose();
