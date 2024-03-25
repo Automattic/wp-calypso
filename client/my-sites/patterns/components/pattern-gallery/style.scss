@@ -19,13 +19,11 @@
 }
 
 .pattern-gallery--grid.pattern-gallery--pages {
+	--gutter-size: 24px;
+
 	display: block;
+}
 
-	@include break-medium {
-		column-count: 2;
-	}
-
-	@include break-huge {
-		column-count: 3;
-	}
+.pattern-gallery__gutter {
+	width: var(--gutter-size);
 }

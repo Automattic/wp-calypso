@@ -7838,6 +7838,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jquery@npm:*":
+  version: 3.5.29
+  resolution: "@types/jquery@npm:3.5.29"
+  dependencies:
+    "@types/sizzle": "npm:*"
+  checksum: 17409b551956c54d641264895790b9e63a2179bacdabe2a87d5f8f2baebe2f16625d111b17b1441cdffbf9e059e683bb25bf04ba6ea56b36e39ea50cc77f5b8c
+  languageName: node
+  linkType: hard
+
 "@types/jsdom@npm:^20.0.0":
   version: 20.0.1
   resolution: "@types/jsdom@npm:20.0.1"
@@ -7886,6 +7895,15 @@ __metadata:
   version: 4.14.199
   resolution: "@types/lodash@npm:4.14.199"
   checksum: a7168a0a2a7c9e8801aa95f92b02f9d664ee938a5186d73f77a3a8447f475bbadedc1f7f746ffd2530ae34069d232bf25f4f4414077f0d81c71489e34e59173e
+  languageName: node
+  linkType: hard
+
+"@types/masonry-layout@npm:^4.2.7":
+  version: 4.2.7
+  resolution: "@types/masonry-layout@npm:4.2.7"
+  dependencies:
+    "@types/jquery": "npm:*"
+  checksum: 81ea3d8c0780ff7a4523dd8e954f4825806ca2c9928e13a19489571f2517e483c0a7143abc322da9fc820392e8c92a8a88aa9eda0a67ceb68a4bd346711aa157
   languageName: node
   linkType: hard
 
@@ -8241,6 +8259,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: ef55b05fb2d12ed790d8e3b46d96bb84224c67bbcdfb6a867d14129ffc77f7b3edbf66b1eb5e737953d1f1b2ce9928f3505fe29061bfb048016616beaf866ef8
+  languageName: node
+  linkType: hard
+
+"@types/sizzle@npm:*":
+  version: 2.3.8
+  resolution: "@types/sizzle@npm:2.3.8"
+  checksum: ab5460147ae6680cc20c2223a8f17d9f7c97144b70f00a222a1c32d68b5207696d48177ab9784dda88c74d93ed5a78dd31f74d271b15382520b423c81b4aac89
   languageName: node
   linkType: hard
 
@@ -12298,6 +12323,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"
     "@testing-library/user-event": "npm:^14.5.2"
+    "@types/masonry-layout": "npm:^4.2.7"
     "@types/react": "npm:^18.2.14"
     "@types/redux-mock-store": "npm:1.0.6"
     "@wordpress/a11y": "npm:^3.54.0"
@@ -12382,6 +12408,7 @@ __metadata:
     lru: "npm:^3.1.0"
     lunr: "npm:^2.3.8"
     marked: "npm:^4.0.0"
+    masonry-layout: "npm:^4.2.2"
     mock-fs: "npm:^5.2.0"
     mockdate: "npm:^2.0.5"
     moment: "npm:^2.26.0"
@@ -14837,6 +14864,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"desandro-matches-selector@npm:^2.0.0":
+  version: 2.0.2
+  resolution: "desandro-matches-selector@npm:2.0.2"
+  checksum: f4b1f42e6ccd6c97e93e3f99a64461eef2722075b03d8a9e349e31766436f8b385d1fd50802b024dae951dc69399f13de20a139c1187000fd5e2fcf11cb5eb00
+  languageName: node
+  linkType: hard
+
 "destroy@npm:1.2.0":
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
@@ -16734,6 +16768,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ev-emitter@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "ev-emitter@npm:1.1.1"
+  checksum: 332dcb444de2b1d81035fb22a10dd33926311baa7ea6fc24f1de7b60c6eff5b7e133611000fce740471f0c8f95259d3914d49b4201af2d85a51f0aeb8cb1ceda
+  languageName: node
+  linkType: hard
+
 "event-target-shim@npm:^5.0.0":
   version: 5.0.1
   resolution: "event-target-shim@npm:5.0.1"
@@ -17402,6 +17443,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fizzy-ui-utils@npm:^2.0.0":
+  version: 2.0.7
+  resolution: "fizzy-ui-utils@npm:2.0.7"
+  dependencies:
+    desandro-matches-selector: "npm:^2.0.0"
+  checksum: 4c36d45db4e2e0cf1507aa9633af6710a12bdc047146fa89505e10aedc5bfb16cbfb0da686d5dfd89a37e1da4bce86bbee365e22be88705ab4ffccd530b4902a
+  languageName: node
+  linkType: hard
+
 "flag-icon-css@npm:^3.4.5":
   version: 3.4.5
   resolution: "flag-icon-css@npm:3.4.5"
@@ -17933,6 +17983,13 @@ __metadata:
   version: 5.1.1
   resolution: "get-port@npm:5.1.1"
   checksum: 2873877a469b24e6d5e0be490724a17edb39fafc795d1d662e7bea951ca649713b4a50117a473f9d162312cb0e946597bd0e049ed2f866e79e576e8e213d3d1c
+  languageName: node
+  linkType: hard
+
+"get-size@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "get-size@npm:2.0.3"
+  checksum: c9703caa61b4d38385eab34aa5068f3a25ab40f6d9cda6dac3f0dc4dcd8da38f7b0283035e71c9f52a47b670b9315372cae46f58d66ad709a4939e57c1fdc6cc
   languageName: node
   linkType: hard
 
@@ -22411,6 +22468,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"masonry-layout@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "masonry-layout@npm:4.2.2"
+  dependencies:
+    get-size: "npm:^2.0.2"
+    outlayer: "npm:^2.1.0"
+  checksum: 991044cf7c22acbbb1135690314d68f9f237ef17315494c9dd25ed00fa0c526a8eb27d6bcf99a141a9d049bd62c5c251f66f9c8a4c201ca9c0944d8e44c0f09f
+  languageName: node
+  linkType: hard
+
 "matcher@npm:^3.0.0":
   version: 3.0.0
   resolution: "matcher@npm:3.0.0"
@@ -24371,6 +24438,17 @@ __metadata:
   version: 1.0.2
   resolution: "os-tmpdir@npm:1.0.2"
   checksum: f438450224f8e2687605a8dd318f0db694b6293c5d835ae509a69e97c8de38b6994645337e5577f5001115470414638978cc49da1cdcc25106dad8738dc69990
+  languageName: node
+  linkType: hard
+
+"outlayer@npm:^2.1.0":
+  version: 2.1.1
+  resolution: "outlayer@npm:2.1.1"
+  dependencies:
+    ev-emitter: "npm:^1.0.0"
+    fizzy-ui-utils: "npm:^2.0.0"
+    get-size: "npm:^2.0.2"
+  checksum: 863f5568e16833d11d048a760ddd92395a9e1e49b51b669d863ff4ffda4cf8f6d91ebb2c4c20e26ca30175cb295f8f436075772a56c7e17ae40d3f095d449a53
   languageName: node
   linkType: hard
 
