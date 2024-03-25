@@ -43,7 +43,6 @@
 
 	@media (max-width: $break-large) {
 		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
-		overflow: auto;
 
 		&.sites-dashboard__layout {
 			.sites-overview {
@@ -145,6 +144,9 @@
 		}
 
 		.dataviews-view-table-wrapper {
+			overflow-y: auto;
+			max-height: calc(100vh - 465px); /* 465px is the size of all the content above the dataview, which includes our CTA elements, plus a 10px margin. */
+
 			table {
 				width: 100%;
 				max-width: 100vw;
@@ -184,6 +186,13 @@
 	}
 
 	@media (min-width: $break-wide) {
+		&.sites-dashboard__layout {
+			.dataviews-view-table-wrapper {
+				overflow-y: auto;
+				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
+			}
+		}
+
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -264,7 +273,7 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 165px);
+				max-height: calc(100vh - 175px); /* It subtracts the header height to allow scrolling in this block, plus a 10px margin */
 
 				li {
 					padding: 8px 24px;
