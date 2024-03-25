@@ -31,5 +31,5 @@ export default function FoldableFAQExample() {
 | `children`\* | `React.Node` | none          | The answer                                                       |
 | `icon`       | `string`     | chevron-right | Gridicon string                                                  |
 | `iconSize`   | `number`     | 24            | Size of the icon                                                 |
-| `expanded`   | `boolean`    | false         | Whether or not the the answer starts off expanded/showing answer |
+| `expanded`   | `boolean`    | false         | Whether or not the answer starts off expanded/showing answer |
 | `onToggle`   | `function`   | none          | A callback function that fires every time the FAQ is toggled     |

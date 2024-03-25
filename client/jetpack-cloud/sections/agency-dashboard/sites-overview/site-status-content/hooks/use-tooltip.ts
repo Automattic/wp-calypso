@@ -50,7 +50,7 @@ const ALL_TOOLTIPS: Partial< Record< AllowedRowType, TooltipGetter > > = {
 };
 
 const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | undefined => {
-	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
+	// Show "Not supported on multisite" when the site is multisite and the product is Scan or
 	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
 	const isMultisiteSupported = useIsMultisiteSupported( rows?.site?.value, type );
 

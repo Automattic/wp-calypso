@@ -17,7 +17,7 @@ type ModifierArgumentsWithObserversProp = ModifierArguments< Options > & {
 };
 
 export interface LiveResizeConfiguration {
-	/** CSS Selector for the the DOM node (and children) to observe for mutations */
+	/** CSS Selector for the DOM node (and children) to observe for mutations */
 	rootElementSelector?: string;
 	/** True to enable update on reference element resize, defaults to false */
 	resize?: boolean;

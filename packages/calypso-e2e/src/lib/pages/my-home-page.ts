@@ -83,7 +83,7 @@ export class MyHomePage {
 		// It's important to wait for an actual svg element to be present.
 		// The handling here is a little funky. We take a blank palceholder img, then we
 		// draw an SVG with just the text on top of it.
-		// There's a race condition where the placeholder img can render before the the text svg does.
+		// There's a race condition where the placeholder img can render before the text svg does.
 		const svgLocator = this.anchor.locator( '.domain-upsell-illustration svg' );
 
 		// But, innerText doesn't work on SVG nodes, so we need this locator to actually fetch the text.

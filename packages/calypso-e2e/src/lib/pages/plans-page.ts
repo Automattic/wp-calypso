@@ -142,7 +142,7 @@ export class PlansPage {
 		await this.page.click( selectors.managePlanButton );
 	}
 	/**
-	 * Validates that the provided tab name is the the currently active tab in the wrapper Plans page. Throws if it isn't.
+	 * Validates that the provided tab name is the currently active tab in the wrapper Plans page. Throws if it isn't.
 	 *
 	 * @param {PlansPageTab} expectedTab Name of the expected tab.
 	 * @throws If the expected tab name is not the active tab.

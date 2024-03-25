@@ -7,7 +7,7 @@ import { getSiteAdminUrl, getJetpackVersion, isJetpackSite } from 'calypso/state
  * @param  {Object}    state  Global state tree
  * @param  {?number}   siteId Site ID
  * @returns {?string}         URL for customizing Jetpack Search.
- *                            Can be the the Customizer or Customberg.
+ *                            Can be the Customizer or Customberg.
  */
 export default function getJetpackSearchCustomizeUrl( state, siteId ) {
 	const adminUrl = getSiteAdminUrl( state, siteId );

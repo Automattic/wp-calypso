@@ -39,13 +39,13 @@ const tips = [
 		],
 		description: getTipDescription(
 			__(
-				'You can visit the the <a>Customizer</a> to edit the CSS on your site.',
+				'You can visit the <a>Customizer</a> to edit the CSS on your site.',
 				'full-site-editing'
 			),
 			{
 				a: <TipLink section="customizer" subsection="custom_css" />,
 			},
-			__( 'You can visit the the Customizer to edit the CSS on your site.', 'full-site-editing' )
+			__( 'You can visit the Customizer to edit the CSS on your site.', 'full-site-editing' )
 		),
 		permission: 'settings',
 	},
@@ -72,14 +72,14 @@ const tips = [
 		keywords: [ 'header', __( 'header', 'full-site-editing' ) ],
 		description: getTipDescription(
 			__(
-				'You can visit the the <a>Customizer</a> to edit your logo and site title.',
+				'You can visit the <a>Customizer</a> to edit your logo and site title.',
 				'full-site-editing'
 			),
 			{
 				a: <TipLink section="customizer" subsection="title_tagline" />,
 			},
 			__(
-				'You can visit the the Customizer to edit your logo and site title.',
+				'You can visit the Customizer to edit your logo and site title.',
 				'full-site-editing'
 			)
 		),
@@ -90,13 +90,13 @@ const tips = [
 		keywords: [ 'color', __( 'color', 'full-site-editing' ) ],
 		description: getTipDescription(
 			__(
-				'You can visit the the <a>Customizer</a> to edit the colors on your site.',
+				'You can visit the <a>Customizer</a> to edit the colors on your site.',
 				'full-site-editing'
 			),
 			{
 				a: <TipLink section="customizer" subsection="colors" />,
 			},
-			__( 'You can visit the the Customizer to edit the colors on your site.', 'full-site-editing' )
+			__( 'You can visit the Customizer to edit the colors on your site.', 'full-site-editing' )
 		),
 		permission: 'settings',
 	},

@@ -70,7 +70,7 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		await domainSearchComponent.search( blogName + '.com' );
 	} );
 
-	it( 'Choose the the first suggestion', async function () {
+	it( 'Choose the first suggestion', async function () {
 		selectedDomain = await domainSearchComponent.selectFirstSuggestion();
 	} );
 

@@ -47,7 +47,7 @@ function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): 
 }
 
 /**
- * This hook is a re-projection of the the pricing metadata derived from `usePlans` and `useSitePlans` hooks.
+ * This hook is a re-projection of the pricing metadata derived from `usePlans` and `useSitePlans` hooks.
  * It returns the pricing metadata as needed for the Calypso grid components, which may be adjusted based on the selected site,
  * storage add-ons, current plan (will use the actual purchase price for `originalPrice` in this case), etc.
  *
