@@ -1317,15 +1317,6 @@ $breakpoint-mobile: 660px;
 					max-width: $max-width;
 					margin: 0;
 				}
-
-				.login__form-userdata .form-label {
-					color: var(--color-gray-100);
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 600;
-					line-height: 24px;
-					margin-bottom: 16px;
-				}
 			}
 
 			.auth-form__separator {
@@ -1333,6 +1324,15 @@ $breakpoint-mobile: 660px;
 					margin-block: 0;
 				}
 			}
+		}
+
+		label.form-label {
+			color: var(--color-gray-100);
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 600;
+			line-height: 24px;
+			margin-bottom: 10px;
 		}
 
 		.wp-login__main-footer {
@@ -1596,15 +1596,6 @@ $breakpoint-mobile: 660px;
 						max-width: $max-width;
 					}
 				}
-
-				label.form-label {
-					color: var(--studio-gray-100);
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 600;
-					line-height: 24px;
-					margin-bottom: 16px;
-				}
 			}
 
 			.magic-login__form p.magic-login__form-sub-header,
@@ -1670,15 +1661,6 @@ $breakpoint-mobile: 660px;
 		.logged-out-form {
 			padding: 0;
 			margin: 0;
-
-			label.form-label {
-				color: var(--color-gray-100);
-				font-size: 1rem;
-				font-style: normal;
-				font-weight: 600;
-				line-height: 24px;
-				margin-bottom: 16px;
-			}
 		}
 
 		.login__lostpassword-form {
