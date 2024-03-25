@@ -14,6 +14,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 	cleanupDSP,
+	useDspOriginProps,
 } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -56,6 +57,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
 	const localeSlug = useLocale();
+	const dspOriginProps = useDspOriginProps();
 	const dispatch = useDispatch();
 
 	// Scroll to top on initial load regardless of previous page position
@@ -118,7 +120,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						handleShowTopBar,
 						localeSlug,
 						jetpackVersion,
-						dispatch
+						dispatch,
+						dspOriginProps
 					);
 				} catch ( error ) {
 					setError( true );

@@ -11,13 +11,14 @@ import versionCompare from 'calypso/lib/version-compare';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getSiteOption,
 	isJetpackSite,
 	isJetpackModuleActive,
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:promote-post' );
 
@@ -118,12 +119,18 @@ const getWidgetOptions = () => {
 	};
 };
 
-export const getDSPOrigin = () => {
+export interface DSPOriginProps {
+	isAtomic?: boolean;
+}
+
+export const getDSPOrigin = ( originProps: DSPOriginProps | undefined ) => {
+	const { isAtomic = false } = originProps ?? {};
+
 	// We need to check for Woo first, because Woo Blaze is also running in Jetpack (At least in this iteration)
 	if ( config.isEnabled( 'is_running_in_woo_site' ) ) {
 		return 'wc-blaze-plugin';
 	} else if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-		return 'jetpack';
+		return isAtomic ? 'jetpack-atomic' : 'jetpack';
 	} else if ( isWpMobileApp() ) {
 		return 'wp-mobile-app';
 	} else if ( isWcMobileApp() ) {
@@ -146,7 +153,8 @@ export async function showDSP(
 	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string,
 	jetpackVersion?: string,
-	dispatch?: Dispatch
+	dispatch?: Dispatch,
+	dspOriginProps?: DSPOriginProps
 ): Promise< boolean > {
 	// Increase Sentry sample rate to 100% for DSP widget
 	await initSentry( { sampleRate: 1.0 } );
@@ -157,7 +165,9 @@ export async function showDSP(
 	return new Promise( ( resolve, reject ) => {
 		if ( ! window.BlazePress ) {
 			dispatch?.(
-				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin: getDSPOrigin() } )
+				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', {
+					origin: getDSPOrigin( dspOriginProps ),
+				} )
 			);
 			reject( false );
 			return;
@@ -213,7 +223,9 @@ export async function showDSP(
 			captureException( error );
 
 			dispatch?.(
-				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin: getDSPOrigin() } )
+				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', {
+					origin: getDSPOrigin( dspOriginProps ?? {} ),
+				} )
 			);
 			reject( false );
 		}
@@ -230,10 +242,10 @@ export async function cleanupDSP() {
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
  * @param {string} entryPoint - A slug describing the entry point.
  */
-export function recordDSPEntryPoint( entryPoint: string ) {
+export function recordDSPEntryPoint( entryPoint: string, dspOrigin: DSPOriginProps ) {
 	const eventProps = {
 		entry_point: entryPoint,
-		origin: getDSPOrigin(),
+		origin: getDSPOrigin( dspOrigin ),
 	};
 
 	return composeAnalytics(
@@ -246,10 +258,10 @@ export function recordDSPEntryPoint( entryPoint: string ) {
  * Gets the recordTrack function to be used in the DSP widget
  * @param {Dispatch} dispatch - Redux disptach function
  */
-export function getRecordDSPEventHandler( dispatch: Dispatch ) {
+export function getRecordDSPEventHandler( dispatch: Dispatch, dspOrigin: DSPOriginProps ) {
 	return ( eventName: string, props?: any ) => {
 		const eventProps = {
-			origin: getDSPOrigin(),
+			origin: getDSPOrigin( dspOrigin ),
 			...props,
 		};
 		dispatch( recordTracksEvent( eventName, eventProps ) );
@@ -317,6 +329,16 @@ export enum PromoteWidgetStatus {
 	ENABLED = 'enabled',
 	DISABLED = 'disabled',
 }
+
+/**
+ * Hook to get all props needed to calculate the DSP origin
+ * @returns The props to use when calculating the DSP origin
+ */
+export const useDspOriginProps = (): DSPOriginProps => {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ?? 0 ) );
+	return { isAtomic };
+};
 
 /**
  * Hook to verify if we should enable the promote widget.

@@ -117,7 +117,10 @@ export class ConfigApi extends Function {
 		productionConfig.features[ 'use-translation-chunks' ] = false;
 
 		// Note: configData is hydrated in https://github.com/Automattic/jetpack/blob/d4d0f987cbf63a864b03b542b7813aabe87e0ed3/projects/packages/stats-admin/src/class-dashboard.php#L214
-		this.configData.features = productionConfig.features;
+		this.configData = {
+			...this.configData,
+			...productionConfig,
+		};
 	}
 
 	// Copied from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/calypso-config/src/index.ts#L60

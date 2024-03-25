@@ -102,7 +102,10 @@ module.exports = {
 			FileConfig.loader(),
 			{
 				test: /.*config\/production\.json$/,
-				use: { loader: './filter-json-config-loader', options: { keys: [ 'features' ] } },
+				use: {
+					loader: './filter-json-config-loader',
+					options: { keys: [ 'advertising_dashboard_path_prefix', 'features' ] },
+				},
 			},
 		],
 	},
