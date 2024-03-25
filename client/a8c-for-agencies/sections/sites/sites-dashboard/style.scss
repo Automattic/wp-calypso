@@ -44,6 +44,10 @@
 	@media (max-width: $break-large) {
 		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
 
+		.section-nav__mobile-header {
+			padding: 13px;
+		}
+
 		&.sites-dashboard__layout {
 			.sites-overview {
 				overflow: hidden;
