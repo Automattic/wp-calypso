@@ -228,6 +228,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 					logo={ selectedLogo }
 					onApplyLogo={ handleApplyLogo }
 					logoAccepted={ logoAccepted }
+					siteId={ String( siteId ) }
 				/>
 				{ logoAccepted ? (
 					<div className="jetpack-ai-logo-generator__accept">

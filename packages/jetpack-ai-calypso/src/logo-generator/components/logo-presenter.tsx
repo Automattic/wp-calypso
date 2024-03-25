@@ -3,6 +3,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Icon } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
 /**
@@ -14,6 +15,8 @@ import LogoIcon from '../assets/icons/logo';
 import MediaIcon from '../assets/icons/media';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
+import { updateLogo } from '../lib/logo-storage';
+import { STORE_NAME } from '../store';
 import { ImageLoader } from './image-loader';
 import './logo-presenter.scss';
 /**
@@ -25,7 +28,7 @@ import type React from 'react';
 
 const debug = debugFactory( 'jetpack-ai-calypso:logo-presenter' );
 
-const SaveInLibraryButton: React.FC = () => {
+const SaveInLibraryButton: React.FC< { siteId: string } > = ( { siteId } ) => {
 	const {
 		saveLogo,
 		selectedLogo,
@@ -36,6 +39,8 @@ const SaveInLibraryButton: React.FC = () => {
 	} = useLogoGenerator();
 	const saved = !! selectedLogo?.mediaId;
 
+	const { loadLogoHistory } = useDispatch( STORE_NAME );
+
 	const handleClick = async () => {
 		if ( ! saved && ! saving ) {
 			recordTracksEvent( EVENT_SAVE, {
@@ -45,7 +50,18 @@ const SaveInLibraryButton: React.FC = () => {
 			} );
 
 			try {
-				await saveLogo( selectedLogo );
+				const savedLogo = await saveLogo( selectedLogo );
+
+				// Update localStorage
+				updateLogo( {
+					siteId,
+					url: selectedLogo.url,
+					newUrl: savedLogo.mediaURL,
+					mediaId: savedLogo.mediaId,
+				} );
+
+				// Update state
+				loadLogoHistory( siteId );
 			} catch ( error ) {
 				debug( 'Error saving logo', error );
 			}
@@ -123,7 +139,8 @@ const LogoLoading: React.FC = () => {
 	);
 };
 
-const LogoReady: React.FC< { logo: Logo; onApplyLogo: () => void } > = ( {
+const LogoReady: React.FC< { siteId: string; logo: Logo; onApplyLogo: () => void } > = ( {
+	siteId,
 	logo,
 	onApplyLogo,
 } ) => {
@@ -139,7 +156,7 @@ const LogoReady: React.FC< { logo: Logo; onApplyLogo: () => void } > = ( {
 					{ logo.description }
 				</span>
 				<div className="jetpack-ai-logo-generator-modal-presenter__actions">
-					<SaveInLibraryButton />
+					<SaveInLibraryButton siteId={ siteId } />
 					<UseOnSiteButton onApplyLogo={ onApplyLogo } />
 				</div>
 			</div>
@@ -168,6 +185,7 @@ export const LogoPresenter: React.FC< LogoPresenterProps > = ( {
 	loading = false,
 	onApplyLogo,
 	logoAccepted = false,
+	siteId,
 } ) => {
 	const { isRequestingImage } = useLogoGenerator();
 	const { saveToLibraryError, logoUpdateError } = useRequestErrors();
@@ -183,7 +201,9 @@ export const LogoPresenter: React.FC< LogoPresenterProps > = ( {
 	} else if ( logoAccepted ) {
 		logoContent = <LogoUpdated logo={ logo } />;
 	} else {
-		logoContent = <LogoReady logo={ logo } onApplyLogo={ onApplyLogo } />;
+		logoContent = (
+			<LogoReady siteId={ String( siteId ) } logo={ logo } onApplyLogo={ onApplyLogo } />
+		);
 	}
 
 	return (

@@ -16,6 +16,7 @@ export interface LogoPresenterProps {
 	loading?: boolean;
 	onApplyLogo: () => void;
 	logoAccepted?: boolean;
+	siteId: string | number;
 }
 
 export type SaveToMediaLibraryProps = {
@@ -74,6 +75,13 @@ export type TokenDataEndpointResponseProps = {
 
 export type SaveToStorageProps = Logo & {
 	siteId: string;
+};
+
+export type UpdateInStorageProps = {
+	siteId: string;
+	url: Logo[ 'url' ];
+	newUrl: Logo[ 'url' ];
+	mediaId: Logo[ 'mediaId' ];
 };
 
 export type RemoveFromStorageProps = {

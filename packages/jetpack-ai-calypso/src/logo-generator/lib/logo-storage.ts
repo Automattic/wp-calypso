@@ -1,15 +1,14 @@
 /**
  * Types
  */
-import { RemoveFromStorageProps, SaveToStorageProps } from '../../types';
+import { RemoveFromStorageProps, SaveToStorageProps, UpdateInStorageProps } from '../../types';
 import { Logo } from '../store/types';
 import { mediaExists } from './media-exists';
 
 const MAX_LOGOS = 10;
 
 export function stashLogo( { siteId, url, description, mediaId }: SaveToStorageProps ) {
-	const storedString = localStorage.getItem( `logo-history-${ siteId }` );
-	const storedContent = storedString ? JSON.parse( storedString ) : [];
+	const storedContent = getSiteLogoHistory( siteId );
 
 	const logo: Logo = {
 		url,
@@ -23,7 +22,26 @@ export function stashLogo( { siteId, url, description, mediaId }: SaveToStorageP
 		`logo-history-${ siteId }`,
 		JSON.stringify( storedContent.slice( -MAX_LOGOS ) )
 	);
+
 	return logo;
+}
+
+export function updateLogo( { siteId, url, newUrl, mediaId }: UpdateInStorageProps ) {
+	const storedContent = getSiteLogoHistory( siteId );
+
+	const index = storedContent.findIndex( ( logo ) => logo.url === url );
+
+	if ( index > -1 ) {
+		storedContent[ index ].url = newUrl;
+		storedContent[ index ].mediaId = mediaId;
+	}
+
+	localStorage.setItem(
+		`logo-history-${ siteId }`,
+		JSON.stringify( storedContent.slice( -MAX_LOGOS ) )
+	);
+
+	return storedContent[ index ];
 }
 
 export function getSiteLogoHistory( siteId: string ) {
@@ -44,9 +62,7 @@ export function getSiteLogoHistory( siteId: string ) {
 			return (
 				typeof logo === 'object' &&
 				typeof logo.url === 'string' &&
-				typeof logo.description === 'string' &&
-				logo.mediaId !== undefined &&
-				typeof logo.mediaId === 'number'
+				typeof logo.description === 'string'
 			);
 		} )
 		.map( ( logo ) => ( {
