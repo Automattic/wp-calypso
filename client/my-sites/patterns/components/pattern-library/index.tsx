@@ -200,7 +200,7 @@ export const PatternLibrary = ( {
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title={ translate_not_yet( 'It’s Easier With Patterns' ) }
+				title={ translate_not_yet( 'Build your site faster with patterns' ) }
 			/>
 
 			<div className="pattern-library__wrapper">
