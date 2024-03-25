@@ -19,8 +19,6 @@
 }
 
 .pattern-gallery--grid.pattern-gallery--pages {
-	display: block;
-
 	@include break-medium {
 		column-count: 2;
 	}
