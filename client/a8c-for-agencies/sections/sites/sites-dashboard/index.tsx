@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -32,14 +32,21 @@ import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import {
-	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
-	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
-} from '../constants';
+import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
 
 import './style.scss';
+
+const filtersMap: AgencyDashboardFilterMap[] = [
+	{ filterType: 'all_issues', ref: 1 },
+	{ filterType: 'backup_failed', ref: 2 },
+	{ filterType: 'backup_warning', ref: 3 },
+	{ filterType: 'threats_found', ref: 4 },
+	{ filterType: 'site_disconnected', ref: 5 },
+	{ filterType: 'site_down', ref: 6 },
+	{ filterType: 'plugin_updates', ref: 7 },
+];
 
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
@@ -53,19 +60,6 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 	} = useContext( SitesDashboardContext );
-
-	const filtersMap = useMemo< AgencyDashboardFilterMap[] >(
-		() => [
-			{ filterType: 'all_issues', ref: 1 },
-			{ filterType: 'backup_failed', ref: 2 },
-			{ filterType: 'backup_warning', ref: 3 },
-			{ filterType: 'threats_found', ref: 4 },
-			{ filterType: 'site_disconnected', ref: 5 },
-			{ filterType: 'site_down', ref: 6 },
-			{ filterType: 'plugin_updates', ref: 7 },
-		],
-		[]
-	);
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const { data: products } = useProductsQuery();
@@ -147,12 +141,7 @@ export default function SitesDashboard() {
 		// We need a category in the URL if we have a selected site
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		} else if (
-			category &&
-			sitesViewState.selectedSite &&
-			selectedSiteFeature &&
-			selectedSiteFeature !== A4A_SITES_DASHBOARD_DEFAULT_FEATURE // If the selected feature is the default one, we can leave the url a little cleaner.
-		) {
+		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
 			page.replace(
 				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
 			);
@@ -173,8 +162,6 @@ export default function SitesDashboard() {
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
-			// We reset the feature to its default upon closing, instead of setting it to undefined. This way, when users switch sites while a site is selected, the feature remains consistent.
-			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
 		}
 	}, [ sitesViewState, setSelectedSiteFeature ] );
 
