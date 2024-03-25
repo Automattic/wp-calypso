@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -14,14 +13,11 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getHostingLogo } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
 import PressableOverviewFeatures from './features';
-import PressableOverviewFilter from './filter';
-import PressableOverviewPlanDetails from './plan-details';
+import PressableOverviewPlanSelection from './plan-selection';
 
 import './style.scss';
 
@@ -29,26 +25,6 @@ export default function PressableOverview() {
 	const translate = useTranslate();
 
 	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
-
-	const { pressablePlans } = useProductAndPlans( {
-		selectedSite: null,
-		productSearchQuery: '',
-	} );
-
-	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
-
-	const onSelectPlan = useCallback(
-		( plan: APIProductFamilyProduct | null ) => {
-			setSelectedPlan( plan );
-		},
-		[ setSelectedPlan ]
-	);
-
-	useEffect( () => {
-		if ( pressablePlans?.length ) {
-			setSelectedPlan( pressablePlans[ 0 ] );
-		}
-	}, [ pressablePlans, setSelectedPlan ] );
 
 	return (
 		<Layout
@@ -104,18 +80,17 @@ export default function PressableOverview() {
 					</h2>
 				</section>
 
-				<PressableOverviewFilter
-					selectedPlan={ selectedPlan }
-					plans={ pressablePlans }
-					onSelectPlan={ onSelectPlan }
-				/>
+				<PressableOverviewPlanSelection />
 
-				<PressableOverviewPlanDetails
-					selectedPlan={ selectedPlan }
-					onSelectPlan={ () => {
-						//FIXME: add to cart
-					} }
-				/>
+				<section className="pressable-overview__banner">
+					<h1 className="pressable-overview__banner-title">
+						{ translate( 'The Pressable Promise' ) }
+					</h1>
+
+					<h2 className="pressable-overview__banner-subtitle">
+						{ translate( 'Flexible plans that are designed to grow with your business.' ) }
+					</h2>
+				</section>
 
 				<PressableOverviewFeatures />
 			</LayoutBody>

@@ -1,0 +1,21 @@
+
+.pressable-overview-features {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 48px;
+	row-gap: 32px;
+}
+
+
+.pressable-overview-features__item-title {
+	font-size: rem(18px);
+	line-height: 1.4;
+	font-weight: 500;
+	margin-block-end: 8px;
+}
+
+.pressable-overview-features__item-description {
+	font-size: 1rem;
+	line-height: 1.6;
+	font-weight: 400;
+}

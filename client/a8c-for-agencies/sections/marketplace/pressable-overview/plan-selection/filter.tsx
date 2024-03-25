@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import getPressablePlan from './lib/get-pressable-plan';
-import getSliderOptions from './lib/get-slider-options';
+import getPressablePlan from '../lib/get-pressable-plan';
+import getSliderOptions from '../lib/get-slider-options';
 
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
@@ -10,7 +10,7 @@ type Props = {
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
 };
 
-export default function PressableOverviewFilter( { selectedPlan, plans, onSelectPlan }: Props ) {
+export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan }: Props ) {
 	const options = useMemo(
 		() =>
 			getSliderOptions(
@@ -30,7 +30,7 @@ export default function PressableOverviewFilter( { selectedPlan, plans, onSelect
 	const selectedOption = options.findIndex( ( { value } ) => value === selectedPlan?.slug );
 
 	return (
-		<section className="pressable-overview__filter">
+		<section className="pressable-overview-plan-selection__filter">
 			<A4ASlider value={ selectedOption } onChange={ onSelectOption } options={ options } />
 		</section>
 	);
