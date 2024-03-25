@@ -16,7 +16,7 @@ export const PatternsHeader = ( {
 	onSearch = () => {},
 	title,
 }: PatternsHeaderProps ) => {
-	const translateNotYet = useTranslate();
+	const translate_not_yet = useTranslate();
 	return (
 		<header className="patterns-header">
 			<div className="patterns-header__inner">
@@ -27,7 +27,7 @@ export const PatternsHeader = ( {
 					delaySearch
 					initialValue={ initialSearchTerm }
 					onSearch={ onSearch }
-					placeholder={ translateNotYet( 'Search patterns...' ) }
+					placeholder={ translate_not_yet( 'Search patterns...' ) }
 				/>
 			</div>
 		</header>

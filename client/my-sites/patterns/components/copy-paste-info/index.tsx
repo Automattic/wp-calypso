@@ -8,7 +8,7 @@ import ImgStyle from './images/style.svg';
 import './style.scss';
 
 export function PatternsCopyPasteInfo() {
-	const translateNotYet = useTranslate();
+	const translate_not_yet = useTranslate();
 	return (
 		<PatternsSection
 			bodyFullWidth
@@ -24,10 +24,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translateNotYet( 'Copy-paste your way' ) }
+							{ translate_not_yet( 'Copy-paste your way' ) }
 						</div>
 						<div className="section-patterns-info__item-description">
-							{ translateNotYet(
+							{ translate_not_yet(
 								'Paste patterns directly into the WordPress editor to fully customize them.'
 							) }
 						</div>
@@ -39,10 +39,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translateNotYet( 'Bring your style with you' ) }
+							{ translate_not_yet( 'Bring your style with you' ) }
 						</div>
 						<div className="section-patterns-info__item-description">
-							{ translateNotYet(
+							{ translate_not_yet(
 								'Patterns replicate the typography and color palette from your site to ensure every page is on-brand.'
 							) }
 						</div>
@@ -54,10 +54,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translateNotYet( 'Make it yours' ) }
+							{ translate_not_yet( 'Make it yours' ) }
 						</div>
 						<div className="section-patterns-info__item-description">
-							{ translateNotYet(
+							{ translate_not_yet(
 								'Patterns are collections of regular WordPress blocks, so you can edit every detail, however you want.'
 							) }
 						</div>
@@ -69,10 +69,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translateNotYet( 'Responsive by design' ) }
+							{ translate_not_yet( 'Responsive by design' ) }
 						</div>
 						<div className="section-patterns-info__item-description">
-							{ translateNotYet(
+							{ translate_not_yet(
 								'All patterns are fully responsive to ensure they look fantastic on any device or screen.'
 							) }
 						</div>

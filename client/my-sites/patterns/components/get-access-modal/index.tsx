@@ -22,7 +22,7 @@ export const PatternsGetAccessModal = ( {
 	const isLoggedIn = false;
 	const startUrl = localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn );
 	const loginUrl = localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn );
-	const translateNotYet = useTranslate();
+	const translate_not_yet = useTranslate();
 
 	return (
 		<Dialog
@@ -46,10 +46,10 @@ export const PatternsGetAccessModal = ( {
 				</button>
 				<div className="patterns-get-access-modal__inner">
 					<div className="patterns-get-access-modal__title">
-						{ translateNotYet( 'Unlock the full pattern library' ) }
+						{ translate_not_yet( 'Unlock the full pattern library' ) }
 					</div>
 					<div className="patterns-get-access-modal__description">
-						{ translateNotYet(
+						{ translate_not_yet(
 							"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
 						) }
 					</div>
