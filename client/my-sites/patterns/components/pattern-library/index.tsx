@@ -189,7 +189,7 @@ export const PatternLibrary = ( {
 				searchTerm={ urlQuerySearchTerm }
 			/>
 
-			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
+			<DocumentHead title={ translate_not_yet( `WordPress ${ category } Patterns ` ) } />
 
 			<PatternsHeader
 				description={ translate_not_yet(
