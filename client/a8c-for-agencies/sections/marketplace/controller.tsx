@@ -6,6 +6,7 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
+import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
 
 export const marketplaceContext: Callback = () => {
@@ -41,5 +42,11 @@ export const assignLicenseContext: Callback = ( context, next ) => {
 	context.primary = (
 		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
 	);
+	next();
+};
+
+export const downloadProductsContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = <DownloadProducts />;
 	next();
 };
