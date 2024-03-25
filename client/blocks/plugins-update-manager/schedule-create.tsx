@@ -68,6 +68,7 @@ export const ScheduleCreate = ( props: Props ) => {
 			frequency: params.frequency,
 			plugins_number: params.plugins.length,
 			hours: params.hours,
+			weekday: params.weekday,
 		} );
 
 		createMonitor();
