@@ -4,7 +4,7 @@ import './style.scss';
 
 export type Option = {
 	label: string;
-	value: number | string;
+	value: number | string | null;
 	sub?: string;
 };
 

@@ -24,12 +24,17 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
 
 	const options = useMemo(
-		() =>
-			getSliderOptions(
+		() => [
+			...getSliderOptions(
 				filterType,
 				plans.map( ( plan ) => getPressablePlan( plan.slug ) )
 			),
-		[ filterType, plans ]
+			{
+				label: translate( 'More' ),
+				value: null,
+			},
+		],
+		[ filterType, plans, translate ]
 	);
 
 	const onSelectOption = useCallback(
@@ -43,7 +48,9 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 		[ onSelectPlan, plans ]
 	);
 
-	const selectedOption = options.findIndex( ( { value } ) => value === selectedPlan?.slug );
+	const selectedOption = options.findIndex(
+		( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null )
+	);
 
 	const onSelectInstallFilterType = useCallback( () => {
 		setFilterType( FILTER_TYPE_INSTALL );
