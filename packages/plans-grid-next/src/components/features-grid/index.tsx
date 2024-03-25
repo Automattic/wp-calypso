@@ -3,7 +3,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	WPComStorageAddOnSlug,
-	PlanSlug,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
@@ -32,7 +31,6 @@ type MobileViewProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -54,7 +52,6 @@ const MobileView = ( {
 	onStorageAddOnClick,
 	paidDomainName,
 	planActionOverrides,
-	onPlanCtaClick,
 	planUpgradeCreditsApplicable,
 	selectedFeature,
 	showUpgradeableStorage,
@@ -115,7 +112,6 @@ const MobileView = ( {
 						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
-						onPlanCtaClick={ onPlanCtaClick }
 					/>
 					<CardContainer
 						header={ translate( 'Show all features' ) }
@@ -155,7 +151,6 @@ type TabletViewProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
-	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -176,7 +171,6 @@ const TabletView = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
-	onPlanCtaClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
@@ -200,7 +194,6 @@ const TabletView = ( {
 		isInSignup,
 		isLaunchPage,
 		onStorageAddOnClick,
-		onPlanCtaClick,
 		paidDomainName,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
@@ -232,7 +225,6 @@ const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	isLaunchPage,
 	planActionOverrides,
-	planActions,
 	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage,
@@ -243,9 +235,6 @@ const FeaturesGrid = ( {
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
 }: FeaturesGridProps ) => {
-	const onPlanCtaClick = ( planSlug: PlanSlug ) => {
-		return planActions?.[ planSlug ] || ( () => {} );
-	};
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
@@ -254,7 +243,6 @@ const FeaturesGrid = ( {
 		isLaunchPage,
 		onStorageAddOnClick,
 		planActionOverrides,
-		onPlanCtaClick,
 		planUpgradeCreditsApplicable,
 		selectedFeature,
 		showUpgradeableStorage,

@@ -6,7 +6,7 @@ import {
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	WPComStorageAddOnSlug,
-	PLAN_FREE,
+	// PLAN_FREE,
 	type PlanSlug,
 	UrlFriendlyTermType,
 	isValidFeatureKey,
@@ -71,7 +71,6 @@ import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availabi
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
-import usePlanActions from './hooks/use-plan-actions';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
@@ -464,28 +463,6 @@ const PlansFeaturesMain = ( {
 		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
 	);
 
-	const comparisonGridPlanActions = usePlanActions(
-		gridPlansForComparisonGrid,
-		intent,
-		flowName,
-		sitePlanSlug,
-		siteSlug,
-		withDiscount,
-		planActionCallback,
-		onUpgradeClick
-	);
-
-	const featuresGridPlanActions = usePlanActions(
-		gridPlansForFeaturesGrid,
-		intent,
-		flowName,
-		sitePlanSlug,
-		siteSlug,
-		withDiscount,
-		planActionCallback,
-		onUpgradeClick
-	);
-
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
@@ -817,7 +794,9 @@ const PlansFeaturesMain = ( {
 							{
 								components: {
 									link: (
-										<Button onClick={ () => featuresGridPlanActions[ PLAN_FREE ]?.() } borderless />
+										// TODO: Fix onClick callback here
+										// <Button onClick={ () => featuresGridPlanActions[ PLAN_FREE ]?.() } borderless />
+										<Button borderless />
 									),
 								},
 							}
@@ -857,6 +836,7 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
+										getActionCallback={ getActionCallback }
 										gridPlanForSpotlight={ gridPlanForSpotlight }
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -869,8 +849,6 @@ const PlansFeaturesMain = ( {
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
 										planActionOverrides={ planActionOverrides }
-										planActions={ featuresGridPlanActions }
-										getActionCallback={ getActionCallback }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
 										selectedFeature={ selectedFeature }
@@ -929,6 +907,7 @@ const PlansFeaturesMain = ( {
 													className="plans-features-main__comparison-grid"
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
+													getActionCallback={ getActionCallback }
 													gridPlans={ gridPlansForComparisonGrid }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
@@ -938,8 +917,6 @@ const PlansFeaturesMain = ( {
 													isLaunchPage={ isLaunchPage }
 													onStorageAddOnClick={ handleStorageAddOnClick }
 													planActionOverrides={ planActionOverrides }
-													planActions={ comparisonGridPlanActions }
-													getActionCallback={ getActionCallback }
 													planTypeSelectorProps={
 														! hidePlanSelector
 															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }

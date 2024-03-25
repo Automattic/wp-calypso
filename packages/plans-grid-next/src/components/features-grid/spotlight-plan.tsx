@@ -1,9 +1,4 @@
-import {
-	PlanSlug,
-	WPComStorageAddOnSlug,
-	getPlanClass,
-	isFreePlan,
-} from '@automattic/calypso-products';
+import { WPComStorageAddOnSlug, getPlanClass, isFreePlan } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { GridPlan, PlanActionOverrides } from '../../types';
 import BillingTimeframes from './billing-timeframes';
@@ -22,7 +17,6 @@ type SpotlightPlanProps = {
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
 	planActionOverrides?: PlanActionOverrides;
-	onPlanCtaClick: ( planSlug: PlanSlug ) => ( isFreeTrialPlan?: boolean | undefined ) => void;
 	planUpgradeCreditsApplicable?: number | null;
 	showUpgradeableStorage: boolean;
 	options?: {
@@ -37,7 +31,6 @@ const SpotlightPlan = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
-	onPlanCtaClick,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
 	showUpgradeableStorage,
@@ -78,7 +71,6 @@ const SpotlightPlan = ( {
 				isLaunchPage={ isLaunchPage }
 				currentSitePlanSlug={ currentSitePlanSlug }
 				planActionOverrides={ planActionOverrides }
-				onPlanCtaClick={ onPlanCtaClick }
 			/>
 		</div>
 	);

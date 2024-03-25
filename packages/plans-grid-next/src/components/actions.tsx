@@ -37,7 +37,6 @@ type PlanFeaturesActionsButtonProps = {
 	isInSignup?: boolean;
 	isLaunchPage?: boolean | null;
 	isMonthlyPlan?: boolean;
-	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
 	planSlug: PlanSlug;
 	buttonText?: string;
 	planActionOverrides?: PlanActionOverrides;
