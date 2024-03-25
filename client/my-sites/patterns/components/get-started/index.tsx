@@ -1,5 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.png';
 import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.png';
 import imageBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/use-block-patterns.png';
@@ -8,16 +9,19 @@ import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import './style.scss';
 
 export function PatternsGetStarted() {
+	const translateNotYet = useTranslate();
 	return (
 		<PatternsSection
 			bodyFullWidth
-			description="Take a look at our how-to guides to get started with patterns."
+			description={ translateNotYet(
+				'Take a look at our how-to guides to get started with patterns.'
+			) }
 			theme="dark"
-			title="All about patterns"
+			title={ translateNotYet( 'All about patterns' ) }
 		>
 			<div className="patterns-get-started__buttons">
 				<Button className="patterns-get-started__start-button" href="/start">
-					Build a site
+					{ translateNotYet( 'Build a site' ) }
 				</Button>
 			</div>
 
@@ -35,8 +39,12 @@ export function PatternsGetStarted() {
 							height="675"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">Video tutorial</div>
-						<div className="patterns-get-started__item-description">Block Patterns</div>
+						<div className="patterns-get-started__item-name">
+							{ translateNotYet( 'Video tutorial' ) }
+						</div>
+						<div className="patterns-get-started__item-description">
+							{ translateNotYet( 'Block Patterns' ) }
+						</div>
 					</a>
 
 					<a
@@ -51,8 +59,12 @@ export function PatternsGetStarted() {
 							height="675"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">Video tutorial</div>
-						<div className="patterns-get-started__item-description">Use Pre-Made Page Layouts</div>
+						<div className="patterns-get-started__item-name">
+							{ translateNotYet( 'Video tutorial' ) }
+						</div>
+						<div className="patterns-get-started__item-description">
+							{ translateNotYet( 'Use Pre-Made Page Layouts' ) }
+						</div>
 					</a>
 
 					<a
@@ -67,8 +79,12 @@ export function PatternsGetStarted() {
 							height="639"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">Free course</div>
-						<div className="patterns-get-started__item-description">Design Your Homepage</div>
+						<div className="patterns-get-started__item-name">
+							{ translateNotYet( 'Free course' ) }
+						</div>
+						<div className="patterns-get-started__item-description">
+							{ translateNotYet( 'Design Your Homepage' ) }
+						</div>
 					</a>
 				</div>
 			</div>
