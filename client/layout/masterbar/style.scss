@@ -81,6 +81,7 @@ body.is-mobile-app-view {
 		color: var(--color-checkout-masterbar-text);
 		height: var(--masterbar-height);
 		position: absolute;
+		padding: 0 1em;
 
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
@@ -88,6 +89,7 @@ body.is-mobile-app-view {
 
 		@include breakpoint-deprecated( ">960px" ) {
 			background-color: var(--color-checkout-masterbar-background);
+			padding: 0 2em;
 		}
 	}
 
@@ -234,7 +236,6 @@ body.is-mobile-app-view {
 	font-size: $masterbar-font-size;
 	height: var(--masterbar-height);
 	line-height: var(--masterbar-height);
-	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
 	transition: all 0.2s ease-in-out;
@@ -381,7 +382,6 @@ body.is-mobile-app-view {
 		display: block;
 		width: 150px;
 		height: 25px;
-		margin: 0 5px;
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -393,7 +393,6 @@ body.is-mobile-app-view {
 			display: block;
 			height: 24px;
 			width: 24px;
-			margin-left: 5px;
 			fill: var(--color-text-inverted);
 		}
 
@@ -888,47 +887,48 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
-	margin-left: 24px;
+
+	.masterbar--is-akismet &,
+	.masterbar--is-jetpack & {
+		column-gap: 1em;
+	}
 
 	.masterbar__wpcom-wordmark {
 		color: var(--color-checkout-masterbar-text);
 		fill: var(--color-checkout-masterbar-text);
-		margin-right: 5px;
 	}
 
 	.masterbar__jetpack-wordmark {
 		height: 25px;
-		margin: 0 5px;
+
 	}
 
-	.masterbar__akismet-wordmark {
-		margin: 0 5px;
-	}
+	/* empty for now, saved for future use if needed
+		.masterbar__akismet-wordmark {
+		}
+	*/
 
 	.masterbar__close-button {
 		flex: initial;
 		width: initial;
-		margin-right: 10px;
-
-		@include break-mobile {
-			margin-right: 0;
-		}
 	}
 
 	.masterbar__secure-checkout-text {
 		color: var(--color-checkout-masterbar-text);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.2em;
 		font-size: 0.75rem;
-		margin-left: 5px;
 		position: relative;
 		top: -0.5px;
+
+		/* Hide the secure checkout text on very small devices */
+		@media screen and ( max-width: 300px ) {
+			display: none;
+		}
 
 		@include breakpoint-deprecated( ">480px" ) {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
-			margin-left: 0;
 		}
+
 
 		.masterbar--is-jetpack & {
 			transform: translateY(0.5px);
