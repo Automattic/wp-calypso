@@ -44,7 +44,7 @@
 .download-products-form__action-items pre {
 	font-size: 0.875rem;
 	padding: 0;
-	margin-bottom: 0.6rem;
+	margin-block-end: 0.6rem;
 }
 
 .download-products-form__action-items ul {
@@ -101,7 +101,7 @@ p.download-products-form__description {
 	align-self: flex-end;
 	margin: 0 0 1rem;
 	font-size: 0.875rem;
-	color: #333;
+	color: var(--color-text-gray);
 
 	@include break-medium {
 		flex: 1 1 auto;
