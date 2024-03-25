@@ -46,7 +46,7 @@ export default function PressableOverviewPlanDetails( { selectedPlan, onSelectPl
 		: { discountedCost: 0 };
 
 	return (
-		<div className="pressable-overview__plan-details">
+		<section className="pressable-overview__plan-details">
 			<div className="pressable-overview__plan-details-card">
 				<div className="pressable-overview__plan-details-card-header">
 					<h3 className="pressable-overview__plan-details-card-header-title">
@@ -120,6 +120,6 @@ export default function PressableOverviewPlanDetails( { selectedPlan, onSelectPl
 					] }
 				/>
 			</div>
-		</div>
+		</section>
 	);
 }

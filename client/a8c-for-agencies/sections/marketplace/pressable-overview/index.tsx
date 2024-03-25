@@ -19,6 +19,7 @@ import useProductAndPlans from '../hooks/use-product-and-plans';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getHostingLogo } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
+import PressableOverviewFeatures from './features';
 import PressableOverviewFilter from './filter';
 import PressableOverviewPlanDetails from './plan-details';
 
@@ -89,7 +90,7 @@ export default function PressableOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<div className="pressable-overview__banner">
+				<section className="pressable-overview__banner">
 					<div className="pressable-overview__banner-logo">
 						{ getHostingLogo( 'pressable-hosting' ) }
 					</div>
@@ -101,7 +102,7 @@ export default function PressableOverview() {
 					<h2 className="pressable-overview__banner-subtitle">
 						{ translate( 'Scalable plans to help you grow your business.' ) }
 					</h2>
-				</div>
+				</section>
 
 				<PressableOverviewFilter
 					selectedPlan={ selectedPlan }
@@ -115,6 +116,8 @@ export default function PressableOverview() {
 						//FIXME: add to cart
 					} }
 				/>
+
+				<PressableOverviewFeatures />
 			</LayoutBody>
 		</Layout>
 	);

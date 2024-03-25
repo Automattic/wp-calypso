@@ -1,8 +1,14 @@
+.pressable-overview .a4a-layout__body-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 64px;
+	margin-block-start: 48px;
+}
+
 
 .pressable-overview__banner {
-	margin: 48px auto 64px;
+	margin: 0 auto;
 	text-align: center;
-
 }
 
 .pressable-overview__banner-logo {
@@ -24,6 +30,7 @@
 
 .pressable-overview__plan-details {
 	margin-block-start: 32px;
+	margin-block-end: 64px;
 	display: flex;
 	flex-direction: row;
 	gap: 32px;
@@ -105,6 +112,27 @@
 .pressable-overview__banner,
 .pressable-overview__filter,
 .pressable-overview__plan-details {
-	max-width: 800px;
+	width: 800px;
 	margin-inline: auto;
+}
+
+.pressable-overview__features {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 48px;
+	row-gap: 32px;
+}
+
+
+.pressable-overview__features-item-title {
+	font-size: rem(18px);
+	line-height: 1.4;
+	font-weight: 500;
+	margin-block-end: 8px;
+}
+
+.pressable-overview__features-item-description {
+	font-size: 1rem;
+	line-height: 1.6;
+	font-weight: 400;
 }

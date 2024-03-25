@@ -30,8 +30,8 @@ export default function PressableOverviewFilter( { selectedPlan, plans, onSelect
 	const selectedOption = options.findIndex( ( { value } ) => value === selectedPlan?.slug );
 
 	return (
-		<div className="pressable-overview__filter">
+		<section className="pressable-overview__filter">
 			<A4ASlider value={ selectedOption } onChange={ onSelectOption } options={ options } />
-		</div>
+		</section>
 	);
 }
