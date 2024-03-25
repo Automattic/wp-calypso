@@ -34,7 +34,11 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 
 	const onSelectOption = useCallback(
 		( option: Option ) => {
-			onSelectPlan( plans.find( ( plan ) => plan.slug === option.value ) ?? null );
+			const plan = plans.find( ( plan ) => plan.slug === option.value ) ?? null;
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_select_plan', {
+				slug: plan?.slug,
+			} );
+			onSelectPlan( plan );
 		},
 		[ onSelectPlan, plans ]
 	);
