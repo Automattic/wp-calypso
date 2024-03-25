@@ -1,3 +1,4 @@
+import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
@@ -80,7 +81,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 						} ),
 						translate( '{{b}}%(count)s{{/b}} visits per month', {
 							args: {
-								count: info?.visits ?? customString,
+								count: info ? formatNumber( info.visits ) : customString,
 							},
 							components: { b: <b /> },
 						} ),
