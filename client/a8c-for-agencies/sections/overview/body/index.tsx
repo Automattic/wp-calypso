@@ -1,12 +1,12 @@
 import OverviewBodyHosting from './hosting';
+import OverviewBodyIntroCards from './intro-cards';
 import OverviewBodyNextSteps from './next-steps';
 import OverviewBodyProducts from './products';
-import OverviewBodyTips from './tips';
 
 const OverviewBody = () => {
 	return (
 		<div className="overview-body">
-			<OverviewBodyTips />
+			<OverviewBodyIntroCards />
 			<OverviewBodyNextSteps />
 			<OverviewBodyProducts />
 			<OverviewBodyHosting />

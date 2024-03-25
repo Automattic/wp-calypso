@@ -29,6 +29,7 @@ import {
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import {
 	PatternTypeFilter,
+	PatternView,
 	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
@@ -37,6 +38,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 
 import './style.scss';
 
@@ -109,6 +111,32 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
+	const currentView = isGridView ? 'grid' : 'list';
+
+	const handleViewChange = ( view: PatternView ) => {
+		if ( currentView === view ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_pattern_library_view_switch', {
+			category,
+			is_logged_in: isLoggedIn,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view,
+		} );
+
+		const url = new URL( window.location.href );
+		url.searchParams.delete( 'grid' );
+
+		if ( view === 'grid' ) {
+			url.searchParams.set( 'grid', '1' );
+		}
+
+		// Removing the origin ensures that a full refresh is not attempted
+		page( url.href.replace( url.origin, '' ) );
+	};
+
 	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
 	useEffect( () => {
 		if ( ! urlQuerySearchTerm ) {
@@ -127,32 +155,6 @@ export const PatternLibrary = ( {
 		setSearchTerm( '' );
 		setSearchFormKey( category );
 	}, [ category ] );
-
-	const handleViewChange = ( view: 'grid' | 'list' ) => {
-		const currentView = isGridView ? 'grid' : 'list';
-
-		if ( currentView === view ) {
-			return;
-		}
-
-		recordTracksEvent( 'calypso_pattern_library_view_switch', {
-			category,
-			is_logged_in: isLoggedIn,
-			type: patternTypeFilter === PatternTypeFilter.REGULAR ? 'pattern' : 'page-layout',
-			user_is_dev_account: isDevAccount ? '1' : '0',
-			view,
-		} );
-
-		const url = new URL( window.location.href );
-		url.searchParams.delete( 'grid' );
-
-		if ( view === 'grid' ) {
-			url.searchParams.set( 'grid', '1' );
-		}
-
-		// Removing the origin ensures that a full refresh is not attempted
-		page( url.href.replace( url.origin, '' ) );
-	};
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
@@ -175,6 +177,8 @@ export const PatternLibrary = ( {
 		<>
 			<PatternsPageViewTracker
 				category={ category }
+				patternTypeFilter={ patternTypeFilter }
+				view={ currentView }
 				key={ `${ category }-tracker` }
 				// We pass `urlQuerySearchTerm` instead of `searchTerm` since the former is
 				// immediately reset when navigating to a new category, whereas the latter is reset

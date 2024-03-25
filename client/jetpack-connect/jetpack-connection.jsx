@@ -103,7 +103,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
 				clearPlan();
-				if ( source === 'jetpack-manage' ) {
+				if ( source === 'jetpack-manage' || source === 'a8c-for-agencies' ) {
 					this.setState( { status: ALREADY_CONNECTED } );
 				} else if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {

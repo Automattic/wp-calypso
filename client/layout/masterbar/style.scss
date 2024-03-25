@@ -959,24 +959,29 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar__global-nav {
-	background: var(--color-sidebar-background);
-	border-bottom: 1 px solid var(--color-sidebar-background);
+	background: var(--color-global-masterbar-background);
+	border-bottom: 1 px solid var(--color-global-masterbar-background);
 
 	.masterbar__section--left {
 		flex: 10;
 	}
 	.masterbar__item.is-active {
-		background-color: var(--color-sidebar-background);
+		background-color: var(--color-global-masterbar-background);
+	}
+
+	.masterbar__item .gridicon {
+		fill: var(--color-global-masterbar-gridicon-fill);
 	}
 
 	.masterbar__item,
 	.site {
+		color: var(--color-global-masterbar-text);
 		&:hover {
-			background-color: var(--color-sidebar-menu-hover-background);
+			background-color: var(--color-global-masterbar-hover-background);
 		}
 		.site__info .site__domain-and-badges .site__badge {
 			&::before {
-				color: var(--color-sidebar-text);
+				color: var(--color-global-masterbar-text);
 			}
 		}
 	}
@@ -987,7 +992,7 @@ a.masterbar__quick-language-switcher {
 		}
 		.site__title,
 		.site__domain {
-			color: var(--color-sidebar-text);
+			color: var(--color-global-masterbar-text);
 		}
 	}
 }

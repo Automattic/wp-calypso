@@ -20,6 +20,7 @@ import {
 	SubscribersPageProvider,
 	useSubscribersPage,
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
@@ -44,13 +45,16 @@ const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderP
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID || null;
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	const openHelpCenter = () => {
 		setShowHelpCenter( true );
 		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
 	};
 
-	const paidNewsletterUrl = isJetpackCloud()
+	const paidNewsletterUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/newsletter/paid-newsletters/'
 		: 'https://wordpress.com/support/paid-newsletters/';
 

@@ -1,13 +1,13 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib/constants';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import { LicenseRole } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
+import useRefetchLicenses from '../hooks/use-refetch-licenses';
+import LicensesOverviewContext from '../licenses-overview/context';
 import useRevokeLicenseMutation from './hooks/use-revoke-license-mutation';
 
 import './style.scss';
@@ -33,23 +33,26 @@ export default function RevokeLicenseDialog( {
 	let close = noop;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const refreshLicenceList = useRefreshLicenseList( LicenseListContext );
 
-	const mutation = useRevokeLicenseMutation( {
-		onSuccess: () => {
+	const refetchLicenses = useRefetchLicenses( LicensesOverviewContext );
+
+	const { mutate, isPending, status, error } = useRevokeLicenseMutation();
+
+	useEffect( () => {
+		if ( status === 'success' ) {
 			close();
-			dispatch( refreshLicenceList() );
-		},
-		onError: ( error: Error ) => {
+			refetchLicenses();
+		} else if ( status === 'error' ) {
 			dispatch( errorNotice( error.message ) );
-		},
-	} );
+		}
+	}, [ status, error, dispatch, close, refetchLicenses ] );
 
+	// Use mutate function to trigger the mutation
 	close = useCallback( () => {
-		if ( ! mutation.isPending ) {
+		if ( ! isPending ) {
 			onClose();
 		}
-	}, [ onClose, mutation.isPending ] );
+	}, [ onClose, isPending ] );
 
 	const revoke = useCallback( () => {
 		dispatch(
@@ -57,8 +60,8 @@ export default function RevokeLicenseDialog( {
 				license_role: licenseRole,
 			} )
 		);
-		mutation.mutate( { licenseKey } );
-	}, [ dispatch, licenseKey, licenseRole, mutation ] );
+		mutate( { licenseKey } );
+	}, [ dispatch, licenseKey, licenseRole, mutate ] );
 
 	const isParentLicense = licenseRole === LicenseRole.Parent;
 	const isAssignedChildLicense = licenseRole === LicenseRole.Child && siteUrl;
@@ -68,7 +71,7 @@ export default function RevokeLicenseDialog( {
 			{ translate( 'Go back' ) }
 		</Button>,
 
-		<Button primary scary busy={ mutation.isPending } onClick={ revoke }>
+		<Button primary scary busy={ isPending } onClick={ revoke }>
 			{ isParentLicense ? translate( 'Revoke bundle' ) : translate( 'Revoke License' ) }
 		</Button>,
 	];
