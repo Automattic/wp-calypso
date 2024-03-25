@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import Search from 'calypso/components/search';
 
 import './style.scss';
@@ -15,6 +16,7 @@ export const PatternsHeader = ( {
 	onSearch = () => {},
 	title,
 }: PatternsHeaderProps ) => {
+	const translateNotYet = useTranslate();
 	return (
 		<header className="patterns-header">
 			<div className="patterns-header__inner">
@@ -25,7 +27,7 @@ export const PatternsHeader = ( {
 					delaySearch
 					initialValue={ initialSearchTerm }
 					onSearch={ onSearch }
-					placeholder="Search patterns..."
+					placeholder={ translateNotYet( 'Search patterns...' ) }
 				/>
 			</div>
 		</header>
