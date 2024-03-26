@@ -57,7 +57,7 @@ export default function LicensesOverview( {
 	const partnerCanIssueLicense = true; // FIXME: get this from state
 
 	const onIssueNewLicenseClick = () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_license_list_ssue_license_click' ) );
+		dispatch( recordTracksEvent( 'calypso_a4a_license_list_issue_license_click' ) );
 	};
 
 	const { data, isFetched } = useFetchLicenseCounts();
