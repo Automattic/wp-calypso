@@ -1,6 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -33,7 +33,10 @@ const Loading = () => {
 		</div>
 	);
 };
-const DoNotTranslateIt = ( { value, as: As = 'span' } ) => <As>{ value }</As>;
+
+const DoNotTranslateIt: FC< { value: string; as: string } > = ( { value, as: As = 'span' } ) => (
+	<As>{ value }</As>
+);
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
