@@ -1,7 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import classNames from 'classnames';
-import Masonry, { Options as MasonryOptions } from 'masonry-layout';
-import { PropsWithChildren, useLayoutEffect, useRef } from 'react';
+import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
@@ -16,41 +15,48 @@ import './style.scss';
 
 const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
 
-type MasonryWrapperProps = PropsWithChildren< {
+type MasonryGalleryProps = PropsWithChildren< {
 	className?: string;
 	enableMasonry: boolean;
-	masonryOptions?: MasonryOptions;
 } >;
 
-function MasonryWrapper( {
-	className,
-	children,
-	enableMasonry = false,
-	masonryOptions,
-}: MasonryWrapperProps ) {
+function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryProps ) {
 	const ref = useRef< HTMLDivElement >( null );
+	const [ maxHeight, setMaxHeight ] = useState( 0 );
 
 	useLayoutEffect( () => {
-		if ( ! ref.current || ! enableMasonry ) {
+		if ( ! ref.current ) {
 			return;
 		}
 
+		const columns = [ 0, 0, 0 ];
 		const element = ref.current;
-		const masonry = new Masonry( element, masonryOptions );
 
-		function resizeListener() {
-			masonry.layout?.();
+		function calculateHeight() {
+			const previews = element.querySelectorAll( '.pattern-preview' );
+
+			for ( const preview of previews ) {
+				const smallestColumn = Math.min( ...columns );
+				const shortestColumnIndex = columns.indexOf( smallestColumn );
+
+				const coords = preview.getBoundingClientRect();
+				columns[ shortestColumnIndex ] += coords.height + 16;
+			}
+
+			setMaxHeight( Math.max( ...columns ) );
 		}
-		ref.current.addEventListener( 'pattern_preview_resize', resizeListener );
+
+		calculateHeight();
+
+		element.addEventListener( 'patternPreviewResize', calculateHeight );
 
 		return () => {
-			masonry.destroy?.();
-			element.removeEventListener( 'pattern_preview_resize', resizeListener );
+			element.removeEventListener( 'patternPreviewResize', calculateHeight );
 		};
-	}, [ enableMasonry, masonryOptions ] );
+	} );
 
 	return (
-		<div className={ className } ref={ ref }>
+		<div className={ className } ref={ ref } style={ enableMasonry ? { maxHeight } : undefined }>
 			{ children }
 		</div>
 	);
@@ -58,6 +64,7 @@ function MasonryWrapper( {
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const { getPatternPermalink, isGridView = false, patterns = [], patternTypeFilter } = props;
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
@@ -74,17 +81,13 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 				shouldShufflePosts={ false }
 				siteId={ RENDERER_SITE_ID }
 			>
-				<MasonryWrapper
+				<MasonryGallery
 					className={ classNames( 'pattern-gallery', {
 						'pattern-gallery--grid': isGridView,
 						'pattern-gallery--pages': isPageLayouts,
 					} ) }
-					enableMasonry={ isGridView && isPageLayouts }
+					enableMasonry
 					key={ patternIdsByCategory.first.join( ',' ) }
-					masonryOptions={ {
-						gutter: '.pattern-gallery__gutter',
-						transitionDuration: 0,
-					} }
 				>
 					{ patterns.map( ( pattern, i ) => (
 						<PatternPreview
@@ -101,9 +104,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
-
-					{ isGridView && isPageLayouts && <div className="pattern-gallery__gutter" /> }
-				</MasonryWrapper>
+				</MasonryGallery>
 			</PatternsRendererProvider>
 		</BlockRendererProvider>
 	);

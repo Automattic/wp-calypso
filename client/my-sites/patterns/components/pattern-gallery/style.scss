@@ -21,9 +21,8 @@
 .pattern-gallery--grid.pattern-gallery--pages {
 	--gutter-size: 24px;
 
-	display: block;
-}
-
-.pattern-gallery__gutter {
-	width: var(--gutter-size);
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	max-height: 1000px;
 }
