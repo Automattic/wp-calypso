@@ -37,6 +37,14 @@ export const PatternsGetAccessModal = ( {
 		} );
 	};
 
+	const recordLoginClickEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+		} );
+	};
+
 	return (
 		<Dialog
 			isVisible={ isOpen }
@@ -64,7 +72,11 @@ export const PatternsGetAccessModal = ( {
 						>
 							Create a free account
 						</Button>
-						<Button transparent href={ loginUrl }>
+						<Button
+							transparent
+							href={ loginUrl }
+							onClick={ () => recordLoginClickEvent( 'calypso_pattern_library_get_access_signup' ) }
+						>
 							Log in
 						</Button>
 					</div>
