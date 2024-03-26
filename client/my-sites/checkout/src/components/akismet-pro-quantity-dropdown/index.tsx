@@ -114,6 +114,7 @@ const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 	font-size: ${ ( props ) => props.theme.fontSize.small };
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	justify-content: space-between;
+	flex-wrap: wrap;
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
@@ -124,14 +125,15 @@ const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 `;
 
 const Price = styled.span< { shouldUseCheckoutV2: boolean } >`
-	flex: 1 0 auto;
-	text-align: right;
+	flex: 1 0 fit-content;
 	color: #646970;
 	> span {
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
 
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: right;` ) }
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: right;` ) }
+	}
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -347,7 +349,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		if ( selectedQuantity !== AkBusinessDropdownPosition ) {
 			return isMobile()
 				? translate(
-						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. ={{/span}} %(actualAmountDisplay)s',
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. = %(actualAmountDisplay)s{{/span}}',
 						{
 							args: {
 								quantity: selectedQuantity,
@@ -365,7 +367,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 						}
 				  )
 				: translate(
-						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license ={{/span}} %(actualAmountDisplay)s',
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license = %(actualAmountDisplay)s{{/span}}',
 						{
 							args: {
 								quantity: selectedQuantity,
