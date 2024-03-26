@@ -84,12 +84,7 @@ export interface PlanActionOverrides {
 	};
 }
 
-// TODO: Remove PlanActions?
-export type PlanActions = {
-	[ planSlug in PlanSlug ]?: PlanAction;
-};
-
-export type PlanAction = ( isFreeTrialPlan?: boolean ) => void;
+// export type PlanAction = ( isFreeTrialPlan?: boolean ) => void;
 
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
@@ -148,7 +143,15 @@ export type GridContextProps = {
 	selectedSiteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	// TODO: Fix type
-	getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
+	getActionCallback: (
+		gridPlan: GridPlan
+	) => ( {
+		isFreeTrialPlan,
+		storageAddOn,
+	}?: {
+		isFreeTrialPlan?: boolean;
+		storageAddOn?: WPComStorageAddOnSlug;
+	} ) => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
