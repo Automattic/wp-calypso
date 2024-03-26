@@ -54,7 +54,9 @@ $sidebar-appearance-break-point: 783px;
 
 		@media ( max-width: $break-small ) {
 			margin-bottom: 0;
+			padding-bottom: 0;
 		}
+
 		@media ( min-width: $break-small ) {
 			padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 			padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
