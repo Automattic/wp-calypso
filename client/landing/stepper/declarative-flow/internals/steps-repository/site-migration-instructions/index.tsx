@@ -64,7 +64,7 @@ const SiteMigrationInstructions: Step = function () {
 			<ol className="site-migration-instructions__list">
 				<li>
 					{ translate(
-						'Install and active the {{a}}Migrate Guru plugin{{/a}} on your existing site.',
+						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your existing site.',
 						{
 							components: {
 								a: <a href={ getInstallationURL( fromUrl ) } target="_blank" rel="noreferrer" />,
@@ -74,7 +74,7 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					{ translate(
-						'Go to the {{a}}Migrate Guru page on the source site{{/a}}, enter your email address, and click {{strong}}Migrate{{/strong}}.',
+						'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{strong}}Migrate{{/strong}}.',
 						{
 							components: {
 								a: <a href={ getMigrateGuruPageURL( fromUrl ) } target="_blank" rel="noreferrer" />,
