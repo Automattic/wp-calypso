@@ -54,6 +54,7 @@ export default function HostingCard( { plan }: Props ) {
 					args: {
 						hosting: name,
 					},
+					comment: '%(hosting)s is the name of the hosting provider.',
 				} ) }
 			</Button>
 		</div>

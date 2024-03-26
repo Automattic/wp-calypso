@@ -18,13 +18,13 @@ export default function useHostingDescription( slug: string ): {
 
 		switch ( slug ) {
 			case 'pressable-hosting':
-				name = 'Pressable';
+				name = translate( 'Pressable' );
 				description = translate(
 					'9 custom plans built for agencies that include an intuitive control panel, easy site migration, staging environments, performance tools, and flexible upgrades & downgrades. '
 				);
 				break;
 			case 'wpcom-hosting':
-				name = 'Wordpress.com';
+				name = translate( 'Wordpress.com' );
 				description = translate(
 					'Unbeatable uptime, unmetered bandwidth, and everything you need to streamline your development process, baked in. Perfect uptime. Fastest WP Bench score. A+ SSL grade.'
 				);
