@@ -110,6 +110,14 @@ function PatternPreviewFragment( {
 		} );
 	};
 
+	const recordCloseModalEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+		} );
+	};
+
 	return (
 		<div
 			className={ classNames( 'pattern-preview', className, {
@@ -175,7 +183,10 @@ function PatternPreviewFragment( {
 
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
-				onClose={ () => setIsAuthModalOpen( false ) }
+				onClose={ () => {
+					setIsAuthModalOpen( false );
+					recordCloseModalEvent( 'calypso_pattern_library_get_access_dismiss' );
+				} }
 			/>
 		</div>
 	);
