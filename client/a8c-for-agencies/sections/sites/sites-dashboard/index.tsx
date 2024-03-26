@@ -145,21 +145,23 @@ export default function SitesDashboard() {
 	useEffect( () => {
 		// If the favorites filter is set, make sure to update the filter and correctly add the is_favorite param to URLs.
 		filter.showOnlyFavorites = isFavoriteFilter;
-		const favoriteParam = isFavoriteFilter ? '?is_favorite' : '';
+		const favoritesParam = isFavoriteFilter ? '?is_favorite' : '';
 		// We need a category in the URL if we have a selected site
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
 		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
 			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }${ favoriteParam }`
+				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }${ favoritesParam }`
 			);
 		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }${ favoriteParam }` );
+			page.replace(
+				`/sites/${ category }/${ sitesViewState.selectedSite.url }${ favoritesParam }`
+			);
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( `/sites/${ category }${ favoriteParam }` );
+			page.replace( `/sites/${ category }${ favoritesParam }` );
 		} else {
-			page.replace( `/sites${ favoriteParam }` );
+			page.replace( `/sites${ favoritesParam }` );
 		}
 
 		if ( sitesViewState.selectedSite ) {

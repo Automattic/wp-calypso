@@ -45,7 +45,7 @@ const SitesDataViews = ( {
 		},
 		[ onSitesViewChange, sitesViewState ]
 	);
-	//
+
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteInfo ) => {
 			if ( isLoading ) {
