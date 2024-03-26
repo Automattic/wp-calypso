@@ -5,7 +5,7 @@ import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -13,6 +13,7 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import StagingGate from 'calypso/components/staging-gate';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
@@ -21,6 +22,7 @@ import {
 	useSubscribersPage,
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
@@ -143,6 +145,7 @@ const SubscribersPage = ( {
 	const [ giftUsername, setGiftUsername ] = useState( '' );
 
 	const siteId = selectedSite?.ID || null;
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const pageArgs = {
 		currentPage: pageNumber,
@@ -177,6 +180,23 @@ const SubscribersPage = ( {
 		setGiftUsername( display_name );
 	};
 
+	const Gate = ( props: { children: ReactNode } ) => {
+		const { children } = props;
+
+		return isStagingSite ? (
+			<StagingGate siteId={ siteId }>{ children }</StagingGate>
+		) : (
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
+			<EmailVerificationGate
+				noticeText={ translate( 'You must verify your email to add subscribers.' ) }
+				noticeStatus="is-warning"
+			>
+				{ children }
+			</EmailVerificationGate>
+		);
+	};
+
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -195,12 +215,7 @@ const SubscribersPage = ( {
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
 				<SubscribersHeader selectedSiteId={ selectedSite?.ID } isUnverified={ isUnverified } />
-				{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
-				{ /* @ts-ignore */ }
-				<EmailVerificationGate
-					noticeText={ translate( 'You must verify your email to add subscribers.' ) }
-					noticeStatus="is-warning"
-				>
+				<Gate>
 					<SubscriberListContainer
 						siteId={ siteId }
 						onClickView={ onClickView }
@@ -228,7 +243,7 @@ const SubscribersPage = ( {
 					) }
 					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 					{ selectedSite && <MigrateSubscribersModal /> }
-				</EmailVerificationGate>
+				</Gate>
 			</Main>
 		</SubscribersPageProvider>
 	);
