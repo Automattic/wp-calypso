@@ -46,31 +46,16 @@ class CurrentSite extends Component {
 		const { translate, isRtl } = this.props;
 		const arrowDirection = isRtl ? 'right' : 'left';
 
-		if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-			return (
-				<span className="current-site__switch-sites">
-					<Button borderless href="/sites" onClick={ this.onAllSitesClick }>
-						<span
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-						></span>
-						<span className="current-site__switch-sites-label">{ translate( 'All Sites' ) }</span>
-					</Button>
-				</span>
-			);
-		}
 		return (
-			this.props.siteCount > 1 && (
-				<span className="current-site__switch-sites">
-					<Button borderless onClick={ this.switchSites }>
-						<span
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-						></span>
-						<span className="current-site__switch-sites-label">{ translate( 'Switch Site' ) }</span>
-					</Button>
-				</span>
-			)
+			<span className="current-site__switch-sites">
+				<Button borderless href="/sites" onClick={ this.onAllSitesClick }>
+					<span
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+					></span>
+					<span className="current-site__switch-sites-label">{ translate( 'All Sites' ) }</span>
+				</Button>
+			</span>
 		);
 	};
 

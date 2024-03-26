@@ -1454,7 +1454,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 	const BBESupportLink = (
 		<a
-			href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+			href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
 				`I have a question about my project: ${ siteSlug }`
 			) }` }
 		/>

@@ -7,7 +7,8 @@ import {
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
-import { RENDERER_SITE_ID, getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
+import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternTypeFilter, type CategoryGalleryFC } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
@@ -61,9 +62,9 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 							>
 								<div
 									className={ classNames( 'patterns-category-gallery__item-preview', {
-										'patterns-category-gallery__item-preview_page-layouts':
+										'patterns-category-gallery__item-preview--page-layout':
 											patternTypeFilter === PatternTypeFilter.PAGES,
-										'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
+										'patterns-category-gallery__item-preview--mirrored': category.name === 'footer',
 									} ) }
 								>
 									<div className="patterns-category-gallery__item-preview-inner">

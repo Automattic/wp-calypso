@@ -47,7 +47,7 @@ const Row = styled.tr`
 const Column = styled.td< { tabletHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
-	padding-inline-end: 24px;
+	padding-inline-end: 12px;
 	vertical-align: middle;
 	font-size: 14px;
 	line-height: 20px;
@@ -228,7 +228,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 									<SiteLaunchNag site={ site } />
 								</div>
 								{ isDIFMInProgress && (
-									<BadgeDIFM className="site__badge">{ __( 'Built By Express' ) }</BadgeDIFM>
+									<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 								) }
 							</>
 						)
