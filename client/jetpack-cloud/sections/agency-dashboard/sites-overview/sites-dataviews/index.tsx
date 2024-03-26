@@ -286,26 +286,19 @@ const SitesDataViews = ( {
 		);
 	};
 
-	const tableWrapper = document.getElementsByClassName( 'dataviews-view-table-wrapper' )[ 0 ];
-	if ( tableWrapper ) {
+	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
+	if ( dataviewsWrapper ) {
 		// Remove any existing spinner if present
-		const existingSpinner = tableWrapper.querySelector( '.spinner-wrapper' );
+		const existingSpinner = dataviewsWrapper.querySelector( '.spinner-wrapper' );
 		if ( existingSpinner ) {
 			existingSpinner.remove();
 		}
 
-		const spinnerWrapper = document.createElement( 'div' );
+		const spinnerWrapper = dataviewsWrapper.appendChild( document.createElement( 'div' ) );
 		spinnerWrapper.classList.add( 'spinner-wrapper' );
-
-		const secondDataViewsTableChild = tableWrapper.children[ 1 ];
-
-		// Insert the spinner wrapper after the second child element
-		if ( secondDataViewsTableChild ) {
-			secondDataViewsTableChild.insertAdjacentElement( 'afterend', spinnerWrapper );
-
-			// Render the SpinnerWrapper component inside the spinner wrapper
-			ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
-		}
+		// Render the SpinnerWrapper component inside the spinner wrapper
+		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
+		//}
 	}
 
 	const urlParams = new URLSearchParams( window.location.search );
