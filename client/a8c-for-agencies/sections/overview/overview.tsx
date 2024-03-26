@@ -11,6 +11,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import OverviewSidebar from './sidebar';
+import './style.scss';
 
 export default function Overview() {
 	const translate = useTranslate();
@@ -19,15 +20,19 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
-				<LayoutHeader>
-					<Title>{ title }</Title>
-					<Actions>
-						<OverviewHeaderActions />
-					</Actions>
-				</LayoutHeader>
+				<div className="a4a-overview-header">
+					<LayoutHeader>
+						<Title>{ title }</Title>
+						<Actions>
+							<OverviewHeaderActions />
+						</Actions>
+					</LayoutHeader>
+				</div>
 			</LayoutTop>
 			<LayoutBody>
-				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
+				<div className="a4a-overview-content">
+					<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
+				</div>
 			</LayoutBody>
 		</Layout>
 	);
