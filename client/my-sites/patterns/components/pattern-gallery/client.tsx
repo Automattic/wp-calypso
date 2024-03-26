@@ -98,7 +98,6 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 						'pattern-gallery--pages': isPageLayouts,
 					} ) }
 					enableMasonry={ isGridView && isPageLayouts }
-					key={ patternIdsByCategory.first.join( ',' ) }
 				>
 					{ patterns.map( ( pattern, i ) => (
 						<PatternPreview
