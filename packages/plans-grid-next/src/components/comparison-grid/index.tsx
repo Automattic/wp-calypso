@@ -48,7 +48,6 @@ import type {
 	PlanActionOverrides,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
-	PlanActions,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -352,7 +351,6 @@ type ComparisonGridHeaderProps = {
 	onPlanChange: ( currentPlan: PlanSlug, event: ChangeEvent< HTMLSelectElement > ) => void;
 	currentSitePlanSlug?: string | null;
 	planActionOverrides?: PlanActionOverrides;
-	planActions?: PlanActions;
 	selectedPlan?: string;
 	showRefundPeriod?: boolean;
 	isStuck: boolean;
@@ -503,7 +501,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 			onPlanChange,
 			currentSitePlanSlug,
 			planActionOverrides,
-			planActions,
 			selectedPlan,
 			isHiddenInMobile,
 			showRefundPeriod,
@@ -550,7 +547,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 						currentSitePlanSlug={ currentSitePlanSlug }
 						isLaunchPage={ isLaunchPage }
 						planActionOverrides={ planActionOverrides }
-						planActions={ planActions }
 						selectedPlan={ selectedPlan }
 						showRefundPeriod={ showRefundPeriod }
 						isStuck={ isStuck }

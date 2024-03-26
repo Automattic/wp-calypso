@@ -84,13 +84,6 @@ export interface PlanActionOverrides {
 	};
 }
 
-// TODO: Remove PlanActions?
-export type PlanActions = {
-	[ planSlug in PlanSlug ]?: PlanAction;
-};
-
-export type PlanAction = ( isFreeTrialPlan?: boolean ) => void;
-
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
 // but at the moment it's located here to reduce its scope of influence.
@@ -141,14 +134,22 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
+export type GetActionCallbackParams = {
+	planSlug: PlanSlug;
+	cartItemForPlan?: { product_slug: string } | null;
+	currentPlan?: boolean;
+	freeTrialPlanSlug?: PlanSlug;
+	isFreeTrialPlan?: boolean;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+};
+
 export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	// TODO: Fix type
-	getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
+	getActionCallback: ( options: GetActionCallbackParams ) => () => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

@@ -6,6 +6,7 @@ import {
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	WPComStorageAddOnSlug,
+	// TODO: FIX THIS
 	// PLAN_FREE,
 	type PlanSlug,
 	UrlFriendlyTermType,

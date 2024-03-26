@@ -23,6 +23,7 @@ import { useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
+import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
@@ -74,7 +75,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
+	onPlanCtaClick: () => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
@@ -89,7 +90,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 		},
 	} );
 
-	const onClick = () => onPlanCtaClick( hasFreeTrialPlan );
+	const onClick = () => onPlanCtaClick();
 
 	if ( isFreePlan( planSlug ) ) {
 		btnText = translate( 'Start with Free' );
@@ -123,7 +124,12 @@ const SignupFlowPlanFeatureActionButton = ( {
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick( false ) } borderless>
+					<PlanButton
+						planSlug={ planSlug }
+						// onClick={ () => onPlanCtaClick( { isFreeTrialPlan: false } ) }
+						onClick={ () => onPlanCtaClick() }
+						borderless
+					>
 						{ btnText }
 					</PlanButton>
 				) }
@@ -257,8 +263,9 @@ const LoggedInPlansFeatureActionButton = ( {
 			return (
 				<PlanButton
 					planSlug={ planSlug }
-					// TODO: Replace planActionOverrides
+					// TODO: Replace planActionOverrides callback
 					// onClick={ planActionOverrides.loggedInFreePlan.callback }
+					onClick={ onPlanCtaClick }
 					current={ current }
 				>
 					{ planActionOverrides.loggedInFreePlan.text }
@@ -436,21 +443,38 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const {
 		gridPlansIndex,
 		helpers: { getActionCallback },
+		selectedSiteId,
 	} = usePlansGridContext();
 	const {
+		current,
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
+		cartItemForPlan,
+		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const { prices } = usePlanPricingInfoFromGridPlans( {
 		gridPlans: visibleGridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
-	const onPlanCtaClick = getActionCallback( gridPlansIndex[ planSlug ] );
+
+	const selectedStorageAddOn = useSelectedStorageAddOn( {
+		planSlug,
+		selectedSiteId,
+		storageAddOnsForPlan,
+	} );
+
+	const onPlanCtaClick = getActionCallback( {
+		planSlug,
+		cartItemForPlan,
+		currentPlan: current,
+		freeTrialPlanSlug,
+		selectedStorageAddOn,
+	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() }>
+			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick }>
 				{ translate( 'Learn more' ) }
 			</PlanButton>
 		);
@@ -478,6 +502,15 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		);
 	}
 	if ( isInSignup ) {
+		const onPlanCtaClick = getActionCallback( {
+			planSlug,
+			cartItemForPlan,
+			currentPlan: current,
+			freeTrialPlanSlug,
+			isFreeTrialPlan: !! freeTrialPlanSlug,
+			selectedStorageAddOn,
+		} );
+
 		return (
 			<SignupFlowPlanFeatureActionButton
 				planSlug={ planSlug }

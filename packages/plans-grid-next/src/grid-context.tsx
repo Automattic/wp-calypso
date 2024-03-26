@@ -1,5 +1,5 @@
 import { createContext, useContext } from '@wordpress/element';
-import type { GridContextProps, GridPlan, PlansIntent } from './types';
+import type { GetActionCallbackParams, GridContextProps, GridPlan, PlansIntent } from './types';
 import type { FeatureList } from '@automattic/calypso-products';
 import type { Plans } from '@automattic/data-stores';
 
@@ -11,8 +11,7 @@ interface PlansGridContext {
 	allFeaturesList: FeatureList;
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-		// TODO: Fix type
-		getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
+		getActionCallback: ( options: GetActionCallbackParams ) => () => void;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;

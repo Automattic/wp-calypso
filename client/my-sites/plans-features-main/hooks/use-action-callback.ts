@@ -7,14 +7,12 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { WpcomPlansUI } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import type { GridPlan, PlansIntent } from '@automattic/plans-grid-next';
+import type { GetActionCallbackParams, GridPlan, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
@@ -75,13 +73,15 @@ function useUpgradeHandler(
 		[ siteSlug, withDiscount, planActionCallback, cartHandler ]
 	);
 
-	const selectedStorageOptions = useSelect( ( select ) => {
-		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
-	}, [] );
-
-	const addSelectedPlanAndStorageAddon = useCallback(
-		( gridPlan: GridPlan, isFreeTrialPlan?: boolean ) => {
-			const { planSlug, freeTrialPlanSlug } = gridPlan;
+	const processCartItemsForPlanAndAddOns = useCallback(
+		( params: GetActionCallbackParams ) => {
+			const {
+				cartItemForPlan,
+				isFreeTrialPlan,
+				freeTrialPlanSlug,
+				planSlug,
+				selectedStorageAddOn,
+			} = params;
 
 			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
 				const freeTrialCartItem = { product_slug: freeTrialPlanSlug };
@@ -89,19 +89,13 @@ function useUpgradeHandler(
 				return;
 			}
 
-			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
-			const { cartItemForPlan, storageAddOnsForPlan } = gridPlan;
-			const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
-				return selectedStorageOption && addOn
-					? addOn.featureSlugs?.includes( selectedStorageOption )
-					: false;
-			} );
-			const storageAddOnCartItem = storageAddOn &&
-				! storageAddOn.purchased && {
-					product_slug: storageAddOn.productSlug,
-					quantity: storageAddOn.quantity,
+			const storageAddOnCartItem = selectedStorageAddOn &&
+				! selectedStorageAddOn.purchased && {
+					product_slug: selectedStorageAddOn.productSlug,
+					quantity: selectedStorageAddOn.quantity,
 					volume: 1,
-					extra: { feature_slug: selectedStorageOption },
+					// TODO: figure out how to pass storageAddOnSlug
+					// extra: { feature_slug: storageAddOnSlug },
 				};
 
 			if ( cartItemForPlan ) {
@@ -114,14 +108,13 @@ function useUpgradeHandler(
 
 			processCartItems?.( null, planSlug );
 		},
-		[ processCartItems, selectedStorageOptions ]
+		[ processCartItems ]
 	);
 
 	return useCallback(
-		( gridPlan: GridPlan ) => {
-			const { planSlug, freeTrialPlanSlug } = gridPlan;
-
-			return ( isFreeTrialPlan?: boolean ) => {
+		( params: GetActionCallbackParams ) => {
+			return () => {
+				const { isFreeTrialPlan, freeTrialPlanSlug, planSlug } = params;
 				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
 				if ( ! isFreePlan( planSlug ) ) {
@@ -131,14 +124,13 @@ function useUpgradeHandler(
 						saw_free_trial_offer: !! freeTrialPlanSlug,
 					} );
 				}
-				addSelectedPlanAndStorageAddon?.( gridPlan, isFreeTrialPlan );
+				processCartItemsForPlanAndAddOns?.( params );
 			};
 		},
-		[ sitePlanSlug, addSelectedPlanAndStorageAddon ]
+		[ sitePlanSlug, processCartItemsForPlanAndAddOns ]
 	);
 }
 
-// TODO: Verify that "Plan" is appropriate here. What about upsell modal CTAs? Consider renaming to something more generic.
 function useActionCallback(
 	intent?: PlansIntent | null,
 	flowName?: string | null,
@@ -160,8 +152,8 @@ function useActionCallback(
 
 	const [ managePlan, manageAddon, gotoVip ] = useMemo( () => {
 		const composePlanActionCallback = ( callback: () => void ) => {
-			return ( planSlug: PlanSlug ) => {
-				const earlyReturn = planActionCallback?.( planSlug );
+			return ( gridPlan: GridPlan ) => {
+				const earlyReturn = planActionCallback?.( gridPlan.planSlug );
 
 				if ( earlyReturn ) {
 					return;
@@ -180,18 +172,29 @@ function useActionCallback(
 		} );
 
 		return [ managePlan, manageAddon, gotoVip ];
-	}, [] );
+	}, [ currentPlanManageHref, flowName, planActionCallback, siteSlug ] );
 
-	return ( gridPlan: GridPlan ) => {
-		if ( isWpcomEnterpriseGridPlan( gridPlan.planSlug ) ) {
+	return (
+		params: GetActionCallbackParams = {
+			planSlug: PLAN_FREE,
+			cartItemForPlan: { product_slug: '' },
+			currentPlan: false,
+			freeTrialPlanSlug: undefined,
+			isFreeTrialPlan: false,
+			selectedStorageAddOn: undefined,
+		}
+	) => {
+		const { currentPlan, planSlug } = params;
+
+		if ( planSlug && isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return gotoVip;
 		}
 
-		if ( sitePlanSlug && intent !== 'plans-p2' ) {
+		if ( sitePlanSlug && currentPlan && intent !== 'plans-p2' ) {
 			return isFreePlan( sitePlanSlug ) ? manageAddon : managePlan;
 		}
 
-		return upgradeHandler( gridPlan );
+		return upgradeHandler( params );
 	};
 }
 
