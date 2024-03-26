@@ -25,32 +25,6 @@ interface APIFetchOptions {
 	path: string;
 }
 
-const fetchArticlesFromWPCom = async ( queryString: string ): Promise< SearchResult[] > => {
-	return await wpcomRequest( {
-		path: `help/search/wpcom?${ queryString }`,
-		apiNamespace: 'wpcom/v2/',
-		apiVersion: '2',
-	} );
-};
-
-const fetchArticlesFromAPI = async ( queryString: string ): Promise< SearchResult[] > => {
-	return await apiFetch( {
-		global: true,
-		path: `/help-center/search?${ queryString }`,
-	} as APIFetchOptions );
-};
-
-const fetchArticlesFromWP = async ( articles: TailoredArticles ): Promise< SearchResult[] > => {
-	const { post_ids, blog_id, locale } = articles;
-	return await wpcomRequest( {
-		path: `help/articles`,
-		apiNamespace: 'wpcom/v2/',
-		apiVersion: '2',
-		method: 'PUT',
-		body: { post_ids, blog_id, locale },
-	} );
-};
-
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
@@ -62,13 +36,36 @@ const fetchArticlesAPI = async (
 	let searchResultResponse: SearchResult[] = [];
 
 	if ( articles ) {
-		articlesResponse = await fetchArticlesFromWP( articles );
+		const { post_ids, blog_id, locale } = articles;
+		if ( canAccessWpcomApis() ) {
+			articlesResponse = ( await wpcomRequest( {
+				path: `help/articles`,
+				apiNamespace: 'wpcom/v2/',
+				apiVersion: '2',
+				method: 'PUT',
+				body: { post_ids, blog_id, locale },
+			} ) ) as SearchResult[];
+		} else {
+			articlesResponse = ( await apiFetch( {
+				global: true,
+				path: `/help-center/articles`,
+				method: 'PUT',
+				data: { post_ids, blog_id, locale },
+			} as APIFetchOptions ) ) as SearchResult[];
+		}
 	}
 
 	if ( canAccessWpcomApis() ) {
-		searchResultResponse = await fetchArticlesFromWPCom( queryString );
+		searchResultResponse = ( await wpcomRequest( {
+			path: `help/search/wpcom?${ queryString }`,
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+		} ) ) as SearchResult[];
 	} else {
-		searchResultResponse = await fetchArticlesFromAPI( queryString );
+		searchResultResponse = ( await apiFetch( {
+			global: true,
+			path: `/help-center/search?${ queryString }`,
+		} as APIFetchOptions ) ) as SearchResult[];
 	}
 	//Add tailored results first, if no tailored results, add search results.
 	const combinedResults = [ ...articlesResponse, ...searchResultResponse ];

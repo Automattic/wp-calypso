@@ -43,6 +43,61 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 				),
 			)
 		);
+		register_rest_route(
+			$this->namespace,
+			'/articles',
+			array(
+				'methods'             => \WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'get_articles_search_results' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'blog_id'  => array(
+						'type'     => 'number',
+						'required' => true,
+					),
+					'post_ids' => array(
+						'type'     => 'array',
+						'required' => true,
+					),
+					'locale'   => array(
+						'type'     => 'string',
+						'required' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Should return articles search results
+	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_articles_search_results( \WP_REST_Request $request ) {
+		$articles_args = array(
+			'blog_id'  => $request['blog_id'],
+			'post_ids' => $request['post_ids'],
+			'locale'   => $request['locale'],
+		);
+
+		$body = Client::wpcom_json_api_request_as_user(
+			'/help/articles',
+			'2',
+			array(
+				'method' => 'PUT',
+			),
+			$articles_args
+		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		return rest_ensure_response( $response );
 	}
 
 	/**
