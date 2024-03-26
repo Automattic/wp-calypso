@@ -22,6 +22,14 @@
 	justify-content: space-between;
 	position: relative;
 
+	iframe {
+		pointer-events: initial !important;
+	}
+
+	> div[aria-hidden="true"] {
+		pointer-events: initial !important;
+	}
+
 	.pattern-preview__renderer {
 		background: var(--color-surface);
 		border-radius: 4px;
