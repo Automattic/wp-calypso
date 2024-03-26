@@ -358,11 +358,11 @@ class StatsSummary extends Component {
 				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-					<StatsGlobalValuesContext.Consumer>
-						{ ( isInternal ) => (
-							<>
-								{ this.props.context.params.module === 'utm' &&
-									( supportsUTMStats || isInternal ) && (
+					{ this.props.context.params.module === 'utm' ? (
+						<StatsGlobalValuesContext.Consumer>
+							{ ( isInternal ) => (
+								<>
+									{ supportsUTMStats || isInternal ? (
 										<>
 											{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 											<StatsModuleUTM
@@ -372,14 +372,15 @@ class StatsSummary extends Component {
 												summary
 											/>
 										</>
+									) : (
+										<div>{ translate( 'This path is not available.' ) }</div>
 									) }
-								{ this.props.context.params.module === 'utm' &&
-									! supportsUTMStats &&
-									! isInternal && <div>{ translate( 'This path is not available.' ) }</div> }
-							</>
-						) }
-					</StatsGlobalValuesContext.Consumer>
-					{ ! this.props.context.params.module !== 'utm' && summaryViews }
+								</>
+							) }
+						</StatsGlobalValuesContext.Consumer>
+					) : (
+						summaryViews
+					) }
 					<JetpackColophon />
 				</div>
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
