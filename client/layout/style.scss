@@ -22,9 +22,14 @@ body.is-focus-sites {
 // Set transitons for layout elements
 .layout__primary .main,
 .layout__secondary,
+.layout__global,
 .layout__secondary .sidebar,
 .layout__secondary .site-selector {
-	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out, left 0.25s ease-out;
+}
+
+.layout__secondary {
+	transition: width 0.25s ease-out;
 }
 
 .layout__header-section-content {
@@ -148,6 +153,38 @@ body.is-mobile-app-view {
 		display: none;
 	}
 }
+
+.layout__global {
+	width: calc(100vw - var( --sidebar-width-max ));
+	// padding-left: var(--sidebar-width-max);
+	left: var(--sidebar-width-max);
+    position: relative;
+}
+
+// inner container that doesn't change its width so that content is not continually re-rendered.
+.layout__global-inner {
+	width: calc( var(--sidebar-width-max) - 50px);
+}
+
+.layout__global .global-site-selector-grid {
+	grid-template-columns: 1fr;
+}
+
+.is-global-site-sidebar-visible .layout__global {
+	width: calc( var(--sidebar-width-max) - 50px);
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 50px;
+	background: white;
+	padding: 10px;
+	overflow: auto;
+}
+
+.is-global-site-sidebar-visible .layout__secondary {
+	width: 50px;
+}
+
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {
