@@ -115,6 +115,17 @@ function PatternPreviewFragment( {
 			  } );
 	}
 
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const recordCopyEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
+
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
@@ -175,6 +186,7 @@ function PatternPreviewFragment( {
 					<ClipboardButton
 						className="pattern-preview__copy"
 						onCopy={ () => {
+							recordCopyEvent( 'calypso_pattern_library_copy' );
 							setIsPatternCopied( true );
 						} }
 						text={ pattern?.html ?? '' }
