@@ -362,9 +362,9 @@ function StatsCommercialFlowOptOutForm( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
 
-		// For Jetpack sites, open the Jetpack support form. Do not prefill.
+		// For Jetpack sites, open the Jetpack plugin forum, which is the standard support for not-paying / lower pwyw users.
 		if ( isJetpackSupport ) {
-			window.open( `https://jetpack.com/contact-support/?url=${ siteSlug }` );
+			window.open( `https://wordpress.org/support/plugin/jetpack/#new-post` );
 			return;
 		}
 
