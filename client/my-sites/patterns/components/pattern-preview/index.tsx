@@ -175,7 +175,7 @@ function PatternPreviewFragment( {
 						} }
 						transparent
 					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
+						<Icon height={ 18 } icon={ lock } width={ 18 } /> { translate_not_yet( 'Get access' ) }
 					</Button>
 				) }
 			</div>
