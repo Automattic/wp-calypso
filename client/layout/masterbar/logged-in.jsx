@@ -621,7 +621,6 @@ class MasterbarLoggedIn extends Component {
 			loadHelpCenterIcon,
 			currentSelectedSiteId,
 			isGlobalSiteView,
-			isGlobalView,
 		} = this.props;
 		const { isMobile } = this.state;
 
@@ -635,7 +634,7 @@ class MasterbarLoggedIn extends Component {
 					<Masterbar className="masterbar__global-nav">
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
-							{ isGlobalView && this.renderGlobalMySites() }
+							{ this.renderGlobalMySites() }
 							{ isGlobalSiteView && currentSelectedSiteId && (
 								<Site
 									siteId={ currentSelectedSiteId }
