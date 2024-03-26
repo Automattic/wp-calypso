@@ -4,7 +4,7 @@ import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -47,11 +47,12 @@ import {
 import StepWrapper from 'calypso/signup/step-wrapper';
 import useLongFetchingDetection from 'calypso/site-profiler/hooks/use-long-fetching-detection';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SiteSlug } from 'calypso/types';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
@@ -440,12 +441,17 @@ function DIFMPagePicker( props: StepProps ) {
 			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
 			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 	);
-	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
+
+	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
 
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site' || siteSlug;
 
-	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
-	const { isProductsLoading, effectiveCurrencyCode } = useCartForDIFM( selectedPages, isStoreFlow );
+	const { isProductsLoading } = useCartForDIFM( {
+		selectedPages,
+		isStoreFlow,
+		currentPlanSlug: currentPlan?.product_slug,
+	} );
 
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	let difmTieredPriceDetails = null;
@@ -467,10 +473,6 @@ function DIFMPagePicker( props: StepProps ) {
 	const submitPickedPages = async () => {
 		if ( ! isCheckoutPressed ) {
 			setIsCheckoutPressed( true );
-			if ( cartKey ) {
-				//Empty cart so that the sign up flow can add products to the cart
-				await replaceProductsInCart( [] );
-			}
 
 			if ( true === isEligibleForOneClickCheckout && isExistingSite ) {
 				setShowPurchaseModal( true );
@@ -489,7 +491,8 @@ function DIFMPagePicker( props: StepProps ) {
 	};
 
 	const isCheckoutButtonBusy =
-		( isExistingSite && ( isProductsLoading || isLoadingIsEligibleForOneClickCheckout ) ) ||
+		isProductsLoading ||
+		( isExistingSite && isLoadingIsEligibleForOneClickCheckout ) ||
 		isCheckoutPressed;
 
 	const isBusyForWhile = useLongFetchingDetection( 'difm-page-picker', isCheckoutButtonBusy, 5000 );
@@ -527,7 +530,7 @@ function DIFMPagePicker( props: StepProps ) {
 						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
 						extraPagePrice: formatCurrency(
 							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
-							effectiveCurrencyCode ?? '',
+							currencyCode ?? '',
 							{
 								stripZeros: true,
 								isSmallestUnit: true,
@@ -547,7 +550,7 @@ function DIFMPagePicker( props: StepProps ) {
 						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages as number,
 						extraPagePrice: formatCurrency(
 							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
-							effectiveCurrencyCode ?? '',
+							currencyCode ?? '',
 							{
 								stripZeros: true,
 								isSmallestUnit: true,
@@ -596,7 +599,11 @@ function DIFMPagePicker( props: StepProps ) {
 				</StyledButton>
 			}
 			headerContent={
-				<ShoppingCartForDIFM selectedPages={ selectedPages } isStoreFlow={ isStoreFlow } />
+				<ShoppingCartForDIFM
+					selectedPages={ selectedPages }
+					isStoreFlow={ isStoreFlow }
+					currentPlanSlug={ currentPlan?.product_slug }
+				/>
 			}
 			{ ...props }
 		/>

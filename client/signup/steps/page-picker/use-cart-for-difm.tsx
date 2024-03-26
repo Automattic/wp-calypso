@@ -3,6 +3,10 @@ import {
 	WPCOM_DIFM_LITE,
 	getDIFMTieredPriceDetails,
 	PLAN_BUSINESS,
+	isPremium,
+	isBusiness,
+	isEcommerce,
+	isPro,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
@@ -28,6 +32,7 @@ type DummyCartParams = {
 	currencyCode: string;
 	activePlanScheme: ProductListItem;
 	difmLiteProduct: ProductListItem;
+	currentPlanSlug?: string | null;
 	translate: LocalizeProps[ 'translate' ];
 };
 
@@ -85,12 +90,26 @@ function getDIFMPriceBreakdownSubLabel( {
 	return { subLabel };
 }
 
+const hasHigherPlan = ( currentPlanSlug: string, plan: string ) => {
+	const planMatchers =
+		plan === PLAN_PREMIUM
+			? [ isPremium, isBusiness, isEcommerce, isPro ]
+			: [ isBusiness, isEcommerce, isPro ];
+
+	return planMatchers.some( ( planMatcher ) =>
+		planMatcher( {
+			productSlug: currentPlanSlug,
+		} )
+	);
+};
+
 function getDummyCartProducts( {
 	selectedPages,
 	currencyCode,
 	activePlanScheme,
 	difmLiteProduct,
 	translate,
+	currentPlanSlug,
 }: DummyCartParams ): Array< CartItem > {
 	let displayedCartItems: CartItem[] = [];
 	if ( difmLiteProduct && activePlanScheme ) {
@@ -120,7 +139,13 @@ function getDummyCartProducts( {
 					translate,
 				} ),
 			},
-			{
+		];
+
+		if (
+			! currentPlanSlug ||
+			( currentPlanSlug && ! hasHigherPlan( currentPlanSlug, activePlanScheme.product_slug ) )
+		) {
+			displayedCartItems.push( {
 				productSlug: activePlanScheme.product_slug,
 				productOriginalName: activePlanScheme.product_name,
 				itemSubTotal: activePlanScheme.cost_smallest_unit,
@@ -136,21 +161,25 @@ function getDummyCartProducts( {
 						} ),
 					},
 				} ),
-			},
-		];
+			} );
+		}
 	}
 
 	return displayedCartItems;
 }
 
-export function useCartForDIFM(
-	selectedPages: string[],
-	isStoreFlow: boolean
-): {
+export function useCartForDIFM( {
+	selectedPages,
+	isStoreFlow,
+	currentPlanSlug,
+}: {
+	selectedPages: string[];
+	isStoreFlow: boolean;
+	currentPlanSlug?: string | null;
+} ): {
 	items: CartItem[];
 	total: string | null;
 	isProductsLoading: boolean;
-	effectiveCurrencyCode: string | null;
 } {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -159,32 +188,32 @@ export function useCartForDIFM(
 	);
 	const isProductsLoading = useSelector( isProductsListFetching );
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
-	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
 
 	// [Effect] Loads required initial data
 	useEffect( () => {
-		if ( ! difmLiteProduct || ! userCurrencyCode ) {
+		if ( ! difmLiteProduct || ! currencyCode ) {
 			dispatch( requestProductsList() );
 		}
-	}, [ dispatch, difmLiteProduct, userCurrencyCode ] );
+	}, [ dispatch, difmLiteProduct, currencyCode ] );
 
-	const effectiveCurrencyCode = userCurrencyCode;
 	let displayedCartItems: CartItem[] = [];
 	let totalCostFormatted = null;
-	if ( difmLiteProduct && activePlanScheme && effectiveCurrencyCode ) {
+	if ( difmLiteProduct && activePlanScheme && currencyCode ) {
 		displayedCartItems = getDummyCartProducts( {
 			selectedPages,
-			currencyCode: effectiveCurrencyCode,
+			currencyCode,
 			translate,
 			activePlanScheme: activePlanScheme,
 			difmLiteProduct,
+			currentPlanSlug,
 		} );
 
 		const totalCost = displayedCartItems.reduce(
 			( total, currentProduct ) => currentProduct.itemSubTotal + total,
 			0
 		);
-		totalCostFormatted = formatCurrency( totalCost, effectiveCurrencyCode, {
+		totalCostFormatted = formatCurrency( totalCost, currencyCode, {
 			stripZeros: true,
 			isSmallestUnit: true,
 		} );
@@ -193,7 +222,6 @@ export function useCartForDIFM(
 		items: displayedCartItems,
 		total: totalCostFormatted,
 		isProductsLoading,
-		effectiveCurrencyCode,
 	};
 }
 

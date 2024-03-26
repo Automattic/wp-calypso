@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import LoadingLine from './loading-content';
 import useCartForDIFM, { CartItem } from './use-cart-for-difm';
 
@@ -162,13 +164,21 @@ function DummyLineItem( {
 export default function ShoppingCartForDIFM( {
 	selectedPages,
 	isStoreFlow,
+	currentPlanSlug,
 }: {
 	selectedPages: string[];
 	isStoreFlow: boolean;
+	currentPlanSlug?: string | null;
 } ) {
 	const translate = useTranslate();
-	const { items, total, effectiveCurrencyCode } = useCartForDIFM( selectedPages, isStoreFlow );
-	return effectiveCurrencyCode === null ? (
+	const { items, total, isProductsLoading } = useCartForDIFM( {
+		selectedPages,
+		isStoreFlow,
+		currentPlanSlug,
+	} );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
+
+	return isProductsLoading ? (
 		<LoadingContainer>
 			<LoadingLine key="plan-placeholder" />
 			<LoadingLine key="difm-placeholder" />
@@ -179,11 +189,7 @@ export default function ShoppingCartForDIFM( {
 			<Cart>
 				<LineItemsWrapper>
 					{ items.map( ( item ) => (
-						<DummyLineItem
-							key={ item.productSlug }
-							{ ...item }
-							currencyCode={ effectiveCurrencyCode }
-						/>
+						<DummyLineItem key={ item.productSlug } { ...item } currencyCode={ currencyCode } />
 					) ) }
 
 					<Total>
