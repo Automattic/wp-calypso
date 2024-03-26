@@ -34,9 +34,10 @@ const Loading = () => {
 	);
 };
 
-const DoNotTranslateIt: FC< { value: string; as: string } > = ( { value, as: As = 'span' } ) => (
-	<As>{ value }</As>
-);
+const DoNotTranslateIt: FC< { value: string; as: keyof JSX.IntrinsicElements } > = ( {
+	value,
+	as: As = 'span',
+} ) => <As>{ value }</As>;
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
