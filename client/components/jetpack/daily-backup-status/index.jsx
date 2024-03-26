@@ -11,6 +11,7 @@ import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
+	isStorageOrRetentionReached,
 	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
@@ -122,7 +123,7 @@ const DailyBackupStatus = ( {
 					availableActions={ [ 'rewind' ] }
 				/>
 			);
-		} else if ( ! backup.activityIsRewindable ) {
+		} else if ( isStorageOrRetentionReached( backup ) ) {
 			return <BackupNoStorage selectedDate={ selectedDate } />;
 		}
 		return <BackupFailed backup={ backup } />;
