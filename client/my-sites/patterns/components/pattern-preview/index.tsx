@@ -11,6 +11,8 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
+import { useSelector } from 'calypso/state';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 import type {
 	Pattern,
@@ -89,6 +91,17 @@ function PatternPreviewFragment( {
 		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
 	}
 
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const recordCopyEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
+
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
@@ -153,6 +166,7 @@ function PatternPreviewFragment( {
 					<ClipboardButton
 						className="pattern-preview__copy"
 						onCopy={ () => {
+							recordCopyEvent( 'calypso_pattern_library_copy' );
 							setIsPatternCopied( true );
 						} }
 						text={ pattern?.html ?? '' }
