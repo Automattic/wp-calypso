@@ -29,7 +29,7 @@ const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
 	sectionName: string,
-	articles: TailoredArticles | undefined
+	articles?: TailoredArticles
 ): Promise< SearchResult[] > => {
 	let queryString;
 	let articlesResponse: SearchResult[] = [];
@@ -78,7 +78,7 @@ export const useHelpSearchQuery = (
 	locale = 'en',
 	queryOptions: Record< string, unknown > = {},
 	sectionName = '',
-	tailoredArticles: TailoredArticles | undefined
+	tailoredArticles?: TailoredArticles
 ) => {
 	return useQuery< any >( {
 		queryKey: [ 'help-center-search', search, locale, sectionName, tailoredArticles ],

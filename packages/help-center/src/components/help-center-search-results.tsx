@@ -136,14 +136,15 @@ function HelpSearchResults( {
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || contextSearch,
+		debouncedQuery || contextSearch, // If there's a query, we don't context search
 		locale,
 		{},
 		sectionName,
-		// We need to think about how to handle this if the locale has no tailoredIds
-		tailoredArticles?.find(
-			( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale
-		)
+		debouncedQuery
+			? undefined // If there's a query, we don't need tailored articles
+			: tailoredArticles?.find(
+					( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale
+			  )
 	);
 
 	const searchResults = searchData ?? [];
