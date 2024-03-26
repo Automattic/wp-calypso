@@ -251,7 +251,7 @@ export const PatternLibrary = ( {
 								: translate_not_yet( 'Patterns' ) }
 						</h1>
 
-						{ category && (
+						{ category && !! categoryObject?.pagePatternCount && (
 							<ToggleGroupControl
 								className="pattern-library__toggle--pattern-type"
 								isBlock
@@ -276,7 +276,6 @@ export const PatternLibrary = ( {
 								/>
 								<ToggleGroupControlOption
 									className="pattern-library__toggle-option"
-									disabled={ categoryObject?.pagePatternCount === 0 }
 									label={ translate_not_yet( 'Page layouts' ) }
 									value={ PatternTypeFilter.PAGES }
 								/>

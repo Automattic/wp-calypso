@@ -21,6 +21,10 @@
 	}
 }
 
+.pattern-library__pill-navigation + .patterns-section {
+	padding-top: 48px;
+}
+
 .pattern-library {
 	@include patterns-page-width;
 	padding-bottom: 96px;
