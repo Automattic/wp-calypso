@@ -5,10 +5,9 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	getPlanPath,
+	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { WpcomPlansUI } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -76,12 +75,8 @@ function useUpgradeHandler(
 		[ siteSlug, withDiscount, planActionCallback, cartHandler ]
 	);
 
-	const selectedStorageOptions = useSelect( ( select ) => {
-		return select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId );
-	}, [] );
-
 	const addSelectedPlanAndStorageAddon = useCallback(
-		( gridPlan: GridPlan, isFreeTrialPlan?: boolean ) => {
+		( gridPlan: GridPlan, isFreeTrialPlan?: boolean, storageAddOn?: WPComStorageAddOnSlug ) => {
 			const { planSlug, freeTrialPlanSlug } = gridPlan;
 
 			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
@@ -90,19 +85,18 @@ function useUpgradeHandler(
 				return;
 			}
 
-			const selectedStorageOption = selectedStorageOptions?.[ planSlug ];
 			const { cartItemForPlan, storageAddOnsForPlan } = gridPlan;
-			const storageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
-				return selectedStorageOption && addOn
-					? addOn.featureSlugs?.includes( selectedStorageOption )
-					: false;
+
+			const selectedStorageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
+				return storageAddOn && addOn ? addOn.featureSlugs?.includes( storageAddOn ) : false;
 			} );
-			const storageAddOnCartItem = storageAddOn &&
-				! storageAddOn.purchased && {
-					product_slug: storageAddOn.productSlug,
-					quantity: storageAddOn.quantity,
+
+			const storageAddOnCartItem = selectedStorageAddOn &&
+				! selectedStorageAddOn.purchased && {
+					product_slug: selectedStorageAddOn.productSlug,
+					quantity: selectedStorageAddOn.quantity,
 					volume: 1,
-					extra: { feature_slug: selectedStorageOption },
+					extra: { feature_slug: storageAddOn },
 				};
 
 			if ( cartItemForPlan ) {
@@ -115,14 +109,22 @@ function useUpgradeHandler(
 
 			processCartItems?.( null, planSlug );
 		},
-		[ processCartItems, selectedStorageOptions ]
+		[ processCartItems ]
 	);
 
 	return useCallback(
 		( gridPlan: GridPlan ) => {
 			const { planSlug, freeTrialPlanSlug } = gridPlan;
 
-			return ( isFreeTrialPlan?: boolean ) => {
+			return (
+				{
+					isFreeTrialPlan = false,
+					storageAddOn,
+				}: {
+					isFreeTrialPlan: boolean;
+					storageAddOn?: WPComStorageAddOnSlug;
+				} = { isFreeTrialPlan: false, storageAddOn: undefined }
+			) => {
 				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
 				if ( ! isFreePlan( planSlug ) ) {
@@ -132,7 +134,7 @@ function useUpgradeHandler(
 						saw_free_trial_offer: !! freeTrialPlanSlug,
 					} );
 				}
-				addSelectedPlanAndStorageAddon?.( gridPlan, isFreeTrialPlan );
+				addSelectedPlanAndStorageAddon?.( gridPlan, isFreeTrialPlan, storageAddOn );
 			};
 		},
 		[ sitePlanSlug, addSelectedPlanAndStorageAddon ]

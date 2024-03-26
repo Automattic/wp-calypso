@@ -1,3 +1,4 @@
+import { WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import { createContext, useContext } from '@wordpress/element';
 import type { GridContextProps, GridPlan, PlansIntent } from './types';
 import type { FeatureList } from '@automattic/calypso-products';
@@ -12,7 +13,15 @@ interface PlansGridContext {
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 		// TODO: Fix type
-		getActionCallback: ( gridPlan: GridPlan ) => ( isFreeTrialPlan?: boolean ) => void;
+		getActionCallback: (
+			gridPlan: GridPlan
+		) => ( {
+			isFreeTrialPlan,
+			storageAddOn,
+		}?: {
+			isFreeTrialPlan?: boolean;
+			storageAddOn?: WPComStorageAddOnSlug;
+		} ) => void;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;

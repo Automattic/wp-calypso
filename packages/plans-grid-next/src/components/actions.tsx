@@ -15,6 +15,7 @@ import {
 	isFreePlan,
 	isBusinessPlan,
 } from '@automattic/calypso-products';
+import { WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
@@ -74,7 +75,13 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	onPlanCtaClick: ( isFreeTrialPlan?: boolean ) => void;
+	onPlanCtaClick: ( {
+		isFreeTrialPlan,
+		storageAddOn,
+	}?: {
+		isFreeTrialPlan?: boolean;
+		storageAddOn?: WPComStorageAddOnSlug;
+	} ) => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
@@ -89,7 +96,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 		},
 	} );
 
-	const onClick = () => onPlanCtaClick( hasFreeTrialPlan );
+	// TODO: Fix isFreeTrialPlan param name
+	const onClick = () => onPlanCtaClick( { isFreeTrialPlan: hasFreeTrialPlan } );
 
 	if ( isFreePlan( planSlug ) ) {
 		btnText = translate( 'Start with Free' );
@@ -123,7 +131,11 @@ const SignupFlowPlanFeatureActionButton = ( {
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick( false ) } borderless>
+					<PlanButton
+						planSlug={ planSlug }
+						onClick={ () => onPlanCtaClick( { isFreeTrialPlan: false } ) }
+						borderless
+					>
 						{ btnText }
 					</PlanButton>
 				) }
@@ -214,7 +226,14 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
-	onPlanCtaClick: () => void;
+	// TODO: Fix Type
+	onPlanCtaClick: ( {
+		isFreeTrialPlan,
+		storageAddOn,
+	}?: {
+		isFreeTrialPlan?: boolean;
+		storageAddOn?: WPComStorageAddOnSlug;
+	} ) => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
@@ -258,8 +277,9 @@ const LoggedInPlansFeatureActionButton = ( {
 			return (
 				<PlanButton
 					planSlug={ planSlug }
-					// TODO: Replace planActionOverrides
+					// TODO: Replace planActionOverrides callback
 					// onClick={ planActionOverrides.loggedInFreePlan.callback }
+					onClick={ () => onPlanCtaClick() }
 					current={ current }
 				>
 					{ planActionOverrides.loggedInFreePlan.text }
@@ -341,7 +361,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() } current={ current }>
 					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</PlanButton>
 			);
@@ -349,7 +369,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() } current={ current }>
 					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</PlanButton>
 			);
@@ -357,7 +377,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() } current={ current }>
 					{ buttonText || translate( 'Upgrade to Yearly' ) }
 				</PlanButton>
 			);
@@ -392,7 +412,11 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( availableForPurchase ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+			<PlanButton
+				planSlug={ planSlug }
+				onClick={ () => onPlanCtaClick( { storageAddOn: selectedStorageOptionForPlan } ) }
+				current={ current }
+			>
 				{ buttonTextFallback }
 			</PlanButton>
 		);
