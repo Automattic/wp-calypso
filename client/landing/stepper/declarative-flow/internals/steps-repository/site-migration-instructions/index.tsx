@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -9,6 +10,7 @@ import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migr
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ShowHideInput } from './show-hide-input';
 import type { Step } from '../../types';
+
 import './style.scss';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
@@ -45,6 +47,17 @@ const SiteMigrationInstructions: Step = function () {
 		isFetching,
 		isFetched,
 	} = useSiteMigrationKey( siteId );
+
+	useEffect( () => {
+		if ( isError && fromUrl ) {
+			recordTracksEvent(
+				'calypso_onboarding_site_migration_instructions_unable_to_get_migration_key',
+				{
+					from: fromUrl,
+				}
+			);
+		}
+	}, [ fromUrl, isError ] );
 
 	const stepContent = (
 		<div className="site-migration-instructions__content">
