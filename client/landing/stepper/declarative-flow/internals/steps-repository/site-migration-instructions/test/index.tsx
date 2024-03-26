@@ -33,7 +33,7 @@ describe( 'SiteMigrationInstructions', () => {
 		render();
 
 		const link = await screen.findByRole( 'link', {
-			name: /Migrate Guru page on the source site/,
+			name: /Migrate Guru page on your source site/,
 		} );
 
 		expect( link ).toHaveAttribute( 'href', `${ FROM_URL }/wp-admin/admin.php?page=migrateguru` );
