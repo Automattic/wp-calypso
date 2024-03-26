@@ -1,6 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import classNames from 'classnames';
-import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
+import { PropsWithChildren, useLayoutEffect, useRef } from 'react';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
@@ -20,43 +20,50 @@ type MasonryGalleryProps = PropsWithChildren< {
 	enableMasonry: boolean;
 } >;
 
+// Simulates a Masonry layout by applying negative `margin-top` on every item that doesn't sit in
+// the first row
 function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryProps ) {
 	const ref = useRef< HTMLDivElement >( null );
-	const [ maxHeight, setMaxHeight ] = useState( 0 );
 
 	useLayoutEffect( () => {
-		if ( ! ref.current ) {
+		if ( ! ref.current || ! enableMasonry ) {
 			return;
 		}
 
-		const columns = [ 0, 0, 0 ];
 		const element = ref.current;
 
-		function calculateHeight() {
-			const previews = element.querySelectorAll( '.pattern-preview' );
+		function calculateLayout() {
+			const columnCount = getComputedStyle( element ).gridTemplateColumns.split( ' ' ).length;
 
-			for ( const preview of previews ) {
-				const smallestColumn = Math.min( ...columns );
-				const shortestColumnIndex = columns.indexOf( smallestColumn );
-
-				const coords = preview.getBoundingClientRect();
-				columns[ shortestColumnIndex ] += coords.height + 16;
+			if ( columnCount === 1 ) {
+				return;
 			}
 
-			setMaxHeight( Math.max( ...columns ) );
+			const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
+
+			// We calculate the difference between the top coordinates of each `.pattern-preview`
+			// with the bottom coordinates of the first `.pattern-preview` in the same column. This
+			// value is then used to set a negative `margin-top`, simulating a Masonry layout
+			items.slice( columnCount ).forEach( ( item, i ) => {
+				item.style.marginTop = '0';
+
+				const firstRowBottom = items[ i ].getBoundingClientRect().bottom;
+				const thisRowTop = item.getBoundingClientRect().top;
+
+				item.style.marginTop = `${ firstRowBottom - thisRowTop }px`;
+			} );
 		}
 
-		calculateHeight();
-
-		element.addEventListener( 'patternPreviewResize', calculateHeight );
+		calculateLayout();
+		element.addEventListener( 'patternPreviewResize', calculateLayout );
 
 		return () => {
-			element.removeEventListener( 'patternPreviewResize', calculateHeight );
+			element.removeEventListener( 'patternPreviewResize', calculateLayout );
 		};
-	} );
+	}, [ enableMasonry ] );
 
 	return (
-		<div className={ className } ref={ ref } style={ enableMasonry ? { maxHeight } : undefined }>
+		<div className={ className } ref={ ref }>
 			{ children }
 		</div>
 	);
@@ -86,7 +93,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 						'pattern-gallery--grid': isGridView,
 						'pattern-gallery--pages': isPageLayouts,
 					} ) }
-					enableMasonry
+					enableMasonry={ isGridView && isPageLayouts }
 					key={ patternIdsByCategory.first.join( ',' ) }
 				>
 					{ patterns.map( ( pattern, i ) => (

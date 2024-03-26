@@ -19,10 +19,5 @@
 }
 
 .pattern-gallery--grid.pattern-gallery--pages {
-	--gutter-size: 24px;
-
-	display: flex;
-	flex-direction: column;
-	flex-wrap: wrap;
-	max-height: 1000px;
+	align-items: start;
 }

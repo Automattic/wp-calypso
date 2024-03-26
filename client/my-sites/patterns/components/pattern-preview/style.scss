@@ -129,19 +129,6 @@
 	}
 }
 
-.pattern-preview--grid.pattern-preview--page {
-	margin-bottom: 16px;
-	width: 100%;
-
-	@include break-medium {
-		width: calc((100% - var(--gutter-size)) / 2);
-	}
-
-	@include break-huge {
-		width: calc((100% - var(--gutter-size) * 2) / 3);
-	}
-}
-
 .pattern-preview--category-gallery {
 	.pattern-preview__renderer {
 		border-radius: 0;
