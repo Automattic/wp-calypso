@@ -28,7 +28,7 @@ const StagingGate: FC< Props > = ( { children, siteId } ) => {
 		);
 	};
 
-	if ( ! isStagingSite ) {
+	if ( isStagingSite ) {
 		return (
 			<div tabIndex={ -1 } className="staging-gate">
 				{ getNoticeBanner() }
