@@ -1,6 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import classNames from 'classnames';
-import { PropsWithChildren, useLayoutEffect, useRef } from 'react';
+import { PropsWithChildren, useEffect, useRef } from 'react';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
@@ -10,10 +10,33 @@ import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { debounce } from 'calypso/utils';
 
 import './style.scss';
 
-const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
+const calculateMasonryLayout = debounce( function ( element: HTMLElement ) {
+	const columnCount = getComputedStyle( element ).gridTemplateColumns.split( ' ' ).length;
+
+	if ( columnCount === 1 ) {
+		return;
+	}
+
+	const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
+
+	items.forEach( ( item ) => {
+		item.style.marginTop = '0';
+	} );
+
+	// We calculate the difference between the top coordinates of each `.pattern-preview`
+	// with the bottom coordinates of the first `.pattern-preview` in the same column. This
+	// value is then used to set a negative `margin-top`, simulating a Masonry layout
+	items.slice( columnCount ).forEach( ( item, i ) => {
+		const firstRowBottom = items[ i ].getBoundingClientRect().bottom;
+		const thisRowTop = item.getBoundingClientRect().top;
+
+		item.style.marginTop = `${ firstRowBottom - thisRowTop }px`;
+	} );
+}, 100 );
 
 type MasonryGalleryProps = PropsWithChildren< {
 	className?: string;
@@ -25,40 +48,19 @@ type MasonryGalleryProps = PropsWithChildren< {
 function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryProps ) {
 	const ref = useRef< HTMLDivElement >( null );
 
-	useLayoutEffect( () => {
+	useEffect( () => {
 		if ( ! ref.current || ! enableMasonry ) {
 			return;
 		}
 
 		const element = ref.current;
 
-		function calculateLayout() {
-			const columnCount = getComputedStyle( element ).gridTemplateColumns.split( ' ' ).length;
-
-			if ( columnCount === 1 ) {
-				return;
-			}
-
-			const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
-
-			// We calculate the difference between the top coordinates of each `.pattern-preview`
-			// with the bottom coordinates of the first `.pattern-preview` in the same column. This
-			// value is then used to set a negative `margin-top`, simulating a Masonry layout
-			items.slice( columnCount ).forEach( ( item, i ) => {
-				item.style.marginTop = '0';
-
-				const firstRowBottom = items[ i ].getBoundingClientRect().bottom;
-				const thisRowTop = item.getBoundingClientRect().top;
-
-				item.style.marginTop = `${ firstRowBottom - thisRowTop }px`;
-			} );
-		}
-
-		calculateLayout();
-		element.addEventListener( 'patternPreviewResize', calculateLayout );
+		calculateMasonryLayout( element );
+		const onLayoutChange = () => calculateMasonryLayout( element );
+		element.addEventListener( 'patternPreviewResize', onLayoutChange );
 
 		return () => {
-			element.removeEventListener( 'patternPreviewResize', calculateLayout );
+			element.removeEventListener( 'patternPreviewResize', onLayoutChange );
 		};
 	}, [ enableMasonry ] );
 
@@ -68,6 +70,8 @@ function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryP
 		</div>
 	);
 }
+
+const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const { getPatternPermalink, isGridView = false, patterns = [], patternTypeFilter } = props;
