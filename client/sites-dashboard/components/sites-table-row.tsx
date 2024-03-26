@@ -1,4 +1,4 @@
-import { ListTile, Popover } from '@automattic/components';
+import { Button, ListTile, Popover } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -180,6 +180,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		siteUrl = site.options?.unmapped_url;
 	}
 
+	const isDeleted = true;
+
 	return (
 		<Row ref={ ref }>
 			<Column>
@@ -194,9 +196,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					title={
 						<ListTileTitle>
-							<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
-								{ site.title }
-							</SiteName>
+							{ isDeleted ? (
+								<span>{ site.title }</span>
+							) : (
+								<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+									{ site.title }
+								</SiteName>
+							) }
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 							{ isTrialSitePlan && (
@@ -205,53 +211,75 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</ListTileTitle>
 					}
 					subtitle={
-						<ListTileSubtitle>
-							<SiteUrl href={ siteUrl } title={ siteUrl }>
+						isDeleted ? (
+							<span>
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-							</SiteUrl>
-						</ListTileSubtitle>
+							</span>
+						) : (
+							<ListTileSubtitle>
+								<SiteUrl href={ siteUrl } title={ siteUrl }>
+									<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+								</SiteUrl>
+							</ListTileSubtitle>
+						)
 					}
 				/>
 			</Column>
+			{ ! isDeleted && (
+				<Column tabletHidden>
+					<SitePlan site={ site } userId={ userId } />
+				</Column>
+			) }
 			<Column tabletHidden>
-				<SitePlan site={ site } userId={ userId } />
-			</Column>
-			<Column tabletHidden>
-				<WithAtomicTransfer site={ site }>
-					{ ( result ) =>
-						result.wasTransferring ? (
-							<TransferNoticeWrapper { ...result } />
-						) : (
-							<>
-								<div>
-									{ translatedStatus }
-									<SiteLaunchNag site={ site } />
-								</div>
-								{ isDIFMInProgress && (
-									<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
-								) }
-							</>
-						)
-					}
-				</WithAtomicTransfer>
+				{ isDeleted ? (
+					<span>{ __( 'Deleted' ) } </span>
+				) : (
+					<WithAtomicTransfer site={ site }>
+						{ ( result ) =>
+							result.wasTransferring ? (
+								<TransferNoticeWrapper { ...result } />
+							) : (
+								<>
+									<div>
+										{ translatedStatus }
+										<SiteLaunchNag site={ site } />
+									</div>
+									{ isDIFMInProgress && (
+										<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
+									) }
+								</>
+							)
+						}
+					</WithAtomicTransfer>
+				) }
 			</Column>
 			<Column tabletHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<StatsColumnStyled tabletHidden>
-				{ inView && (
-					<>
-						{ hasStatsLoadingError ? (
-							<StatsOffIndicator />
-						) : (
-							<a href={ `/stats/day/${ site.slug }` }>
-								<StatsSparkline siteId={ site.ID } showLoader={ true } />
-							</a>
-						) }
-					</>
-				) }
-			</StatsColumnStyled>
-			<Column style={ { width: '24px' } }>{ inView && <SitesEllipsisMenu site={ site } /> }</Column>
+			{ ! isDeleted && (
+				<StatsColumnStyled tabletHidden>
+					{ inView && (
+						<>
+							{ hasStatsLoadingError ? (
+								<StatsOffIndicator />
+							) : (
+								<a href={ `/stats/day/${ site.slug }` }>
+									<StatsSparkline siteId={ site.ID } showLoader={ true } />
+								</a>
+							) }
+						</>
+					) }
+				</StatsColumnStyled>
+			) }
+			{ isDeleted ? (
+				<Column style={ { textAlign: 'right' } }>
+					<Button scary>{ __( 'Restore site ' ) }</Button>
+				</Column>
+			) : (
+				<Column style={ { width: '24px' } }>
+					{ inView && <SitesEllipsisMenu site={ site } /> }
+				</Column>
+			) }
 		</Row>
 	);
 } );
