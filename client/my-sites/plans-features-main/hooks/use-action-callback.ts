@@ -118,10 +118,10 @@ function useUpgradeHandler(
 
 			return (
 				{
-					isFreeTrialPlan = false,
+					isFreeTrialPlan,
 					storageAddOn,
 				}: {
-					isFreeTrialPlan: boolean;
+					isFreeTrialPlan?: boolean;
 					storageAddOn?: WPComStorageAddOnSlug;
 				} = { isFreeTrialPlan: false, storageAddOn: undefined }
 			) => {
