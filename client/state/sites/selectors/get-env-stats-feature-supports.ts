@@ -25,8 +25,8 @@ const version_greater_than_or_equal = (
 export default function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
-	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
-		treatAtomicAsJetpackSite: false,
+	const isSiteJetpack = isJetpackSite( state, siteId, {
+		treatAtomicAsJetpackSite: true,
 	} );
 
 	return {
@@ -61,7 +61,7 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 			// TODO: Remove the flag check once UTM stats are released.
 			( config.isEnabled( 'stats/utm-module' ) &&
 				// UTM stats are only available for Jetpack sites for now.
-				isSiteJetpackNotAtomic &&
+				isSiteJetpack &&
 				version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ) ),
 	};
 }

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { isA8CSpecialBlog } from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
@@ -43,7 +44,8 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const isSiteInternal =
 		isA8CSpecialBlog( siteId ) || ( ! isFetchingUsage && usageData?.is_internal );
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isFetchingUTM;
-	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
+	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse || isSiteAtomic;
 
 	// TODO: trigger useUTMMetricsQuery manually once isAdvancedFeatureEnabled === true
 
