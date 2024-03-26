@@ -101,20 +101,16 @@ function PatternPreviewFragment( {
 		return null;
 	}
 
-	const recordOpenModalEvent = ( tracksEventName: string ) => {
+	// This handler will be used to fire each of the different 'Get Access'
+	// events for logged out users: opening the modal, closing the modal,
+	// signing up, and logging in. The handler will be passed the name of the
+	// event to fire, and the event props will be the same for each.
+	const recordGetAccessEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
-			name: pattern?.name,
+			name: pattern.name,
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
 			view,
-		} );
-	};
-
-	const recordCloseModalEvent = ( tracksEventName: string ) => {
-		recordTracksEvent( tracksEventName, {
-			name: pattern?.name,
-			category,
-			type: getTracksPatternType( patternTypeFilter ),
 		} );
 	};
 
@@ -172,7 +168,7 @@ function PatternPreviewFragment( {
 						className="pattern-preview__get-access"
 						onClick={ () => {
 							setIsAuthModalOpen( true );
-							recordOpenModalEvent( 'calypso_pattern_library_get_access' );
+							recordGetAccessEvent( 'calypso_pattern_library_get_access' );
 						} }
 						transparent
 					>
@@ -182,14 +178,9 @@ function PatternPreviewFragment( {
 			</div>
 
 			<PatternsGetAccessModal
-				category={ category }
 				isOpen={ isAuthModalOpen }
-				onClose={ () => {
-					setIsAuthModalOpen( false );
-					recordCloseModalEvent( 'calypso_pattern_library_get_access_dismiss' );
-				} }
-				pattern={ pattern.name }
-				patternTypeFilter={ patternTypeFilter }
+				onClose={ () => setIsAuthModalOpen( false ) }
+				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>
 	);

@@ -1,26 +1,19 @@
 import { Button, Dialog } from '@automattic/components';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Icon, close as iconClose } from '@wordpress/icons';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
-import { PatternTypeFilter } from '../../types';
 
 import './style.scss';
 
 type PatternsGetAccessModalProps = {
-	category: string;
 	isOpen: boolean;
 	onClose: () => void;
-	pattern: string;
-	patternTypeFilter: PatternTypeFilter;
+	tracksEventHandler: ( eventName: string ) => void;
 };
 
 export const PatternsGetAccessModal = ( {
-	category,
 	isOpen,
 	onClose,
-	pattern,
-	patternTypeFilter,
+	tracksEventHandler,
 }: PatternsGetAccessModalProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
@@ -29,28 +22,15 @@ export const PatternsGetAccessModal = ( {
 	const startUrl = localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn );
 	const loginUrl = localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn );
 
-	const recordSignupClickEvent = ( tracksEventName: string ) => {
-		recordTracksEvent( tracksEventName, {
-			name: pattern,
-			category,
-			type: getTracksPatternType( patternTypeFilter ),
-		} );
-	};
-
-	const recordLoginClickEvent = ( tracksEventName: string ) => {
-		recordTracksEvent( tracksEventName, {
-			name: pattern,
-			category,
-			type: getTracksPatternType( patternTypeFilter ),
-		} );
-	};
-
 	return (
 		<Dialog
 			isVisible={ isOpen }
 			additionalClassNames="patterns-get-access-modal"
 			additionalOverlayClassNames="patterns-get-access-modal__backdrop"
-			onClose={ onClose }
+			onClose={ () => {
+				onClose();
+				tracksEventHandler( 'calypso_pattern_library_get_access_dismiss' );
+			} }
 		>
 			<div className="patterns-get-access-modal__content">
 				<button className="patterns-get-access-modal__close" onClick={ onClose }>
@@ -66,16 +46,14 @@ export const PatternsGetAccessModal = ( {
 						<Button
 							primary
 							href={ startUrl }
-							onClick={ () =>
-								recordSignupClickEvent( 'calypso_pattern_library_get_access_signup' )
-							}
+							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_signup' ) }
 						>
 							Create a free account
 						</Button>
 						<Button
 							transparent
 							href={ loginUrl }
-							onClick={ () => recordLoginClickEvent( 'calypso_pattern_library_get_access_login' ) }
+							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_login' ) }
 						>
 							Log in
 						</Button>
