@@ -115,6 +115,49 @@ function UseMyDomain( props ) {
 		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi, '$1' );
 	}, [] );
 
+	const getWpcomAvailabilityErrors = useCallback( async () => {
+		const filteredDomainName = filterDomainName( domainName );
+		const wpRegistrationCheckData = await getWpcomRegistrationStatus(
+			filteredDomainName,
+			selectedSite?.ID
+		);
+
+		if ( ! wpRegistrationCheckData ) {
+			return null;
+		}
+
+		return {
+			availabilityData: wpRegistrationCheckData,
+			errorMessage: getAvailabilityErrorMessage( {
+				availabilityData: wpRegistrationCheckData,
+				domainName: filteredDomainName,
+				selectedSite,
+			} ),
+		};
+	}, [ filterDomainName, domainName, selectedSite ] );
+
+	const getAvailability = useCallback( async () => {
+		const filteredDomainName = filterDomainName( domainName );
+		const wpcomAvailabilityErrors = await getWpcomAvailabilityErrors();
+
+		if ( wpcomAvailabilityErrors ) {
+			return wpcomAvailabilityErrors;
+		}
+
+		const availabilityData = await wpcom
+			.domain( filteredDomainName )
+			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
+
+		return {
+			availabilityData,
+			errorMessage: getAvailabilityErrorMessage( {
+				availabilityData,
+				domainName: filteredDomainName,
+				selectedSite,
+			} ),
+		};
+	}, [ filterDomainName, domainName, getWpcomAvailabilityErrors, selectedSite ] );
+
 	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
 			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
@@ -173,37 +216,13 @@ function UseMyDomain( props ) {
 		setDomainAvailabilityData( null );
 
 		try {
-			const wpRegistrationCheckData = await getWpcomRegistrationStatus(
-				filteredDomainName,
-				selectedSite?.ID
-			);
-
-			let availabilityErrorMessage = getAvailabilityErrorMessage( {
-				availabilityData: wpRegistrationCheckData,
-				domainName: filteredDomainName,
-				selectedSite,
-			} );
-
-			if ( availabilityErrorMessage ) {
-				setDomainNameValidationError( availabilityErrorMessage );
-				return;
-			}
-
-			const availabilityData = await wpcom
-				.domain( filteredDomainName )
-				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
+			const { availabilityData, errorMessage } = await getAvailability();
 
 			setDomainName( filteredDomainName );
 			await setDomainTransferData();
 
-			availabilityErrorMessage = getAvailabilityErrorMessage( {
-				availabilityData,
-				domainName: filteredDomainName,
-				selectedSite,
-			} );
-
-			if ( availabilityErrorMessage ) {
-				setDomainNameValidationError( availabilityErrorMessage );
+			if ( errorMessage ) {
+				setDomainNameValidationError( errorMessage );
 			} else {
 				onNextStep?.( { mode: inputMode.transferOrConnect, domain: filteredDomainName } );
 				setMode( inputMode.transferOrConnect );
