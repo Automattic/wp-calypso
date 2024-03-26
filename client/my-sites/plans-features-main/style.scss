@@ -157,6 +157,16 @@ body.is-section-signup.is-white-signup {
 			border: solid 1px var(--studio-gray-5);
 		}
 	}
+
+	/**
+	 * Following styles are important for stretching the plan type selector to full width when sticky
+	 *   - .is-sticky-plan-type-selector is the class added when the plan type selector is sticky
+	 *   - 15px is the padding added by the layout overrides in modernized-layout.tsx
+	 */
+	.is-sticky-plan-type-selector & {
+		margin-left: -15px;
+		width: 100vw;
+	}
 }
 
 /**
@@ -167,7 +177,7 @@ body.is-section-plans .layout__content .main {
 		padding: 0;
 		.is-2023-pricing-grid .plans-wrapper {
 			margin: 0;
-			padding: 17px max(calc(50% - 612px), 30px);
+			padding: 17px;
 		}
 	}
 }

@@ -3,6 +3,7 @@
 .plan-type-selector {
 	width: fit-content;
 	min-width: 275px;
+	background-color: var(--studio-white);
 }
 
 .is-sticky-plan-type-selector {
@@ -111,7 +112,6 @@
 			overflow: hidden;
 			width: 100%;
 			.components-input-control__container {
-				background-color: var(--studio-white);
 				.components-custom-select-control__button {
 					min-width: 225px;
 					height: auto;
