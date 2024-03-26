@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import getSiteOption from './get-site-option';
 import type { AppState } from 'calypso/types';
 
@@ -9,10 +8,6 @@ import type { AppState } from 'calypso/types';
  * @returns {?boolean}        Whether site has the nav redesign enabled
  */
 export default function isGlobalSiteViewEnabled( state: AppState, siteId: number | null ) {
-	if ( ! isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-		return false;
-	}
-
 	const isAdminInterfaceWPAdmin =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	const isClassicEarlyRelease = !! getSiteOption( state, siteId, 'wpcom_classic_early_release' );

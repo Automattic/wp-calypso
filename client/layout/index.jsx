@@ -124,14 +124,12 @@ function WhatsNewLoader( { loadWhatsNew, siteId } ) {
 			seenWhatsNewAnnouncements &&
 			typeof seenWhatsNewAnnouncements.indexOf === 'function'
 		) {
-			if ( config.isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-				data.forEach( ( item ) => {
-					if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
-						setShowWhatsNew( true );
-						return;
-					}
-				} );
-			}
+			data.forEach( ( item ) => {
+				if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
+					setShowWhatsNew( true );
+					return;
+				}
+			} );
 		}
 	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
 

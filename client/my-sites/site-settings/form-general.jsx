@@ -584,7 +584,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
+				{ ! isClassicView && (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
