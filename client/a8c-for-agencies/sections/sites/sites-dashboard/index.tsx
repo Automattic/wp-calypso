@@ -57,9 +57,14 @@ export default function SitesDashboard() {
 		selectedSiteUrl,
 		selectedSiteFeature,
 		setSelectedSiteFeature,
+		isFavoriteFilter,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 	} = useContext( SitesDashboardContext );
+
+	// TODO: this is just an example
+	// eslint-disable-next-line no-console
+	console.log( ' is_favorite param = ' + isFavoriteFilter );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const { data: products } = useProductsQuery();
