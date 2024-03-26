@@ -182,14 +182,13 @@ function useActionCallback(
 		} );
 
 		return [ managePlan, manageAddon, gotoVip ];
-	}, [] );
+	}, [ currentPlanManageHref, flowName, planActionCallback, siteSlug ] );
 
 	return ( gridPlan: GridPlan ) => {
 		if ( isWpcomEnterpriseGridPlan( gridPlan.planSlug ) ) {
 			return gotoVip;
 		}
 
-		// TODO: Check that this only applies to spotlight plan
 		if ( sitePlanSlug && gridPlan.current && intent !== 'plans-p2' ) {
 			return isFreePlan( sitePlanSlug ) ? manageAddon : managePlan;
 		}
