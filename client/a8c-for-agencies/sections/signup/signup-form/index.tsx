@@ -42,7 +42,7 @@ export default function SignupForm() {
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
 					managed_sites: payload.managedSites,
-					services_offered: payload.servicesOffered,
+					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
