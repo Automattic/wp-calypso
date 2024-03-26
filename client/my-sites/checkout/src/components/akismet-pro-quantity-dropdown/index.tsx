@@ -127,12 +127,14 @@ const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 const Price = styled.span< { shouldUseCheckoutV2: boolean } >`
 	flex: 1 0 fit-content;
 	color: #646970;
+	text-align: start;
+
 	> span {
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
-		${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: right;` ) }
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: end;` ) }
 	}
 `;
 
