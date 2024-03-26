@@ -75,7 +75,7 @@ export const PatternsGetAccessModal = ( {
 						<Button
 							transparent
 							href={ loginUrl }
-							onClick={ () => recordLoginClickEvent( 'calypso_pattern_library_get_access_signup' ) }
+							onClick={ () => recordLoginClickEvent( 'calypso_pattern_library_get_access_login' ) }
 						>
 							Log in
 						</Button>
