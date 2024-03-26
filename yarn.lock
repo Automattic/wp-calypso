@@ -1555,6 +1555,8 @@ __metadata:
     "@testing-library/user-event": "npm:^14.5.2"
     "@wordpress/data": "npm:^9.24.0"
     "@wordpress/element": "npm:^5.31.0"
+    "@wordpress/icons": "npm:^9.45.0"
+    "@wordpress/primitives": "npm:^3.52.0"
     "@wordpress/url": "npm:^3.55.0"
     "@wordpress/warning": "npm:^2.54.0"
     classnames: "npm:^2.3.2"
