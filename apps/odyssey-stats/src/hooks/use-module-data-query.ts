@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
@@ -15,7 +16,7 @@ function queryModuleData( module: Module ): Promise< ModuleData > {
 		.get( {
 			method: 'GET',
 			// Ensure you add the apiNamespace to be able to access Jetpack's `jetpack/v4` endpoints, otherwise it's all defaulted to `jetpack/v4/stats-app`.
-			apiNamespace: 'jetpack/v4',
+			apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack/v4' : 'rest/v1.1',
 			path: `/module/${ module }/data`,
 		} )
 		.catch( ( error: Error & ErrorResponse ) => {

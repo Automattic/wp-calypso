@@ -1,6 +1,7 @@
 /**
  * This is a Odyssey implementation of 'calypso/components/data/query-site-purchases'.
  */
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { isError } from 'lodash';
 import { useEffect } from 'react';
@@ -19,7 +20,12 @@ async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 	}
 
 	return wpcom.req
-		.get( { path: '/site/purchases', apiNamespace: 'jetpack/v4' } )
+		.get( {
+			path: config.isEnabled( 'is_running_in_jetpack_site' )
+				? '/site/purchases'
+				: `/sites/${ siteId }/purchases`,
+			apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack/v4' : 'rest/v1.1',
+		} )
 		.then( ( res: { data: string } ) => JSON.parse( res.data ) )
 		.catch( ( error: Error ) => error );
 }

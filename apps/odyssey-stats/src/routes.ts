@@ -46,7 +46,10 @@ const siteSelection = ( context: Context, next: () => void ) => {
 
 	dispatch( { type: SITE_REQUEST, siteId: siteId } );
 	wpcom.req
-		.get( { path: '/site', apiNamespace: 'jetpack/v4' } )
+		.get( {
+			path: config.isEnabled( 'is_running_in_jetpack_site' ) ? '/site' : `/sites/${ siteId }`,
+			apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack/v4' : 'rest/v1.1',
+		} )
 		.then( ( site: { data: string } ) => JSON.parse( site.data ) )
 		.then( ( site: SiteDetails ) => {
 			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );
