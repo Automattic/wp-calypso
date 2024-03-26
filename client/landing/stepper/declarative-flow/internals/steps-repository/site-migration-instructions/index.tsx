@@ -76,11 +76,12 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					{ translate(
-						'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{migrateButton /}}.',
+						'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{strong}}{{migrateButton /}}{{/strong}}.',
 						{
 							components: {
 								a: <a href={ getMigrateGuruPageURL( fromUrl ) } target="_blank" rel="noreferrer" />,
-								migrateButton: <DoNotTranslateIt value="Migrate" as="strong" />,
+								migrateButton: <DoNotTranslateIt value="Migrate" />,
+								strong: <strong />,
 							},
 						}
 					) }
