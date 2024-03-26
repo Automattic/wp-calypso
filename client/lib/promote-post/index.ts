@@ -47,6 +47,8 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
+				origin: string;
+				originProps?: DSPOriginProps;
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: typeof translate;
@@ -156,6 +158,8 @@ export async function showDSP(
 	dispatch?: Dispatch,
 	dspOriginProps?: DSPOriginProps
 ): Promise< boolean > {
+	const origin = getDSPOrigin( dspOriginProps ?? {} );
+
 	// Increase Sentry sample rate to 100% for DSP widget
 	await initSentry( { sampleRate: 1.0 } );
 
@@ -164,11 +168,7 @@ export async function showDSP(
 
 	return new Promise( ( resolve, reject ) => {
 		if ( ! window.BlazePress ) {
-			dispatch?.(
-				recordTracksEvent( 'calypso_dsp_widget_failed_to_load', {
-					origin: getDSPOrigin( dspOriginProps ),
-				} )
-			);
+			dispatch?.( recordTracksEvent( 'calypso_dsp_widget_failed_to_load', { origin } ) );
 			reject( false );
 			return;
 		}
@@ -189,6 +189,8 @@ export async function showDSP(
 				// todo fetch rlt somehow
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
+				origin,
+				originProps: dspOriginProps,
 				onLoaded: () => {
 					debug( 'showDSP: [Widget loaded]' );
 					resolve( true );
@@ -222,11 +224,7 @@ export async function showDSP(
 			debug( 'showDSP: [Widget start error] the widget render method execution failed: ', error );
 			captureException( error );
 
-			dispatch?.(
-				recordTracksEvent( 'calypso_dsp_widget_failed_to_start', {
-					origin: getDSPOrigin( dspOriginProps ?? {} ),
-				} )
-			);
+			dispatch?.( recordTracksEvent( 'calypso_dsp_widget_failed_to_start', { origin } ) );
 			reject( false );
 		}
 	} );
