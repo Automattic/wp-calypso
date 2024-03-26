@@ -304,20 +304,20 @@ export const PatternLibrary = ( {
 						/>
 					</PatternLibraryBody>
 				) }
+
+				{ isHomePage && <PatternsCopyPasteInfo /> }
+
+				{ isHomePage && (
+					<CategoryGallery
+						title={ translate_not_yet( 'Beautifully curated page layouts' ) }
+						description={ translate_not_yet(
+							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
+						) }
+						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+						patternTypeFilter={ PatternTypeFilter.PAGES }
+					/>
+				) }
 			</div>
-
-			{ isHomePage && <PatternsCopyPasteInfo /> }
-
-			{ isHomePage && (
-				<CategoryGallery
-					title={ translate_not_yet( 'Beautifully curated page layouts' ) }
-					description={ translate_not_yet(
-						'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
-					) }
-					categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-					patternTypeFilter={ PatternTypeFilter.PAGES }
-				/>
-			) }
 
 			<PatternsGetStarted />
 		</>
