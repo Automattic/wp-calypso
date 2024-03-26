@@ -213,7 +213,7 @@ export async function showDSP(
 					: undefined,
 				jetpackVersion,
 				hotjarSiteSettings: { ...getHotjarSiteSettings(), isEnabled: mayWeLoadHotJarScript() },
-				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch ) : undefined,
+				recordDSPEvent: dispatch ? getRecordDSPEventHandler( dispatch, dspOriginProps ) : undefined,
 				options: getWidgetOptions(),
 			} );
 
@@ -258,10 +258,10 @@ export function recordDSPEntryPoint( entryPoint: string, dspOrigin: DSPOriginPro
  * Gets the recordTrack function to be used in the DSP widget
  * @param {Dispatch} dispatch - Redux disptach function
  */
-export function getRecordDSPEventHandler( dispatch: Dispatch, dspOrigin: DSPOriginProps ) {
+export function getRecordDSPEventHandler( dispatch: Dispatch, dspOriginProps?: DSPOriginProps ) {
 	return ( eventName: string, props?: any ) => {
 		const eventProps = {
-			origin: getDSPOrigin( dspOrigin ),
+			origin: getDSPOrigin( dspOriginProps ),
 			...props,
 		};
 		dispatch( recordTracksEvent( eventName, eventProps ) );
