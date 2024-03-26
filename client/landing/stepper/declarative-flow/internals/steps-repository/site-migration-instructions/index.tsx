@@ -71,11 +71,14 @@ const SiteMigrationInstructions: Step = function () {
 					) }
 				</li>
 				<li>
-					{ translate( 'When asked to select a destination host, pick {{em}}“Automattic”{{/em}}.', {
-						components: {
-							em: <em />,
-						},
-					} ) }
+					{ translate(
+						'When asked to select a destination host, pick {{em}}WordPress.com{{/em}}.',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+					) }
 				</li>
 				{ isSuccess && migrationKey && (
 					<li>
@@ -94,7 +97,7 @@ const SiteMigrationInstructions: Step = function () {
 				{ isError && (
 					<li>
 						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}"Migrate Guru Migration Key"{{/em}} field of your existing site and click {{strong}}"Migrate"{{/strong}}.',
+							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}Migrate Guru Migration Key"{{/em}} field of your existing site and click {{strong}}"Migrate"{{/strong}}.',
 							{
 								components: {
 									em: <em />,
