@@ -31,30 +31,31 @@ const fetchArticlesAPI = async (
 	sectionName: string,
 	articles: TailoredArticles | undefined
 ): Promise< SearchResult[] > => {
-	const queryString = buildQueryString( { query: search, locale, section: sectionName } );
+	let queryString;
 	let articlesResponse: SearchResult[] = [];
 	let searchResultResponse: SearchResult[] = [];
 
 	if ( articles ) {
 		const { post_ids, blog_id, locale } = articles;
+		queryString = buildQueryString( {
+			blog_id: blog_id,
+			post_ids: `${ post_ids.join( ',' ) }`,
+			locale,
+		} );
 		if ( canAccessWpcomApis() ) {
 			articlesResponse = ( await wpcomRequest( {
-				path: `help/articles`,
+				path: `help/articles?${ queryString }`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
-				method: 'PUT',
-				body: { post_ids, blog_id, locale },
 			} ) ) as SearchResult[];
 		} else {
 			articlesResponse = ( await apiFetch( {
 				global: true,
-				path: `/help-center/articles`,
-				method: 'PUT',
-				data: { post_ids, blog_id, locale },
+				path: `/help-center/articles?${ queryString }`,
 			} as APIFetchOptions ) ) as SearchResult[];
 		}
 	}
-
+	queryString = buildQueryString( { query: search, locale, section: sectionName } );
 	if ( canAccessWpcomApis() ) {
 		searchResultResponse = ( await wpcomRequest( {
 			path: `help/search/wpcom?${ queryString }`,
@@ -67,7 +68,7 @@ const fetchArticlesAPI = async (
 			path: `/help-center/search?${ queryString }`,
 		} as APIFetchOptions ) ) as SearchResult[];
 	}
-	//Add tailored results first, if no tailored results, add search results.
+	//Add tailored results first then add search results.
 	const combinedResults = [ ...articlesResponse, ...searchResultResponse ];
 	return combinedResults.slice( 0, 5 );
 };

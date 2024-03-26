@@ -24,18 +24,18 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined )
 		return '';
 	}, [] );
 
-	// Find exact URL matches
-	const exactMatch = urlMapping[ currentRoute as keyof typeof urlMapping ];
-	if ( exactMatch ) {
-		return { contextSearch: exactMatch };
-	}
-
 	// Fuzzier matches
 	const urlMatchKey = Object.keys( urlMapping ).find( ( key ) => currentRoute?.startsWith( key ) );
 	const urlSearchQuery = urlMatchKey ? urlMapping[ urlMatchKey as keyof typeof urlMapping ] : '';
 	const tailoredArticles = urlMatchKey
 		? tailoredArticlesMapping[ urlMatchKey as keyof typeof tailoredArticlesMapping ]
 		: [];
+
+	// Find exact URL matches
+	const exactMatch = urlMapping[ currentRoute as keyof typeof urlMapping ];
+	if ( exactMatch ) {
+		return { contextSearch: exactMatch, tailoredArticles };
+	}
 
 	return {
 		contextSearch: blockSearchQuery || urlSearchQuery || '',

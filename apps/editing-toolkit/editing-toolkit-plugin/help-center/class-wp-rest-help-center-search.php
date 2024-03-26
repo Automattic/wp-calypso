@@ -47,7 +47,7 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 			$this->namespace,
 			'/articles',
 			array(
-				'methods'             => \WP_REST_Server::EDITABLE,
+				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_articles_search_results' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 				'args'                => array(
@@ -76,19 +76,13 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_articles_search_results( \WP_REST_Request $request ) {
-		$articles_args = array(
+		$query_parameters = array(
 			'blog_id'  => $request['blog_id'],
 			'post_ids' => $request['post_ids'],
 			'locale'   => $request['locale'],
 		);
-
-		$body = Client::wpcom_json_api_request_as_user(
-			'/help/articles',
-			'2',
-			array(
-				'method' => 'PUT',
-			),
-			$articles_args
+		$body             = Client::wpcom_json_api_request_as_user(
+			'/help/articles?' . http_build_query( $query_parameters )
 		);
 
 		if ( is_wp_error( $body ) ) {
