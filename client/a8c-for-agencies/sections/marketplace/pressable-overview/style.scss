@@ -6,7 +6,6 @@
 	margin-block-end: 64px;
 }
 
-
 .pressable-overview__banner {
 	margin: 0 auto;
 	text-align: center;
@@ -27,4 +26,15 @@
 	font-size: 1rem;
 	font-weight: 400;
 	line-height: 1.1;
+}
+
+.pressable-overview__footer {
+	text-align: center;
+}
+
+.pressable-overview__learn-more-link {
+	border-radius: 4px;
+	font-weight: 600;
+	font-size: 0.875rem;
+	min-height: 40px;
 }
