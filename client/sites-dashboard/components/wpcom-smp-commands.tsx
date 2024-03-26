@@ -23,6 +23,7 @@ import {
 	plugins as pluginsIcon,
 	plus as plusIcon,
 	postComments as postCommentsIcon,
+	replace as switchIcon,
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
@@ -327,6 +328,30 @@ export const useCommandsArrayWpcom = ( {
 			].join( ' ' ),
 			callback: commandNavigation( `/sites` ),
 			icon: wordpressIcon,
+		},
+		{
+			name: 'switchSite',
+			label: __( 'Switch site' ),
+			searchLabel: [
+				_x( 'change site', 'Keyword for the Switch site command' ),
+				_x( 'swap site', 'Keyword for the Switch site command' ),
+			].join( ' ' ),
+			callback: setStateCallback( 'switchSite', __( 'Select site to switch to' ) ),
+			siteFunctions: {
+				onClick: ( param ) => {
+					let newRoute = currentRoute ?? '';
+					newRoute = newRoute.replaceAll( ':site', param.site.slug );
+					if ( newRoute === currentRoute ) {
+						// on a global page, navigate to the dashboard
+						newRoute = `/home/${ param.site.slug }`;
+					}
+					return commandNavigation( newRoute )( param );
+				},
+			},
+			icon: switchIcon,
+			// This command is explicitly about switching sites, it should therefore always display the site selector
+			// where possible
+			alwaysUseSiteSelector: true,
 		},
 		{
 			name: 'getHelp',

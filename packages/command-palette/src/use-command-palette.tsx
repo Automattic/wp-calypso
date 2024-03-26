@@ -62,6 +62,7 @@ export interface Command {
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
+	alwaysUseSiteSelector?: boolean;
 }
 
 export interface useExtraCommandsParams {
@@ -326,6 +327,10 @@ export const useCommandPalette = ( {
 		);
 
 		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {
+			if ( command?.alwaysUseSiteSelector ) {
+				return command;
+			}
+
 			const callback = ( params: CommandCallBackParams ) => {
 				const targetFunction = command?.siteFunctions?.onClick || command.callback;
 				if ( command?.siteFunctions ) {
