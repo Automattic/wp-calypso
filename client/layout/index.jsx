@@ -467,7 +467,7 @@ export default withCurrentRoute(
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 				isWooCommerceCoreProfilerFlow( state );
 			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-			const shouldShowCollapsedGlobalSiteSidebar = getShouldShowCollapsedGlobalSidebar(
+			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 				state,
 				siteId,
 				sectionGroup
@@ -546,7 +546,7 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter,
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSiteSidebar && ! sidebarIsHidden,
+				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ),
 				userCapabilities: state.currentUser.capabilities,

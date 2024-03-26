@@ -71,7 +71,7 @@ $brand-text: "SF Pro Text", $sans;
 		overflow: initial;
 
 		.global-sidebar {
-			overflow: hidden;
+			overflow: unset;
 		}
 	}
 }
