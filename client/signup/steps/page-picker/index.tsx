@@ -52,7 +52,7 @@ import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSitePlan } from 'calypso/state/sites/selectors';
+import { getSiteId, getSitePlan } from 'calypso/state/sites/selectors';
 import { SiteSlug } from 'calypso/types';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
@@ -428,7 +428,7 @@ function DIFMPagePicker( props: StepProps ) {
 	const {
 		stepName,
 		goToNextStep,
-		signupDependencies: { siteId, siteSlug, newOrExistingSiteChoice },
+		signupDependencies: { siteId: siteIdFromDependencies, siteSlug, newOrExistingSiteChoice },
 		flowName,
 	} = props;
 	const translate = useTranslate();
@@ -442,6 +442,7 @@ function DIFMPagePicker( props: StepProps ) {
 			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 	);
 
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) ) || siteIdFromDependencies;
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || '';
 
