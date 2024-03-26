@@ -14,7 +14,10 @@ import {
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useShoppingCart from '../hooks/use-shopping-cart';
+import { getHostingLogo } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
+
+import './style.scss';
 
 export default function PressableOverview() {
 	const translate = useTranslate();
@@ -60,7 +63,21 @@ export default function PressableOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Pressable hosting here</LayoutBody>
+			<LayoutBody>
+				<section className="pressable-overview__banner">
+					<div className="pressable-overview__banner-logo">
+						{ getHostingLogo( 'pressable-hosting' ) }
+					</div>
+
+					<h1 className="pressable-overview__banner-title">
+						{ translate( 'Managed WordPress Hosting' ) }
+					</h1>
+
+					<h2 className="pressable-overview__banner-subtitle">
+						{ translate( 'Scalable plans to help you grow your business.' ) }
+					</h2>
+				</section>
+			</LayoutBody>
 		</Layout>
 	);
 }
