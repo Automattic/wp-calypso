@@ -258,6 +258,12 @@ const RowTitleCell = styled.div< {
 const PlanSelector = styled.header`
 	position: relative;
 
+	.plan-comparison-grid__title {
+		&.is-select-trigger {
+			display: flex;
+		}
+	}
+
 	.plan-comparison-grid__title-select {
 		appearance: none;
 		-moz-appearance: none;
@@ -278,10 +284,6 @@ const PlanSelector = styled.header`
 		&:focus ~ .plan-comparison-grid__title {
 			outline: thin dotted;
 		}
-	}
-
-	.plan-comparison-grid__title--is-select-trigger {
-		display: flex;
 	}
 
 	.plan-comparison-grid__title-icon {
@@ -424,7 +426,7 @@ const ComparisonGridHeaderCell = ( {
 				<h4
 					className={ classNames(
 						'plan-comparison-grid__title',
-						showPlanSelect && 'plan-comparison-grid__title--is-select-trigger'
+						showPlanSelect && 'is-select-trigger'
 					) }
 				>
 					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
