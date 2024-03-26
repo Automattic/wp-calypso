@@ -79,7 +79,7 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 					} ) }
 					onClick={ onSelectInstallFilterType }
 				>
-					{ translate( 'WordPress install' ) }
+					{ translate( 'WordPress installs' ) }
 				</Button>
 
 				<Button
@@ -88,7 +88,7 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 					} ) }
 					onClick={ onSelectVisitFilterType }
 				>
-					{ translate( 'Number of visit' ) }
+					{ translate( 'Number of visits' ) }
 				</Button>
 			</div>
 
