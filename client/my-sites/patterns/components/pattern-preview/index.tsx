@@ -182,11 +182,14 @@ function PatternPreviewFragment( {
 			</div>
 
 			<PatternsGetAccessModal
+				category={ category }
 				isOpen={ isAuthModalOpen }
 				onClose={ () => {
 					setIsAuthModalOpen( false );
 					recordCloseModalEvent( 'calypso_pattern_library_get_access_dismiss' );
 				} }
+				pattern={ pattern.name }
+				patternTypeFilter={ patternTypeFilter }
 			/>
 		</div>
 	);
