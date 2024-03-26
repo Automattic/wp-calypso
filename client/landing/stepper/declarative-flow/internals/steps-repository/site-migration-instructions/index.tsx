@@ -34,10 +34,7 @@ const Loading = () => {
 	);
 };
 
-const DoNotTranslateIt: FC< { value: string; as: keyof JSX.IntrinsicElements } > = ( {
-	value,
-	as: As = 'span',
-} ) => <As>{ value }</As>;
+const DoNotTranslateIt: FC< { value: string } > = ( { value } ) => <>{ value }</>;
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
@@ -101,13 +98,13 @@ const SiteMigrationInstructions: Step = function () {
 				{ isSuccess && migrationKey && (
 					<li>
 						{ translate(
-							'Copy and paste the migration key below in the {{ migrationKeyField /}} field and click {{migrateButton /}}.',
+							'Copy and paste the migration key below in the {{em}}{{ migrationKeyField /}}{{/em}} field and click {{strong}}{{migrateButton /}}{{/strong}}.',
 							{
 								components: {
-									migrationKeyField: (
-										<DoNotTranslateIt value="Migrate Guru Migration key" as="em" />
-									),
-									migrateButton: <DoNotTranslateIt value="Migrate" as="strong" />,
+									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
+									migrateButton: <DoNotTranslateIt value="Migrate" />,
+									em: <em />,
+									strong: <strong />,
 								},
 							}
 						) }
@@ -117,7 +114,7 @@ const SiteMigrationInstructions: Step = function () {
 				{ isError && (
 					<li>
 						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{migrationKeyField /}} field of your existing site and click {{migrateButton /}}.',
+							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}{{migrationKeyField /}}{{/em}} field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}}.',
 							{
 								components: {
 									a: (
@@ -127,11 +124,10 @@ const SiteMigrationInstructions: Step = function () {
 											rel="noreferrer"
 										/>
 									),
-									migrationKeyField: (
-										<DoNotTranslateIt value="Migrate Guru Migration key" as="em" />
-									),
-
-									migrateButton: <DoNotTranslateIt value="Migrate" as="strong" />,
+									em: <em />,
+									strong: <strong />,
+									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
+									migrateButton: <DoNotTranslateIt value="Migrate" />,
 								},
 							}
 						) }
