@@ -27,7 +27,7 @@ function getAvailabilityNotice(
 	domainTld = ''
 ) {
 	const tld = domainTld || ( domain ? getTld( domain ) : null );
-	const { site, maintenanceEndTime, availabilityPreCheck } = errorData || {};
+	const { site, maintenanceEndTime, availabilityPreCheck, isSiteDomainOnly } = errorData || {};
 
 	// The message is set only when there is a valid error
 	// and the conditions of the corresponding switch block are met.
@@ -64,22 +64,30 @@ function getAvailabilityNotice(
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			if ( site ) {
-				message = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
-					{
-						args: { domain, site },
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									target={ linksTarget }
-									rel="noopener noreferrer"
-									href={ domainManagementTransferToOtherSite( site, domain ) }
-								/>
-							),
-						},
-					}
-				);
+				const messageOptions = {
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								target={ linksTarget }
+								rel="noopener noreferrer"
+								href={ domainManagementTransferToOtherSite( site, domain ) }
+							/>
+						),
+					},
+				};
+				if ( isSiteDomainOnly ) {
+					message = translate(
+						'{{strong}}%(domain)s{{/strong}} is already registered as a domain-only site. Do you want to {{a}}move it to this site{{/a}}?',
+						messageOptions
+					);
+				} else {
+					message = translate(
+						'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
+						messageOptions
+					);
+				}
 			} else {
 				message = translate(
 					'{{strong}}%(domain)s{{/strong}} is already registered on another site you own.',
