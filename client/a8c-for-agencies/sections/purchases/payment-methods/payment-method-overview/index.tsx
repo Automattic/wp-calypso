@@ -30,13 +30,15 @@ export default function PaymentMethodOverview() {
 	const dispatch = useDispatch();
 
 	const {
-		allStoredCards,
-		primaryStoredCard,
-		secondaryStoredCards,
+		data: {
+			allStoredCards,
+			primaryStoredCard,
+			secondaryStoredCards,
+			pageSize,
+			hasStoredCards,
+			hasMoreStoredCards,
+		},
 		isFetching,
-		pageSize,
-		hasStoredCards,
-		hasMoreStoredCards,
 	} = useStoredCards();
 
 	const { page, showPagination, onPageClick } = useStoredCardsPagination( {

@@ -19,6 +19,9 @@ export default function SignupForm() {
 	const dispatch = useDispatch();
 	const notificationId = 'a4a-agency-signup-form';
 
+	const queryParams = new URLSearchParams( window.location.search );
+	const referer = queryParams.get( 'ref' );
+
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
 			dispatch( fetchAgencies() );
@@ -38,12 +41,15 @@ export default function SignupForm() {
 				recordTracksEvent( 'calypso_a4a_create_agency_submit', {
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
+					managed_sites: payload.managedSites,
+					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
 					country: payload.country,
 					postal_code: payload.postalCode,
 					state: payload.state,
+					referer: payload.referer,
 				} )
 			);
 		},
@@ -67,6 +73,7 @@ export default function SignupForm() {
 				isLoading={ createAgency.isPending }
 				onSubmit={ onSubmit }
 				submitLabel={ translate( 'Continue' ) }
+				referer={ referer }
 			/>
 		</Card>
 	);

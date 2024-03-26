@@ -73,7 +73,11 @@ export default function SitePreviewPane( {
 			return null;
 		}
 		return (
-			<NavItem selected={ featureTab.selected } onClick={ featureTab.onClick }>
+			<NavItem
+				key={ featureTab.key }
+				selected={ featureTab.selected }
+				onClick={ featureTab.onClick }
+			>
 				{ featureTab.label }
 			</NavItem>
 		);

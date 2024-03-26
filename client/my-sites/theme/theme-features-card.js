@@ -24,7 +24,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 				<ul className="theme__sheet-features-list">
 					{ features.map( ( { name, slug, term } ) => {
 						const filterPath = localizeThemesPath(
-							`/themes/filter/${ term }/${ siteSlug || '' }`,
+							`/themes/all/filter/${ term }/${ siteSlug || '' }`,
 							locale,
 							! isLoggedIn
 						);
