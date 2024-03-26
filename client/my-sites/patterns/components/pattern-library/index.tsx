@@ -15,13 +15,13 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
 	usePatternSearchTerm,
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
