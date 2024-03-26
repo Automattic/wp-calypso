@@ -279,14 +279,14 @@ export const PatternLibrary = ( {
 							<ToggleGroupControlOption
 								className="pattern-library__toggle-option--list-view"
 								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
-								onClick={ () => handleViewChange( 'list' ) }
 								value="list"
+								onClick={ () => handleViewChange( 'list' ) }
 							/>
 							<ToggleGroupControlOption
 								className="pattern-library__toggle-option--grid-view"
 								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
-								onClick={ () => handleViewChange( 'grid' ) }
 								value="grid"
+								onClick={ () => handleViewChange( 'grid' ) }
 							/>
 						</ToggleGroupControl>
 					</div>

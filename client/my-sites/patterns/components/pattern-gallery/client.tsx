@@ -102,7 +102,6 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
-								'pattern-preview--page': isPageLayouts,
 							} ) }
 							getPatternPermalink={ getPatternPermalink }
 							isResizable={ ! isGridView }

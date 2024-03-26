@@ -81,12 +81,7 @@ function PatternPreviewFragment( {
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
 	useEffect( () => {
-		ref.current?.dispatchEvent(
-			new CustomEvent( 'patternPreviewResize', {
-				bubbles: true,
-				detail: { ...nodeSize },
-			} )
-		);
+		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
 	}, [ nodeSize.width, nodeSize.height ] );
 
 	if ( ! pattern ) {
