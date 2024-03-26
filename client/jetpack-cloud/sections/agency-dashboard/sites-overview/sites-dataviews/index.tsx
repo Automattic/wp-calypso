@@ -27,8 +27,9 @@ const SitesDataViews = ( {
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const totalSites =
-		window.location.pathname === '/sites/favorites' ? data?.totalFavorites || 0 : data?.total || 0;
+	const totalSites = window.location.search.includes( 'is_favorite' )
+		? data?.totalFavorites || 0
+		: data?.total || 0;
 
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
@@ -44,7 +45,7 @@ const SitesDataViews = ( {
 		},
 		[ onSitesViewChange, sitesViewState ]
 	);
-
+	//
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteInfo ) => {
 			if ( isLoading ) {

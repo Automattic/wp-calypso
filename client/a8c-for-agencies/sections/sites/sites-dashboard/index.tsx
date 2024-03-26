@@ -143,26 +143,37 @@ export default function SitesDashboard() {
 	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
 
 	useEffect( () => {
+		// If the favorites filter is set, make sure to update the filter and correctly add the is_favorite param to URLs.
+		filter.showOnlyFavorites = isFavoriteFilter;
+		const favoriteParam = isFavoriteFilter ? '?is_favorite' : '';
 		// We need a category in the URL if we have a selected site
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
 		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
 			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
+				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }${ favoriteParam }`
 			);
 		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }` );
+			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }${ favoriteParam }` );
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( `/sites/${ category }` );
+			page.replace( `/sites/${ category }${ favoriteParam }` );
 		} else {
-			page.replace( '/sites' );
+			page.replace( `/sites${ favoriteParam }` );
 		}
 
 		if ( sitesViewState.selectedSite ) {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
-	}, [ sitesViewState.selectedSite, selectedSiteFeature, category, setCategory, dispatch ] );
+	}, [
+		filter,
+		isFavoriteFilter,
+		sitesViewState.selectedSite,
+		selectedSiteFeature,
+		category,
+		setCategory,
+		dispatch,
+	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
