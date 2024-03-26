@@ -168,7 +168,7 @@ export const getCampaignBudgetData = (
 	spent_budget_cents: number,
 	is_evergreen = 0
 ) => {
-	let campaignDays = 7;
+	let campaignDays;
 	if ( is_evergreen ) {
 		campaignDays = 7;
 	} else {
