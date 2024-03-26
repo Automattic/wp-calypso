@@ -16,6 +16,7 @@ import {
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getHostingLogo } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
+import PressableOverviewPlanSelection from './plan-selection';
 
 import './style.scss';
 
@@ -77,6 +78,8 @@ export default function PressableOverview() {
 						{ translate( 'Scalable plans to help you grow your business.' ) }
 					</h2>
 				</section>
+
+				<PressableOverviewPlanSelection />
 			</LayoutBody>
 		</Layout>
 	);
