@@ -3,6 +3,7 @@
 .is-section-patterns {
 	.layout__content {
 		padding: 0;
+		overflow: visible; // necessary for sticky CategoryPillNavigation
 
 		.masterbar {
 			// Makes sure the navigation bar header appears below the masterbar and notices

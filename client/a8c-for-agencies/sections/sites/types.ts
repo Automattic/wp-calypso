@@ -4,6 +4,8 @@ import {
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
+export * from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+
 export interface SitesDashboardContextInterface {
 	selectedCategory?: string;
 	setSelectedCategory: ( category: string ) => void;
@@ -12,7 +14,7 @@ export interface SitesDashboardContextInterface {
 	setSelectedSiteUrl: ( siteUrl: string ) => void;
 
 	selectedSiteFeature?: string;
-	setSelectedSiteFeature: ( siteFeature: string ) => void;
+	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;

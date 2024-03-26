@@ -1,5 +1,8 @@
-import config from '@automattic/calypso-config';
 import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import { addQueryArgs } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { APIInvoices, Invoices } from 'calypso/state/partner-portal/types';
 
 interface QueryError {
@@ -9,40 +12,6 @@ interface QueryError {
 interface Pagination {
 	starting_after: string;
 	ending_before: string;
-}
-
-const showDummyData = config.isEnabled( 'a4a/mock-api-data' );
-
-function queryInvoices() {
-	if ( showDummyData ) {
-		return {
-			items: [
-				{
-					id: 'in_test',
-					number: 'TEST-0132',
-					due_date: null,
-					status: 'paid',
-					total: 0,
-					currency: 'usd',
-					invoice_pdf: 'www.example.com/invoice.pdf',
-				},
-				{
-					id: 'in_test2',
-					number: 'TEST-0131',
-					due_date: null,
-					status: 'void',
-					total: 0,
-					currency: 'usd',
-					invoice_pdf: 'www.example.com/invoice.pdf',
-				},
-			],
-			has_more: false,
-		} as APIInvoices;
-	}
-	return {
-		items: [],
-		has_more: false,
-	};
 }
 
 function selectInvoices( api: APIInvoices ): Invoices {
@@ -62,15 +31,35 @@ function selectInvoices( api: APIInvoices ): Invoices {
 	};
 }
 
+export const getFetchInvoicesQueryKey = ( {
+	starting_after,
+	ending_before,
+	agencyId,
+}: {
+	starting_after: string;
+	ending_before: string;
+	agencyId?: number;
+} ) => {
+	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId ];
+};
+
 export default function useFetchInvoices(
 	pagination: Pagination,
 	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >
 ): UseQueryResult< Invoices, QueryError > {
-	const activeKeyId = 'test'; // FIXME: Get active key ID from state
+	const { starting_after, ending_before } = pagination;
+	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery< APIInvoices, QueryError, Invoices >( {
-		queryKey: [ 'a4a', 'invoices', activeKeyId, pagination ],
-		queryFn: queryInvoices,
+		queryKey: getFetchInvoicesQueryKey( { starting_after, ending_before, agencyId } ),
+		queryFn: () =>
+			wpcom.req.get( {
+				apiNamespace: 'wpcom/v2',
+				path: addQueryArgs(
+					{ starting_after, ending_before, agency_id: agencyId },
+					'/jetpack-licensing/partner/invoices'
+				),
+			} ),
 		refetchOnWindowFocus: false,
 		select: selectInvoices,
 		...options,

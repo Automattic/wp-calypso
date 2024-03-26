@@ -57,6 +57,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
 	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+	const isWPCOMSite = ! site?.jetpack || site?.is_wpcom_atomic;
 
 	return (
 		<Modal
@@ -99,6 +100,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 				showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 				recordTracksEvent={ recordTracksEvent }
 				hidden={ isUploading }
+				isWPCOMSite={ isWPCOMSite }
 			/>
 		</Modal>
 	);

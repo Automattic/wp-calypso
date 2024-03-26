@@ -69,7 +69,10 @@ export default function CreditCardFields() {
 		},
 	};
 
-	const { allStoredCards: paymentMethods, isFetching: isFetchingPaymentMethods } = useStoredCards();
+	const {
+		data: { primaryStoredCard },
+		isFetching: isFetchingPaymentMethods,
+	} = useStoredCards();
 
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -103,8 +106,8 @@ export default function CreditCardFields() {
 				/>
 
 				<SetAsPrimaryPaymentMethod
-					isChecked={ useAsPrimaryPaymentMethod || paymentMethods.length === 0 }
-					isDisabled={ isFetchingPaymentMethods || isDisabled || paymentMethods.length === 0 }
+					isChecked={ useAsPrimaryPaymentMethod || ! primaryStoredCard }
+					isDisabled={ isFetchingPaymentMethods || isDisabled || ! primaryStoredCard }
 					onChange={ setUseAsPrimaryPaymentMethod }
 				/>
 			</div>

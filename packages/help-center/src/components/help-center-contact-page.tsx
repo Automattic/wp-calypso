@@ -198,24 +198,25 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				/>
 
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
-					<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
-						<div
-							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
-							role="button"
-							tabIndex={ 0 }
-						>
-							<div className="help-center-contact-page__box-icon">
-								<Icon icon={ <Forum /> } />
+					{ ! renderEmail.render && (
+						<Link to={ forumUrl } onClick={ contactOptionsEventMap[ 'forum' ] }>
+							<div
+								className={ classnames( 'help-center-contact-page__box', 'forum' ) }
+								role="button"
+								tabIndex={ 0 }
+							>
+								<div className="help-center-contact-page__box-icon">
+									<Icon icon={ <Forum /> } />
+								</div>
+								<div>
+									<h2>{ forumHeaderText }</h2>
+									<p>
+										{ __( 'Your question and any answers will be public', __i18n_text_domain__ ) }
+									</p>
+								</div>
 							</div>
-							<div>
-								<h2>{ forumHeaderText }</h2>
-								<p>
-									{ __( 'Your question and any answers will be public', __i18n_text_domain__ ) }
-								</p>
-							</div>
-						</div>
-					</Link>
-
+						</Link>
+					) }
 					{ renderChat.render && (
 						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
 							<ConditionalLink

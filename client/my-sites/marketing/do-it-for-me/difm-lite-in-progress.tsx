@@ -58,7 +58,7 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 			br: <br />,
 			SupportLink: (
 				<a
-					href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+					href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
 						`I need help with my site: ${ primaryDomain.domain }`
 					) }` }
 				/>
@@ -128,7 +128,7 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 								br: <br />,
 								SupportLink: (
 									<a
-										href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+										href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
 											`I need help with my site: ${ primaryDomain.domain }`
 										) }` }
 									/>

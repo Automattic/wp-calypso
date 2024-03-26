@@ -12,7 +12,7 @@ export const createFeaturePreview = (
 	id: string,
 	label: string,
 	enabled: boolean,
-	selectedFeatureId: string,
+	selectedFeatureId: string | undefined,
 	setSelectedFeatureId: ( id: string ) => void,
 	preview: React.ReactNode
 ): FeaturePreviewInterface => {
@@ -73,7 +73,11 @@ export default function SitePreviewPane( {
 			return null;
 		}
 		return (
-			<NavItem selected={ featureTab.selected } onClick={ featureTab.onClick }>
+			<NavItem
+				key={ featureTab.key }
+				selected={ featureTab.selected }
+				onClick={ featureTab.onClick }
+			>
 				{ featureTab.label }
 			</NavItem>
 		);

@@ -27,8 +27,16 @@ export const RepositorySelectionDialog = ( {
 			shouldCloseOnOverlayClick
 			shouldCloseOnEsc
 			onClose={ onClose }
+			additionalClassNames="github-deployments-dialog"
+			className="repository-selection-dialog"
 		>
-			<div className="repository-selection-dialog">
+			<div
+				css={ {
+					display: 'flex',
+					flexDirection: 'column',
+					flexGrow: 1,
+				} }
+			>
 				<FormattedHeader
 					align="left"
 					headerText={ __( 'Select repository' ) }

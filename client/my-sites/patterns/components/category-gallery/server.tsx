@@ -30,9 +30,9 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 						<div className="patterns-category-gallery__item-preview">
 							<div
 								className={ classNames( 'patterns-category-gallery__item-preview', {
-									'patterns-category-gallery__item-preview_page-layouts':
+									'patterns-category-gallery__item-preview--page-layout':
 										patternTypeFilter === PatternTypeFilter.PAGES,
-									'patterns-category-gallery__item-preview_mirrored': category.name === 'footer',
+									'patterns-category-gallery__item-preview--mirrored': category.name === 'footer',
 								} ) }
 							>
 								<div className="patterns-category-gallery__item-preview-inner">

@@ -103,7 +103,9 @@ class Help_Center {
 		wp_localize_script(
 			'help-center-script',
 			'helpCenterLocale',
-			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
+			array(
+				'locale' => \A8C\FSE\Common\get_iso_639_locale( determine_locale() ),
+			)
 		);
 
 		// Adds feature flags for development.

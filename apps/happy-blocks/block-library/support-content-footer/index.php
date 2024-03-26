@@ -24,7 +24,7 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 				<?php esc_html_e( 'Your site, built for you', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Sit back as our Built by WordPress.com team of experts builds a site you\'ll fall in love with. From single page sites to full stores, they\'ll help you make it happen.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Sit back as our team of experts builds a site you\'ll fall in love with. From single page sites to full stores, they\'ll help you make it happen.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
 				<a href="<?php echo esc_url( 'https://wordpress.com/website-design-service/?ref=banner-learn' ); ?>">
