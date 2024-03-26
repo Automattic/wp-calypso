@@ -121,6 +121,7 @@ export default function StoredCreditCard( {
 					isVisible={ true }
 					onClose={ () => setIsDeleteDialogVisible( false ) }
 					onConfirm={ handleDelete }
+					isDeleteInProgress={ isDeleteInProgress }
 				/>
 			) }
 		</>
