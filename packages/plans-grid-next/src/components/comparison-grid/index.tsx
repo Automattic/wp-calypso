@@ -421,6 +421,19 @@ const ComparisonGridHeaderCell = ( {
 				additionalClassName={ popularBadgeClasses }
 			/>
 			<PlanSelector>
+				<h4
+					className={ classNames(
+						'plan-comparison-grid__title',
+						showPlanSelect && 'plan-comparison-grid__title--is-select-trigger'
+					) }
+				>
+					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
+					{ showPlanSelect && (
+						<span className="plan-comparison-grid__title-icon">
+							<Icon icon={ chevronRightSmall } size={ 30 } />
+						</span>
+					) }
+				</h4>
 				{ showPlanSelect && (
 					<select
 						onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
@@ -446,19 +459,6 @@ const ComparisonGridHeaderCell = ( {
 						} ) }
 					</select>
 				) }
-				<h4
-					className={ classNames(
-						'plan-comparison-grid__title',
-						showPlanSelect && 'plan-comparison-grid__title--is-select-trigger'
-					) }
-				>
-					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
-					{ showPlanSelect && (
-						<span className="plan-comparison-grid__title-icon">
-							<Icon icon={ chevronRightSmall } size={ 30 } />
-						</span>
-					) }
-				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
 				planSlug={ planSlug }
