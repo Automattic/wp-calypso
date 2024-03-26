@@ -1,8 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
@@ -275,6 +276,37 @@ const SitesDataViews = ( {
 		],
 		[ translate ]
 	);
+
+	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
+	const SpinnerWrapper = () => {
+		return (
+			<div className="spinner-wrapper">
+				<Spinner />
+			</div>
+		);
+	};
+
+	const tableWrapper = document.getElementsByClassName( 'dataviews-view-table-wrapper' )[ 0 ];
+	if ( tableWrapper ) {
+		// Remove any existing spinner if present
+		const existingSpinner = tableWrapper.querySelector( '.spinner-wrapper' );
+		if ( existingSpinner ) {
+			existingSpinner.remove();
+		}
+
+		const spinnerWrapper = document.createElement( 'div' );
+		spinnerWrapper.classList.add( 'spinner-wrapper' );
+
+		const secondDataViewsTableChild = tableWrapper.children[ 1 ];
+
+		// Insert the spinner wrapper after the second child element
+		if ( secondDataViewsTableChild ) {
+			secondDataViewsTableChild.insertAdjacentElement( 'afterend', spinnerWrapper );
+
+			// Render the SpinnerWrapper component inside the spinner wrapper
+			ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
+		}
+	}
 
 	const urlParams = new URLSearchParams( window.location.search );
 	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;

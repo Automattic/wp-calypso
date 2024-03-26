@@ -187,4 +187,23 @@
 	.dataviews-loading {
 		padding-left: 16px;
 	}
+
+	.spinner-wrapper {
+		display: none;
+	}
+
+	.dataviews-view-table-wrapper:has(.dataviews-loading) {
+		.spinner-wrapper {
+			display: block;
+		}
+		.dataviews-loading p {
+			display: none;
+		}
+	}
+
+	.dataviews-view-table-wrapper:has(.dataviews-no-results) {
+		.spinner-wrapper {
+			display: none;
+		}
+	}
 }
