@@ -33,6 +33,7 @@ const Loading = () => {
 		</div>
 	);
 };
+const DoNotTranslateIt = ( { value, as: As = 'span' } ) => <As>{ value }</As>;
 
 const SiteMigrationInstructions: Step = function () {
 	const translate = useTranslate();
@@ -74,11 +75,11 @@ const SiteMigrationInstructions: Step = function () {
 				</li>
 				<li>
 					{ translate(
-						'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{strong}}Migrate{{/strong}}.',
+						'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{migrateButton /}}.',
 						{
 							components: {
 								a: <a href={ getMigrateGuruPageURL( fromUrl ) } target="_blank" rel="noreferrer" />,
-								strong: <strong />,
+								migrateButton: <DoNotTranslateIt value="Migrate" as="strong" />,
 							},
 						}
 					) }
@@ -96,11 +97,13 @@ const SiteMigrationInstructions: Step = function () {
 				{ isSuccess && migrationKey && (
 					<li>
 						{ translate(
-							'Copy and paste the migration key below in the {{em}}Migrate Guru Migration Key{{/em}} field and click {{strong}}Migrate{{/strong}}.',
+							'Copy and paste the migration key below in the {{ migrationKeyField /}} field and click {{migrateButton /}}.',
 							{
 								components: {
-									em: <em />,
-									strong: <strong />,
+									migrationKeyField: (
+										<DoNotTranslateIt value="Migrate Guru Migration key" as="em" />
+									),
+									migrateButton: <DoNotTranslateIt value="Migrate" as="strong" />,
 								},
 							}
 						) }
@@ -110,10 +113,9 @@ const SiteMigrationInstructions: Step = function () {
 				{ isError && (
 					<li>
 						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}Migrate Guru Migration Key{{/em}} field of your existing site and click {{strong}}Migrate{{/strong}}.',
+							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{migrationKeyField /}} field of your existing site and click {{migrateButton /}}.',
 							{
 								components: {
-									em: <em />,
 									a: (
 										<a
 											href={ getMigrateGuruPageURL( site!.URL ) }
@@ -121,7 +123,11 @@ const SiteMigrationInstructions: Step = function () {
 											rel="noreferrer"
 										/>
 									),
-									strong: <strong />,
+									migrationKeyField: (
+										<DoNotTranslateIt value="Migrate Guru Migration key" as="em" />
+									),
+
+									migrateButton: <DoNotTranslateIt value="Migrate" as="strong" />,
 								},
 							}
 						) }
