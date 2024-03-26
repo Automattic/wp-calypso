@@ -1,8 +1,8 @@
-import { SiteDetails } from '@automattic/data-stores';
+import { WordPressLogo } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import builtByLogo from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import { Banner } from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
+import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
 	site: SiteDetails;
@@ -10,7 +10,7 @@ type Props = {
 	urlRef: string;
 };
 
-export function BuiltByUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
+export function DIFMUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 	const { __ } = useI18n();
 	// Do not show for launched sites
 	if ( ! isUnlaunchedSite ) {
@@ -44,7 +44,7 @@ export function BuiltByUpsell( { site, isUnlaunchedSite, urlRef }: Props ) {
 			callToAction={ __( 'Get started' ) }
 			href={ url }
 			target="_blank"
-			iconPath={ builtByLogo }
+			icon={ <WordPressLogo size={ 32 } /> }
 			disableCircle={ true }
 			event="settings_bb_upsell"
 			tracksImpressionName="calypso_settings_bb_upsell_impression"

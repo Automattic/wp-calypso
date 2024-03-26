@@ -228,7 +228,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 									<SiteLaunchNag site={ site } />
 								</div>
 								{ isDIFMInProgress && (
-									<BadgeDIFM className="site__badge">{ __( 'Built By Express' ) }</BadgeDIFM>
+									<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 								) }
 							</>
 						)
