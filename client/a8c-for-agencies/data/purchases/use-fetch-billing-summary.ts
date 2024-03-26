@@ -1,9 +1,12 @@
-import config from '@automattic/calypso-config';
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
+import { addQueryArgs } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
+
 // API interfaces.
 interface APIBillingCounts {
 	assigned: number;
@@ -68,72 +71,6 @@ interface BillingDashboardQueryError {
 	code?: string;
 }
 
-function getBillingSummary(): Promise< APIBilling > {
-	const showDummyData = config.isEnabled( 'a4a/mock-api-data' );
-
-	if ( showDummyData ) {
-		return Promise.resolve( {
-			products: [
-				{
-					product_slug: 'jetpack-backup-t1',
-					product_name: 'Licenses: Jetpack VaultPress Backup (10GB)',
-					product_quantity: 155,
-					product_cost: 0.16,
-					product_total_cost: 24.8,
-					counts: {
-						assigned: 2,
-						unassigned: 3,
-						total: 5,
-					},
-				},
-				{
-					product_slug: 'jetpack-search',
-					product_name: 'Licenses: Jetpack Search',
-					product_quantity: 31,
-					product_cost: 0.27,
-					product_total_cost: 8.37,
-					counts: {
-						assigned: 0,
-						unassigned: 1,
-						total: 1,
-					},
-				},
-				{
-					product_slug: 'jetpack-ai',
-					product_name: 'Licenses: Jetpack AI Assistant',
-					product_quantity: 372,
-					product_cost: 0.27,
-					product_total_cost: 100.44,
-					counts: {
-						assigned: 1,
-						unassigned: 11,
-						total: 12,
-					},
-				},
-			],
-			licenses: {
-				total: 18,
-				assigned: 3,
-				unassigned: 15,
-			},
-			costs: {
-				total: 4.31,
-				assigned: 0.59,
-				unassigned: 3.72,
-			},
-			price_interval: 'day',
-			date: new Date().toString(),
-		} );
-	}
-
-	return Promise.reject( {
-		code: 'rest_forbidden',
-		data: { status: 403 },
-		status: 403,
-		statusCode: 403,
-	} );
-}
-
 function selectBillingSummary( api: APIBilling ): Billing {
 	return {
 		date: api.date,
@@ -158,11 +95,16 @@ export default function useFetchBillingSummary(
 ): UseQueryResult< Billing, BillingDashboardQueryError > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const activeKeyId = null; // FIXME: get from actual store.
+
+	const agencyId = useSelector( getActiveAgencyId );
 
 	const query = useQuery( {
-		queryKey: [ 'a4a-purchases', activeKeyId ],
-		queryFn: getBillingSummary,
+		queryKey: [ 'a4a-purchases', agencyId ],
+		queryFn: () =>
+			wpcom.req.get( {
+				apiNamespace: 'wpcom/v2',
+				path: addQueryArgs( { agency_id: agencyId }, '/jetpack-licensing/licenses/billing' ),
+			} ),
 		select: selectBillingSummary,
 		retry: ( failureCount, error ) => {
 			// There is no reason for us to try and re-fetch on the "no billing
