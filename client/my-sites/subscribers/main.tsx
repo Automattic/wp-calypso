@@ -36,12 +36,12 @@ import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
-	isUnverified: boolean;
+	disableCta: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderProps ) => {
+const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -103,7 +103,7 @@ const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderP
 			<Button
 				className="add-subscribers-button"
 				primary
-				disabled={ isUnverified }
+				disabled={ disableCta }
 				onClick={ () => setShowAddSubscribersModal( true ) }
 			>
 				<Gridicon icon="plus" size={ 24 } />
@@ -145,7 +145,6 @@ const SubscribersPage = ( {
 	const [ giftUsername, setGiftUsername ] = useState( '' );
 
 	const siteId = selectedSite?.ID || null;
-	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const pageArgs = {
 		currentPage: pageNumber,
@@ -160,6 +159,7 @@ const SubscribersPage = ( {
 	);
 
 	const isUnverified = importSelector?.error?.code === 'unverified_email';
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const { getSubscribersImports } = useDataStoreDispatch( SubscriberDataStore.store );
 
@@ -214,7 +214,10 @@ const SubscribersPage = ( {
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader selectedSiteId={ selectedSite?.ID } isUnverified={ isUnverified } />
+				<SubscribersHeader
+					selectedSiteId={ selectedSite?.ID }
+					disableCta={ isUnverified || isStagingSite }
+				/>
 				<Gate>
 					<SubscriberListContainer
 						siteId={ siteId }
