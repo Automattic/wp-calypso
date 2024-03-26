@@ -18,6 +18,7 @@ import type { GridPlan, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
+	siteId?: number | null,
 	sitePlanSlug?: PlanSlug | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
@@ -76,7 +77,7 @@ function useUpgradeHandler(
 	);
 
 	const selectedStorageOptions = useSelect( ( select ) => {
-		return select( WpcomPlansUI.store ).getSelectedStorageOptions();
+		return select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId );
 	}, [] );
 
 	const addSelectedPlanAndStorageAddon = useCallback(
@@ -138,10 +139,10 @@ function useUpgradeHandler(
 	);
 }
 
-// TODO: Verify that "Plan" is appropriate here. What about upsell modal CTAs? Consider renaming to something more generic.
 function useActionCallback(
 	intent?: PlansIntent | null,
 	flowName?: string | null,
+	siteId?: number | null,
 	sitePlanSlug?: PlanSlug | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
@@ -149,6 +150,7 @@ function useActionCallback(
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ) {
 	const upgradeHandler = useUpgradeHandler(
+		siteId,
 		sitePlanSlug,
 		siteSlug,
 		withDiscount,
@@ -160,8 +162,8 @@ function useActionCallback(
 
 	const [ managePlan, manageAddon, gotoVip ] = useMemo( () => {
 		const composePlanActionCallback = ( callback: () => void ) => {
-			return ( planSlug: PlanSlug ) => {
-				const earlyReturn = planActionCallback?.( planSlug );
+			return ( gridPlan: GridPlan ) => {
+				const earlyReturn = planActionCallback?.( gridPlan.planSlug );
 
 				if ( earlyReturn ) {
 					return;
@@ -187,7 +189,8 @@ function useActionCallback(
 			return gotoVip;
 		}
 
-		if ( sitePlanSlug && intent !== 'plans-p2' ) {
+		// TODO: Check that this only applies to spotlight plan
+		if ( sitePlanSlug && gridPlan.current && intent !== 'plans-p2' ) {
 			return isFreePlan( sitePlanSlug ) ? manageAddon : managePlan;
 		}
 

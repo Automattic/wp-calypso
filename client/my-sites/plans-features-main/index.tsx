@@ -6,6 +6,7 @@ import {
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	WPComStorageAddOnSlug,
+	// TODO: FIX THIS
 	// PLAN_FREE,
 	type PlanSlug,
 	UrlFriendlyTermType,
@@ -387,6 +388,7 @@ const PlansFeaturesMain = ( {
 	const getActionCallback = useActionCallback(
 		intent,
 		flowName,
+		siteId,
 		sitePlanSlug,
 		siteSlug,
 		withDiscount,
