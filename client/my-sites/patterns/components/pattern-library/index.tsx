@@ -5,12 +5,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import {
-	Icon,
-	starEmpty as iconStar,
-	category as iconCategory,
-	menu as iconMenu,
-} from '@wordpress/icons';
+import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
@@ -213,15 +208,10 @@ export const PatternLibrary = ( {
 					selectedCategoryId={ category }
 					buttons={ [
 						{
-							icon: <Icon icon={ iconStar } size={ 30 } />,
-							label: translate_not_yet( 'Discover' ),
-							link: addLocaleToPathLocaleInFront( '/patterns' ),
-							isActive: isHomePage,
-						},
-						{
 							icon: <Icon icon={ iconCategory } size={ 26 } />,
 							label: translate_not_yet( 'All Categories' ),
-							link: '/222',
+							link: addLocaleToPathLocaleInFront( '/patterns' ),
+							isActive: isHomePage,
 						},
 					] }
 					categories={ categoryNavList }
