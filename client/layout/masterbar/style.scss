@@ -81,7 +81,12 @@ body.is-mobile-app-view {
 		color: var(--color-checkout-masterbar-text);
 		height: var(--masterbar-height);
 		position: absolute;
-		padding: 0 1em;
+		padding-inline-end: 1.5em;
+
+		&.masterbar--is-akismet,
+		&.masterbar--is-jetpack {
+			padding-inline-start: 1.5em;
+		}
 
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
@@ -89,7 +94,6 @@ body.is-mobile-app-view {
 
 		@include breakpoint-deprecated( ">960px" ) {
 			background-color: var(--color-checkout-masterbar-background);
-			padding: 0 2em;
 		}
 	}
 
@@ -236,6 +240,7 @@ body.is-mobile-app-view {
 	font-size: $masterbar-font-size;
 	height: var(--masterbar-height);
 	line-height: var(--masterbar-height);
+	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
 	transition: all 0.2s ease-in-out;
@@ -244,6 +249,7 @@ body.is-mobile-app-view {
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
+		padding: 0;
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
 			line-height: var(--masterbar-checkout-height);
@@ -382,6 +388,11 @@ body.is-mobile-app-view {
 		display: block;
 		width: 150px;
 		height: 25px;
+		margin: 0 5px;
+
+		.masterbar--is-checkout & {
+			margin: 0;
+		}
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -393,7 +404,12 @@ body.is-mobile-app-view {
 			display: block;
 			height: 24px;
 			width: 24px;
+			margin-left: 5px;
 			fill: var(--color-text-inverted);
+
+			.masterbar--is-checkout & {
+				margin-left: 0;
+			}
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -911,6 +927,11 @@ a.masterbar__quick-language-switcher {
 	.masterbar__close-button {
 		flex: initial;
 		width: initial;
+		padding: 1em;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			padding: 1.5em;
+		}
 	}
 
 	.masterbar__secure-checkout-text {
