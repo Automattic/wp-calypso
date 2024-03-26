@@ -22,6 +22,7 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getWpcomRegistrationStatus } from 'calypso/lib/domains/get-wpcom-registration-status';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
@@ -172,6 +173,22 @@ function UseMyDomain( props ) {
 		setDomainAvailabilityData( null );
 
 		try {
+			const wpRegistrationCheckData = await getWpcomRegistrationStatus(
+				filteredDomainName,
+				selectedSite?.ID
+			);
+
+			let availabilityErrorMessage = getAvailabilityErrorMessage( {
+				availabilityData: wpRegistrationCheckData,
+				domainName: filteredDomainName,
+				selectedSite,
+			} );
+
+			if ( availabilityErrorMessage ) {
+				setDomainNameValidationError( availabilityErrorMessage );
+				return;
+			}
+
 			const availabilityData = await wpcom
 				.domain( filteredDomainName )
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
@@ -179,7 +196,7 @@ function UseMyDomain( props ) {
 			setDomainName( filteredDomainName );
 			await setDomainTransferData();
 
-			const availabilityErrorMessage = getAvailabilityErrorMessage( {
+			availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
 				domainName: filteredDomainName,
 				selectedSite,
