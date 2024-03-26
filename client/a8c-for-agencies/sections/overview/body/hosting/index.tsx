@@ -4,13 +4,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
+import {
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import './styles.scss';
-
-const A4A_HOSTING_PRESSABLE_MARKETPLACE_LINK = '/marketplace/hosting/pressable';
-const A4A_HOSTING_WPCOM_MARKETPLACE_LINK = '/marketplace/hosting/wpcom';
 
 const OverviewBodyHosting = () => {
 	const translate = useTranslate();
@@ -48,7 +49,7 @@ const OverviewBodyHosting = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'hosting', 'pressable' );
-			page( A4A_HOSTING_PRESSABLE_MARKETPLACE_LINK );
+			page( A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK );
 		},
 	};
 
@@ -77,7 +78,7 @@ const OverviewBodyHosting = () => {
 		expanded: false,
 		actionHandler: () => {
 			actionHandlerCallback( 'hosting', 'wordpress.com' );
-			page( A4A_HOSTING_WPCOM_MARKETPLACE_LINK );
+			page( A4A_MARKETPLACE_HOSTING_WPCOM_LINK );
 		},
 	};
 
