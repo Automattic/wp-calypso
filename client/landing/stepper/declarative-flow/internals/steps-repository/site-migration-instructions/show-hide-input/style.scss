@@ -11,7 +11,7 @@
 	transition: all 0.2s;
 
 	&--hidden {
-		overflow-x: hidden;
+		overflow: hidden;
 		user-select: none;
 
 		input {
