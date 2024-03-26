@@ -41,7 +41,7 @@ export default function VolumePriceSelector( {
 	return (
 		<A4ASlider
 			label={ translate( 'Volume pricing' ) }
-			sub={ translate( 'Discount' ) }
+			sub={ translate( 'Save up to' ) }
 			className="product-listing__volume-price-selector"
 			value={ options.findIndex( ( { value } ) => selectedBundleSize === value ) }
 			options={ options }
