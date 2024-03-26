@@ -11,6 +11,9 @@ import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
 	useMarketplaceReviewsQuery,
@@ -146,6 +149,17 @@ export default function MarketplaceTest() {
 	return (
 		<Container>
 			<button onClick={ fetchNextPage }>Fetch next page</button>
+
+			<SectionNav>
+				<NavTabs>
+					<NavItem path="/marketplace/test" selected>
+						Marketplace Home
+					</NavItem>
+					<NavItem path="/plugins">Plugins</NavItem>
+					<NavItem path="/themes">Themes</NavItem>
+				</NavTabs>
+			</SectionNav>
+
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<Card key="marketplace-reviews">
 				<CardHeading tagName="h1" size={ 21 }>
