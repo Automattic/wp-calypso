@@ -83,7 +83,7 @@ const SiteMigrationInstructions: Step = function () {
 				{ isSuccess && migrationKey && (
 					<li>
 						{ translate(
-							'Copy and paste the migration key below in the {{em}}“Migrate Guru Migration Key”{{/em}} field and click {{strong}}Migrate{{/strong}}.',
+							'Copy and paste the migration key below in the {{em}}Migrate Guru Migration Key{{/em}} field and click {{strong}}Migrate{{/strong}}.',
 							{
 								components: {
 									em: <em />,
@@ -97,7 +97,7 @@ const SiteMigrationInstructions: Step = function () {
 				{ isError && (
 					<li>
 						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}Migrate Guru Migration Key"{{/em}} field of your existing site and click {{strong}}"Migrate"{{/strong}}.',
+							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}Migrate Guru Migration Key{{/em}} field of your existing site and click {{strong}}Migrate{{/strong}}.',
 							{
 								components: {
 									em: <em />,
