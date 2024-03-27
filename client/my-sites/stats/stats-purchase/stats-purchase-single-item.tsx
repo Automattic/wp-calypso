@@ -363,7 +363,7 @@ function StatsCommercialFlowOptOutForm( {
 		setComemercialClassificationRunAt(
 			parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' )
 		);
-	} );
+	}, [] );
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -489,7 +489,7 @@ function StatsCommercialFlowOptOutForm( {
 					</Button>
 				) }
 				{ ( ! supportsOnDemandCommercialClassification ||
-					( isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
+					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
 					<Button
 						variant="secondary"
 						disabled={ ! supportsOnDemandCommercialClassification && isFormSubmissionDisabled() }
