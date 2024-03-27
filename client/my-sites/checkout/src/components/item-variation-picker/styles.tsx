@@ -153,7 +153,10 @@ export const Label = styled.span< { shouldUseCheckoutV2: boolean } >`
 	display: flex;
 	white-space: nowrap;
 
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'font-size: 14px' : 'font-size: inherit' ) };
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? 'font-size: 14px; white-space: normal; text-align: start'
+			: 'font-size: inherit' };
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {
