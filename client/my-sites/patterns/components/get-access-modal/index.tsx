@@ -33,7 +33,13 @@ export const PatternsGetAccessModal = ( {
 			} }
 		>
 			<div className="patterns-get-access-modal__content">
-				<button className="patterns-get-access-modal__close" onClick={ onClose }>
+				<button
+					className="patterns-get-access-modal__close"
+					onClick={ () => {
+						onClose();
+						tracksEventHandler( 'calypso_pattern_library_get_access_dismiss' );
+					} }
+				>
 					<Icon icon={ iconClose } size={ 24 } />
 				</button>
 				<div className="patterns-get-access-modal__inner">
