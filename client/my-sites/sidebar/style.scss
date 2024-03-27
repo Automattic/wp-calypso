@@ -33,9 +33,7 @@ $brand-text: "SF Pro Text", $sans;
 	--color-sidebar-submenu-selected-background: transparent;
 	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
 
-	.is-global-sidebar-visible,
-	.is-global-site-sidebar-visible {
-
+	.is-global-sidebar-visible {
 		--sidebar-width-max: 295px;
 		--sidebar-width-min: 295px;
 
@@ -59,6 +57,11 @@ $brand-text: "SF Pro Text", $sans;
 		--color-global-masterbar-text: var(--studio-white);
 		--color-global-masterbar-gridicon-fill: var(--color-masterbar-text);
 		--color-global-masterbar-hover-background: var(--studio-gray-80);
+	}
+
+	.is-unified-site-sidebar-visible {
+		--sidebar-width-max: 160px;
+		--sidebar-width-min: 160px;
 	}
 
 	.layout__secondary {
