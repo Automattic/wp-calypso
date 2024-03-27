@@ -397,6 +397,7 @@ function StatsCommercialFlowOptOutForm( {
 	};
 	const commercialClassificationLastRunAt = useMemo(
 		() => parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ comemercialClassificationRunAt ]
 	);
 	const hasRunLessThan3DAgo =
