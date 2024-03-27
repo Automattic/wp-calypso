@@ -47,7 +47,7 @@ function calculateMasonryLayout( element: HTMLElement ) {
 	items.slice( columnCount ).forEach( ( item, i ) => {
 		const firstRowBottom = items[ i ].getBoundingClientRect().bottom;
 		const thisRowTop = item.getBoundingClientRect().top;
-		const parsedTransform = /translateY\((-?\d+(\.\d+)?)/.exec( item.style.transform );
+		const parsedTransform = /translateY\((-?\d+(\.\d+)?px)/.exec( item.style.transform );
 		const currentTransform = parsedTransform?.[ 1 ] ?? '0';
 
 		item.style.transform = `translateY(${
