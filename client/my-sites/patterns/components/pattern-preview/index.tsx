@@ -49,12 +49,12 @@ function useTimeoutToResetBoolean(
 
 type PatternPreviewProps = {
 	canCopy?: boolean;
-	category: string;
+	category?: string;
 	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
-	patternTypeFilter: PatternTypeFilter;
+	patternTypeFilter?: PatternTypeFilter;
 	isGridView?: boolean;
 	viewportWidth?: number;
 };
@@ -92,11 +92,15 @@ function PatternPreviewFragment( {
 	}
 
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const patternType =
+		typeof patternTypeFilter !== 'undefined'
+			? getTracksPatternType( patternTypeFilter )
+			: patternTypeFilter;
 	const recordCopyEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern?.name,
 			category,
-			type: getTracksPatternType( patternTypeFilter ),
+			type: patternType,
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			view: isGridView ? 'grid' : 'list',
 		} );
@@ -121,7 +125,7 @@ function PatternPreviewFragment( {
 		recordTracksEvent( tracksEventName, {
 			name: pattern.name,
 			category,
-			type: getTracksPatternType( patternTypeFilter ),
+			type: patternType,
 			view: isGridView ? 'grid' : 'list',
 		} );
 	};
