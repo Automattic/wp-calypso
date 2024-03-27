@@ -298,7 +298,11 @@ export function useCartForDIFM(
 	// [Effect] Loads required initial data
 	useEffect( () => {
 		if ( ! difmLiteProduct || ! userCurrencyCode ) {
-			dispatch( requestProductsList() );
+			const query = {
+				type: 'partial',
+				product_slugs: `${ WPCOM_DIFM_LITE },wp_difm_extra_page`,
+			};
+			dispatch( requestProductsList( query ) );
 		}
 	}, [ dispatch, difmLiteProduct, userCurrencyCode ] );
 

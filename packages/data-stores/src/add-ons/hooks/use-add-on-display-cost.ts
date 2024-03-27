@@ -6,9 +6,8 @@ const useAddOnDisplayCost = ( productSlug: ProductsList.StoreProductSlug, quanti
 	const translate = useTranslate();
 	const prices = useAddOnPrices( productSlug, quantity );
 	const formattedCost = prices?.formattedMonthlyPrice || '';
-	const productsList = ProductsList.useProducts();
+	const productsList = ProductsList.useProducts( [ productSlug ] );
 	const product = productsList.data?.[ productSlug ];
-
 	if ( product?.term === 'month' ) {
 		/* Translators: %(formattedCost)s: monthly price formatted with currency */
 		return translate( '%(formattedCost)s/month, billed monthly', {

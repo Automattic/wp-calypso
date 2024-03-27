@@ -285,6 +285,7 @@ export default function DIFMLanding( {
 	siteId?: number | null;
 	isStoreFlow: boolean;
 } ) {
+	const required_product_slugs = [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ];
 	const translate = useTranslate();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
@@ -396,7 +397,9 @@ export default function DIFMLanding( {
 
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
+			{ ! hasPriceDataLoaded && (
+				<QueryProductsList product_slug_list={ required_product_slugs } type="partial" />
+			) }
 			<Wrapper>
 				<ContentSection>
 					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
