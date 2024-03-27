@@ -1,10 +1,11 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useContext, type FunctionComponent } from 'react';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import { PaymentMethodOverviewContext } from '../../context';
 import useStoredCards from '../../hooks/use-stored-cards';
 import DeletePrimaryCardConfirmation from './delete-primary-confirmation';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
@@ -25,11 +26,13 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const { paging } = useContext( PaymentMethodOverviewContext );
+
 	// Fetch the stored cards from the cache if they are available.
 	const {
 		data: { allStoredCards },
 		isFetching,
-	} = useStoredCards( Infinity );
+	} = useStoredCards( paging, { staleTime: Infinity } );
 
 	return (
 		<Dialog

@@ -82,14 +82,14 @@
 		pointer-events: none;
 	}
 
-	.payment-method-overview__pagination--has-prev {
+	&.payment-method-overview__pagination--has-prev {
 		.pagination__list-item.is-left {
 			opacity: 1;
 			pointer-events: initial;
 		}
 	}
 
-	.payment-method-overview__pagination--has-next {
+	&.payment-method-overview__pagination--has-next {
 		.pagination__list-item.is-right {
 			opacity: 1;
 			pointer-events: initial;
