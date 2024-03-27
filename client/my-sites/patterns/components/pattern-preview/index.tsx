@@ -6,7 +6,7 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
@@ -55,6 +55,7 @@ function PatternPreviewFragment( {
 	pattern,
 	viewportWidth,
 }: PatternPreviewProps ) {
+	const ref = useRef< HTMLDivElement >( null );
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
 
@@ -79,6 +80,10 @@ function PatternPreviewFragment( {
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
+	useEffect( () => {
+		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
+	}, [ nodeSize.width, nodeSize.height ] );
+
 	if ( ! pattern ) {
 		return null;
 	}
@@ -92,6 +97,7 @@ function PatternPreviewFragment( {
 				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
 			id={ idAttr }
+			ref={ ref }
 		>
 			{ resizeObserver }
 
