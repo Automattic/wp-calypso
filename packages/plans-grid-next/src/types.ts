@@ -84,8 +84,6 @@ export interface PlanActionOverrides {
 	};
 }
 
-// export type PlanAction = ( isFreeTrialPlan?: boolean ) => void;
-
 // A generic type representing the response of an async request.
 // It's probably generic enough to be put outside of the pricing grid package,
 // but at the moment it's located here to reduce its scope of influence.
@@ -151,7 +149,6 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	// TODO: Fix type
 	getActionCallback: ( planSlug: PlanSlug, options?: ActionCallbackOptions ) => () => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
