@@ -18,8 +18,8 @@ import { JetpackBackupPreview } from './jetpack-backup';
 import { JetpackBoostPreview } from './jetpack-boost';
 import { JetpackMonitorPreview } from './jetpack-monitor';
 import { JetpackPluginsPreview } from './jetpack-plugins';
-import { JetpackScanPreview } from './jetpack-scan';
 import { JetpackStatsPreview } from './jetpack-stats';
+import { JetpackScanPreview } from './scan/jetpack-scan';
 
 export function JetpackPreviewPane( {
 	site,
@@ -74,7 +74,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview sideId={ site.blog_id } />
+				<JetpackScanPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_MONITOR_ID,
