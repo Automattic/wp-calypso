@@ -51,13 +51,15 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
 	const serverSyncCallbacks = {
-		onSuccess: () =>
-			onSyncSuccess &&
-			onSyncSuccess( {
+		onSuccess: () => {
+			const date = new Date( timestamp * 1000 );
+			onSyncSuccess?.( {
 				plugins: selectedPlugins,
 				frequency,
-				hours: new Date( timestamp * 1000 ).getHours(),
-			} ),
+				hours: date.getHours(),
+				weekday: frequency === 'weekly' ? date.getDay() : undefined,
+			} );
+		},
 		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
 	};
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );

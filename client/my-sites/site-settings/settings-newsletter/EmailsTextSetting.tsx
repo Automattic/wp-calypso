@@ -77,24 +77,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 						</FormSettingExplanation>
 					</>
 				) }
-
-				<FormLabel htmlFor="comment_follow_email_message">
-					{ translate( 'Comment follow email message' ) }
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate(
-						'The ability to customize the comment follow email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
-					) }
-				</FormSettingExplanation>
-
-				<FormLabel htmlFor="confirmation_email_message">
-					{ translate( 'Confirmation email message' ) }
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate(
-						'The ability to customize the confirmation email message had to be disabled to prevent abuse. It will revert to the default message for all new subscribers.'
-					) }
-				</FormSettingExplanation>
 			</FormFieldset>
 		</div>
 	);

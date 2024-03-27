@@ -13,6 +13,7 @@ interface Props {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
+	isDeleteInProgress?: boolean;
 }
 
 const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
@@ -20,10 +21,15 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 	isVisible,
 	onClose,
 	onConfirm,
+	isDeleteInProgress,
 } ) => {
 	const translate = useTranslate();
 
-	const { allStoredCards, isFetching } = useStoredCards();
+	// Fetch the stored cards from the cache if they are available.
+	const {
+		data: { allStoredCards },
+		isFetching,
+	} = useStoredCards( Infinity );
 
 	return (
 		<Dialog
@@ -35,7 +41,7 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 					{ translate( 'Go back' ) }
 				</Button>,
 
-				<Button disabled={ isFetching } onClick={ onConfirm } primary scary>
+				<Button disabled={ isDeleteInProgress } onClick={ onConfirm } primary scary>
 					{ translate( 'Delete payment method' ) }
 				</Button>,
 			] }

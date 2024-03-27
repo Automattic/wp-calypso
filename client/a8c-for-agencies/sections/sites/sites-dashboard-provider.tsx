@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import {
 	AgencyDashboardFilterOption,
 	DashboardSortInterface,
@@ -11,6 +11,7 @@ interface Props {
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
+	isFavoriteFilterInitialState: boolean;
 	children: ReactNode;
 	path: string;
 	search: string;
@@ -25,6 +26,7 @@ export const SitesDashboardProvider = ( {
 	categoryInitialState,
 	siteUrlInitialState,
 	siteFeatureInitialState,
+	isFavoriteFilterInitialState,
 	children,
 	path,
 	search,
@@ -36,6 +38,7 @@ export const SitesDashboardProvider = ( {
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
 	const [ selectedSiteUrl, setSelectedSiteUrl ] = useState( siteUrlInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
+	const [ isFavoriteFilter, setIsFavoriteFilter ] = useState( isFavoriteFilterInitialState );
 
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
@@ -57,6 +60,10 @@ export const SitesDashboardProvider = ( {
 	const onHideLicenseInfo = () => {
 		setCurrentLicenseInfo( null );
 	};
+
+	useEffect( () => {
+		setIsFavoriteFilter( isFavoriteFilterInitialState );
+	}, [ isFavoriteFilterInitialState ] );
 
 	const sitesDashboardContextValue = {
 		selectedCategory: selectedCategory,
@@ -83,9 +90,10 @@ export const SitesDashboardProvider = ( {
 		setMostRecentConnectedSite,
 		isPopoverOpen,
 		setIsPopoverOpen,
+		isFavoriteFilter,
+		setIsFavoriteFilter,
 		showSitesDashboardV2: true,
 	};
-
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>
 			{ children }

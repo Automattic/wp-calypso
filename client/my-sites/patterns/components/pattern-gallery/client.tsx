@@ -6,7 +6,7 @@ import {
 	DESKTOP_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
-import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/controller';
+import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

@@ -748,7 +748,7 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( param ) =>
 					commandNavigation(
 						`${
-							siteUsesWpAdminInterface( param.site )
+							param.site.is_wpcom_atomic && siteUsesWpAdminInterface( param.site )
 								? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
 								: '/activity-log/'
 						}${ param.site.slug }`
@@ -767,7 +767,7 @@ export const useCommandsArrayWpcom = ( {
 				onClick: ( param ) =>
 					commandNavigation(
 						`${
-							siteUsesWpAdminInterface( param.site )
+							param.site.is_wpcom_atomic && siteUsesWpAdminInterface( param.site )
 								? 'https://jetpack.com/redirect/?source=calypso-backups&site='
 								: '/backup/'
 						}${ param.site.slug }`
@@ -1238,7 +1238,13 @@ export const useCommandsArrayWpcom = ( {
 			siteFunctions: {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
 				onClick: ( param ) =>
-					commandNavigation( `/subscribers/${ param.site.slug }#add-subscribers` )( param ),
+					commandNavigation(
+						`${
+							param.site.is_wpcom_atomic && siteUsesWpAdminInterface( param.site )
+								? 'https://cloud.jetpack.com/subscribers/'
+								: '/subscribers/'
+						}${ param.site.slug }#add-subscribers`
+					)( param ),
 			},
 			icon: subscriberIcon,
 		},
@@ -1248,7 +1254,14 @@ export const useCommandsArrayWpcom = ( {
 			callback: setStateCallback( 'manageSubscribers', __( 'Select site to manage subscribers' ) ),
 			siteFunctions: {
 				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-				onClick: ( param ) => commandNavigation( `/subscribers/${ param.site.slug }` )( param ),
+				onClick: ( param ) =>
+					commandNavigation(
+						`${
+							param.site.is_wpcom_atomic && siteUsesWpAdminInterface( param.site )
+								? 'https://cloud.jetpack.com/subscribers/'
+								: '/subscribers/'
+						}${ param.site.slug }`
+					)( param ),
 			},
 			icon: subscriberIcon,
 		},

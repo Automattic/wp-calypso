@@ -5,12 +5,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import {
-	Icon,
-	starEmpty as iconStar,
-	category as iconCategory,
-	menu as iconMenu,
-} from '@wordpress/icons';
+import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
@@ -20,13 +15,13 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/controller';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
 	usePatternSearchTerm,
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
@@ -111,6 +106,20 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
+	const recordClickEvent = (
+		tracksEventName: string,
+		view: PatternView,
+		typeFilter: PatternTypeFilter
+	) => {
+		recordTracksEvent( tracksEventName, {
+			category,
+			is_logged_in: isLoggedIn,
+			type: getTracksPatternType( typeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view,
+		} );
+	};
+
 	const currentView = isGridView ? 'grid' : 'list';
 
 	const handleViewChange = ( view: PatternView ) => {
@@ -118,13 +127,7 @@ export const PatternLibrary = ( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_pattern_library_view_switch', {
-			category,
-			is_logged_in: isLoggedIn,
-			type: getTracksPatternType( patternTypeFilter ),
-			user_is_dev_account: isDevAccount ? '1' : '0',
-			view,
-		} );
+		recordClickEvent( 'calypso_pattern_library_view_switch', view, patternTypeFilter );
 
 		const url = new URL( window.location.href );
 		url.searchParams.delete( 'grid' );
@@ -200,120 +203,121 @@ export const PatternLibrary = ( {
 				title={ translate_not_yet( 'It’s Easier With Patterns' ) }
 			/>
 
-			<div className="pattern-library__pill-navigation">
-				<CategoryPillNavigation
-					selectedCategoryId={ category }
-					buttons={ [
-						{
-							icon: <Icon icon={ iconStar } size={ 30 } />,
-							label: translate_not_yet( 'Discover' ),
-							link: addLocaleToPathLocaleInFront( '/patterns' ),
-							isActive: isHomePage,
-						},
-						{
-							icon: <Icon icon={ iconCategory } size={ 26 } />,
-							label: translate_not_yet( 'All Categories' ),
-							link: '/222',
-						},
-					] }
-					categories={ categoryNavList }
-				/>
-			</div>
+			<div className="pattern-library__wrapper">
+				<div className="pattern-library__pill-navigation">
+					<CategoryPillNavigation
+						selectedCategoryId={ category }
+						buttons={ [
+							{
+								icon: <Icon icon={ iconCategory } size={ 26 } />,
+								label: translate_not_yet( 'All Categories' ),
+								link: addLocaleToPathLocaleInFront( '/patterns' ),
+								isActive: isHomePage,
+							},
+						] }
+						categories={ categoryNavList }
+					/>
+				</div>
 
-			{ isHomePage && (
-				<CategoryGallery
-					title={ translate_not_yet( 'Ship faster, ship more' ) }
-					description={ translate_not_yet(
-						'Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time.'
-					) }
-					categories={ categories }
-					patternTypeFilter={ PatternTypeFilter.REGULAR }
-				/>
-			) }
+				{ isHomePage && (
+					<CategoryGallery
+						title={ translate_not_yet( 'Ship faster, ship more' ) }
+						description={ translate_not_yet(
+							'Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time.'
+						) }
+						categories={ categories }
+						patternTypeFilter={ PatternTypeFilter.REGULAR }
+					/>
+				) }
 
-			{ ! isHomePage && (
-				<PatternLibraryBody className="pattern-library">
-					<div className="pattern-library__header">
-						<h1 className="pattern-library__title">
-							{ searchTerm
-								? translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
-										count: patterns.length,
-										args: { count: patterns.length },
-								  } )
-								: translate_not_yet( 'Patterns' ) }
-						</h1>
+				{ ! isHomePage && (
+					<PatternLibraryBody className="pattern-library">
+						<div className="pattern-library__header">
+							<h1 className="pattern-library__title">
+								{ searchTerm
+									? translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
+											count: patterns.length,
+											args: { count: patterns.length },
+									  } )
+									: translate_not_yet( 'Patterns' ) }
+							</h1>
 
-						{ category && (
+							{ category && !! categoryObject?.pagePatternCount && (
+								<ToggleGroupControl
+									className="pattern-library__toggle--pattern-type"
+									isBlock
+									label=""
+									onChange={ ( value ) => {
+										const href =
+											getCategoryUrlPath( category, value as PatternTypeFilter ) +
+											( isGridView ? '?grid=1' : '' );
+										recordClickEvent(
+											'calypso_pattern_library_type_switch',
+											currentView,
+											value as PatternTypeFilter
+										);
+										page( href );
+									} }
+									value={ patternTypeFilter }
+								>
+									<ToggleGroupControlOption
+										className="pattern-library__toggle-option"
+										label={ translate_not_yet( 'Patterns' ) }
+										value={ PatternTypeFilter.REGULAR }
+									/>
+									<ToggleGroupControlOption
+										className="pattern-library__toggle-option"
+										label={ translate_not_yet( 'Page layouts' ) }
+										value={ PatternTypeFilter.PAGES }
+									/>
+								</ToggleGroupControl>
+							) }
+
 							<ToggleGroupControl
-								className="pattern-library__toggle--pattern-type"
-								isBlock
+								className="pattern-library__toggle--view"
 								label=""
-								onChange={ ( value ) => {
-									const href =
-										getCategoryUrlPath( category, value as PatternTypeFilter ) +
-										( isGridView ? '?grid=1' : '' );
-									page( href );
-								} }
-								value={ patternTypeFilter }
+								isBlock
+								value={ isGridView ? 'grid' : 'list' }
 							>
 								<ToggleGroupControlOption
-									className="pattern-library__toggle-option"
-									label={ translate_not_yet( 'Patterns' ) }
-									value={ PatternTypeFilter.REGULAR }
+									className="pattern-library__toggle-option--list-view"
+									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
+									value="list"
+									onClick={ () => handleViewChange( 'list' ) }
 								/>
 								<ToggleGroupControlOption
-									className="pattern-library__toggle-option"
-									disabled={ categoryObject?.pagePatternCount === 0 }
-									label={ translate_not_yet( 'Page layouts' ) }
-									value={ PatternTypeFilter.PAGES }
+									className="pattern-library__toggle-option--grid-view"
+									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
+									value="grid"
+									onClick={ () => handleViewChange( 'grid' ) }
 								/>
 							</ToggleGroupControl>
+						</div>
+
+						<PatternGallery
+							getPatternPermalink={ ( pattern ) =>
+								getPatternPermalink( pattern, category, patternTypeFilter, categories )
+							}
+							isGridView={ isGridView }
+							patterns={ patterns }
+							patternTypeFilter={ patternTypeFilter }
+						/>
+					</PatternLibraryBody>
+				) }
+
+				{ isHomePage && <PatternsCopyPasteInfo /> }
+
+				{ isHomePage && (
+					<CategoryGallery
+						title={ translate_not_yet( 'Beautifully curated page layouts' ) }
+						description={ translate_not_yet(
+							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
 						) }
-
-						<ToggleGroupControl
-							className="pattern-library__toggle--view"
-							label=""
-							isBlock
-							value={ isGridView ? 'grid' : 'list' }
-						>
-							<ToggleGroupControlOption
-								className="pattern-library__toggle-option--list-view"
-								label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
-								value="list"
-								onClick={ () => handleViewChange( 'list' ) }
-							/>
-							<ToggleGroupControlOption
-								className="pattern-library__toggle-option--grid-view"
-								label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
-								value="grid"
-								onClick={ () => handleViewChange( 'grid' ) }
-							/>
-						</ToggleGroupControl>
-					</div>
-
-					<PatternGallery
-						getPatternPermalink={ ( pattern ) =>
-							getPatternPermalink( pattern, category, patternTypeFilter, categories )
-						}
-						isGridView={ isGridView }
-						patterns={ patterns }
-						patternTypeFilter={ patternTypeFilter }
+						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
+						patternTypeFilter={ PatternTypeFilter.PAGES }
 					/>
-				</PatternLibraryBody>
-			) }
-
-			{ isHomePage && <PatternsCopyPasteInfo /> }
-
-			{ isHomePage && (
-				<CategoryGallery
-					title={ translate_not_yet( 'Beautifully curated page layouts' ) }
-					description={ translate_not_yet(
-						'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
-					) }
-					categories={ categories?.filter( ( c ) => c.pagePatternCount ) }
-					patternTypeFilter={ PatternTypeFilter.PAGES }
-				/>
-			) }
+				) }
+			</div>
 
 			<PatternsGetStarted />
 		</>

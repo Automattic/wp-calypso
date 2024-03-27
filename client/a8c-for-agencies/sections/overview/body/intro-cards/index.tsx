@@ -60,8 +60,12 @@ const Card4 = () => {
 			<h1>{ translate( 'And more to come' ) }</h1>
 			<p>
 				{ translate(
-					// to do: change the x@automattic.com email address
-					'We’re only just getting started. Our mission is to create an agency program that helps your business to grow with us. If you have any feedback or suggestions for us, we’d love to hear from you at X@automattic.com.'
+					'We’re only just getting started. Our mission is to create an agency program that helps your business to grow with us. If you have any feedback or suggestions for us, we’d love to hear from you at {{mailto}}partnerships@automattic.com{{/mailto}}.',
+					{
+						components: {
+							mailto: <a href="mailto:partnerships@automattic.com" />,
+						},
+					}
 				) }
 			</p>
 		</>

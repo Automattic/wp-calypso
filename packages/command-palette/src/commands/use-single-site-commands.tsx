@@ -520,7 +520,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: commandNavigation(
 				`${
-					shouldUseWpAdmin
+					isAtomic && shouldUseWpAdmin
 						? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
 						: '/activity-log/'
 				}:site`
@@ -533,7 +533,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			label: __( 'Open Jetpack Backup', __i18n_text_domain__ ),
 			callback: commandNavigation(
 				`${
-					shouldUseWpAdmin
+					isAtomic && shouldUseWpAdmin
 						? 'https://jetpack.com/redirect/?source=calypso-backups&site='
 						: '/backup/'
 				}:site`
@@ -898,14 +898,22 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'import subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 				_x( 'upload subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 			].join( ' ' ),
-			callback: commandNavigation( '/subscribers/:site#add-subscribers' ),
+			callback: commandNavigation(
+				`${
+					isAtomic && shouldUseWpAdmin ? 'https://cloud.jetpack.com/subscribers/' : '/subscribers/'
+				}:site#add-subscribers`
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: subscriberIcon,
 		},
 		{
 			name: 'manageSubscribers',
 			label: __( 'Manage subscribers', __i18n_text_domain__ ),
-			callback: commandNavigation( '/subscribers/:site' ),
+			callback: commandNavigation(
+				`${
+					isAtomic && shouldUseWpAdmin ? 'https://cloud.jetpack.com/subscribers/' : '/subscribers/'
+				}:site`
+			),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: subscriberIcon,
 		},
