@@ -1,7 +1,9 @@
-import { ComponentSwapper, CountComparisonCard, ShortenedNumber } from '@automattic/components';
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import ComponentSwapper from '../component-swapper';
+import ShortenedNumber from '../number-formatters';
+import CountComparisonCard from './count-comparison-card';
 
 import './style.scss';
 
