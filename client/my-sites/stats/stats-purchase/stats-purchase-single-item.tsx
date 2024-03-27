@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
@@ -346,6 +347,9 @@ function StatsCommercialFlowOptOutForm( {
 		'contact-details': translate( 'Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
 	};
+	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 
 	// Checkbox state
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
@@ -402,6 +406,9 @@ function StatsCommercialFlowOptOutForm( {
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
 	const allConditionsChecked =
 		isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked;
+	const isFormSubmissionDisabled = () => {
+		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
+	};
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
@@ -472,37 +479,46 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				<Button
-					variant="secondary"
-					disabled={ hasRunLessThan3DAgo || ! allConditionsChecked }
-					onClick={ handleCommercialClassification }
-				>
-					{ translate( 'Reverify' ) }
-				</Button>
-				{ ! isClassificationInProgress && commercialClassificationLastRunAt > 0 && (
+				{ supportsOnDemandCommercialClassification && (
 					<Button
 						variant="secondary"
-						// disabled={ isFormSubmissionDisabled() }
+						disabled={ hasRunLessThan3DAgo || ! allConditionsChecked }
+						onClick={ handleCommercialClassification }
+					>
+						{ translate( 'Reverify' ) }
+					</Button>
+				) }
+				{ ( ! supportsOnDemandCommercialClassification ||
+					( isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
+					<Button
+						variant="secondary"
+						disabled={ ! supportsOnDemandCommercialClassification && isFormSubmissionDisabled() }
 						onClick={ formHandler }
 					>
 						{ formButton }
 					</Button>
 				) }
 			</div>
-			{ errorMessage && (
-				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>Error: { errorMessage }</p>
-			) }
-			{ isClassificationInProgress && ! errorMessage && (
-				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-					{ translate( 'We are verifying your site. Please come back later…' ) }
-				</p>
-			) }
-			{ ! isClassificationInProgress && commercialClassificationLastRunAt > 0 && ! errorMessage && (
-				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-					{ translate(
-						'We have finished verify your site. If you still think this is an error, please contact our support.'
+			{ supportsOnDemandCommercialClassification && (
+				<>
+					{ errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>Error: { errorMessage }</p>
 					) }
-				</p>
+					{ isClassificationInProgress && ! errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+							{ translate( 'We are verifying your site. Please come back later…' ) }
+						</p>
+					) }
+					{ ! isClassificationInProgress &&
+						commercialClassificationLastRunAt > 0 &&
+						! errorMessage && (
+							<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+								{ translate(
+									'We have finished verify your site. If you still think this is an error, please contact our support.'
+								) }
+							</p>
+						) }
+				</>
 			) }
 		</>
 	);

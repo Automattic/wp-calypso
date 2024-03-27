@@ -63,5 +63,10 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 				// UTM stats are only available for Jetpack sites for now.
 				isSiteJetpackNotAtomic &&
 				version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ) ),
+		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
+			statsAdminVersion,
+			'0.18.0-alpha',
+			isOdysseyStats
+		),
 	};
 }
