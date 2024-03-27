@@ -199,7 +199,7 @@ const Home = () => {
 	 */
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
 		const ctaURL = isJetpackCloud()
-			? 'https://jetpack.com/support/jetpack-blocks/donations-block/'
+			? 'https://jetpack.com/support/jetpack-blocks/payments-block/'
 			: 'https://wordpress.com/payments-donations/';
 		const cta = {
 			text: translate( 'Learn more' ),
@@ -408,13 +408,17 @@ const Home = () => {
 	 * Return the content to display in the Ads card based on the current plan.
 	 */
 	const getAdsCard = (): PromoSectionCardProps => {
+		const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
+
 		const cta =
 			hasWordAdsFeature || hasSetupAds
 				? {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
-							page( `/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }` );
+							page(
+								`${ earnPath }/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }`
+							);
 						},
 				  }
 				: {
