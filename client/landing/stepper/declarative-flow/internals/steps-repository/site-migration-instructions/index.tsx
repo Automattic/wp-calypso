@@ -86,25 +86,15 @@ const SiteMigrationInstructions: Step = function () {
 						}
 					) }
 				</li>
-				<li>
-					{ translate(
-						'When asked to select a destination host, pick {{em}}WordPress.com{{/em}}.',
-						{
-							components: {
-								em: <em />,
-							},
-						}
-					) }
-				</li>
+				<li>{ translate( 'When asked to select a destination host, pick ‘WordPress.com‘.' ) }</li>
 				{ isSuccess && migrationKey && (
 					<li>
 						{ translate(
-							'Copy and paste the migration key below in the {{em}}{{ migrationKeyField /}}{{/em}} field and click {{strong}}{{migrateButton /}}{{/strong}}.',
+							'Copy and paste the migration key below in the ‘{{ migrationKeyField /}}‘ field and click {{strong}}{{migrateButton /}}{{/strong}}.',
 							{
 								components: {
 									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
 									migrateButton: <DoNotTranslateIt value="Migrate" />,
-									em: <em />,
 									strong: <strong />,
 								},
 							}
@@ -115,7 +105,7 @@ const SiteMigrationInstructions: Step = function () {
 				{ isError && (
 					<li>
 						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}{{migrationKeyField /}}{{/em}} field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}}.',
+							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the ‘{{migrationKeyField /}}‘ field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}}.',
 							{
 								components: {
 									a: (
