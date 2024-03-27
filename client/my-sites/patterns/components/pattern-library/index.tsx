@@ -176,6 +176,56 @@ export const PatternLibrary = ( {
 
 	const isHomePage = ! category && ! searchTerm;
 
+	const PATTERN_SEO_CONTENT: Record< Category[ 'name' ], { title: string } > = useMemo(
+		() => ( {
+			default: {
+				title: translate( 'WordPress Patterns' ),
+			},
+			header: {
+				title: translate( 'WordPress Header Patterns' ),
+			},
+			footer: {
+				title: translate( 'WordPress Footer Patterns' ),
+			},
+			about: {
+				title: translate( 'WordPress About Patterns' ),
+			},
+			posts: {
+				title: translate( 'WordPress Blog Post Patterns' ),
+			},
+			contact: {
+				title: translate( 'WordPress Contact Patterns' ),
+			},
+			events: {
+				title: translate( 'WordPress Events Patterns' ),
+			},
+			gallery: {
+				title: translate( 'WordPress Gallery Patterns' ),
+			},
+			intro: {
+				title: translate( 'WordPress Intro Patterns' ),
+			},
+			menu: {
+				title: translate( 'WordPress Menu Patterns' ),
+			},
+			newsletter: {
+				title: translate( 'WordPress Newsletter Patterns' ),
+			},
+			services: {
+				title: translate( 'WordPress Services Patterns' ),
+			},
+			store: {
+				title: translate( 'WordPress Store Patterns' ),
+			},
+			testimonials: {
+				title: translate( 'WordPress Testimonial Patterns' ),
+			},
+		} ),
+		[ translate ]
+	);
+
+	const seoContent = category ? PATTERN_SEO_CONTENT[ category ] : PATTERN_SEO_CONTENT.default;
+
 	return (
 		<>
 			<PatternsPageViewTracker
@@ -189,7 +239,7 @@ export const PatternLibrary = ( {
 				searchTerm={ urlQuerySearchTerm }
 			/>
 
-			<DocumentHead title={ translate_not_yet( `WordPress ${ category } Patterns ` ) } />
+			<DocumentHead title={ seoContent.title } />
 
 			<PatternsHeader
 				description={ translate_not_yet(
