@@ -27,6 +27,7 @@ import {
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
+import { updateDashboardURLQueryArgs } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -124,8 +125,7 @@ export default function SitesDashboard() {
 		[ setSitesViewState ]
 	);
 	// Filter selection
-	// Todo: restore this code when the filters are implemented
-	/*useEffect( () => {
+	useEffect( () => {
 		if ( isLoading || isError ) {
 			return;
 		}
@@ -138,7 +138,16 @@ export default function SitesDashboard() {
 				return filterType;
 			} ) || [];
 
-	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
+		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
+	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
+
+	// Search query
+	useEffect( () => {
+		if ( isLoading || isError ) {
+			return;
+		}
+		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
+	}, [ isLoading, isError, sitesViewState.search ] );
 
 	// Build the query string with the search, page, sort, filter, etc.
 	const buildQueryString = useCallback( () => {
