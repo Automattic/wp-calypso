@@ -156,7 +156,7 @@ export default function SitesDashboard() {
 			urlQuery.set( 'sort_direction', sort.direction );
 		}
 		if ( filter.showOnlyFavorites ) {
-			urlQuery.set( 'is_favorite', '' );
+			urlQuery.set( 'is_favorite', 'true' );
 		}
 		if ( filter.issueTypes && filter.issueTypes.length > 0 ) {
 			urlQuery.set( 'issue_types', filter.issueTypes.join( ',' ) );

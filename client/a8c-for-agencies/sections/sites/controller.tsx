@@ -21,7 +21,7 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
-		showOnlyFavorites: is_favorite === true || is_favorite === '',
+		showOnlyFavorites: is_favorite === '' || is_favorite === '1' || is_favorite === 'true',
 	};
 	const sort = {
 		field: sort_field,
