@@ -1,11 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useAddHostingTrialMutation, {
+	HOSTING_INTENT_MIGRATE,
+} from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -60,6 +62,11 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const onFreeTrialClick = () => {
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
+		} else if ( config.isEnabled( 'onboarding/new-migration-flow' ) ) {
+			// If the user is in the new migration flow, we need to add the hosting trial with the intent
+			// so that the site created is UTF-8. I'am adding this check here to avoid changing the existing migration
+			// logic. Once the new migration flow is fully implemented, we can remove this check.
+			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 		} else {
 			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 		}
