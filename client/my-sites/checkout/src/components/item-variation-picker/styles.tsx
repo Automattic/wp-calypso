@@ -17,7 +17,8 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 
 	.gridicon {
 		fill: #a7aaad;
-		${ ( props ) => ( props.shouldUseCheckoutV2 ? `margin-left: 0;` : `margin-left: 14px;` ) };
+		${ ( props ) =>
+			props.shouldUseCheckoutV2 ? `margin-inline-start: 0;` : `margin-inline-start: 14px;` };
 	}
 
 	${ ( props ) =>
