@@ -5,7 +5,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	getPlanPath,
-	WPComStorageAddOnSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useMemo, useCallback } from '@wordpress/element';
@@ -13,11 +12,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move t
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import type { GridPlan, PlansIntent } from '@automattic/plans-grid-next';
+import type { ActionCallbackOptions, GridPlan, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
-	siteId?: number | null,
 	sitePlanSlug?: PlanSlug | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
@@ -76,8 +74,14 @@ function useUpgradeHandler(
 	);
 
 	const addSelectedPlanAndStorageAddon = useCallback(
-		( gridPlan: GridPlan, isFreeTrialPlan?: boolean, storageAddOn?: WPComStorageAddOnSlug ) => {
-			const { planSlug, freeTrialPlanSlug } = gridPlan;
+		( planSlug: PlanSlug, options: ActionCallbackOptions ) => {
+			const {
+				cartItemForPlan,
+				isFreeTrialPlan,
+				freeTrialPlanSlug,
+				storageAddOnSlug,
+				storageAddOnsForPlan,
+			} = options;
 
 			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
 				const freeTrialCartItem = { product_slug: freeTrialPlanSlug };
@@ -85,10 +89,8 @@ function useUpgradeHandler(
 				return;
 			}
 
-			const { cartItemForPlan, storageAddOnsForPlan } = gridPlan;
-
 			const selectedStorageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
-				return storageAddOn && addOn ? addOn.featureSlugs?.includes( storageAddOn ) : false;
+				return storageAddOnSlug && addOn ? addOn.featureSlugs?.includes( storageAddOnSlug ) : false;
 			} );
 
 			const storageAddOnCartItem = selectedStorageAddOn &&
@@ -96,7 +98,7 @@ function useUpgradeHandler(
 					product_slug: selectedStorageAddOn.productSlug,
 					quantity: selectedStorageAddOn.quantity,
 					volume: 1,
-					extra: { feature_slug: storageAddOn },
+					extra: { feature_slug: storageAddOnSlug },
 				};
 
 			if ( cartItemForPlan ) {
@@ -113,18 +115,9 @@ function useUpgradeHandler(
 	);
 
 	return useCallback(
-		( gridPlan: GridPlan ) => {
-			const { planSlug, freeTrialPlanSlug } = gridPlan;
-
-			return (
-				{
-					isFreeTrialPlan,
-					storageAddOn,
-				}: {
-					isFreeTrialPlan?: boolean;
-					storageAddOn?: WPComStorageAddOnSlug;
-				} = { isFreeTrialPlan: false, storageAddOn: undefined }
-			) => {
+		( planSlug: PlanSlug, options: ActionCallbackOptions ) => {
+			return () => {
+				const { isFreeTrialPlan, freeTrialPlanSlug } = options;
 				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
 
 				if ( ! isFreePlan( planSlug ) ) {
@@ -134,7 +127,7 @@ function useUpgradeHandler(
 						saw_free_trial_offer: !! freeTrialPlanSlug,
 					} );
 				}
-				addSelectedPlanAndStorageAddon?.( gridPlan, isFreeTrialPlan, storageAddOn );
+				addSelectedPlanAndStorageAddon?.( planSlug, options );
 			};
 		},
 		[ sitePlanSlug, addSelectedPlanAndStorageAddon ]
@@ -144,7 +137,6 @@ function useUpgradeHandler(
 function useActionCallback(
 	intent?: PlansIntent | null,
 	flowName?: string | null,
-	siteId?: number | null,
 	sitePlanSlug?: PlanSlug | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
@@ -152,7 +144,6 @@ function useActionCallback(
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ) {
 	const upgradeHandler = useUpgradeHandler(
-		siteId,
 		sitePlanSlug,
 		siteSlug,
 		withDiscount,
@@ -186,16 +177,28 @@ function useActionCallback(
 		return [ managePlan, manageAddon, gotoVip ];
 	}, [ currentPlanManageHref, flowName, planActionCallback, siteSlug ] );
 
-	return ( gridPlan: GridPlan ) => {
-		if ( isWpcomEnterpriseGridPlan( gridPlan.planSlug ) ) {
+	return (
+		planSlug: PlanSlug,
+		options: ActionCallbackOptions = {
+			cartItemForPlan: { product_slug: '' },
+			currentPlan: false,
+			freeTrialPlanSlug: undefined,
+			isFreeTrialPlan: false,
+			storageAddOnSlug: undefined,
+			storageAddOnsForPlan: null,
+		}
+	) => {
+		const { currentPlan } = options;
+
+		if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 			return gotoVip;
 		}
 
-		if ( sitePlanSlug && gridPlan.current && intent !== 'plans-p2' ) {
+		if ( sitePlanSlug && currentPlan && intent !== 'plans-p2' ) {
 			return isFreePlan( sitePlanSlug ) ? manageAddon : managePlan;
 		}
 
-		return upgradeHandler( gridPlan );
+		return upgradeHandler( planSlug, options );
 	};
 }
 

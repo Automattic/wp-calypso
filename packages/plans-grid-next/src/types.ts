@@ -136,14 +136,14 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
-// TODO: Consider generalizing this type
-type onPlanCTAClick = ( {
-	isFreeTrialPlan,
-	storageAddOn,
-}?: {
-	isFreeTrialPlan?: boolean | undefined;
-	storageAddOn?: WPComStorageAddOnSlug | undefined;
-} ) => void;
+export type ActionCallbackOptions = {
+	cartItemForPlan?: { product_slug: string } | null;
+	currentPlan?: boolean;
+	freeTrialPlanSlug?: PlanSlug;
+	isFreeTrialPlan?: boolean;
+	storageAddOnSlug?: WPComStorageAddOnSlug;
+	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
+};
 
 export type GridContextProps = {
 	gridPlans: GridPlan[];
@@ -152,7 +152,7 @@ export type GridContextProps = {
 	selectedSiteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	// TODO: Fix type
-	getActionCallback: ( gridPlan: GridPlan ) => onPlanCTAClick | ( ( gridPlan: GridPlan ) => void );
+	getActionCallback: ( planSlug: PlanSlug, options?: ActionCallbackOptions ) => () => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

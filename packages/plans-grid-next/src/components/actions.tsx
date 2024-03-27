@@ -15,7 +15,6 @@ import {
 	isFreePlan,
 	isBusinessPlan,
 } from '@automattic/calypso-products';
-import { WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
@@ -75,13 +74,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	onPlanCtaClick: ( {
-		isFreeTrialPlan,
-		storageAddOn,
-	}?: {
-		isFreeTrialPlan?: boolean;
-		storageAddOn?: WPComStorageAddOnSlug;
-	} ) => void;
+	onPlanCtaClick: () => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
@@ -96,8 +89,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 		},
 	} );
 
-	// TODO: Fix isFreeTrialPlan param name
-	const onClick = () => onPlanCtaClick( { isFreeTrialPlan: hasFreeTrialPlan } );
+	const onClick = () => onPlanCtaClick();
 
 	if ( isFreePlan( planSlug ) ) {
 		btnText = translate( 'Start with Free' );
@@ -133,7 +125,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
 					<PlanButton
 						planSlug={ planSlug }
-						onClick={ () => onPlanCtaClick( { isFreeTrialPlan: false } ) }
+						// onClick={ () => onPlanCtaClick( { isFreeTrialPlan: false } ) }
+						onClick={ () => onPlanCtaClick() }
 						borderless
 					>
 						{ btnText }
@@ -226,14 +219,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
-	// TODO: Fix Type
-	onPlanCtaClick: ( {
-		isFreeTrialPlan,
-		storageAddOn,
-	}?: {
-		isFreeTrialPlan?: boolean;
-		storageAddOn?: WPComStorageAddOnSlug;
-	} ) => void;
+	onPlanCtaClick: () => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
@@ -279,7 +265,7 @@ const LoggedInPlansFeatureActionButton = ( {
 					planSlug={ planSlug }
 					// TODO: Replace planActionOverrides callback
 					// onClick={ planActionOverrides.loggedInFreePlan.callback }
-					onClick={ () => onPlanCtaClick() }
+					onClick={ onPlanCtaClick }
 					current={ current }
 				>
 					{ planActionOverrides.loggedInFreePlan.text }
@@ -361,7 +347,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</PlanButton>
 			);
@@ -369,7 +355,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</PlanButton>
 			);
@@ -377,7 +363,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Yearly' ) }
 				</PlanButton>
 			);
@@ -412,11 +398,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( availableForPurchase ) {
 		return (
-			<PlanButton
-				planSlug={ planSlug }
-				onClick={ () => onPlanCtaClick( { storageAddOn: selectedStorageOptionForPlan } ) }
-				current={ current }
-			>
+			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
 				{ buttonTextFallback }
 			</PlanButton>
 		);
@@ -461,21 +443,36 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const {
 		gridPlansIndex,
 		helpers: { getActionCallback },
+		selectedSiteId,
 	} = usePlansGridContext();
 	const {
+		current,
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
+		cartItemForPlan,
+		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 	const { prices } = usePlanPricingInfoFromGridPlans( {
 		gridPlans: visibleGridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
-	const onPlanCtaClick = getActionCallback( gridPlansIndex[ planSlug ] );
+	const storageAddOnSlug = useSelect(
+		( select ) =>
+			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ),
+		[ planSlug ]
+	);
+	const onPlanCtaClick = getActionCallback( planSlug, {
+		cartItemForPlan,
+		currentPlan: current,
+		freeTrialPlanSlug,
+		storageAddOnSlug,
+		storageAddOnsForPlan,
+	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ () => onPlanCtaClick() }>
+			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick }>
 				{ translate( 'Learn more' ) }
 			</PlanButton>
 		);
@@ -503,6 +500,15 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		);
 	}
 	if ( isInSignup ) {
+		const onPlanCtaClick = getActionCallback( planSlug, {
+			cartItemForPlan,
+			currentPlan: current,
+			freeTrialPlanSlug,
+			isFreeTrialPlan: !! freeTrialPlanSlug,
+			storageAddOnSlug,
+			storageAddOnsForPlan,
+		} );
+
 		return (
 			<SignupFlowPlanFeatureActionButton
 				planSlug={ planSlug }

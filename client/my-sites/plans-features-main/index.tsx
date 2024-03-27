@@ -388,7 +388,6 @@ const PlansFeaturesMain = ( {
 	const getActionCallback = useActionCallback(
 		intent,
 		flowName,
-		siteId,
 		sitePlanSlug,
 		siteSlug,
 		withDiscount,
