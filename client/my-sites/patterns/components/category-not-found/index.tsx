@@ -9,7 +9,7 @@ import './style.scss';
 
 type PatternsCategoryNotFoundProps = {
 	category: string;
-	referrer: string;
+	referrer?: string;
 };
 
 export const PatternsCategoryNotFound = ( {
