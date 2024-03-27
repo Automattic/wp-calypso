@@ -194,6 +194,55 @@ function WeeklyHighlighCardsStandard( {
 	);
 }
 
+function WeeklyHighlighCardsMobile( {
+	counts,
+	previousCounts,
+	showValueTooltip,
+	onClickComments,
+	onClickLikes,
+	onClickViews,
+	onClickVisitors,
+}: WeeklyHighlighCardsStandardProps ) {
+	console.log( 'WeeklyHighlighCardsMobile' );
+	const translate = useTranslate();
+	return (
+		<div className="highlight-cards-list">
+			<CountComparisonCard
+				heading={ translate( 'Visitors' ) }
+				icon={ <Icon icon={ people } /> }
+				count={ counts?.visitors ?? null }
+				previousCount={ previousCounts?.visitors ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickVisitors }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Views' ) }
+				icon={ <Icon icon={ eye } /> }
+				count={ counts?.views ?? null }
+				previousCount={ previousCounts?.views ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickViews }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Likes' ) }
+				icon={ <Icon icon={ starEmpty } /> }
+				count={ counts?.likes ?? null }
+				previousCount={ previousCounts?.likes ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickLikes }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Comments' ) }
+				icon={ <Icon icon={ commentContent } /> }
+				count={ counts?.comments ?? null }
+				previousCount={ previousCounts?.comments ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickComments }
+			/>
+		</div>
+	);
+}
+
 export default function WeeklyHighlightCards( {
 	className,
 	counts,
@@ -289,7 +338,7 @@ export default function WeeklyHighlightCards( {
 			<ComponentSwapper
 				breakpoint="<660px"
 				breakpointActiveComponent={
-					<WeeklyHighlighCardsStandard
+					<WeeklyHighlighCardsMobile
 						counts={ counts }
 						previousCounts={ previousCounts }
 						showValueTooltip={ showValueTooltip }
