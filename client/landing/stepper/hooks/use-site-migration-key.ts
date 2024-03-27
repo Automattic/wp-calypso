@@ -17,6 +17,7 @@ export const useSiteMigrationKey = ( siteId?: number ) => {
 		retry: false,
 		enabled: !! siteId,
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
+		staleTime: 60000, // 1 minute
 		refetchOnWindowFocus: false,
 	} );
 };
