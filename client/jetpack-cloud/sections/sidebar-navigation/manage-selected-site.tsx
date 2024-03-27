@@ -11,6 +11,7 @@ import {
 	search,
 	shield,
 	people,
+	payment,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -39,7 +40,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
-	JETPACK_CLOUD_EARN_LINK,
+	JETPACK_CLOUD_MONETIZE_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
 	JETPACK_CLOUD_SUBSCRIBERS_LINK,
@@ -145,13 +146,13 @@ const useMenuItems = ( {
 					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SUBSCRIBERS_LINK }/${ siteSlug }` ),
 				},
 				{
-					icon: currencyDollar,
+					icon: payment,
 					path: '/',
-					link: `${ JETPACK_CLOUD_EARN_LINK }/${ siteSlug }`,
-					title: translate( 'Earn' ),
-					trackEventName: 'calypso_jetpack_sidebar_earn_clicked',
-					enabled: isAdmin && isSectionNameEnabled( 'jetpack-earn' ) && ! isWPForTeamsSite,
-					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_EARN_LINK }/${ siteSlug }` ),
+					link: `${ JETPACK_CLOUD_MONETIZE_LINK }/${ siteSlug }`,
+					title: translate( 'Monetize' ),
+					trackEventName: 'calypso_jetpack_sidebar_monetize_clicked',
+					enabled: isAdmin && isSectionNameEnabled( 'jetpack-monetize' ) && ! isWPForTeamsSite,
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_MONETIZE_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: settings,

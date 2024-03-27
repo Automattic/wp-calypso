@@ -663,8 +663,8 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'jetpack-earn',
-		paths: [ '/earn' ],
+		name: 'jetpack-monetize',
+		paths: [ '/monetize' ],
 		module: 'calypso/my-sites/earn',
 		group: 'jetpack-cloud',
 	},
