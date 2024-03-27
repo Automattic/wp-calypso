@@ -185,7 +185,7 @@ export default function SitesDashboard() {
 			url += `/${ category }`;
 		}
 
-		page.replace( url + queryString );
+		page.replace( url + queryString, null, false, false );
 
 		if ( sitesViewState.selectedSite ) {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
