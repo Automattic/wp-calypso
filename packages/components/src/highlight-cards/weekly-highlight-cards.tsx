@@ -206,39 +206,39 @@ function WeeklyHighlighCardsMobile( {
 	console.log( 'WeeklyHighlighCardsMobile' );
 	const translate = useTranslate();
 	return (
-		<div className="highlight-cards-list">
-			<CountComparisonCard
-				heading={ translate( 'Visitors' ) }
-				icon={ <Icon icon={ people } /> }
-				count={ counts?.visitors ?? null }
-				previousCount={ previousCounts?.visitors ?? null }
-				showValueTooltip={ showValueTooltip }
-				onClick={ onClickVisitors }
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Views' ) }
-				icon={ <Icon icon={ eye } /> }
-				count={ counts?.views ?? null }
-				previousCount={ previousCounts?.views ?? null }
-				showValueTooltip={ showValueTooltip }
-				onClick={ onClickViews }
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Likes' ) }
-				icon={ <Icon icon={ starEmpty } /> }
-				count={ counts?.likes ?? null }
-				previousCount={ previousCounts?.likes ?? null }
-				showValueTooltip={ showValueTooltip }
-				onClick={ onClickLikes }
-			/>
-			<CountComparisonCard
-				heading={ translate( 'Comments' ) }
-				icon={ <Icon icon={ commentContent } /> }
-				count={ counts?.comments ?? null }
-				previousCount={ previousCounts?.comments ?? null }
-				showValueTooltip={ showValueTooltip }
-				onClick={ onClickComments }
-			/>
+		<div className="highlight-cards-list-mobile">
+			<div className="highlight-cards-list-mobile__item" key="visitors">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ people } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">
+					{ translate( 'Visitors' ) }
+				</span>
+				<span className="highlight-cards-list-mobile__item-count">{ counts?.visitors ?? '-' }</span>
+			</div>
+			<div className="highlight-cards-list-mobile__item" key="views">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ eye } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Views' ) }</span>
+				<span className="highlight-cards-list-mobile__item-count">{ counts?.views ?? '-' }</span>
+			</div>
+			<div className="highlight-cards-list-mobile__item" key="likes">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ starEmpty } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
+				<span className="highlight-cards-list-mobile__item-count">{ counts?.likes ?? '-' }</span>
+			</div>
+			<div className="highlight-cards-list-mobile__item" key="comments">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ commentContent } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">
+					{ translate( 'Comments' ) }
+				</span>
+				<span className="highlight-cards-list-mobile__item-count">{ counts?.comments ?? '-' }</span>
+			</div>
 		</div>
 	);
 }
