@@ -15,12 +15,12 @@ describe( 'useSiteMigrationKey', () => {
 		);
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/sites/some-site-id/atomic-migration-status/migrate-guru-key' )
+			.get( '/wpcom/v2/sites/123/atomic-migration-status/migrate-guru-key' )
 			.query( { http_envelope: 1 } )
 			.once()
 			.reply( 200, { migration_key: 'some-migration-key' } );
 
-		const { result } = renderHook( () => useSiteMigrationKey( 'some-site-id' ), { wrapper } );
+		const { result } = renderHook( () => useSiteMigrationKey( 123 ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data?.migrationKey ).toEqual( 'some-migration-key' );
