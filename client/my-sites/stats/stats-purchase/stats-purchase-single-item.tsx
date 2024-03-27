@@ -312,16 +312,15 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! isCommercialOwned ||
-				( isCommercial && ! isNewSite && (
-					<StatsSingleItemCard>
-						<StatsCommercialFlowOptOutForm
-							isCommercial={ isCommercial }
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-						/>
-					</StatsSingleItemCard>
-				) ) }
+			{ ! isCommercialOwned && ! isNewSite && (
+				<StatsSingleItemCard>
+					<StatsCommercialFlowOptOutForm
+						isCommercial={ isCommercial }
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+					/>
+				</StatsSingleItemCard>
+			) }
 		</>
 	);
 };
