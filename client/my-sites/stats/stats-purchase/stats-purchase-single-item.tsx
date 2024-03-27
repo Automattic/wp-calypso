@@ -497,7 +497,7 @@ function StatsCommercialFlowOptOutForm( {
 					{ translate( 'We are verifying your site. Please come back later…' ) }
 				</p>
 			) }
-			{ ! isClassificationInProgress && ! errorMessage && (
+			{ ! isClassificationInProgress && commercialClassificationLastRunAt > 0 && ! errorMessage && (
 				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
 					{ translate(
 						'We have finished verify your site. If you still think this is an error, please contact our support.'
