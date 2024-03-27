@@ -16,7 +16,6 @@ import type {
 	Pattern,
 	PatternGalleryProps,
 	PatternTypeFilter,
-	PatternView,
 } from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -54,7 +53,7 @@ type PatternPreviewProps = {
 	isResizable?: boolean;
 	pattern: Pattern | null;
 	patternTypeFilter: PatternTypeFilter;
-	view: PatternView;
+	isGridView?: boolean;
 	viewportWidth?: number;
 };
 
@@ -65,7 +64,7 @@ function PatternPreviewFragment( {
 	getPatternPermalink = () => '',
 	pattern,
 	patternTypeFilter,
-	view,
+	isGridView,
 	viewportWidth,
 }: PatternPreviewProps ) {
 	const ref = useRef< HTMLDivElement >( null );
@@ -110,7 +109,7 @@ function PatternPreviewFragment( {
 			name: pattern.name,
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
-			view,
+			view: isGridView ? 'grid' : 'list',
 		} );
 	};
 

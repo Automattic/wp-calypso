@@ -136,7 +136,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							key={ pattern.ID }
 							pattern={ pattern }
 							patternTypeFilter={ patternTypeFilter }
-							view={ isGridView ? 'grid' : 'list' }
+							isGridView={ isGridView }
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
