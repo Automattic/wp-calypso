@@ -214,13 +214,6 @@ const Hosting = ( props ) => {
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
 
-	const onSecondaryCTAClick = () => {
-		if ( ! isEligibleForHostingTrial ) {
-			return;
-		}
-		setIsTrialAcknowledgeModalOpen( true );
-	};
-
 	const setOpenModal = ( isOpen ) => {
 		setIsTrialAcknowledgeModalOpen( isOpen );
 	};
@@ -255,15 +248,7 @@ const Hosting = ( props ) => {
 					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
 					title: translate( 'Upgrade your plan to access all hosting features' ),
 			  };
-		const secondaryCallToAction = isEligibleForHostingTrial ? translate( 'Try for free' ) : null;
-		return (
-			<HostingUpsellNudge
-				siteId={ siteId }
-				targetPlan={ targetPlan }
-				secondaryCallToAction={ secondaryCallToAction }
-				secondaryOnClick={ onSecondaryCTAClick }
-			/>
-		);
+		return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 	};
 
 	const getAtomicActivationNotice = () => {
