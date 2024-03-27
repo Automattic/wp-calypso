@@ -161,7 +161,7 @@ const SiteMigrationInstructions: Step = function () {
 						id="site-migration-instructions-header"
 						headerText={ translate( 'Ready to migrate your site?' ) }
 						align="center"
-						subHeaderText={ translate( 'Follow these steps to get started.' ) }
+						subHeaderText={ translate( 'Follow these steps' ) }
 						subHeaderAlign="center"
 					/>
 				}
