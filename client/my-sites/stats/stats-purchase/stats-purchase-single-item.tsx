@@ -396,15 +396,12 @@ function StatsCommercialFlowOptOutForm( {
 		[ comemercialClassificationRunAt ]
 	);
 	const hasRunLessThan3DAgo =
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 3; // 3 days
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
 	const isClassificationInProgress =
 		commercialClassificationLastRunAt > 0 &&
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60; // 1 hour
 	const allConditionsChecked =
 		isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked;
-	// const isFormSubmissionDisabled = () => {
-	// 	return ! allConditionsChecked || comemercialClassificationRunAt === 0;
-	// };
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
