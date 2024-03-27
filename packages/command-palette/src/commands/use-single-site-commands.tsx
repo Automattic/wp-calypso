@@ -579,7 +579,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 						/>
 					</g>
 					<defs>
-						<clipPath id="use-single-site-commands-clip0_2014_1339">
+						<clipPath id="clip0_2014_1339">
 							<rect width="19" height="18.6122" fill="white" />
 						</clipPath>
 					</defs>
