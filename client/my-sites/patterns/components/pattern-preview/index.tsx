@@ -81,20 +81,16 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	const translate_not_yet = useTranslate();
+	const translate = useTranslate();
 
 	const titleTooltipText = isPermalinkCopied
-		? translate_not_yet( 'Copied link to pattern' )
-		: translate_not_yet( 'Copy link to pattern' );
+		? translate( 'Copied link to pattern' )
+		: translate( 'Copy link to pattern' );
 
-	let copyButtonText = isPreviewLarge
-		? translate_not_yet( 'Copy pattern' )
-		: translate_not_yet( 'Copy' );
+	let copyButtonText = isPreviewLarge ? translate( 'Copy pattern' ) : translate( 'Copy' );
 
 	if ( isPatternCopied ) {
-		copyButtonText = isPreviewLarge
-			? translate_not_yet( 'Pattern copied!' )
-			: translate_not_yet( 'Copied' );
+		copyButtonText = isPreviewLarge ? translate( 'Pattern copied!' ) : translate( 'Copied' );
 	}
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
@@ -175,7 +171,7 @@ function PatternPreviewFragment( {
 						} }
 						transparent
 					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> { translate_not_yet( 'Get access' ) }
+						<Icon height={ 18 } icon={ lock } width={ 18 } /> { translate( 'Get access' ) }
 					</Button>
 				) }
 			</div>
