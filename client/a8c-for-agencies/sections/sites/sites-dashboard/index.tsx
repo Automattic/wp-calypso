@@ -74,7 +74,13 @@ export default function SitesDashboard() {
 	);
 
 	useEffect( () => {
-		if ( ! isLoading && ! isError && data && selectedSiteUrl ) {
+		if (
+			! isLoading &&
+			! isError &&
+			data &&
+			selectedSiteUrl &&
+			sitesViewState.selectedSite?.url !== selectedSiteUrl
+		) {
 			const site = data.sites.find( ( site: Site ) => site.url === selectedSiteUrl );
 
 			setSitesViewState( ( prevState ) => ( {
@@ -83,7 +89,14 @@ export default function SitesDashboard() {
 				type: 'list',
 			} ) );
 		}
-	}, [ data, isError, isLoading, selectedSiteUrl ] );
+	}, [
+		data,
+		isError,
+		isLoading,
+		selectedSiteUrl,
+		setSitesViewState,
+		sitesViewState.selectedSite?.url,
+	] );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
