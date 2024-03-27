@@ -1,7 +1,11 @@
+import page from '@automattic/calypso-router';
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classnames from 'classnames';
+import FormSelect from 'calypso/components/forms/form-select';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
 import './style.scss';
@@ -69,6 +73,33 @@ export const CategoryPillNavigation = ( {
 			inline: 'center',
 		} );
 	}, [ selectedCategoryId ] );
+
+	if ( isMobile() ) {
+		return (
+			<div className="category-pill-navigation">
+				<FormSelect
+					className="category-pill-navigation__mobile-select"
+					value={ window.location.pathname + window.location.search }
+					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) => {
+						page( event.target.value );
+					} }
+				>
+					{ buttons &&
+						buttons.map( ( button ) => (
+							<option key={ button.label } value={ addLocaleToPathLocaleInFront( button.link ) }>
+								{ button.label }
+							</option>
+						) ) }
+					{ categories &&
+						categories.map( ( category ) => (
+							<option key={ category.id } value={ addLocaleToPathLocaleInFront( category.link ) }>
+								{ category.label }
+							</option>
+						) ) }
+				</FormSelect>
+			</div>
+		);
+	}
 
 	return (
 		<div className="category-pill-navigation">
