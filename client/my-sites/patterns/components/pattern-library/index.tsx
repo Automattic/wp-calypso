@@ -295,6 +295,7 @@ export const PatternLibrary = ( {
 						</div>
 
 						<PatternGallery
+							category={ category }
 							getPatternPermalink={ ( pattern ) =>
 								getPatternPermalink( pattern, category, patternTypeFilter, categories )
 							}
