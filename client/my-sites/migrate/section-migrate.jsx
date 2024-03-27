@@ -680,8 +680,8 @@ export class SectionMigrate extends Component {
 			case 'in-progress':
 				return (
 					<MigrationInProgress
-						sourceSite={ get( sourceSite, 'domain' ) }
-						targetSite={ get( targetSite, 'domain' ) }
+						sourceSite={ sourceSite?.domain }
+						targetSite={ targetSite?.domain }
 						targetSiteId={ targetSiteId }
 						onComplete={ this.finishMigration }
 					/>
