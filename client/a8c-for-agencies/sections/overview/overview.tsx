@@ -20,19 +20,15 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
 			<LayoutTop>
-				<div className="a4a-overview-header">
-					<LayoutHeader>
-						<Title>{ title }</Title>
-						<Actions>
-							<OverviewHeaderActions />
-						</Actions>
-					</LayoutHeader>
-				</div>
+				<LayoutHeader className="a4a-overview-header">
+					<Title>{ title }</Title>
+					<Actions>
+						<OverviewHeaderActions />
+					</Actions>
+				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody>
-				<div className="a4a-overview-content">
-					<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
-				</div>
+			<LayoutBody className="a4a-overview-content">
+				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
 			</LayoutBody>
 		</Layout>
 	);
