@@ -10,6 +10,7 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
+import useSiteComplusoryPlanSelectionQualifiedCheck from '../hooks/use-site-complusory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -296,6 +297,7 @@ const StatsSingleItemPagePurchase = ( {
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const { isCommercialOwned } = useStatsPurchases( siteId );
+	const { isNewSite } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
 		<>
@@ -310,7 +312,7 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! isCommercialOwned && (
+			{ ! isCommercialOwned && isCommercial && ! isNewSite && (
 				<StatsSingleItemCard>
 					<StatsCommercialFlowOptOutForm
 						isCommercial={ isCommercial }
@@ -479,7 +481,7 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ supportsOnDemandCommercialClassification && (
+				{ supportsOnDemandCommercialClassification && isCommercial && (
 					<Button
 						variant="secondary"
 						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled() }
@@ -489,6 +491,7 @@ function StatsCommercialFlowOptOutForm( {
 					</Button>
 				) }
 				{ ( ! supportsOnDemandCommercialClassification ||
+					! isCommercial ||
 					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
 					<Button
 						variant="secondary"
@@ -499,7 +502,7 @@ function StatsCommercialFlowOptOutForm( {
 					</Button>
 				) }
 			</div>
-			{ supportsOnDemandCommercialClassification && (
+			{ supportsOnDemandCommercialClassification && isCommercial && (
 				<>
 					{ errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>{ errorMessage }</p>
