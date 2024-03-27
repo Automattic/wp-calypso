@@ -10,8 +10,7 @@ import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { sitesPath } from 'calypso/lib/jetpack/paths';
+import { sitesPath, sitesFavoritesPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -40,11 +39,22 @@ import SiteNotifications from './site-notifications';
 import SiteTopHeaderButtons from './site-top-header-buttons';
 import SitesDataViews from './sites-dataviews';
 import { SitesViewState } from './sites-dataviews/interfaces';
+import { AgencyDashboardFilterMap } from './types';
 
 import './style.scss';
 import './style-dashboard-v2.scss';
 
 const QUERY_PARAM_PROVISIONING = 'provisioning';
+
+const filtersMap: AgencyDashboardFilterMap[] = [
+	{ filterType: 'all_issues', ref: 1 },
+	{ filterType: 'backup_failed', ref: 2 },
+	{ filterType: 'backup_warning', ref: 3 },
+	{ filterType: 'threats_found', ref: 4 },
+	{ filterType: 'site_disconnected', ref: 5 },
+	{ filterType: 'site_down', ref: 6 },
+	{ filterType: 'plugin_updates', ref: 7 },
+];
 
 export default function SitesDashboardV2() {
 	const translate = useTranslate();
@@ -61,19 +71,6 @@ export default function SitesDashboardV2() {
 	const selectedLicensesCount = isStreamlinedPurchasesEnabled
 		? selectedSiteLicenses.reduce( ( acc, { products } ) => acc + products.length, 0 )
 		: selectedLicenses?.length;
-
-	const filtersMap = useMemo< AgencyDashboardFilterMap[] >(
-		() => [
-			{ filterType: 'all_issues', ref: 1 },
-			{ filterType: 'backup_failed', ref: 2 },
-			{ filterType: 'backup_warning', ref: 3 },
-			{ filterType: 'threats_found', ref: 4 },
-			{ filterType: 'site_disconnected', ref: 5 },
-			{ filterType: 'site_down', ref: 6 },
-			{ filterType: 'plugin_updates', ref: 7 },
-		],
-		[]
-	);
 
 	const { path, search, currentPage, filter, sort } = useContext( SitesOverviewContext );
 
@@ -117,9 +114,14 @@ export default function SitesDashboardV2() {
 
 	// Filter selection
 	useEffect( () => {
-		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
+		if (
+			isLoading ||
+			( window.location.pathname !== sitesPath() &&
+				window.location.pathname !== sitesFavoritesPath() )
+		) {
 			return;
 		}
+
 		const filtersSelected =
 			sitesViewState.filters?.map( ( filter ) => {
 				const filterType =
@@ -130,19 +132,23 @@ export default function SitesDashboardV2() {
 			} ) || [];
 
 		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
+	}, [ sitesViewState.filters ] );
 
 	// Search query
 	useEffect( () => {
-		if ( isLoading || isError || window.location.pathname !== sitesPath() ) {
+		if (
+			isLoading ||
+			( window.location.pathname !== sitesPath() &&
+				window.location.pathname !== sitesFavoritesPath() )
+		) {
 			return;
 		}
 		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
-	}, [ isLoading, isError, sitesViewState.search ] );
+	}, [ sitesViewState.search ] );
 
 	// Set or clear filter depending on sites submenu path selected
 	useEffect( () => {
-		if ( path === '/sites' || path === '/sites/favorites' ) {
+		if ( path === sitesPath() || path === sitesFavoritesPath() ) {
 			setSitesViewState( { ...sitesViewState, filters: [], search: '', page: 1 } );
 		}
 		if ( path === '/sites?issue_types=all_issues' ) {
