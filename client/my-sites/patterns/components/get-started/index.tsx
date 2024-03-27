@@ -9,19 +9,17 @@ import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
 import './style.scss';
 
 export function PatternsGetStarted() {
-	const translate_not_yet = useTranslate();
+	const translate = useTranslate();
 	return (
 		<PatternsSection
 			bodyFullWidth
-			description={ translate_not_yet(
-				'Take a look at our how-to guides to get started with patterns.'
-			) }
+			description={ translate( 'Take a look at our how-to guides to get started with patterns.' ) }
 			theme="dark"
-			title={ translate_not_yet( 'All about patterns' ) }
+			title={ translate( 'All about patterns' ) }
 		>
 			<div className="patterns-get-started__buttons">
 				<Button className="patterns-get-started__start-button" href="/start">
-					{ translate_not_yet( 'Build a site' ) }
+					{ translate( 'Build a site' ) }
 				</Button>
 			</div>
 
@@ -39,11 +37,9 @@ export function PatternsGetStarted() {
 							height="675"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">
-							{ translate_not_yet( 'Video tutorial' ) }
-						</div>
+						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
 						<div className="patterns-get-started__item-description">
-							{ translate_not_yet( 'Block Patterns' ) }
+							{ translate( 'Block Patterns' ) }
 						</div>
 					</a>
 
@@ -59,11 +55,9 @@ export function PatternsGetStarted() {
 							height="675"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">
-							{ translate_not_yet( 'Video tutorial' ) }
-						</div>
+						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
 						<div className="patterns-get-started__item-description">
-							{ translate_not_yet( 'Use Pre-Made Page Layouts' ) }
+							{ translate( 'Use Pre-Made Page Layouts' ) }
 						</div>
 					</a>
 
@@ -79,11 +73,9 @@ export function PatternsGetStarted() {
 							height="639"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">
-							{ translate_not_yet( 'Free course' ) }
-						</div>
+						<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
 						<div className="patterns-get-started__item-description">
-							{ translate_not_yet( 'Design Your Homepage' ) }
+							{ translate( 'Design Your Homepage' ) }
 						</div>
 					</a>
 				</div>

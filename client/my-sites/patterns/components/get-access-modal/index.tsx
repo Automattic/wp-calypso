@@ -22,7 +22,7 @@ export const PatternsGetAccessModal = ( {
 	const isLoggedIn = false;
 	const startUrl = localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn );
 	const loginUrl = localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn );
-	const translate_not_yet = useTranslate();
+	const translate = useTranslate();
 
 	return (
 		<Dialog
@@ -46,10 +46,10 @@ export const PatternsGetAccessModal = ( {
 				</button>
 				<div className="patterns-get-access-modal__inner">
 					<div className="patterns-get-access-modal__title">
-						{ translate_not_yet( 'Unlock the full pattern library' ) }
+						{ translate( 'Unlock the full pattern library' ) }
 					</div>
 					<div className="patterns-get-access-modal__description">
-						{ translate_not_yet(
+						{ translate(
 							"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
 						) }
 					</div>
@@ -59,14 +59,14 @@ export const PatternsGetAccessModal = ( {
 							href={ startUrl }
 							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_signup' ) }
 						>
-							{ translate_not_yet( 'Create a free account' ) }
+							{ translate( 'Create a free account' ) }
 						</Button>
 						<Button
 							transparent
 							href={ loginUrl }
 							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_login' ) }
 						>
-							{ translate_not_yet( 'Log in' ) }
+							{ translate( 'Log in' ) }
 						</Button>
 					</div>
 				</div>
