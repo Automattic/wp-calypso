@@ -2,8 +2,9 @@ import { Button, Gridicon, Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
@@ -14,6 +15,7 @@ import SiteSetFavorite from '../site-set-favorite';
 import SiteSort from '../site-sort';
 import { AllowedTypes, Site } from '../types';
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
+
 import './style.scss';
 
 const SitesDataViews = ( {
@@ -26,11 +28,8 @@ const SitesDataViews = ( {
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
-
-	const totalSites = window.location.search.includes( 'is_favorite' )
-		? data?.totalFavorites || 0
-		: data?.total || 0;
-
+	const { isFavoriteFilter } = useContext( SitesDashboardContext );
+	const totalSites = isFavoriteFilter ? data?.totalFavorites || 0 : data?.total || 0;
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
