@@ -176,10 +176,21 @@ export function SitesDashboard( {
 		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+
+	const { data: deletedSites = [] } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only,
+		'deleted'
+	);
+
+	deletedSites.forEach( ( site ) => {
+		site.is_deleted = true;
+	} );
+
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const elementRef = useRef( window );
 
@@ -196,6 +207,8 @@ export function SitesDashboard( {
 	} );
 
 	const isMobile = useMobileBreakpoint();
+
+	const allSites = status === 'deleted' ? liveSites.concat( deletedSites ) : liveSites;
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
