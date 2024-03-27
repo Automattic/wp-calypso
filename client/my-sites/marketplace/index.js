@@ -10,6 +10,7 @@ import {
 	renderThemesInstallPage,
 	redirectToHome,
 	renderMarketplaceSignupSuccess,
+	renderMarketplaceHomePage,
 } from './controller';
 
 export default function () {
@@ -22,6 +23,8 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page( '/marketplace/home', navigation, renderMarketplaceHomePage, makeLayout, clientRender );
 	}
 
 	if ( config.isEnabled( 'marketplace-domain-bundle' ) ) {
