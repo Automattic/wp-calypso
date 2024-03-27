@@ -45,6 +45,10 @@
 			border: none;
 			padding-block-start: 0;
 		}
+		.foldable-card.is-expanded .foldable-card__content {
+			border: none;
+			padding: 0;
+		}
 	}
 
 	.a4a-offering-item__card-list {
