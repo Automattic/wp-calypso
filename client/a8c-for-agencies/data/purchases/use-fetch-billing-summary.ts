@@ -123,6 +123,7 @@ export default function useFetchBillingSummary(
 			// @link https://react-query.tanstack.com/guides/query-retries
 			return 3 > failureCount;
 		},
+		enabled: !! agencyId,
 		...options,
 	} );
 
