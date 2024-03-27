@@ -1,5 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import {
@@ -29,6 +30,8 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 				?.filter( ( { regularPreviewPattern } ) => regularPreviewPattern )
 				.map( ( { regularPreviewPattern } ) => `${ regularPreviewPattern?.ID }` ) ?? [],
 	};
+
+	const translate = useTranslate();
 
 	return (
 		<BlockRendererProvider
@@ -87,7 +90,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 									{ patternTypeFilter === PatternTypeFilter.PAGES
 										? category.pagePatternCount
 										: category.regularPatternCount }{ ' ' }
-									patterns
+									{ translate( 'patterns' ) }
 								</div>
 							</LocalizedLink>
 						) ) }
