@@ -31,9 +31,7 @@ export default function HostingList( { selectedSite }: Props ) {
 		[ pressablePlans ]
 	);
 
-	const cheapestWPCOMPlan = cheapestPressablePlan
-		? { ...cheapestPressablePlan, family_slug: 'wpcom-hosting' }
-		: null; // FIXME: Need to fetch from API
+	const cheapestWPCOMPlan = null; // FIXME: Need to fetch from API
 
 	const onProductSearch = useCallback(
 		( value: string ) => {
