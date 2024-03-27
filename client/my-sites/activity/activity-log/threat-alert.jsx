@@ -1,5 +1,6 @@
 import { Button, Card, Spinner, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -12,7 +13,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import TimeSince from 'calypso/components/time-since';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';

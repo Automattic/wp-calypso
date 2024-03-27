@@ -1,4 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	CHANGE_NAME_SERVERS,
+	DOMAINS,
+	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	MAP_EXISTING_DOMAIN_UPDATE_DNS,
+	MAP_SUBDOMAIN,
+	SETTING_PRIMARY_DOMAIN,
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+} from '@automattic/urls';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
 import { intersection, map, find, get } from 'lodash';
@@ -16,15 +25,6 @@ import {
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
 import { isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
-import {
-	CHANGE_NAME_SERVERS,
-	DOMAINS,
-	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
-	MAP_EXISTING_DOMAIN_UPDATE_DNS,
-	MAP_SUBDOMAIN,
-	SETTING_PRIMARY_DOMAIN,
-	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-} from 'calypso/lib/url/support';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	domainManagementEdit,
@@ -925,7 +925,7 @@ export class DomainWarnings extends PureComponent {
 							strong: <strong />,
 							a: (
 								<a
-									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>
@@ -947,7 +947,7 @@ export class DomainWarnings extends PureComponent {
 								strong: <strong />,
 								a: (
 									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 										rel="noopener noreferrer"
 										target="_blank"
 									/>
@@ -970,7 +970,7 @@ export class DomainWarnings extends PureComponent {
 							strong: <strong />,
 							a: (
 								<a
-									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>

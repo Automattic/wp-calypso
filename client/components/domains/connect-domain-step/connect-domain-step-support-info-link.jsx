@@ -1,13 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
+} from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import {
-	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-} from 'calypso/lib/url/support';
 import { modeType } from './constants';
 
 import './style.scss';
