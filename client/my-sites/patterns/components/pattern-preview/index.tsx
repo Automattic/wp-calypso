@@ -204,7 +204,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			name: pattern?.name,
 			category,
 			type: getTracksPatternType( patternTypeFilter ),
-			is_logged_in: isLoggedIn ? '1' : '0',
+			is_logged_in: isLoggedIn,
 			user_is_dev_account: isDevAccount ? '1' : '0',
 		} );
 	};
