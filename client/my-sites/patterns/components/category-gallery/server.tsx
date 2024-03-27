@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
@@ -13,6 +14,8 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 	title,
 	patternTypeFilter,
 } ) => {
+	const translate = useTranslate();
+
 	return (
 		<PatternsSection title={ title } description={ description }>
 			<div
@@ -52,7 +55,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 							{ patternTypeFilter === PatternTypeFilter.PAGES
 								? category.pagePatternCount
 								: category.regularPatternCount }{ ' ' }
-							patterns
+							{ translate( 'patterns' ) }
 						</div>
 					</LocalizedLink>
 				) ) }
