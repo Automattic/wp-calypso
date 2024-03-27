@@ -1,7 +1,8 @@
+import { ComponentSwapper, CountComparisonCard } from '@automattic/components';
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import CountComparisonCard from './count-comparison-card';
+
 import './style.scss';
 
 type AnnualHighlightCardsProps = {
@@ -18,7 +19,47 @@ type AnnualHighlightCardsProps = {
 	navigation?: React.ReactNode;
 };
 
+function AnnualHighlightsMobile( { counts } ) {
+	console.log( 'AnnualHighlightsMobile' );
+	const translate = useTranslate();
+	return (
+		<div className="highlight-cards-list">
+			<CountComparisonCard
+				heading={ translate( 'Posts' ) }
+				icon={ <Icon icon={ postContent } /> }
+				count={ counts?.posts ?? null }
+				showValueTooltip
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Words' ) }
+				icon={ <Icon icon={ paragraph } /> }
+				count={ counts?.words ?? null }
+				showValueTooltip
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Likes' ) }
+				icon={ <Icon icon={ starEmpty } /> }
+				count={ counts?.likes ?? null }
+				showValueTooltip
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Comments' ) }
+				icon={ <Icon icon={ comment } /> }
+				count={ counts?.comments ?? null }
+				showValueTooltip
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Subscribers' ) }
+				icon={ <Icon icon={ people } /> }
+				count={ counts?.followers ?? null }
+				showValueTooltip
+			/>
+		</div>
+	);
+}
+
 function AnnualHighlightsStandard( { counts } ) {
+	console.log( 'AnnualHighlightsStandard' );
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list">
@@ -87,7 +128,11 @@ export default function AnnualHighlightCards( {
 				{ navigation }
 			</div>
 
-			<AnnualHighlightsStandard counts={ counts } />
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={ <AnnualHighlightsMobile counts={ counts } /> }
+				breakpointInactiveComponent={ <AnnualHighlightsStandard counts={ counts } /> }
+			/>
 		</div>
 	);
 }
