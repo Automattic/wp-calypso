@@ -5,15 +5,14 @@ import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import { useEffect, useState, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import StagingGate from 'calypso/components/staging-gate';
+import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
@@ -180,23 +179,6 @@ const SubscribersPage = ( {
 		setGiftUsername( display_name );
 	};
 
-	const Gate = ( props: { children: ReactNode } ) => {
-		const { children } = props;
-
-		return isStagingSite ? (
-			<StagingGate siteId={ siteId }>{ children }</StagingGate>
-		) : (
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-expect-error
-			<EmailVerificationGate
-				noticeText={ translate( 'You must verify your email to add subscribers.' ) }
-				noticeStatus="is-warning"
-			>
-				{ children }
-			</EmailVerificationGate>
-		);
-	};
-
 	return (
 		<SubscribersPageProvider
 			siteId={ siteId }
@@ -218,7 +200,7 @@ const SubscribersPage = ( {
 					selectedSiteId={ selectedSite?.ID }
 					disableCta={ isUnverified || isStagingSite }
 				/>
-				<Gate>
+				<SubscriberValidationGate siteId={ siteId }>
 					<SubscriberListContainer
 						siteId={ siteId }
 						onClickView={ onClickView }
@@ -246,7 +228,7 @@ const SubscribersPage = ( {
 					) }
 					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 					{ selectedSite && <MigrateSubscribersModal /> }
-				</Gate>
+				</SubscriberValidationGate>
 			</Main>
 		</SubscribersPageProvider>
 	);

@@ -57,6 +57,7 @@ export const PRIVACY_PROTECTION = `${ root }/domains/domain-registrations-and-pr
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
 export const REFUNDS = `${ root }/refunds/`;
 export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;
+export const SCHEDULED_UPDATES_SUPPORT = `${ root }/plugins/update-a-plugin-or-theme/#schedule-plugin-updates`;
 export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/set-a-primary-address/`;
 export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-services/`;
 export const SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN = `${ root }/set-up-email-authentication-for-your-domain/`;
