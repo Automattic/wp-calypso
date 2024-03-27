@@ -23,6 +23,8 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		url?.replace( /^https?:\/\//, '' )
 	);
 
+	const isSafeJetpackRedirectUrl = /^https:\/\/jetpack\.com\/redirect\//.test( url );
+
 	// Gives WP Admin Customizer a chance to return to where we started from.
 	if ( isSafeWpAdminUrl && url?.includes( 'wp-admin/customize.php' ) ) {
 		url = addQueryArgs(
@@ -33,7 +35,7 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		);
 	}
 
-	if ( isSafeInternalUrl || isSafeWpAdminUrl ) {
+	if ( isSafeInternalUrl || isSafeWpAdminUrl || isSafeJetpackRedirectUrl ) {
 		return url;
 	}
 
