@@ -16,13 +16,7 @@ describe( 'MigrationInProgress', () => {
 		const queryClient = new QueryClient();
 		return render(
 			<QueryClientProvider client={ queryClient }>
-				<MigrationInProgress
-					targetSite="new-site.wordpress.com"
-					targetSiteId="some-site-id"
-					sourceSite="source-site.external.com"
-					onComplete={ jest.fn() }
-					{ ...props }
-				/>
+				<MigrationInProgress targetSiteId={ 123 } onComplete={ jest.fn() } { ...props } />
 			</QueryClientProvider>
 		);
 	};
