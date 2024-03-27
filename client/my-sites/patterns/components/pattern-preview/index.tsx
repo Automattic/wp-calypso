@@ -100,10 +100,6 @@ function PatternPreviewFragment( {
 		return null;
 	}
 
-	// This handler will be used to fire each of the different 'Get Access'
-	// events for logged out users: opening the modal, closing the modal,
-	// signing up, and logging in. The handler will be passed the name of the
-	// event to fire, and the event props will be the same for each.
 	const recordGetAccessEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern.name,
