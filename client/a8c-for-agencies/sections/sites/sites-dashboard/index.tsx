@@ -18,7 +18,6 @@ import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features
 import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
@@ -57,16 +56,18 @@ export default function SitesDashboard() {
 		selectedSiteUrl,
 		selectedSiteFeature,
 		setSelectedSiteFeature,
-		isFavoriteFilter,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
+		search,
+		currentPage,
+		filter,
+		sort,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const { data: products } = useProductsQuery();
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
-	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
+
 	const {
 		data: verifiedContacts,
 		refetch: refetchContacts,
