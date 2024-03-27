@@ -4,13 +4,23 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import formatStoredCards from '../../lib/format-stored-cards';
 
-export const getFetchStoredCardsKey = ( agencyId?: number ) => [ 'a4a-stored-cards', agencyId ];
+interface Paging {
+	startingAfter: string;
+	endingBefore: string;
+}
 
-export default function useStoredCards( staleTime: number = 0 ) {
+export const getFetchStoredCardsKey = ( agencyId?: number, paging?: Paging ) => [
+	'a4a-stored-cards',
+	paging,
+	agencyId,
+];
+
+export default function useStoredCards( paging?: Paging, options?: { staleTime: number } ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		queryKey: getFetchStoredCardsKey( agencyId ),
+		...options,
+		queryKey: getFetchStoredCardsKey( agencyId, paging ),
 		queryFn: () =>
 			wpcom.req.get(
 				{
@@ -19,12 +29,15 @@ export default function useStoredCards( staleTime: number = 0 ) {
 				},
 				{
 					...( agencyId && { agency_id: agencyId } ),
+					...( paging && {
+						starting_after: paging.startingAfter,
+						ending_before: paging.endingBefore,
+					} ),
 				}
 			),
 		enabled: !! agencyId,
 		select: formatStoredCards,
 		refetchOnWindowFocus: false,
-		staleTime: staleTime,
 		initialData: {
 			items: [],
 			per_page: 0,
