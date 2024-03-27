@@ -132,6 +132,7 @@ const sections = [
 		paths: [ '/marketplace' ],
 		module: 'calypso/my-sites/marketplace',
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'pages',
