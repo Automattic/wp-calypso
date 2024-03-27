@@ -479,7 +479,7 @@ function StatsCommercialFlowOptOutForm( {
 				>
 					{ translate( 'Reverify' ) }
 				</Button>
-				{ ! isClassificationInProgress && (
+				{ ! isClassificationInProgress && commercialClassificationLastRunAt > 0 && (
 					<Button
 						variant="secondary"
 						// disabled={ isFormSubmissionDisabled() }
