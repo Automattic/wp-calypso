@@ -10,7 +10,6 @@ import wpcom from 'calypso/lib/wp';
 interface Props {
 	sourceSite?: string;
 	targetSite: string;
-	siteId: string;
 	targetSiteId: string;
 	onComplete: () => void;
 }
@@ -68,11 +67,7 @@ export const MigrationInProgress: FC< Props > = ( props ) => {
 					}
 				) }
 			</p>
-			<p>
-				{ translate(
-					'You will be inform via email once your site has successfully migrated to its new home.'
-				) }
-			</p>
+			<p>{ translate( 'We will send you an email when the migration is complete.' ) }</p>
 			<Spinner />
 		</Card>
 	);
