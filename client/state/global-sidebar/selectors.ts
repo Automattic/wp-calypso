@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -15,8 +16,13 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	siteId: number,
 	sectionGroup: string
 ) => {
-	// Global Site View should be limited to classic interface users only for now.
-	return isGlobalSiteViewEnabled( state, siteId ) && sectionGroup === 'sites' && !! siteId;
+	// Global Site View should be limited to classic interface users with layout/dotcom-nav-redesign-v2 feature flag enabled for now.
+	return (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		isGlobalSiteViewEnabled( state, siteId ) &&
+		sectionGroup === 'sites' &&
+		!! siteId
+	);
 };
 
 export const getShouldShowGlobalSiteSidebar = (
