@@ -27,7 +27,7 @@ export const PatternsHeader = ( {
 					delaySearch
 					initialValue={ initialSearchTerm }
 					onSearch={ onSearch }
-					placeholder={ translate_not_yet( 'Search patterns...' ) }
+					placeholder={ translate_not_yet( 'Search patterns…' ) }
 				/>
 			</div>
 		</header>
