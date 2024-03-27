@@ -8,6 +8,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
 import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
@@ -34,6 +35,8 @@ type Tab = {
 	id: string;
 };
 
+const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
+
 const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
@@ -56,22 +59,22 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		return [
 			{
 				title: translate( 'Monetization Options' ),
-				path: '/earn' + pathSuffix,
+				path: earnPath + pathSuffix,
 				id: 'earn',
 			},
 			{
 				title: translate( 'Supporters' ),
-				path: '/earn/supporters' + pathSuffix,
+				path: earnPath + '/supporters' + pathSuffix,
 				id: 'supporters',
 			},
 			{
 				title: translate( 'Payment Settings' ),
-				path: '/earn/payments' + pathSuffix,
+				path: earnPath + '/payments' + pathSuffix,
 				id: 'payments',
 			},
 			{
 				title: translate( 'Ads' ),
-				path: '/earn/ads-earnings' + pathSuffix,
+				path: earnPath + '/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
 			},
 		];
@@ -84,17 +87,17 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		if ( canAccessAds ) {
 			tabs.push( {
 				title: translate( 'Earnings' ),
-				path: '/earn/ads-earnings' + pathSuffix,
+				path: earnPath + '/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
 			} );
 			tabs.push( {
 				title: translate( 'Payments' ),
-				path: '/earn/ads-payments' + pathSuffix,
+				path: earnPath + '/ads-payments' + pathSuffix,
 				id: 'ads-payments',
 			} );
 			tabs.push( {
 				title: translate( 'Settings' ),
-				path: '/earn/ads-settings' + pathSuffix,
+				path: earnPath + '/ads-settings' + pathSuffix,
 				id: 'ads-settings',
 			} );
 		}
@@ -187,7 +190,10 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const getEarnSectionNav = () => {
 		return (
 			<div id="earn-navigation">
-				<SectionNav selectedText={ getEarnSelectedText() } variation="minimal">
+				<SectionNav
+					selectedText={ getEarnSelectedText() }
+					variation={ ! isJetpackCloud() ? 'minimal' : '' }
+				>
 					<NavTabs>
 						{ getEarnTabs().map( ( tabItem ) => {
 							return (
@@ -235,7 +241,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	return (
 		<Main wideLayout={ true } className="earn">
 			<PageViewTracker
-				path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
+				path={ section ? `${ earnPath }/${ section }/:site` : `${ earnPath }/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
 			/>
 			<DocumentHead
