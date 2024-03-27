@@ -26,16 +26,19 @@ function debounce( callback: () => void ) {
 
 function calculateMasonryLayout( element: HTMLElement ) {
 	const columnCount = getComputedStyle( element ).gridTemplateColumns.split( ' ' ).length;
+	const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
 
 	if ( columnCount === 1 ) {
+		items.forEach( ( item ) => {
+			item.style.removeProperty( 'transform' );
+		} );
+
 		return;
 	}
 
-	const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
-
 	// Always reset all items on the first row, since the number of grid columns is variable
 	items.slice( 0, columnCount ).forEach( ( item ) => {
-		item.style.transform = 'none';
+		item.style.removeProperty( 'transform' );
 	} );
 
 	// We calculate the difference between the top coordinates of each `.pattern-preview` with the
