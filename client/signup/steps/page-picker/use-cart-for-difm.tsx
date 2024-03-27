@@ -300,7 +300,7 @@ export function useCartForDIFM(
 		if ( ! difmLiteProduct || ! userCurrencyCode ) {
 			const query = {
 				type: 'partial',
-				product_slugs: `${ WPCOM_DIFM_LITE },wp_difm_extra_page`,
+				product_slugs: `${ WPCOM_DIFM_LITE },${ PLAN_BUSINESS }, ${ PLAN_PREMIUM }`,
 			};
 			dispatch( requestProductsList( query ) );
 		}
