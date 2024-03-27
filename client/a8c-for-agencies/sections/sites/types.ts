@@ -41,4 +41,7 @@ export interface SitesDashboardContextInterface {
 
 	isPopoverOpen: boolean;
 	setIsPopoverOpen: React.Dispatch< React.SetStateAction< boolean > >;
+
+	isFavoriteFilter: boolean;
+	setIsFavoriteFilter: React.Dispatch< React.SetStateAction< boolean > >;
 }

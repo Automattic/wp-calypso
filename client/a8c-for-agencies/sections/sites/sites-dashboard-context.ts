@@ -42,6 +42,10 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	setIsPopoverOpen: () => {
 		return undefined;
 	},
+	isFavoriteFilter: false,
+	setIsFavoriteFilter: () => {
+		return undefined;
+	},
 	sort: {
 		field: 'url',
 		direction: 'asc',
