@@ -12,9 +12,11 @@ export function PatternsCopyPasteInfo() {
 	return (
 		<PatternsSection
 			bodyFullWidth
-			description="Pick out a pattern, copy-paste it into your design, and customize it any way you like. No plugins needed."
+			description={ translate(
+				'Pick out a pattern, copy-paste it into your design, and customize it any way you like. No plugins needed.'
+			) }
 			theme="dark"
-			title="Copy, paste, customize—it’s easy like that"
+			title={ translate( 'Copy, paste, customize—it’s easy like that' ) }
 		>
 			<div className="section-patterns-info">
 				<div className="section-patterns-info__inner">
