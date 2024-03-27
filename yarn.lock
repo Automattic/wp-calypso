@@ -439,6 +439,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@wordpress/data": "npm:^9.24.0"
     i18n-calypso: "workspace:^"
     react: "npm:^18.2.0"
@@ -892,6 +893,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/jest-dom": "npm:^6.4.2"
@@ -1875,6 +1877,15 @@ __metadata:
   resolution: "@automattic/typography@workspace:packages/typography"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/urls@workspace:^, @automattic/urls@workspace:packages/urls":
+  version: 0.0.0-use.local
+  resolution: "@automattic/urls@workspace:packages/urls"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
 
@@ -12276,6 +12287,7 @@ __metadata:
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
     "@automattic/tree-select": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
@@ -32553,6 +32565,7 @@ __metadata:
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@automattic/verbum-block-editor": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
