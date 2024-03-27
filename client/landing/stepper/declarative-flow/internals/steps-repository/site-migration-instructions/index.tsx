@@ -90,7 +90,7 @@ const SiteMigrationInstructions: Step = function () {
 				{ isSuccess && migrationKey && (
 					<li>
 						{ translate(
-							'Copy and paste the migration key below in the ‘{{ migrationKeyField /}}‘ field and click {{strong}}{{migrateButton /}}{{/strong}}.',
+							'Copy and paste the migration key below in the ‘{{ migrationKeyField /}}‘ field and click {{strong}}{{migrateButton /}}{{/strong}} once more.',
 							{
 								components: {
 									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
@@ -103,31 +103,41 @@ const SiteMigrationInstructions: Step = function () {
 					</li>
 				) }
 				{ isError && (
-					<li>
-						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the ‘{{migrationKeyField /}}‘ field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}}.',
-							{
-								components: {
-									a: (
-										<a
-											href={ getMigrateGuruPageURL( site!.URL ) }
-											target="_blank"
-											rel="noreferrer"
-										/>
-									),
-									em: <em />,
-									strong: <strong />,
-									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
-									migrateButton: <DoNotTranslateIt value="Migrate" />,
-								},
-							}
-						) }
-					</li>
+					<>
+						<li>
+							{ translate(
+								'Head to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key.',
+								{
+									components: {
+										a: (
+											<a
+												href={ getMigrateGuruPageURL( site!.URL ) }
+												target="_blank"
+												rel="noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</li>
+						<li>
+							{ translate(
+								'Paste the migration key on the ‘{{ migrationKeyField /}}‘ field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}} once more.',
+								{
+									components: {
+										strong: <strong />,
+										migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
+										migrateButton: <DoNotTranslateIt value="Migrate" />,
+									},
+								}
+							) }
+						</li>
+					</>
 				) }
 			</ol>
 			<p>
 				{ translate(
-					'And you are done! When the migration finishes, Migrate Guru will send you an email.'
+					'And you are done! When the migration is ready, Migrate Guru will send you an email.'
 				) }
 			</p>
 		</div>
