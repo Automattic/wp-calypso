@@ -399,7 +399,7 @@ function StatsCommercialFlowOptOutForm( {
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
 	const isClassificationInProgress =
 		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60; // 1 hour
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
 	const allConditionsChecked =
 		isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked;
 
