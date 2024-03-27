@@ -234,12 +234,17 @@ export const PatternLibrary = ( {
 					<PatternLibraryBody className="pattern-library">
 						<div className="pattern-library__header">
 							<h1 className="pattern-library__title">
-								{ searchTerm
-									? translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
-											count: patterns.length,
-											args: { count: patterns.length },
-									  } )
-									: translate_not_yet( 'Patterns' ) }
+								{ searchTerm &&
+									translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
+										count: patterns.length,
+										args: { count: patterns.length },
+									} ) }
+								{ ! searchTerm &&
+									patternTypeFilter === PatternTypeFilter.PAGES &&
+									translate_not_yet( 'Page Layouts' ) }
+								{ ! searchTerm &&
+									patternTypeFilter === PatternTypeFilter.REGULAR &&
+									translate_not_yet( 'Patterns' ) }
 							</h1>
 
 							{ category && !! categoryObject?.pagePatternCount && (
@@ -267,7 +272,7 @@ export const PatternLibrary = ( {
 									/>
 									<ToggleGroupControlOption
 										className="pattern-library__toggle-option"
-										label={ translate_not_yet( 'Page layouts' ) }
+										label={ translate_not_yet( 'Page Layouts' ) }
 										value={ PatternTypeFilter.PAGES }
 									/>
 								</ToggleGroupControl>
