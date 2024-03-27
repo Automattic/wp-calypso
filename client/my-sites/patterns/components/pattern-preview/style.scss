@@ -22,11 +22,7 @@
 	justify-content: space-between;
 	position: relative;
 
-	iframe {
-		pointer-events: initial !important;
-	}
-
-	> div[aria-hidden="true"] {
+	&:not(.pattern-preview--category-gallery) iframe {
 		pointer-events: initial !important;
 	}
 
