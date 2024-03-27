@@ -139,8 +139,7 @@ export type ActionCallbackOptions = {
 	currentPlan?: boolean;
 	freeTrialPlanSlug?: PlanSlug;
 	isFreeTrialPlan?: boolean;
-	storageAddOnSlug?: WPComStorageAddOnSlug;
-	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
 };
 
 export type GridContextProps = {

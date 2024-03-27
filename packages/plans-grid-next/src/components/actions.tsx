@@ -23,6 +23,7 @@ import { useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../grid-context';
 import useDefaultStorageOption from '../hooks/data-store/use-default-storage-option';
+import useSelectedStorageAddOn from '../hooks/data-store/use-selected-storage-add-on';
 import useIsLargeCurrency from '../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../hooks/use-plan-pricing-info-from-grid-plans';
@@ -457,17 +458,18 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		gridPlans: visibleGridPlans,
 	} );
 	const isLargeCurrency = useIsLargeCurrency( { prices, currencyCode: currencyCode || 'USD' } );
-	const storageAddOnSlug = useSelect(
-		( select ) =>
-			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ),
-		[ planSlug ]
-	);
+
+	const selectedStorageAddOn = useSelectedStorageAddOn( {
+		planSlug,
+		selectedSiteId,
+		storageAddOnsForPlan,
+	} );
+
 	const onPlanCtaClick = getActionCallback( planSlug, {
 		cartItemForPlan,
 		currentPlan: current,
 		freeTrialPlanSlug,
-		storageAddOnSlug,
-		storageAddOnsForPlan,
+		selectedStorageAddOn,
 	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -505,8 +507,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			currentPlan: current,
 			freeTrialPlanSlug,
 			isFreeTrialPlan: !! freeTrialPlanSlug,
-			storageAddOnSlug,
-			storageAddOnsForPlan,
+			selectedStorageAddOn,
 		} );
 
 		return (

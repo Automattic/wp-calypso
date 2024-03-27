@@ -75,13 +75,7 @@ function useUpgradeHandler(
 
 	const addSelectedPlanAndStorageAddon = useCallback(
 		( planSlug: PlanSlug, options: ActionCallbackOptions ) => {
-			const {
-				cartItemForPlan,
-				isFreeTrialPlan,
-				freeTrialPlanSlug,
-				storageAddOnSlug,
-				storageAddOnsForPlan,
-			} = options;
+			const { cartItemForPlan, isFreeTrialPlan, freeTrialPlanSlug, selectedStorageAddOn } = options;
 
 			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
 				const freeTrialCartItem = { product_slug: freeTrialPlanSlug };
@@ -89,16 +83,12 @@ function useUpgradeHandler(
 				return;
 			}
 
-			const selectedStorageAddOn = storageAddOnsForPlan?.find( ( addOn ) => {
-				return storageAddOnSlug && addOn ? addOn.featureSlugs?.includes( storageAddOnSlug ) : false;
-			} );
-
 			const storageAddOnCartItem = selectedStorageAddOn &&
 				! selectedStorageAddOn.purchased && {
 					product_slug: selectedStorageAddOn.productSlug,
 					quantity: selectedStorageAddOn.quantity,
 					volume: 1,
-					extra: { feature_slug: storageAddOnSlug },
+					// extra: { feature_slug: storageAddOnSlug },
 				};
 
 			if ( cartItemForPlan ) {
