@@ -200,6 +200,9 @@ const LayoutLoggedOut = ( {
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
+				{ ...( sectionName === 'patterns' && {
+					startUrl: localizeUrl( '//wordpress.com/setup/assembler-first', locale, isLoggedIn ),
+				} ) }
 			/>
 		);
 	} else if ( isWooCoreProfilerFlow ) {
