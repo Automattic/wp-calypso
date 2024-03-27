@@ -10,6 +10,101 @@
 	}
 }
 
+.pressable-overview-plan-selection__details {
+	margin-block-start: 32px;
+	margin-block-end: 64px;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+
+	> * {
+		padding: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+
+	@include break-large {
+		flex-direction: row;
+	}
+}
+
+.pressable-overview-plan-selection__details-card {
+	border-radius: 4px;
+}
+
+.pressable-overview-plan-selection__details-card:not(.is-aside) {
+	flex-grow: 1;
+	background: var(--studio-automattic-0);
+}
+
+.pressable-overview-plan-selection__details-card.is-aside {
+	border: 1px solid var(--color-neutral-5);
+	flex-grow: 1;
+
+	@include break-large {
+		width: 300px;
+		flex-grow: 0;
+	}
+}
+
+.pressable-overview-plan-selection__details-card-header-title {
+	font-size: 1rem;
+	line-height: 1.4;
+	font-weight: 600;
+}
+
+.pressable-overview-plan-selection__details-card-header-price {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.pressable-overview-plan-selection__details-card-header-price-value {
+	font-size: 2rem;
+	line-height: 1;
+	font-weight: 600;
+	display: block;
+}
+
+.pressable-overview-plan-selection__details-card-header-price-interval {
+	font-size: 0.75rem;
+	line-height: 0.85;
+	font-weight: 400;
+	color: var(--color-neutral-60);
+}
+
+.pressable-overview-plan-selection__details-card-included-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		font-size: 1rem;
+		line-height: 1.6;
+		font-weight: 400;
+	}
+}
+
+.pressable-overview-plan-selection__details-card-included-list-icon {
+	margin-inline-end: 4px;
+	fill: var(--color-primary-40);
+	margin-block-end: -6px;
+}
+
+.pressable-overview-plan-selection__details-card-cta-button {
+	display: flex;
+	justify-content: center;
+	border-radius: 4px;
+	font-weight: 600;
+	font-size: 0.875rem;
+	min-height: 40px;
+}
+
 .pressable-overview-plan-selection__filter-type {
 	display: flex;
 	flex-direction: row;

@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -13,6 +14,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getHostingLogo } from '../lib/hosting';
 import ShoppingCart from '../shopping-cart';
@@ -23,7 +25,15 @@ import './style.scss';
 export default function PressableOverview() {
 	const translate = useTranslate();
 
-	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
+
+	const onAddToCart = useCallback(
+		( item: APIProductFamilyProduct ) => {
+			setSelectedCartItems( [ ...selectedCartItems, { ...item, quantity: 1 } ] );
+			page( A4A_MARKETPLACE_LINK );
+		},
+		[ selectedCartItems, setSelectedCartItems ]
+	);
 
 	return (
 		<Layout
@@ -79,7 +89,7 @@ export default function PressableOverview() {
 					</h2>
 				</section>
 
-				<PressableOverviewPlanSelection />
+				<PressableOverviewPlanSelection onAddToCart={ onAddToCart } />
 			</LayoutBody>
 		</Layout>
 	);
