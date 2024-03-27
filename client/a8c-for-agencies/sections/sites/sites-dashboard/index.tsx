@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useCallback } from 'react';
+import React, { useContext, useEffect, useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -21,8 +21,14 @@ import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fe
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
-import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import {
+	Filter,
+	SitesViewState,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import {
+	AgencyDashboardFilter,
+	Site,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateDashboardURLQueryArgs } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -35,6 +41,18 @@ import SiteNotifications from '../sites-notifications';
 
 import './style.scss';
 
+function getSelectedFilters( filters: Filter[] ) {
+	return (
+		filters?.map( ( filter ) => {
+			const filterType =
+				filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
+				'all_issues';
+
+			return filterType;
+		} ) || []
+	);
+}
+
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
@@ -45,13 +63,12 @@ export default function SitesDashboard() {
 		setSitesViewState,
 		selectedSiteUrl,
 		selectedSiteFeature,
-		setSelectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		search,
 		currentPage,
-		filter,
 		sort,
+		showOnlyFavorites,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -64,11 +81,25 @@ export default function SitesDashboard() {
 		isError: fetchContactFailed,
 	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
 
+	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
+		issueTypes: [],
+		showOnlyFavorites: showOnlyFavorites || false,
+	} );
+
+	useEffect( () => {
+		const selectedFilters = getSelectedFilters( sitesViewState.filters );
+
+		setAgencyDashboardFilter( {
+			issueTypes: selectedFilters,
+			showOnlyFavorites: showOnlyFavorites || false,
+		} );
+	}, [ sitesViewState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
 		sitesViewState.page,
-		filter,
+		agencyDashboardFilter,
 		sort,
 		sitesViewState.perPage
 	);
@@ -104,22 +135,6 @@ export default function SitesDashboard() {
 		},
 		[ setSitesViewState ]
 	);
-	// Filter selection
-	useEffect( () => {
-		if ( isLoading || isError ) {
-			return;
-		}
-		const filtersSelected =
-			sitesViewState.filters?.map( ( filter ) => {
-				const filterType =
-					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
-					'all_issues';
-
-				return filterType;
-			} ) || [];
-
-		updateDashboardURLQueryArgs( { filter: filtersSelected || [] } );
-	}, [ isLoading, isError, sitesViewState.filters ] ); // filtersMap omitted as dependency due to rendering loop and continuous console errors, even if wrapped in useMemo.
 
 	// Search query
 	useEffect( () => {
@@ -132,6 +147,8 @@ export default function SitesDashboard() {
 	// Build the query string with the search, page, sort, filter, etc.
 	const buildQueryString = useCallback( () => {
 		const urlQuery = new URLSearchParams();
+		const selectedFilters = getSelectedFilters( sitesViewState.filters );
+
 		if ( search ) {
 			urlQuery.set( 's', search );
 		}
@@ -144,17 +161,24 @@ export default function SitesDashboard() {
 		if ( sort.direction && sort.direction !== 'asc' ) {
 			urlQuery.set( 'sort_direction', sort.direction );
 		}
-		if ( filter.showOnlyFavorites ) {
+		if ( showOnlyFavorites ) {
 			urlQuery.set( 'is_favorite', 'true' );
 		}
-		if ( filter.issueTypes && filter.issueTypes.length > 0 ) {
-			urlQuery.set( 'issue_types', filter.issueTypes.join( ',' ) );
+		if ( selectedFilters && selectedFilters.length > 0 ) {
+			urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
 		}
 
 		const queryString = urlQuery.toString();
 
 		return queryString ? `?${ queryString }` : '';
-	}, [ search, currentPage, sort, filter ] );
+	}, [
+		sitesViewState.filters,
+		search,
+		currentPage,
+		sort.field,
+		sort.direction,
+		showOnlyFavorites,
+	] );
 
 	useEffect( () => {
 		// Build the query string
@@ -180,7 +204,6 @@ export default function SitesDashboard() {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
 	}, [
-		filter,
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
 		category,
@@ -193,7 +216,7 @@ export default function SitesDashboard() {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
 		}
-	}, [ sitesViewState, setSelectedSiteFeature ] );
+	}, [ sitesViewState, setSitesViewState ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {

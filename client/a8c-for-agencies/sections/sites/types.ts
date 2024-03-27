@@ -1,6 +1,5 @@
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
-	AgencyDashboardFilterOption,
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -23,10 +22,12 @@ export interface SitesDashboardContextInterface {
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;
 
+	showOnlyFavorites?: boolean;
+	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
+
 	path: string;
 	search: string;
 	currentPage: number;
-	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 

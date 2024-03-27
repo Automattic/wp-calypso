@@ -19,10 +19,6 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 		is_favorite,
 	} = context.query;
 
-	const filter = {
-		issueTypes: issue_types?.split( ',' ),
-		showOnlyFavorites: is_favorite === '' || is_favorite === '1' || is_favorite === 'true',
-	};
 	const sort = {
 		field: sort_field,
 		direction: sort_direction,
@@ -35,10 +31,13 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 			siteUrlInitialState={ siteUrl }
 			siteFeatureInitialState={ siteFeature }
 			hideListingInitialState={ hideListingInitialState }
+			showOnlyFavoritesInitialState={
+				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
 			path={ context.path }
 			search={ search }
 			currentPage={ currentPage }
-			filter={ filter }
+			issueTypes={ issue_types }
 			sort={ sort }
 			showSitesDashboardV2={ true }
 		>

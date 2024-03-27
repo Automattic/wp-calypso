@@ -15,6 +15,9 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	hideListing: undefined,
 	setHideListing: () => {},
 
+	showOnlyFavorites: undefined,
+	setShowOnlyFavorites: () => {},
+
 	sitesViewState: initialSitesViewState,
 	setSitesViewState: () => {
 		return undefined;
@@ -23,7 +26,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	currentPage: 1,
 	path: '',
 	search: '',
-	filter: { issueTypes: [], showOnlyFavorites: false },
 	isBulkManagementActive: false,
 	showSitesDashboardV2: false,
 	setIsBulkManagementActive: () => {
