@@ -16,20 +16,17 @@ import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
 import CountComparisonCard from './count-comparison-card';
 import './style.scss';
 
+type HighlightCardCounts = {
+	comments: number | null;
+	likes: number | null;
+	views: number | null;
+	visitors: number | null;
+};
+
 type WeeklyHighlightCardsProps = {
 	className?: string;
-	counts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
-	previousCounts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
 	showValueTooltip?: boolean | null;
 	onClickComments: ( event: MouseEvent ) => void;
 	onClickLikes: ( event: MouseEvent ) => void;
@@ -137,18 +134,8 @@ const HighlightCardsSettings = function ( {
 };
 
 type WeeklyHighlighCardsStandardProps = {
-	counts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
-	previousCounts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
 	showValueTooltip?: boolean | null;
 	onClickComments: ( event: MouseEvent ) => void;
 	onClickLikes: ( event: MouseEvent ) => void;
