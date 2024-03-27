@@ -30,7 +30,6 @@ import {
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
-import { updateDashboardURLQueryArgs } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -65,7 +64,6 @@ export default function SitesDashboard() {
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
-		search,
 		currentPage,
 		sort,
 		showOnlyFavorites,
@@ -97,7 +95,7 @@ export default function SitesDashboard() {
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		search,
+		sitesViewState.search,
 		sitesViewState.page,
 		agencyDashboardFilter,
 		sort,
@@ -136,21 +134,13 @@ export default function SitesDashboard() {
 		[ setSitesViewState ]
 	);
 
-	// Search query
-	useEffect( () => {
-		if ( isLoading || isError ) {
-			return;
-		}
-		updateDashboardURLQueryArgs( { search: sitesViewState.search } );
-	}, [ isLoading, isError, sitesViewState.search ] );
-
 	// Build the query string with the search, page, sort, filter, etc.
 	const buildQueryString = useCallback( () => {
 		const urlQuery = new URLSearchParams();
 		const selectedFilters = getSelectedFilters( sitesViewState.filters );
 
-		if ( search ) {
-			urlQuery.set( 's', search );
+		if ( sitesViewState.search ) {
+			urlQuery.set( 's', sitesViewState.search );
 		}
 		if ( currentPage > 1 ) {
 			urlQuery.set( 'page', currentPage.toString() );
@@ -173,7 +163,7 @@ export default function SitesDashboard() {
 		return queryString ? `?${ queryString }` : '';
 	}, [
 		sitesViewState.filters,
-		search,
+		sitesViewState.search,
 		currentPage,
 		sort.field,
 		sort.direction,
@@ -183,7 +173,6 @@ export default function SitesDashboard() {
 	useEffect( () => {
 		// Build the query string
 		const queryString = buildQueryString();
-
 		let url = '/sites';
 
 		// We need a category in the URL if we have a selected site

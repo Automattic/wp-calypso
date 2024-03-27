@@ -13,9 +13,9 @@ interface Props {
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
+	searchInitialState: string;
 	children: ReactNode;
 	path: string;
-	search: string;
 	issueTypes: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
@@ -30,7 +30,7 @@ export const SitesDashboardProvider = ( {
 	siteFeatureInitialState,
 	children,
 	path,
-	search,
+	searchInitialState,
 	issueTypes,
 	currentPage,
 	sort,
@@ -64,7 +64,7 @@ export const SitesDashboardProvider = ( {
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		...initialSitesViewState,
 		page: currentPage,
-		search: search,
+		search: searchInitialState,
 	} );
 
 	useEffect( () => {
@@ -89,6 +89,7 @@ export const SitesDashboardProvider = ( {
 		setSitesViewState( ( previousState ) => ( {
 			...previousState,
 			filters: [],
+			search: '',
 		} ) );
 	}, [ showOnlyFavoritesInitialState ] );
 
@@ -104,7 +105,6 @@ export const SitesDashboardProvider = ( {
 		showOnlyFavorites: showOnlyFavorites,
 		setShowOnlyFavorites: setShowOnlyFavorites,
 		path,
-		search,
 		currentPage,
 		sort,
 		isBulkManagementActive,

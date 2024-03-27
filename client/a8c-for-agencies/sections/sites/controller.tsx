@@ -35,7 +35,7 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
 			}
 			path={ context.path }
-			search={ search }
+			searchInitialState={ search }
 			currentPage={ currentPage }
 			issueTypes={ issue_types }
 			sort={ sort }

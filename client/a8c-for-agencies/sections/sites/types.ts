@@ -26,7 +26,6 @@ export interface SitesDashboardContextInterface {
 	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
 
 	path: string;
-	search: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
