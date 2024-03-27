@@ -36,10 +36,7 @@
 		position: static;
 
 		.category-pill-navigation {
-			.category-pill-navigation__mobile-select {
-				margin: 0 24px;
-				width: calc(100% - 48px);
-			}
+			padding: 24px;
 		}
 	}
 }
