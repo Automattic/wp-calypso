@@ -29,6 +29,7 @@ export const getSiteLaunchStatus = ( site: SiteObjectWithStatus ): SiteLaunchSta
 	if ( site.options?.is_redirect ) {
 		return 'redirect';
 	}
+
 	if ( site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' ) ) {
 		return 'coming-soon';
 	}

@@ -137,7 +137,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 		};
 	}, [ masterbarHeight ] );
 
-	const isStatusDeleted = true;
+	const isStatusDeleted = sites.some( ( site ) => ! site.is_deleted );
 
 	return (
 		<Table className={ className }>

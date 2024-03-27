@@ -1,16 +1,25 @@
 import { Button, ListTile, Popover } from '@automattic/components';
-import { useSiteLaunchStatusLabel } from '@automattic/sites';
+import {
+	SITE_EXCERPT_REQUEST_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+	useSiteLaunchStatusLabel,
+} from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useDispatch } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
+import useRestoreSiteMutation from 'calypso/sites-dashboard/hooks/use-restore-site-mutation';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
@@ -155,6 +164,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 	const userId = useSelector( getCurrentUserId );
+	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -167,12 +178,48 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
+	const { mutate: restoreSite, isPending } = useRestoreSiteMutation( {
+		onSuccess() {
+			queryClient.invalidateQueries( {
+				queryKey: [
+					USE_SITE_EXCERPTS_QUERY_KEY,
+					SITE_EXCERPT_REQUEST_FIELDS,
+					SITE_EXCERPT_REQUEST_OPTIONS,
+					[],
+					'all',
+				],
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: [
+					USE_SITE_EXCERPTS_QUERY_KEY,
+					SITE_EXCERPT_REQUEST_FIELDS,
+					SITE_EXCERPT_REQUEST_OPTIONS,
+					[],
+					'deleted',
+				],
+			} );
+			dispatch(
+				successNotice( __( 'The site has been restored.' ), {
+					duration: 3000,
+				} )
+			);
+		},
+		onError: () => {
+			dispatch( errorNotice( __( 'We were unable to restore the site. ' ), { duration: 5000 } ) );
+		},
+	} );
+
 	const computeDashboardUrl = ( site: SiteExcerptData ) => {
 		if ( siteDefaultInterface( site ) === 'wp-admin' ) {
 			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
 		}
 		return getDashboardUrl( site.slug );
 	};
+
+	const handleRestoreSite = () => {
+		restoreSite( site.ID );
+	};
+
 	const dashboardUrl = computeDashboardUrl( site );
 
 	let siteUrl = site.URL;
@@ -180,7 +227,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		siteUrl = site.options?.unmapped_url;
 	}
 
-	const isDeleted = true;
+	const isDeleted = site.is_deleted;
 
 	return (
 		<Row ref={ ref }>
@@ -273,7 +320,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			) }
 			{ isDeleted ? (
 				<Column style={ { textAlign: 'right' } }>
-					<Button scary>{ __( 'Restore site ' ) }</Button>
+					<Button scary busy={ isPending } disabled={ isPending } onClick={ handleRestoreSite }>
+						{ __( 'Restore site ' ) }
+					</Button>
 				</Column>
 			) : (
 				<Column style={ { width: '24px' } }>
