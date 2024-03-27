@@ -21,6 +21,7 @@ import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fe
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import { JetpackPreviewPane } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-feature-previews/jetpack-preview-pane';
+import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
@@ -32,7 +33,6 @@ import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import OverviewHeaderActions from '../../overview/header-actions';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -222,8 +222,8 @@ export default function SitesDashboard() {
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>
 						<Actions>
-							{ /* TODO: We were using a component from Jetpack Manage, and we changed it for the overview header actions. We have to check if this is the best header available for the sites page. */ }
-							<OverviewHeaderActions />
+							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
+							<SiteTopHeaderButtons />
 						</Actions>
 					</LayoutHeader>
 					<LayoutNavigation { ...selectedItemProps }>
