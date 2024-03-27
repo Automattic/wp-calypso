@@ -23,7 +23,7 @@ export const useShouldShowCriticalAnnouncementsQuery = (
 		whatsNewList &&
 		whatsNewList.length > 0 &&
 		seenWhatsNewAnnouncements &&
-		typeof seenWhatsNewAnnouncements.indexOf === 'function'
+		Array.isArray( seenWhatsNewAnnouncements )
 	) {
 		for ( let i = 0; i < whatsNewList.length; i++ ) {
 			if (

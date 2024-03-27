@@ -185,11 +185,8 @@ function AppBannerLoader( siteId ) {
 	}, [ shouldShowCriticalAnnouncements, isLoading ] );
 
 	return (
-		<AsyncLoad
-			require="calypso/blocks/app-banner"
-			placeholder={ null }
-			shouldShowWhatsNew={ showWhatsNew }
-		/>
+		! isLoading &&
+		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 	);
 }
 
