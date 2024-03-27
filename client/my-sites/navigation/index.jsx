@@ -24,7 +24,7 @@ class MySitesNavigation extends Component {
 
 	handleGlobalSidebarMenuItemClick = ( path ) => {
 		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
-			section: this.props.isGlobalSiteSidebarVisible ? 'site' : 'sites',
+			section: 'sites',
 			path: path.replace( this.props.siteDomain, ':site' ),
 		} );
 	};
@@ -34,6 +34,7 @@ class MySitesNavigation extends Component {
 			placeholder: null,
 			path: this.props.path,
 			siteBasePath: this.props.siteBasePath,
+			isUnifiedSiteSidebarVisible: this.props.isUnifiedSiteSidebarVisible,
 		};
 
 		let asyncSidebar = null;
@@ -57,8 +58,6 @@ class MySitesNavigation extends Component {
 			};
 		} else if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
-		} else if ( this.props.isGlobalSiteSidebarVisible ) {
-			return this.renderGlobalSiteSidebar();
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 
@@ -99,17 +98,6 @@ class MySitesNavigation extends Component {
 		);
 	}
 
-	renderGlobalSiteSidebar() {
-		return (
-			<GlobalSidebar path={ this.props.path }>
-				<MySitesSidebarUnifiedBody
-					path={ this.props.path }
-					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
-				/>
-			</GlobalSidebar>
-		);
-	}
-
 	render() {
 		return this.renderSidebar();
 	}
@@ -130,7 +118,7 @@ export default withCurrentRoute(
 			return {
 				siteDomain,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isUnifiedSiteSidebarVisible: shouldShowGlobalSiteSidebar,
 			};
 		},
 		{
