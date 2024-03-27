@@ -15,7 +15,7 @@ import { eye } from '../icons';
 import ShortenedNumber from '../number-formatters';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import CountComparisonCard from './count-comparison-card';
+import CountComparisonCard, { TrendComparison } from './count-comparison-card';
 
 import './style.scss';
 
@@ -210,6 +210,12 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 				<span className="highlight-cards-list-mobile__item-heading">
 					{ translate( 'Visitors' ) }
 				</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.visitors ?? null }
+						previousCount={ previousCounts?.visitors ?? null }
+					/>
+				</span>
 				<span className="highlight-cards-list-mobile__item-count">
 					<ShortenedNumber value={ counts?.visitors ?? null } />
 				</span>
@@ -219,6 +225,12 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 					<Icon icon={ eye } />
 				</span>
 				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Views' ) }</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.views ?? null }
+						previousCount={ previousCounts?.views ?? null }
+					/>
+				</span>
 				<span className="highlight-cards-list-mobile__item-count">
 					<ShortenedNumber value={ counts?.views ?? null } />
 				</span>
@@ -228,6 +240,12 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 					<Icon icon={ starEmpty } />
 				</span>
 				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.likes ?? null }
+						previousCount={ previousCounts?.likes ?? null }
+					/>
+				</span>
 				<span className="highlight-cards-list-mobile__item-count">
 					<ShortenedNumber value={ counts?.likes ?? null } />
 				</span>
@@ -238,6 +256,12 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 				</span>
 				<span className="highlight-cards-list-mobile__item-heading">
 					{ translate( 'Comments' ) }
+				</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.comments ?? null }
+						previousCount={ previousCounts?.comments ?? null }
+					/>
 				</span>
 				<span className="highlight-cards-list-mobile__item-count">
 					<ShortenedNumber value={ counts?.comments ?? null } />
