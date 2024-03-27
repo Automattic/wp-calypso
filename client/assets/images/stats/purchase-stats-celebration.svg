@@ -1,23 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none">
     <defs>
-        <symbol id="celeb"  width="456" height="596" fill="none">
+        <symbol id="purchase-stats-celebration-celeb"  width="456" height="596" fill="none">
             <path
                 fill="#31CC9F"
                 d="m210.866 115.195 4.45-1.654 3.02 8.122-4.451 1.654zM226.729 470.002l-4.45 1.654-3.02-8.122 4.451-1.654z"
             />
-            <g filter="url(#a)">
+            <g filter="url(#purchase-stats-celebration-a)">
                 <path fill="#E34C84" d="m-.907 93.68 14.29 3.83-6.987 26.077-14.29-3.829z" />
             </g>
-            <g filter="url(#b)">
+            <g filter="url(#purchase-stats-celebration-b)">
                 <path fill="#E34C84" d="m438.501 465.186-14.29-3.83 6.987-26.077 14.29 3.829z" />
             </g>
-            <g filter="url(#c)">
+            <g filter="url(#purchase-stats-celebration-c)">
                 <path fill="#31CC9F" d="m131.773 442.674 6.552-3.91 7.136 11.954-6.552 3.911z" />
             </g>
-            <g filter="url(#d)">
+            <g filter="url(#purchase-stats-celebration-d)">
                 <path fill="#31CC9F" d="m334.162 66.412-7.34 2.082-3.8-13.394 7.34-2.082z" />
             </g>
-            <g filter="url(#e)">
+            <g filter="url(#purchase-stats-celebration-e)">
                 <path fill="#31CC9F" d="m385.47 532.162.47 7.616-13.897.857-.47-7.616z" />
             </g>
             <circle
@@ -65,10 +65,10 @@
                 fill="#F2D76B"
                 transform="rotate(-180 370.049 405.174)"
             />
-            <g filter="url(#f)">
+            <g filter="url(#purchase-stats-celebration-f)">
                 <circle cx="457.968" cy="298.277" r="8.322" fill="#FAA754" />
             </g>
-            <g filter="url(#g)">
+            <g filter="url(#purchase-stats-celebration-g)">
                 <circle
                     cx="434.483"
                     cy="119.353"
@@ -79,7 +79,7 @@
             </g>
             <defs>
                 <filter
-                    id="a"
+                    id="purchase-stats-celebration-a"
                     width="38.883"
                     height="47.513"
                     x="-16.697"
@@ -92,7 +92,7 @@
                     <feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
                 </filter>
                 <filter
-                    id="b"
+                    id="purchase-stats-celebration-b"
                     width="38.883"
                     height="47.513"
                     x="415.408"
@@ -105,7 +105,7 @@
                     <feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
                 </filter>
                 <filter
-                    id="c"
+                    id="purchase-stats-celebration-c"
                     width="20.09"
                     height="22.267"
                     x="128.573"
@@ -118,7 +118,7 @@
                     <feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="1.6" />
                 </filter>
                 <filter
-                    id="d"
+                    id="purchase-stats-celebration-d"
                     width="17.541"
                     height="21.878"
                     x="319.822"
@@ -131,7 +131,7 @@
                     <feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="1.6" />
                 </filter>
                 <filter
-                    id="e"
+                    id="purchase-stats-celebration-e"
                     width="20.768"
                     height="14.874"
                     x="368.372"
@@ -144,7 +144,7 @@
                     <feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="1.6" />
                 </filter>
                 <filter
-                    id="f"
+                    id="purchase-stats-celebration-f"
                     width="34.249"
                     height="34.249"
                     x="440.844"
@@ -157,7 +157,7 @@
                     <feGaussianBlur result="effect1_foregroundBlur_3568_14033" stdDeviation="4.401" />
                 </filter>
                 <filter
-                    id="g"
+                    id="purchase-stats-celebration-g"
                     width="34.253"
                     height="34.251"
                     x="417.357"
