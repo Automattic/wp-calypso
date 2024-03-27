@@ -274,11 +274,9 @@ const useGridPlans = ( {
 		const storageAddOnsForPlan =
 			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
 
-		const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
-
 		return {
 			planSlug,
-			freeTrialPlanSlug,
+			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
 			isVisible: planSlugsForIntent.includes( planSlug ),
 			tagline,
 			availableForPurchase,
