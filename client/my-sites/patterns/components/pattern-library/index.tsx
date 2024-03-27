@@ -75,6 +75,7 @@ type PatternLibraryProps = {
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
+	referrer: string;
 	searchTerm?: string;
 };
 
@@ -84,6 +85,7 @@ export const PatternLibrary = ( {
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
+	referrer,
 	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
@@ -187,6 +189,7 @@ export const PatternLibrary = ( {
 				// immediately reset when navigating to a new category, whereas the latter is reset
 				// *after* the first render (which triggers an additional, incorrect, page view)
 				searchTerm={ urlQuerySearchTerm }
+				referrer={ referrer }
 			/>
 
 			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />

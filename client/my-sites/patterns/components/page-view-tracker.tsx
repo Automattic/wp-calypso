@@ -11,6 +11,7 @@ type PatternsPageViewTrackerProps = {
 	category: string;
 	searchTerm: string;
 	patternTypeFilter: PatternTypeFilter;
+	referrer: string;
 	view: PatternView;
 };
 
@@ -18,6 +19,7 @@ export function PatternsPageViewTracker( {
 	category,
 	searchTerm,
 	patternTypeFilter,
+	referrer,
 	view,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -54,6 +56,7 @@ export function PatternsPageViewTracker( {
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			search_term: debouncedSearchTerm,
 			type: getTracksPatternType( patternTypeFilter ),
+			referrer,
 			view,
 		} );
 

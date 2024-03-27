@@ -22,7 +22,7 @@ import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories
 function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsWrapper>
-			<PatternsCategoryNotFound />
+			<PatternsCategoryNotFound referrer={ context.query.ref ?? '' } />
 		</PatternsWrapper>
 	);
 
@@ -41,6 +41,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 					patternTypeFilter={
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
 					}
+					referrer={ context.query.ref ?? '' }
 					searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
 				/>
 			</PatternsWrapper>
