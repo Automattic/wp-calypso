@@ -59,6 +59,7 @@ export default function SitesDashboard() {
 		setSelectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
+		path,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -142,16 +143,21 @@ export default function SitesDashboard() {
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
 		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
-			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
-			);
+			const baseUrl = `/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`;
+
+			// Use the path if it's based on the baseUrl
+			if ( path.includes( baseUrl ) ) {
+				page.replace( path, null, false, false );
+			} else {
+				page.replace( baseUrl, null, false, false );
+			}
 		} else if ( category && sitesViewState.selectedSite ) {
 			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }` );
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( `/sites/${ category }` );
+			page.replace( `/sites/${ category }`, null, false, false );
 		} else {
-			page.replace( '/sites' );
+			page.replace( '/sites', null, false, false );
 		}
 
 		if ( sitesViewState.selectedSite ) {
