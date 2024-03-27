@@ -134,7 +134,8 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
-export type ActionCallbackOptions = {
+export type GetActionCallbackParams = {
+	planSlug?: PlanSlug | null;
 	cartItemForPlan?: { product_slug: string } | null;
 	currentPlan?: boolean;
 	freeTrialPlanSlug?: PlanSlug;
@@ -148,7 +149,7 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	getActionCallback: ( planSlug: PlanSlug, options?: ActionCallbackOptions ) => () => void;
+	getActionCallback: ( options: GetActionCallbackParams ) => () => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

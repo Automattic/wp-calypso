@@ -465,7 +465,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		storageAddOnsForPlan,
 	} );
 
-	const onPlanCtaClick = getActionCallback( planSlug, {
+	const onPlanCtaClick = getActionCallback( {
+		planSlug,
 		cartItemForPlan,
 		currentPlan: current,
 		freeTrialPlanSlug,
@@ -502,7 +503,8 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		);
 	}
 	if ( isInSignup ) {
-		const onPlanCtaClick = getActionCallback( planSlug, {
+		const onPlanCtaClick = getActionCallback( {
+			planSlug,
 			cartItemForPlan,
 			currentPlan: current,
 			freeTrialPlanSlug,

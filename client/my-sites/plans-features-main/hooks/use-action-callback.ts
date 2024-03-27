@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move t
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import type { ActionCallbackOptions, GridPlan, PlansIntent } from '@automattic/plans-grid-next';
+import type { GetActionCallbackParams, GridPlan, PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
@@ -74,7 +74,7 @@ function useUpgradeHandler(
 	);
 
 	const addSelectedPlanAndStorageAddon = useCallback(
-		( planSlug: PlanSlug, options: ActionCallbackOptions ) => {
+		( planSlug: PlanSlug, options: GetActionCallbackParams ) => {
 			const { cartItemForPlan, isFreeTrialPlan, freeTrialPlanSlug, selectedStorageAddOn } = options;
 
 			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
@@ -105,7 +105,7 @@ function useUpgradeHandler(
 	);
 
 	return useCallback(
-		( planSlug: PlanSlug, options: ActionCallbackOptions ) => {
+		( planSlug: PlanSlug, options: GetActionCallbackParams ) => {
 			return () => {
 				const { isFreeTrialPlan, freeTrialPlanSlug } = options;
 				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
@@ -169,13 +169,13 @@ function useActionCallback(
 
 	return (
 		planSlug: PlanSlug,
-		options: ActionCallbackOptions = {
+		options: GetActionCallbackParams = {
+			planSlug: null,
 			cartItemForPlan: { product_slug: '' },
 			currentPlan: false,
 			freeTrialPlanSlug: undefined,
 			isFreeTrialPlan: false,
-			storageAddOnSlug: undefined,
-			storageAddOnsForPlan: null,
+			selectedStorageAddOn: undefined,
 		}
 	) => {
 		const { currentPlan } = options;
