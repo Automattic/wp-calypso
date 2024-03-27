@@ -11,16 +11,18 @@ type PatternsPageViewTrackerProps = {
 	category: string;
 	searchTerm: string;
 	patternTypeFilter: PatternTypeFilter;
-	referrer: string;
 	view: PatternView;
+	referrer?: string;
+	error?: string;
 };
 
 export function PatternsPageViewTracker( {
 	category,
 	searchTerm,
 	patternTypeFilter,
-	referrer,
 	view,
+	referrer,
+	error,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
@@ -50,15 +52,24 @@ export function PatternsPageViewTracker( {
 	}, [ category, isDevAccount, isLoggedIn, patternTypeFilter ] );
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_pattern_library_view', {
+		const eventProp = {
 			category,
 			is_logged_in: isLoggedIn,
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			search_term: debouncedSearchTerm,
 			type: getTracksPatternType( patternTypeFilter ),
-			referrer,
 			view,
-		} );
+		};
+
+		if ( referrer ) {
+			eventProp.referrer = referrer;
+		}
+
+		if ( error ) {
+			eventProp.error = error;
+		}
+
+		recordTracksEvent( 'calypso_pattern_library_view', eventProp );
 
 		// We want to avoid resubmitting the event whenever
 		// `category` changes, which is why we deliberately don't include it in the dependency array

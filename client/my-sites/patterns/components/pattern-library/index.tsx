@@ -75,7 +75,7 @@ type PatternLibraryProps = {
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
-	referrer: string;
+	referrer?: string;
 	searchTerm?: string;
 };
 

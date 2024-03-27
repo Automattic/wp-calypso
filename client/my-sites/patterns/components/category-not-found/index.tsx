@@ -8,10 +8,14 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 type PatternsCategoryNotFoundProps = {
+	category: string;
 	referrer: string;
 };
 
-export const PatternsCategoryNotFound = ( { referrer }: PatternsCategoryNotFoundProps ) => {
+export const PatternsCategoryNotFound = ( {
+	category,
+	referrer,
+}: PatternsCategoryNotFoundProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const translate_not_yet = useTranslate();
 
@@ -20,7 +24,11 @@ export const PatternsCategoryNotFound = ( { referrer }: PatternsCategoryNotFound
 
 	return (
 		<>
-			<PatternsPageViewTracker category="not-found" referrer={ referrer } />
+			<PatternsPageViewTracker
+				category={ category }
+				referrer={ referrer }
+				error="category-not-found"
+			/>
 
 			<EmptyContent
 				title={ translate_not_yet( "Oops! We can't find this category!", { comment } ) }

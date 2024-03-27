@@ -23,6 +23,10 @@ export function usePatternSearchTerm(
 			url.searchParams.delete( QUERY_PARAM_SEARCH );
 		}
 
+		// Strip out `ref` parameter when updating the URL for search
+		// to ensure the referrer is only be reported in the initial page view.
+		url.searchParams.delete( 'ref' );
+
 		if ( url.href !== location.href ) {
 			page( url.href.replace( url.origin, '' ) );
 		}
