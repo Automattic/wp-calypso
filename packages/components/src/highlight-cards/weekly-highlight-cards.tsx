@@ -193,15 +193,12 @@ function WeeklyHighlighCardsStandard( {
 	);
 }
 
-function WeeklyHighlighCardsMobile( {
-	counts,
-	previousCounts,
-	showValueTooltip,
-	onClickComments,
-	onClickLikes,
-	onClickViews,
-	onClickVisitors,
-}: WeeklyHighlighCardsStandardProps ) {
+type WeeklyHighlighCardsMobileProps = {
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
+};
+
+function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCardsMobileProps ) {
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list-mobile">
@@ -336,15 +333,7 @@ export default function WeeklyHighlightCards( {
 			<ComponentSwapper
 				breakpoint="<660px"
 				breakpointActiveComponent={
-					<WeeklyHighlighCardsMobile
-						counts={ counts }
-						previousCounts={ previousCounts }
-						showValueTooltip={ showValueTooltip }
-						onClickComments={ onClickComments }
-						onClickLikes={ onClickLikes }
-						onClickViews={ onClickViews }
-						onClickVisitors={ onClickVisitors }
-					/>
+					<WeeklyHighlighCardsMobile counts={ counts } previousCounts={ previousCounts } />
 				}
 				breakpointInactiveComponent={
 					<WeeklyHighlighCardsStandard
