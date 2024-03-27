@@ -136,6 +136,26 @@ const HighlightCardsSettings = function ( {
 	);
 };
 
+type WeeklyHighlighCardsStandardProps = {
+	counts: {
+		comments: number | null;
+		likes: number | null;
+		views: number | null;
+		visitors: number | null;
+	};
+	previousCounts: {
+		comments: number | null;
+		likes: number | null;
+		views: number | null;
+		visitors: number | null;
+	};
+	showValueTooltip?: boolean | null;
+	onClickComments: ( event: MouseEvent ) => void;
+	onClickLikes: ( event: MouseEvent ) => void;
+	onClickViews: ( event: MouseEvent ) => void;
+	onClickVisitors: ( event: MouseEvent ) => void;
+};
+
 function WeeklyHighlighCardsStandard( {
 	counts,
 	previousCounts,
@@ -144,7 +164,7 @@ function WeeklyHighlighCardsStandard( {
 	onClickLikes,
 	onClickViews,
 	onClickVisitors,
-} ) {
+}: WeeklyHighlighCardsStandardProps ) {
 	console.log( 'WeeklyHighlighCardsStandard' );
 	const translate = useTranslate();
 	return (
