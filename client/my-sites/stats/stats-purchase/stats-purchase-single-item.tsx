@@ -3,11 +3,12 @@ import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -351,6 +352,14 @@ function StatsCommercialFlowOptOutForm( {
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ comemercialClassificationRunAt, setComemercialClassificationRunAt ] = useState( 0 );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
+
+	useEffect( () => {
+		setComemercialClassificationRunAt(
+			parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' )
+		);
+	} );
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -372,14 +381,35 @@ function StatsCommercialFlowOptOutForm( {
 		window.open( 'https://wordpress.com/help' );
 	};
 
+	const { mutateAsync: runCommercialClassificationAsync } =
+		useOnDemandCommercialClassificationMutation( siteId );
+	const handleCommercialClassification = async () => {
+		const now = Date.now();
+		localStorage?.setItem( 'commercial_classification__button_clicked', `${ now }` );
+		setComemercialClassificationRunAt( now );
+		runCommercialClassificationAsync().catch( ( e ) => {
+			setErrorMessage( e.message );
+		} );
+	};
+	const commercialClassificationLastRunAt = useMemo(
+		() => parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' ),
+		[ comemercialClassificationRunAt ]
+	);
+	const hasRunLessThan3DAgo =
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 3; // 3 days
+	const isClassificationInProgress =
+		commercialClassificationLastRunAt > 0 &&
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+	const allConditionsChecked =
+		isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked;
 	const isFormSubmissionDisabled = () => {
-		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
+		return ! allConditionsChecked || comemercialClassificationRunAt === 0;
 	};
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error, confirm the information below and let us know.',
+				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error or you’ve removed the commercial identifier, please confirm the information below and reverify (maximum once every 24 hours). If you still have issues, you will be given options to contact support.',
 				{
 					args: {
 						reasons:
@@ -445,10 +475,31 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				<Button variant="secondary" disabled={ isFormSubmissionDisabled() } onClick={ formHandler }>
-					{ formButton }
+				<Button
+					variant="secondary"
+					disabled={ hasRunLessThan3DAgo || ! allConditionsChecked }
+					onClick={ handleCommercialClassification }
+				>
+					{ translate( 'Reverify' ) }
 				</Button>
+				{ ! isClassificationInProgress && (
+					<Button
+						variant="secondary"
+						disabled={ isFormSubmissionDisabled() }
+						onClick={ formHandler }
+					>
+						{ formButton }
+					</Button>
+				) }
 			</div>
+			{ errorMessage && (
+				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>Error: { errorMessage }</p>
+			) }
+			{ isClassificationInProgress && ! errorMessage && (
+				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+					{ translate( 'We are verifying your site. Please come back later…' ) }
+				</p>
+			) }
 		</>
 	);
 }
