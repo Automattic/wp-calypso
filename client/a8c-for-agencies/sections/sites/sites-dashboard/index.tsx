@@ -139,6 +139,33 @@ export default function SitesDashboard() {
 
 	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
 
+	// Build the query string with the search, page, sort, filter, etc.
+	const buildQueryString = useCallback( () => {
+		const urlQuery = new URLSearchParams();
+		if ( search ) {
+			urlQuery.set( 's', search );
+		}
+		if ( currentPage > 1 ) {
+			urlQuery.set( 'page', currentPage.toString() );
+		}
+		if ( sort.field && sort.field !== 'url' ) {
+			urlQuery.set( 'sort_field', sort.field );
+		}
+		if ( sort.direction && sort.direction !== 'asc' ) {
+			urlQuery.set( 'sort_direction', sort.direction );
+		}
+		if ( filter.showOnlyFavorites ) {
+			urlQuery.set( 'is_favorite', '' );
+		}
+		if ( filter.issueTypes && filter.issueTypes.length > 0 ) {
+			urlQuery.set( 'issue_types', filter.issueTypes.join( ',' ) );
+		}
+
+		const queryString = urlQuery.toString();
+
+		return queryString ? `?${ queryString }` : '';
+	}, [ search, currentPage, sort, filter ] );
+
 	useEffect( () => {
 		// If the favorites filter is set, make sure to update the filter and correctly add the is_favorite param to URLs.
 		filter.showOnlyFavorites = isFavoriteFilter;
