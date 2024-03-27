@@ -5,21 +5,31 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
+type AnnualHighlightCounts = {
+	comments: number | null;
+	likes: number | null;
+	posts: number | null;
+	words: number | null;
+	followers: number | null;
+};
+
+type AnnualHighlightsMobileProps = {
+	counts: AnnualHighlightCounts;
+};
+
+type AnnualHighlightsStandardProps = {
+	counts: AnnualHighlightCounts;
+};
+
 type AnnualHighlightCardsProps = {
 	className?: string;
-	counts: {
-		comments: number | null;
-		likes: number | null;
-		posts: number | null;
-		words: number | null;
-		followers: number | null;
-	};
+	counts: AnnualHighlightCounts;
 	titleHref?: string | null;
 	year?: string | number | null;
 	navigation?: React.ReactNode;
 };
 
-function AnnualHighlightsMobile( { counts } ) {
+function AnnualHighlightsMobile( { counts }: AnnualHighlightsMobileProps ) {
 	console.log( 'AnnualHighlightsMobile' );
 	const translate = useTranslate();
 	return (
@@ -58,7 +68,7 @@ function AnnualHighlightsMobile( { counts } ) {
 	);
 }
 
-function AnnualHighlightsStandard( { counts } ) {
+function AnnualHighlightsStandard( { counts }: AnnualHighlightsStandardProps ) {
 	console.log( 'AnnualHighlightsStandard' );
 	const translate = useTranslate();
 	return (
