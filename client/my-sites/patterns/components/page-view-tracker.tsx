@@ -53,13 +53,19 @@ export function PatternsPageViewTracker( {
 
 	useEffect( () => {
 		const eventProp = {
-			category,
 			is_logged_in: isLoggedIn,
 			user_is_dev_account: isDevAccount ? '1' : '0',
-			search_term: debouncedSearchTerm,
 			type: getTracksPatternType( patternTypeFilter ),
 			view,
 		};
+
+		if ( category ) {
+			eventProp.category = category;
+		}
+
+		if ( debouncedSearchTerm ) {
+			eventProp.search_term = debouncedSearchTerm;
+		}
 
 		if ( referrer ) {
 			eventProp.referrer = referrer;
