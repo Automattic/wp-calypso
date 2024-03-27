@@ -1,0 +1,30 @@
+.pressable-overview .a4a-layout__body-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 64px;
+	margin-block-start: 48px;
+	margin-block-end: 64px;
+}
+
+
+.pressable-overview__banner {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.pressable-overview__banner-logo {
+	margin-block-end: 32px;
+}
+
+.pressable-overview__banner-title {
+	font-size: 2.25rem;
+	font-weight: 600;
+	line-height: 1.1;
+	margin-block-end: 8px;
+}
+
+.pressable-overview__banner-subtitle {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.1;
+}
