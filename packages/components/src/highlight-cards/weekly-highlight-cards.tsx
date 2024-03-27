@@ -10,10 +10,12 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
+import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
 import CountComparisonCard from './count-comparison-card';
+
 import './style.scss';
 
 type HighlightCardCounts = {
@@ -284,14 +286,30 @@ export default function WeeklyHighlightCards( {
 				) }
 			</h3>
 
-			<WeeklyHighlighCardsStandard
-				counts={ counts }
-				previousCounts={ previousCounts }
-				showValueTooltip={ showValueTooltip }
-				onClickComments={ onClickComments }
-				onClickLikes={ onClickLikes }
-				onClickViews={ onClickViews }
-				onClickVisitors={ onClickVisitors }
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={
+					<WeeklyHighlighCardsStandard
+						counts={ counts }
+						previousCounts={ previousCounts }
+						showValueTooltip={ showValueTooltip }
+						onClickComments={ onClickComments }
+						onClickLikes={ onClickLikes }
+						onClickViews={ onClickViews }
+						onClickVisitors={ onClickVisitors }
+					/>
+				}
+				breakpointInactiveComponent={
+					<WeeklyHighlighCardsStandard
+						counts={ counts }
+						previousCounts={ previousCounts }
+						showValueTooltip={ showValueTooltip }
+						onClickComments={ onClickComments }
+						onClickLikes={ onClickLikes }
+						onClickViews={ onClickViews }
+						onClickVisitors={ onClickVisitors }
+					/>
+				}
 			/>
 		</div>
 	);
