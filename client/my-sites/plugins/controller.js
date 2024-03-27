@@ -153,7 +153,14 @@ export function updatesManager( context, next ) {
 				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
-
+		case 'multisite':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				scheduleId,
+				context: 'multisite',
+				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
+			} );
+			break;
 		case 'list':
 		default:
 			context.primary = createElement( PluginsUpdateManager, {

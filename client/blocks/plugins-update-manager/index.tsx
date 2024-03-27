@@ -17,6 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { MultiSitePluginPicker } from './multisite-plugin-picker';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
@@ -24,7 +25,7 @@ import './styles.scss';
 
 interface Props {
 	siteSlug: string;
-	context: 'list' | 'create' | 'edit' | 'logs';
+	context: 'list' | 'create' | 'edit' | 'logs' | 'multisite';
 	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
@@ -83,6 +84,10 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
 			title: translate( 'Edit schedule' ),
+		},
+		multisite: {
+			component: <MultiSitePluginPicker />,
+			title: translate( 'Scheduled Updates' ),
 		},
 	}[ context ];
 
