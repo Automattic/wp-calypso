@@ -405,8 +405,7 @@ function StatsCommercialFlowOptOutForm( {
 	const isClassificationInProgress =
 		commercialClassificationLastRunAt > 0 &&
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
-	const allConditionsChecked =
-		isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked;
+
 	const isFormSubmissionDisabled = () => {
 		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
 	};
@@ -483,7 +482,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ supportsOnDemandCommercialClassification && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || ! allConditionsChecked }
+						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled() }
 						onClick={ handleCommercialClassification }
 					>
 						{ translate( 'Reverify' ) }
