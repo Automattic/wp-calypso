@@ -30,7 +30,6 @@ type AnnualHighlightCardsProps = {
 };
 
 function AnnualHighlightsMobile( { counts }: AnnualHighlightsMobileProps ) {
-	console.log( 'AnnualHighlightsMobile' );
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list-mobile">
@@ -88,7 +87,6 @@ function AnnualHighlightsMobile( { counts }: AnnualHighlightsMobileProps ) {
 }
 
 function AnnualHighlightsStandard( { counts }: AnnualHighlightsStandardProps ) {
-	console.log( 'AnnualHighlightsStandard' );
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list">
