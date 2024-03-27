@@ -1,3 +1,4 @@
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilterOption,
 	DashboardSortInterface,
@@ -15,6 +16,9 @@ export interface SitesDashboardContextInterface {
 
 	selectedSiteFeature?: string;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
+
+	sitesViewState: SitesViewState;
+	setSitesViewState: React.Dispatch< React.SetStateAction< SitesViewState > >;
 
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;

@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { initialSitesViewState } from './constants';
 import type { SitesDashboardContextInterface } from './types';
 
 const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
@@ -13,6 +14,11 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 
 	hideListing: undefined,
 	setHideListing: () => {},
+
+	sitesViewState: initialSitesViewState,
+	setSitesViewState: () => {
+		return undefined;
+	},
 
 	currentPage: 1,
 	path: '',

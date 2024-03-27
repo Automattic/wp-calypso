@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import React, { useContext, useEffect, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -22,31 +22,18 @@ import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboar
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
-import {
-	AgencyDashboardFilterMap,
-	Site,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { updateDashboardURLQueryArgs } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
+import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY, filtersMap } from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
 
 import './style.scss';
-
-const filtersMap: AgencyDashboardFilterMap[] = [
-	{ filterType: 'all_issues', ref: 1 },
-	{ filterType: 'backup_failed', ref: 2 },
-	{ filterType: 'backup_warning', ref: 3 },
-	{ filterType: 'threats_found', ref: 4 },
-	{ filterType: 'site_disconnected', ref: 5 },
-	{ filterType: 'site_down', ref: 6 },
-	{ filterType: 'plugin_updates', ref: 7 },
-];
 
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
@@ -54,6 +41,8 @@ export default function SitesDashboard() {
 	const dispatch = useDispatch();
 
 	const {
+		sitesViewState,
+		setSitesViewState,
 		selectedSiteUrl,
 		selectedSiteFeature,
 		setSelectedSiteFeature,
@@ -74,28 +63,6 @@ export default function SitesDashboard() {
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
 	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
-
-	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
-		type: 'table',
-		perPage: 50,
-		page: currentPage,
-		sort: {
-			field: 'url',
-			direction: 'desc',
-		},
-		search: search,
-		filters:
-			filter?.issueTypes?.map( ( issueType ) => {
-				return {
-					field: 'status',
-					operator: 'in',
-					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-				};
-			} ) || [],
-		hiddenFields: [ 'status' ],
-		layout: {},
-		selectedSite: undefined,
-	} );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,

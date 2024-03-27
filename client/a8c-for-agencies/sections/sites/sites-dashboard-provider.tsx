@@ -1,9 +1,11 @@
 import { ReactNode, useState } from 'react';
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilterOption,
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { filtersMap, initialSitesViewState } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
@@ -57,6 +59,20 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
+	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
+		...initialSitesViewState,
+		page: currentPage,
+		search: search,
+		filters:
+			filter?.issueTypes?.map( ( issueType ) => {
+				return {
+					field: 'status',
+					operator: 'in',
+					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
+				};
+			} ) || [],
+	} );
+
 	const sitesDashboardContextValue = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
@@ -82,6 +98,8 @@ export const SitesDashboardProvider = ( {
 		setMostRecentConnectedSite,
 		isPopoverOpen,
 		setIsPopoverOpen,
+		sitesViewState,
+		setSitesViewState,
 		showSitesDashboardV2: true,
 	};
 	return (
