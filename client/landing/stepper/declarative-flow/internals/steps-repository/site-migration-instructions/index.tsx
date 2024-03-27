@@ -6,7 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migraiton-key';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ShowHideInput } from './show-hide-input';
 import type { Step } from '../../types';

@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { useSiteMigrationKey } from '../use-site-migraiton-key';
+import { useSiteMigrationKey } from '../use-site-migration-key';
 
 describe( 'useSiteMigrationKey', () => {
 	it( 'returns the site migration key', async () => {
