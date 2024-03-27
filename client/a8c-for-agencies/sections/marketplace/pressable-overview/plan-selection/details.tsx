@@ -63,6 +63,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 							args: {
 								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
 							},
+							comment: '%(planName)s is the name of the selected plan.',
 						} ) }
 					</h3>
 
@@ -86,18 +87,21 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 								count: info?.install ?? customString,
 							},
 							components: { b: <b /> },
+							comment: '%(count)s is the number of WordPress installs.',
 						} ),
 						translate( '{{b}}%(count)s{{/b}} visits per month', {
 							args: {
 								count: info ? formatNumber( info.visits ) : customString,
 							},
 							components: { b: <b /> },
+							comment: '%(count)s is the number of visits per month.',
 						} ),
 						translate( '{{b}}%(size)s{{/b}} storage per month', {
 							args: {
 								size: info ? `${ info.storage }GB` : customString,
 							},
 							components: { b: <b /> },
+							comment: '%(size)s is the amount of storage in gigabytes.',
 						} ),
 					] }
 				/>
@@ -112,6 +116,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 							args: {
 								planName: selectedPlan ? getPressableShortName( selectedPlan.name ) : customString,
 							},
+							comment: '%(planName)s is the name of the selected plan.',
 						} ) }
 					</Button>
 				) }
