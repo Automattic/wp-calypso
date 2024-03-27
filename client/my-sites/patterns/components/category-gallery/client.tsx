@@ -77,7 +77,7 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 													: category.regularPreviewPattern
 											}
 											patternTypeFilter={ patternTypeFilter }
-											view="grid"
+											view="grid" /* Passing this prop to satisfy TS, using 'grid' as a placeholder */
 											viewportWidth={ DESKTOP_VIEWPORT_WIDTH }
 										/>
 									</div>
