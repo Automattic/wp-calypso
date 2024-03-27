@@ -502,7 +502,7 @@ function StatsCommercialFlowOptOutForm( {
 			{ supportsOnDemandCommercialClassification && (
 				<>
 					{ errorMessage && (
-						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>Error: { errorMessage }</p>
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>{ errorMessage }</p>
 					) }
 					{ isClassificationInProgress && ! errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
