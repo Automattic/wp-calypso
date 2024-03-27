@@ -399,17 +399,17 @@ function StatsCommercialFlowOptOutForm( {
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 3; // 3 days
 	const isClassificationInProgress =
 		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60; // 1 hour
 	const allConditionsChecked =
 		isAdsChecked && isSellingChecked && isBusinessChecked && isDonationChecked;
-	const isFormSubmissionDisabled = () => {
-		return ! allConditionsChecked || comemercialClassificationRunAt === 0;
-	};
+	// const isFormSubmissionDisabled = () => {
+	// 	return ! allConditionsChecked || comemercialClassificationRunAt === 0;
+	// };
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error or you’ve removed the commercial identifier, please confirm the information below and reverify (maximum once every 24 hours). If you still have issues, you will be given options to contact support.',
+				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error or you’ve removed the commercial identifier, please confirm the information below and reverify (maximum once every 24 hours).',
 				{
 					args: {
 						reasons:
@@ -485,7 +485,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ ! isClassificationInProgress && (
 					<Button
 						variant="secondary"
-						disabled={ isFormSubmissionDisabled() }
+						// disabled={ isFormSubmissionDisabled() }
 						onClick={ formHandler }
 					>
 						{ formButton }
@@ -498,6 +498,13 @@ function StatsCommercialFlowOptOutForm( {
 			{ isClassificationInProgress && ! errorMessage && (
 				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
 					{ translate( 'We are verifying your site. Please come back later…' ) }
+				</p>
+			) }
+			{ ! isClassificationInProgress && ! errorMessage && (
+				<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+					{ translate(
+						'We have finished verify your site. If you still think this is an error, please contact our support.'
+					) }
 				</p>
 			) }
 		</>
