@@ -479,7 +479,7 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ supportsOnDemandCommercialClassification && (
+				{ supportsOnDemandCommercialClassification && isCommercial && (
 					<Button
 						variant="secondary"
 						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled() }
@@ -489,6 +489,7 @@ function StatsCommercialFlowOptOutForm( {
 					</Button>
 				) }
 				{ ( ! supportsOnDemandCommercialClassification ||
+					! isCommercial ||
 					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
 					<Button
 						variant="secondary"
@@ -499,7 +500,7 @@ function StatsCommercialFlowOptOutForm( {
 					</Button>
 				) }
 			</div>
-			{ supportsOnDemandCommercialClassification && (
+			{ supportsOnDemandCommercialClassification && isCommercial && (
 				<>
 					{ errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>{ errorMessage }</p>
