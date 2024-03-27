@@ -154,7 +154,6 @@ function WeeklyHighlighCardsStandard( {
 	onClickViews,
 	onClickVisitors,
 }: WeeklyHighlighCardsStandardProps ) {
-	console.log( 'WeeklyHighlighCardsStandard' );
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list">
@@ -203,7 +202,6 @@ function WeeklyHighlighCardsMobile( {
 	onClickViews,
 	onClickVisitors,
 }: WeeklyHighlighCardsStandardProps ) {
-	console.log( 'WeeklyHighlighCardsMobile' );
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list-mobile">
