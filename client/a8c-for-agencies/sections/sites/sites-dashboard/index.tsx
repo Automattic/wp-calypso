@@ -149,10 +149,15 @@ export default function SitesDashboard() {
 			if ( path.includes( baseUrl ) ) {
 				page.replace( path, null, false, false );
 			} else {
-				page.replace( baseUrl, null, false, false );
+				page.replace( baseUrl, null, false, true );
 			}
 		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }` );
+			page.replace(
+				`/sites/${ category }/${ sitesViewState.selectedSite.url }`,
+				null,
+				false,
+				false
+			);
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
 			page.replace( `/sites/${ category }`, null, false, false );
