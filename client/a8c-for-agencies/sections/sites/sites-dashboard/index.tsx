@@ -95,6 +95,7 @@ export default function SitesDashboard() {
 		layout: {},
 		selectedSite: undefined,
 	} );
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
@@ -167,38 +168,36 @@ export default function SitesDashboard() {
 	}, [ search, currentPage, sort, filter ] );
 
 	useEffect( () => {
-		// If the favorites filter is set, make sure to update the filter and correctly add the is_favorite param to URLs.
-		filter.showOnlyFavorites = isFavoriteFilter;
-		const favoritesParam = isFavoriteFilter ? '?is_favorite' : '';
+		// Build the query string
+		const queryString = buildQueryString();
+
+		let url = '/sites';
+
 		// We need a category in the URL if we have a selected site
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
 		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
-			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }${ favoritesParam }`
-			);
+			url += `/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`;
 		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }${ favoritesParam }`
-			);
+			url += `/${ category }/${ sitesViewState.selectedSite.url }`;
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( `/sites/${ category }${ favoritesParam }` );
-		} else {
-			page.replace( `/sites${ favoritesParam }` );
+			url += `/${ category }`;
 		}
+
+		page.replace( url + queryString );
 
 		if ( sitesViewState.selectedSite ) {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
 	}, [
 		filter,
-		isFavoriteFilter,
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
 		category,
 		setCategory,
 		dispatch,
+		buildQueryString,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
