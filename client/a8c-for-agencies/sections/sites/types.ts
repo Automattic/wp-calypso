@@ -1,3 +1,4 @@
+import { ReactNode, SetStateAction, Dispatch } from 'react';
 import {
 	AgencyDashboardFilterOption,
 	DashboardSortInterface,
@@ -16,6 +17,8 @@ export interface SitesDashboardContextInterface {
 	selectedSiteFeature?: string;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 
+	featurePreview?: ReactNode | null;
+
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;
 
@@ -24,7 +27,6 @@ export interface SitesDashboardContextInterface {
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
-	showSitesDashboardV2: boolean;
 
 	isBulkManagementActive: boolean;
 	setIsBulkManagementActive: ( value: boolean ) => void;
@@ -40,5 +42,5 @@ export interface SitesDashboardContextInterface {
 	setMostRecentConnectedSite: ( mostRecentConnectedSite: string ) => void;
 
 	isPopoverOpen: boolean;
-	setIsPopoverOpen: React.Dispatch< React.SetStateAction< boolean > >;
+	setIsPopoverOpen: Dispatch< SetStateAction< boolean > >;
 }

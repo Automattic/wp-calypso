@@ -28,11 +28,11 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 			siteFeatureInitialState={ siteFeature }
 			hideListingInitialState={ hideListingInitialState }
 			path={ context.path }
+			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
 			search={ search }
 			currentPage={ currentPage }
 			filter={ filter }
 			sort={ sort }
-			showSitesDashboardV2={ true }
 		>
 			<SitesDashboard />
 		</SitesDashboardProvider>
@@ -44,7 +44,7 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 	context.store.dispatch( setAllSitesSelected() );
 }
 
-export const sitesContext: Callback = ( context, next ) => {
+export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( false, context );
 	next();
 };

@@ -17,7 +17,7 @@ interface Props {
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
-	showSitesDashboardV2: boolean;
+	featurePreview?: ReactNode | null;
 }
 
 export const SitesDashboardProvider = ( {
@@ -31,6 +31,7 @@ export const SitesDashboardProvider = ( {
 	currentPage,
 	filter,
 	sort,
+	featurePreview,
 }: Props ) => {
 	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
@@ -83,7 +84,7 @@ export const SitesDashboardProvider = ( {
 		setMostRecentConnectedSite,
 		isPopoverOpen,
 		setIsPopoverOpen,
-		showSitesDashboardV2: true,
+		featurePreview,
 	};
 
 	return (

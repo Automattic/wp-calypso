@@ -19,7 +19,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	search: '',
 	filter: { issueTypes: [], showOnlyFavorites: false },
 	isBulkManagementActive: false,
-	showSitesDashboardV2: false,
 	setIsBulkManagementActive: () => {
 		return undefined;
 	},
@@ -46,6 +45,7 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 		field: 'url',
 		direction: 'asc',
 	},
+	featurePreview: null,
 } );
 
 export default SitesDashboardContext;
