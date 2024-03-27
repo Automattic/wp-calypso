@@ -225,7 +225,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			minWidth={ 375 }
 			maxWidth="100%"
 			onResizeStop={ () => {
-				recordResizeEvent( 'calypso_pattern_library_viewport_resize' );
+				recordResizeEvent( 'calypso_pattern_library_resize' );
 			} }
 		>
 			<PatternPreviewFragment { ...props } />
