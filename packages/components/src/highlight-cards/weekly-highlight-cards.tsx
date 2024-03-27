@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
+import ShortenedNumber from '../number-formatters';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
 import CountComparisonCard from './count-comparison-card';
@@ -209,21 +210,27 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 				<span className="highlight-cards-list-mobile__item-heading">
 					{ translate( 'Visitors' ) }
 				</span>
-				<span className="highlight-cards-list-mobile__item-count">{ counts?.visitors ?? '-' }</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.visitors ?? null } />
+				</span>
 			</div>
 			<div className="highlight-cards-list-mobile__item" key="views">
 				<span className="highlight-cards-list-mobile__item-icon">
 					<Icon icon={ eye } />
 				</span>
 				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Views' ) }</span>
-				<span className="highlight-cards-list-mobile__item-count">{ counts?.views ?? '-' }</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.views ?? null } />
+				</span>
 			</div>
 			<div className="highlight-cards-list-mobile__item" key="likes">
 				<span className="highlight-cards-list-mobile__item-icon">
 					<Icon icon={ starEmpty } />
 				</span>
 				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
-				<span className="highlight-cards-list-mobile__item-count">{ counts?.likes ?? '-' }</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.likes ?? null } />
+				</span>
 			</div>
 			<div className="highlight-cards-list-mobile__item" key="comments">
 				<span className="highlight-cards-list-mobile__item-icon">
@@ -232,7 +239,9 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 				<span className="highlight-cards-list-mobile__item-heading">
 					{ translate( 'Comments' ) }
 				</span>
-				<span className="highlight-cards-list-mobile__item-count">{ counts?.comments ?? '-' }</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.comments ?? null } />
+				</span>
 			</div>
 		</div>
 	);
