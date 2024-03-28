@@ -296,7 +296,7 @@ const StatsSingleItemPagePurchase = ( {
 	isCommercial,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const { isCommercialOwned } = useStatsPurchases( siteId );
+	const { supportCommercialUse } = useStatsPurchases( siteId );
 	const { isNewSite } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
@@ -312,7 +312,7 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! isCommercialOwned && ! ( isNewSite && isCommercial ) && (
+			{ ! supportCommercialUse && ! ( isNewSite && isCommercial ) && (
 				<StatsSingleItemCard>
 					<StatsCommercialFlowOptOutForm
 						isCommercial={ isCommercial }
