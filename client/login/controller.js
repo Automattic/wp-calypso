@@ -101,8 +101,14 @@ export async function login( context, next ) {
 		}
 
 		const { searchParams: redirectParams } = getUrlParts( redirect_to );
+		const back = redirectParams.get( 'back' );
 
-		if ( client_id !== redirectParams.get( 'client_id' ) ) {
+		const redirectClientId =
+			redirectParams.get( 'client_id' ) ||
+			// If the client_id is not in the redirect_to URL, check the back URL. This is for the case where the client_id is passed in the back parameter of remote login link when proxy is enabled. See: https://github.com/Automattic/wp-calypso/issues/52940
+			( back ? getUrlParts( back ).searchParams.get( 'client_id' ) : null );
+
+		if ( client_id !== redirectClientId ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
@@ -120,7 +126,6 @@ export async function login( context, next ) {
 			}
 		}
 	}
-
 	enhanceContextWithLogin( context );
 
 	next();
