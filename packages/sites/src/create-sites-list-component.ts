@@ -27,7 +27,7 @@ interface BaseProps< T = MinimumSite > extends Attributes {
 type FilteringProps = { filtering?: SitesFilterOptions };
 
 const addFiltering = < T extends BaseProps >( enabled: boolean, baseProps: T ) => {
-	const { status } = baseProps.grouping;
+	const { status } = baseProps.grouping ?? {};
 
 	// we only show deleted sites if this status was requested and not part of "all"
 	if ( status !== 'deleted' ) {
@@ -105,7 +105,7 @@ type CreatedComponentProps<
 	TFiltering extends boolean,
 > = {
 	sites: TSite[];
-	grouping: { status: string; showHidden: boolean };
+	grouping?: { status: string; showHidden: boolean };
 	children( processedData: RenderProp< TSite, TGrouping > ): ReactElement;
 } & ComponentGroupingProp< TGrouping > &
 	ComponentSortingProp< TSorting > &
