@@ -116,15 +116,11 @@ function PatternPreviewFragment( {
 	}
 
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
-	const patternType =
-		typeof patternTypeFilter !== 'undefined'
-			? getTracksPatternType( patternTypeFilter )
-			: patternTypeFilter;
 	const recordCopyEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern?.name,
 			category,
-			type: patternType,
+			type: getTracksPatternType( patternTypeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',
 			view: isGridView ? 'grid' : 'list',
 		} );
