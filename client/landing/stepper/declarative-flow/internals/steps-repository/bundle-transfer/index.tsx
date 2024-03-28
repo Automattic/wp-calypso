@@ -122,7 +122,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 				// Initiate transfer
 				console.log( getIntent() );
 				if ( isNewSiteMigrationFlow( flow ) ) {
-					await initiateAtomicTransfer( siteId, softwareSet, getIntent() );
+					await initiateAtomicTransfer( siteId, softwareSet, 'migrate' );
 				} else {
 					await initiateAtomicTransfer( siteId, softwareSet );
 				}
