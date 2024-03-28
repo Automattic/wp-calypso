@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,6 +22,7 @@ interface Props {
 
 export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	const { children } = props;
@@ -99,7 +101,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<UpgradePlanFeatureList plan={ plan } />
 					</div>
 				</div>
-				<UpgradePlanHostingDetails />
+				{ isEnglishLocale && <UpgradePlanHostingDetails /> }
 			</div>
 		</div>
 	);

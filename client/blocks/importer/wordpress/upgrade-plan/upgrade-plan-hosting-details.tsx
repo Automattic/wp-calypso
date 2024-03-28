@@ -1,13 +1,10 @@
-import { WordPressLogo } from '@automattic/components';
-import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
-import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
+import { UpgradePlanHostingDetailsList } from './constants';
 
 export const UpgradePlanHostingDetails = () => {
 	const { __ } = useI18n();
-	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	// const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
 	return (
 		<div className="import__upgrade-plan-hosting-details">
@@ -36,7 +33,7 @@ export const UpgradePlanHostingDetails = () => {
 					) ) }
 				</ul>
 			</div>
-			<div className="import__upgrade-plan-hosting-details-testimonials-container">
+			{ /* <div className="import__upgrade-plan-hosting-details-testimonials-container">
 				<p>{ __( '100% loved by our best customers' ) }</p>
 				<div className="import__upgrade-plan-hosting-details-testimonials">
 					{ UpgradePlanHostingTestimonials.map(
@@ -59,7 +56,7 @@ export const UpgradePlanHostingDetails = () => {
 						)
 					) }
 				</div>
-			</div>
+			</div> */ }
 		</div>
 	);
 };
