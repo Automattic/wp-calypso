@@ -137,10 +137,9 @@
 	margin-top: 1em;
 
 	.button {
-		margin: 0;
-		margin-left: calc(15% + 20px);
+		margin: auto;
 		text-align: center;
-		width: auto;
+		min-width: 300px;
 	}
 
 	.purchase-detail__info {
