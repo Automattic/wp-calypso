@@ -3,8 +3,8 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
-import { useDispatch, useSelect } from '@wordpress/data';
+import WhatsNewGuide, { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
+import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
@@ -100,38 +100,15 @@ function SidebarScrollSynchronizer() {
 }
 
 function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
 	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
 
-	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
-
 	useEffect( () => {
-		fetchSeenWhatsNewAnnouncements();
-	}, [ fetchSeenWhatsNewAnnouncements ] );
-
-	const { seenWhatsNewAnnouncements } = useSelect( ( select ) => {
-		const helpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			seenWhatsNewAnnouncements: helpCenterSelect.getSeenWhatsNewAnnouncements(),
-		};
-	}, [] );
-
-	useEffect( () => {
-		if (
-			data &&
-			data.length > 0 &&
-			! isLoading &&
-			seenWhatsNewAnnouncements &&
-			typeof seenWhatsNewAnnouncements.indexOf === 'function'
-		) {
-			data.forEach( ( item ) => {
-				if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
-					setShowWhatsNew( true );
-					return;
-				}
-			} );
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
 		}
-	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
 
 	const handleClose = useCallback( () => {
 		setShowWhatsNew( false );
@@ -194,6 +171,23 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	}, [ layoutFocus ] );
 
 	return null;
+}
+
+function AppBannerLoader( { siteId } ) {
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
+		}
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
+
+	return (
+		! isLoading &&
+		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+	);
 }
 
 class Layout extends Component {
@@ -420,7 +414,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+					<AppBannerLoader siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />

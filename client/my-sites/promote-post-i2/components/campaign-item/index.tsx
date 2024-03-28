@@ -51,6 +51,7 @@ export default function CampaignItem( props: Props ) {
 		start_date,
 		campaign_stats,
 		type,
+		is_evergreen,
 	} = campaign;
 
 	const clicks_total = campaign_stats?.clicks_total ?? 0;
@@ -69,13 +70,19 @@ export default function CampaignItem( props: Props ) {
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, 108, 0 );
 
-	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
-		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
+	const { totalBudget, campaignDays } = useMemo(
+		() =>
+			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
 		[ budget_cents, end_date, spent_budget_cents, start_date ]
 	);
 
-	const budgetString =
-		campaignDays && totalBudgetLeft ? `$${ formatCents( totalBudgetLeft ) } ` : '-';
+	let budgetString = '-';
+	if ( is_evergreen && campaignDays ) {
+		budgetString = `$${ formatCents( totalBudget ) } weekly`;
+	} else if ( campaignDays ) {
+		budgetString = `$${ formatCents( totalBudget ) }`;
+	}
+
 	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 

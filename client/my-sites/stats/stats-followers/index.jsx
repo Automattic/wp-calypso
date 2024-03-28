@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
@@ -65,6 +66,7 @@ class StatModuleFollowers extends Component {
 			emailQuery,
 			wpcomQuery,
 			isOdysseyStats,
+			className,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -145,7 +147,7 @@ class StatModuleFollowers extends Component {
 						)
 					}
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					className="stats__modernised-followers"
+					className={ classNames( 'stats__modernised-followers', className ) }
 					showLeftIcon
 				/>
 			</>

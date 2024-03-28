@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import SupportIcon from './assets/images/support.svg';
 import Theme2Image from './assets/images/theme-2.jpg';
@@ -322,12 +323,6 @@ import {
 	isWooExpressPlan,
 } from './main';
 import type { FeatureList } from './types';
-
-/**
- * Hardcoded URL temporary until @automattic/urls is cretated
- */
-export const DOMAIN_PRICING_AND_AVAILABLE_TLDS =
-	'https://wordpress.com/support/domains/domain-pricing-and-available-tlds/';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
