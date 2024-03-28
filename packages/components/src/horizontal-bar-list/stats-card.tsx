@@ -54,7 +54,9 @@ const StatsCard = ( {
 	// Show Card title on one line and all other column header(s) below:
 	// (main item, optional additional columns and value)
 	const splitHeaderNode = (
-		<div className={ `${ BASE_CLASS_NAME }-header ${ BASE_CLASS_NAME }-header--split` }>
+		<div
+			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
+		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
 				{ titleNode }
 				{ toggleControl }

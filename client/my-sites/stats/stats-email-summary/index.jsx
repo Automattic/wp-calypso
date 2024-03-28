@@ -9,6 +9,7 @@ import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import '../summary/style.scss';
+import '../stats-module/summary-nav.scss';
 
 const StatsStrings = statsStringsFactory();
 
@@ -42,13 +43,15 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 				path={ `/stats/${ module }/:site` }
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>
-			<NavigationHeader navigationItems={ navigationItems } />
+			<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
 			<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-				<div className="stats-summary-nav__header">
-					<div>
-						<div className="stats-section-title">
-							<h3>{ translate( 'Stats for Emails' ) }</h3>
+				<div className="stats-summary-nav">
+					<div className="stats-summary-nav__header">
+						<div>
+							<div className="stats-section-title">
+								<h3>{ translate( 'Stats for Emails' ) }</h3>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -74,6 +77,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					mainItemLabel={ translate( 'Latest Emails' ) }
 					hideSummaryLink
 					metricLabel={ translate( 'Clicks' ) }
+					listItemClassName="stats__summary--narrow-mobile"
 				/>
 				<JetpackColophon />
 			</div>
