@@ -140,6 +140,10 @@ const DeletedStatus = styled.div`
 	}
 `;
 
+const StatsOffContainer = styled.div`
+	text-align: left;
+`;
+
 const StatsOffIndicator = () => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const tooltipRef = useRef( null );
@@ -154,7 +158,7 @@ const StatsOffIndicator = () => {
 	};
 
 	return (
-		<div
+		<StatsOffContainer
 			onMouseOver={ handleOnMouseEnter }
 			onMouseOut={ handleOnMouseExit }
 			onFocus={ handleOnMouseEnter }
@@ -166,7 +170,7 @@ const StatsOffIndicator = () => {
 			<Popover isVisible={ showPopover } context={ tooltipRef.current } css={ { marginTop: -5 } }>
 				<PopoverContent>{ translate( 'Stats are disabled on this site.' ) }</PopoverContent>
 			</Popover>
-		</div>
+		</StatsOffContainer>
 	);
 };
 
