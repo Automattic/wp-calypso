@@ -1,13 +1,19 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.png';
 import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.png';
 import imageBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/use-block-patterns.png';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
 export function PatternsGetStarted() {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const localizeUrl = useLocalizeUrl();
+	const locale = useLocale();
+
 	return (
 		<PatternsSection
 			bodyFullWidth
@@ -16,7 +22,10 @@ export function PatternsGetStarted() {
 			title="All about patterns"
 		>
 			<div className="patterns-get-started__buttons">
-				<Button className="patterns-get-started__start-button" href="/start">
+				<Button
+					className="patterns-get-started__start-button"
+					href={ localizeUrl( '//wordpress.com/setup/assembler-first', locale, isLoggedIn ) }
+				>
 					Build a site
 				</Button>
 			</div>
