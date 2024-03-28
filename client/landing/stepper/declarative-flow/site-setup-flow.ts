@@ -392,7 +392,7 @@ const siteSetupFlow: Flow = {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
+					if ( shouldRedirectToSiteMigration( currentStep, platform, locale, origin ) ) {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from },
