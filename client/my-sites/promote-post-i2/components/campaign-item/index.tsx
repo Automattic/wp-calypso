@@ -73,7 +73,7 @@ export default function CampaignItem( props: Props ) {
 	const { totalBudget, campaignDays } = useMemo(
 		() =>
 			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
-		[ budget_cents, end_date, spent_budget_cents, start_date ]
+		[ budget_cents, end_date, spent_budget_cents, start_date, is_evergreen ]
 	);
 
 	let budgetString = '-';
