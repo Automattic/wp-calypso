@@ -51,7 +51,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1",
-		"tinymce": "^5.0.0"
+		"tinymce": "^7.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
