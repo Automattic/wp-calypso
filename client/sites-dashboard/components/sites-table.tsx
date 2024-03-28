@@ -137,8 +137,6 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 		};
 	}, [ masterbarHeight ] );
 
-	const isStatusDeleted = sites.some( ( site ) => ! site.is_deleted );
-
 	return (
 		<Table className={ className }>
 			<THead
@@ -148,17 +146,15 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 			>
 				<Row>
 					<SiteTh>{ __( 'Site' ) }</SiteTh>
-					{ ! isStatusDeleted && <th>{ __( 'Plan' ) }</th> }
+					<th>{ __( 'Plan' ) }</th>
 					<StatusTh>{ __( 'Status' ) }</StatusTh>
 					<th>{ __( 'Last Publish' ) }</th>
-					{ ! isStatusDeleted && (
-						<StatsTh>
-							<StatsThInner>
-								<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
-							</StatsThInner>
-						</StatsTh>
-					) }
-					<th style={ isStatusDeleted ? {} : { width: '24px' } }></th>
+					<StatsTh>
+						<StatsThInner>
+							<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
+						</StatsThInner>
+					</StatsTh>
+					<th style={ { width: '24px' } }></th>
 				</Row>
 			</THead>
 			<tbody>
