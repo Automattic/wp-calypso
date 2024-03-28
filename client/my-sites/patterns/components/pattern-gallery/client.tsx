@@ -132,11 +132,11 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 								'pattern-preview--list': ! isGridView,
 							} ) }
 							getPatternPermalink={ getPatternPermalink }
+							isGridView={ isGridView }
 							isResizable={ ! isGridView }
 							key={ pattern.ID }
 							pattern={ pattern }
 							patternTypeFilter={ patternTypeFilter }
-							isGridView={ isGridView }
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }

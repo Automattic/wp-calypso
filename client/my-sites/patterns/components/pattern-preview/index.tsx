@@ -11,12 +11,11 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
-import type {
-	Pattern,
-	PatternGalleryProps,
-	PatternTypeFilter,
-} from 'calypso/my-sites/patterns/types';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { PatternTypeFilter, Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
@@ -100,10 +99,6 @@ function PatternPreviewFragment( {
 		return null;
 	}
 
-	// This handler will be used to fire each of the different 'Get Access'
-	// events for logged out users: opening the modal, closing the modal,
-	// signing up, and logging in. The handler will be passed the name of the
-	// event to fire, and the event props will be the same for each.
 	const recordGetAccessEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern.name,
@@ -186,8 +181,10 @@ function PatternPreviewFragment( {
 }
 
 export function PatternPreview( props: PatternPreviewProps ) {
-	const { isResizable, pattern } = props;
+	const { category, isResizable, pattern, patternTypeFilter } = props;
 	const isMobile = useMobileBreakpoint();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
 	if ( ! pattern ) {
 		return null;
@@ -196,6 +193,16 @@ export function PatternPreview( props: PatternPreviewProps ) {
 	if ( ! isResizable || isMobile ) {
 		return <PatternPreviewFragment { ...props } />;
 	}
+
+	const recordResizeEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			is_logged_in: isLoggedIn,
+			user_is_dev_account: isDevAccount ? '1' : '0',
+		} );
+	};
 
 	return (
 		<ResizableBox
@@ -212,6 +219,9 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			handleWrapperClass="pattern-preview__resizer"
 			minWidth={ 375 }
 			maxWidth="100%"
+			onResizeStop={ () => {
+				recordResizeEvent( 'calypso_pattern_library_resize' );
+			} }
 		>
 			<PatternPreviewFragment { ...props } />
 		</ResizableBox>
