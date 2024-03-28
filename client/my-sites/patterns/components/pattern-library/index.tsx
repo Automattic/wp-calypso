@@ -101,6 +101,7 @@ export const PatternLibrary = ( {
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
+
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
