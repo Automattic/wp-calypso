@@ -227,6 +227,8 @@ const SitesDataViews = ( {
 
 	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
 	// todo - refactor: extract actions, along fields, to the upper component
+	// Currently not in use until bulk selections are properly implemented.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const actions = useMemo(
 		() => [
 			{
@@ -321,7 +323,7 @@ const SitesDataViews = ( {
 				} }
 				onChangeView={ onSitesViewChange }
 				supportedLayouts={ [ 'table' ] }
-				actions={ actions }
+				actions={ [] } // Replace with actions when bulk selections are implemented.
 				isLoading={ isLoading }
 			/>
 		</div>
