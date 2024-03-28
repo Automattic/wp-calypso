@@ -8,10 +8,6 @@ $grid-vertical-gutters: 32px;
 }
 
 .stats__module-list.stats__module--unified.subscribers-page {
-	@media (max-width: 660px) {
-		padding: 0 16px;
-	}
-
 	// Eliminate the vertical gap appended to the bottom of the grid.
 	&::after {
 		display: none;
