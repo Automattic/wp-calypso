@@ -39,7 +39,7 @@ $business-plan-color: #7f54b3;
 			margin-bottom: 2em;
 			margin-right: 0;
 			margin-left: 0;
-			width: 452px;
+			width: 352px;
 		}
 	}
 
@@ -54,7 +54,7 @@ $business-plan-color: #7f54b3;
 	.import__upgrade-plan-period-switcher {
 		display: flex;
 		justify-content: center;
-		margin-bottom: 3rem;
+		margin-bottom: 1.5rem;
 
 		.button-group {
 			background: #f2f2f2;
@@ -131,6 +131,7 @@ $business-plan-color: #7f54b3;
 
 			&.is-primary {
 				background-color: $business-plan-color !important;
+				border: $business-plan-color;
 				color: var(--studio-purple-0);
 			}
 
@@ -241,7 +242,7 @@ $business-plan-color: #7f54b3;
 		flex-direction: column;
 		margin-top: 0;
 		margin-bottom: 2.75rem;
-		gap: 1.5rem;
+		gap: 2rem;
 
 		@include break-medium {
 			margin-right: 0;
@@ -253,7 +254,7 @@ $business-plan-color: #7f54b3;
 			border-bottom-left-radius: 0;
 			border-left: 0;
 			width: 352px;
-			padding: 1.5rem;
+			padding: 2.75rem 1.5rem;
 		}
 
 		.import__upgrade-plan-hosting-details-header {
@@ -295,10 +296,8 @@ $business-plan-color: #7f54b3;
 				border-radius: 4px;
 				background-color: #f2e9ed;
 				padding: 4px;
-				border: 4px solid #f2e9ed;
-				svg {
-					fill: #984a9c;
-				}
+				border: 2px solid #f2e9ed;
+				fill: #984a9c;
 			}
 
 			.import__upgrade-plan-hosting-details-list-stats {
@@ -307,6 +306,11 @@ $business-plan-color: #7f54b3;
 				gap: 0.125rem;
 				line-height: 16px;
 				justify-content: space-around;
+
+				span {
+					font-size: 0.75rem;
+					color: var(--studio-gray-50, #646970);
+				}
 			}
 		}
 
