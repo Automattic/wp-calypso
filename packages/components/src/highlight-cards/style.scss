@@ -452,7 +452,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
-
 .highlight-cards-list-mobile {
 	display: flex;
 	flex-direction: column;
@@ -486,5 +485,8 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		svg {
 			vertical-align: middle;
 		}
+	}
+	.highlight-cards-list-mobile__item-trend {
+		padding-left: 8px;
 	}
 }
