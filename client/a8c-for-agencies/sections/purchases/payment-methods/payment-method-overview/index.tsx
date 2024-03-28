@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -51,6 +52,7 @@ export default function PaymentMethodOverview() {
 		hasMoreStoredCards,
 		setPaging,
 	} );
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const onAddNewCardClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_payments_add_new_card_button_click' ) );
@@ -116,7 +118,7 @@ export default function PaymentMethodOverview() {
 
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ translate( 'Payment Methods' ) } </Title>
+					{ ! isNarrowView && <Title>{ translate( 'Payment Methods' ) } </Title> }
 					<Subtitle>
 						{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
 					</Subtitle>

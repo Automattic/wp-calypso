@@ -13,6 +13,12 @@
 		display: flex;
 	}
 
+	.a4a-layout-column {
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
+	}
+
 	.dataviews-view-table-wrapper {
 		height: calc(100vh - 265px); /* It subtracts the header height to allow scrolling in this block */
 		overflow-y: auto;

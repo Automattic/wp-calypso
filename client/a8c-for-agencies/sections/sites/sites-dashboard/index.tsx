@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -63,6 +64,7 @@ export default function SitesDashboard() {
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
+	const isNarrowView = useBreakpoint( '<660px' );
 	const { data: products } = useProductsQuery();
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -216,7 +218,7 @@ export default function SitesDashboard() {
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation>
 					<LayoutHeader>
-						<Title>{ translate( 'Sites' ) }</Title>
+						{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
 						<Actions>
 							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
 							<SiteTopHeaderButtons />

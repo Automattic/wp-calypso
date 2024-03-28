@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -39,6 +40,7 @@ export default function PressableOverview() {
 		},
 		[ selectedCartItems, setSelectedCartItems ]
 	);
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const PRESSABLE_LINK = 'https://pressable.com/';
 
@@ -53,27 +55,40 @@ export default function PressableOverview() {
 			wide
 			withBorder
 			compact
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
-				<LayoutHeader>
-					<Breadcrumb
-						items={ [
-							{
-								label: translate( 'Marketplace' ),
-								href: A4A_MARKETPLACE_LINK,
-							},
-							{
-								label: translate( 'Hosting' ),
-								href: A4A_MARKETPLACE_HOSTING_LINK,
-							},
-							{
-								label: translate( 'Pressable hosting' ),
-							},
-						] }
-					/>
+				{ ! isNarrowView ? (
+					<LayoutHeader>
+						<Breadcrumb
+							items={ [
+								{
+									label: translate( 'Marketplace' ),
+									href: A4A_MARKETPLACE_LINK,
+								},
+								{
+									label: translate( 'Hosting' ),
+									href: A4A_MARKETPLACE_HOSTING_LINK,
+								},
+								{
+									label: translate( 'Pressable hosting' ),
+								},
+							] }
+						/>
 
-					<Actions>
+						<Actions>
+							<ShoppingCart
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
+								onCheckout={ () => {
+									page( A4A_MARKETPLACE_CHECKOUT_LINK );
+								} }
+							/>
+						</Actions>
+					</LayoutHeader>
+				) : (
+					<Actions className="a4a-layout-header-mobile">
+						<MobileSidebarNavigation />
+
 						<ShoppingCart
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
@@ -82,7 +97,7 @@ export default function PressableOverview() {
 							} }
 						/>
 					</Actions>
-				</LayoutHeader>
+				) }
 			</LayoutTop>
 
 			<LayoutBody>

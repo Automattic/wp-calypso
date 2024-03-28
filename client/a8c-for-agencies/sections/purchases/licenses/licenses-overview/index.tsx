@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -45,6 +46,7 @@ export default function LicensesOverview( {
 	const dispatch = useDispatch();
 
 	const title = translate( 'Licenses' );
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const context = {
 		filter,
@@ -80,7 +82,7 @@ export default function LicensesOverview( {
 			<LicensesOverviewContext.Provider value={ context }>
 				<LayoutTop withNavigation>
 					<LayoutHeader>
-						<Title>{ title } </Title>
+						{ ! isNarrowView && <Title>{ title } </Title> }
 						<Actions>
 							<Button
 								disabled={ ! partnerCanIssueLicense }

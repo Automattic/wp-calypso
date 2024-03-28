@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -13,6 +14,7 @@ export default function InvoicesOverview() {
 	const translate = useTranslate();
 
 	const title = translate( 'Invoices' );
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -20,7 +22,7 @@ export default function InvoicesOverview() {
 
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title } </Title>
+					{ ! isNarrowView && <Title>{ title } </Title> }
 					{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
 				</LayoutHeader>
 			</LayoutTop>

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -18,6 +19,7 @@ export default function Hosting() {
 	const translate = useTranslate();
 
 	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	return (
 		<Layout
@@ -25,13 +27,25 @@ export default function Hosting() {
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
-				<LayoutHeader>
-					<Title>{ translate( 'Marketplace' ) }</Title>
+				{ ! isNarrowView ? (
+					<LayoutHeader>
+						<Title>{ translate( 'Marketplace' ) }</Title>
 
-					<Actions>
+						<Actions>
+							<ShoppingCart
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
+								onCheckout={ () => {
+									page( A4A_MARKETPLACE_CHECKOUT_LINK );
+								} }
+							/>
+						</Actions>
+					</LayoutHeader>
+				) : (
+					<Actions className="a4a-layout-header-mobile">
+						<MobileSidebarNavigation />
 						<ShoppingCart
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
@@ -40,7 +54,7 @@ export default function Hosting() {
 							} }
 						/>
 					</Actions>
-				</LayoutHeader>
+				) }
 			</LayoutTop>
 
 			<LayoutBody>

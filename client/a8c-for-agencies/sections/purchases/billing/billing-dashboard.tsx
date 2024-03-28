@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -19,6 +20,7 @@ export default function BillingDashboard() {
 	const title = translate( 'Billing' );
 
 	const partnerCanIssueLicense = true; // FIXME: get this from state
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const onIssueNewLicenseClick = () => {
 		// TODO: dispatch action to open issue license modal
@@ -35,7 +37,7 @@ export default function BillingDashboard() {
 
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title } </Title>
+					{ ! isNarrowView && <Title>{ title } </Title> }
 					<Actions>
 						<Button
 							disabled={ ! partnerCanIssueLicense }

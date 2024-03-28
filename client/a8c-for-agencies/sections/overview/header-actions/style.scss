@@ -3,6 +3,12 @@
 	align-items: center;
 	gap: 8px;
 
+	@include breakpoint-deprecated( "<660px" ) {
+		margin-inline-end: 32px;
+		margin-inline-start: auto;
+		flex-grow: 0;
+	}
+
 	.button {
 		border-radius: 4px;
 	}

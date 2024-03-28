@@ -1,3 +1,4 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -16,16 +17,24 @@ import './style.scss';
 export default function Overview() {
 	const translate = useTranslate();
 	const title = translate( 'Agency HQ Overview' );
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	return (
-		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout title={ title } wide>
 			<LayoutTop>
-				<LayoutHeader className="a4a-overview-header">
-					<Title>{ title }</Title>
-					<Actions>
+				{ ! isNarrowView ? (
+					<LayoutHeader className="a4a-overview-header">
+						<Title>{ title }</Title>
+						<Actions>
+							<OverviewHeaderActions />
+						</Actions>
+					</LayoutHeader>
+				) : (
+					<Actions className="a4a-layout-header-mobile">
+						<MobileSidebarNavigation />
 						<OverviewHeaderActions />
 					</Actions>
-				</LayoutHeader>
+				) }
 			</LayoutTop>
 			<LayoutBody className="a4a-overview-content">
 				<ContentSidebar mainContent={ <OverviewBody /> } rightSidebar={ <OverviewSidebar /> } />
