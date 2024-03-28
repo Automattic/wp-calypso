@@ -3,6 +3,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import { serializeQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import { containEquivalentItems } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-submit-form';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -44,7 +45,8 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			onAssignError: ( error: Error ) =>
 				dispatch( errorNotice( error.message, { isPersistent: true } ) ),
 		} );
-	const paymentMethodRequired = false; // FIXME: Fix this with actual data
+
+	const { paymentMethodRequired } = usePaymentMethod();
 
 	const maybeTrackUnsuggestedSelection = useCallback(
 		( selectedLicenses: IssueLicenseRequest[] ) => {

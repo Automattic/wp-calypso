@@ -38,7 +38,9 @@ import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 import { useAssignNewCardProcessor } from '../../hooks/use-assign-new-card-processor';
 import { useCreateStoredCreditCardMethod } from '../../hooks/use-create-stored-credit-card';
+import usePaymentMethod from '../../hooks/use-payment-method';
 import { useReturnUrl } from '../../hooks/use-return-url';
+import useStoredCards from '../../hooks/use-stored-cards';
 import { getStripeConfiguration } from '../../lib/get-stripe-configuration';
 import CreditCardLoading from '../credit-card-fields/credit-card-loading';
 
@@ -65,7 +67,7 @@ function PaymentMethodForm() {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	const paymentMethodRequired = true; // FIXME: This is a placeholder value, it should be fetched from the store.
+	const { paymentMethodRequired } = usePaymentMethod();
 
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
@@ -80,6 +82,8 @@ function PaymentMethodForm() {
 		stripeConfiguration,
 		stripe,
 	} );
+
+	const { refetch: refetchStoredCards } = useStoredCards( undefined, { staleTime: Infinity } );
 
 	const paymentMethods = useMemo(
 		() => [ stripeMethod ].filter( isValueTruthy ),
@@ -192,11 +196,11 @@ function PaymentMethodForm() {
 		// product - will make sure there will be a license issuing for that product
 		//
 		if ( returnQueryArg || products ) {
-			// FIXME: Need to refetch the stored cards.
+			refetchStoredCards();
 		} else {
 			page( A4A_PAYMENT_METHODS_LINK );
 		}
-	}, [ returnQueryArg, products ] );
+	}, [ returnQueryArg, products, refetchStoredCards ] );
 
 	useEffect( () => {
 		if ( paymentMethodRequired ) {
