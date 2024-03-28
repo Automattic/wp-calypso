@@ -263,6 +263,7 @@ describe( 'Site Actions', () => {
 				type: 'ATOMIC_TRANSFER_START',
 				siteId,
 				softwareSet,
+				transferIntent,
 			} );
 
 			// Second iteration: WP_COM_REQUEST is fired
