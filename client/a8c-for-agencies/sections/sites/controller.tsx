@@ -9,13 +9,19 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 	const siteUrl = context.params.siteUrl;
 	const siteFeature = context.params.feature;
 	const hideListingInitialState = !! siteUrl;
-	const queryParams = new URLSearchParams( context.querystring );
-	const isFavoriteFilter = queryParams.get( 'is_favorite' ) !== null;
 
-	const { s: search, page: contextPage, issue_types, sort_field, sort_direction } = context.query;
+	const {
+		s: search,
+		page: contextPage,
+		issue_types,
+		sort_field,
+		sort_direction,
+		is_favorite,
+	} = context.query;
+
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
-		showOnlyFavorites: context.params.filter === 'favorites',
+		showOnlyFavorites: is_favorite === '' || is_favorite === '1' || is_favorite === 'true',
 	};
 	const sort = {
 		field: sort_field,
@@ -35,7 +41,6 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 			filter={ filter }
 			sort={ sort }
 			showSitesDashboardV2={ true }
-			isFavoriteFilterInitialState={ isFavoriteFilter }
 		>
 			<SitesDashboard />
 		</SitesDashboardProvider>

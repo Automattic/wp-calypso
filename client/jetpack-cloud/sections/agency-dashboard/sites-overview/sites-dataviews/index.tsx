@@ -28,8 +28,8 @@ const SitesDataViews = ( {
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
-	const { isFavoriteFilter } = useContext( SitesDashboardContext );
-	const totalSites = isFavoriteFilter ? data?.totalFavorites || 0 : data?.total || 0;
+	const { filter } = useContext( SitesDashboardContext );
+	const totalSites = filter.showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );

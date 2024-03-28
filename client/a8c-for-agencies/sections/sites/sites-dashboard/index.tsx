@@ -18,13 +18,13 @@ import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features
 import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilterMap,
+	AgencyDashboardFilterOption,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -57,16 +57,18 @@ export default function SitesDashboard() {
 		selectedSiteUrl,
 		selectedSiteFeature,
 		setSelectedSiteFeature,
-		isFavoriteFilter,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
+		search,
+		currentPage,
+		filter,
+		sort,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const { data: products } = useProductsQuery();
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
-	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
+
 	const {
 		data: verifiedContacts,
 		refetch: refetchContacts,
@@ -77,10 +79,7 @@ export default function SitesDashboard() {
 		type: 'table',
 		perPage: 50,
 		page: currentPage,
-		sort: {
-			field: 'url',
-			direction: 'desc',
-		},
+		sort,
 		search: search,
 		filters:
 			filter?.issueTypes?.map( ( issueType ) => {
@@ -94,12 +93,26 @@ export default function SitesDashboard() {
 		layout: {},
 		selectedSite: undefined,
 	} );
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+
+	const [ manageFilter, setManageFilter ] = useState< {
+		issueTypes: AgencyDashboardFilterOption[];
+		showOnlyFavorites: boolean;
+	} >( {
+		issueTypes: filter.issueTypes,
+		showOnlyFavorites: filter.showOnlyFavorites,
+	} );
+
+	const {
+		data,
+		isError,
+		isLoading,
+		refetch: refetchSites,
+	} = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		search,
+		sitesViewState.search,
 		sitesViewState.page,
-		filter,
-		sort,
+		manageFilter,
+		sitesViewState.sort,
 		sitesViewState.perPage
 	);
 
@@ -121,56 +134,94 @@ export default function SitesDashboard() {
 		},
 		[ setSitesViewState ]
 	);
-	// Filter selection
-	// Todo: restore this code when the filters are implemented
-	/*useEffect( () => {
-		if ( isLoading || isError ) {
-			return;
-		}
-		const filtersSelected =
-			sitesViewState.filters?.map( ( filter ) => {
-				const filterType =
-					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
-					'all_issues';
-
-				return filterType;
-			} ) || [];
-
-	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
 
 	useEffect( () => {
-		// If the favorites filter is set, make sure to update the filter and correctly add the is_favorite param to URLs.
-		filter.showOnlyFavorites = isFavoriteFilter;
-		const favoritesParam = isFavoriteFilter ? '?is_favorite' : '';
+		setManageFilter( {
+			issueTypes: filter.issueTypes,
+			showOnlyFavorites: filter.showOnlyFavorites,
+		} );
+	}, [ filter ] );
+
+	// Build the query string with the search, page, sort, filter, etc.
+	const buildQueryString = useCallback( () => {
+		const urlQuery = new URLSearchParams();
+
+		if ( sitesViewState.search ) {
+			urlQuery.set( 's', sitesViewState.search );
+		}
+		if ( sitesViewState.page > 1 ) {
+			urlQuery.set( 'page', sitesViewState.page.toString() );
+		}
+		if ( sitesViewState.sort.field && sitesViewState.sort.field !== 'url' ) {
+			urlQuery.set( 'sort_field', sitesViewState.sort.field );
+		}
+		if ( sitesViewState.sort.direction && sitesViewState.sort.direction !== 'desc' ) {
+			urlQuery.set( 'sort_direction', sitesViewState.sort.direction );
+		}
+		if ( manageFilter.showOnlyFavorites ) {
+			urlQuery.set( 'is_favorite', 'true' );
+		}
+		if ( sitesViewState.filters.length > 0 ) {
+			const selectedFilters = sitesViewState.filters.map( ( filter ) => {
+				return (
+					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
+					'all_issues'
+				);
+			} );
+			setManageFilter( {
+				...manageFilter,
+				issueTypes: selectedFilters ?? [],
+			} );
+
+			urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
+		} else {
+			urlQuery.delete( 'issue_types' );
+		}
+
+		const queryString = urlQuery.toString();
+
+		return queryString ? `?${ queryString }` : '';
+	}, [
+		sitesViewState.search,
+		sitesViewState.page,
+		sitesViewState.perPage,
+		sitesViewState.filters,
+		setManageFilter,
+		sitesViewState.sort,
+	] );
+
+	useEffect( () => {
+		// Build the query string
+		const queryString = buildQueryString();
+
+		let url = '/sites';
+
 		// We need a category in the URL if we have a selected site
 		if ( sitesViewState.selectedSite && ! category ) {
 			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
 		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
-			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }${ favoritesParam }`
-			);
+			url += `/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`;
 		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }${ favoritesParam }`
-			);
+			url += `/${ category }/${ sitesViewState.selectedSite.url }`;
 		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
 			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( `/sites/${ category }${ favoritesParam }` );
-		} else {
-			page.replace( `/sites${ favoritesParam }` );
+			url += `/${ category }`;
 		}
+
+		// Update the URL without dispatching it.
+		page.replace( url + queryString, null, false, false );
 
 		if ( sitesViewState.selectedSite ) {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
 	}, [
 		filter,
-		isFavoriteFilter,
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
 		category,
 		setCategory,
 		dispatch,
+		buildQueryString,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
@@ -181,9 +232,9 @@ export default function SitesDashboard() {
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
-			refetch();
+			refetchSites();
 		}
-	}, [ refetch, jetpackSiteDisconnected ] );
+	}, [ refetchSites, jetpackSiteDisconnected ] );
 
 	// This is a basic representation of the feature families for now, with just the Overview tab.
 	const navItems = [
