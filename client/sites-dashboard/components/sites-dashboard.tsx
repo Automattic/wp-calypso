@@ -187,10 +187,6 @@ export function SitesDashboard( {
 		'deleted'
 	);
 
-	deletedSites.forEach( ( site ) => {
-		site.is_deleted = true;
-	} );
-
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const elementRef = useRef( window );
 
@@ -208,7 +204,7 @@ export function SitesDashboard( {
 
 	const isMobile = useMobileBreakpoint();
 
-	const allSites = status === 'deleted' ? liveSites.concat( deletedSites ) : liveSites;
+	const allSites = liveSites.concat( deletedSites );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();

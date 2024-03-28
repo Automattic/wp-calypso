@@ -44,6 +44,12 @@ export const useSiteExcerptsQuery = (
 		select: ( data ) => {
 			const sites = data?.sites.map( computeFields( data?.sites ) ) || [];
 
+			if ( site_visibility === 'deleted' ) {
+				sites.forEach( ( site ) => {
+					site.is_deleted = true;
+				} );
+			}
+
 			return sitesFilterFn ? sites.filter( sitesFilterFn ) : sites;
 		},
 		initialData: () => {

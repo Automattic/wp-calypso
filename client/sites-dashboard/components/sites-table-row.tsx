@@ -127,6 +127,19 @@ const BadgeDIFM = styled.span`
 	white-space: break-spaces;
 `;
 
+const DeletedStatus = styled.div`
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	padding-left: 8px;
+	span {
+		color: var( --color-error );
+	}
+	button {
+		padding: 4px;
+	}
+`;
+
 const StatsOffIndicator = () => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const tooltipRef = useRef( null );
@@ -178,7 +191,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
-	const { mutate: restoreSite, isPending } = useRestoreSiteMutation( {
+	const { mutate: restoreSite, isPending: isRestoring } = useRestoreSiteMutation( {
 		onSuccess() {
 			queryClient.invalidateQueries( {
 				queryKey: [
@@ -205,7 +218,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			);
 		},
 		onError: () => {
-			dispatch( errorNotice( __( 'We were unable to restore the site. ' ), { duration: 5000 } ) );
+			dispatch( errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } ) );
 		},
 	} );
 
@@ -227,8 +240,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		siteUrl = site.options?.unmapped_url;
 	}
 
-	const isDeleted = site.is_deleted;
-
 	return (
 		<Row ref={ ref }>
 			<Column>
@@ -243,13 +254,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					title={
 						<ListTileTitle>
-							{ isDeleted ? (
-								<span>{ site.title }</span>
-							) : (
-								<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
-									{ site.title }
-								</SiteName>
-							) }
+							<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+								{ site.title }
+							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 							{ isTrialSitePlan && (
@@ -258,28 +265,31 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</ListTileTitle>
 					}
 					subtitle={
-						isDeleted ? (
-							<span>
+						<ListTileSubtitle>
+							<SiteUrl href={ siteUrl } title={ siteUrl }>
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-							</span>
-						) : (
-							<ListTileSubtitle>
-								<SiteUrl href={ siteUrl } title={ siteUrl }>
-									<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-								</SiteUrl>
-							</ListTileSubtitle>
-						)
+							</SiteUrl>
+						</ListTileSubtitle>
 					}
 				/>
 			</Column>
-			{ ! isDeleted && (
-				<Column tabletHidden>
-					<SitePlan site={ site } userId={ userId } />
-				</Column>
-			) }
 			<Column tabletHidden>
-				{ isDeleted ? (
-					<span>{ __( 'Deleted' ) } </span>
+				<SitePlan site={ site } userId={ userId } />
+			</Column>
+			<Column tabletHidden={ ! site.is_deleted }>
+				{ site.is_deleted ? (
+					<DeletedStatus>
+						<span>{ __( 'Deleted' ) }</span>
+						<Button
+							primary
+							borderless
+							busy={ isRestoring }
+							disabled={ isRestoring }
+							onClick={ handleRestoreSite }
+						>
+							{ __( 'Restore' ) }
+						</Button>
+					</DeletedStatus>
 				) : (
 					<WithAtomicTransfer site={ site }>
 						{ ( result ) =>
@@ -303,32 +313,22 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column tabletHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			{ ! isDeleted && (
-				<StatsColumnStyled tabletHidden>
-					{ inView && (
-						<>
-							{ hasStatsLoadingError ? (
-								<StatsOffIndicator />
-							) : (
-								<a href={ `/stats/day/${ site.slug }` }>
-									<StatsSparkline siteId={ site.ID } showLoader={ true } />
-								</a>
-							) }
-						</>
-					) }
-				</StatsColumnStyled>
-			) }
-			{ isDeleted ? (
-				<Column style={ { textAlign: 'right' } }>
-					<Button scary busy={ isPending } disabled={ isPending } onClick={ handleRestoreSite }>
-						{ __( 'Restore site ' ) }
-					</Button>
-				</Column>
-			) : (
-				<Column style={ { width: '24px' } }>
-					{ inView && <SitesEllipsisMenu site={ site } /> }
-				</Column>
-			) }
+			<StatsColumnStyled tabletHidden>
+				{ inView && (
+					<>
+						{ hasStatsLoadingError ? (
+							<StatsOffIndicator />
+						) : (
+							<a href={ `/stats/day/${ site.slug }` }>
+								<StatsSparkline siteId={ site.ID } showLoader={ true } />
+							</a>
+						) }
+					</>
+				) }
+			</StatsColumnStyled>
+			<Column style={ { width: '24px' } }>
+				{ ! site.is_deleted && inView && <SitesEllipsisMenu site={ site } /> }
+			</Column>
 		</Row>
 	);
 } );
