@@ -35,8 +35,9 @@ interface FetchDashboardSitesArgsInterface {
 }
 
 const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
-	const { isPartnerOAuthTokenLoaded, searchQuery, currentPage, filter, sort, perPage } = args;
-	let query_key = [
+	const { isPartnerOAuthTokenLoaded, searchQuery, currentPage, filter, sort, perPage = 20 } = args;
+
+	const queryKey = [
 		'jetpack-agency-dashboard-sites',
 		searchQuery,
 		currentPage,
@@ -44,13 +45,9 @@ const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
 		sort,
 		perPage,
 	];
-	// If per_page is not provided, we want to remove per_page from the query_key as existing tests don't pass otherwise.
-	if ( ! perPage ) {
-		query_key = [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ];
-	}
 
 	return useQuery( {
-		queryKey: query_key,
+		queryKey,
 		queryFn: () =>
 			wpcomJpl.req.get(
 				{
@@ -62,7 +59,7 @@ const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
-					per_page: perPage ?? 20,
+					per_page: perPage,
 				}
 			),
 		select: ( data ) => {
