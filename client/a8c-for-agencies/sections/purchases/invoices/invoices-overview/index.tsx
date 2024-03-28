@@ -21,7 +21,6 @@ export default function InvoicesOverview() {
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
-					{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
 				</LayoutHeader>
 			</LayoutTop>
 
