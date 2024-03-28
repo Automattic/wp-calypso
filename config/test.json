@@ -117,7 +117,6 @@
 		"stats/checkout-flows-v2": true,
 		"stats/flexible-grid": true,
 		"stats/new-video-summary": false,
-		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
 		"stats/type-detection": true,
 		"stats/utm-module": true,
