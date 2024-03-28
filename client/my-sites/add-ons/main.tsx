@@ -4,7 +4,6 @@ import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -119,7 +118,6 @@ const AddOnsMain = () => {
 	return (
 		<div>
 			<Global styles={ globalOverrides } />
-			<QueryProductsList />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<PageViewTracker path="/add-ons/:site" title="Add-Ons" />
 			<ContentWithHeader>

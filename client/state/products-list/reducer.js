@@ -11,7 +11,7 @@ import { productsListSchema } from './schema';
 export const items = withSchemaValidation( productsListSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_RECEIVE:
-			return action.productsList;
+			return { ...state.productsList, ...action.productsList };
 	}
 
 	return state;
