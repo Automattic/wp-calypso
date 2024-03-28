@@ -4,14 +4,20 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
-import SitesOverviewContext from '../context';
-import type { APIError, Site, APIToggleFavorite, ToggleFavoriteOptions } from '../types';
-
+import type {
+	APIError,
+	Site,
+	APIToggleFavorite,
+	ToggleFavoriteOptions,
+	AgencyDashboardFilter,
+} from '../types';
 import './style.scss';
 
 interface Props {
@@ -20,13 +26,27 @@ interface Props {
 	siteUrl: string;
 }
 
-export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
+export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
-	const { showOnlyFavorites } = filter;
+	const { sitesViewState, showOnlyFavorites, currentPage, sort } =
+		useContext( SitesDashboardContext );
+	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
+		issueTypes: [],
+		showOnlyFavorites: showOnlyFavorites || false,
+	} );
+	useEffect( () => {
+		const selectedFilters = getSelectedFilters( sitesViewState.filters );
+
+		setAgencyDashboardFilter( {
+			issueTypes: selectedFilters,
+			showOnlyFavorites: showOnlyFavorites || false,
+		} );
+	}, [ sitesViewState.filters, showOnlyFavorites ] );
+	const search = sitesViewState.search;
+
 	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 	const siblingQueryKey = [
 		'jetpack-agency-dashboard-sites',
@@ -84,7 +104,6 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 				// Snapshot the previous value
 				const previousSites = queryClient.getQueryData( queryKey );
-
 				// Optimistically update to the new value
 				queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 					return {
