@@ -26,8 +26,6 @@ This is the React Interface for the standalone client for Automattic's ExPlat. T
 
 ## API: `useExperiment('experiment_name')`
 
-Note: Every component that calls `useExperiment` will return loading as true for at least one render, even if the experiment is already loaded. See pbmo2S-2sV-p2 for more details.
-
 ### Type signature
 
 `useExperiment: (experimentName: string) => [boolean, ExperimentAssignment | null]`
