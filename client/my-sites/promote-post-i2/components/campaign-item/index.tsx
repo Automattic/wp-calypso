@@ -82,20 +82,20 @@ export default function CampaignItem( props: Props ) {
 		/* translators: Daily average spend. dailyAverageSpending is the budget */
 		budgetString = sprintf(
 			/* translators: %s is a formatted amount */
-			'%s weekly',
-			`$${ formatCents( totalBudget ) }`
+			translate( '$%s weekly' ),
+			formatCents( totalBudget )
 		);
 		budgetStringMobile = sprintf(
 			/* translators: %s is a formatted amount */
-			'%s weekly budget',
-			`$${ totalBudget }`
+			translate( '$%s weekly budget' ),
+			totalBudget
 		);
 	} else if ( campaignDays ) {
 		budgetString = `$${ formatCents( totalBudget ) }`;
 		budgetStringMobile = sprintf(
 			/* translators: %s is a formatted amount */
-			'%s budget',
-			`$${ totalBudget }`
+			translate( '$%s budget' ),
+			totalBudget
 		);
 	}
 
