@@ -4,7 +4,7 @@ import SitesSidebar from '../../components/sidebar-menu/sites';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
 
-function configureSitesContext( isFavorites: boolean, context: Context ) {
+function configureSitesContext( context: Context ) {
 	const category = context.params.category;
 	const siteUrl = context.params.siteUrl;
 	const siteFeature = context.params.feature;
@@ -52,6 +52,6 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 }
 
 export const sitesContext: Callback = ( context, next ) => {
-	configureSitesContext( false, context );
+	configureSitesContext( context );
 	next();
 };
