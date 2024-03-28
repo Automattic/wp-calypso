@@ -24,7 +24,7 @@ describe( 'MigrationInProgress', () => {
 	it( 'calls onComplete when migration is done', async () => {
 		const onComplete = jest.fn();
 		nock( 'https://public-api.wordpress.com:443' )
-			.get( '/wpcom/v2/sites/some-site-id/migration-status' )
+			.get( '/wpcom/v2/sites/123/migration-status' )
 			.reply( 200, { status: 'done' } );
 
 		renderComponent( { onComplete } );
