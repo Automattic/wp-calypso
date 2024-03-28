@@ -1,12 +1,12 @@
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
-import { DataResponse, GridPlan } from '../types';
-import PlanFeatures2023GridFeatures from './features';
-import PlanDivOrTdContainer from './plan-div-td-container';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
+import { DataResponse, GridPlan } from '../../types';
+import PlanDivOrTdContainer from '../plan-div-td-container';
+import { Plans2023Tooltip } from '../plans-2023-tooltip';
+import Features from './features';
 
-const PlanFeaturesContainer: React.FC< {
+interface Props {
 	plansWithFeatures: GridPlan[];
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >; // used to show a wpcom free domain in the Free plan column when a paid domain is picked.
@@ -14,7 +14,9 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
-} > = ( {
+}
+
+const FeaturesContainer = ( {
 	plansWithFeatures,
 	paidDomainName,
 	generatedWPComSubdomain,
@@ -22,7 +24,7 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
 	isTableCell,
-} ) => {
+}: Props ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 
@@ -34,7 +36,7 @@ const PlanFeaturesContainer: React.FC< {
 					isTableCell={ isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					<PlanFeatures2023GridFeatures
+					<Features
 						features={ wpcomFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
@@ -57,7 +59,7 @@ const PlanFeaturesContainer: React.FC< {
 							</Plans2023Tooltip>
 						</div>
 					) }
-					<PlanFeatures2023GridFeatures
+					<Features
 						features={ jetpackFeatures }
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
@@ -73,4 +75,4 @@ const PlanFeaturesContainer: React.FC< {
 	);
 };
 
-export default PlanFeaturesContainer;
+export default FeaturesContainer;

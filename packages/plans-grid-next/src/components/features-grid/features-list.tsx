@@ -1,9 +1,9 @@
 import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { DataResponse, GridPlan } from '../../types';
-import PlanFeaturesContainer from '../plan-features-container';
+import FeaturesContainer from './features-container';
 
-type PlanFeaturesListProps = {
+interface Props {
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	hideUnavailableFeatures?: boolean;
 	isCustomDomainAllowedOnFreePlan: boolean;
@@ -13,7 +13,7 @@ type PlanFeaturesListProps = {
 	options?: {
 		isTableCell?: boolean;
 	};
-};
+}
 
 const PlanFeaturesList = ( {
 	generatedWPComSubdomain,
@@ -23,7 +23,7 @@ const PlanFeaturesList = ( {
 	paidDomainName,
 	renderedGridPlans,
 	selectedFeature,
-}: PlanFeaturesListProps ) => {
+}: Props ) => {
 	const plansWithFeatures = useMemo( () => {
 		return renderedGridPlans.filter(
 			( gridPlan ) => ! isWpcomEnterpriseGridPlan( gridPlan.planSlug )
@@ -31,7 +31,7 @@ const PlanFeaturesList = ( {
 	}, [ renderedGridPlans ] );
 
 	return (
-		<PlanFeaturesContainer
+		<FeaturesContainer
 			plansWithFeatures={ plansWithFeatures }
 			paidDomainName={ paidDomainName }
 			generatedWPComSubdomain={ generatedWPComSubdomain }

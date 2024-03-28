@@ -10,8 +10,8 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
+import FeaturesList from './features-list';
 import MobileFreeDomain from './mobile-free-domain';
-import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
 import PlanPrice from './plan-price';
@@ -130,7 +130,7 @@ const MobileView = ( {
 						}
 					>
 						<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
-						<PlanFeaturesList
+						<FeaturesList
 							renderedGridPlans={ [ gridPlan ] }
 							selectedFeature={ selectedFeature }
 							paidDomainName={ paidDomainName }
