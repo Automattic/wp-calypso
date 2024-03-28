@@ -83,7 +83,11 @@ export default function CampaignItem( props: Props ) {
 		budgetString = `$${ formatCents( totalBudget ) }`;
 	}
 
-	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
+	let budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
+	if ( is_evergreen && campaignDays ) {
+		budgetStringMobile = `$${ totalBudget } weekly budget`;
+	}
+
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const getPostType = ( type: string ) => {
@@ -186,11 +190,13 @@ export default function CampaignItem( props: Props ) {
 			</td>
 			<td className="campaign-item__ends">
 				<div>
-					{ getCampaignEndText(
-						moment( campaign.end_date ),
-						campaign.status,
-						campaign?.is_evergreen
-					) }
+					{ campaign.end_date && campaign.end_date.length > 0
+						? getCampaignEndText(
+								moment( campaign.end_date ),
+								campaign.status,
+								campaign?.is_evergreen
+						  )
+						: '-' }
 				</div>
 			</td>
 			<td className="campaign-item__budget">
