@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
@@ -22,6 +22,7 @@ interface Props {
 	ctaText: string;
 	subTitleText?: string;
 	hideTitleAndSubTitle?: boolean;
+	sendIntentWhenCreatingTrial?: boolean;
 	onFreeTrialSelectionSuccess?: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
@@ -40,6 +41,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		ctaText,
 		subTitleText,
 		hideTitleAndSubTitle = false,
+		sendIntentWhenCreatingTrial = false,
 		onFreeTrialSelectionSuccess = () => {},
 		onCtaClick,
 		isBusy,
@@ -62,10 +64,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const onFreeTrialClick = () => {
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
-		} else if ( config.isEnabled( 'onboarding/new-migration-flow' ) ) {
-			// If the user is in the new migration flow, we need to add the hosting trial with the intent
-			// so that the site created is UTF-8. I'am adding this check here to avoid changing the existing migration
-			// logic. Once the new migration flow is fully implemented, we can remove this check.
+		} else if ( sendIntentWhenCreatingTrial ) {
 			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 		} else {
 			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );

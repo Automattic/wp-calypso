@@ -24,6 +24,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 			subTitleText=""
 			isBusy={ false }
 			hideTitleAndSubTitle
+			sendIntentWhenCreatingTrial
 			onCtaClick={ () => {
 				navigation.submit?.( {
 					goToCheckout: true,
