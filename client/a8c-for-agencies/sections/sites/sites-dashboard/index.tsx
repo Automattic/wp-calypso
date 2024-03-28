@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -21,10 +20,7 @@ import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fe
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
-import {
-	Filter,
-	SitesViewState,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilter,
 	Site,
@@ -34,23 +30,12 @@ import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY, filtersMap } from '../constants';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
+import { getSelectedFilters } from './get-selected-filters';
+import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
-
-function getSelectedFilters( filters: Filter[] ) {
-	return (
-		filters?.map( ( filter ) => {
-			const filterType =
-				filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
-				'all_issues';
-
-			return filterType;
-		} ) || []
-	);
-}
 
 export default function SitesDashboard() {
 	useQueryJetpackPartnerPortalPartner();
@@ -65,7 +50,6 @@ export default function SitesDashboard() {
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
-		currentPage,
 		sort,
 		showOnlyFavorites,
 		hideListing,
@@ -137,60 +121,18 @@ export default function SitesDashboard() {
 		[ setSitesViewState ]
 	);
 
-	// Build the query string with the search, page, sort, filter, etc.
-	const buildQueryString = useCallback( () => {
-		const urlQuery = new URLSearchParams();
-		const selectedFilters = getSelectedFilters( sitesViewState.filters );
-
-		if ( sitesViewState.search ) {
-			urlQuery.set( 's', sitesViewState.search );
-		}
-		if ( currentPage > 1 ) {
-			urlQuery.set( 'page', currentPage.toString() );
-		}
-		if ( sort.field && sort.field !== 'url' ) {
-			urlQuery.set( 'sort_field', sort.field );
-		}
-		if ( sort.direction && sort.direction !== 'asc' ) {
-			urlQuery.set( 'sort_direction', sort.direction );
-		}
-		if ( showOnlyFavorites ) {
-			urlQuery.set( 'is_favorite', 'true' );
-		}
-		if ( selectedFilters && selectedFilters.length > 0 ) {
-			urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
-		}
-
-		const queryString = urlQuery.toString();
-
-		return queryString ? `?${ queryString }` : '';
-	}, [
-		sitesViewState.filters,
-		sitesViewState.search,
-		currentPage,
-		sort.field,
-		sort.direction,
-		showOnlyFavorites,
-	] );
-
 	useEffect( () => {
-		// Build the query string
-		const queryString = buildQueryString();
-		let url = '/sites';
-
-		// We need a category in the URL if we have a selected site
-		if ( sitesViewState.selectedSite && ! category ) {
-			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
-			url += `/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`;
-		} else if ( category && sitesViewState.selectedSite ) {
-			url += `/${ category }/${ sitesViewState.selectedSite.url }`;
-		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
-			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			url += `/${ category }`;
-		}
-
-		page.replace( url + queryString, null, false, false );
+		updateSitesDashboardUrl( {
+			category: category,
+			setCategory: setCategory,
+			filters: sitesViewState.filters,
+			selectedSite: sitesViewState.selectedSite,
+			selectedSiteFeature: selectedSiteFeature,
+			search: sitesViewState.search,
+			currentPage: sitesViewState.page,
+			sort: sitesViewState.sort,
+			showOnlyFavorites: showOnlyFavorites,
+		} );
 
 		if ( sitesViewState.selectedSite ) {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
@@ -201,7 +143,11 @@ export default function SitesDashboard() {
 		category,
 		setCategory,
 		dispatch,
-		buildQueryString,
+		sitesViewState.filters,
+		sitesViewState.search,
+		sitesViewState.page,
+		showOnlyFavorites,
+		sitesViewState.sort,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
