@@ -46,6 +46,54 @@ export default function SitePreviewPane( {
 		}, 150 );
 	}, [] );
 
+	const currentURL = window.location.href;
+
+	useEffect( () => {
+		const handleClick = ( event: MouseEvent ) => {
+			const target = event.target as HTMLElement;
+			if ( ! target ) {
+				return;
+			}
+
+			if ( currentURL.includes( 'jetpack-scan' ) ) {
+				const newScanURL = currentURL.split( 'jetpack-scan' )[ 0 ] + 'jetpack-scan';
+
+				const scanLinks = [
+					...document.querySelectorAll(
+						'a.section-nav-tab__link[href*="/scan/"]:not([href*="/scan/history"])'
+					),
+					...document.querySelectorAll( 'a.section-nav-tab__link[href*="/scan/history"]' ),
+					...document.querySelectorAll( 'a.section-nav-tab__link[href*="/scan/history/fixed"]' ),
+					...document.querySelectorAll( 'a.section-nav-tab__link[href*="/scan/history/ignored"]' ),
+				];
+
+				scanLinks.forEach( ( link ) => {
+					let newerScanURL = newScanURL;
+					if ( ( link as HTMLAnchorElement ).href.includes( '/scan/history' ) ) {
+						newerScanURL += '/history';
+					} else if ( ( link as HTMLAnchorElement ).href.includes( '/scan/history/fixed' ) ) {
+						newerScanURL += '/history/fixed';
+					} else if ( ( link as HTMLAnchorElement ).href.includes( '/scan/history/ignored' ) ) {
+						newerScanURL += '/history/ignored';
+					}
+
+					( link as HTMLAnchorElement ).setAttribute( 'href', newerScanURL );
+				} );
+			}
+		};
+
+		document.addEventListener( 'click', handleClick );
+
+		return () => {
+			document.removeEventListener( 'click', handleClick );
+		};
+	}, [ currentURL ] );
+
+	// Ensure we have features
+	if ( ! features || ! features.length ) {
+		return null;
+	}
+
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
 		return null;
