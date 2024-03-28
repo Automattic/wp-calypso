@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classnames from 'classnames';
-import FormSelect from 'calypso/components/forms/form-select';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
 import './style.scss';
@@ -30,6 +30,7 @@ export const CategoryPillNavigation = ( {
 	categories,
 	selectedCategoryId,
 }: CategoryPillNavigationProps ) => {
+	const isMobile = useMobileBreakpoint();
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 	const listRef = useRef< HTMLDivElement | null >( null );
@@ -74,29 +75,49 @@ export const CategoryPillNavigation = ( {
 		} );
 	}, [ selectedCategoryId ] );
 
-	if ( isMobile() ) {
+	if ( isMobile ) {
+		const currentUrl =
+			typeof window === 'undefined' ? '' : window.location.pathname + window.location.search;
+
+		const selectedText = [ ...categories, ...( buttons || [] ) ].find(
+			( { link } ) => currentUrl === addLocaleToPathLocaleInFront( link )
+		)?.label;
+
 		return (
 			<div className="category-pill-navigation">
-				<FormSelect
+				<SelectDropdown
 					className="category-pill-navigation__mobile-select"
-					value={ window.location.pathname + window.location.search }
-					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) => {
-						page( event.target.value );
-					} }
+					selectedText={ selectedText }
 				>
 					{ buttons &&
-						buttons.map( ( button ) => (
-							<option key={ button.label } value={ addLocaleToPathLocaleInFront( button.link ) }>
-								{ button.label }
-							</option>
-						) ) }
+						buttons.map( ( button ) => {
+							const value = addLocaleToPathLocaleInFront( button.link );
+
+							return (
+								<SelectDropdown.Item
+									key={ button.label }
+									selected={ value === currentUrl }
+									onClick={ () => page( value ) }
+								>
+									{ button.label }
+								</SelectDropdown.Item>
+							);
+						} ) }
 					{ categories &&
-						categories.map( ( category ) => (
-							<option key={ category.id } value={ addLocaleToPathLocaleInFront( category.link ) }>
-								{ category.label }
-							</option>
-						) ) }
-				</FormSelect>
+						categories.map( ( category ) => {
+							const value = addLocaleToPathLocaleInFront( category.link );
+
+							return (
+								<SelectDropdown.Item
+									key={ category.id }
+									selected={ value === currentUrl }
+									onClick={ () => page( value ) }
+								>
+									{ category.label }
+								</SelectDropdown.Item>
+							);
+						} ) }
+				</SelectDropdown>
 			</div>
 		);
 	}
