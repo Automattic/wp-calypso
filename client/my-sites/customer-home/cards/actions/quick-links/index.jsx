@@ -11,11 +11,7 @@ import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import {
-	recordDSPEntryPoint,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-} from 'calypso/lib/promote-post';
+import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -339,7 +335,7 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 };
 
 const trackPromotePostAction = () => ( dispatch ) => {
-	dispatch( recordDSPEntryPoint( 'myhome_quick-links' ) );
+	dispatch( recordTracksEvent( 'calypso_customer_home_my_site_quick_link_blaze' ) );
 };
 
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {

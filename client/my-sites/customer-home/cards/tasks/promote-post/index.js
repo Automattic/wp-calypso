@@ -1,13 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
-import {
-	loadDSPWidgetJS,
-	recordDSPEntryPoint,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-} from 'calypso/lib/promote-post';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { TASK_PROMOTE_POST } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
@@ -18,14 +13,10 @@ const PromotePost = () => {
 	const dispatch = useDispatch();
 	const advertisingUrl = useAdvertisingUrl();
 	const trackDspAction = async () => {
-		dispatch( recordDSPEntryPoint( 'myhome_tasks-swipeable' ) );
+		dispatch( recordTracksEvent( 'calypso_customer_home_tasks_swipeable_blaze' ) );
 	};
 
 	PromotePost.isDisabled = ! showPromotePost;
-
-	useEffect( () => {
-		loadDSPWidgetJS();
-	}, [] );
 
 	return (
 		<>
