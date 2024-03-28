@@ -25,7 +25,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, getContactDetailsType } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -64,7 +64,6 @@ import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-detai
 import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';

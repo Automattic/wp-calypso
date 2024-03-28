@@ -1,6 +1,9 @@
-import { getCountryPostalCodeSupport, getCountryTaxRequirements } from '@automattic/wpcom-checkout';
+import {
+	getCountryPostalCodeSupport,
+	getCountryTaxRequirements,
+	getContactDetailsType,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import getContactDetailsType from '../lib/get-contact-details-type';
 import type { ResponseCart, UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
