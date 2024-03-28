@@ -14,8 +14,7 @@ type Key =
 	| 'newsletter_page_title'
 	| 'services_page_title'
 	| 'store_page_title'
-	| 'testimonials_page_title'
-	| 'fredrik_test';
+	| 'testimonials_page_title';
 
 export function getTranslatedString( translate: I18N[ 'translate' ], key: Key ): string {
 	switch ( key ) {
@@ -100,12 +99,6 @@ export function getTranslatedString( translate: I18N[ 'translate' ], key: Key ):
 		case 'testimonials_page_title':
 			return translate( 'WordPress Testimonial Patterns', {
 				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} );
-
-		case 'fredrik_test':
-			return translate( 'Fredrik Lorem Ipsum Hello', {
-				comment: 'Test string',
 				textOnly: true,
 			} );
 	}
