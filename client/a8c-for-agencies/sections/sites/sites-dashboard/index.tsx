@@ -31,6 +31,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import OverviewHeaderActions from '../../overview/header-actions';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
+import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
@@ -181,6 +182,12 @@ export default function SitesDashboard() {
 	const selectedItemProps = {
 		selectedText: selectedItem.label,
 	};
+
+	const isEmpty = data && data.sites.length === 0;
+
+	if ( isEmpty ) {
+		return <EmptyState />;
+	}
 
 	return (
 		<Layout
