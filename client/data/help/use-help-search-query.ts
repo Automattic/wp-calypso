@@ -17,7 +17,6 @@ export interface SearchResult {
 interface TailoredArticles {
 	post_ids: Array< number >;
 	blog_id: number;
-	locale: string;
 }
 
 interface APIFetchOptions {
@@ -36,11 +35,10 @@ const fetchArticlesAPI = async (
 	let searchResultResponse: SearchResult[] = [];
 
 	if ( articles ) {
-		const { post_ids, blog_id, locale } = articles;
+		const { post_ids, blog_id } = articles;
 		queryString = buildQueryString( {
 			blog_id: blog_id,
 			post_ids: `${ post_ids.join( ',' ) }`,
-			locale,
 		} );
 		if ( canAccessWpcomApis() ) {
 			articlesResponse = ( await wpcomRequest( {

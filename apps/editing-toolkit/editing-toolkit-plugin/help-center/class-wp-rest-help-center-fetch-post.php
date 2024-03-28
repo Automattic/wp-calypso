@@ -49,10 +49,9 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 					'post_ids' => array(
 						'type'     => 'array',
 						'required' => true,
-					),
-					'locale'   => array(
-						'type'     => 'string',
-						'required' => true,
+						'items'    => array(
+							'type' => 'string',
+						),
 					),
 				),
 			)
@@ -70,7 +69,6 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 		$query_parameters = array(
 			'blog_id'  => $request['blog_id'],
 			'post_ids' => $request['post_ids'],
-			'locale'   => $request['locale'],
 		);
 		$body             = Client::wpcom_json_api_request_as_user(
 			'/help/articles?' . http_build_query( $query_parameters )
