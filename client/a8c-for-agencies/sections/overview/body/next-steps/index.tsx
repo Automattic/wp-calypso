@@ -88,7 +88,7 @@ export default function OverviewBodyNextSteps() {
 					<p>
 						{ translate(
 							"Right now there's nothing left for you to do. We'll let you know when anything needs your attention."
-						) }{ ' ' }
+						) }
 					</p>
 				) }
 				<Checklist>
