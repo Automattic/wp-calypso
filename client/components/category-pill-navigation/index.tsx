@@ -1,3 +1,7 @@
+import page from '@automattic/calypso-router';
+import { SelectDropdown } from '@automattic/components';
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { Icon, chevronRight } from '@wordpress/icons';
@@ -26,6 +30,7 @@ export const CategoryPillNavigation = ( {
 	categories,
 	selectedCategoryId,
 }: CategoryPillNavigationProps ) => {
+	const isMobile = useMobileBreakpoint();
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 	const listRef = useRef< HTMLDivElement | null >( null );
@@ -69,6 +74,53 @@ export const CategoryPillNavigation = ( {
 			inline: 'center',
 		} );
 	}, [ selectedCategoryId ] );
+
+	if ( isMobile ) {
+		const currentUrl =
+			typeof window === 'undefined' ? '' : window.location.pathname + window.location.search;
+
+		const selectedText = [ ...categories, ...( buttons || [] ) ].find(
+			( { link } ) => currentUrl === addLocaleToPathLocaleInFront( link )
+		)?.label;
+
+		return (
+			<div className="category-pill-navigation">
+				<SelectDropdown
+					className="category-pill-navigation__mobile-select"
+					selectedText={ selectedText }
+				>
+					{ buttons &&
+						buttons.map( ( button ) => {
+							const value = addLocaleToPathLocaleInFront( button.link );
+
+							return (
+								<SelectDropdown.Item
+									key={ button.label }
+									selected={ value === currentUrl }
+									onClick={ () => page( value ) }
+								>
+									{ button.label }
+								</SelectDropdown.Item>
+							);
+						} ) }
+					{ categories &&
+						categories.map( ( category ) => {
+							const value = addLocaleToPathLocaleInFront( category.link );
+
+							return (
+								<SelectDropdown.Item
+									key={ category.id }
+									selected={ value === currentUrl }
+									onClick={ () => page( value ) }
+								>
+									{ category.label }
+								</SelectDropdown.Item>
+							);
+						} ) }
+				</SelectDropdown>
+			</div>
+		);
+	}
 
 	return (
 		<div className="category-pill-navigation">
