@@ -69,7 +69,7 @@ describe( 'login', () => {
 		expect( next ).toHaveBeenCalledWith( expect.objectContaining( { status: 401 } ) );
 	} );
 
-	it( 'should throw an error if client_id does not match redirect ClientId', async () => {
+	it( 'should throw an error if client_id does not match redirectClientId', async () => {
 		context.query.client_id = '1234';
 		context.query.redirect_to = 'http://public-api.wordpress.com?client_id=different_client_id';
 		await login( context, next );
@@ -87,7 +87,7 @@ describe( 'login', () => {
 		expect( next ).toHaveBeenCalled();
 	} );
 
-	it( 'should get OAuth2Client if client_id matches redirect ClientId', async () => {
+	it( 'should get OAuth2Client if client_id matches redirectClientId', async () => {
 		context.query.client_id = '1234';
 		context.query.redirect_to = 'http://public-api.wordpress.com?client_id=1234';
 		getOAuth2Client.mockReturnValueOnce( {} );
