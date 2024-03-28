@@ -1,17 +1,17 @@
 import { Button } from '@automattic/components';
 import { localizeUrl, englishLocales } from '@automattic/i18n-utils';
+import {
+	SETTING_PRIMARY_DOMAIN,
+	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	GDPR_POLICIES,
+	DOMAIN_EXPIRATION,
+} from '@automattic/urls';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
-import {
-	SETTING_PRIMARY_DOMAIN,
-	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
-	GDPR_POLICIES,
-	DOMAIN_EXPIRATION,
-} from 'calypso/lib/url/support';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,

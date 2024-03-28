@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
-import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 
 export default [
 	{

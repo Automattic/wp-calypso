@@ -733,6 +733,8 @@ const sections = [
 			'/marketplace',
 			'/marketplace/products',
 			'/marketplace/hosting',
+			'/marketplace/hosting/pressable',
+			'/marketplace/hosting/wpcom',
 			'/marketplace/checkout',
 			'/marketplace/assign-license',
 			'/marketplace/download-products',
