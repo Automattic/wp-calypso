@@ -68,6 +68,8 @@ export default function SitesDashboard() {
 		currentPage,
 		sort,
 		showOnlyFavorites,
+		hideListing,
+		setHideListing,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -206,8 +208,9 @@ export default function SitesDashboard() {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
 			setSelectedSiteUrl( '' );
+			setHideListing( false );
 		}
-	}, [ sitesViewState, setSitesViewState, setSelectedSiteUrl ] );
+	}, [ sitesViewState, setSitesViewState, setSelectedSiteUrl, setHideListing ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -243,48 +246,50 @@ export default function SitesDashboard() {
 			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
-			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop withNavigation>
-					<LayoutHeader>
-						<Title>{ translate( 'Sites' ) }</Title>
-						<Actions>
-							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
-							<SiteTopHeaderButtons />
-						</Actions>
-					</LayoutHeader>
-					<LayoutNavigation { ...selectedItemProps }>
-						<NavigationTabs { ...selectedItemProps } items={ navItems } />
-					</LayoutNavigation>
-				</LayoutTop>
+			{ ! hideListing && (
+				<LayoutColumn className="sites-overview" wide>
+					<LayoutTop withNavigation>
+						<LayoutHeader>
+							<Title>{ translate( 'Sites' ) }</Title>
+							<Actions>
+								{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
+								<SiteTopHeaderButtons />
+							</Actions>
+						</LayoutHeader>
+						<LayoutNavigation { ...selectedItemProps }>
+							<NavigationTabs { ...selectedItemProps } items={ navItems } />
+						</LayoutNavigation>
+					</LayoutTop>
 
-				<SiteNotifications />
+					<SiteNotifications />
 
-				<DashboardDataContext.Provider
-					value={ {
-						verifiedContacts: {
-							emails: verifiedContacts?.emails ?? [],
-							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-							refetchIfFailed: () => {
-								if ( fetchContactFailed ) {
-									refetchContacts();
-								}
-								return;
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
 							},
-						},
-						products: products ?? [],
-						isLargeScreen: isLargeScreen || false,
-					} }
-				>
-					<SitesDataViews
-						className="sites-overview__content"
-						data={ data }
-						isLoading={ isLoading }
-						isLargeScreen={ isLargeScreen || false }
-						onSitesViewChange={ onSitesViewChange }
-						sitesViewState={ sitesViewState }
-					/>
-				</DashboardDataContext.Provider>
-			</LayoutColumn>
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<SitesDataViews
+							className="sites-overview__content"
+							data={ data }
+							isLoading={ isLoading }
+							isLargeScreen={ isLargeScreen || false }
+							onSitesViewChange={ onSitesViewChange }
+							sitesViewState={ sitesViewState }
+						/>
+					</DashboardDataContext.Provider>
+				</LayoutColumn>
+			) }
 
 			{ sitesViewState.selectedSite && (
 				<LayoutColumn className="site-preview-pane" wide>
