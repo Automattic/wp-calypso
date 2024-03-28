@@ -44,7 +44,7 @@
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.45.0",
 		"prop-types": "^15.7.2",
-		"typescript": "^5.3.3"
+		"typescript": "^5.4.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.24.0",

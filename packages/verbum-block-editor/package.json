@@ -59,7 +59,7 @@
 		"@typescript-eslint/parser": "^6.21.0",
 		"@wordpress/eslint-plugin": "^17.11.0",
 		"@wordpress/stylelint-config": "^21.37.0",
-		"typescript": "^5.3.3"
+		"typescript": "^5.4.2"
 	},
 	"peerDependencies": {
 		"@babel/core": "*",
