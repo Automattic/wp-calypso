@@ -32,10 +32,19 @@ interface FetchDashboardSitesArgsInterface {
 	filter: AgencyDashboardFilter;
 	sort: DashboardSortInterface;
 	perPage?: number;
+	agencyId?: number;
 }
 
 const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
-	const { isPartnerOAuthTokenLoaded, searchQuery, currentPage, filter, sort, perPage = 20 } = args;
+	const {
+		isPartnerOAuthTokenLoaded,
+		searchQuery,
+		currentPage,
+		filter,
+		sort,
+		perPage = 20,
+		agencyId,
+	} = args;
 
 	const queryKey = [
 		'jetpack-agency-dashboard-sites',
@@ -44,9 +53,15 @@ const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
 		filter,
 		sort,
 		perPage,
+		...( agencyId ? [ agencyId ] : [] ),
 	];
 
+	const isAgencyOrPartnerAuthEnabled =
+		isPartnerOAuthTokenLoaded || ( agencyId !== undefined && agencyId !== null );
+
 	return useQuery( {
+		// Disable eslint rule since TS isn't grasping that agencyId is being optionally added to the array
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey,
 		queryFn: () =>
 			wpcomJpl.req.get(
@@ -60,6 +75,7 @@ const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
 					per_page: perPage,
+					...( agencyId && { agency_id: agencyId } ),
 				}
 			),
 		select: ( data ) => {
@@ -70,7 +86,7 @@ const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
 				totalFavorites: data.total_favorites,
 			};
 		},
-		enabled: isPartnerOAuthTokenLoaded,
+		enabled: isAgencyOrPartnerAuthEnabled,
 	} );
 };
 
