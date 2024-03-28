@@ -24,6 +24,7 @@ import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboar
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
+	AgencyDashboardFilter,
 	AgencyDashboardFilterMap,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -56,7 +57,6 @@ export default function SitesDashboard() {
 	const {
 		selectedSiteUrl,
 		selectedSiteFeature,
-		setSelectedSiteFeature,
 		isFavoriteFilter,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
@@ -94,11 +94,15 @@ export default function SitesDashboard() {
 		layout: {},
 		selectedSite: undefined,
 	} );
+
+	const [ agencyDashboardFilter, setAgencyDashboardFilter ] =
+		useState< AgencyDashboardFilter >( filter );
+
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		search,
+		sitesViewState.search,
 		sitesViewState.page,
-		filter,
+		agencyDashboardFilter,
 		sort,
 		sitesViewState.perPage
 	);
@@ -121,9 +125,8 @@ export default function SitesDashboard() {
 		},
 		[ setSitesViewState ]
 	);
-	// Filter selection
-	// Todo: restore this code when the filters are implemented
-	/*useEffect( () => {
+
+	useEffect( () => {
 		if ( isLoading || isError ) {
 			return;
 		}
@@ -132,11 +135,14 @@ export default function SitesDashboard() {
 				const filterType =
 					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
 					'all_issues';
-
 				return filterType;
 			} ) || [];
 
-	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
+		setAgencyDashboardFilter( {
+			issueTypes: filtersSelected,
+			showOnlyFavorites: isFavoriteFilter,
+		} );
+	}, [ isLoading, isError, sitesViewState.filters, isFavoriteFilter ] );
 
 	useEffect( () => {
 		// If the favorites filter is set, make sure to update the filter and correctly add the is_favorite param to URLs.
@@ -177,7 +183,7 @@ export default function SitesDashboard() {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
 		}
-	}, [ sitesViewState, setSelectedSiteFeature ] );
+	}, [ sitesViewState ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {

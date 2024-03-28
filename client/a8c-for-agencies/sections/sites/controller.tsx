@@ -15,7 +15,7 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 	const { s: search, page: contextPage, issue_types, sort_field, sort_direction } = context.query;
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
-		showOnlyFavorites: context.params.filter === 'favorites',
+		showOnlyFavorites: isFavoriteFilter,
 	};
 	const sort = {
 		field: sort_field,
