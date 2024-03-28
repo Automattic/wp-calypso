@@ -312,7 +312,7 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! isCommercialOwned && ! isNewSite && (
+			{ ! isCommercialOwned && ! ( isNewSite && isCommercial ) && (
 				<StatsSingleItemCard>
 					<StatsCommercialFlowOptOutForm
 						isCommercial={ isCommercial }
