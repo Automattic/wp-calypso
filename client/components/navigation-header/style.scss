@@ -46,10 +46,6 @@
 	box-sizing: border-box;
 	column-gap: 10px;
 
-	@media ( max-width: $break-small ) {
-		min-height: 40px;
-	}
-
 	> .formatted-header {
 		flex: 1;
 
