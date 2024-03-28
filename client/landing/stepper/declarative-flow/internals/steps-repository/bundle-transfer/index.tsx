@@ -120,11 +120,8 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 			// Ensure we don't have an existing transfer in progress before starting a new one.
 			if ( preTransferCheck?.status !== transferStates.ACTIVE ) {
 				// Initiate transfer
-				if ( isNewSiteMigrationFlow( flow ) ) {
-					await initiateAtomicTransfer( siteId, softwareSet, 'migrate' );
-				} else {
-					await initiateAtomicTransfer( siteId, softwareSet );
-				}
+				const transferIntent = isNewSiteMigrationFlow( flow ) ? 'migrate' : undefined;
+				await initiateAtomicTransfer( siteId, softwareSet, transferIntent );
 			}
 
 			// Poll for transfer status
