@@ -89,8 +89,6 @@ function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryP
 	);
 }
 
-const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
-
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const {
 		category,
@@ -123,9 +121,9 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 					} ) }
 					enableMasonry={ isGridView && isPageLayouts }
 				>
-					{ patterns.map( ( pattern, i ) => (
+					{ patterns.map( ( pattern ) => (
 						<PatternPreview
-							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
+							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
 							category={ category }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
