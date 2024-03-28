@@ -126,6 +126,7 @@ export async function login( context, next ) {
 			}
 		}
 	}
+
 	enhanceContextWithLogin( context );
 
 	next();
