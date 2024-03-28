@@ -19,6 +19,7 @@ import {
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
+	REDDIT_TRACKING_SCRIPT_URL,
 } from './constants';
 import { setup } from './setup';
 
@@ -113,6 +114,10 @@ function getTrackingScriptsToLoad() {
 
 	if ( mayWeTrackByTracker( 'clarity' ) ) {
 		scripts.push( WPCOM_CLARITY_URI );
+	}
+
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
 	}
 
 	return scripts;
