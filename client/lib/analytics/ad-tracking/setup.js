@@ -8,6 +8,7 @@ import {
 	ADROLL_PURCHASE_PIXEL_URL_1,
 	ADROLL_PURCHASE_PIXEL_URL_2,
 	TRACKING_IDS,
+	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
 
 export function setup() {
@@ -84,6 +85,11 @@ export function setup() {
 
 		if ( mayWeInitTracker( 'clarity' ) ) {
 			setupClarityGlobal();
+		}
+
+		// Reddit
+		if ( mayWeInitTracker( 'reddit' ) ) {
+			setupRedditGlobal();
 		}
 	}
 }
@@ -209,6 +215,26 @@ function setupAdRollGlobal() {
 			},
 		};
 	}
+}
+
+/**
+ * Sets up the base Reddit advertising pixel.
+ */
+function setupRedditGlobal() {
+	const params = {
+		optOut: false,
+		useDecimalCurrencyValues: true,
+	};
+
+	window.rdt =
+		window.rdt ||
+		function ( ...args ) {
+			window.rdt.sendEvent ? window.rdt.sendEvent( ...args ) : window.rdt.callQueue.push( args );
+		};
+
+	window.rdt.callQueue = [];
+
+	window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 }
 
 function setupGtag() {
