@@ -538,7 +538,8 @@ function isAllowedOrigin( urlOrigin ) {
 	return (
 		wpcomAllowedOrigins.includes( urlOrigin ) ||
 		/^https:\/\/[a-z0-9-]+\.calypso\.live$/.test( urlOrigin ) ||
-		/^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/.test( urlOrigin )
+		/^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/.test( urlOrigin ) ||
+		/^https:\/\/([a-z0-9-]+\.)+wpcomstaging\.com$/.test( urlOrigin )
 	);
 }
 
