@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
+import * as React from 'react';
 import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
@@ -188,30 +189,17 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	}
 
 	const dispatch = useDispatch();
-
-	const setSiteId = ( siteId: number ) => {
-		dispatch( setSelectedSiteId( siteId ) );
+	const onSiteClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
+		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+			event.stopPropagation();
+			event.preventDefault();
+			dispatch( setSelectedSiteId( site.ID ) );
+		}
 	};
 
-	let leading = (
-		<ListTileLeading href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
-			<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
-		</ListTileLeading>
-	);
-
-	let siteName = (
-		<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
-			{ site.title }
-		</SiteName>
-	);
-
+	let title = __( 'Visit Dashboard' );
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		leading = (
-			<ListTileLeading onClick={ () => setSiteId( site.ID ) }>
-				<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
-			</ListTileLeading>
-		);
-		siteName = <SiteName onClick={ () => setSiteId( site.ID ) }>{ site.title }</SiteName>;
+		title = __( 'View Site Details' );
 	}
 
 	return (
@@ -221,10 +209,14 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					contentClassName={ css`
 						min-width: 0;
 					` }
-					leading={ leading }
+					leading={
+						<ListTileLeading href={ dashboardUrl } title={ title } onClick={ onSiteClick }>
+							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
+						</ListTileLeading>
+					}
 					title={
 						<ListTileTitle>
-							{ siteName }
+							<SiteName onClick={ onSiteClick }>{ site.title }</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 							{ isTrialSitePlan && (
