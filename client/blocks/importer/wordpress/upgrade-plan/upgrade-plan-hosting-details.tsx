@@ -13,7 +13,7 @@ export const UpgradePlanHostingDetails = () => {
 					{ __( 'Why you should host with us' ) }
 				</p>
 				<p className="import__upgrade-plan-hosting-details-header-subtext">
-					{ __( 'Our performance vs. our top 3 competitors' ) }
+					{ __( 'Our performance vs. the average WordPress host' ) }
 				</p>
 			</div>
 			<div className="import__upgrade-plan-hosting-details-list">
