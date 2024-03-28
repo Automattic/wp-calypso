@@ -22,6 +22,7 @@ import {
 	plugins as pluginsIcon,
 	plus as plusIcon,
 	postComments as postCommentsIcon,
+	replace as switchIcon,
 	reusableBlock as cacheIcon,
 	seen as seenIcon,
 	settings as settingsIcon,
@@ -115,6 +116,20 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			].join( ' ' ),
 			callback: commandNavigation( 'https://wordpress.com/sites' ),
 			icon: wordpressIcon,
+		},
+		{
+			name: 'switchSite',
+			label: __( 'Switch site', __i18n_text_domain__ ),
+			searchLabel: [
+				_x( 'change site', 'Keyword for the Switch site command', __i18n_text_domain__ ),
+				_x( 'swap site', 'Keyword for the Switch site command', __i18n_text_domain__ ),
+			].join( ' ' ),
+			callback: commandNavigation(
+				`/switch-site?route=${ encodeURIComponent(
+					window.location.pathname + window.location.search
+				) }`
+			),
+			icon: switchIcon,
 		},
 		{
 			name: 'getHelp',

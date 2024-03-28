@@ -21,6 +21,11 @@ const sections = [
 		group: 'sites-dashboard',
 	},
 	{
+		name: 'switch-site',
+		paths: [ '/switch-site' ],
+		module: 'calypso/switch-site',
+	},
+	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
