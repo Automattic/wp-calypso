@@ -36,10 +36,10 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
-	} ); //
+	} );
 	useEffect( () => {
 		const selectedFilters = getSelectedFilters( sitesViewState.filters );
-		//
+
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
