@@ -1,8 +1,9 @@
-import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, getPlan, getPlanByPathSlug } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -11,7 +12,13 @@ import type { Step } from '../../types';
 const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
-	const plan = getPlan( PLAN_BUSINESS );
+
+	const selectedPlanData = useSelectedPlanUpgradeQuery();
+	const selectedPlanPathSlug = selectedPlanData.data;
+
+	const plan = selectedPlanPathSlug
+		? getPlanByPathSlug( selectedPlanPathSlug )
+		: getPlan( PLAN_BUSINESS );
 
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
