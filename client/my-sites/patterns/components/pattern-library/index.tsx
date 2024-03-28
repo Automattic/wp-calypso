@@ -21,6 +21,8 @@ import {
 	filterPatternsByTerm,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { getTranslatedString } from 'calypso/my-sites/patterns/lib/strings';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
@@ -33,7 +35,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 
 import './style.scss';
 
@@ -176,94 +177,7 @@ export const PatternLibrary = ( {
 
 	const isHomePage = ! category && ! searchTerm;
 
-	const PATTERN_SEO_CONTENT: Record< Category[ 'name' ], { title: string } > = {
-		default: {
-			title: translate( 'WordPress Patterns', {
-				comment: 'Pattern Library home page title',
-				textOnly: true,
-			} ),
-		},
-		header: {
-			title: translate( 'WordPress Header Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		footer: {
-			title: translate( 'WordPress Footer Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		about: {
-			title: translate( 'WordPress About Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		posts: {
-			title: translate( 'WordPress Blog Post Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		contact: {
-			title: translate( 'WordPress Contact Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		events: {
-			title: translate( 'WordPress Events Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		gallery: {
-			title: translate( 'WordPress Gallery Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		intro: {
-			title: translate( 'WordPress Intro Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		menu: {
-			title: translate( 'WordPress Menu Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		newsletter: {
-			title: translate( 'WordPress Newsletter Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		services: {
-			title: translate( 'WordPress Services Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		store: {
-			title: translate( 'WordPress Store Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-		testimonials: {
-			title: translate( 'WordPress Testimonial Patterns', {
-				comment: 'Pattern Library category page title',
-				textOnly: true,
-			} ),
-		},
-	};
-
-	const seoContent = category ? PATTERN_SEO_CONTENT[ category ] : PATTERN_SEO_CONTENT.default;
+	const pageTitleTranslationKey = category ? `${ category }_page_title` : 'default_page_title';
 
 	return (
 		<>
@@ -278,7 +192,7 @@ export const PatternLibrary = ( {
 				searchTerm={ urlQuerySearchTerm }
 			/>
 
-			<DocumentHead title={ seoContent.title } />
+			<DocumentHead title={ getTranslatedString( translate, pageTitleTranslationKey as any ) } />
 
 			<PatternsHeader
 				description={ translate(
