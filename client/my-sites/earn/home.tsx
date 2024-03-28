@@ -25,6 +25,7 @@ import PromoSection, {
 } from 'calypso/components/promo-section';
 import { PromoCardVariation } from 'calypso/components/promo-section/promo-card';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -149,15 +150,19 @@ const Home = () => {
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 */
 	const getSimplePaymentsCard = (): PromoSectionCardProps => {
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/pay-with-paypal/'
+			: 'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/';
+
 		const cta = hasSimplePayments
 			? {
 					text: translate( 'Learn more' ),
-					component: <EarnSupportButton supportContext="paypal" />,
+					...( ! isJetpackCloud() && {
+						component: <EarnSupportButton supportContext="paypal" />,
+					} ),
 					action: () => {
 						trackCtaButton( 'simple-payments' );
-						window.location.href = localizeUrl(
-							'https://wordpress.com/support/wordpress-editor/blocks/pay-with-paypal/'
-						);
+						window.location.href = localizeUrl( ctaURL );
 					},
 			  }
 			: {
@@ -193,15 +198,19 @@ const Home = () => {
 	 * Return the content to display in the Recurring Payments card based on the current plan.
 	 */
 	const getRecurringPaymentsCard = (): PromoSectionCardProps => {
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/jetpack-blocks/payments-block/'
+			: 'https://wordpress.com/payments-donations/';
 		const cta = {
 			text: translate( 'Learn more' ),
-			...( hasConnectedAccount && {
-				component: <EarnSupportButton supportContext="payment_button_block" />,
-			} ),
+			...( ! isJetpackCloud() &&
+				hasConnectedAccount && {
+					component: <EarnSupportButton supportContext="payment_button_block" />,
+				} ),
 			action: () => {
 				trackCtaButton( 'recurring-payments' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -234,15 +243,20 @@ const Home = () => {
 	 * Return the content to display in the Donations card based on the current plan.
 	 */
 	const getDonationsCard = (): PromoSectionCardProps => {
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/jetpack-blocks/donations-block/'
+			: 'https://wordpress.com/payments-donations/';
+
 		const cta = {
 			text: translate( 'Learn more' ),
-			...( hasConnectedAccount && {
-				component: <EarnSupportButton supportContext="donations" />,
-			} ),
+			...( ! isJetpackCloud() &&
+				hasConnectedAccount && {
+					component: <EarnSupportButton supportContext="donations" />,
+				} ),
 			action: () => {
 				trackCtaButton( 'donations' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( 'https://wordpress.com/payments-donations/' );
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -271,15 +285,19 @@ const Home = () => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/jetpack-blocks/paid-content-block/'
+			: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/';
+
 		const cta = {
 			text: translate( 'Learn more' ),
-			component: <EarnSupportButton supportContext="premium_content_block" />,
+			...( ! isJetpackCloud() && {
+				component: <EarnSupportButton supportContext="premium_content_block" />,
+			} ),
 			action: () => {
 				trackLearnLink( 'premium-content' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl(
-						'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/'
-					);
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -306,13 +324,19 @@ const Home = () => {
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
+		const ctaURL = isJetpackCloud()
+			? 'https://jetpack.com/support/newsletter/paid-newsletters/'
+			: 'https://wordpress.com/support/paid-newsletters/';
+
 		const cta = {
 			text: translate( 'Learn more' ),
-			component: <EarnSupportButton supportContext="paid-newsletters" />,
+			...( ! isJetpackCloud() && {
+				component: <EarnSupportButton supportContext="paid-newsletters" />,
+			} ),
 			action: () => {
 				trackCtaButton( 'learn-paid-newsletters' );
 				if ( window && window.location ) {
-					window.location.href = localizeUrl( 'https://wordpress.com/support/paid-newsletters/' );
+					window.location.href = localizeUrl( ctaURL );
 				}
 			},
 		};
@@ -384,13 +408,17 @@ const Home = () => {
 	 * Return the content to display in the Ads card based on the current plan.
 	 */
 	const getAdsCard = (): PromoSectionCardProps => {
+		const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
+
 		const cta =
 			hasWordAdsFeature || hasSetupAds
 				? {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
 							trackCtaButton( 'ads' );
-							page( `/earn/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }` );
+							page(
+								`${ earnPath }/${ hasSetupAds ? 'ads-earnings' : 'ads-settings' }/${ site?.slug }`
+							);
 						},
 				  }
 				: {
