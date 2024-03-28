@@ -24,6 +24,7 @@ import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/site
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilterMap,
+	AgencyDashboardFilterOption,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -78,10 +79,7 @@ export default function SitesDashboard() {
 		type: 'table',
 		perPage: 50,
 		page: currentPage,
-		sort: {
-			field: 'url',
-			direction: 'desc',
-		},
+		sort,
 		search: search,
 		filters:
 			filter?.issueTypes?.map( ( issueType ) => {
@@ -96,12 +94,25 @@ export default function SitesDashboard() {
 		selectedSite: undefined,
 	} );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const [ manageFilter, setManageFilter ] = useState< {
+		issueTypes: AgencyDashboardFilterOption[];
+		showOnlyFavorites: boolean;
+	} >( {
+		issueTypes: filter.issueTypes,
+		showOnlyFavorites: filter.showOnlyFavorites,
+	} );
+
+	const {
+		data,
+		isError,
+		isLoading,
+		refetch: refetchSites,
+	} = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
-		search,
+		sitesViewState.search,
 		sitesViewState.page,
-		filter,
-		sort,
+		manageFilter,
+		sitesViewState.sort,
 		sitesViewState.perPage
 	);
 
@@ -123,49 +134,61 @@ export default function SitesDashboard() {
 		},
 		[ setSitesViewState ]
 	);
-	// Filter selection
-	// Todo: restore this code when the filters are implemented
-	/*useEffect( () => {
-		if ( isLoading || isError ) {
-			return;
-		}
-		const filtersSelected =
-			sitesViewState.filters?.map( ( filter ) => {
-				const filterType =
-					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
-					'all_issues';
 
-				return filterType;
-			} ) || [];
-
-	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
+	useEffect( () => {
+		setManageFilter( {
+			issueTypes: filter.issueTypes,
+			showOnlyFavorites: filter.showOnlyFavorites,
+		} );
+	}, [ filter ] );
 
 	// Build the query string with the search, page, sort, filter, etc.
 	const buildQueryString = useCallback( () => {
 		const urlQuery = new URLSearchParams();
-		if ( search ) {
-			urlQuery.set( 's', search );
+
+		if ( sitesViewState.search ) {
+			urlQuery.set( 's', sitesViewState.search );
 		}
-		if ( currentPage > 1 ) {
-			urlQuery.set( 'page', currentPage.toString() );
+		if ( sitesViewState.page > 1 ) {
+			urlQuery.set( 'page', sitesViewState.page.toString() );
 		}
-		if ( sort.field && sort.field !== 'url' ) {
-			urlQuery.set( 'sort_field', sort.field );
+		if ( sitesViewState.sort.field && sitesViewState.sort.field !== 'url' ) {
+			urlQuery.set( 'sort_field', sitesViewState.sort.field );
 		}
-		if ( sort.direction && sort.direction !== 'asc' ) {
-			urlQuery.set( 'sort_direction', sort.direction );
+		if ( sitesViewState.sort.direction && sitesViewState.sort.direction !== 'desc' ) {
+			urlQuery.set( 'sort_direction', sitesViewState.sort.direction );
 		}
-		if ( filter.showOnlyFavorites ) {
+		if ( manageFilter.showOnlyFavorites ) {
 			urlQuery.set( 'is_favorite', 'true' );
 		}
-		if ( filter.issueTypes && filter.issueTypes.length > 0 ) {
-			urlQuery.set( 'issue_types', filter.issueTypes.join( ',' ) );
+		if ( sitesViewState.filters.length > 0 ) {
+			const selectedFilters = sitesViewState.filters.map( ( filter ) => {
+				return (
+					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
+					'all_issues'
+				);
+			} );
+			setManageFilter( {
+				...manageFilter,
+				issueTypes: selectedFilters ?? [],
+			} );
+
+			urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
+		} else {
+			urlQuery.delete( 'issue_types' );
 		}
 
 		const queryString = urlQuery.toString();
 
 		return queryString ? `?${ queryString }` : '';
-	}, [ search, currentPage, sort, filter ] );
+	}, [
+		sitesViewState.search,
+		sitesViewState.page,
+		sitesViewState.perPage,
+		sitesViewState.filters,
+		setManageFilter,
+		sitesViewState.sort,
+	] );
 
 	useEffect( () => {
 		// Build the query string
@@ -185,6 +208,7 @@ export default function SitesDashboard() {
 			url += `/${ category }`;
 		}
 
+		// Update the URL without dispatching it.
 		page.replace( url + queryString, null, false, false );
 
 		if ( sitesViewState.selectedSite ) {
@@ -208,9 +232,9 @@ export default function SitesDashboard() {
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
-			refetch();
+			refetchSites();
 		}
-	}, [ refetch, jetpackSiteDisconnected ] );
+	}, [ refetchSites, jetpackSiteDisconnected ] );
 
 	// This is a basic representation of the feature families for now, with just the Overview tab.
 	const navItems = [

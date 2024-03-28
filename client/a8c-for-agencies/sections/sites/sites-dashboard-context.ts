@@ -44,7 +44,7 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	},
 	sort: {
 		field: 'url',
-		direction: 'asc',
+		direction: 'desc',
 	},
 } );
 
