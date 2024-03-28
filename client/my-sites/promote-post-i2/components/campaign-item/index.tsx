@@ -73,17 +73,32 @@ export default function CampaignItem( props: Props ) {
 	const { totalBudget, campaignDays } = useMemo(
 		() =>
 			getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents, is_evergreen ),
-		[ budget_cents, end_date, spent_budget_cents, start_date ]
+		[ budget_cents, end_date, spent_budget_cents, start_date, is_evergreen ]
 	);
 
 	let budgetString = '-';
+	let budgetStringMobile = '';
 	if ( is_evergreen && campaignDays ) {
-		budgetString = `$${ formatCents( totalBudget ) } weekly`;
+		/* translators: Daily average spend. dailyAverageSpending is the budget */
+		budgetString = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s weekly' ),
+			formatCents( totalBudget )
+		);
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s weekly budget' ),
+			totalBudget
+		);
 	} else if ( campaignDays ) {
 		budgetString = `$${ formatCents( totalBudget ) }`;
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			translate( '$%s budget' ),
+			totalBudget
+		);
 	}
 
-	const budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
 
 	const getPostType = ( type: string ) => {
@@ -186,11 +201,13 @@ export default function CampaignItem( props: Props ) {
 			</td>
 			<td className="campaign-item__ends">
 				<div>
-					{ getCampaignEndText(
-						moment( campaign.end_date ),
-						campaign.status,
-						campaign?.is_evergreen
-					) }
+					{ campaign.end_date
+						? getCampaignEndText(
+								moment( campaign.end_date ),
+								campaign.status,
+								campaign?.is_evergreen
+						  )
+						: '-' }
 				</div>
 			</td>
 			<td className="campaign-item__budget">
