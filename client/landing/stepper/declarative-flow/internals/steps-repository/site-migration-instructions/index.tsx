@@ -6,7 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migraiton-key';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ShowHideInput } from './show-hide-input';
 import type { Step } from '../../types';
@@ -86,25 +86,15 @@ const SiteMigrationInstructions: Step = function () {
 						}
 					) }
 				</li>
-				<li>
-					{ translate(
-						'When asked to select a destination host, pick {{em}}WordPress.com{{/em}}.',
-						{
-							components: {
-								em: <em />,
-							},
-						}
-					) }
-				</li>
+				<li>{ translate( 'When asked to select a destination host, pick ‘WordPress.com‘.' ) }</li>
 				{ isSuccess && migrationKey && (
 					<li>
 						{ translate(
-							'Copy and paste the migration key below in the {{em}}{{ migrationKeyField /}}{{/em}} field and click {{strong}}{{migrateButton /}}{{/strong}}.',
+							'Copy and paste the migration key below in the ‘{{ migrationKeyField /}}‘ field and click {{strong}}{{migrateButton /}}{{/strong}} once more.',
 							{
 								components: {
 									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
 									migrateButton: <DoNotTranslateIt value="Migrate" />,
-									em: <em />,
 									strong: <strong />,
 								},
 							}
@@ -113,31 +103,41 @@ const SiteMigrationInstructions: Step = function () {
 					</li>
 				) }
 				{ isError && (
-					<li>
-						{ translate(
-							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}{{migrationKeyField /}}{{/em}} field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}}.',
-							{
-								components: {
-									a: (
-										<a
-											href={ getMigrateGuruPageURL( site!.URL ) }
-											target="_blank"
-											rel="noreferrer"
-										/>
-									),
-									em: <em />,
-									strong: <strong />,
-									migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
-									migrateButton: <DoNotTranslateIt value="Migrate" />,
-								},
-							}
-						) }
-					</li>
+					<>
+						<li>
+							{ translate(
+								'Head to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key.',
+								{
+									components: {
+										a: (
+											<a
+												href={ getMigrateGuruPageURL( site!.URL ) }
+												target="_blank"
+												rel="noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</li>
+						<li>
+							{ translate(
+								'Paste the migration key on the ‘{{ migrationKeyField /}}‘ field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}} once more.',
+								{
+									components: {
+										strong: <strong />,
+										migrationKeyField: <DoNotTranslateIt value="Migrate Guru Migration key" />,
+										migrateButton: <DoNotTranslateIt value="Migrate" />,
+									},
+								}
+							) }
+						</li>
+					</>
 				) }
 			</ol>
 			<p>
 				{ translate(
-					'And you are done! When the migration finishes, Migrate Guru will send you an email.'
+					'And you are done! When the migration is ready, Migrate Guru will send you an email.'
 				) }
 			</p>
 		</div>
@@ -161,7 +161,7 @@ const SiteMigrationInstructions: Step = function () {
 						id="site-migration-instructions-header"
 						headerText={ translate( 'Ready to migrate your site?' ) }
 						align="center"
-						subHeaderText={ translate( 'Follow these steps to get started.' ) }
+						subHeaderText={ translate( 'Follow these steps' ) }
 						subHeaderAlign="center"
 					/>
 				}
