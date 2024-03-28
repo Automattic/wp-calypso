@@ -5,6 +5,7 @@ import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
+import A4ASiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import A4ASiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
@@ -194,11 +195,19 @@ const SitesDataViews = ( {
 					}
 					return (
 						<span className="sites-dataviews__favorite-btn-wrapper">
-							<SiteSetFavorite
-								isFavorite={ item.isFavorite || false }
-								siteId={ item.site.value.blog_id }
-								siteUrl={ item.site.value.url }
-							/>
+							{ isA4AEnabled ? (
+								<A4ASiteSetFavorite
+									isFavorite={ item.isFavorite || false }
+									siteId={ item.site.value.blog_id }
+									siteUrl={ item.site.value.url }
+								/>
+							) : (
+								<SiteSetFavorite
+									isFavorite={ item.isFavorite || false }
+									siteId={ item.site.value.blog_id }
+									siteUrl={ item.site.value.url }
+								/>
+							) }
 						</span>
 					);
 				},
@@ -238,6 +247,8 @@ const SitesDataViews = ( {
 
 	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
 	// todo - refactor: extract actions, along fields, to the upper component
+	// Currently not in use until bulk selections are properly implemented.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const actions = useMemo(
 		() => [
 			{
@@ -332,7 +343,7 @@ const SitesDataViews = ( {
 				} }
 				onChangeView={ onSitesViewChange }
 				supportedLayouts={ [ 'table' ] }
-				actions={ actions }
+				actions={ [] } // Replace with actions when bulk selections are implemented.
 				isLoading={ isLoading }
 			/>
 		</div>
