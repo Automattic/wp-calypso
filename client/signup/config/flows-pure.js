@@ -188,7 +188,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
 				domains: {
-					isOnboardingPaidMediaFlow: true,
+					useAlternateDomainMessaging: true,
 				},
 				plans: {
 					/**
