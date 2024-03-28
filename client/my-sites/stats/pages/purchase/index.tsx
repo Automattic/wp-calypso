@@ -4,7 +4,6 @@ import {
 	PRODUCT_JETPACK_STATS_MONTHLY,
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { ProductsList } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -19,7 +18,6 @@ import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -50,9 +48,6 @@ const StatsPurchasePage = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 
 	const isCommercial = useSelector( ( state ) =>
@@ -68,19 +63,6 @@ const StatsPurchasePage = ( {
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
 	} = useStatsPurchases( siteId );
-
-	useEffect( () => {
-		if ( ! siteSlug ) {
-			return;
-		}
-		const trafficPageUrl = `/stats/day/${ siteSlug }`;
-		// Redirect to Calypso Stats if:
-		// - the site is not Jetpack.
-		// TODO: remove this check once we have Stats in Calypso for all sites.
-		if ( ! isSiteJetpackNotAtomic && ! config.isEnabled( 'stats/paid-wpcom-stats' ) ) {
-			page.redirect( trafficPageUrl );
-		}
-	}, [ siteSlug, isSiteJetpackNotAtomic ] );
 
 	useEffect( () => {
 		// track different upgrade sources

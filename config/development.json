@@ -201,7 +201,6 @@
 		"stats/checkout-flows-v2": true,
 		"stats/flexible-grid": true,
 		"stats/new-video-summary": true,
-		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/plan-usage": true,
 		"stats/tier-upgrade-slider": true,
