@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
+import usePaymentMethod from '../../purchases/payment-methods/hooks/use-payment-method';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type StepKey =
@@ -31,7 +32,7 @@ const AssignLicenseStepProgress = ( {
 	isBundleLicensing,
 }: Props ) => {
 	const translate = useTranslate();
-	const paymentMethodRequired = true; // TODO: Get this from the store.
+	const { paymentMethodRequired } = usePaymentMethod();
 	const sites = useSelector( getSites ).length;
 
 	const steps: Step[] = [

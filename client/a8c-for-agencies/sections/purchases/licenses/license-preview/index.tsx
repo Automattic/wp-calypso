@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
+import usePaymentMethod from '../../payment-methods/hooks/use-payment-method';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
@@ -76,7 +77,7 @@ export default function LicensePreview( {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
 
-	const paymentMethodRequired = false; // FIXME: Fix this with actual data
+	const { paymentMethodRequired } = usePaymentMethod();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 

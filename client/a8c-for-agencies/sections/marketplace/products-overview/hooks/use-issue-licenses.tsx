@@ -1,3 +1,4 @@
+import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 import useIssueLicenseMutation from '../../hooks/use-issue-license-mutation';
 
@@ -25,7 +26,7 @@ type UseIssueLicensesOptions = {
 	onError?: ( ( error: APIError ) => void ) | ( () => void );
 };
 const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
-	const paymentMethodRequired = false; // FIXME: Fix this with actual data
+	const { paymentMethodRequired } = usePaymentMethod();
 
 	const { mutateAsync, isIdle } = useIssueLicenseMutation( {
 		onError: options.onError ?? NO_OP,
