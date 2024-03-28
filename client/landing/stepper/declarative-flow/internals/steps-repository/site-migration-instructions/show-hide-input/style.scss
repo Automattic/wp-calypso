@@ -9,52 +9,50 @@
 	height: 28px;
 	max-width: 456px;
 	transition: all 0.2s;
-}
 
-.show-hide-input--hidden {
-	overflow: hidden;
-	user-select: none;
-}
+	&--hidden {
+		overflow: hidden;
+		user-select: none;
 
-.show-hide-input--hidden input {
-	background-color: transparent;
-}
+		input {
+			background-color: transparent;
+		}
+	}
 
-.show-hide-input__value {
-	overflow-x: scroll;
-	font-size: 0.875rem;
-	border: none;
-	outline: none;
-	width: 100%;
-}
+	&__value {
+		overflow-x: scroll;
+		font-size: 0.875rem;
+		border: none;
+		outline: none;
+		width: 100%;
+	}
 
-.show-hide-input:has(:focus),
-.show-hide-input:hover {
-	outline-color: var(--color-primary);
-	box-shadow: 0 0 0 2px var(--color-primary-10);
-}
+	&:has(:focus),
+	&:hover {
+		outline-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
 
-.show-hide-input__actions {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	gap: 10px;
-}
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+	}
 
-.show-hide-input__visibility-button {
-	width: 20px;
-	fill: var(--studio-gray-20);
-	transition: all 0.2s;
-}
+	&__visibility-button {
+		width: 20px;
+		fill: #a7aaad;
+		transition: all 0.2s;
+		&:hover {
+			fill: #787c82;
+		}
+	}
 
-.show-hide-input__visibility-button:hover {
-	fill: var(--studio-gray-40);
+	&__copy-button {
+		padding: 0 8px;
+		height: 28px;
+		border-radius: 4px;
+	}
 }
-
-.show-hide-input__copy-button {
-	padding: 0 8px;
-	height: 28px;
-	border-radius: 4px;
-}
-
