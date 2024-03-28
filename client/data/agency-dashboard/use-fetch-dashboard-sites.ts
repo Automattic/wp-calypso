@@ -25,24 +25,27 @@ const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
 	};
 };
 
-const useFetchDashboardSites = (
-	isPartnerOAuthTokenLoaded: boolean,
-	searchQuery: string,
-	currentPage: number,
-	filter: AgencyDashboardFilter,
-	sort: DashboardSortInterface,
-	per_page?: number
-) => {
+interface FetchDashboardSitesArgsInterface {
+	isPartnerOAuthTokenLoaded: boolean;
+	searchQuery: string;
+	currentPage: number;
+	filter: AgencyDashboardFilter;
+	sort: DashboardSortInterface;
+	perPage?: number;
+}
+
+const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
+	const { isPartnerOAuthTokenLoaded, searchQuery, currentPage, filter, sort, perPage } = args;
 	let query_key = [
 		'jetpack-agency-dashboard-sites',
 		searchQuery,
 		currentPage,
 		filter,
 		sort,
-		per_page,
+		perPage,
 	];
 	// If per_page is not provided, we want to remove per_page from the query_key as existing tests don't pass otherwise.
-	if ( ! per_page ) {
+	if ( ! perPage ) {
 		query_key = [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ];
 	}
 
@@ -59,7 +62,7 @@ const useFetchDashboardSites = (
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
-					per_page: per_page ?? 20,
+					per_page: perPage ?? 20,
 				}
 			),
 		select: ( data ) => {
