@@ -84,13 +84,21 @@ function PatternPreviewFragment( {
 	const translate = useTranslate();
 
 	const titleTooltipText = isPermalinkCopied
-		? translate( 'Copied link to pattern' )
-		: translate( 'Copy link to pattern' );
+		? translate( 'Copied link to pattern', {
+				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
+		  } )
+		: translate( 'Copy link to pattern', { comment: 'Tooltip text in Pattern Library' } );
 
-	let copyButtonText = isPreviewLarge ? translate( 'Copy pattern' ) : translate( 'Copy' );
+	let copyButtonText = isPreviewLarge
+		? translate( 'Copy pattern', { comment: 'Button label for copying a pattern' } )
+		: translate( 'Copy', { comment: 'Button label for copying a pattern' } );
 
 	if ( isPatternCopied ) {
-		copyButtonText = isPreviewLarge ? translate( 'Pattern copied!' ) : translate( 'Copied' );
+		copyButtonText = isPreviewLarge
+			? translate( 'Pattern copied!', {
+					comment: 'Button label for when a pattern was just copied',
+			  } )
+			: translate( 'Copied', { comment: 'Button label for when a pattern was just copied' } );
 	}
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
@@ -171,7 +179,11 @@ function PatternPreviewFragment( {
 						} }
 						transparent
 					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> { translate( 'Get access' ) }
+						<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
+						{ translate( 'Get access', {
+							comment:
+								'Button label for that shows in Pattern Library instead of "Copy" when logged-out users need to sign up',
+						} ) }
 					</Button>
 				) }
 			</div>
