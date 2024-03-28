@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -176,53 +176,92 @@ export const PatternLibrary = ( {
 
 	const isHomePage = ! category && ! searchTerm;
 
-	const PATTERN_SEO_CONTENT: Record< Category[ 'name' ], { title: string } > = useMemo(
-		() => ( {
-			default: {
-				title: translate( 'WordPress Patterns' ),
-			},
-			header: {
-				title: translate( 'WordPress Header Patterns' ),
-			},
-			footer: {
-				title: translate( 'WordPress Footer Patterns' ),
-			},
-			about: {
-				title: translate( 'WordPress About Patterns' ),
-			},
-			posts: {
-				title: translate( 'WordPress Blog Post Patterns' ),
-			},
-			contact: {
-				title: translate( 'WordPress Contact Patterns' ),
-			},
-			events: {
-				title: translate( 'WordPress Events Patterns' ),
-			},
-			gallery: {
-				title: translate( 'WordPress Gallery Patterns' ),
-			},
-			intro: {
-				title: translate( 'WordPress Intro Patterns' ),
-			},
-			menu: {
-				title: translate( 'WordPress Menu Patterns' ),
-			},
-			newsletter: {
-				title: translate( 'WordPress Newsletter Patterns' ),
-			},
-			services: {
-				title: translate( 'WordPress Services Patterns' ),
-			},
-			store: {
-				title: translate( 'WordPress Store Patterns' ),
-			},
-			testimonials: {
-				title: translate( 'WordPress Testimonial Patterns' ),
-			},
-		} ),
-		[ translate ]
-	);
+	const PATTERN_SEO_CONTENT: Record< Category[ 'name' ], { title: string } > = {
+		default: {
+			title: translate( 'WordPress Patterns', {
+				comment: 'Pattern Library home page title',
+				textOnly: true,
+			} ),
+		},
+		header: {
+			title: translate( 'WordPress Header Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		footer: {
+			title: translate( 'WordPress Footer Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		about: {
+			title: translate( 'WordPress About Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		posts: {
+			title: translate( 'WordPress Blog Post Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		contact: {
+			title: translate( 'WordPress Contact Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		events: {
+			title: translate( 'WordPress Events Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		gallery: {
+			title: translate( 'WordPress Gallery Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		intro: {
+			title: translate( 'WordPress Intro Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		menu: {
+			title: translate( 'WordPress Menu Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		newsletter: {
+			title: translate( 'WordPress Newsletter Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		services: {
+			title: translate( 'WordPress Services Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		store: {
+			title: translate( 'WordPress Store Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+		testimonials: {
+			title: translate( 'WordPress Testimonial Patterns', {
+				comment: 'Pattern Library category page title',
+				textOnly: true,
+			} ),
+		},
+	};
 
 	const seoContent = category ? PATTERN_SEO_CONTENT[ category ] : PATTERN_SEO_CONTENT.default;
 
