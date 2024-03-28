@@ -58,21 +58,27 @@ describe( 'login', () => {
 
 	it( 'should replace page and return if context.hash and context.hash.client_id exist', async () => {
 		context.hash = { client_id: '1234' };
+
 		await login( context, next );
+
 		expect( page.replace ).toHaveBeenCalled();
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should throw an error if client_id exists but redirect_to does not', async () => {
 		context.query.client_id = '1234';
+
 		await login( context, next );
+
 		expect( next ).toHaveBeenCalledWith( expect.objectContaining( { status: 401 } ) );
 	} );
 
 	it( 'should throw an error if client_id does not match redirectClientId', async () => {
 		context.query.client_id = '1234';
 		context.query.redirect_to = 'http://public-api.wordpress.com?client_id=different_client_id';
+
 		await login( context, next );
+
 		expect( next ).toHaveBeenCalledWith( expect.objectContaining( { status: 401 } ) );
 	} );
 
@@ -81,6 +87,7 @@ describe( 'login', () => {
 		context.query.redirect_to =
 			'http://jetpack.com?back=https://public-api.wordpress.com?client_id=1234';
 		getOAuth2Client.mockReturnValueOnce( {} );
+
 		await login( context, next );
 
 		expect( getOAuth2Client ).toHaveBeenCalledWith( state, '1234' );
@@ -91,7 +98,9 @@ describe( 'login', () => {
 		context.query.client_id = '1234';
 		context.query.redirect_to = 'http://public-api.wordpress.com?client_id=1234';
 		getOAuth2Client.mockReturnValueOnce( {} );
+
 		await login( context, next );
+
 		expect( getOAuth2Client ).toHaveBeenCalledWith( state, '1234' );
 		expect( next ).toHaveBeenCalled();
 	} );
