@@ -1,7 +1,9 @@
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { JETPACK_BOOST_ID } from './features/features';
 import { AgencyDashboardFilterMap } from './types';
 
 export const A4A_SITES_DASHBOARD_DEFAULT_CATEGORY = 'overview';
+export const A4A_SITES_DASHBOARD_DEFAULT_FEATURE = JETPACK_BOOST_ID;
 
 export const filtersMap: AgencyDashboardFilterMap[] = [
 	{ filterType: 'all_issues', ref: 1 },
