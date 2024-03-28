@@ -216,7 +216,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					title={
 						<ListTileTitle>
-							<SiteName onClick={ onSiteClick }>{ site.title }</SiteName>
+							<SiteName href={ dashboardUrl } title={ title } onClick={ onSiteClick }>
+								{ site.title }
+							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 							{ isTrialSitePlan && (
