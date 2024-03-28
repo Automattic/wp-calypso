@@ -1,6 +1,11 @@
 import { Card, CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, type Task } from '@automattic/launchpad';
 import { useTranslate } from 'i18n-calypso';
+import {
+	A4A_MARKETPLACE_LINK,
+	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
+	A4A_SITES_LINK_WALKTHROUGH_TOUR,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { A4A_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -24,7 +29,7 @@ export default function OverviewBodyNextSteps() {
 
 	const tasks: Task[] = [
 		{
-			calypso_path: '/sites?tour=sites-walkthrough',
+			calypso_path: A4A_SITES_LINK_WALKTHROUGH_TOUR,
 			completed: checkTourCompletion( 'sitesWalkthrough' ),
 			disabled: false,
 			actionDispatch: () => {
@@ -38,7 +43,7 @@ export default function OverviewBodyNextSteps() {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '/marketplace',
+			calypso_path: A4A_MARKETPLACE_LINK,
 			completed: checkTourCompletion( 'exploreMarketplace' ),
 			disabled: false,
 			actionDispatch: () => {
@@ -54,7 +59,7 @@ export default function OverviewBodyNextSteps() {
 			useCalypsoPath: true,
 		},
 		{
-			calypso_path: '/sites?tour=add-new-site',
+			calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 			completed: checkTourCompletion( 'addSiteStep1' ),
 			disabled: false,
 			actionDispatch: () => {
