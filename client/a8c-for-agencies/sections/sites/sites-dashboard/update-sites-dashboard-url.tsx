@@ -30,11 +30,16 @@ const buildQueryString = ( {
 		urlQuery.set( 'page', currentPage.toString() );
 	}
 
-	if ( sort.field && sort.field !== 'url' ) {
+	const queryParams = new URLSearchParams( window.location.search );
+
+	if ( queryParams.has( 'sort_field' ) || sort.field !== 'url' ) {
 		urlQuery.set( 'sort_field', sort.field );
 
-		if ( sort.direction && sort.direction !== 'asc' ) {
-			urlQuery.set( 'sort_direction', sort.direction );
+		if ( queryParams.has( 'sort_direction' ) || sort.direction !== 'asc' ) {
+			urlQuery.set(
+				'sort_direction',
+				queryParams.get( 'sort_direction' ) === 'asc' ? 'asc' : sort.direction
+			);
 		}
 	}
 
