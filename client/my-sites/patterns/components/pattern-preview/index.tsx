@@ -56,6 +56,8 @@ function PatternPreviewFragment( {
 	viewportWidth,
 }: PatternPreviewProps ) {
 	const ref = useRef< HTMLDivElement >( null );
+	const hasScrolledToAnchorRef = useRef< boolean >( false );
+
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
 
@@ -84,6 +86,29 @@ function PatternPreviewFragment( {
 		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
 	}, [ nodeSize.width, nodeSize.height ] );
 
+	// We deliberately use `Element::scrollIntoView` instead of setting an ID attribute on the
+	// `.pattern-preview` element to avoid a janky experience for users while the page is loading.
+	// This way, the browser doesn't scroll down to the relevant patterns until patterns are mostly
+	// finished loading.
+	useEffect( () => {
+		if ( window.location.hash !== `#${ idAttr }` || hasScrolledToAnchorRef.current ) {
+			return;
+		}
+
+		const element = ref.current;
+		const timeoutId = setTimeout( function () {
+			hasScrolledToAnchorRef.current = true;
+			element?.scrollIntoView( {
+				behavior: 'smooth',
+				block: 'center',
+			} );
+		}, 1000 );
+
+		return () => {
+			clearTimeout( timeoutId );
+		};
+	}, [ renderedPattern, idAttr ] );
+
 	if ( ! pattern ) {
 		return null;
 	}
@@ -96,7 +121,6 @@ function PatternPreviewFragment( {
 				// SSR markup to client-side React code, which is why we need the `is-targeted` class
 				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
-			id={ idAttr }
 			ref={ ref }
 		>
 			{ resizeObserver }
