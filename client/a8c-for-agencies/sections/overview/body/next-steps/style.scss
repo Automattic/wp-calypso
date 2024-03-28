@@ -9,7 +9,7 @@
 		h2 {
 			font-size: rem(16px);
 			font-weight: 500;
-			color: var(--studio-gray-100);
+			color: var(--color-neutral-100);
 		}
 		.circular__progress-bar {
 			margin-right: 8px;
@@ -18,11 +18,11 @@
 				font-size: rem(10px);
 				font-weight: 500;
 				line-height: 20px;
-				color: var(--studio-gray-100);
+				color: var(--color-neutral-100);
 			}
 
 			.circular__progress-bar-fill-circle {
-				stroke: var(--studio-jetpack-green-50);
+				stroke: var(--color-jetpack);
 			}
 		}
 	}
@@ -31,7 +31,7 @@
 	button {
 		font-size: rem(14px);
 		font-weight: 400;
-		color: var(--studio-gray-80);
+		color: var(--color-neutral-80);
 	}
 
 	button.dismiss {
@@ -39,7 +39,7 @@
 		text-decoration: underline;
 
 		&:hover {
-			color: var(--studio-jetpack-green-50);
+			color: var(--color-jetpack);
 		}
 	}
 
@@ -48,7 +48,7 @@
 		.checklist-item__text {
 			font-size: rem(14px);
 			font-weight: 400;
-			color: var(--studio-gray-80);
+			color: var(--color-neutral-80);
 		}
 
 		&.completed .checklist-item__text {
@@ -60,12 +60,12 @@
 		&.completed.enabled > a:focus,
 		&.pending > a:focus {
 			.checklist-item__text {
-				color: var(--studio-jetpack-green-50);
+				color: var(--color-jetpack);
 			}
 
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
-				fill: var(--studio-jetpack-green-50);
+				fill: var(--color-jetpack);
 			}
 		}
 	}
