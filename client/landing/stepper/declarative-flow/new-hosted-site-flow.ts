@@ -3,6 +3,7 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
+import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -86,6 +87,10 @@ const hosting: Flow = {
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
+
+					if ( ! providedDependencies.goToCheckout ) {
+						recordFreeHostingTrialStarted( flowName );
+					}
 
 					if ( providedDependencies.goToCheckout ) {
 						return window.location.assign(
