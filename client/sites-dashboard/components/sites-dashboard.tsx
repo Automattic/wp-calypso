@@ -288,6 +288,25 @@ export function SitesDashboard( {
 													sites={ paginatedSites }
 													className={ sitesMarginTable }
 												/>
+												{ selectedStatus.name === 'deleted' && (
+													<div
+														style={ {
+															display: 'flex',
+															alignItems: 'center',
+															gap: '8px',
+														} }
+													>
+														<Gridicon icon="info" size={ 18 } />
+														<span>
+															{ createInterpolateElement(
+																__(
+																	'These sites will be permanently removed after <strong>30 days.</strong>'
+																),
+																{ strong: <strong /> }
+															) }
+														</span>
+													</div>
+												) }
 												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 													<PageBodyBottomContainer>
 														<Pagination
