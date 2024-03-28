@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
+import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
 	children: React.ReactNode;
@@ -66,36 +67,39 @@ export const UpgradePlanDetails = ( props: Props ) => {
 			</div>
 
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
-				<div className={ classnames( 'import__upgrade-plan-header' ) }>
-					<Plans2023Tooltip
-						text={ __(
-							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
-						) }
-						id="wp-cloud-logo"
-						setActiveTooltipId={ setActiveTooltipId }
-						activeTooltipId={ activeTooltipId }
-					>
-						<CloudLogo />
-					</Plans2023Tooltip>
-					<Title className="plan-title" tagName="h2">
-						{ plan?.getTitle() }
-					</Title>
-					<small>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</small>
-				</div>
+				<div className={ classnames( 'import__upgrade-plan-features-container' ) }>
+					<div className={ classnames( 'import__upgrade-plan-header' ) }>
+						<Plans2023Tooltip
+							text={ __(
+								'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
+							) }
+							id="wp-cloud-logo"
+							setActiveTooltipId={ setActiveTooltipId }
+							activeTooltipId={ activeTooltipId }
+						>
+							<CloudLogo />
+						</Plans2023Tooltip>
+						<Title className="plan-title" tagName="h2">
+							{ plan?.getTitle() }
+						</Title>
+						<small>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</small>
+					</div>
 
-				<div className={ classnames( 'import__upgrade-plan-price' ) }>
-					<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
-					<span className={ classnames( 'plan-time-frame' ) }>
-						<small>{ plan?.getBillingTimeFrame() }</small>
-						<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
-					</span>
-				</div>
+					<div className={ classnames( 'import__upgrade-plan-price' ) }>
+						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
+						<span className={ classnames( 'plan-time-frame' ) }>
+							<small>{ plan?.getBillingTimeFrame() }</small>
+							<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
+						</span>
+					</div>
 
-				<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
+					<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
 
-				<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
-					<UpgradePlanFeatureList plan={ plan } />
+					<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
+						<UpgradePlanFeatureList plan={ plan } />
+					</div>
 				</div>
+				<UpgradePlanHostingDetails />
 			</div>
 		</div>
 	);

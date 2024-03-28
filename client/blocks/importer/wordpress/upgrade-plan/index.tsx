@@ -75,11 +75,11 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
 				<div className="import__heading import__heading-center">
-					<Title>{ translate( 'Upgrade your plan' ) }</Title>
+					<Title>{ translate( 'Take your site to a new performance level' ) }</Title>
 					<SubTitle>
 						{ subTitleText ||
 							translate(
-								'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
+								'Migrating your site requires a %(plan)s plan. Discover everything included and take your site to the next level.',
 								{
 									args: {
 										plan: plan?.getTitle() ?? '',
