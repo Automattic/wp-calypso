@@ -7,7 +7,7 @@ const isMultipleEmailEnabled = isEnabled(
 	'jetpack/pro-dashboard-monitor-multiple-email-recipients'
 );
 
-const useFetchMonitorVerfiedContacts = (
+const useFetchMonitorVerifiedContacts = (
 	isPartnerOAuthTokenLoaded: boolean,
 	agencyId?: number
 ) => {
@@ -39,4 +39,4 @@ const useFetchMonitorVerfiedContacts = (
 	} );
 };
 
-export default useFetchMonitorVerfiedContacts;
+export default useFetchMonitorVerifiedContacts;
