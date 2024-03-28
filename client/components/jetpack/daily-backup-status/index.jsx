@@ -11,6 +11,7 @@ import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
+	isStorageOrRetentionReached,
 	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
@@ -25,6 +26,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupFailed from './status-card/backup-failed';
 import BackupInProgress from './status-card/backup-in-progress';
 import BackupJustCompleted from './status-card/backup-just-completed';
+import BackupNoStorage from './status-card/backup-no-storage';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
@@ -110,17 +112,21 @@ const DailyBackupStatus = ( {
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
-		return isSuccessful( backup ) ? (
-			<BackupSuccessful
-				backup={ backup }
-				deltas={ deltas }
-				selectedDate={ selectedDate }
-				lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
-				availableActions={ [ 'rewind' ] }
-			/>
-		) : (
-			<BackupFailed backup={ backup } />
-		);
+
+		if ( isSuccessful( backup ) ) {
+			return (
+				<BackupSuccessful
+					backup={ backup }
+					deltas={ deltas }
+					selectedDate={ selectedDate }
+					lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
+					availableActions={ [ 'rewind' ] }
+				/>
+			);
+		} else if ( isStorageOrRetentionReached( backup ) ) {
+			return <BackupNoStorage selectedDate={ selectedDate } />;
+		}
+		return <BackupFailed backup={ backup } />;
 	}
 	if ( lastBackupDate ) {
 		// if the storage is full, don't show backup is schdeuled or delayed message to the user.

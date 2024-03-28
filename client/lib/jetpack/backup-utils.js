@@ -116,3 +116,9 @@ export const isSuccessfulRealtimeBackup = ( backup ) => {
 		backup.streams && !! backup.streams.filter( ( stream ) => stream.activityIsRewindable ).length;
 	return hasRestorableStreams || backup.activityIsRewindable;
 };
+
+export const isStorageOrRetentionReached = ( backup ) => {
+	return (
+		SUCCESSFUL_BACKUP_ACTIVITIES.includes( backup.activityName ) && ! backup.activityIsRewindable
+	);
+};
