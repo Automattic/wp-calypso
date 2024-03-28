@@ -86,19 +86,33 @@ function PatternPreviewFragment( {
 	const titleTooltipText = isPermalinkCopied
 		? translate( 'Copied link to pattern', {
 				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
+				textOnly: true,
 		  } )
-		: translate( 'Copy link to pattern', { comment: 'Tooltip text in Pattern Library' } );
+		: translate( 'Copy link to pattern', {
+				comment: 'Tooltip text in Pattern Library',
+				textOnly: true,
+		  } );
 
 	let copyButtonText = isPreviewLarge
-		? translate( 'Copy pattern', { comment: 'Button label for copying a pattern' } )
-		: translate( 'Copy', { comment: 'Button label for copying a pattern' } );
+		? translate( 'Copy pattern', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } )
+		: translate( 'Copy', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } );
 
 	if ( isPatternCopied ) {
 		copyButtonText = isPreviewLarge
 			? translate( 'Pattern copied!', {
 					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
 			  } )
-			: translate( 'Copied', { comment: 'Button label for when a pattern was just copied' } );
+			: translate( 'Copied', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } );
 	}
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
