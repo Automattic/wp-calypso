@@ -253,7 +253,11 @@ describe( 'Site Actions', () => {
 					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					path: `/sites/${ siteId }/atomic/transfers`,
-					body: { software_set: softwareSet, context: 'woo-on-plans' },
+					body: {
+						software_set: softwareSet,
+						context: 'woo-on-plans',
+						transfer_intent: transferIntent,
+					},
 				},
 				type: 'WPCOM_REQUEST',
 			};
@@ -274,6 +278,7 @@ describe( 'Site Actions', () => {
 				type: 'ATOMIC_TRANSFER_FAILURE',
 				siteId,
 				softwareSet,
+				transferIntent,
 				error: atomicTransferError,
 			} );
 		} );
