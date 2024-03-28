@@ -28,45 +28,52 @@ export const CategoryPillNavigation = ( {
 }: CategoryPillNavigationProps ) => {
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
-	const listRef = useRef< HTMLDivElement | null >( null );
+	const listInnerRef = useRef< HTMLDivElement | null >( null );
 
 	const checkScrollArrows = () => {
-		if ( ! listRef.current ) {
+		if ( ! listInnerRef.current ) {
 			return;
 		}
 
-		const { scrollLeft, scrollWidth, clientWidth } = listRef.current;
+		const { scrollLeft, scrollWidth, clientWidth } = listInnerRef.current;
 		setShowLeftArrow( scrollLeft > 0 );
 		setShowRightArrow( Math.ceil( scrollLeft ) < scrollWidth - clientWidth );
 	};
 
 	const scrollTo = ( direction: 'right' | 'left' ) => {
-		if ( ! listRef.current ) {
+		if ( ! listInnerRef.current ) {
 			return;
 		}
 
-		let left = listRef.current.clientWidth / 2;
+		let left = listInnerRef.current.clientWidth / 2;
 
 		if ( direction === 'left' ) {
 			left *= -1;
 		}
 
-		listRef.current?.scrollBy( { left, behavior: 'smooth' } );
+		listInnerRef.current?.scrollBy( { left, behavior: 'smooth' } );
 	};
 
 	useEffect( () => {
-		if ( ! listRef.current ) {
+		if ( ! listInnerRef.current ) {
 			return;
 		}
 
 		checkScrollArrows();
 
-		const target = listRef.current.querySelector( '.is-active' );
+		const target = listInnerRef.current?.querySelector( '.is-active' );
 
-		target?.scrollIntoView( {
+		if ( ! target ) {
+			return;
+		}
+
+		const targetCoords = target.getBoundingClientRect();
+		const listInnerCoords = listInnerRef.current.getBoundingClientRect();
+		const listInnerHalfWidth = listInnerCoords.width / 2 - targetCoords.width / 2;
+
+		listInnerRef.current?.scrollBy( {
+			left: targetCoords.left - listInnerCoords.left - listInnerHalfWidth,
 			behavior: 'smooth',
-			block: 'nearest',
-			inline: 'center',
 		} );
 	}, [ selectedCategoryId ] );
 
@@ -78,6 +85,7 @@ export const CategoryPillNavigation = ( {
 						<Icon icon={ chevronRight } size={ 28 } />
 					</Button>
 				) }
+
 				{ showRightArrow && (
 					<Button
 						className="category-pill-navigation__arrow right"
@@ -86,9 +94,10 @@ export const CategoryPillNavigation = ( {
 						<Icon icon={ chevronRight } size={ 28 } />
 					</Button>
 				) }
+
 				<div
 					className="category-pill-navigation__list-inner"
-					ref={ listRef }
+					ref={ listInnerRef }
 					onScroll={ checkScrollArrows }
 				>
 					{ buttons && (
@@ -108,6 +117,7 @@ export const CategoryPillNavigation = ( {
 							<div className="category-pill-navigation__button-divider" />
 						</>
 					) }
+
 					{ categories.map( ( category ) => (
 						<LocalizedLink
 							key={ category.id }
