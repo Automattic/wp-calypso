@@ -55,6 +55,10 @@ class MySitesNavigation extends Component {
 				showManageSitesButton: false,
 				showHiddenSites: false,
 			};
+		} else if ( this.props.isGlobalSidebarVisible ) {
+			return this.renderGlobalSidebar();
+		} else if ( this.props.isGlobalSiteSidebarVisible ) {
+			return this.renderGlobalSiteSidebar();
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 
@@ -107,12 +111,6 @@ class MySitesNavigation extends Component {
 	}
 
 	render() {
-		if ( this.props.isGlobalSidebarVisible ) {
-			return this.renderGlobalSidebar();
-		}
-		if ( this.props.isGlobalSiteSidebarVisible ) {
-			return this.renderGlobalSiteSidebar();
-		}
 		return this.renderSidebar();
 	}
 }

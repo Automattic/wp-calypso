@@ -228,14 +228,13 @@ const JetpackFAQ: FC = () => {
 					<li>
 						<FoldableFAQ
 							id="multisite-network"
-							question={ translate( 'Does this work with a multisite network?' ) }
+							question={ translate( 'Does Jetpack work with a multisite network?' ) }
 							onToggle={ onFaqToggle }
 							className="jetpack-faq__section"
 						>
 							{ translate(
-								'Jetpack’s free features are compatible with WordPress Multisite networks. Paid features' +
-									' also work with Multisite networks, but each site requires its own subscription. Jetpack VaultPress Backup' +
-									' and Jetpack Scan are not currently compatible with Multisite networks.'
+								'Jetpack’s free features are compatible with WordPress Multisite networks. Most paid features also work with Multisite networks, but each site requires its own subscription. Ad network is an exception and will only work with the main site.' +
+									' Jetpack VaultPress Backup, Jetpack Scan, Jetpack Security, and Jetpack Complete are not currently compatible with Multisite networks.'
 							) }
 						</FoldableFAQ>
 					</li>
