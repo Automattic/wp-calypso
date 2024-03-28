@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
@@ -30,6 +31,7 @@ interface Props {
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
 		site,
@@ -75,17 +77,29 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
 				<div className="import__heading import__heading-center">
-					<Title>{ translate( 'Take your site to a new performance level' ) }</Title>
+					<Title>
+						{ isEnglishLocale
+							? translate( 'Take your site to a new performance level' )
+							: translate( 'Upgrade your plan' ) }
+					</Title>
 					<SubTitle>
-						{ subTitleText ||
-							translate(
-								'Migrating your site requires a %(plan)s plan. Discover everything included and take your site to the next level.',
-								{
-									args: {
-										plan: plan?.getTitle() ?? '',
-									},
-								}
-							) }
+						{ subTitleText || isEnglishLocale
+							? translate(
+									'Migrating your site requires a %(plan)s plan. Discover everything included and take your site to the next level.',
+									{
+										args: {
+											plan: plan?.getTitle() ?? '',
+										},
+									}
+							  )
+							: translate(
+									'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
+									{
+										args: {
+											plan: plan?.getTitle() ?? '',
+										},
+									}
+							  ) }
 						<br />
 						{ ! isEligibleForTrialPlan &&
 							onContentOnlyClick &&
