@@ -180,6 +180,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	streetNumber?: string;
 	phoneNumber?: string;
 	document?: string;
+	isForBusiness?: boolean;
 	deviceId?: string;
 	successUrl?: string;
 	cancelUrl?: string;
@@ -559,6 +560,7 @@ export type DomainContactValidationRequestExtraFields = {
 		trademark_number?: string;
 		siren_siret?: string;
 	};
+	is_for_business?: boolean;
 };
 
 export type ContactValidationResponseMessagesExtra = {
@@ -577,6 +579,7 @@ export type ContactValidationResponseMessagesExtra = {
 		trademark_number?: string[];
 		siren_siret?: string[];
 	};
+	is_for_business?: boolean;
 };
 
 /**
