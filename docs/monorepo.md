@@ -109,6 +109,21 @@ If your package requires compilation, the `package.json` `build` script should c
 
 If you need exceptions to linting rules, add a `./eslintrc.js` file to your app/package and disable the relevant rules.
 
+#### Watching asset changes
+If you also need to watch asset changes in your packages (like scss files) you can add the following lines, make sure to add `npm-run-all` to your devDependencies
+```	
+		"watch:tsc": "tsc --build ./tsconfig.json --watch",
+		"watch:assets": "copy-assets --watch",
+		"watch": "npm-run-all --parallel watch:tsc watch:assets"
+```
+This will concurrently watch for tsc changes as well as [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) changes.
+ Next running the following command should watch your changes
+`yarn workspace @automattic/plans-grid-next watch` 
+
+If not you can simply do 
+`yarn workspace @automattic/plans-grid-next copy-assets --watch` 
+
+
 ## Running Tests
 
 To run all of the package tests:

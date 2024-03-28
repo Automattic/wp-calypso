@@ -2,6 +2,8 @@
 
 // find all the packages
 const path = require( 'path' );
+// eslint-disable-next-line import/no-extraneous-dependencies
+const chokidar = require( 'chokidar' );
 const rcopy = require( 'recursive-copy' );
 
 const dir = process.cwd();
@@ -28,22 +30,60 @@ let copyAll = true;
 let copyESM = false;
 let copyCJS = false;
 
-for ( const arg of process.argv.slice( 2 ) ) {
-	if ( arg === '--esm' ) {
-		copyAll = false;
-		copyESM = true;
+const copyAssets = ( args ) => () => {
+	for ( const arg of args.slice( 2 ) ) {
+		if ( arg === '--esm' ) {
+			copyAll = false;
+			copyESM = true;
+		}
+
+		if ( arg === '--cjs' ) {
+			copyAll = false;
+			copyCJS = true;
+		}
 	}
 
-	if ( arg === '--cjs' ) {
-		copyAll = false;
-		copyCJS = true;
+	if ( copyAll || copyESM ) {
+		rcopy( inputDir, outputDirESM, copyOptions );
 	}
-}
 
-if ( copyAll || copyESM ) {
-	rcopy( inputDir, outputDirESM, copyOptions );
-}
+	if ( copyAll || copyCJS ) {
+		rcopy( inputDir, outputDirCJS, copyOptions );
+	}
+};
 
-if ( copyAll || copyCJS ) {
-	rcopy( inputDir, outputDirCJS, copyOptions );
+const resolveShortPath = ( filePath ) => {
+	if ( filePath.includes( 'wp-calypso' ) ) {
+		return filePath.split( 'wp-calypso/' )[ 1 ];
+	}
+	return filePath;
+};
+
+const isWatched = process.argv.some( ( arg ) => arg.includes( '--watch' ) );
+const copyAssetsFn = copyAssets( process.argv );
+let debounceTimeout;
+
+if ( ! isWatched ) {
+	copyAssetsFn();
+} else {
+	const watchedFiles = copyOptions.filter.slice( 0, 6 ).map( ( o ) => `${ dir }/${ o }` );
+	const watcher = chokidar.watch( watchedFiles, {
+		ignored: [ `${ dir }/**/test/**`, outputDirESM, outputDirCJS ],
+		persistent: true,
+	} );
+	console.log(
+		`Copy assets is watching for changes in package ${ resolveShortPath(
+			dir
+		) } for the following file paths \n`
+	);
+	watchedFiles.forEach( ( file ) => console.log( `👀 ==> ${ resolveShortPath( file ) }` ) );
+	watcher.on( 'change', ( changedPath ) => {
+		clearTimeout( debounceTimeout );
+		debounceTimeout = setTimeout( () => {
+			console.log(
+				`File ${ resolveShortPath( changedPath ) } has been changed, triggering copy assets`
+			);
+			copyAssetsFn();
+		}, 500 );
+	} );
 }
