@@ -9,9 +9,9 @@ import { PatternTypeFilter, PatternView } from '../types';
 
 type PatternsPageViewTrackerProps = {
 	category: string;
-	searchTerm: string;
-	patternTypeFilter: PatternTypeFilter;
-	view: PatternView;
+	searchTerm?: string;
+	patternTypeFilter?: PatternTypeFilter;
+	view?: PatternView;
 	referrer?: string;
 	error?: string;
 };
