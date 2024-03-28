@@ -1,23 +1,20 @@
-import { Card } from '@automattic/components';
 import { MigrationStatus } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
-import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect } from 'react';
-import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import wpcom from 'calypso/lib/wp';
+import './style.scss';
 
 interface Props {
-	sourceSite?: string;
-	targetSite: string;
-	targetSiteId: string;
+	targetSiteId: number;
 	onComplete: () => void;
 }
 
 export const MigrationInProgress: FC< Props > = ( props ) => {
 	const translate = useTranslate();
 
-	const { sourceSite, targetSite, targetSiteId, onComplete } = props;
+	const { targetSiteId, onComplete } = props;
 
 	const {
 		data: { status },
@@ -40,35 +37,16 @@ export const MigrationInProgress: FC< Props > = ( props ) => {
 	//
 
 	return (
-		<Card className="migrate__pane">
-			<img
-				className="migrate__illustration"
-				src="/calypso/images/illustrations/waitTime-plain.svg"
-				alt=""
-			/>
-
-			<FormattedHeader
-				className="migrate__section-header"
-				headerText={ translate( 'Migration in progress' ) }
-				align="center"
-			/>
+		<div className="migration-in-progress">
+			<h2 className="migration-in-progress__title">
+				{ translate( 'We are migrating your site' ) }
+			</h2>
 			<p>
 				{ translate(
-					"We're moving everything from {{strong}}{{sp}}%(sourceSite)s{{/sp}}{{/strong}} to {{strong}}{{sp}}%(targetSite)s{{/sp}}{{/strong}}.",
-					{
-						args: {
-							sourceSite: sourceSite || translate( 'your source site' ),
-							targetSite,
-						},
-						components: {
-							sp: <span className="migrate__domain" />,
-							strong: <strong />,
-						},
-					}
+					'Feel free to close this window. We’ll email you when your new site is ready.'
 				) }
 			</p>
-			<p>{ translate( 'We will send you an email when the migration is complete.' ) }</p>
-			<Spinner />
-		</Card>
+			<LoadingEllipsis className="migration-in-progress__loading" />
+		</div>
 	);
 };
