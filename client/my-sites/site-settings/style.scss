@@ -744,12 +744,10 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .support-info + .jetpack-module-toggle,
 .support-info + .components-toggle-control,
-.support-info + .custom-content-types__module-settings,
-.support-info + .verbum-comments-toggle {
+.support-info + .custom-content-types__module-settings {
 	display: flex;
 }
 
-.jetpack-module-toggle,
-.verbum-comments-toggle {
+.jetpack-module-toggle {
 	flex-direction: column;
 }

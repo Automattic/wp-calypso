@@ -68,31 +68,25 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	commentDisplaySettings() {
-		const {
-			isJetpack,
-			fields,
-			isRequestingSettings,
-			isSavingSettings,
-			onChangeField,
-			handleAutosavingToggle,
-		} = this.props;
+		const { isJetpack } = this.props;
+		if ( ! isJetpack ) {
+			return null;
+		}
+
+		const { fields, isRequestingSettings, isSavingSettings, onChangeField } = this.props;
 
 		const commentDisplaySettingsFields = {
 			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
 			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
-			enable_verbum_commenting: fields.enable_verbum_commenting,
-			enable_blocks_comments: fields.enable_blocks_comments,
 		};
 
 		return (
 			<div>
-				{ isJetpack && <QueryJetpackModules siteId={ this.props.siteId } /> }
+				<QueryJetpackModules siteId={ this.props.siteId } />
 				<CommentDisplaySettings
 					onChangeField={ onChangeField }
 					submittingForm={ isRequestingSettings || isSavingSettings }
 					fields={ commentDisplaySettingsFields }
-					isJetpack={ isJetpack }
-					handleAutosavingToggle={ handleAutosavingToggle }
 				/>
 				<hr />
 			</div>
@@ -664,8 +658,6 @@ export const getFormSettings = ( settings ) => {
 		'stb_enabled',
 		'stc_enabled',
 		'wpcom_publish_comments_with_markdown',
-		'enable_verbum_commenting',
-		'enable_blocks_comments',
 	] );
 };
 
