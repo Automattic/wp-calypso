@@ -77,15 +77,26 @@ export default function CampaignItem( props: Props ) {
 	);
 
 	let budgetString = '-';
+	let budgetStringMobile = '';
 	if ( is_evergreen && campaignDays ) {
-		budgetString = `$${ formatCents( totalBudget ) } weekly`;
+		/* translators: Daily average spend. dailyAverageSpending is the budget */
+		budgetString = sprintf(
+			/* translators: %s is a formatted amount */
+			'%s weekly',
+			`$${ formatCents( totalBudget ) }`
+		);
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			'%s weekly budget',
+			`$${ totalBudget }`
+		);
 	} else if ( campaignDays ) {
 		budgetString = `$${ formatCents( totalBudget ) }`;
-	}
-
-	let budgetStringMobile = campaignDays ? `$${ totalBudget } budget` : null;
-	if ( is_evergreen && campaignDays ) {
-		budgetStringMobile = `$${ totalBudget } weekly budget`;
+		budgetStringMobile = sprintf(
+			/* translators: %s is a formatted amount */
+			'%s budget',
+			`$${ totalBudget }`
+		);
 	}
 
 	const isWooStore = config.isEnabled( 'is_running_in_woo_site' );
@@ -190,7 +201,7 @@ export default function CampaignItem( props: Props ) {
 			</td>
 			<td className="campaign-item__ends">
 				<div>
-					{ campaign.end_date && campaign.end_date.length > 0
+					{ campaign.end_date
 						? getCampaignEndText(
 								moment( campaign.end_date ),
 								campaign.status,
