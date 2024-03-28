@@ -44,7 +44,7 @@ function NotificationSvg() {
 			viewBox="0 0 310 80"
 			className="two-factor-authentication__illustration-notification"
 		>
-			<g filter="url(#a)">
+			<g filter="url(#push-notification-illustration-a)">
 				<rect width="300" height="70" x="5" y="3" fill={ COLOR_WHITE } rx="6" />
 				<rect width="50" height="50" x="15" y="13" fill={ COLOR_GREEN_40 } rx="14" />
 				<path
@@ -56,7 +56,7 @@ function NotificationSvg() {
 			</g>
 			<defs>
 				<filter
-					id="a"
+					id="push-notification-illustration-a"
 					width="310"
 					height="80"
 					x="0"
