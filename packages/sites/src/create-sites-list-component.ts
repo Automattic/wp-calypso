@@ -21,7 +21,7 @@ type Features< TGrouping extends boolean, TSorting extends boolean, TFiltering e
 
 interface BaseProps< T = MinimumSite > extends Attributes {
 	sites: T[];
-	grouping: { status: string; showHidden: boolean };
+	grouping?: SitesGroupingOptions;
 }
 
 type FilteringProps = { filtering?: SitesFilterOptions };
@@ -105,7 +105,6 @@ type CreatedComponentProps<
 	TFiltering extends boolean,
 > = {
 	sites: TSite[];
-	grouping?: { status: string; showHidden: boolean };
 	children( processedData: RenderProp< TSite, TGrouping > ): ReactElement;
 } & ComponentGroupingProp< TGrouping > &
 	ComponentSortingProp< TSorting > &
