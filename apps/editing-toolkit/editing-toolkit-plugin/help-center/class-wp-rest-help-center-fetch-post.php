@@ -39,7 +39,7 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 			'/articles',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_articles_search_results' ),
+				'callback'            => array( $this, 'get_articles_fetch_results' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 				'args'                => array(
 					'blog_id'  => array(
@@ -60,13 +60,13 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Should return articles search results
+	 * Should fetch articles
 	 *
 	 * @param \WP_REST_Request $request    The request sent to the API.
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_articles_search_results( \WP_REST_Request $request ) {
+	public function get_articles_fetch_results( \WP_REST_Request $request ) {
 		$query_parameters = array(
 			'blog_id'  => $request['blog_id'],
 			'post_ids' => $request['post_ids'],
