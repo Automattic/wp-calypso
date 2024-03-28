@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -7,6 +8,17 @@ export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, section
 		sectionGroup === 'reader' ||
 		sectionGroup === 'sites-dashboard' ||
 		( sectionGroup === 'sites' && ! siteId )
+	);
+};
+
+export const getShouldShowCollapsedGlobalSidebar = (
+	state: AppState,
+	siteId: number,
+	sectionGroup: string
+) => {
+	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
+	return (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && siteId
 	);
 };
 
