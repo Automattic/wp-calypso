@@ -42,7 +42,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"typescript": "^5.3.3"
+		"typescript": "^5.4.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.24.0",

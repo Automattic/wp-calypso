@@ -52,7 +52,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/cli": "^7.6.17",
 		"@storybook/react": "^7.6.17",
-		"typescript": "^5.3.3"
+		"typescript": "^5.4.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^9.24.0",
