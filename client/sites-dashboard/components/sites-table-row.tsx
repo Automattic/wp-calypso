@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ListTile, Popover } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -9,11 +10,12 @@ import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	displaySiteUrl,
 	getDashboardUrl,
@@ -185,6 +187,33 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		siteUrl = site.options?.unmapped_url;
 	}
 
+	const dispatch = useDispatch();
+
+	const setSiteId = ( siteId: number ) => {
+		dispatch( setSelectedSiteId( siteId ) );
+	};
+
+	let leading = (
+		<ListTileLeading href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+			<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
+		</ListTileLeading>
+	);
+
+	let siteName = (
+		<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+			{ site.title }
+		</SiteName>
+	);
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		leading = (
+			<ListTileLeading onClick={ () => setSiteId( site.ID ) }>
+				<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
+			</ListTileLeading>
+		);
+		siteName = <SiteName onClick={ () => setSiteId( site.ID ) }>{ site.title }</SiteName>;
+	}
+
 	return (
 		<Row ref={ ref }>
 			<Column>
@@ -192,16 +221,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					contentClassName={ css`
 						min-width: 0;
 					` }
-					leading={
-						<ListTileLeading href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
-							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
-						</ListTileLeading>
-					}
+					leading={ leading }
 					title={
 						<ListTileTitle>
-							<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
-								{ site.title }
-							</SiteName>
+							{ siteName }
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 							{ isTrialSitePlan && (

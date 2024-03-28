@@ -16,12 +16,9 @@ export const getShouldShowCollapsedGlobalSidebar = (
 	siteId: number,
 	sectionGroup: string
 ) => {
-	// Global Site View should be limited to classic interface users with layout/dotcom-nav-redesign-v2 feature flag enabled for now.
+	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
 	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
-		isGlobalSiteViewEnabled( state, siteId ) &&
-		sectionGroup === 'sites' &&
-		!! siteId
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && siteId
 	);
 };
 
