@@ -12,8 +12,8 @@ import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PARTNER_RAZORPAY = 'razorpay';
-export const PAYMENT_AGREEMENTS_PARTNERS = [PARTNER_PAYPAL_EXPRESS, PARTNER_RAZORPAY];
-export const UPI_PARTNERS = [PARTNER_RAZORPAY];
+export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS, PARTNER_RAZORPAY ];
+export const UPI_PARTNERS = [ PARTNER_RAZORPAY ];
 
 /**
  * A saved payment method (card, PayPal agreement, or Razorpay emandate).
