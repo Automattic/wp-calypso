@@ -1,5 +1,4 @@
 import { Plans, AddOns } from '@automattic/data-stores';
-import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -8,7 +7,6 @@ import type {
 	FeatureObject,
 	StorageOption,
 } from '@automattic/calypso-products';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 /******************
@@ -76,7 +74,6 @@ export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
 	};
 	currentPlan?: {
 		text?: TranslateResult;
@@ -117,7 +114,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick?: UpgradeClickHandler;
 	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
@@ -138,35 +134,32 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
+export type GetActionCallbackParams = {
+	planSlug?: PlanSlug | null;
+	cartItemForPlan?: { product_slug: string } | null;
+	currentPlan?: boolean;
+	freeTrialPlanSlug?: PlanSlug;
+	isFreeTrialPlan?: boolean;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+};
+
 export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
 	selectedSiteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	getActionCallback: ( options: GetActionCallbackParams ) => () => void;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	ComparisonGridProps;
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit<
-		FeaturesGridProps,
-		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
-	> & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' >;
 
 /************************
  * PlanTypeSelector Types:

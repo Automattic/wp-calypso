@@ -1,5 +1,5 @@
 import { createContext, useContext } from '@wordpress/element';
-import type { GridContextProps, GridPlan, PlansIntent } from './types';
+import type { GetActionCallbackParams, GridContextProps, GridPlan, PlansIntent } from './types';
 import type { FeatureList } from '@automattic/calypso-products';
 import type { Plans } from '@automattic/data-stores';
 
@@ -11,6 +11,7 @@ interface PlansGridContext {
 	allFeaturesList: FeatureList;
 	helpers: {
 		useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+		getActionCallback: ( options: GetActionCallbackParams ) => () => void;
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
@@ -22,6 +23,7 @@ const PlansGridContextProvider = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
+	getActionCallback,
 	recordTracksEvent,
 	allFeaturesList,
 	selectedSiteId,
@@ -44,7 +46,7 @@ const PlansGridContextProvider = ( {
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,
-				helpers: { useCheckPlanAvailabilityForPurchase, recordTracksEvent },
+				helpers: { useCheckPlanAvailabilityForPurchase, getActionCallback, recordTracksEvent },
 				coupon,
 			} }
 		>
