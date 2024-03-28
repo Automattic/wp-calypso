@@ -278,7 +278,6 @@ describe( 'Site Actions', () => {
 				type: 'ATOMIC_TRANSFER_FAILURE',
 				siteId,
 				softwareSet,
-				transferIntent,
 				error: atomicTransferError,
 			} );
 		} );
