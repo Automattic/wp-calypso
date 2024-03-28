@@ -69,14 +69,12 @@ export const CategoryGalleryClient: CategoryGalleryFC = ( {
 								>
 									<div className="patterns-category-gallery__item-preview-inner">
 										<PatternPreview
-											category={ category.name }
 											className="pattern-preview--category-gallery"
 											pattern={
 												patternTypeFilter === PatternTypeFilter.PAGES
 													? category.pagePreviewPattern
 													: category.regularPreviewPattern
 											}
-											patternTypeFilter={ patternTypeFilter }
 											viewportWidth={ DESKTOP_VIEWPORT_WIDTH }
 										/>
 									</div>

@@ -11,7 +11,9 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { useSelector } from 'calypso/state';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type {
 	Pattern,
 	PatternGalleryProps,
@@ -47,12 +49,12 @@ function useTimeoutToResetBoolean(
 
 type PatternPreviewProps = {
 	canCopy?: boolean;
-	category: string;
+	category?: string;
 	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
-	patternTypeFilter: PatternTypeFilter;
+	patternTypeFilter?: PatternTypeFilter;
 	isGridView?: boolean;
 	viewportWidth?: number;
 };
@@ -89,6 +91,17 @@ function PatternPreviewFragment( {
 		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
 	}
 
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const recordCopyEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
+
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
@@ -108,7 +121,7 @@ function PatternPreviewFragment( {
 		recordTracksEvent( tracksEventName, {
 			name: pattern.name,
 			category,
-			type: getTracksPatternType( patternTypeFilter ),
+			type: patternType,
 			view: isGridView ? 'grid' : 'list',
 		} );
 	};
@@ -153,6 +166,7 @@ function PatternPreviewFragment( {
 					<ClipboardButton
 						className="pattern-preview__copy"
 						onCopy={ () => {
+							recordCopyEvent( 'calypso_pattern_library_copy' );
 							setIsPatternCopied( true );
 						} }
 						text={ pattern?.html ?? '' }
