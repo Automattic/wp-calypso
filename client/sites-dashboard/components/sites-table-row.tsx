@@ -1,16 +1,25 @@
-import { ListTile, Popover } from '@automattic/components';
-import { useSiteLaunchStatusLabel } from '@automattic/sites';
+import { Button, ListTile, Popover } from '@automattic/components';
+import {
+	SITE_EXCERPT_REQUEST_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+	useSiteLaunchStatusLabel,
+} from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useDispatch } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
+import useRestoreSiteMutation from 'calypso/sites-dashboard/hooks/use-restore-site-mutation';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
@@ -123,6 +132,23 @@ const BadgeDIFM = styled.span`
 	white-space: break-spaces;
 `;
 
+const DeletedStatus = styled.div`
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	padding-left: 8px;
+	span {
+		color: var( --color-error );
+	}
+	button {
+		padding: 4px;
+	}
+`;
+
+const StatsOffContainer = styled.div`
+	text-align: left;
+`;
+
 const StatsOffIndicator = () => {
 	const [ showPopover, setShowPopover ] = useState( false );
 	const tooltipRef = useRef( null );
@@ -137,7 +163,7 @@ const StatsOffIndicator = () => {
 	};
 
 	return (
-		<div
+		<StatsOffContainer
 			onMouseOver={ handleOnMouseEnter }
 			onMouseOut={ handleOnMouseExit }
 			onFocus={ handleOnMouseEnter }
@@ -149,7 +175,7 @@ const StatsOffIndicator = () => {
 			<Popover isVisible={ showPopover } context={ tooltipRef.current } css={ { marginTop: -5 } }>
 				<PopoverContent>{ translate( 'Stats are disabled on this site.' ) }</PopoverContent>
 			</Popover>
-		</div>
+		</StatsOffContainer>
 	);
 };
 
@@ -160,6 +186,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 	const userId = useSelector( getCurrentUserId );
+	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isWpcomStagingSite = isStagingSite( site );
@@ -172,12 +200,48 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		return siteId && hasSiteStatsQueryFailed( state, siteId, statType, query );
 	} );
 
+	const { mutate: restoreSite, isPending: isRestoring } = useRestoreSiteMutation( {
+		onSuccess() {
+			queryClient.invalidateQueries( {
+				queryKey: [
+					USE_SITE_EXCERPTS_QUERY_KEY,
+					SITE_EXCERPT_REQUEST_FIELDS,
+					SITE_EXCERPT_REQUEST_OPTIONS,
+					[],
+					'all',
+				],
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: [
+					USE_SITE_EXCERPTS_QUERY_KEY,
+					SITE_EXCERPT_REQUEST_FIELDS,
+					SITE_EXCERPT_REQUEST_OPTIONS,
+					[],
+					'deleted',
+				],
+			} );
+			dispatch(
+				successNotice( __( 'The site has been restored.' ), {
+					duration: 3000,
+				} )
+			);
+		},
+		onError: () => {
+			dispatch( errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } ) );
+		},
+	} );
+
 	const computeDashboardUrl = ( site: SiteExcerptData ) => {
 		if ( siteDefaultInterface( site ) === 'wp-admin' ) {
 			return getSiteWpAdminUrl( site ) || getDashboardUrl( site.slug );
 		}
 		return getDashboardUrl( site.slug );
 	};
+
+	const handleRestoreSite = () => {
+		restoreSite( site.ID );
+	};
+
 	const dashboardUrl = computeDashboardUrl( site );
 
 	let siteUrl = site.URL;
@@ -228,24 +292,39 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column tabletHidden>
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
-			<Column tabletHidden>
-				<WithAtomicTransfer site={ site }>
-					{ ( result ) =>
-						result.wasTransferring ? (
-							<TransferNoticeWrapper { ...result } />
-						) : (
-							<>
-								<div>
-									{ translatedStatus }
-									<SiteLaunchNag site={ site } />
-								</div>
-								{ isDIFMInProgress && (
-									<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
-								) }
-							</>
-						)
-					}
-				</WithAtomicTransfer>
+			<Column tabletHidden={ ! site.is_deleted }>
+				{ site.is_deleted ? (
+					<DeletedStatus>
+						<span>{ __( 'Deleted' ) }</span>
+						<Button
+							primary
+							borderless
+							busy={ isRestoring }
+							disabled={ isRestoring }
+							onClick={ handleRestoreSite }
+						>
+							{ __( 'Restore' ) }
+						</Button>
+					</DeletedStatus>
+				) : (
+					<WithAtomicTransfer site={ site }>
+						{ ( result ) =>
+							result.wasTransferring ? (
+								<TransferNoticeWrapper { ...result } />
+							) : (
+								<>
+									<div>
+										{ translatedStatus }
+										<SiteLaunchNag site={ site } />
+									</div>
+									{ isDIFMInProgress && (
+										<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
+									) }
+								</>
+							)
+						}
+					</WithAtomicTransfer>
+				) }
 			</Column>
 			<Column tabletHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
@@ -263,7 +342,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					</>
 				) }
 			</StatsColumnStyled>
-			<Column style={ { width: '24px' } }>{ inView && <SitesEllipsisMenu site={ site } /> }</Column>
+			<Column style={ { width: '24px' } }>
+				{ ! site.is_deleted && inView && <SitesEllipsisMenu site={ site } /> }
+			</Column>
 		</Row>
 	);
 } );

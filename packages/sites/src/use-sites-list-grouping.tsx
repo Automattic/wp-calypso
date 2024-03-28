@@ -59,6 +59,7 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 			public: 0,
 			private: 0,
 			redirect: 0,
+			deleted: 0,
 		};
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
@@ -78,7 +79,14 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 
 				return groups;
 			},
-			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [], redirect: [] }
+			{
+				all: showHidden ? allSites : [],
+				'coming-soon': [],
+				public: [],
+				private: [],
+				redirect: [],
+				deleted: [],
+			}
 		);
 
 		for ( const status of statuses ) {

@@ -126,6 +126,7 @@ export interface SiteDetails {
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;
+	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
 	is_wpcom_staging_site?: boolean;
