@@ -47,6 +47,7 @@ import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/select
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
+import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
@@ -196,7 +197,7 @@ class StatsSite extends Component {
 		}
 	}
 
-	renderStats() {
+	renderStats( isInternal ) {
 		const {
 			date,
 			siteId,
@@ -209,12 +210,13 @@ class StatsSite extends Component {
 			moduleSettings,
 			supportsPlanUsage,
 			supportsEmailStats,
-			supportsUTMStats,
+			supportsUTMStatsFeature,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
+		const supportsUTMStats = supportsUTMStatsFeature || isInternal;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -657,14 +659,14 @@ class StatsSite extends Component {
 		);
 	}
 
-	renderBody() {
+	renderBody( isInternal ) {
 		if ( ! this.props.canUserViewStats ) {
 			return this.renderInsufficientPermissionsPage();
 		} else if ( this.props.showEnableStatsModule ) {
 			return this.renderEnableStatsModule();
 		}
 
-		return this.renderStats();
+		return this.renderStats( isInternal );
 	}
 
 	render() {
@@ -694,7 +696,9 @@ class StatsSite extends Component {
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				{ this.renderBody() }
+				<StatsGlobalValuesContext.Consumer>
+					{ ( isInternal ) => this.renderBody( isInternal ) }
+				</StatsGlobalValuesContext.Consumer>
 			</Main>
 		);
 	}
@@ -756,7 +760,7 @@ export default connect(
 			statsAdminVersion,
 			supportsEmailStats,
 			supportsPlanUsage,
-			supportsUTMStats,
+			supportsUTMStatsFeature: supportsUTMStats,
 		};
 	},
 	{

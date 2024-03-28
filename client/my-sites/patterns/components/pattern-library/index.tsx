@@ -223,7 +223,7 @@ export const PatternLibrary = ( {
 					<CategoryGallery
 						title={ translate_not_yet( 'Ship faster, ship more' ) }
 						description={ translate_not_yet(
-							'Choose from a library of beautiful, functional design patterns to build exactly the page you—or your client—need, in no time.'
+							'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
 						) }
 						categories={ categories }
 						patternTypeFilter={ PatternTypeFilter.REGULAR }
@@ -295,6 +295,7 @@ export const PatternLibrary = ( {
 						</div>
 
 						<PatternGallery
+							category={ category }
 							getPatternPermalink={ ( pattern ) =>
 								getPatternPermalink( pattern, category, patternTypeFilter, categories )
 							}
