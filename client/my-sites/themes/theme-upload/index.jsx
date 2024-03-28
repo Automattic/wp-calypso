@@ -257,7 +257,7 @@ class Upload extends Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteSlug, isCommerceTrial, translate, isEligibleForHostingTrial } = this.props;
+		const { siteSlug, isCommerceTrial, translate } = this.props;
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
 		let upsellPlan = PLAN_BUSINESS;
@@ -274,17 +274,6 @@ class Upload extends Component {
 			upgradeUrl = `/plans/${ siteSlug }`;
 		}
 
-		if ( isEligibleForHostingTrial ) {
-			/* translators: %(planName)s the short-hand version of the Business plan name */
-			title = translate(
-				'Start your free %(planName)s plan trial to access the theme install features',
-				{
-					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-				}
-			);
-			upgradeUrl = '#';
-		}
-
 		return (
 			<UpsellNudge
 				title={ title }
@@ -293,7 +282,6 @@ class Upload extends Component {
 				plan={ upsellPlan }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
-				onClick={ this.onUpsellNudgeClick }
 			/>
 		);
 	}
