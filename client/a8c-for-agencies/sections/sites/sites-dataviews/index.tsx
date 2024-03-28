@@ -2,19 +2,22 @@ import { Button, Gridicon, Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { LegacyRef, useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
+import SiteSetFavorite from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-set-favorite';
+import SiteSort from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-sort';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
+import {
+	AllowedTypes,
+	Site,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SiteSetFavorite from '../site-set-favorite';
-import SiteSort from '../site-sort';
-import { AllowedTypes, Site } from '../types';
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
 
 import './style.scss';
@@ -36,7 +39,9 @@ const SitesDataViews = ( {
 	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const [ sitesWalkthroughTourIntroStepAnchor, setSitesWalkthroughTourIntroStepAnchor ] =
-		useState( null );
+		useState< LegacyRef< HTMLSpanElement | null > >( null );
+	const [ sitesWalkthroughTourStatsStepAnchor, setSitesWalkthroughTourStatsStepAnchor ] =
+		useState< LegacyRef< HTMLSpanElement | null > >( null );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
@@ -102,7 +107,7 @@ const SitesDataViews = ( {
 						<SiteSort isSortable={ true } columnKey="site">
 							<span
 								className="sites-dataview__site-header"
-								ref={ ( ref ) => setSitesWalkthroughTourIntroStepAnchor( ref ) }
+								ref={ setSitesWalkthroughTourIntroStepAnchor }
 							>
 								{ translate( 'Site' ).toUpperCase() }
 							</span>
@@ -132,7 +137,20 @@ const SitesDataViews = ( {
 			},
 			{
 				id: 'stats',
-				header: <span className="sites-dataview__stats-header">STATS</span>,
+				header: (
+					<>
+						<span
+							className="sites-dataview__stats-header"
+							ref={ setSitesWalkthroughTourStatsStepAnchor }
+						>
+							STATS
+						</span>
+						<GuidedTourStep
+							id="sites-walkthrough-stats"
+							context={ sitesWalkthroughTourStatsStepAnchor }
+						/>
+					</>
+				),
 				getValue: () => '-',
 				render: ( { item }: { item: SiteInfo } ) => renderField( 'stats', item ),
 				enableHiding: false,
