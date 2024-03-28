@@ -45,8 +45,7 @@ export default function SitesDashboard() {
 	const {
 		sitesViewState,
 		setSitesViewState,
-		selectedSiteUrl,
-		setSelectedSiteUrl,
+		initialSelectedSiteUrl,
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
@@ -90,14 +89,18 @@ export default function SitesDashboard() {
 	);
 
 	useEffect( () => {
-		if (
-			! isLoading &&
-			! isError &&
-			data &&
-			selectedSiteUrl &&
-			sitesViewState.selectedSite?.url !== selectedSiteUrl
-		) {
-			const site = data.sites.find( ( site: Site ) => site.url === selectedSiteUrl );
+		if ( sitesViewState.selectedSite && ! initialSelectedSiteUrl ) {
+			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			setHideListing( false );
+			return;
+		}
+
+		if ( sitesViewState.selectedSite ) {
+			return;
+		}
+
+		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
+			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
 
 			setSitesViewState( ( prevState ) => ( {
 				...prevState,
@@ -105,14 +108,7 @@ export default function SitesDashboard() {
 				type: 'list',
 			} ) );
 		}
-	}, [
-		data,
-		isError,
-		isLoading,
-		selectedSiteUrl,
-		setSitesViewState,
-		sitesViewState.selectedSite?.url,
-	] );
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState ] );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -122,6 +118,15 @@ export default function SitesDashboard() {
 	);
 
 	useEffect( () => {
+		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
+		if ( hideListing && ! sitesViewState.selectedSite ) {
+			return;
+		}
+
+		if ( sitesViewState.selectedSite ) {
+			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
+		}
+
 		updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
@@ -133,10 +138,6 @@ export default function SitesDashboard() {
 			sort: sitesViewState.sort,
 			showOnlyFavorites: showOnlyFavorites,
 		} );
-
-		if ( sitesViewState.selectedSite ) {
-			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
-		}
 	}, [
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
@@ -148,15 +149,15 @@ export default function SitesDashboard() {
 		sitesViewState.page,
 		showOnlyFavorites,
 		sitesViewState.sort,
+		hideListing,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
-			setSelectedSiteUrl( '' );
 			setHideListing( false );
 		}
-	}, [ sitesViewState, setSitesViewState, setSelectedSiteUrl, setHideListing ] );
+	}, [ sitesViewState, setSitesViewState, setHideListing ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {

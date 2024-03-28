@@ -13,7 +13,7 @@ interface Props {
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
-	searchInitialState: string;
+	searchQuery: string;
 	children: ReactNode;
 	path: string;
 	issueTypes: string;
@@ -30,14 +30,13 @@ export const SitesDashboardProvider = ( {
 	siteFeatureInitialState,
 	children,
 	path,
-	searchInitialState,
+	searchQuery,
 	issueTypes,
 	currentPage,
 	sort,
 }: Props ) => {
 	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
-	const [ selectedSiteUrl, setSelectedSiteUrl ] = useState( siteUrlInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
 	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
@@ -45,6 +44,7 @@ export const SitesDashboardProvider = ( {
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
 
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
@@ -64,10 +64,16 @@ export const SitesDashboardProvider = ( {
 	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
 		...initialSitesViewState,
 		page: currentPage,
-		search: searchInitialState,
+		search: searchQuery,
 	} );
 
 	useEffect( () => {
+		setInitialSelectedSiteUrl( siteUrlInitialState );
+		if ( ! siteUrlInitialState ) {
+			setShowOnlyFavorites( () => showOnlyFavoritesInitialState );
+			setHideListing( false );
+		}
+
 		const issueTypesArray = issueTypes?.split( ',' );
 
 		setSitesViewState( ( previousState ) => ( {
@@ -80,24 +86,22 @@ export const SitesDashboardProvider = ( {
 						value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 					};
 				} ) || [],
+			search: searchQuery,
+			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
+			...( siteUrlInitialState ? {} : { type: 'table' } ),
 		} ) );
-	}, [ issueTypes ] );
-
-	useEffect( () => {
-		setShowOnlyFavorites( () => showOnlyFavoritesInitialState );
-
-		setSitesViewState( ( previousState ) => ( {
-			...previousState,
-			filters: [],
-			search: '',
-		} ) );
-	}, [ showOnlyFavoritesInitialState ] );
+	}, [
+		setSitesViewState,
+		showOnlyFavoritesInitialState,
+		searchQuery,
+		issueTypes,
+		siteUrlInitialState,
+		setInitialSelectedSiteUrl,
+	] );
 
 	const sitesDashboardContextValue = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
-		selectedSiteUrl: selectedSiteUrl,
-		setSelectedSiteUrl: setSelectedSiteUrl,
 		selectedSiteFeature: selectedSiteFeature,
 		setSelectedSiteFeature: setSelectedSiteFeature,
 		hideListing: hideListing,
@@ -108,6 +112,7 @@ export const SitesDashboardProvider = ( {
 		currentPage,
 		sort,
 		isBulkManagementActive,
+		initialSelectedSiteUrl: initialSelectedSiteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,

@@ -20,13 +20,7 @@ const buildQueryString = ( {
 	sort: DashboardSortInterface;
 	showOnlyFavorites?: boolean;
 } ) => {
-	let queryArgs = '';
-
-	if ( showOnlyFavorites ) {
-		queryArgs += 'is_favorite';
-	}
-
-	const urlQuery = new URLSearchParams( queryArgs );
+	const urlQuery = new URLSearchParams();
 
 	if ( search ) {
 		urlQuery.set( 's', search );
@@ -49,7 +43,11 @@ const buildQueryString = ( {
 		urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
 	}
 
-	return urlQuery.toString() ? `?${ urlQuery }` : '';
+	let queryString = urlQuery.toString();
+	if ( showOnlyFavorites ) {
+		queryString = queryString ? `is_favorite&${ queryString }` : 'is_favorite';
+	}
+	return queryString ? `?${ queryString }` : '';
 };
 
 export const updateSitesDashboardUrl = ( {

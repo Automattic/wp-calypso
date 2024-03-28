@@ -10,9 +10,6 @@ export interface SitesDashboardContextInterface {
 	selectedCategory?: string;
 	setSelectedCategory: ( category: string ) => void;
 
-	selectedSiteUrl?: string;
-	setSelectedSiteUrl: ( siteUrl: string ) => void;
-
 	selectedSiteFeature?: string;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 
@@ -25,6 +22,7 @@ export interface SitesDashboardContextInterface {
 	showOnlyFavorites?: boolean;
 	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
 
+	initialSelectedSiteUrl?: string;
 	path: string;
 	currentPage: number;
 	sort: DashboardSortInterface;

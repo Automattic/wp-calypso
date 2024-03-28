@@ -6,9 +6,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedCategory: undefined,
 	setSelectedCategory: () => {},
 
-	selectedSiteUrl: undefined,
-	setSelectedSiteUrl: () => {},
-
 	selectedSiteFeature: undefined,
 	setSelectedSiteFeature: () => {},
 
@@ -23,6 +20,7 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 		return undefined;
 	},
 
+	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
 	isBulkManagementActive: false,
