@@ -61,6 +61,7 @@ export default function SitesDashboard() {
 		sitesViewState,
 		setSitesViewState,
 		selectedSiteUrl,
+		setSelectedSiteUrl,
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
@@ -204,8 +205,9 @@ export default function SitesDashboard() {
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			setSelectedSiteUrl( '' );
 		}
-	}, [ sitesViewState, setSitesViewState ] );
+	}, [ sitesViewState, setSitesViewState, setSelectedSiteUrl ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
