@@ -24,41 +24,48 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 					'is-page-patterns': patternTypeFilter === PatternTypeFilter.PAGES,
 				} ) }
 			>
-				{ categories?.map( ( category ) => (
-					<LocalizedLink
-						className="patterns-category-gallery__item"
-						href={ getCategoryUrlPath( category.name, patternTypeFilter, false ) }
-						key={ category.name }
-					>
-						<div className="patterns-category-gallery__item-preview">
-							<div
-								className={ classNames( 'patterns-category-gallery__item-preview', {
-									'patterns-category-gallery__item-preview--page-layout':
-										patternTypeFilter === PatternTypeFilter.PAGES,
-									'patterns-category-gallery__item-preview--mirrored': category.name === 'footer',
-								} ) }
-							>
-								<div className="patterns-category-gallery__item-preview-inner">
-									<PatternPreviewPlaceholder
-										pattern={
-											patternTypeFilter === PatternTypeFilter.PAGES
-												? category.pagePreviewPattern
-												: category.regularPreviewPattern
-										}
-									/>
+				{ categories?.map( ( category ) => {
+					const patternCount =
+						patternTypeFilter === PatternTypeFilter.PAGES
+							? category.pagePatternCount
+							: category.regularPatternCount;
+
+					return (
+						<LocalizedLink
+							className="patterns-category-gallery__item"
+							href={ getCategoryUrlPath( category.name, patternTypeFilter, false ) }
+							key={ category.name }
+						>
+							<div className="patterns-category-gallery__item-preview">
+								<div
+									className={ classNames( 'patterns-category-gallery__item-preview', {
+										'patterns-category-gallery__item-preview--page-layout':
+											patternTypeFilter === PatternTypeFilter.PAGES,
+										'patterns-category-gallery__item-preview--mirrored': category.name === 'footer',
+									} ) }
+								>
+									<div className="patterns-category-gallery__item-preview-inner">
+										<PatternPreviewPlaceholder
+											pattern={
+												patternTypeFilter === PatternTypeFilter.PAGES
+													? category.pagePreviewPattern
+													: category.regularPreviewPattern
+											}
+										/>
+									</div>
 								</div>
 							</div>
-						</div>
 
-						<div className="patterns-category-gallery__item-name">{ category.label }</div>
-						<div className="patterns-category-gallery__item-count">
-							{ patternTypeFilter === PatternTypeFilter.PAGES
-								? category.pagePatternCount
-								: category.regularPatternCount }{ ' ' }
-							{ translate( 'patterns' ) }
-						</div>
-					</LocalizedLink>
-				) ) }
+							<div className="patterns-category-gallery__item-name">{ category.label }</div>
+							<div className="patterns-category-gallery__item-count">
+								{ translate( '%(count)d pattern', '%(count)d patterns', {
+									count: patternCount,
+									args: { count: patternCount },
+								} ) }
+							</div>
+						</LocalizedLink>
+					);
+				} ) }
 			</div>
 		</PatternsSection>
 	);
