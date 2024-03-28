@@ -24,16 +24,14 @@ export function useCheckoutV2(): 'loading' | 'treatment' | 'control' {
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const isWPcomCheckout =
+	const isJetpackOrAkismetCheckout =
 		useSelector( getSectionName ) === 'checkout' &&
-		! isJetpackCheckout() &&
-		! isAkismetCheckout() &&
-		! isJetpackNotAtomic;
+		( isJetpackCheckout() || isJetpackNotAtomic || isAkismetCheckout() );
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_launch_checkout_v2',
 		{
-			isEligible: isWPcomCheckout && ! hasCheckoutVersion( '2' ),
+			isEligible: isJetpackOrAkismetCheckout && ! hasCheckoutVersion( '2' ),
 		}
 	);
 
