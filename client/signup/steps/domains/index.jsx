@@ -98,7 +98,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
-		isOnboardingPaidMediaFlow: PropTypes.bool,
+		useAlternateDomainMessaging: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -1046,7 +1046,7 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
-				isOnboardingPaidMediaFlow={ this.props.isOnboardingPaidMediaFlow }
+				useAlternateDomainMessaging={ this.props.useAlternateDomainMessaging }
 			/>
 		);
 	};
@@ -1109,7 +1109,7 @@ export class RenderDomainsStep extends Component {
 		const {
 			flowName,
 			isAllDomains,
-			isOnboardingPaidMediaFlow,
+			useAlternateDomainMessaging,
 			isReskinned,
 			stepSectionName,
 			translate,
@@ -1159,7 +1159,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			if ( isOnboardingPaidMediaFlow ) {
+			if ( useAlternateDomainMessaging ) {
 				return translate(
 					"Find a unique web address that's easy to remember and even easier to share."
 				);
@@ -1182,7 +1182,7 @@ export class RenderDomainsStep extends Component {
 			flowName,
 			headerText,
 			isAllDomains,
-			isOnboardingPaidMediaFlow,
+			useAlternateDomainMessaging,
 			isReskinned,
 			stepSectionName,
 			translate,
@@ -1205,7 +1205,7 @@ export class RenderDomainsStep extends Component {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
 
-			if ( isOnboardingPaidMediaFlow ) {
+			if ( useAlternateDomainMessaging ) {
 				return translate( 'Claim your domain name' );
 			}
 
