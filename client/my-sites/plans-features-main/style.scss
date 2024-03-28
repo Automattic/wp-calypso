@@ -24,11 +24,9 @@ $plan-features-header-banner-height: 20px;
 	}
 }
 
-.plans-features-main {
-	.plans-grid-next__features-grid,
-	.plans-grid-next__comparison-grid {
-		margin-top: 50px;
-	}
+.plans-features-main__features-grid,
+.plans-features-main__comparison-grid {
+	margin-top: 50px;
 }
 
 .is-2023-pricing-grid {
