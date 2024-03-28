@@ -1,18 +1,22 @@
+import React from 'react';
 import Search from 'calypso/components/search';
 
 import './style.scss';
 
 type PatternsHeaderProps = {
 	description: string;
-	initialSearchTerm?: string;
-	onSearch?( searchTerm: string ): void;
+	searchValue?: string;
+	onSearchKeyDown(
+		event: React.KeyboardEvent< HTMLInputElement >,
+		saveTmpValue: ( value: string ) => void
+	): void;
 	title: string;
 };
 
 export const PatternsHeader = ( {
 	description,
-	initialSearchTerm = '',
-	onSearch = () => {},
+	searchValue,
+	onSearchKeyDown,
 	title,
 }: PatternsHeaderProps ) => {
 	return (
@@ -22,9 +26,10 @@ export const PatternsHeader = ( {
 				<div className="patterns-header__description">{ description }</div>
 				<Search
 					additionalClasses="patterns-header__search-input"
-					delaySearch
-					initialValue={ initialSearchTerm }
-					onSearch={ onSearch }
+					onSearch={ () => {} }
+					initialValue={ searchValue }
+					value={ searchValue }
+					onKeyDown={ onSearchKeyDown }
 					placeholder="Search patterns..."
 				/>
 			</div>

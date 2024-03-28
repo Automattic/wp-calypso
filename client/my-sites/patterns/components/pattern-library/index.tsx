@@ -6,10 +6,12 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
+import { ENTER } from '@wordpress/keycodes';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import Search from 'calypso/components/search';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
@@ -17,8 +19,8 @@ import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
-	usePatternSearchTerm,
 	filterPatternsByTerm,
+	QUERY_PARAM_SEARCH,
 } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
@@ -33,6 +35,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { usePatternsContext } from '../../context';
 import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 
 import './style.scss';
@@ -76,7 +79,6 @@ type PatternLibraryProps = {
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
 	referrer?: string;
-	searchTerm?: string;
 };
 
 export const PatternLibrary = ( {
@@ -86,17 +88,13 @@ export const PatternLibrary = ( {
 	patternGallery: PatternGallery,
 	patternTypeFilter,
 	referrer,
-	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate_not_yet = useTranslate();
+	const { searchTerm } = usePatternsContext();
+	const [ tmpSearchTermHeader, setTmpSearchTermHeader ] = useState( '' );
+	const [ tmpSearchTermNavigation, setTmpSearchTermNavigation ] = useState( '' );
 
-	// Helps prevent resetting the search input if a search term was provided through the URL
-	const isInitialRender = useRef( true );
-	// Helps reset the search input when navigating between categories
-	const [ searchFormKey, setSearchFormKey ] = useState( category );
-
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
@@ -142,25 +140,6 @@ export const PatternLibrary = ( {
 		page( url.href.replace( url.origin, '' ) );
 	};
 
-	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
-	useEffect( () => {
-		if ( ! urlQuerySearchTerm ) {
-			setSearchTerm( '' );
-			setSearchFormKey( Math.random().toString() );
-		}
-	}, [ urlQuerySearchTerm ] );
-
-	// Resets the search term whenever the category changes
-	useEffect( () => {
-		if ( isInitialRender.current ) {
-			isInitialRender.current = false;
-			return;
-		}
-
-		setSearchTerm( '' );
-		setSearchFormKey( category );
-	}, [ category ] );
-
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
 	const categoryNavList = categories.map( ( category ) => {
@@ -178,6 +157,36 @@ export const PatternLibrary = ( {
 
 	const isHomePage = ! category && ! searchTerm;
 
+	const handleSearchKeydown = (
+		event: React.KeyboardEvent< HTMLInputElement >,
+		saveTmpValue: ( value: string ) => void
+	) => {
+		const value = event.currentTarget.value;
+
+		if ( event.keyCode === ENTER ) {
+			const url = new URL( window.location.href );
+
+			if ( value ) {
+				url.searchParams.set( QUERY_PARAM_SEARCH, value );
+
+				// Strip out `ref` parameter when updating the URL for search
+				// to ensure the referrer is only be reported in the initial page view.
+				url.searchParams.delete( 'ref' );
+			} else {
+				url.searchParams.delete( QUERY_PARAM_SEARCH );
+			}
+
+			if ( url.href !== location.href ) {
+				page( url.href.replace( url.origin, '' ) );
+			}
+
+			setTmpSearchTermHeader( '' );
+			setTmpSearchTermNavigation( '' );
+		} else {
+			saveTmpValue( value );
+		}
+	};
+
 	return (
 		<>
 			<PatternsPageViewTracker
@@ -185,10 +194,7 @@ export const PatternLibrary = ( {
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
 				key={ `${ category }-tracker` }
-				// We pass `urlQuerySearchTerm` instead of `searchTerm` since the former is
-				// immediately reset when navigating to a new category, whereas the latter is reset
-				// *after* the first render (which triggers an additional, incorrect, page view)
-				searchTerm={ urlQuerySearchTerm }
+				searchTerm={ searchTerm }
 				referrer={ referrer }
 			/>
 
@@ -198,11 +204,8 @@ export const PatternLibrary = ( {
 				description={ translate_not_yet(
 					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
 				) }
-				initialSearchTerm={ searchTerm }
-				key={ `${ searchFormKey }-search` }
-				onSearch={ ( query ) => {
-					setSearchTerm( query );
-				} }
+				searchValue={ tmpSearchTermHeader || searchTerm }
+				onSearchKeyDown={ handleSearchKeydown.bind( setTmpSearchTermHeader ) }
 				title={ translate_not_yet( 'It’s Easier With Patterns' ) }
 			/>
 
@@ -219,6 +222,13 @@ export const PatternLibrary = ( {
 							},
 						] }
 						categories={ categoryNavList }
+					/>
+					<Search
+						initialValue={ searchTerm }
+						value={ tmpSearchTermNavigation || searchTerm }
+						onSearch={ () => {} }
+						onKeyDown={ handleSearchKeydown.bind( setTmpSearchTermNavigation ) }
+						placeholder="Search patterns..."
 					/>
 				</div>
 
