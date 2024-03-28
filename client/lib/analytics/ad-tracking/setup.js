@@ -85,6 +85,11 @@ export function setup() {
 		if ( mayWeInitTracker( 'clarity' ) ) {
 			setupClarityGlobal();
 		}
+
+		// Reddit
+		if ( mayWeInitTracker( 'reddit' ) ) {
+			setupRedditGlobal();
+		}
 	}
 }
 
@@ -209,6 +214,19 @@ function setupAdRollGlobal() {
 			},
 		};
 	}
+}
+
+/**
+ * Sets up the base Reddit advertising pixel.
+ */
+function setupRedditGlobal() {
+	window.rdt =
+		window.rdt ||
+		function ( ...args ) {
+			window.rdt.sendEvent ? window.rdt.sendEvent( ...args ) : window.rdt.callQueue.push( args );
+		};
+
+	window.rdt.callQueue = [];
 }
 
 function setupGtag() {
