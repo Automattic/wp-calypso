@@ -13,11 +13,11 @@ export const GitHubDeploymentCard = () => {
 		<Card className="developer-features-list__item developer-features-list__item--full">
 			<div className="developer-features-list__item-tag">{ translate( 'New' ) }</div>
 			<div className="developer-features-list__item-title">
-				{ translate( 'GitHub Deployment' ) }
+				{ translate( 'GitHub Deployments' ) }
 			</div>
 			<div className="developer-features-list__item-description">
 				{ translate(
-					'Speed up your development workflow and take version control further by connecting your WordPress.com sites and GitHub repos. Choose from fully automatic or on-demand deployment.'
+					'Speed up your development workflow and take version control further by connecting your WordPress.com sites and GitHub repos. Choose from fully automatic or on-demand deployments.'
 				) }
 			</div>
 			<div className="developer-features-list__item-learn-more">

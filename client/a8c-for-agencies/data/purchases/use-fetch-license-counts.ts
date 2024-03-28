@@ -1,34 +1,29 @@
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
-export default function useFetchLicenseCounts() {
-	const showDummyData = config.isEnabled( 'a4a/mock-api-data' );
+export const getFetchLicenseCountsQueryKey = ( agencyId?: number ) => {
+	return [ 'a4a-license-counts', agencyId ];
+};
 
-	const getLicenseCounts = () => {
-		if ( showDummyData ) {
-			return {
-				attached: 1,
-				detached: 1,
-				revoked: 0,
-				not_revoked: 2,
-				standard: 0,
-				all: 2,
-				products: {},
-			};
-		}
-		return {
-			attached: 0,
-			detached: 0,
-			revoked: 0,
-			not_revoked: 0,
-			standard: 0,
-			all: 0,
-			products: {},
-		}; // FIXME: This is a placeholder for the actual API call.
-	};
+export default function useFetchLicenseCounts( staleTime = 0 ) {
+	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		queryKey: [ 'a4a-license-counts' ],
-		queryFn: () => getLicenseCounts(),
+		queryKey: getFetchLicenseCountsQueryKey( agencyId ),
+		queryFn: () =>
+			wpcom.req.get(
+				{
+					apiNamespace: 'wpcom/v2',
+					path: '/jetpack-licensing/licenses/counts',
+				},
+				{
+					...( agencyId && { agency_id: agencyId } ),
+				}
+			),
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
+		staleTime,
 	} );
 }

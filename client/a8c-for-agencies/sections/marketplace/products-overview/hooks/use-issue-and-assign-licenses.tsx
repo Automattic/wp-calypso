@@ -6,11 +6,11 @@ import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { type APIError } from 'calypso/state/partner-portal/types';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
 import useIssueLicenses, {
@@ -24,7 +24,7 @@ const NO_OP = () => {
 
 const useGetLicenseIssuedMessage = () => {
 	const translate = useTranslate();
-	const products = useProductsQuery( true );
+	const products = useProductsQuery();
 
 	return useCallback(
 		( licenses: FulfilledIssueLicenseResult[] ) => {
@@ -59,6 +59,7 @@ const useGetLicenseIssuedMessage = () => {
 };
 
 type UseIssueAndAssignLicensesOptions = {
+	onSuccess?: () => void;
 	onIssueError?: ( ( error: APIError ) => void ) | ( () => void );
 	onAssignError?: ( ( error: Error ) => void ) | ( () => void );
 };
@@ -103,6 +104,9 @@ function useIssueAndAssignLicenses(
 				} )
 			);
 
+			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
+			options.onSuccess?.();
+
 			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
 
 			// TODO: Move dispatch events and redirects outside this function
@@ -146,6 +150,7 @@ function useIssueAndAssignLicenses(
 		isAssignReady,
 		isIssueReady,
 		issueLicenses,
+		options,
 		selectedSite?.ID,
 	] );
 }

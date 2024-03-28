@@ -10,15 +10,18 @@ import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
 	useSubscribersPage,
 } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AddSubscribersModal } from './components/add-subscribers-modal';
 import { MigrateSubscribersModal } from './components/migrate-subscribers-modal';
@@ -32,33 +35,43 @@ import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
-	isUnverified: boolean;
+	disableCta: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderProps ) => {
+const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderProps ) => {
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { hasTranslation } = useI18n();
 	const isEnglishLocale = useIsEnglishLocale();
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID || null;
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	const openHelpCenter = () => {
 		setShowHelpCenter( true );
 		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
 	};
 
+	const paidNewsletterUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/paid-newsletters/'
+		: 'https://wordpress.com/support/paid-newsletters/';
+
 	const subtitleOptions = {
 		components: {
 			link: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) }
+					href={ localizeUrl( paidNewsletterUrl ) }
 					target="blank"
 					onClick={ ( event ) => {
-						event.preventDefault();
-						openHelpCenter();
+						if ( ! isJetpackCloud() ) {
+							event.preventDefault();
+							openHelpCenter();
+						}
 					} }
+					rel="noreferrer"
 				/>
 			),
 		},
@@ -89,7 +102,7 @@ const SubscribersHeader = ( { selectedSiteId, isUnverified }: SubscribersHeaderP
 			<Button
 				className="add-subscribers-button"
 				primary
-				disabled={ isUnverified }
+				disabled={ disableCta }
 				onClick={ () => setShowAddSubscribersModal( true ) }
 			>
 				<Gridicon icon="plus" size={ 24 } />
@@ -145,6 +158,7 @@ const SubscribersPage = ( {
 	);
 
 	const isUnverified = importSelector?.error?.code === 'unverified_email';
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const { getSubscribersImports } = useDataStoreDispatch( SubscriberDataStore.store );
 
@@ -182,13 +196,11 @@ const SubscribersPage = ( {
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader selectedSiteId={ selectedSite?.ID } isUnverified={ isUnverified } />
-				{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
-				{ /* @ts-ignore */ }
-				<EmailVerificationGate
-					noticeText={ translate( 'You must verify your email to add subscribers.' ) }
-					noticeStatus="is-warning"
-				>
+				<SubscribersHeader
+					selectedSiteId={ selectedSite?.ID }
+					disableCta={ isUnverified || isStagingSite }
+				/>
+				<SubscriberValidationGate siteId={ siteId }>
 					<SubscriberListContainer
 						siteId={ siteId }
 						onClickView={ onClickView }
@@ -216,7 +228,7 @@ const SubscribersPage = ( {
 					) }
 					{ selectedSite && <AddSubscribersModal site={ selectedSite } /> }
 					{ selectedSite && <MigrateSubscribersModal /> }
-				</EmailVerificationGate>
+				</SubscriberValidationGate>
 			</Main>
 		</SubscribersPageProvider>
 	);

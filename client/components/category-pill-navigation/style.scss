@@ -24,9 +24,12 @@
 		display: flex;
 		gap: 16px;
 		align-items: center;
+		// Chrome, Edge, Firefox
+		scrollbar-width: none;
 
+		// Safari
 		&::-webkit-scrollbar {
-			display: none; /* for browsers that support this */
+			display: none;
 		}
 	}
 
@@ -65,7 +68,8 @@
 		}
 
 		@media ( max-width: $break-wide ) {
-			display: none;
+			width: 0;
+			padding: 0;
 		}
 	}
 }

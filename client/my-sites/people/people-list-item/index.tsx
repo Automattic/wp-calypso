@@ -5,9 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
 import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
+import { userCan } from 'calypso/lib/site/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
@@ -96,15 +98,14 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	const handleInviteSuccess = ( siteId: number ) => {
 		dispatch( requestSiteInvites( siteId ) );
 		displayNotice( translate( 'Invitation sent successfully' ) );
-		dispatch(
-			composeAnalytics( recordGoogleEvent( 'calypso_sso_user_invite_success', { siteId } ) )
-		);
+		dispatch( recordTracksEvent( 'calypso_sso_user_invite_success', { site_id: siteId } ) );
 	};
 
-	const handleInviteError = ( siteId: number ) => {
+	const handleInviteError = ( siteId: number, error: unknown ) => {
 		displayNotice( translate( 'The invitation sending has failed.' ), 'is-error' );
+		const error_message = error instanceof Error ? error.message : 'error sending invite';
 		dispatch(
-			composeAnalytics( recordGoogleEvent( 'calypso_sso_user_invite_error', { siteId } ) )
+			recordTracksEvent( 'calypso_sso_user_invite_error', { site_id: siteId, error_message } )
 		);
 	};
 
@@ -118,14 +119,20 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		}
 		const { email } = user;
 		const userRoles = getRole( user );
-		const response = ( await sendInvites( [
-			{ email_or_username: email as string, role: userRoles },
-		] ) ) as [ sendInvitesResponse ];
-
-		const success = response && response[ 0 ]?.success;
-		success ? handleInviteSuccess( siteId ) : handleInviteError( siteId );
+		try {
+			( await sendInvites( [ { email_or_username: email as string, role: userRoles } ] ) ) as [
+				sendInvitesResponse,
+			];
+			handleInviteSuccess( siteId );
+		} catch ( error ) {
+			handleInviteError( siteId, error );
+		}
 	};
 
+	const shouldShowInviteButton = ( isInvite: boolean | undefined ) => {
+		const canSendInvite = site && userCan( 'promote_users', site );
+		return canReceiveInvite() && ! isInvite && canSendInvite;
+	};
 	const renderInviteButton = () => {
 		return (
 			<div className="people-list-item__invite-status">
@@ -177,7 +184,6 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	} );
 
 	const tagName = canLinkToProfile() ? 'a' : 'span';
-	const inviteButton = renderInviteButton();
 
 	return (
 		<CompactCard
@@ -196,7 +202,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 					showRole={ !! maybeGetCardLink() }
 				/>
 			</div>
-			{ canReceiveInvite() && ! isInvite && inviteButton }
+			{ shouldShowInviteButton( isInvite ) && renderInviteButton() }
 			{ onRemove && (
 				<div className="people-list-item__actions">
 					<Button

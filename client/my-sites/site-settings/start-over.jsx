@@ -25,7 +25,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { BuiltByUpsell } from './built-by-upsell-banner';
+import { DIFMUpsell } from './difm-upsell-banner';
 import { getSettingsSource } from './site-tools/utils';
 
 function SiteResetCard( {
@@ -311,7 +311,7 @@ function SiteResetCard( {
 				<h1>{ translate( 'Site Reset' ) }</h1>
 			</HeaderCake>
 			{ renderBody() }
-			<BuiltByUpsell
+			<DIFMUpsell
 				site={ site }
 				isUnlaunchedSite={ isUnlaunchedSiteProp }
 				urlRef="unlaunched-site-reset"

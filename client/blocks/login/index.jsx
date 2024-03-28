@@ -27,6 +27,7 @@ import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
@@ -293,6 +294,22 @@ class Login extends Component {
 		} );
 	};
 
+	getSignupLinkComponent = () => {
+		const signupUrl = this.getSignupUrl();
+		return (
+			<a
+				href={ signupUrl }
+				onClick={ ( event ) => {
+					// If the user is already logged in, log them out before sending them to the signup page. Otherwise, they will see the weird logged-in state on the signup page.
+					if ( this.props.isLoggedIn ) {
+						event.preventDefault();
+						this.props.redirectToLogout( signupUrl );
+					}
+				} }
+			/>
+		);
+	};
+
 	getSignupUrl = () => {
 		const {
 			currentRoute,
@@ -361,17 +378,7 @@ class Login extends Component {
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
-		const signupLink = (
-			<a
-				href={ this.getSignupUrl() }
-				onClick={ () => {
-					// If the user is already logged in, log them out before sending them to the signup page. Otherwise, they will see the weird logged-in state on the signup page.
-					if ( this.props.isLoggedIn ) {
-						this.props.logoutUser();
-					}
-				} }
-			/>
-		);
+		const signupLink = this.getSignupLinkComponent();
 
 		if ( isSocialFirst ) {
 			headerText = translate( 'Log in to WordPress.com' );
@@ -747,16 +754,7 @@ class Login extends Component {
 			loginButtons,
 		} = this.props;
 
-		const signupLink = (
-			<a
-				href={ this.getSignupUrl() }
-				onClick={ () => {
-					if ( this.props.isLoggedIn ) {
-						this.props.logoutUser();
-					}
-				} }
-			/>
-		);
+		const signupLink = this.getSignupLinkComponent();
 
 		if ( socialConnect ) {
 			return (
@@ -973,6 +971,7 @@ export default connect(
 		hideMagicLoginRequestForm,
 		sendEmailLogin,
 		logoutUser,
+		redirectToLogout,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...ownProps,

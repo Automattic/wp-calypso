@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -38,18 +37,9 @@ function SocialAuthToS( props ) {
 		);
 	}
 
-	if ( config.isEnabled( 'login/github' ) ) {
-		return getToSComponent(
-			props.translate(
-				'If you continue with Google, Apple or GitHub, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-				toSLinks
-			)
-		);
-	}
-
 	return getToSComponent(
 		props.translate(
-			'If you continue with Google and Apple, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			'If you continue with Google, Apple or GitHub, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			toSLinks
 		)
 	);

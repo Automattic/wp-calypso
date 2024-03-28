@@ -74,6 +74,7 @@
 	&.is-transparent-info {
 		background: unset;
 		color: var(--color-error-40);
+		margin-bottom: 0;
 
 		&.is-compact {
 			.notice__icon-wrapper-drop {
@@ -95,8 +96,8 @@
 
 		.notice__icon-wrapper {
 			background: transparent;
-			align-items: flex-start;
-			padding-top: 13px;
+			align-items: center;
+			padding: 0;
 		}
 		.notice__icon-wrapper-drop {
 			background: var(--color-error);

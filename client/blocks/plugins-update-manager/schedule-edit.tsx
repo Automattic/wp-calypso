@@ -17,6 +17,7 @@ import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
+import type { SyncSuccessParams } from './types';
 
 interface Props {
 	scheduleId?: string;
@@ -51,9 +52,13 @@ export const ScheduleEdit = ( props: Props ) => {
 		return null;
 	}
 
-	const onSyncSuccess = () => {
+	const onSyncSuccess = ( params: SyncSuccessParams ) => {
 		recordTracksEvent( 'calypso_scheduled_updates_edit_schedule', {
 			site_slug: siteSlug,
+			frequency: params.frequency,
+			plugins_number: params.plugins.length,
+			hours: params.hours,
+			weekday: params.weekday,
 		} );
 
 		setSyncError( '' );

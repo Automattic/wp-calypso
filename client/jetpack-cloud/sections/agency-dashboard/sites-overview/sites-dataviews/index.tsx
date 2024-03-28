@@ -1,8 +1,10 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
+import ReactDOM from 'react-dom';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
@@ -13,6 +15,7 @@ import SiteSetFavorite from '../site-set-favorite';
 import SiteSort from '../site-sort';
 import { AllowedTypes, Site } from '../types';
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
+
 import './style.scss';
 
 const SitesDataViews = ( {
@@ -25,10 +28,8 @@ const SitesDataViews = ( {
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
-
-	const totalSites =
-		window.location.pathname === '/sites/favorites' ? data?.totalFavorites || 0 : data?.total || 0;
-
+	const { showOnlyFavorites } = useContext( SitesDashboardContext );
+	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
@@ -276,6 +277,30 @@ const SitesDataViews = ( {
 		[ translate ]
 	);
 
+	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
+	const SpinnerWrapper = () => {
+		return (
+			<div className="spinner-wrapper">
+				<Spinner />
+			</div>
+		);
+	};
+
+	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
+	if ( dataviewsWrapper ) {
+		// Remove any existing spinner if present
+		const existingSpinner = dataviewsWrapper.querySelector( '.spinner-wrapper' );
+		if ( existingSpinner ) {
+			existingSpinner.remove();
+		}
+
+		const spinnerWrapper = dataviewsWrapper.appendChild( document.createElement( 'div' ) );
+		spinnerWrapper.classList.add( 'spinner-wrapper' );
+		// Render the SpinnerWrapper component inside the spinner wrapper
+		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
+		//}
+	}
+
 	const urlParams = new URLSearchParams( window.location.search );
 	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
 	const useExampleDataForTour =
@@ -289,7 +314,7 @@ const SitesDataViews = ( {
 				fields={ fields }
 				view={ sitesViewState }
 				search={ true }
-				searchLabel={ translate( 'Search sites' ) }
+				searchLabel={ translate( 'Search for sites' ) }
 				getItemId={ ( item: SiteInfo ) => {
 					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
 					return item.id;

@@ -5,42 +5,45 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
-import { getSupportedBundleSizes } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
 import {
 	getIncompatibleProducts,
 	isIncompatibleProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/incompatible-products';
-import useProductAndPlans from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/licenses-form/hooks/use-product-and-plans';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FilterSearch from '../../../../components/filter-search';
 import { ShoppingCartContext } from '../../context';
+import useProductAndPlans from '../../hooks/use-product-and-plans';
+import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
+import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
-import ProductFilterSearch from './product-filter-search';
-import ProductListingSection from './sections';
+import VolumePriceSelector from './volume-price-selector';
 import type { ShoppingCartItem } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
+
 interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
-	quantity?: number;
 }
 
-export default function ProductListing( {
-	selectedSite,
-	suggestedProduct,
-	quantity = 1,
-}: ProductListingProps ) {
+export default function ProductListing( { selectedSite, suggestedProduct }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { selectedCartItems, setSelectedCartItems } = useContext( ShoppingCartContext );
 
 	const [ productSearchQuery, setProductSearchQuery ] = useState< string >( '' );
+
+	const {
+		selectedSize: quantity,
+		availableSizes: availableBundleSizes,
+		setSelectedSize: setSelectedBundleSize,
+	} = useProductBundleSize();
 
 	const {
 		filteredProductsAndBundles,
@@ -55,7 +58,6 @@ export default function ProductListing( {
 		selectedSite,
 		selectedBundleSize: quantity,
 		productSearchQuery,
-		usePublicQuery: true, // FIXME: Fix this when we have the API endpoint for A4A
 	} );
 
 	// Create a ref for `filteredProductsAndBundles` to prevent unnecessary re-renders caused by the `useEffect` hook.
@@ -182,7 +184,7 @@ export default function ProductListing( {
 		[ dispatch, handleSelectBundleLicense, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+	const { isReady } = useSubmitForm( { selectedSite, suggestedProductSlugs } );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
@@ -276,14 +278,23 @@ export default function ProductListing( {
 			<QueryProductsList currency="USD" />
 
 			<div className="product-listing__actions">
-				<ProductFilterSearch
-					onProductSearch={ onProductSearch }
+				<FilterSearch
+					label={ translate( 'Search plans, products, add-ons, and extensions' ) }
+					onSearch={ onProductSearch }
 					onClick={ trackClickCallback( 'search' ) }
 				/>
+
+				{ availableBundleSizes.length > 1 && (
+					<VolumePriceSelector
+						selectedBundleSize={ quantity }
+						availableBundleSizes={ availableBundleSizes }
+						onBundleSizeChange={ setSelectedBundleSize }
+					/>
+				) }
 			</div>
 
 			{ plans.length > 0 && (
-				<ProductListingSection
+				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(
@@ -292,11 +303,11 @@ export default function ProductListing( {
 					isTwoColumns
 				>
 					{ getProductCards( plans ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 
 			{ products.length > 0 && (
-				<ProductListingSection
+				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Products' ) }
 					description={ translate(
@@ -304,11 +315,11 @@ export default function ProductListing( {
 					) }
 				>
 					{ getProductCards( products ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 
 			{ wooExtensions.length > 0 && (
-				<ProductListingSection
+				<ListingSection
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -316,11 +327,11 @@ export default function ProductListing( {
 					) }
 				>
 					{ getProductCards( wooExtensions ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 
 			{ backupAddons.length > 0 && (
-				<ProductListingSection
+				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
 					description={ translate(
@@ -328,7 +339,7 @@ export default function ProductListing( {
 					) }
 				>
 					{ getProductCards( backupAddons ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 		</div>
 	);

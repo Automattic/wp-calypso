@@ -965,7 +965,7 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	padding: 32px 20px 0 24px;
 	width: 100%;
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 32px 20px 0 40px;
+		padding: 12px 20px 0 40px;
 	}
 `;
 
@@ -1097,8 +1097,11 @@ const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivEle
 	flex-direction: column;
 	align-items: center;
 	gap: 0.5rem;
+	padding: 1.5rem 4rem 0 1.5rem;
 
-	padding: 1.5rem 1.5rem 0;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 1.5rem 1.5rem 0;
+	}
 
 	img {
 		margin-right: 0.75rem;

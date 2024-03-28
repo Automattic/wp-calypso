@@ -5,6 +5,7 @@ import { Spinner } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { translate } from 'i18n-calypso';
 import { DeploymentCommitDetails } from 'calypso/my-sites/github-deployments/deployments/deployment-commit-details';
 import { DeploymentDuration } from 'calypso/my-sites/github-deployments/deployments/deployment-duration';
 import {
@@ -14,7 +15,7 @@ import {
 import { useCreateCodeDeploymentRun } from 'calypso/my-sites/github-deployments/deployments/use-create-code-deployment-run';
 import { formatDate } from 'calypso/my-sites/github-deployments/utils/dates';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useDispatch, useSelector } from '../../../state';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
@@ -51,17 +52,41 @@ export const DeploymentsListItem = ( { deployment }: DeploymentsListItemProps ) 
 						reason: error.message,
 					} )
 				);
-				dispatch(
-					errorNotice(
-						// translators: "reason" is why connecting the branch failed.
-						sprintf( __( 'Failed to trigger deployment run: %(reason)s' ), {
-							reason: error.message,
-						} ),
-						{
-							...noticeOptions,
-						}
-					)
-				);
+
+				if ( error.code === 'invalid_workflow_file' ) {
+					dispatch(
+						errorNotice(
+							translate( 'The workflow file is invalid. {{a}}Take action{{/a}}', {
+								components: {
+									a: (
+										<a
+											href={ manageDeploymentPage( siteSlug as string, deployment.id ) }
+											onClick={ () => {
+												dispatch( removeNotice( 'github-invalid-workflow-file' ) );
+											} }
+										/>
+									),
+								},
+							} ),
+							{
+								id: 'github-invalid-workflow-file',
+								isPersistent: true,
+							}
+						)
+					);
+				} else {
+					dispatch(
+						errorNotice(
+							// translators: "reason" is why connecting the branch failed.
+							sprintf( __( 'Failed to trigger deployment run: %(reason)s' ), {
+								reason: error.message,
+							} ),
+							{
+								...noticeOptions,
+							}
+						)
+					);
+				}
 			},
 		}
 	);

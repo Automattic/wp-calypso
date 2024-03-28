@@ -123,7 +123,7 @@ const StatsPurchasePage = ( {
 		! commercialMonthlyProduct ||
 		! pwywProduct ||
 		isRequestingSitePurchases ||
-		! hasLoadedSitePurchases;
+		( siteId && ! hasLoadedSitePurchases ); // only check `hasLoadedSitePurchases` if siteId is available
 
 	const [ initialStep, initialSiteType ] = useMemo( () => {
 		// if the site is detected as commercial

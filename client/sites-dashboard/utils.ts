@@ -103,7 +103,7 @@ export const generateSiteInterfaceLink = (
 };
 
 export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
-	return site?.options?.admin_url;
+	return site?.options?.admin_url ?? '';
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

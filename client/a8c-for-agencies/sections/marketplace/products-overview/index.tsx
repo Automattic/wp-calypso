@@ -14,7 +14,6 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { useProductBundleSize } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-product-bundle-size';
 import { useSelector } from 'calypso/state';
 import getSites from 'calypso/state/selectors/get-sites';
 import { ShoppingCartContext } from '../context';
@@ -32,8 +31,6 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 	const { selectedCartItems, setSelectedCartItems, onRemoveCartItem } = useShoppingCart();
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
-
-	const { selectedSize } = useProductBundleSize( true );
 
 	const sites = useSelector( getSites );
 
@@ -72,11 +69,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 
 			<LayoutBody>
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-					<ProductListing
-						selectedSite={ selectedSite }
-						suggestedProduct={ suggestedProduct }
-						quantity={ selectedSize }
-					/>
+					<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 				</ShoppingCartContext.Provider>
 			</LayoutBody>
 		</Layout>

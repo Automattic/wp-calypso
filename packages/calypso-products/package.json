@@ -40,17 +40,18 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
+		"@automattic/urls": "workspace:^",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@wordpress/data": "^9.23.0",
+		"@wordpress/data": "^9.24.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.23.0",
+		"@wordpress/data": "^9.24.0",
 		"react": "^18.2.0"
 	}
 }

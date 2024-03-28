@@ -30,7 +30,7 @@ export default function Layout( {
 	);
 	const layoutContainerClassname = hasLayoutColumns
 		? 'a4a-layout-with-columns__container'
-         : 'a4a-layout__container';
+		: 'a4a-layout__container';
 
 	return (
 		<Main

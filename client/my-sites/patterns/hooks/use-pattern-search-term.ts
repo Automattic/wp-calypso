@@ -15,16 +15,17 @@ export function usePatternSearchTerm(
 
 	// Updates the URL of the page whenever the search term changes
 	useEffect( () => {
-		const params = new URLSearchParams( window.location.search );
+		const url = new URL( window.location.href );
 
 		if ( searchTerm ) {
-			params.set( QUERY_PARAM_SEARCH, searchTerm );
+			url.searchParams.set( QUERY_PARAM_SEARCH, searchTerm );
 		} else {
-			params.delete( QUERY_PARAM_SEARCH );
+			url.searchParams.delete( QUERY_PARAM_SEARCH );
 		}
 
-		const paramsString = params.toString().length ? `?${ params.toString() }` : '';
-		page.redirect( `${ window.location.pathname }${ paramsString }` );
+		if ( url.href !== location.href ) {
+			page( url.href.replace( url.origin, '' ) );
+		}
 	}, [ searchTerm ] );
 
 	// Updates the search term whenever the URL of the page changes

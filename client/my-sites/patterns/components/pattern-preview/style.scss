@@ -2,12 +2,29 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/components/src/styles/typography";
 
+@keyframes pattern-preview-target {
+	from {
+		box-shadow: 0 0 0 2px #3858e9;
+	}
+
+	to {
+		box-shadow: 0 0 0 2px #3858e900;
+	}
+}
+
 .pattern-preview {
+	--button-color-default: #3858e9;
+	--button-color-hover: #1d35b4;
+
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 	justify-content: space-between;
 	position: relative;
+
+	&:not(.pattern-preview--category-gallery) iframe {
+		pointer-events: initial !important;
+	}
 
 	.pattern-preview__renderer {
 		background: var(--color-surface);
@@ -18,8 +35,15 @@
 		overflow: hidden;
 	}
 
+	&:target .pattern-preview__renderer,
+	&.is-targeted .pattern-preview__renderer {
+		animation: 0.8s linear 3.5s backwards pattern-preview-target;
+	}
+
 	&.is-loading .pattern-preview__renderer {
 		aspect-ratio: 7 / 4;
+		animation-play-state: paused;
+		width: 100%;
 	}
 
 	.pattern-preview__header {
@@ -35,14 +59,19 @@
 	}
 
 	.pattern-preview__title {
+		font-size: inherit;
+		line-height: inherit;
+		padding-bottom: 0;
 		padding-top: 4px;
+		text-align: left;
+
+		&:hover {
+			color: var(--button-color-default);
+		}
 	}
 
 	.pattern-preview__copy,
 	.pattern-preview__get-access {
-		--default-color: #3858e9;
-		--hover-color: #1d35b4;
-
 		flex-shrink: 0;
 		font-size: rem(13px);
 		line-height: 1.6;
@@ -50,20 +79,20 @@
 	}
 
 	.pattern-preview__copy {
-		background-color: var(--default-color);
-		border-color: var(--default-color);
+		background-color: var(--button-color-default);
+		border-color: var(--button-color-default);
 
 		&:enabled:hover,
 		&:focus {
-			background-color: var(--hover-color);
-			border-color: var(--hover-color);
+			background-color: var(--button-color-hover);
+			border-color: var(--button-color-hover);
 		}
 	}
 
 	.pattern-preview__get-access {
 		align-items: center;
 		border: 1px solid currentColor;
-		color: var(--default-color);
+		color: var(--button-color-default);
 		display: flex;
 		font-family: inherit;
 		gap: 4px;
@@ -72,7 +101,7 @@
 		&:enabled:hover,
 		&:focus {
 			border-color: currentColor;
-			color: var(--hover-color);
+			color: var(--button-color-hover);
 		}
 
 		path {
@@ -116,20 +145,23 @@
 }
 
 .pattern-preview__resizer .components-resizable-box__handle-right {
+	bottom: 3rem;
+	height: auto;
+	left: 100%;
+	right: initial;
+
 	&::after {
 		background-color: #a7aaad;
 		border-radius: 3px;
 		box-shadow: none;
 		height: 50px;
-		margin-right: -10px;
-		right: calc(50% - 5px);
-		top: calc(50% - 8px - 3rem);
+		right: calc(50% - 3px);
+		top: calc(50% - 8px);
 		width: 6px;
 	}
 
-	&:active::before,
-	&:hover::before {
-		animation: none;
+	&::before {
+		content: none;
 	}
 }
 

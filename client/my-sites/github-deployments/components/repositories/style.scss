@@ -60,7 +60,6 @@
 
 	.pagination {
 		margin-top: auto;
-		margin-bottom: 16px;
 
 		+ .github-repositories-list-permissions-notice {
 			margin-top: initial;
@@ -74,7 +73,7 @@
 
 .github-deployments-repository-list-table {
 	border-collapse: collapse;
-	margin-bottom: 8px;
+	margin-bottom: 16px;
 
 	th,
 	td {

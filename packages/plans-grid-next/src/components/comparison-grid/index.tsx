@@ -12,6 +12,7 @@ import { Gridicon, JetpackLogo } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from '@wordpress/element';
+import { Icon, chevronRightSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -57,19 +58,6 @@ import type {
 	WPComStorageAddOnSlug,
 	FeatureGroupMap,
 } from '@automattic/calypso-products';
-
-function DropdownIcon() {
-	return (
-		<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none" viewBox="0 -5 26 24">
-			<path
-				fill="#0675C4"
-				fillRule="evenodd"
-				d="M18 10.5L13 15l-5-4.5L9.224 9 13 12.399 16.776 9 18 10.5z"
-				clipRule="evenodd"
-			></path>
-		</svg>
-	);
-}
 
 const featureGroupRowTitleCellMaxWidth = 450;
 const rowCellMaxWidth = 290;
@@ -271,8 +259,8 @@ const PlanSelector = styled.header`
 	position: relative;
 
 	.plan-comparison-grid__title {
-		.gridicon {
-			margin-inline-start: 6px;
+		&.is-select-trigger {
+			display: flex;
 		}
 	}
 
@@ -295,6 +283,20 @@ const PlanSelector = styled.header`
 
 		&:focus ~ .plan-comparison-grid__title {
 			outline: thin dotted;
+		}
+	}
+
+	.plan-comparison-grid__title-icon {
+		position: relative;
+		top: -2px;
+		left: -2px;
+		width: 1px;
+		height: 1px;
+		overflow: visible;
+
+		svg {
+			fill: var( --color-link );
+			transform: rotate( 90deg );
 		}
 	}
 `;
@@ -421,6 +423,19 @@ const ComparisonGridHeaderCell = ( {
 				additionalClassName={ popularBadgeClasses }
 			/>
 			<PlanSelector>
+				<h4
+					className={ classNames(
+						'plan-comparison-grid__title',
+						showPlanSelect && 'is-select-trigger'
+					) }
+				>
+					<span className="plan-comparison-grid__title-label">{ gridPlan.planTitle }</span>
+					{ showPlanSelect && (
+						<span className="plan-comparison-grid__title-icon">
+							<Icon icon={ chevronRightSmall } size={ 30 } />
+						</span>
+					) }
+				</h4>
 				{ showPlanSelect && (
 					<select
 						onChange={ ( event: ChangeEvent< HTMLSelectElement > ) =>
@@ -446,10 +461,6 @@ const ComparisonGridHeaderCell = ( {
 						} ) }
 					</select>
 				) }
-				<h4 className="plan-comparison-grid__title">
-					<span>{ gridPlan.planTitle }</span>
-					{ showPlanSelect && <DropdownIcon /> }
-				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
 				planSlug={ planSlug }
@@ -979,7 +990,7 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans } = usePlansGridContext();
+	const { gridPlans, selectedSiteId } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -1093,6 +1104,7 @@ const ComparisonGrid = ( {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
+		selectedSiteId: selectedSiteId,
 	} );
 
 	/**
