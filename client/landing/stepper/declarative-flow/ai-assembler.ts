@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
-import { isAssemblerSupported, getAssemblerDesign } from '@automattic/design-picker';
+import { getAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -75,7 +75,7 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.LAUNCHPAD,
+			STEPS.SITE_EDITOR,
 			STEPS.PLANS,
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
@@ -112,30 +112,16 @@ const withAIAssemblerFlow: Flow = {
 			setIntentOnSite( selectedSiteSlug, SiteIntent.AIAssembler );
 			saveSiteSettings( selectedSiteId, { launchpad_screen: 'full' } );
 
-			// Check whether to go to the assembler. If not, go to the site editor directly
-			let params;
-			if ( ! isAssemblerSupported() ) {
-				params = new URLSearchParams( {
-					canvas: 'edit',
-					assembler: '1',
-				} );
-
-				return `/site-editor/${ selectedSiteSlug }?${ params }`;
-			}
-
-			params = new URLSearchParams( {
+			const params = new URLSearchParams( {
 				siteSlug: selectedSiteSlug,
 				siteId: selectedSiteId,
 			} );
-			if ( config.isEnabled( 'pattern-assembler/v2' ) ) {
-				params.set( 'flags', 'pattern-assembler/v2' );
-			}
 
 			if ( isNewSite ) {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `site-prompt?${ params }` );
+			return navigate( `site-editor?${ params }` );
 		};
 
 		const submit = async (

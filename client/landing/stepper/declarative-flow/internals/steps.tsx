@@ -150,7 +150,10 @@ export const STEPS = {
 		slug: 'create-site',
 		asyncComponent: () => import( './steps-repository/create-site' ),
 	},
-
+	SITE_EDITOR: {
+		slug: 'site-editor',
+		asyncComponent: () => import( './steps-repository/site-editor' ),
+	},
 	SITE_LAUNCH: {
 		slug: 'site-launch',
 		asyncComponent: () => import( './steps-repository/site-launch' ),
