@@ -79,14 +79,14 @@ export default function SitesDashboard() {
 		} );
 	}, [ sitesViewState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
-		sitesViewState.search,
-		sitesViewState.page,
-		agencyDashboardFilter,
+		searchQuery: sitesViewState.search,
+		currentPage: sitesViewState.page,
+		filter: agencyDashboardFilter,
 		sort,
-		sitesViewState.perPage
-	);
+		perPage: sitesViewState.perPage,
+	} );
 
 	useEffect( () => {
 		if ( sitesViewState.selectedSite && ! initialSelectedSiteUrl ) {

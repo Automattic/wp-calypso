@@ -99,14 +99,14 @@ export default function SitesDashboardV2() {
 		selectedSite: undefined,
 	} );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
-		search,
-		sitesViewState.page,
+		searchQuery: search,
+		currentPage: sitesViewState.page,
 		filter,
 		sort,
-		sitesViewState.perPage
-	);
+		perPage: sitesViewState.perPage,
+	} );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {

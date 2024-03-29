@@ -84,13 +84,13 @@ export default function SitesOverview() {
 		setIsBulkManagementActive,
 	} = useContext( SitesOverviewContext );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
-		search,
+		searchQuery: search,
 		currentPage,
 		filter,
-		sort
-	);
+		sort,
+	} );
 
 	const {
 		data: verifiedContacts,
