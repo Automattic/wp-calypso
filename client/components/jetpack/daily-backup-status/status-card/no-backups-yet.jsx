@@ -2,12 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
 import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupTips from './backup-tips';
@@ -19,7 +17,6 @@ const NoBackupsYet = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
-	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
 
 	return (
@@ -62,14 +59,6 @@ const NoBackupsYet = () => {
 					}
 				) }
 			</div>
-			<ul className="status-card__link-list">
-				<li>
-					<ExternalLink href={ siteUrl }>{ translate( 'Visit your website' ) }</ExternalLink>
-				</li>
-				<li>
-					<ExternalLink href={ adminUrl }>{ translate( 'Manage your website' ) }</ExternalLink>
-				</li>
-			</ul>
 			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="NO_BACKUPS" /> }
 		</>
 	);
