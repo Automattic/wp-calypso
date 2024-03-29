@@ -17,10 +17,22 @@ export const PatternsCategoryNotFound = ( {
 	referrer,
 }: PatternsCategoryNotFoundProps ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const translate_not_yet = useTranslate();
+	const translate = useTranslate();
 
-	const comment =
-		'Message displayed when an invalid category was specified while searching block patterns';
+	const title = translate( "Oops! We can't find this category!", {
+		comment:
+			'Heading displayed when an invalid category was specified while searching block patterns',
+	} );
+
+	const line = translate( "The category you are looking for doesn't exist.", {
+		comment:
+			'Message displayed when an invalid category was specified while searching block patterns',
+	} );
+
+	const action = translate( 'Browse all patterns', {
+		comment:
+			'Label of the button displayed when an invalid category was specified while searching block patterns',
+	} );
 
 	return (
 		<>
@@ -31,9 +43,9 @@ export const PatternsCategoryNotFound = ( {
 			/>
 
 			<EmptyContent
-				title={ translate_not_yet( "Oops! We can't find this category!", { comment } ) }
-				line={ translate_not_yet( "The category you are looking for doesn't exist.", { comment } ) }
-				action={ translate_not_yet( 'Browse all patterns', { comment } ) }
+				title={ title }
+				line={ line }
+				action={ action }
 				actionURL={ isLoggedIn ? '/patterns' : addLocaleToPathLocaleInFront( '/patterns' ) }
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
