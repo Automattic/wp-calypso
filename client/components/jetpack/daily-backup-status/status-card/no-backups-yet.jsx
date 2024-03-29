@@ -35,9 +35,10 @@ const NoBackupsYet = () => {
 			</h2>
 			<div className="status-card__label">
 				{ translate(
-					"No backups yet, but don't worry, one should become available soon. {{support}}Contact support{{/support}} if you still see this message after {{strong}}24 hours{{/strong}}, or if you still need help.",
+					"No backups yet, but don't worry, one should become available soon.{{lineBreak/}}{{support}}Contact support{{/support}} if you still see this message after {{strong}}24 hours{{/strong}}, or if you still need help.",
 					{
 						components: {
+							lineBreak: <br />,
 							strong: <strong />,
 							support: (
 								<a
