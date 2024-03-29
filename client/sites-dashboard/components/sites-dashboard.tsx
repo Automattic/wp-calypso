@@ -17,9 +17,12 @@ import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { withoutHttp } from 'calypso/lib/url';
-import { useDispatch } from 'calypso/state';
+import { SitesTableNarrow } from 'calypso/sites-dashboard/components/sites-table-narrow';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { HostingCommandPaletteBanner } from './hosting-command-palette-banner';
@@ -37,6 +40,7 @@ interface SitesDashboardProps {
 }
 
 const MAX_PAGE_WIDTH = '1224px';
+const MAX_SITES_TABLE_WIDTH = '320px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
@@ -50,6 +54,17 @@ const pagePadding = {
 		paddingInlineEnd: '16px',
 	},
 };
+
+const PageColumns = styled.div( {
+	display: 'flex',
+	width: '100%',
+} );
+
+const SitesTableColumn = styled.div( {
+	marginInline: 'unset',
+	maxWidth: MAX_SITES_TABLE_WIDTH,
+	padding: '16px',
+} );
 
 const PageHeader = styled.div( {
 	...pagePadding,
@@ -65,8 +80,8 @@ const PageHeader = styled.div( {
 
 const PageBodyWrapper = styled.div( {
 	...pagePadding,
-	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
+	maxWidth: MAX_PAGE_WIDTH,
 	marginInline: 'auto',
 } );
 
@@ -109,6 +124,16 @@ export const PageBodyBottomContainer = styled.div( {
 		paddingBlockEnd: '48px',
 	},
 } );
+
+const PageFlyoutColumn = styled.div( {
+	display: 'flex',
+	flex: '1',
+	marginRight: '0',
+} );
+
+const PageFlyout = styled.div( {} );
+
+const PageFlyoutBody = styled.div( {} );
 
 const HiddenSitesMessageContainer = styled.div( {
 	fontSize: '14px',
@@ -197,8 +222,114 @@ export function SitesDashboard( {
 
 	const isMobile = useMobileBreakpoint();
 
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const shouldShowCollapsedGlobalSidebar = useSelector( ( state ) => {
+		return getShouldShowCollapsedGlobalSidebar( state, selectedSiteId, 'sites-dashboard' );
+	} );
+
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
+
+	if ( shouldShowCollapsedGlobalSidebar ) {
+		return (
+			<main>
+				<DocumentHead title={ __( 'Sites' ) } />
+				<PageColumns>
+					<SitesTableColumn>
+						<PageHeader>
+							<StyledHostingCommandPaletteBanner />
+							<HeaderControls>
+								<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
+								<SplitButton
+									primary
+									whiteSeparator
+									label={ isMobile ? undefined : __( 'Add new site' ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+									} }
+									href={ createSiteUrl }
+									toggleIcon={ isMobile ? 'plus' : undefined }
+								>
+									<PopoverMenuItem
+										onClick={ () => {
+											recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+										} }
+										href={ addQueryArgs( '/jetpack/connect', {
+											cta_from: TRACK_SOURCE_NAME,
+											cta_id: 'add-site',
+										} ) }
+									>
+										<JetpackLogo className="gridicon" size={ 18 } />
+										<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
+									</PopoverMenuItem>
+									<PopoverMenuItem
+										className={ `${ popoverHoverStyles }` }
+										onClick={ () => {
+											recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+										} }
+										href={ importSiteUrl }
+									>
+										<DownloadIcon icon={ download } size={ 18 } />
+										<span>{ __( 'Import an existing site' ) }</span>
+									</PopoverMenuItem>
+								</SplitButton>
+							</HeaderControls>
+						</PageHeader>
+						<PageBodyWrapper>
+							<SitesDashboardSitesList
+								sites={ allSites }
+								filtering={ { search } }
+								sorting={ sitesSorting }
+								grouping={ { status, showHidden: true } }
+							>
+								{ ( { sites, statuses } ) => {
+									const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
+									const selectedStatus =
+										statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
+									return (
+										<>
+											{ hasSitesSortingPreferenceLoaded && (
+												<>
+													{ paginatedSites.length > 0 || isLoading ? (
+														<>
+															<SitesTableNarrow
+																isLoading={ isLoading }
+																sites={ paginatedSites }
+																className={ sitesMarginTable }
+															/>
+														</>
+													) : (
+														<NoSitesMessage
+															status={ selectedStatus.name }
+															statusSiteCount={ selectedStatus.count }
+														/>
+													) }
+												</>
+											) }
+										</>
+									);
+								} }
+							</SitesDashboardSitesList>
+						</PageBodyWrapper>
+						<ScrollButton
+							onClick={ scrollToTop }
+							visible={ isButtonVisible }
+							title={ __( 'Scroll to top' ) }
+							aria-label={ __( 'Scroll to top' ) }
+						>
+							<Gridicon icon="arrow-up" size={ 18 } />
+						</ScrollButton>
+					</SitesTableColumn>
+					<PageFlyoutColumn>
+						<PageFlyout>
+							<DashboardHeading>{ __( 'Home' ) }</DashboardHeading>
+							<PageFlyoutBody />
+						</PageFlyout>
+					</PageFlyoutColumn>
+				</PageColumns>
+			</main>
+		);
+	}
 
 	return (
 		<main>
@@ -254,10 +385,8 @@ export function SitesDashboard( {
 				>
 					{ ( { sites, statuses } ) => {
 						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
-
 						const selectedStatus =
 							statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
-
 						return (
 							<>
 								{ ( allSites.length > 0 || isLoading ) && (

@@ -13,12 +13,12 @@ export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, section
 
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
-	siteId: number,
+	siteId: number | null,
 	sectionGroup: string
 ) => {
 	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
 	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && siteId
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && !! siteId
 	);
 };
 

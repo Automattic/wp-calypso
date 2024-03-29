@@ -80,7 +80,6 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 		}
 	`;
 	context.secondary = <MySitesNavigation path={ context.path } />;
-
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
