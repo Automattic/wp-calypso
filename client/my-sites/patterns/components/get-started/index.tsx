@@ -39,7 +39,9 @@ export function PatternsGetStarted() {
 						/>
 						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
 						<div className="patterns-get-started__item-description">
-							{ translate( 'Block Patterns' ) }
+							{ translate( 'Block Patterns', {
+								comment: 'This string is refers to the title of the Block Patterns support page',
+							} ) }
 						</div>
 					</a>
 

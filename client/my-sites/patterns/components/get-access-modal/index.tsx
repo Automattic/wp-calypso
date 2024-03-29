@@ -46,7 +46,10 @@ export const PatternsGetAccessModal = ( {
 				</button>
 				<div className="patterns-get-access-modal__inner">
 					<div className="patterns-get-access-modal__title">
-						{ translate( 'Unlock the full pattern library' ) }
+						{ translate( 'Unlock the full pattern library', {
+							comment:
+								'This string is used as a title for the modal that prompts users to sign up or log in to access the full pattern library.',
+						} ) }
 					</div>
 					<div className="patterns-get-access-modal__description">
 						{ translate(
