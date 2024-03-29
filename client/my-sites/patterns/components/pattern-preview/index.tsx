@@ -196,7 +196,7 @@ function PatternPreviewFragment( {
 						<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
 						{ translate( 'Get access', {
 							comment:
-								'Button label for that shows in Pattern Library instead of "Copy" when logged-out users need to sign up',
+								'Button label shown when logged-out users need to sign up to be able to use a pattern',
 						} ) }
 					</Button>
 				) }
