@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import React from 'react';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import plansReducer from 'calypso/state/plans/reducer';
 import SiteMigrationUpgradePlan from '../';
@@ -12,11 +13,21 @@ import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/data/plans/use-check-eligibility-migration-trial-plan' );
+jest.mock( 'calypso/data/hosting/use-add-hosting-trial-mutation' );
 
 ( useSite as jest.Mock ).mockReturnValue( {
 	ID: 'site-id',
 	URL: 'https://site-url.wordpress.com',
 } );
+
+( useCheckEligibilityMigrationTrialPlan as jest.Mock ).mockReturnValue( {
+	data: { eligible: true },
+} );
+
+( useAddHostingTrialMutation as jest.Mock ).mockImplementation( ( { onSuccess } ) => ( {
+	addHostingTrial: () => onSuccess(),
+} ) );
 
 describe( 'SiteMigrationUpgradePlan', () => {
 	const render = ( props?: Partial< StepProps > ) => {
@@ -27,8 +38,6 @@ describe( 'SiteMigrationUpgradePlan', () => {
 			},
 		} );
 	};
-
-	beforeAll( () => nock.disableNetConnect() );
 
 	it( 'selects business as default plan', async () => {
 		const navigation = { submit: jest.fn() };
@@ -72,12 +81,15 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) ).toBeEnabled();
+		} );
+
 		await userEvent.click( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) );
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
-			goToCheckout: true,
-			plan: 'business',
+			freeTrialSelected: true,
 		} );
 	} );
 } );
