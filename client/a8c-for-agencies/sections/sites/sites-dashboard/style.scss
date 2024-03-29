@@ -8,6 +8,10 @@
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
+	.a4a-layout__header-actions {
+		white-space: nowrap;
+	}
+
 	.site-preview-pane .a4a-layout-column__container {
 		display: flex;
 	}
