@@ -175,6 +175,12 @@ $brand-text: "SF Pro Text", $sans;
 		li.sidebar-streams__search {
 			margin: 0;
 		}
+
+		.sidebar__menu-link {
+			&.svg_all-sites {
+				margin: -2px 6px -2px -2px;
+			}
+		}
 	}
 
 	.sidebar__footer {
@@ -396,6 +402,39 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__body {
 			padding-top: 0;
+		}
+	}
+}
+
+.is-global-sidebar-collapsed {
+	.global-sidebar {
+		.sidebar__header,
+		.sidebar__footer {
+			flex-direction: column;
+
+			.sidebar__footer-profile {
+				padding: 0;
+			}
+		}
+
+		.sidebar__header {
+			span.dotcom {
+				background-position: left;
+				width: 24px;
+				margin-left: 6px;
+			}
+		}
+
+		.sidebar__body {
+			.sidebar__menu-link-text {
+				display: none;
+			}
+			.sidebar__menu-icon {
+				margin-left: 4px;
+				&.svg_all-sites {
+					margin-left: 2px;
+				}
+			}
 		}
 	}
 }
