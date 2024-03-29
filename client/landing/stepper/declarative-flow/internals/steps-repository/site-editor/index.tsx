@@ -34,6 +34,7 @@ const SiteEditor: Step = ( { flow }: SiteEditorProps ) => {
 				AnyAction
 			>
 		);
+		// TODO: set a static page as home.
 	}
 
 	if ( site && site.URL ) {
