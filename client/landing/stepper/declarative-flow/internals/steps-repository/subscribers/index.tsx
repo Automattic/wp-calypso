@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useIsEligibleSubscriberImporter } from 'calypso/landing/stepper/hooks/use-is-eligible-subscriber-importer';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteHasUnlimitedSubscribers } from 'calypso/landing/stepper/hooks/use-site-has-unlimited-subscribers';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
@@ -15,12 +16,13 @@ const Subscribers: Step = function ( { navigation } ) {
 	const { submit } = navigation;
 	const site = useSite();
 	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
+	const hasUnlimitedSubscribers = useSiteHasUnlimitedSubscribers();
 
 	const handleSubmit = () => {
 		submit?.();
 	};
 
-	const hasSubscriberLimit = !! site?.plan?.is_free;
+	const hasSubscriberLimit = ! hasUnlimitedSubscribers && !! site?.plan?.is_free;
 
 	const subtitleText = hasSubscriberLimit
 		? translate(

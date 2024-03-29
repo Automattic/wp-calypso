@@ -20,6 +20,7 @@ import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
+import siteHasUnlimitedSubscribers from 'calypso/state/selectors/site-has-unlimited-subscribers';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -124,9 +125,10 @@ class Followers extends Component {
 
 		let emptyTitle;
 		const site = this.props.site;
+		const hasUnlimitedSubscribers = this.props.siteHasUnlimitedSubscribers;
 		const isFreeSite = site?.plan?.is_free ?? false;
 		const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
-		const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+		const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
@@ -273,6 +275,7 @@ class Followers extends Component {
 const mapStateToProps = ( state ) => {
 	return {
 		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
+		siteHasUnlimitedSubscribers: siteHasUnlimitedSubscribers( state ),
 	};
 };
 

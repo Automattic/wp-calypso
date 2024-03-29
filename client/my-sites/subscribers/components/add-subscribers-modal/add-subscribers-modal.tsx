@@ -6,6 +6,7 @@ import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
+import { useSiteHasUnlimitedSubscribers } from 'calypso/landing/stepper/hooks/use-site-has-unlimited-subscribers';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
@@ -18,6 +19,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
+	const hasUnlimitedSubscribers = useSiteHasUnlimitedSubscribers( site?.ID );
 
 	useEffect( () => {
 		const handleHashChange = () => {
@@ -56,7 +58,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
-	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 	const isWPCOMSite = ! site?.jetpack || site?.is_wpcom_atomic;
 
 	return (

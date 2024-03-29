@@ -6,6 +6,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useSiteHasUnlimitedSubscribers } from 'calypso/landing/stepper/hooks/use-site-has-unlimited-subscribers';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
@@ -28,6 +29,7 @@ function Subscribers( props: Props ) {
 	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
 	const site = useSelector( getSelectedSite );
+	const hasUnlimitedSubscribers = useSiteHasUnlimitedSubscribers( site?.ID );
 
 	const listKey = [ 'subscribers', site?.ID, 'all', search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } =
@@ -83,7 +85,7 @@ function Subscribers( props: Props ) {
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
-	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 
 	switch ( templateState ) {
 		case 'default':
