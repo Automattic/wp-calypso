@@ -21,19 +21,19 @@ function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHig
 	const displayTrendline = count !== null && previousCount !== null;
 	const displayIcon = icon !== undefined;
 	return (
-		<div className="highlight-cards-list-mobile__item">
+		<div className="mobile-highlight-cards__item">
 			{ displayIcon && (
-				<span className="highlight-cards-list-mobile__item-icon">
+				<span className="mobile-highlight-cards__item-icon">
 					<Icon icon={ icon } />
 				</span>
 			) }
-			<span className="highlight-cards-list-mobile__item-heading">{ heading }</span>
+			<span className="mobile-highlight-cards__item-heading">{ heading }</span>
 			{ displayTrendline && (
-				<span className="highlight-cards-list-mobile__item-trend">
+				<span className="mobile-highlight-cards__item-trend">
 					<TrendComparison count={ count ?? null } previousCount={ previousCount ?? null } />
 				</span>
 			) }
-			<span className="highlight-cards-list-mobile__item-count">
+			<span className="mobile-highlight-cards__item-count">
 				<ShortenedNumber value={ count ?? null } />
 			</span>
 		</div>
@@ -48,7 +48,7 @@ export default function MobileHighlightCardListing( {
 	highlights,
 }: MobileHighlightCardListingProps ) {
 	return (
-		<div className="highlight-cards-list-mobile">
+		<div className="mobile-highlight-cards-listing">
 			{ highlights.map( ( highlight ) => (
 				<MobileHighlightCard
 					key={ highlight.heading }
