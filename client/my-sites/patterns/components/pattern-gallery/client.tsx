@@ -92,7 +92,13 @@ function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryP
 const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
-	const { getPatternPermalink, isGridView = false, patterns = [], patternTypeFilter } = props;
+	const {
+		category,
+		getPatternPermalink,
+		isGridView = false,
+		patterns = [],
+		patternTypeFilter,
+	} = props;
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const patternIdsByCategory = {
@@ -120,6 +126,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 					{ patterns.map( ( pattern, i ) => (
 						<PatternPreview
 							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
+							category={ category }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
@@ -128,6 +135,8 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							isResizable={ ! isGridView }
 							key={ pattern.ID }
 							pattern={ pattern }
+							patternTypeFilter={ patternTypeFilter }
+							isGridView={ isGridView }
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }

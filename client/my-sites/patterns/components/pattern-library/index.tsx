@@ -6,6 +6,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
@@ -75,6 +76,7 @@ type PatternLibraryProps = {
 	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
 	patternTypeFilter: PatternTypeFilter;
+	referrer?: string;
 	searchTerm?: string;
 };
 
@@ -84,6 +86,7 @@ export const PatternLibrary = ( {
 	isGridView,
 	patternGallery: PatternGallery,
 	patternTypeFilter,
+	referrer,
 	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
@@ -186,6 +189,28 @@ export const PatternLibrary = ( {
 		}
 	}, [ category ] );
 
+	const [ isSticky, setIsSticky ] = useState( false );
+	const prevNavTopValue = useRef( 0 );
+
+	useEffect( () => {
+		const handleScroll = () => {
+			if ( ! navRef.current ) {
+				return;
+			}
+
+			const navbarPosition = navRef.current.getBoundingClientRect().top;
+
+			setIsSticky( navbarPosition === prevNavTopValue.current );
+
+			prevNavTopValue.current = navbarPosition;
+		};
+
+		window.addEventListener( 'scroll', handleScroll, { passive: true } );
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [] );
+
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
 	const categoryNavList = categories.map( ( category ) => {
@@ -214,6 +239,7 @@ export const PatternLibrary = ( {
 				// immediately reset when navigating to a new category, whereas the latter is reset
 				// *after* the first render (which triggers an additional, incorrect, page view)
 				searchTerm={ urlQuerySearchTerm }
+				referrer={ referrer }
 			/>
 
 			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
@@ -231,7 +257,12 @@ export const PatternLibrary = ( {
 			/>
 
 			<div className="pattern-library__wrapper">
-				<div className="pattern-library__pill-navigation" ref={ navRef }>
+				<div
+					className={ classNames( 'pattern-library__pill-navigation', {
+						'pattern-library__pill-navigation--sticky': isSticky,
+					} ) }
+					ref={ navRef }
+				>
 					<CategoryPillNavigation
 						selectedCategoryId={ category }
 						buttons={ [
@@ -322,6 +353,7 @@ export const PatternLibrary = ( {
 						</div>
 
 						<PatternGallery
+							category={ category }
 							getPatternPermalink={ ( pattern ) =>
 								getPatternPermalink( pattern, category, patternTypeFilter, categories )
 							}
