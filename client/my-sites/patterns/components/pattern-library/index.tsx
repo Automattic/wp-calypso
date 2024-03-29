@@ -342,7 +342,11 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate( 'Ship faster, ship more' ) }
+						title={ translate( 'Ship faster, ship more', {
+							comment:
+								'Heading text for a section in the Pattern Library with links to block pattern categories',
+							textOnly: true,
+						} ) }
 						description={ translate(
 							'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
 						) }
@@ -362,10 +366,14 @@ export const PatternLibrary = ( {
 									} ) }
 								{ ! searchTerm &&
 									patternTypeFilter === PatternTypeFilter.PAGES &&
-									translate( 'Page Layouts' ) }
+									translate( 'Page Layouts', {
+										comment: 'Refers to block patterns that contain entire page layouts',
+									} ) }
 								{ ! searchTerm &&
 									patternTypeFilter === PatternTypeFilter.REGULAR &&
-									translate( 'Patterns' ) }
+									translate( 'Patterns', {
+										comment: 'Refers to block patterns',
+									} ) }
 							</h1>
 
 							{ category && !! categoryObject?.pagePatternCount && (
@@ -388,12 +396,18 @@ export const PatternLibrary = ( {
 								>
 									<ToggleGroupControlOption
 										className="pattern-library__toggle-option"
-										label={ translate( 'Patterns' ) }
+										label={ translate( 'Patterns', {
+											comment: 'Refers to block patterns',
+											textOnly: true,
+										} ) }
 										value={ PatternTypeFilter.REGULAR }
 									/>
 									<ToggleGroupControlOption
 										className="pattern-library__toggle-option"
-										label={ translate( 'Page Layouts' ) }
+										label={ translate( 'Page Layouts', {
+											comment: 'Refers to block patterns that contain entire page layouts',
+											textOnly: true,
+										} ) }
 										value={ PatternTypeFilter.PAGES }
 									/>
 								</ToggleGroupControl>
@@ -436,7 +450,11 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate( 'Beautifully curated page layouts' ) }
+						title={ translate( 'Beautifully curated page layouts', {
+							comment:
+								'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
+							textOnly: true,
+						} ) }
 						description={ translate(
 							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
 						) }
