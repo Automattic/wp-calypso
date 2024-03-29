@@ -316,7 +316,7 @@ export const PatternLibrary = ( {
 				onSearch={ ( query ) => {
 					setSearchTerm( query );
 				} }
-				title={ translate( 'It's Easier With Patterns' ) }
+				title={ translate( "It's Easier With Patterns" ) }
 			/>
 
 			<div className="pattern-library__wrapper">
