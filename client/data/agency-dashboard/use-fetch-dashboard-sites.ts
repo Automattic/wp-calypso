@@ -1,9 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
-import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type {
 	AgencyDashboardFilter,
 	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+
+const client = isEnabled( 'a8c-for-agencies' ) ? wpcom : wpcomJpl;
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
 	return {
@@ -64,7 +67,7 @@ const useFetchDashboardSites = ( args: FetchDashboardSitesArgsInterface ) => {
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey,
 		queryFn: () =>
-			wpcomJpl.req.get(
+			client.req.get(
 				{
 					path: '/jetpack-agency/sites',
 					apiNamespace: 'wpcom/v2',

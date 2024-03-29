@@ -1,7 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { MonitorContactsResponse } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+
+const client = isEnabled( 'a8c-for-agencies' ) ? wpcom : wpcomJpl;
 
 const isMultipleEmailEnabled = isEnabled(
 	'jetpack/pro-dashboard-monitor-multiple-email-recipients'
@@ -16,7 +18,7 @@ const useFetchMonitorVerifiedContacts = (
 	return useQuery( {
 		queryKey: [ 'monitor_notification_contacts', agencyId ],
 		queryFn: () =>
-			wpcomJpl.req.get(
+			client.req.get(
 				{
 					path: '/jetpack-agency/contacts',
 					apiNamespace: 'wpcom/v2',
