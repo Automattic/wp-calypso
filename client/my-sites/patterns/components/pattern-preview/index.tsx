@@ -141,7 +141,7 @@ function PatternPreviewFragment( {
 		recordTracksEvent( tracksEventName, {
 			name: pattern.name,
 			category,
-			type: patternType,
+			type: getTracksPatternType( patternTypeFilter ),
 			view: isGridView ? 'grid' : 'list',
 		} );
 	};
