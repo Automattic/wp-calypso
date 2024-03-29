@@ -1,4 +1,5 @@
-import { Button, Tooltip } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { backupClonePath } from 'calypso/my-sites/backup/paths';
@@ -29,7 +30,6 @@ const BackupActionsToolbar: FunctionComponent< Props > = ( { siteId, siteSlug } 
 				className="backup__clone-button"
 				href={ backupClonePath( siteSlug ) }
 				onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_copy_site' ) ) }
-				variant="secondary"
 			>
 				{ translate( 'Copy site' ) }
 			</Button>
