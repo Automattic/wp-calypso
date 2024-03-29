@@ -1,5 +1,5 @@
 import { SelectDropdown } from '@automattic/components';
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
@@ -29,6 +29,7 @@ export const CategoryPillNavigation = ( {
 	categories,
 	selectedCategoryId,
 }: CategoryPillNavigationProps ) => {
+	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
@@ -87,7 +88,7 @@ export const CategoryPillNavigation = ( {
 					{ buttons?.map( ( button ) => (
 						<SelectDropdown.Item
 							key={ button.label }
-							path={ addLocaleToPathLocaleInFront( button.link ) }
+							path={ addLocaleToPathLocaleInFront( button.link, locale ) }
 							selected={ button.isActive }
 						>
 							{ button.label }
@@ -96,7 +97,7 @@ export const CategoryPillNavigation = ( {
 					{ categories?.map( ( category ) => (
 						<SelectDropdown.Item
 							key={ category.id }
-							path={ addLocaleToPathLocaleInFront( category.link ) }
+							path={ addLocaleToPathLocaleInFront( category.link, locale ) }
 							selected={ category.id === selectedCategoryId }
 						>
 							{ category.label }
