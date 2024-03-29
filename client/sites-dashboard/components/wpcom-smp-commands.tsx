@@ -1,60 +1,26 @@
-import { JetpackLogo } from '@automattic/components';
+import { COMMANDS } from '@automattic/command-palette';
 import { SiteCapabilities } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import {
-	alignJustify as acitvityLogIcon,
-	backup as backupIcon,
-	brush as brushIcon,
-	chartBar as statsIcon,
-	code as codeIcon,
-	commentAuthorAvatar as profileIcon,
-	commentAuthorName as subscriberIcon,
-	download as downloadIcon,
-	edit as editIcon,
-	globe as domainsIcon,
-	seen as seenIcon,
-	home as dashboardIcon,
-	key as keyIcon,
-	media as mediaIcon,
-	page as pageIcon,
-	payment as creditCardIcon,
-	people as peopleIcon,
-	plugins as pluginsIcon,
-	plus as plusIcon,
-	postComments as postCommentsIcon,
-	settings as settingsIcon,
-	tool as toolIcon,
-	wordpress as wordpressIcon,
-	reusableBlock as cacheIcon,
-	help as helpIcon,
-	comment as feedbackIcon,
-} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import deepmerge from 'deepmerge';
 import { useCallback } from 'react';
-import GitHubIcon from 'calypso/components/social-icons/github';
-import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import {
 	EDGE_CACHE_ENABLE_DISABLE_NOTICE_ID,
 	getEdgeCacheStatus,
 	useSetEdgeCacheMutation,
 	purgeEdgeCache,
 } from 'calypso/data/hosting/use-cache';
+import { navigate } from 'calypso/lib/navigate';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import {
-	generateSiteInterfaceLink,
-	isCustomDomain,
-	isNotAtomicJetpack,
-	isP2Site,
-	siteUsesWpAdminInterface,
-} from '../utils';
+import { getCurrentRoutePattern } from 'calypso/state/selectors/get-current-route-pattern';
 import type {
 	Command,
 	CommandCallBackParams,
@@ -62,14 +28,9 @@ import type {
 } from '@automattic/command-palette';
 import type { SiteExcerptData } from '@automattic/sites';
 
-function useCommandNavigation( {
-	navigate,
-	currentRoute,
-}: {
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	currentRoute: string | null;
-} ) {
+function useCommandNavigation() {
 	const dispatch = useDispatch();
+	const currentRoute = useSelector( getCurrentRoutePattern );
 	// Callback to navigate to a command's destination
 	// used on command callback or siteFunctions onClick
 	const commandNavigation = useCallback(
@@ -86,17 +47,13 @@ function useCommandNavigation( {
 				close();
 				navigate( url, openInNewTab );
 			},
-		[ navigate, currentRoute, dispatch ]
+		[ currentRoute, dispatch ]
 	);
 	return commandNavigation;
 }
 
-export const useCommandsArrayWpcom = ( {
-	setSelectedCommandName,
-	navigate,
-	currentRoute,
-}: useCommandsParams ) => {
-	const { __, _x } = useI18n();
+export const useCommandsCalypso = ( { setSelectedCommandName }: useCommandsParams ) => {
+	const { __ } = useI18n();
 	const setStateCallback =
 		( actionName: string, placeholder: string = __( 'Select a site' ) ) =>
 		( { setSearch, setPlaceholderOverride }: CommandCallBackParams ) => {
@@ -105,7 +62,7 @@ export const useCommandsArrayWpcom = ( {
 			setPlaceholderOverride( placeholder );
 		};
 
-	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
+	const commandNavigation = useCommandNavigation();
 	const dispatch = useDispatch();
 
 	const navigateWithinSamePage = (
@@ -152,27 +109,6 @@ export const useCommandsArrayWpcom = ( {
 		return {
 			removeNotice: () => dispatch( removeNotice( notice.noticeId ) ),
 		};
-	};
-	const createSiteUrl = useAddNewSiteUrl( {
-		ref: 'command-palette',
-	} );
-
-	const siteFilters = {
-		hostingEnabled: {
-			capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-			filter: ( site: SiteExcerptData ) => {
-				return site?.is_wpcom_atomic;
-			},
-			filterNotice: __( 'Only listing sites with hosting features enabled.' ),
-			emptyListNotice: __( 'No sites with hosting features enabled.' ),
-		},
-		hostingEnabledAndPublic: {
-			capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-			filter: ( site: SiteExcerptData ) =>
-				site?.is_wpcom_atomic && ! site?.is_coming_soon && ! site?.is_private,
-			filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
-			emptyListNotice: __( 'No public sites with hosting features enabled.' ),
-		},
 	};
 
 	const fetchSshUser = async ( siteId: number ) => {
@@ -316,175 +252,91 @@ export const useCommandsArrayWpcom = ( {
 		'source-command-palette': 'true',
 	} ).toString() }`;
 
-	const commands: Command[] = [
-		{
-			name: 'viewMySites',
-			label: __( 'View my sites' ),
-			searchLabel: [
-				_x( 'view my sites', 'Keyword for the View my sites command' ),
-				_x( 'manage sites', 'Keyword for the View my sites command' ),
-				_x( 'sites dashboard', 'Keyword for the View my sites command' ),
-			].join( ' ' ),
-			callback: commandNavigation( `/sites` ),
-			icon: wordpressIcon,
-		},
-		{
-			name: 'getHelp',
-			label: __( 'Get help' ),
-			searchLabel: [
-				_x( 'get help', 'Keyword for the Get help command' ),
-				_x( 'contact support', 'Keyword for the Get help command' ),
-				_x( 'help center', 'Keyword for the Get help command' ),
-			].join( ' ' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				setShowHelpCenter( true );
+	const commands: Command[] = Object.values(
+		deepmerge( COMMANDS, {
+			viewMySites: {
+				callback: commandNavigation( '/sites' ),
 			},
-			icon: helpIcon,
-		},
-		{
-			name: 'clearCache',
-			label: __( 'Clear cache' ),
-			callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
-			siteFunctions: {
-				onClick: ( { site, close } ) => {
+			getHelp: {
+				callback: ( { close } ) => {
 					close();
-					clearEdgeCache( site.ID );
+					setShowHelpCenter( true );
 				},
-				...siteFilters.hostingEnabled,
 			},
-			icon: cacheIcon,
-		},
-		{
-			name: 'enableEdgeCache',
-			label: __( 'Enable edge cache' ),
-			callback: setStateCallback( 'enableEdgeCache', __( 'Select a site to enable edge cache' ) ),
-			siteFunctions: {
-				onClick: ( { site, close } ) => {
-					close();
-					enableEdgeCache( site.ID );
+			clearCache: {
+				callback: setStateCallback( 'clearCache', __( 'Select a site to clear cache' ) ),
+				siteFunctions: {
+					onClick: ( { site, close } ) => {
+						close();
+						clearEdgeCache( site.ID );
+					},
 				},
-				...siteFilters.hostingEnabledAndPublic,
 			},
-			icon: cacheIcon,
-		},
-		{
-			name: 'disableEdgeCache',
-			label: __( 'Disable edge cache' ),
-			callback: setStateCallback( 'disableEdgeCache', __( 'Select a site to disable edge cache' ) ),
-			siteFunctions: {
-				onClick: ( { site, close } ) => {
-					close();
-					disableEdgeCache( site.ID );
+			enableEdgeCache: {
+				callback: setStateCallback( 'enableEdgeCache', __( 'Select a site to enable edge cache' ) ),
+				siteFunctions: {
+					onClick: ( { site, close } ) => {
+						close();
+						enableEdgeCache( site.ID );
+					},
 				},
-				...siteFilters.hostingEnabledAndPublic,
 			},
-			icon: cacheIcon,
-		},
-		{
-			name: 'manageCacheSettings',
-			label: __( 'Manage cache settings' ),
-			searchLabel: [
-				_x( 'manage cache settings', 'Keyword for the Manage cache settings command' ),
-				_x( 'clear cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'disable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'enable cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'global edge cache', 'Keyword for the Manage cache settings command' ),
-				_x( 'purge cache', 'Keyword for the Manage cache settings command' ),
-			].join( ' ' ),
-			callback: setStateCallback(
-				'manageCacheSettings',
-				__( 'Select site to manage cache settings' )
-			),
-			siteFunctions: {
-				onClick: ( param ) => {
-					const targetPath = `/hosting-config/${ param.site.slug }#cache`;
-					navigateWithinSamePage( targetPath, 'cache', param );
+			disableEdgeCache: {
+				callback: setStateCallback(
+					'disableEdgeCache',
+					__( 'Select a site to disable edge cache' )
+				),
+				siteFunctions: {
+					onClick: ( { site, close } ) => {
+						close();
+						disableEdgeCache( site.ID );
+					},
 				},
-				...siteFilters.hostingEnabled,
 			},
-			icon: cacheIcon,
-		},
-		{
-			name: 'visitSite',
-			label: __( 'Visit site homepage' ),
-			searchLabel: [
-				_x( 'visit site homepage', 'Keyword for the Visit site dashboard command' ),
-				_x( 'visit site', 'Keyword for the Visit site dashboard command' ),
-				_x( 'see site', 'Keyword for the Visit site dashboard command' ),
-				_x( 'browse site', 'Keyword for the Visit site dashboard command' ),
-			].join( ' ' ),
-			context: [ '/:site' ],
-			callback: setStateCallback( 'visitSite', __( 'Select site to visit the homepage' ) ),
-			siteFunctions: {
-				onClick: ( param ) => commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
-			},
-			icon: seenIcon,
-		},
-		{
-			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard' ),
-			searchLabel: [
-				_x( 'open site dashboard', 'Keyword for the Open site dashboard command' ),
-				_x( 'admin', 'Keyword for the Open site dashboard command' ),
-				_x( 'wp-admin', 'Keyword for the Open site dashboard command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
-			siteFunctions: {
-				onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
-			},
-			icon: dashboardIcon,
-		},
-		{
-			name: 'openHostingConfiguration',
-			label: __( 'Open hosting configuration' ),
-			searchLabel: [
-				_x( 'open hosting configuration', 'Keyword for the Open hosting configuration command' ),
-				_x( 'admin interface style', 'Keyword for the Open hosting configuration command' ),
-				_x( 'cache', 'Keyword for the Open hosting configuration command' ),
-				_x( 'database', 'Keyword for the Open hosting configuration command' ),
-				_x( 'global edge cache', 'Keyword for the Open hosting configuration command' ),
-				_x( 'hosting', 'Keyword for the Open hosting configuration command' ),
-				_x( 'mysql', 'Keyword for the Open hosting configuration command' ),
-				_x( 'phpmyadmin', 'Keyword for the Open hosting configuration command' ),
-				_x( 'php version', 'Keyword for the Open hosting configuration command' ),
-				_x( 'sftp/ssh credentials', 'Keyword for the Open hosting configuration command' ),
-				_x( 'wp-cli', 'Keyword for the Open hosting configuration command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: setStateCallback(
-				'openHostingConfiguration',
-				__( 'Select site to open hosting configuration' )
-			),
-			siteFunctions: {
-				capabilityFilter: SiteCapabilities.MANAGE_OPTIONS,
-				onClick: ( param ) => commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
-				filter: ( site: SiteExcerptData ) => ! isP2Site( site ) && ! isNotAtomicJetpack( site ),
-				filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
-			},
-			icon: settingsIcon,
-		},
-		{
-			name: 'openPHPmyAdmin',
-			label: __( 'Open database in phpMyAdmin' ),
-			searchLabel: [
-				_x( 'open database in phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
-				_x( 'database', 'Keyword for the Open database in phpMyAdmin command' ),
-				_x( 'mysql', 'Keyword for the Open database in phpMyAdmin command' ),
-				_x( 'phpmyadmin', 'Keyword for the Open database in phpMyAdmin command' ),
-			].join( ' ' ),
-			context: [ '/sites' ],
-			callback: setStateCallback( 'openPHPmyAdmin', __( 'Select site to open phpMyAdmin' ) ),
-			siteFunctions: {
-				onClick: async ( { site, close } ) => {
-					close();
-					await openPhpMyAdmin( site.ID );
+			manageCacheSettings: {
+				siteFunctions: {
+					onClick: ( param ) => {
+						const targetPath = `/hosting-config/${ param.site.slug }#cache`;
+						navigateWithinSamePage( targetPath, 'cache', param );
+					},
 				},
-				...siteFilters.hostingEnabled,
 			},
-			icon: pageIcon,
-		},
+			visitSite: {
+				callback: setStateCallback( 'visitSite', __( 'Select site to visit the homepage' ) ),
+				siteFunctions: {
+					onClick: ( param ) =>
+						commandNavigation( param.site.URL, { openInNewTab: true } )( param ),
+				},
+			},
+			openSiteDashboard: {
+				callback: setStateCallback( 'openSiteDashboard', __( 'Select site to open dashboard' ) ),
+				siteFunctions: {
+					onClick: ( param ) => commandNavigation( `/home/${ param.site.slug }` )( param ),
+				},
+			},
+			openHostingConfiguration: {
+				callback: setStateCallback(
+					'openHostingConfiguration',
+					__( 'Select site to open hosting configuration' )
+				),
+				siteFunctions: {
+					onClick: ( param ) =>
+						commandNavigation( `/hosting-config/${ param.site.slug }` )( param ),
+				},
+			},
+			openPHPmyAdmin: {
+				callback: setStateCallback( 'openPHPmyAdmin', __( 'Select site to open phpMyAdmin' ) ),
+				siteFunctions: {
+					onClick: async ( { site, close } ) => {
+						close();
+						await openPhpMyAdmin( site.ID );
+					},
+				},
+			},
+		} )
+	);
+
+	/*const commandsOld: Command[] = [
 		{
 			name: 'openProfile',
 			label: __( 'Open my profile' ),
@@ -1429,7 +1281,7 @@ export const useCommandsArrayWpcom = ( {
 			},
 			icon: feedbackIcon,
 		},
-	];
+	];*/
 
 	return commands;
 };

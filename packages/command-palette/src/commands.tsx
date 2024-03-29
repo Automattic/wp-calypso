@@ -29,23 +29,11 @@ import {
 	wordpress as wordpressIcon,
 	comment as feedbackIcon,
 } from '@wordpress/icons';
-import { Command, CommandCallBackParams } from '../use-command-palette';
-import { isCustomDomain } from '../utils';
-import { useCommandsParams } from './types';
-import useCommandNavigation from './use-command-navigation';
+import { SiteType, Command, CommandCallBackParams } from './use-command-palette';
+import { isCustomDomain } from './utils';
 
-enum SiteType {
-	ATOMIC = 'atomic',
-	SIMPLE = 'simple',
-}
-
-interface CapabilityCommand extends Command {
-	capability?: string;
-	siteType?: SiteType;
-	publicOnly?: boolean;
-	isCustomDomain?: boolean;
-	filterP2?: boolean;
-	filterStaging?: boolean;
+export interface useCommandsParams {
+	setSelectedCommandName: ( name: string ) => void;
 }
 
 interface CustomWindow {
@@ -78,8 +66,189 @@ const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
 	}
 };
 
-const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ): Command[] => {
-	const commandNavigation = useCommandNavigation( { navigate, currentRoute } );
+const siteFilters = {
+	hostingEnabled: {
+		capability: SiteCapabilities.MANAGE_OPTIONS,
+		siteType: SiteType.ATOMIC,
+		filterNotice: __( 'Only listing sites with hosting features enabled.' ),
+		emptyListNotice: __( 'No sites with hosting features enabled.' ),
+	},
+	hostingEnabledAndPublic: {
+		capability: SiteCapabilities.MANAGE_OPTIONS,
+		siteType: SiteType.ATOMIC,
+		publicOnly: true,
+		filterNotice: __( 'Only listing public sites with hosting features enabled.' ),
+		emptyListNotice: __( 'No public sites with hosting features enabled.' ),
+	},
+};
+
+export const COMMANDS = {
+	viewMySites: {
+		name: 'viewMySites',
+		label: __( 'View my sites', __i18n_text_domain__ ),
+		searchLabel: [
+			_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+			_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+			_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		icon: wordpressIcon,
+	},
+	getHelp: {
+		name: 'getHelp',
+		label: __( 'Get help', __i18n_text_domain__ ),
+		searchLabel: [
+			_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
+			_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
+			_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		icon: helpIcon,
+	},
+	clearCache: {
+		name: 'clearCache',
+		label: __( 'Clear cache', __i18n_text_domain__ ),
+		icon: cacheIcon,
+		...siteFilters.hostingEnabled,
+	},
+	enableEdgeCache: {
+		name: 'enableEdgeCache',
+		label: __( 'Enable edge cache', __i18n_text_domain__ ),
+		icon: cacheIcon,
+		...siteFilters.hostingEnabledAndPublic,
+	},
+	disableEdgeCache: {
+		name: 'disableEdgeCache',
+		label: __( 'Disable edge cache', __i18n_text_domain__ ),
+		icon: cacheIcon,
+		...siteFilters.hostingEnabledAndPublic,
+	},
+	manageCacheSettings: {
+		name: 'manageCacheSettings',
+		label: __( 'Manage cache settings', __i18n_text_domain__ ),
+		searchLabel: [
+			_x(
+				'manage cache settings',
+				'Keyword for the Manage cache settings command',
+				__i18n_text_domain__
+			),
+			_x( 'clear cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
+			_x( 'disable cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
+			_x( 'enable cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
+			_x(
+				'global edge cache',
+				'Keyword for the Manage cache settings command',
+				__i18n_text_domain__
+			),
+			_x( 'purge cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		icon: cacheIcon,
+		...siteFilters.hostingEnabled,
+	},
+	visitSite: {
+		name: 'visitSite',
+		label: __( 'Visit site homepage', __i18n_text_domain__ ),
+		searchLabel: [
+			_x(
+				'visit site homepage',
+				'Keyword for the Visit site dashboard command',
+				__i18n_text_domain__
+			),
+			_x( 'visit site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
+			_x( 'see site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
+			_x( 'browse site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		context: [ '/wp-admin', '/:site' ],
+		icon: seenIcon,
+	},
+	openSiteDashboard: {
+		name: 'openSiteDashboard',
+		label: __( 'Open site dashboard', __i18n_text_domain__ ),
+		searchLabel: [
+			_x(
+				'open site dashboard',
+				'Keyword for the Open site dashboard command',
+				__i18n_text_domain__
+			),
+			_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+			_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		icon: dashboardIcon,
+	},
+	openHostingConfiguration: {
+		name: 'openHostingConfiguration',
+		label: __( 'Open hosting configuration', __i18n_text_domain__ ),
+		searchLabel: [
+			_x(
+				'open hosting configuration',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x(
+				'admin interface style',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x( 'cache', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+			_x(
+				'database',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x(
+				'global edge cache',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x( 'hosting', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+			_x( 'mysql', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+			_x(
+				'phpmyadmin',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x(
+				'php version',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x(
+				'sftp/ssh credentials',
+				'Keyword for the Open hosting configuration command',
+				__i18n_text_domain__
+			),
+			_x( 'wp-cli', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		context: [ '/sites' ],
+		capability: SiteCapabilities.MANAGE_OPTIONS,
+		filterP2: true,
+		filterSelfHosted: true,
+		icon: settingsIcon,
+		filterNotice: __( 'Only listing sites hosted on WordPress.com.' ),
+	},
+	openPHPmyAdmin: {
+		name: 'openPHPmyAdmin',
+		label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
+		searchLabel: [
+			_x(
+				'open database in phpmyadmin',
+				'Keyword for the Open database in phpMyAdmin command',
+				__i18n_text_domain__
+			),
+			_x( 'database', 'Keyword for the Open database in phpMyAdmin command', __i18n_text_domain__ ),
+			_x( 'mysql', 'Keyword for the Open database in phpMyAdmin command', __i18n_text_domain__ ),
+			_x(
+				'phpmyadmin',
+				'Keyword for the Open database in phpMyAdmin command',
+				__i18n_text_domain__
+			),
+		].join( ' ' ),
+		context: [ '/sites' ],
+		icon: pageIcon,
+		...siteFilters.hostingEnabled,
+	},
+};
+
+const useSingleSiteCommands = ( { currentRoute }: useCommandsParams ): Command[] => {
+	const commandNavigation = useCommandNavigation( { currentRoute } );
 	const customWindow = window as CustomWindow | undefined;
 	const {
 		isAtomic = false,
@@ -104,193 +273,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		siteType = SiteType.SIMPLE;
 	}
 
-	const commands: CapabilityCommand[] = [
-		{
-			name: 'viewMySites',
-			label: __( 'View my sites', __i18n_text_domain__ ),
-			searchLabel: [
-				_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
-				_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
-				_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			callback: commandNavigation( 'https://wordpress.com/sites' ),
-			icon: wordpressIcon,
-		},
-		{
-			name: 'getHelp',
-			label: __( 'Get help', __i18n_text_domain__ ),
-			searchLabel: [
-				_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
-				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
-				_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			callback: ( { close }: CommandCallBackParams ) => {
-				close();
-				waitForElementAndClick( '#wp-admin-bar-help-center' );
-			},
-			icon: helpIcon,
-		},
-		{
-			name: 'clearCache',
-			label: __( 'Clear cache', __i18n_text_domain__ ),
-			callback: commandNavigation( '/hosting-config/:site#cache' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			icon: cacheIcon,
-		},
-		{
-			name: 'enableEdgeCache',
-			label: __( 'Enable edge cache', __i18n_text_domain__ ),
-			callback: commandNavigation( '/hosting-config/:site#edge' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			publicOnly: true,
-			icon: cacheIcon,
-		},
-		{
-			name: 'disableEdgeCache',
-			label: __( 'Disable edge cache', __i18n_text_domain__ ),
-			callback: commandNavigation( '/hosting-config/:site#edge' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			publicOnly: true,
-			icon: cacheIcon,
-		},
-		{
-			name: 'manageCacheSettings',
-			label: __( 'Manage cache settings', __i18n_text_domain__ ),
-			searchLabel: [
-				_x(
-					'manage cache settings',
-					'Keyword for the Manage cache settings command',
-					__i18n_text_domain__
-				),
-				_x( 'clear cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
-				_x(
-					'disable cache',
-					'Keyword for the Manage cache settings command',
-					__i18n_text_domain__
-				),
-				_x( 'enable cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
-				_x(
-					'global edge cache',
-					'Keyword for the Manage cache settings command',
-					__i18n_text_domain__
-				),
-				_x( 'purge cache', 'Keyword for the Manage cache settings command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			callback: commandNavigation( '/hosting-config/:site#cache' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			icon: cacheIcon,
-		},
-		{
-			name: 'visitSite',
-			label: __( 'Visit site homepage', __i18n_text_domain__ ),
-			searchLabel: [
-				_x(
-					'visit site homepage',
-					'Keyword for the Visit site dashboard command',
-					__i18n_text_domain__
-				),
-				_x( 'visit site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
-				_x( 'see site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
-				_x( 'browse site', 'Keyword for the Visit site dashboard command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			context: [ '/wp-admin' ],
-			callback: commandNavigation( ':site' ),
-			icon: seenIcon,
-		},
-		{
-			name: 'openSiteDashboard',
-			label: __( 'Open site dashboard', __i18n_text_domain__ ),
-			searchLabel: [
-				_x(
-					'open site dashboard',
-					'Keyword for the Open site dashboard command',
-					__i18n_text_domain__
-				),
-				_x( 'admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
-				_x( 'wp-admin', 'Keyword for the Open site dashboard command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			callback: commandNavigation( '/wp-admin' ),
-			icon: dashboardIcon,
-		},
-		{
-			name: 'openHostingConfiguration',
-			label: __( 'Open hosting configuration', __i18n_text_domain__ ),
-			searchLabel: [
-				_x(
-					'open hosting configuration',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x(
-					'admin interface style',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x( 'cache', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
-				_x(
-					'database',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x(
-					'global edge cache',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x( 'hosting', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
-				_x( 'mysql', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
-				_x(
-					'phpmyadmin',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x(
-					'php version',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x(
-					'sftp/ssh credentials',
-					'Keyword for the Open hosting configuration command',
-					__i18n_text_domain__
-				),
-				_x( 'wp-cli', 'Keyword for the Open hosting configuration command', __i18n_text_domain__ ),
-			].join( ' ' ),
-			callback: commandNavigation( '/hosting-config/:site' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			filterP2: true,
-			icon: settingsIcon,
-		},
-		{
-			name: 'openPHPmyAdmin',
-			label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
-			searchLabel: [
-				_x(
-					'open database in phpmyadmin',
-					'Keyword for the Open database in phpMyAdmin command',
-					__i18n_text_domain__
-				),
-				_x(
-					'database',
-					'Keyword for the Open database in phpMyAdmin command',
-					__i18n_text_domain__
-				),
-				_x( 'mysql', 'Keyword for the Open database in phpMyAdmin command', __i18n_text_domain__ ),
-				_x(
-					'phpmyadmin',
-					'Keyword for the Open database in phpMyAdmin command',
-					__i18n_text_domain__
-				),
-			].join( ' ' ),
-			callback: commandNavigation( '/hosting-config/:site#database-access' ),
-			capability: SiteCapabilities.MANAGE_OPTIONS,
-			siteType: SiteType.ATOMIC,
-			icon: pageIcon,
-		},
+	const commands: Command[] = [
 		{
 			name: 'openProfile',
 			label: __( 'Open my profile', __i18n_text_domain__ ),

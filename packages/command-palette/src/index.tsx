@@ -9,7 +9,6 @@ import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCommandsParams } from './commands/types';
-import useSingleSiteCommands from './commands/use-single-site-commands';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
 	Command as PaletteCommand,
@@ -28,7 +27,6 @@ interface CommandMenuGroupProps
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	currentRoute: string | null;
 	useSites: () => SiteExcerptData[];
@@ -106,7 +104,6 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 	setFooterMessage,
 	setEmptyListNotice,
-	navigate,
 	useCommands,
 	currentRoute,
 	useSites,
@@ -117,7 +114,6 @@ export function CommandMenuGroup( {
 		selectedCommandName,
 		setSelectedCommandName,
 		search,
-		navigate,
 		useCommands,
 		currentRoute,
 		useSites,
@@ -233,7 +229,6 @@ interface NotFoundMessageProps {
 
 interface CommandPaletteProps {
 	currentSiteId: number | null;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
 	currentRoute: string | null;
 	isOpenGlobal?: boolean;
@@ -268,7 +263,6 @@ const NotFoundMessage = ( {
 
 const CommandPalette = ( {
 	currentSiteId,
-	navigate,
 	useCommands,
 	currentRoute,
 	isOpenGlobal,
@@ -427,7 +421,6 @@ const CommandPalette = ( {
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
-							navigate={ navigate }
 							useCommands={ useCommands }
 							currentRoute={ currentRoute }
 							useSites={ useSites }
@@ -443,5 +436,5 @@ const CommandPalette = ( {
 
 export default CommandPalette;
 export type { Command, CommandCallBackParams } from './use-command-palette';
-export type { useCommandsParams } from './commands/types';
-export { useSingleSiteCommands };
+export type { useCommandsParams } from './commands';
+export { COMMANDS } from './commands';

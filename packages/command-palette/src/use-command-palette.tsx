@@ -52,6 +52,11 @@ export interface CommandCallBackParams {
 	command: Command;
 }
 
+export enum SiteType {
+	ATOMIC = 'atomic',
+	SIMPLE = 'simple',
+}
+
 export interface Command {
 	name: string;
 	label: string;
@@ -62,6 +67,15 @@ export interface Command {
 	icon?: JSX.Element;
 	image?: JSX.Element;
 	siteFunctions?: SiteFunctions;
+	capability?: string;
+	siteType?: SiteType;
+	publicOnly?: boolean;
+	isCustomDomain?: boolean;
+	filterP2?: boolean;
+	filterStaging?: boolean;
+	filterSelfHosted?: boolean;
+	filterNotice?: string;
+	emptyListNotice?: string;
 }
 
 export interface useExtraCommandsParams {
@@ -73,7 +87,6 @@ interface useCommandPaletteOptions {
 	selectedCommandName: string;
 	setSelectedCommandName: ( name: string ) => void;
 	search: string;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: ( options: useCommandsParams ) => Command[];
 	currentRoute: string | null;
 	useSites: () => SiteExcerptData[];
@@ -150,12 +163,47 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) =>
 	return siteToAction;
 };
 
+const isCommandAvailableOnSite = (
+	command: Command,
+	site: SiteExcerptData,
+	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } }
+): boolean => {
+	if ( command?.capability && ! userCapabilities[ site.ID ]?.[ command.capability ] ) {
+		return false;
+	}
+
+	if ( command.siteType === SiteType.ATOMIC && ! site.is_wpcom_atomic ) {
+		return false;
+	}
+
+	if ( command?.isCustomDomain && ! isCustomDomain( site.slug ) ) {
+		return false;
+	}
+
+	if ( command?.publicOnly && ( site.is_coming_soon || site.is_private ) ) {
+		return false;
+	}
+
+	if ( command?.filterP2 && site.options?.is_wpforteams_site ) {
+		return false;
+	}
+
+	if ( command?.filterStaging && site.is_wpcom_staging_site ) {
+		return false;
+	}
+
+	if ( command?.filterSelfHosted && site.jetpack && ! site.is_wpcom_atomic ) {
+		return false;
+	}
+
+	return true;
+};
+
 export const useCommandPalette = ( {
 	currentSiteId,
 	selectedCommandName,
 	setSelectedCommandName,
 	search,
-	navigate,
 	useCommands,
 	currentRoute,
 	useSites = () => [],
@@ -174,19 +222,7 @@ export const useCommandPalette = ( {
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommands( {
 		setSelectedCommandName,
-		navigate,
-		currentRoute,
 	} ) as Command[];
-
-	const filterCurrentSiteCommands = ( site: SiteExcerptData, command: Command ) => {
-		const { capabilityFilter = false, filter = () => true } = command?.siteFunctions ?? {};
-		let hasCapability = true;
-		if ( capabilityFilter ) {
-			hasCapability = userCapabilities?.[ site.ID ]?.[ capabilityFilter ] ?? false;
-		}
-
-		return filter?.( site ) && hasCapability;
-	};
 
 	const trackSelectedCommand = ( command: Command ) => {
 		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
@@ -216,28 +252,24 @@ export const useCommandPalette = ( {
 		let filterNotice = undefined;
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteFunctions ) {
-			const { capabilityFilter, onClick, filter } = selectedCommand.siteFunctions;
+			const { onClick } = selectedCommand.siteFunctions;
 
 			const onClickSite: OnClickSiteFunction = ( { close, command, site } ) => {
 				onClick( { close, command, site } );
 				trackCompletedCommand( command );
 			};
 
-			let filteredSites = filter ? sites.filter( filter ) : sites;
-			if ( capabilityFilter ) {
-				filteredSites = filteredSites.filter( ( site ) => {
-					const siteCapabilities = userCapabilities[ site.ID ];
-					return siteCapabilities?.[ capabilityFilter ];
-				} );
-			}
+			let filteredSites = sites.filter( ( site ) =>
+				isCommandAvailableOnSite( selectedCommand, site, userCapabilities )
+			);
 			if ( sites.length === 0 ) {
 				emptyListNotice = __( "You don't have any sites yet.", __i18n_text_domain__ );
 			} else if ( filteredSites.length === 0 ) {
-				emptyListNotice = selectedCommand.siteFunctions?.emptyListNotice;
+				emptyListNotice = selectedCommand.emptyListNotice;
 			}
 			// Only show the filterNotice if there are some sites in the first place.
 			if ( filteredSites.length > 0 ) {
-				filterNotice = selectedCommand.siteFunctions?.filterNotice;
+				filterNotice = selectedCommand.filterNotice;
 			}
 
 			if ( currentSiteId ) {
@@ -319,10 +351,13 @@ export const useCommandPalette = ( {
 
 	const currentSite = sites.find( ( site ) => site.ID === currentSiteId );
 
-	// If we have a current site and the route includes the site slug, filter and map the commands for single site use.
-	if ( currentSite && currentRoute?.includes( ':site' ) ) {
+	// If we are on a current site context, filter and map the commands for single site use.
+	if (
+		currentSite &&
+		( currentRoute?.includes( ':site' ) || currentRoute?.startsWith( '/wp-admin' ) )
+	) {
 		finalSortedCommands = finalSortedCommands.filter( ( command ) =>
-			filterCurrentSiteCommands( currentSite, command )
+			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
 
 		finalSortedCommands = finalSortedCommands.map( ( command: Command ) => {

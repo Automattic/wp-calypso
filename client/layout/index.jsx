@@ -29,11 +29,10 @@ import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
-import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -437,8 +436,7 @@ class Layout extends Component {
 						isOpenGlobal={ this.props.isCommandPaletteOpen }
 						onClose={ this.props.closeCommandPalette }
 						currentSiteId={ this.props.siteId }
-						navigate={ navigate }
-						useCommands={ useCommandsArrayWpcom }
+						useCommands={ useCommandsCalypso }
 						currentRoute={ this.props.currentRoutePattern }
 						useSites={ useSiteExcerptsSorted }
 						userCapabilities={ this.props.userCapabilities }

@@ -12346,6 +12346,7 @@ __metadata:
     d3-shape: "npm:^1.3.7"
     debug: "npm:^4.3.3"
     deep-freeze: "npm:^0.0.1"
+    deepmerge: "npm:^4.3.0"
     diff: "npm:^4.0.2"
     dom-helpers: "npm:^5.1.3"
     dompurify: "npm:^2.2.9"
