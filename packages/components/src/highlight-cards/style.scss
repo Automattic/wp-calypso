@@ -494,8 +494,8 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .mobile-highlight-cards-listing {
 	display: flex;
 	flex-direction: column;
-	row-gap: 16px;
-	margin: 24px;
+	row-gap: 8px;
+	margin: 16px;
 
 	.mobile-highlight-cards__item {
 		display: flex;
