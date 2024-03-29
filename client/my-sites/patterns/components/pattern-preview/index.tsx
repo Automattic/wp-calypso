@@ -1,6 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
@@ -86,21 +87,40 @@ function PatternPreviewFragment( {
 		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
 	}, [ nodeSize.width, nodeSize.height ] );
 
-	// We deliberately use `Element::scrollIntoView` instead of setting an ID attribute on the
+	// We deliberately use `window.scrollBy` instead of setting an ID attribute on the
 	// `.pattern-preview` element to avoid a janky experience for users while the page is loading.
 	// This way, the browser doesn't scroll down to the relevant patterns until patterns are mostly
 	// finished loading.
 	useEffect( () => {
-		if ( window.location.hash !== `#${ idAttr }` || hasScrolledToAnchorRef.current ) {
+		if (
+			window.location.hash !== `#${ idAttr }` ||
+			hasScrolledToAnchorRef.current ||
+			! ref.current
+		) {
 			return;
 		}
 
 		const element = ref.current;
+
 		const timeoutId = setTimeout( function () {
 			hasScrolledToAnchorRef.current = true;
-			element?.scrollIntoView( {
+
+			const masterbarHeightRaw = getComputedStyle( document.documentElement ).getPropertyValue(
+				'--masterbar-height'
+			);
+			const masterbarHeight = /^\d+px$/.test( masterbarHeightRaw )
+				? parseInt( masterbarHeightRaw )
+				: 0;
+
+			const stickyNav = document.querySelector( '.pattern-library__pill-navigation' );
+			const stickyNavCoords = stickyNav?.getBoundingClientRect();
+			const stickyNavHeight = stickyNavCoords && ! isMobile() ? stickyNavCoords.height : 0;
+
+			const elementCoords = element.getBoundingClientRect();
+
+			window.scrollBy( {
 				behavior: 'smooth',
-				block: 'center',
+				top: elementCoords.top - stickyNavHeight - masterbarHeight - 16,
 			} );
 		}, 1000 );
 
