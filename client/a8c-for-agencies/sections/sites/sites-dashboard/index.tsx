@@ -14,9 +14,8 @@ import LayoutNavigation, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
-import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
@@ -26,9 +25,9 @@ import {
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
@@ -38,9 +37,11 @@ import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 import './style.scss';
 
 export default function SitesDashboard() {
-	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
+
+	const agency = useSelector( getActiveAgency );
+	const agencyId = agency ? agency.id : undefined;
 
 	const {
 		sitesViewState,
@@ -57,13 +58,12 @@ export default function SitesDashboard() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const { data: products } = useProductsQuery();
-	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const {
 		data: verifiedContacts,
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
-	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+	} = useFetchMonitorVerifiedContacts( false, agencyId );
 
 	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
@@ -79,14 +79,15 @@ export default function SitesDashboard() {
 		} );
 	}, [ sitesViewState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
-		isPartnerOAuthTokenLoaded,
-		sitesViewState.search,
-		sitesViewState.page,
-		agencyDashboardFilter,
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
+		isPartnerOAuthTokenLoaded: false,
+		searchQuery: sitesViewState.search,
+		currentPage: sitesViewState.page,
+		filter: agencyDashboardFilter,
 		sort,
-		sitesViewState.perPage
-	);
+		perPage: sitesViewState.perPage,
+		agencyId,
+	} );
 
 	useEffect( () => {
 		if ( sitesViewState.selectedSite && ! initialSelectedSiteUrl ) {
