@@ -183,7 +183,7 @@ export default function SitesDashboard() {
 		selectedText: selectedItem.label,
 	};
 
-	const isEmpty = data && data.sites.length === 0;
+	const isEmpty = ! isLoading && ! data?.sites?.length;
 
 	if ( isEmpty ) {
 		return <EmptyState />;
