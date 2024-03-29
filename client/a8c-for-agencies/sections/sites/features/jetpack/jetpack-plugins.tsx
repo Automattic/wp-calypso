@@ -18,7 +18,7 @@ export function JetpackPluginsPreview( { featureText, link, linkLabel, captionTe
 					<h3>{ featureText }</h3>
 					<p className="site-preview-pane__plugins-caption">{ captionText }</p>
 					<div style={ { marginTop: '24px' } }>
-						<Button href={ link } primary>
+						<Button href={ link } primary target="_blank">
 							{ linkLabel }
 							<Icon
 								icon={ external }
