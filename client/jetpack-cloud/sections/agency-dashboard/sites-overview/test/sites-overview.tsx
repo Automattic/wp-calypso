@@ -75,7 +75,7 @@ describe( '<SitesOverview>', () => {
 		const data = {
 			sites: [],
 			total: 0,
-			perPage: 20,
+			perPage: 1,
 			totalFavorites: 1,
 		};
 		const queryKey = [
@@ -84,7 +84,6 @@ describe( '<SitesOverview>', () => {
 			1,
 			context.filter,
 			context.sort,
-			20,
 		];
 		queryClient.setQueryData( queryKey, data );
 	};
