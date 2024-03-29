@@ -700,6 +700,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'a8c-for-agencies-landing',
+		paths: [ '/landing' ],
+		module: 'calypso/a8c-for-agencies/sections/landing',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'a8c-for-agencies-auth',
 		paths: [ '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',
