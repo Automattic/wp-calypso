@@ -4,16 +4,15 @@ import { UpgradePlanHostingDetailsList } from './constants';
 
 export const UpgradePlanHostingDetails = () => {
 	const { __ } = useI18n();
-	// const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div className="import__upgrade-plan-hosting-details-header">
 				<p className="import__upgrade-plan-hosting-details-header-main">
-					{ __( 'Why you should host with us' ) }
+					{ __( 'Why you should host with us?' ) }
 				</p>
 				<p className="import__upgrade-plan-hosting-details-header-subtext">
-					{ __( 'Our performance vs. the average WordPress host' ) }
+					{ __( 'Check our performance, compared to the average WordPress host' ) }
 				</p>
 			</div>
 			<div className="import__upgrade-plan-hosting-details-list">
@@ -33,30 +32,6 @@ export const UpgradePlanHostingDetails = () => {
 					) ) }
 				</ul>
 			</div>
-			{ /* <div className="import__upgrade-plan-hosting-details-testimonials-container">
-				<p>{ __( '100% loved by our best customers' ) }</p>
-				<div className="import__upgrade-plan-hosting-details-testimonials">
-					{ UpgradePlanHostingTestimonials.map(
-						( { customerName, customerTestimonial, customerInfo }, i ) => (
-							<UpgradePlanHostingDetailsTooltip
-								key={ i }
-								id={ `testimonial-${ i }` }
-								setActiveTooltipId={ setActiveTooltipId }
-								activeTooltipId={ activeTooltipId }
-								customerName={ customerName }
-								customerInfo={ customerInfo }
-								customerTestimonial={ customerTestimonial }
-								hideArrow={ false }
-							>
-								<WordPressLogo
-									className="import__upgrade-plan-hosting-details-testimonials-image"
-									size={ 24 }
-								/>
-							</UpgradePlanHostingDetailsTooltip>
-						)
-					) }
-				</div>
-			</div> */ }
 		</div>
 	);
 };

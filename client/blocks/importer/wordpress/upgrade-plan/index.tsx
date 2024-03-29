@@ -85,18 +85,13 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				<div className="import__heading import__heading-center">
 					<Title>
 						{ isEnglishLocale
-							? translate( "Elevate your site's performance" )
+							? translate( 'Take your site to the next level' )
 							: translate( 'Upgrade your plan' ) }
 					</Title>
 					<SubTitle className="onboarding-subtitle--full-width">
 						{ subTitleText || isEnglishLocale
 							? translate(
-									'Migrating your site requires a %(plan)s plan. Explore the benefits and take your site to the next level.',
-									{
-										args: {
-											plan: plan?.getTitle() ?? '',
-										},
-									}
+									'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
 							  )
 							: translate(
 									'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
