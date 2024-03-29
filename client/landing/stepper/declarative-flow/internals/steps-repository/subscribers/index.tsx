@@ -16,7 +16,7 @@ const Subscribers: Step = function ( { navigation } ) {
 	const { submit } = navigation;
 	const site = useSite();
 	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
-	const hasUnlimitedSubscribers = useSiteHasUnlimitedSubscribers();
+	const hasUnlimitedSubscribers = useSiteHasUnlimitedSubscribers( site?.ID );
 
 	const handleSubmit = () => {
 		submit?.();
