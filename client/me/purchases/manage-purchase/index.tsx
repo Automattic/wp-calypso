@@ -50,8 +50,10 @@ import {
 	PlanPrice,
 	MaterialIcon,
 } from '@automattic/components';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import classNames from 'classnames';
 import { localize, LocalizeProps, numberFormat, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -131,7 +133,7 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
 import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
-import { getSite, getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -1442,7 +1444,18 @@ function addPaymentMethodLinkText( {
 
 function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, purchase.siteId ) );
+	const site = useSelector( ( state ) => getSite( state, purchase.siteId ) );
+	const siteSlug = site?.slug;
+
+	// Create URLSearchParams for send feedback by email command
+	const { setInitialRoute, setShowHelpCenter, setSubject, setUserDeclaredSite } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const emailUrl = `/contact-form?${ new URLSearchParams( {
+		mode: 'EMAIL',
+		'disable-gpt': 'true',
+	} ).toString() }`;
+
 	const { isLoading, data: websiteContentQueryResult } = useGetWebsiteContentQuery( siteSlug );
 	const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 	if ( ! difmTieredPurchaseDetails ) {
@@ -1454,9 +1467,12 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 	const BBESupportLink = (
 		<a
-			href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
-				`I have a question about my project: ${ siteSlug }`
-			) }` }
+			onClick={ () => {
+				setInitialRoute( emailUrl );
+				setUserDeclaredSite( site );
+				setSubject( `I have a question about my project` );
+				setShowHelpCenter( true );
+			} }
 		/>
 	);
 
