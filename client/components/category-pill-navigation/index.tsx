@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { SelectDropdown } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -76,47 +75,33 @@ export const CategoryPillNavigation = ( {
 	}, [ selectedCategoryId ] );
 
 	if ( isMobile ) {
-		const currentUrl =
-			typeof window === 'undefined' ? '' : window.location.pathname + window.location.search;
-
-		const selectedText = [ ...categories, ...( buttons || [] ) ].find(
-			( { link } ) => currentUrl === addLocaleToPathLocaleInFront( link )
-		)?.label;
-
+		const selectedItem =
+			buttons?.find( ( { isActive } ) => isActive ) ||
+			categories.find( ( { id } ) => id === selectedCategoryId );
 		return (
 			<div className="category-pill-navigation">
 				<SelectDropdown
 					className="category-pill-navigation__mobile-select"
-					selectedText={ selectedText }
+					selectedText={ selectedItem?.label }
 				>
-					{ buttons &&
-						buttons.map( ( button ) => {
-							const value = addLocaleToPathLocaleInFront( button.link );
-
-							return (
-								<SelectDropdown.Item
-									key={ button.label }
-									selected={ value === currentUrl }
-									onClick={ () => page( value ) }
-								>
-									{ button.label }
-								</SelectDropdown.Item>
-							);
-						} ) }
-					{ categories &&
-						categories.map( ( category ) => {
-							const value = addLocaleToPathLocaleInFront( category.link );
-
-							return (
-								<SelectDropdown.Item
-									key={ category.id }
-									selected={ value === currentUrl }
-									onClick={ () => page( value ) }
-								>
-									{ category.label }
-								</SelectDropdown.Item>
-							);
-						} ) }
+					{ buttons?.map( ( button ) => (
+						<SelectDropdown.Item
+							key={ button.label }
+							path={ addLocaleToPathLocaleInFront( button.link ) }
+							selected={ button.isActive }
+						>
+							{ button.label }
+						</SelectDropdown.Item>
+					) ) }
+					{ categories?.map( ( category ) => (
+						<SelectDropdown.Item
+							key={ category.id }
+							path={ addLocaleToPathLocaleInFront( category.link ) }
+							selected={ category.id === selectedCategoryId }
+						>
+							{ category.label }
+						</SelectDropdown.Item>
+					) ) }
 				</SelectDropdown>
 			</div>
 		);
