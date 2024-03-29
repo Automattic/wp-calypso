@@ -12,10 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
-import ShortenedNumber from '../number-formatters';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import CountComparisonCard, { TrendComparison } from './count-comparison-card';
+import CountComparisonCard from './count-comparison-card';
+import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
 
@@ -228,19 +228,7 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 		},
 	];
 
-	return (
-		<div className="highlight-cards-list-mobile">
-			{ highlights.map( ( highlight ) => (
-				<MobileHighlightCard
-					key={ highlight.heading }
-					heading={ highlight.heading }
-					count={ highlight.count }
-					previousCount={ highlight.previousCount }
-					icon={ highlight.icon }
-				/>
-			) ) }
-		</div>
-	);
+	return <MobileHighlightCardListing highlights={ highlights } />;
 }
 
 export default function WeeklyHighlightCards( {
@@ -352,46 +340,6 @@ export default function WeeklyHighlightCards( {
 					/>
 				}
 			/>
-		</div>
-	);
-}
-
-function MobileHighlightCard( {
-	heading,
-	count,
-	previousCount,
-	icon,
-}: {
-	heading: string;
-	count: number | null;
-	previousCount?: number | null;
-	icon?: any;
-} ) {
-	// We require at minimum a heading and a count.
-	const isValidHighlight = count !== null || heading.length > 0;
-	if ( ! isValidHighlight ) {
-		return null;
-	}
-	// We require two counts to display a trendline.
-	// The icon is optional.
-	const displayTrendline = count !== null && previousCount !== null;
-	const displayIcon = icon !== undefined;
-	return (
-		<div className="highlight-cards-list-mobile__item">
-			{ displayIcon && (
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ icon } />
-				</span>
-			) }
-			<span className="highlight-cards-list-mobile__item-heading">{ heading }</span>
-			{ displayTrendline && (
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison count={ count ?? null } previousCount={ previousCount ?? null } />
-				</span>
-			) }
-			<span className="highlight-cards-list-mobile__item-count">
-				<ShortenedNumber value={ count ?? null } />
-			</span>
 		</div>
 	);
 }
