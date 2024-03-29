@@ -276,7 +276,7 @@ $business-plan-color: #7f54b3;
 			.import__upgrade-plan-hosting-details-header-subtext {
 				color: var(--studio-gray-50, #646970);
 				font-size: 0.75rem;
-				line-height: 16px;
+				line-height: 1.4;
 				margin-bottom: 0;
 			}
 		}
@@ -300,17 +300,17 @@ $business-plan-color: #7f54b3;
 
 			.import__upgrade-plan-hosting-details-list-icon {
 				border-radius: 4px;
-				background-color: #f2e9ed;
+				background-color: var(--studio-purple-0);
 				padding: 4px;
-				border: 2px solid #f2e9ed;
-				fill: #984a9c;
+				border: 2px solid var(--studio-purple-0);
+				fill: var(--studio-purple-50);
 			}
 
 			.import__upgrade-plan-hosting-details-list-stats {
 				display: flex;
 				flex-direction: column;
 				gap: 0.125rem;
-				line-height: 16px;
+				line-height: 1.4;
 				justify-content: space-around;
 
 				span {
@@ -378,7 +378,7 @@ $business-plan-color: #7f54b3;
 		flex-direction: column;
 		font-family: "SF Pro Text", sans-serif;
 		font-size: 0.875rem;
-		line-height: 16px;
+		line-height: 1.4;
 		border: 1px solid #c3c4c7;
 		box-shadow:
 			0 15px 20px 0 rgba(0, 0, 0, 0.04),
