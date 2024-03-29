@@ -31,6 +31,14 @@
 			}
 		}
 	}
+
+	@media ( max-width: $break-mobile ) {
+		position: static;
+
+		.category-pill-navigation {
+			padding: 24px;
+		}
+	}
 }
 
 .pattern-library__pill-navigation + .patterns-section {
