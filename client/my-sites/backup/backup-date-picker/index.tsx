@@ -211,7 +211,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 				selectedDate={ selectedDate }
 				firstBackupDate={ oldestDateAvailable }
 				disabledDates={ datesWithNoBackups.dates }
-				disabled={ hasNoBackups }
+				{ ...( hasNoBackups ? { disabled: true } : {} ) }
 			/>
 		</div>
 	);

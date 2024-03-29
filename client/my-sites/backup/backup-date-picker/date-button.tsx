@@ -110,7 +110,7 @@ type Props = {
 	firstBackupDate: Moment | undefined;
 	onDateSelected: ( m: Moment ) => void;
 	disabledDates: Array< string >;
-	disabled: boolean;
+	disabled?: boolean;
 };
 
 export default DateButton;
