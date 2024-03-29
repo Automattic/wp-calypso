@@ -201,32 +201,44 @@ type WeeklyHighlighCardsMobileProps = {
 
 function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCardsMobileProps ) {
 	const translate = useTranslate();
+	const highlights = [
+		{
+			heading: translate( 'Visitors' ),
+			count: counts?.visitors,
+			previousCount: previousCounts?.visitors,
+			icon: people,
+		},
+		{
+			heading: translate( 'Views' ),
+			count: counts?.views,
+			previousCount: previousCounts?.views,
+			icon: eye,
+		},
+		{
+			heading: translate( 'Likes' ),
+			count: counts?.likes,
+			previousCount: previousCounts?.likes,
+			icon: starEmpty,
+		},
+		{
+			heading: translate( 'Comments' ),
+			count: counts?.comments,
+			previousCount: previousCounts?.comments,
+			icon: commentContent,
+		},
+	];
+
 	return (
 		<div className="highlight-cards-list-mobile">
-			<MobileHighlightCard
-				heading={ translate( 'Visitors' ) }
-				icon={ people }
-				count={ counts?.visitors ?? null }
-				previousCount={ previousCounts?.visitors ?? null }
-			/>
-			<MobileHighlightCard
-				heading={ translate( 'Views' ) }
-				icon={ eye }
-				count={ counts?.views ?? null }
-				previousCount={ previousCounts?.views ?? null }
-			/>
-			<MobileHighlightCard
-				heading={ translate( 'Likes' ) }
-				icon={ starEmpty }
-				count={ counts?.likes ?? null }
-				previousCount={ previousCounts?.likes ?? null }
-			/>
-			<MobileHighlightCard
-				heading={ translate( 'Comments' ) }
-				icon={ commentContent }
-				count={ counts?.comments ?? null }
-				previousCount={ previousCounts?.comments ?? null }
-			/>
+			{ highlights.map( ( highlight ) => (
+				<MobileHighlightCard
+					key={ highlight.heading }
+					heading={ highlight.heading }
+					count={ highlight.count }
+					previousCount={ highlight.previousCount }
+					icon={ highlight.icon }
+				/>
+			) ) }
 		</div>
 	);
 }
