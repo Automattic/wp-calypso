@@ -15,7 +15,10 @@ export function PatternsGetStarted() {
 			bodyFullWidth
 			description={ translate( 'Take a look at our how-to guides to get started with patterns.' ) }
 			theme="dark"
-			title={ translate( 'All about patterns' ) }
+			title={ translate( 'All about patterns', {
+				comment: 'Heading text in a section with informative links about block patterns',
+				textOnly: true,
+			} ) }
 		>
 			<div className="patterns-get-started__buttons">
 				<Button className="patterns-get-started__start-button" href="/start">
