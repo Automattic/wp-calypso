@@ -5,7 +5,7 @@ import config from '@automattic/calypso-config';
  * This is needed as WP.com Simple Classic is loading Odyssey Stats, which we will use the public-api.wordpress.com APIs.
  * @returns {string} The API namespace to use.
  */
-export const getApiNamespace = () => {
+export const getApiNamespace = (): string => {
 	return config.isEnabled( 'is_running_in_jetpack_site' ) ? 'jetpack/v4' : 'rest/v1.1';
 };
 
