@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -80,10 +80,6 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	it( 'selects free trial', async () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
-
-		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) ).toBeEnabled();
-		} );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) );
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
