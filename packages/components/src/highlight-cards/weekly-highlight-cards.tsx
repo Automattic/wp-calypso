@@ -203,70 +203,30 @@ function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCa
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list-mobile">
-			<div className="highlight-cards-list-mobile__item" key="visitors">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ people } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">
-					{ translate( 'Visitors' ) }
-				</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.visitors ?? null }
-						previousCount={ previousCounts?.visitors ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.visitors ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="views">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ eye } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Views' ) }</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.views ?? null }
-						previousCount={ previousCounts?.views ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.views ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="likes">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ starEmpty } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.likes ?? null }
-						previousCount={ previousCounts?.likes ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.likes ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="comments">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ commentContent } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">
-					{ translate( 'Comments' ) }
-				</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.comments ?? null }
-						previousCount={ previousCounts?.comments ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.comments ?? null } />
-				</span>
-			</div>
+			<MobileHighlightCard
+				heading={ translate( 'Visitors' ) }
+				icon={ people }
+				count={ counts?.visitors ?? null }
+				previousCount={ previousCounts?.visitors ?? null }
+			/>
+			<MobileHighlightCard
+				heading={ translate( 'Views' ) }
+				icon={ eye }
+				count={ counts?.views ?? null }
+				previousCount={ previousCounts?.views ?? null }
+			/>
+			<MobileHighlightCard
+				heading={ translate( 'Likes' ) }
+				icon={ starEmpty }
+				count={ counts?.likes ?? null }
+				previousCount={ previousCounts?.likes ?? null }
+			/>
+			<MobileHighlightCard
+				heading={ translate( 'Comments' ) }
+				icon={ commentContent }
+				count={ counts?.comments ?? null }
+				previousCount={ previousCounts?.comments ?? null }
+			/>
 		</div>
 	);
 }
@@ -380,6 +340,46 @@ export default function WeeklyHighlightCards( {
 					/>
 				}
 			/>
+		</div>
+	);
+}
+
+function MobileHighlightCard( {
+	heading,
+	count,
+	previousCount,
+	icon,
+}: {
+	heading: string;
+	count: number | null;
+	previousCount?: number | null;
+	icon?: any;
+} ) {
+	// We require at minimum a heading and a count.
+	const isValidHighlight = count !== null || heading.length > 0;
+	if ( ! isValidHighlight ) {
+		return null;
+	}
+	// We require two counts to display a trendline.
+	// The icon is optional.
+	const displayTrendline = count !== null && previousCount !== null;
+	const displayIcon = icon !== undefined;
+	return (
+		<div className="highlight-cards-list-mobile__item">
+			{ displayIcon && (
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ icon } />
+				</span>
+			) }
+			<span className="highlight-cards-list-mobile__item-heading">{ heading }</span>
+			{ displayTrendline && (
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison count={ count ?? null } previousCount={ previousCount ?? null } />
+				</span>
+			) }
+			<span className="highlight-cards-list-mobile__item-count">
+				<ShortenedNumber value={ count ?? null } />
+			</span>
 		</div>
 	);
 }
