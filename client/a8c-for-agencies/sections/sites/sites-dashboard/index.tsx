@@ -13,6 +13,7 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
@@ -89,6 +90,8 @@ export default function SitesDashboard() {
 		perPage: sitesViewState.perPage,
 		agencyId,
 	} );
+
+	const noActiveSite = useNoActiveSite();
 
 	useEffect( () => {
 		if ( sitesViewState.selectedSite && ! initialSelectedSiteUrl ) {
@@ -183,9 +186,7 @@ export default function SitesDashboard() {
 		selectedText: selectedItem.label,
 	};
 
-	const isEmpty = ! isLoading && ! data?.sites?.length;
-
-	if ( isEmpty ) {
+	if ( noActiveSite ) {
 		return <EmptyState />;
 	}
 

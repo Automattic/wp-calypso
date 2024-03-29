@@ -2,9 +2,7 @@ import page from '@automattic/calypso-router';
 import { category, chevronLeft, starEmpty, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import { useSelector } from 'calypso/state';
-import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import Sidebar from '../sidebar';
 import {
 	A4A_OVERVIEW_LINK,
@@ -21,24 +19,10 @@ type Props = {
 export default function ( { path }: Props ) {
 	const translate = useTranslate();
 
-	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-
-	const { data, isLoading } = useFetchDashboardSites(
-		isPartnerOAuthTokenLoaded,
-		'',
-		1,
-		{
-			issueTypes: [],
-			showOnlyFavorites: false,
-		},
-		{
-			field: '',
-			direction: '',
-		}
-	);
+	const noActiveSite = useNoActiveSite();
 
 	const menuItems = useMemo( () => {
-		if ( isLoading || ! data?.sites?.length ) {
+		if ( noActiveSite ) {
 			// We hide the rest of the options when we do not have sites yet.
 			return [
 				createItem(
@@ -96,7 +80,7 @@ export default function ( { path }: Props ) {
 				path
 			),
 		].map( ( item ) => createItem( item, path ) );
-	}, [ data?.sites?.length, isLoading, path, translate ] );
+	}, [ noActiveSite, path, translate ] );
 
 	return (
 		<Sidebar
