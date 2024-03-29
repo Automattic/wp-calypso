@@ -2,6 +2,9 @@ import page from '@automattic/calypso-router';
 import { category, chevronLeft, starEmpty, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import { useSelector } from 'calypso/state';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import Sidebar from '../sidebar';
 import {
 	A4A_OVERVIEW_LINK,
@@ -18,7 +21,42 @@ type Props = {
 export default function ( { path }: Props ) {
 	const translate = useTranslate();
 
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
+
+	const { data, isLoading } = useFetchDashboardSites(
+		isPartnerOAuthTokenLoaded,
+		'',
+		1,
+		{
+			issueTypes: [],
+			showOnlyFavorites: false,
+		},
+		{
+			field: '',
+			direction: '',
+		}
+	);
+
 	const menuItems = useMemo( () => {
+		if ( isLoading || ! data?.sites?.length ) {
+			// We hide the rest of the options when we do not have sites yet.
+			return [
+				createItem(
+					{
+						id: 'sites-all-menu-item',
+						icon: category,
+						path: A4A_SITES_LINK,
+						link: A4A_SITES_LINK,
+						title: translate( 'All' ),
+						trackEventProps: {
+							menu_item: 'Automattic for Agencies / Sites / All',
+						},
+					},
+					path
+				),
+			];
+		}
+
 		return [
 			createItem(
 				{
@@ -58,7 +96,7 @@ export default function ( { path }: Props ) {
 				path
 			),
 		].map( ( item ) => createItem( item, path ) );
-	}, [ path, translate ] );
+	}, [ data?.sites?.length, isLoading, path, translate ] );
 
 	return (
 		<Sidebar
