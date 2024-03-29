@@ -6,6 +6,7 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
@@ -161,6 +162,29 @@ export const PatternLibrary = ( {
 		setSearchFormKey( category );
 	}, [ category ] );
 
+	const [ isSticky, setIsSticky ] = useState( false );
+	const navRef = useRef< HTMLDivElement >( null );
+	const prevNavTopValue = useRef( 0 );
+
+	useEffect( () => {
+		const handleScroll = () => {
+			if ( ! navRef.current ) {
+				return;
+			}
+
+			const navbarPosition = navRef.current.getBoundingClientRect().top;
+
+			setIsSticky( navbarPosition === prevNavTopValue.current );
+
+			prevNavTopValue.current = navbarPosition;
+		};
+
+		window.addEventListener( 'scroll', handleScroll, { passive: true } );
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [] );
+
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 
 	const categoryNavList = categories.map( ( category ) => {
@@ -207,7 +231,12 @@ export const PatternLibrary = ( {
 			/>
 
 			<div className="pattern-library__wrapper">
-				<div className="pattern-library__pill-navigation">
+				<div
+					className={ classNames( 'pattern-library__pill-navigation', {
+						'pattern-library__pill-navigation--sticky': isSticky,
+					} ) }
+					ref={ navRef }
+				>
 					<CategoryPillNavigation
 						selectedCategoryId={ category }
 						buttons={ [
