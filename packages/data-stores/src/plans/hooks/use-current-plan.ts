@@ -6,6 +6,7 @@ interface Props {
 	siteId?: string | number | null;
 }
 
+// TODO: Use this hook to retrieve current plan in plans grid
 const useCurrentPlan = ( { siteId }: Props ): SitePlan | undefined => {
 	const sitePlans = useSitePlans( { siteId } );
 

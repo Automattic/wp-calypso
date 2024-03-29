@@ -25,6 +25,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
+	hasDomainCredit?: boolean;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
@@ -39,6 +40,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	allFeaturesList,
+	hasDomainCredit,
 	intent,
 	selectedFeature,
 	showLegacyStorageFeature,
@@ -133,6 +135,14 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						};
 					} );
 
+					// if ( ! hasDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
+					// 	console.log( 'HERE' );
+					// 	wpcomFeaturesTransformed.push( {
+					// 		...feature,
+					// 		availableOnlyForAnnualPlans,
+					// 		availableForCurrentPlan: false,
+					// 	} );
+
 					if ( highlightedFeatures ) {
 						// slice() and reverse() are needed to the preserve order of features
 						highlightedFeatures
@@ -175,6 +185,12 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							const isHighlightedFeature =
 								highlightedFeatures && highlightedFeatures.includes( feature.getSlug() );
 							if ( feature === topFeature || isHighlightedFeature ) {
+								return;
+							}
+
+							// TODO: We need to update information from the API about whether a domain credit has been used,
+							// not whether or not a credit is available.
+							if ( ! hasDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
 								return;
 							}
 
