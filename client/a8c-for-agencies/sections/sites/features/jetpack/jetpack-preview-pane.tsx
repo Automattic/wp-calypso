@@ -67,7 +67,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview />
+				<JetpackBackupPreview sideId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -113,7 +113,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview />
+				<JetpackActivityPreview sideId={ site.blog_id } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]

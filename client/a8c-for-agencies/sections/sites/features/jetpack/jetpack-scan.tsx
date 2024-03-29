@@ -6,6 +6,8 @@ import {
 	showUnavailableForVaultPressSites,
 	scan,
 } from 'calypso/my-sites/scan/controller';
+import { useDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 import 'calypso/my-sites/scan/style.scss';
 
@@ -40,6 +42,12 @@ export function JetpackScanPreview( { sideId }: Props ) {
 			site: sideId,
 		},
 	};
+
+	const dispatch = useDispatch();
+
+	if ( sideId ) {
+		dispatch( setSelectedSiteId( sideId ) );
+	}
 
 	processContextsChain( contextsChain, context );
 
