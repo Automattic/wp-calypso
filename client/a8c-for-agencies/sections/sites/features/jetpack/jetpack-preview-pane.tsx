@@ -98,7 +98,7 @@ export function JetpackPreviewPane( {
 						args: { siteUrl: site.url },
 					} ) }
 					captionText={ translate(
-						"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. in the meantime, you'll be taken to WP-Admin."
+						"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
 					) }
 				/>
 			),
