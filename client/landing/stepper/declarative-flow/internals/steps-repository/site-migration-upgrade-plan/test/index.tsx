@@ -39,7 +39,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		} );
 	};
 
-	it( 'selects business as default plan', async () => {
+	it( 'selects annual plan as default', async () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
@@ -51,7 +51,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		} );
 	} );
 
-	it( 'selects montly plan', async () => {
+	it( 'selects the monthly plan', async () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
@@ -64,7 +64,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		} );
 	} );
 
-	it( 'selects annually plan', async () => {
+	it( 'selects annual plan', async () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
