@@ -91,7 +91,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 					<SubTitle className="onboarding-subtitle--full-width">
 						{ subTitleText || isEnglishLocale
 							? translate(
-									'Migrating your site requires a Creator plan. Explore the benefits and take your site to the next level.',
+									'Migrating your site requires a %(plan)s plan. Explore the benefits and take your site to the next level.',
 									{
 										args: {
 											plan: plan?.getTitle() ?? '',
