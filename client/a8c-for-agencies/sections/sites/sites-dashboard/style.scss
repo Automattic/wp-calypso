@@ -28,7 +28,7 @@
 		margin-right: 10px;
 	}
 
-	@media (min-width: $break-wide) {
+	@media (min-width: $break-large) {
 		background: inherit;
 
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
@@ -51,7 +51,7 @@
 		}
 	}
 
-	@media (max-width: $break-wide) {
+	@media (max-width: $break-large) {
 		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
 
 		.section-nav__mobile-header {
@@ -145,7 +145,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+3):nth-child(-n+9) {
+		td:nth-child(n+2):nth-child(-n+8) {
 			display: none;
 		}
 
@@ -443,7 +443,7 @@
 			}
 		}
 
-		@media only screen and (min-width: $break-wide) {
+		@media only screen and (min-width: $break-large) {
 			.sites-overview {
 				padding: 24px 18px;
 			}
@@ -479,7 +479,7 @@
 				padding: 0;
 			}
 
-			@media only screen and (min-width: $break-wide) {
+			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
 					overflow-x: auto;
@@ -525,7 +525,7 @@
 			max-height: 40px;
 		}
 
-		@include break-wide {
+		@include break-large {
 			flex-direction: row;
 		}
 	}
