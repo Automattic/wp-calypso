@@ -13,10 +13,18 @@ export function PatternsCopyPasteInfo() {
 		<PatternsSection
 			bodyFullWidth
 			description={ translate(
-				'Pick out a pattern, copy-paste it into your design, and customize it any way you like. No plugins needed.'
+				'Pick out a pattern, copy-paste it into your design, and customize it any way you like. No plugins needed.',
+				{
+					comment: 'Refers to block patterns in the WordPress.com pattern library',
+					textOnly: true,
+				}
 			) }
 			theme="dark"
-			title={ translate( 'Copy, paste, customize—it’s easy like that' ) }
+			title={ translate( 'Copy, paste, customize—it’s easy like that', {
+				comment:
+					'Heading text in a section that contains info about block patterns built by WordPress.com',
+				textOnly: true,
+			} ) }
 		>
 			<div className="section-patterns-info">
 				<div className="section-patterns-info__inner">
@@ -26,7 +34,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translate( 'Copy-paste your way' ) }
+							{ translate( 'Copy-paste your way', {
+								comment:
+									'Refers to block patterns, and the fact that they can easily be copy-pasted',
+							} ) }
 						</div>
 						<div className="section-patterns-info__item-description">
 							{ translate(
@@ -41,7 +52,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translate( 'Bring your style with you' ) }
+							{ translate( 'Bring your style with you', {
+								comment:
+									'Refers to block patterns built by WordPress.com, and the way they adapt to theme style settings',
+							} ) }
 						</div>
 						<div className="section-patterns-info__item-description">
 							{ translate(
@@ -56,7 +70,10 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translate( 'Make it yours' ) }
+							{ translate( 'Make it yours', {
+								comment:
+									'Refers to block patterns, and their ability to be customized to build a site.',
+							} ) }
 						</div>
 						<div className="section-patterns-info__item-description">
 							{ translate(
@@ -71,11 +88,18 @@ export function PatternsCopyPasteInfo() {
 						</div>
 
 						<div className="section-patterns-info__item-title">
-							{ translate( 'Responsive by design' ) }
+							{ translate( 'Responsive by design', {
+								comment:
+									'Refers to block patterns built by WordPress.com, and their built-in responsiveness.',
+							} ) }
 						</div>
 						<div className="section-patterns-info__item-description">
 							{ translate(
-								'All patterns are fully responsive to ensure they look fantastic on any device or screen.'
+								'All patterns are fully responsive to ensure they look fantastic on any device or screen.',
+								{
+									comment:
+										'Refers to block patterns built by WordPress.com, and their built-in responsiveness.',
+								}
 							) }
 						</div>
 					</div>

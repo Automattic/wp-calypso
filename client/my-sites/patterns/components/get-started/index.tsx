@@ -40,7 +40,8 @@ export function PatternsGetStarted() {
 						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
 						<div className="patterns-get-started__item-description">
 							{ translate( 'Block Patterns', {
-								comment: 'This string is refers to the title of the Block Patterns support page',
+								comment:
+									'This string is a copy of the page title from wordpress.com/support/wordpress-editor/block-pattern/',
 							} ) }
 						</div>
 					</a>
@@ -59,7 +60,10 @@ export function PatternsGetStarted() {
 						/>
 						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
 						<div className="patterns-get-started__item-description">
-							{ translate( 'Use Pre-Made Page Layouts' ) }
+							{ translate( 'Use Pre-Made Page Layouts', {
+								comment:
+									'This string is a copy of the page title from wordpress.com/support/wordpress-editor/page-layouts/',
+							} ) }
 						</div>
 					</a>
 
@@ -77,7 +81,10 @@ export function PatternsGetStarted() {
 						/>
 						<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
 						<div className="patterns-get-started__item-description">
-							{ translate( 'Design Your Homepage' ) }
+							{ translate( 'Design Your Homepage', {
+								comment:
+									'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
+							} ) }
 						</div>
 					</a>
 				</div>
