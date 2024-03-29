@@ -15,11 +15,7 @@ type AnnualHighlightCounts = {
 	followers: number | null;
 };
 
-type AnnualHighlightsMobileProps = {
-	counts: AnnualHighlightCounts;
-};
-
-type AnnualHighlightsStandardProps = {
+type AnnualHighlightsProps = {
 	counts: AnnualHighlightCounts;
 };
 
@@ -31,7 +27,7 @@ type AnnualHighlightCardsProps = {
 	navigation?: React.ReactNode;
 };
 
-function AnnualHighlightsMobile( { counts }: AnnualHighlightsMobileProps ) {
+function AnnualHighlightsMobile( { counts }: AnnualHighlightsProps ) {
 	const translate = useTranslate();
 
 	const highlights = [
@@ -45,7 +41,7 @@ function AnnualHighlightsMobile( { counts }: AnnualHighlightsMobileProps ) {
 	return <MobileHighlightCardListing highlights={ highlights } />;
 }
 
-function AnnualHighlightsStandard( { counts }: AnnualHighlightsStandardProps ) {
+function AnnualHighlightsStandard( { counts }: AnnualHighlightsProps ) {
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list">
