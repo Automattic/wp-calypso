@@ -169,7 +169,7 @@
 
 		.dataviews-view-table-wrapper {
 			overflow-y: auto;
-			max-height: calc(100vh - 465px); /* 465px is the size of all the content above the dataview, which includes our CTA elements, plus a 10px margin. */
+			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
 
 			table {
 				width: 100%;
