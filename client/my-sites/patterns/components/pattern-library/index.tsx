@@ -163,7 +163,7 @@ export const PatternLibrary = ( {
 	}, [ category ] );
 
 	const [ isSticky, setIsSticky ] = useState( false );
-	const navRef = useRef< HTMLElement >( null );
+	const navRef = useRef< HTMLDivElement >( null );
 	const prevNavTopValue = useRef( 0 );
 
 	useEffect( () => {
