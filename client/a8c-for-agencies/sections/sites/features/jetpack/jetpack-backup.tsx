@@ -4,14 +4,14 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import SitePreviewPaneContent from '../../site-preview-pane/site-preview-pane-content';
 
 type Props = {
-	sideId: number;
+	siteId: number;
 };
 
-export function JetpackBackupPreview( { sideId }: Props ) {
+export function JetpackBackupPreview( { siteId }: Props ) {
 	const dispatch = useDispatch();
 
-	if ( sideId ) {
-		dispatch( setSelectedSiteId( sideId ) );
+	if ( siteId ) {
+		dispatch( setSelectedSiteId( siteId ) );
 	}
 
 	return (

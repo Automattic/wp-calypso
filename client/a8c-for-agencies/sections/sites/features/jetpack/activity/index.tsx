@@ -7,14 +7,14 @@ import 'calypso/my-sites/activity/activity-log-v2/style.scss';
 import './style.scss';
 
 type Props = {
-	sideId: number;
+	siteId: number;
 };
 
-export function JetpackActivityPreview( { sideId }: Props ) {
+export function JetpackActivityPreview( { siteId }: Props ) {
 	const dispatch = useDispatch();
 
-	if ( sideId ) {
-		dispatch( setSelectedSiteId( sideId ) );
+	if ( siteId ) {
+		dispatch( setSelectedSiteId( siteId ) );
 	}
 	return (
 		<SitePreviewPaneContent>

@@ -67,7 +67,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview sideId={ site.blog_id } />
+				<JetpackBackupPreview siteId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -75,7 +75,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview sideId={ site.blog_id } />
+				<JetpackScanPreview siteId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				JETPACK_MONITOR_ID,
@@ -113,7 +113,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview sideId={ site.blog_id } />
+				<JetpackActivityPreview siteId={ site.blog_id } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
