@@ -3,7 +3,7 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
@@ -11,7 +11,6 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getTheme } from 'calypso/state/themes/selectors';
-import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -71,11 +70,9 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.SITE_PROMPT,
-			STEPS.PATTERN_ASSEMBLER,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.SITE_EDITOR,
 			STEPS.PLANS,
 			STEPS.DOMAINS,
 			STEPS.SITE_LAUNCH,
@@ -91,13 +88,37 @@ const withAIAssemblerFlow: Flow = {
 		);
 
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
-		const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
-		const { site, siteSlug, siteId } = useSiteData();
 
-		const exitFlow = ( to: string ) => {
+		const { saveSiteSettings, setIntentOnSite, setDesignOnSite, setStaticHomepageOnSite } =
+			useDispatch( SITE_STORE );
+
+		const exitFlow = ( selectedSiteId: string, selectedSiteSlug: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
-					window.location.assign( to );
+					if ( ! selectedSiteId || ! selectedSiteSlug ) {
+						return;
+					}
+
+					const pendingActions = [
+						resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
+					];
+
+					pendingActions.push(
+						setDesignOnSite( selectedSiteSlug, {
+							theme: 'assembler',
+						} )
+					);
+
+					// Setting "About" as the static homepage. We may want to change that.
+					pendingActions.push( setStaticHomepageOnSite( selectedSiteId, 1 ) );
+
+					// TODO: Somehow pass the informaation that would lead to setting a sticker.
+					// I was thinking we could use SiteIntent.
+
+					Promise.all( pendingActions ).then( ( results ) => {
+						// URL is in the results from the first promise.
+						window.location.assign( results[ 0 ].URL + '/wp-admin/site-editor.php' );
+					} );
 				} );
 			} );
 
@@ -121,7 +142,7 @@ const withAIAssemblerFlow: Flow = {
 				params.set( 'isNewSite', 'true' );
 			}
 
-			return navigate( `site-editor?${ params }` );
+			return exitFlow( selectedSiteId, selectedSiteSlug );
 		};
 
 		const submit = async (

@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ThunkAction } from 'redux-thunk';
@@ -25,7 +25,7 @@ const SiteEditor: Step = ( { flow }: SiteEditorProps ) => {
 
 	let conditions: PromiseLike< string > = Promise.resolve( '' );
 
-	if ( site && flow === 'ai-assembler' ) {
+	if ( site && flow === AI_ASSEMBLER_FLOW ) {
 		conditions = reduxDispatch(
 			activateOrInstallThenActivate( 'assembler', site.ID, 'assembler', false ) as ThunkAction<
 				PromiseLike< string >,
