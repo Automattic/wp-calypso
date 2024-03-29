@@ -127,6 +127,7 @@ const siteMigration: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
+		const fromQueryParam = urlQueryParams.get( 'from' );
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
@@ -210,8 +211,8 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = addQueryArgs(
 							{
-								flags: 'onboarding/new-migration-flow',
 								siteSlug,
+								from: fromQueryParam,
 							},
 							`/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);

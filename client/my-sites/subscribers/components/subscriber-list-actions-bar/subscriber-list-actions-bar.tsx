@@ -28,6 +28,7 @@ const ListActionsBar = () => {
 		filterOption,
 		setFilterOption,
 		siteId,
+		grandTotal,
 	} = useSubscribersPage();
 	const sortOptions = useMemo( () => getSortOptions( translate ), [ translate ] );
 	const recordSort = useRecordSort();
@@ -36,6 +37,10 @@ const ListActionsBar = () => {
 	const selectedText = translate( 'Subscribers: %s', {
 		args: getOptionLabel( filterOptions, filterOption ) || '',
 	} );
+
+	if ( grandTotal < 3 ) {
+		return <></>;
+	}
 
 	return (
 		<div className="list-actions-bar">
