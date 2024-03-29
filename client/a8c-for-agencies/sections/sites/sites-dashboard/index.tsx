@@ -17,7 +17,6 @@ import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
 import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
@@ -29,6 +28,7 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import OverviewHeaderActions from '../../overview/header-actions';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SiteNotifications from '../sites-notifications';
 import { getSelectedFilters } from './get-selected-filters';
@@ -200,8 +200,8 @@ export default function SitesDashboard() {
 						<LayoutHeader>
 							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
-								{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
-								<SiteTopHeaderButtons />
+								{ /* TODO: We were using a component from the overview header actions. We have to check if this is the best header available for the sites page. */ }
+								<OverviewHeaderActions />
 							</Actions>
 						</LayoutHeader>
 						<LayoutNavigation { ...selectedItemProps }>
