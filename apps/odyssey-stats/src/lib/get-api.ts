@@ -12,6 +12,7 @@ export const getApiNamespace = (): string => {
 /**
  * Get the API path based on the config is_running_in_jetpack_site.
  * @param jetpackPath The path to the Jetpack API endpoint.
+ * @param params Contains 'siteId' and optional additional parameters.
  */
 export const getApiPath = ( jetpackPath: string, params: Record< string, string | number > ) => {
 	switch ( jetpackPath ) {
