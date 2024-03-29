@@ -268,6 +268,7 @@ class GoogleSocialButton extends Component {
 						onClick={ this.handleClick }
 						onMouseEnter={ this.showError }
 						onMouseLeave={ this.hideError }
+						disabled={ isDisabled }
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }
