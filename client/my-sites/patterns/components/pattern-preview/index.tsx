@@ -6,6 +6,7 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
@@ -80,12 +81,38 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	const titleTooltipText = isPermalinkCopied ? 'Copied link to pattern' : 'Copy link to pattern';
+	const translate = useTranslate();
 
-	let copyButtonText = isPreviewLarge ? 'Copy pattern' : 'Copy';
+	const titleTooltipText = isPermalinkCopied
+		? translate( 'Copied link to pattern', {
+				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
+				textOnly: true,
+		  } )
+		: translate( 'Copy link to pattern', {
+				comment: 'Tooltip text in Pattern Library',
+				textOnly: true,
+		  } );
+
+	let copyButtonText = isPreviewLarge
+		? translate( 'Copy pattern', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } )
+		: translate( 'Copy', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } );
 
 	if ( isPatternCopied ) {
-		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
+		copyButtonText = isPreviewLarge
+			? translate( 'Pattern copied!', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } )
+			: translate( 'Copied', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } );
 	}
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
@@ -166,7 +193,11 @@ function PatternPreviewFragment( {
 						} }
 						transparent
 					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
+						<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
+						{ translate( 'Get access', {
+							comment:
+								'Button label shown when logged-out users need to sign up to be able to use a pattern',
+						} ) }
 					</Button>
 				) }
 			</div>

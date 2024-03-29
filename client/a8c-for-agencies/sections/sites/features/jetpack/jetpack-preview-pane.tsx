@@ -92,11 +92,14 @@ export function JetpackPreviewPane( {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<JetpackPluginsPreview
-					link={ '/plugins/manage/' + site.url }
-					linkLabel={ translate( 'Manage Plugins' ) }
+					link={ site.url_with_scheme + '/wp-admin/plugins.php' }
+					linkLabel={ translate( 'Manage Plugins in wp-admin' ) }
 					featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
 						args: { siteUrl: site.url },
 					} ) }
+					captionText={ translate(
+						"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
+					) }
 				/>
 			),
 			createFeaturePreview(
