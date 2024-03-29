@@ -15,6 +15,9 @@ export const getApiNamespace = (): string => {
  * @param params Contains 'siteId' and optional additional parameters.
  */
 export const getApiPath = ( jetpackPath: string, params: Record< string, string | number > ) => {
+	if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		return jetpackPath;
+	}
 	switch ( jetpackPath ) {
 		case '/site/purchases':
 			return `/sites/${ params.siteId }/purchases`;
