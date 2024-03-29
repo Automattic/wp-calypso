@@ -28,7 +28,7 @@
 		margin-right: 10px;
 	}
 
-	@media (min-width: $break-large) {
+	@media (min-width: $break-wide) {
 		background: inherit;
 
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
@@ -45,7 +45,13 @@
 		}
 	}
 
-	@media (max-width: $break-large) {
+	@media (max-width: 660px) {
+		.a4a-layout__header-main {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-wide) {
 		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
 
 		.section-nav__mobile-header {
@@ -437,7 +443,7 @@
 			}
 		}
 
-		@media only screen and (min-width: $break-large) {
+		@media only screen and (min-width: $break-wide) {
 			.sites-overview {
 				padding: 24px 18px;
 			}
@@ -473,7 +479,7 @@
 				padding: 0;
 			}
 
-			@media only screen and (min-width: $break-large) {
+			@media only screen and (min-width: $break-wide) {
 				.sites-overview {
 					padding: 0;
 					overflow-x: auto;
@@ -519,7 +525,7 @@
 			max-height: 40px;
 		}
 
-		@include break-large {
+		@include break-wide {
 			flex-direction: row;
 		}
 	}
