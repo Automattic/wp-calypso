@@ -12,7 +12,7 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import { addTerm, updateTerm } from 'calypso/state/terms/actions';
 import { getTerms } from 'calypso/state/terms/selectors';
@@ -140,33 +140,12 @@ class TermFormDialog extends Component {
 				this.setState( { saving: false } );
 				this.props.onSuccess( savedTerm );
 				this.closeDialog();
-
-				const successText = isNew
-					? translate( 'Added new %(taxonomyName)s successfully.', {
-							args: { taxonomyName: taxonomy },
-					  } )
-					: translate( 'Updated %(taxonomyName)s successfully.', {
-							args: { taxonomyName: taxonomy },
-					  } );
-
-				this.props.successNotice( successText, {
-					id: 'taxonomy-manager-save',
-					duration: 4000,
-				} );
 			} )
 			.catch( () => {
 				this.setState( { saving: false } );
 				this.closeDialog();
 
-				const errorText = isNew
-					? translate( 'Failed to create new %(taxonomyName)s.', {
-							args: { taxonomyName: taxonomy },
-					  } )
-					: translate( 'Failed to update %(taxonomyName)s.', {
-							args: { taxonomyName: taxonomy },
-					  } );
-
-				this.props.errorNotice( errorText, {
+				this.props.errorNotice( translate( 'Something went wrong. Please try again.' ), {
 					id: 'taxonomy-manager-save',
 					duration: 4000,
 				} );
@@ -414,5 +393,5 @@ export default connect(
 			siteId,
 		};
 	},
-	{ addTerm, updateTerm, recordGoogleEvent, bumpStat, errorNotice, successNotice }
+	{ addTerm, updateTerm, recordGoogleEvent, bumpStat, errorNotice }
 )( localize( TermFormDialog ) );
