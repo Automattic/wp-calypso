@@ -1,10 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
 import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -18,6 +21,11 @@ const NoBackupsYet = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
+
+	const dispatch = useDispatch();
+	const onContactSupportClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_first_time_support_click' ) );
+	}, [ dispatch ] );
 
 	return (
 		<>
@@ -50,6 +58,7 @@ const NoBackupsYet = () => {
 												),
 												target: '_blank',
 												rel: 'noopener noreferrer',
+												onClick: onContactSupportClick,
 										  }
 										: {
 												href: CALYPSO_CONTACT,
