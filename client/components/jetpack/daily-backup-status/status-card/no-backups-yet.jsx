@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -25,6 +25,10 @@ const NoBackupsYet = () => {
 	const dispatch = useDispatch();
 	const onContactSupportClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_first_time_support_click' ) );
+	}, [ dispatch ] );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_first_time_view' ) );
 	}, [ dispatch ] );
 
 	return (
