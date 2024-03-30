@@ -65,7 +65,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview sideId={ site.blog_id } />
+				<JetpackScanPreview siteId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				'jetpack_monitor',

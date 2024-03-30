@@ -10,26 +10,26 @@ import {
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
+import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
+import ShortenedNumber from '../number-formatters';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import CountComparisonCard from './count-comparison-card';
+import CountComparisonCard, { TrendComparison } from './count-comparison-card';
+
 import './style.scss';
+
+type HighlightCardCounts = {
+	comments: number | null;
+	likes: number | null;
+	views: number | null;
+	visitors: number | null;
+};
 
 type WeeklyHighlightCardsProps = {
 	className?: string;
-	counts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
-	previousCounts: {
-		comments: number | null;
-		likes: number | null;
-		views: number | null;
-		visitors: number | null;
-	};
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
 	showValueTooltip?: boolean | null;
 	onClickComments: ( event: MouseEvent ) => void;
 	onClickLikes: ( event: MouseEvent ) => void;
@@ -136,6 +136,141 @@ const HighlightCardsSettings = function ( {
 	);
 };
 
+type WeeklyHighlighCardsStandardProps = {
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
+	showValueTooltip?: boolean | null;
+	onClickComments: ( event: MouseEvent ) => void;
+	onClickLikes: ( event: MouseEvent ) => void;
+	onClickViews: ( event: MouseEvent ) => void;
+	onClickVisitors: ( event: MouseEvent ) => void;
+};
+
+function WeeklyHighlighCardsStandard( {
+	counts,
+	previousCounts,
+	showValueTooltip,
+	onClickComments,
+	onClickLikes,
+	onClickViews,
+	onClickVisitors,
+}: WeeklyHighlighCardsStandardProps ) {
+	const translate = useTranslate();
+	return (
+		<div className="highlight-cards-list">
+			<CountComparisonCard
+				heading={ translate( 'Visitors' ) }
+				icon={ <Icon icon={ people } /> }
+				count={ counts?.visitors ?? null }
+				previousCount={ previousCounts?.visitors ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickVisitors }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Views' ) }
+				icon={ <Icon icon={ eye } /> }
+				count={ counts?.views ?? null }
+				previousCount={ previousCounts?.views ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickViews }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Likes' ) }
+				icon={ <Icon icon={ starEmpty } /> }
+				count={ counts?.likes ?? null }
+				previousCount={ previousCounts?.likes ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickLikes }
+			/>
+			<CountComparisonCard
+				heading={ translate( 'Comments' ) }
+				icon={ <Icon icon={ commentContent } /> }
+				count={ counts?.comments ?? null }
+				previousCount={ previousCounts?.comments ?? null }
+				showValueTooltip={ showValueTooltip }
+				onClick={ onClickComments }
+			/>
+		</div>
+	);
+}
+
+type WeeklyHighlighCardsMobileProps = {
+	counts: HighlightCardCounts;
+	previousCounts: HighlightCardCounts;
+};
+
+function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCardsMobileProps ) {
+	const translate = useTranslate();
+	return (
+		<div className="highlight-cards-list-mobile">
+			<div className="highlight-cards-list-mobile__item" key="visitors">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ people } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">
+					{ translate( 'Visitors' ) }
+				</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.visitors ?? null }
+						previousCount={ previousCounts?.visitors ?? null }
+					/>
+				</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.visitors ?? null } />
+				</span>
+			</div>
+			<div className="highlight-cards-list-mobile__item" key="views">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ eye } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Views' ) }</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.views ?? null }
+						previousCount={ previousCounts?.views ?? null }
+					/>
+				</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.views ?? null } />
+				</span>
+			</div>
+			<div className="highlight-cards-list-mobile__item" key="likes">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ starEmpty } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.likes ?? null }
+						previousCount={ previousCounts?.likes ?? null }
+					/>
+				</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.likes ?? null } />
+				</span>
+			</div>
+			<div className="highlight-cards-list-mobile__item" key="comments">
+				<span className="highlight-cards-list-mobile__item-icon">
+					<Icon icon={ commentContent } />
+				</span>
+				<span className="highlight-cards-list-mobile__item-heading">
+					{ translate( 'Comments' ) }
+				</span>
+				<span className="highlight-cards-list-mobile__item-trend">
+					<TrendComparison
+						count={ counts?.comments ?? null }
+						previousCount={ previousCounts?.comments ?? null }
+					/>
+				</span>
+				<span className="highlight-cards-list-mobile__item-count">
+					<ShortenedNumber value={ counts?.comments ?? null } />
+				</span>
+			</div>
+		</div>
+	);
+}
+
 export default function WeeklyHighlightCards( {
 	className,
 	counts,
@@ -228,40 +363,23 @@ export default function WeeklyHighlightCards( {
 				) }
 			</h3>
 
-			<div className="highlight-cards-list">
-				<CountComparisonCard
-					heading={ translate( 'Visitors' ) }
-					icon={ <Icon icon={ people } /> }
-					count={ counts?.visitors ?? null }
-					previousCount={ previousCounts?.visitors ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickVisitors }
-				/>
-				<CountComparisonCard
-					heading={ translate( 'Views' ) }
-					icon={ <Icon icon={ eye } /> }
-					count={ counts?.views ?? null }
-					previousCount={ previousCounts?.views ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickViews }
-				/>
-				<CountComparisonCard
-					heading={ translate( 'Likes' ) }
-					icon={ <Icon icon={ starEmpty } /> }
-					count={ counts?.likes ?? null }
-					previousCount={ previousCounts?.likes ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickLikes }
-				/>
-				<CountComparisonCard
-					heading={ translate( 'Comments' ) }
-					icon={ <Icon icon={ commentContent } /> }
-					count={ counts?.comments ?? null }
-					previousCount={ previousCounts?.comments ?? null }
-					showValueTooltip={ showValueTooltip }
-					onClick={ onClickComments }
-				/>
-			</div>
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={
+					<WeeklyHighlighCardsMobile counts={ counts } previousCounts={ previousCounts } />
+				}
+				breakpointInactiveComponent={
+					<WeeklyHighlighCardsStandard
+						counts={ counts }
+						previousCounts={ previousCounts }
+						showValueTooltip={ showValueTooltip }
+						onClickComments={ onClickComments }
+						onClickLikes={ onClickLikes }
+						onClickViews={ onClickViews }
+						onClickVisitors={ onClickVisitors }
+					/>
+				}
+			/>
 		</div>
 	);
 }

@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 import './pending-whois-update-card.scss';
 

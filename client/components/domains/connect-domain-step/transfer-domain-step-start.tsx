@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, MaterialIcon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { MAP_EXISTING_DOMAIN } from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -15,7 +16,6 @@ import {
 } from 'calypso/components/domains/use-my-domain/utilities';
 import Notice from 'calypso/components/notice';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';

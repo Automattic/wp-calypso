@@ -1,12 +1,12 @@
 import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

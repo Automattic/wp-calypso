@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
-import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getRawSite from 'calypso/state/selectors/get-raw-site';

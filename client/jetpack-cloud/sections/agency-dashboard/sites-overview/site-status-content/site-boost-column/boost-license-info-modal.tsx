@@ -2,6 +2,8 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
 import SitesOverviewContext from '../../context';
 import DashboardDataContext from '../../dashboard-data-context';
@@ -27,10 +29,19 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const { blog_id: siteId, url: siteUrl, is_atomic, url_with_scheme } = site;
 
+	const agencyId = useSelector( getActiveAgencyId );
+
 	// queryKey is needed to optimistically update the site list
 	const queryKey = useMemo(
-		() => [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ],
-		[ filter, search, currentPage, sort ]
+		() => [
+			'jetpack-agency-dashboard-sites',
+			search,
+			currentPage,
+			filter,
+			sort,
+			...( agencyId ? [ agencyId ] : [] ),
+		],
+		[ search, currentPage, filter, sort, agencyId ]
 	);
 	const { installBoost, status } = useInstallBoost( siteId, siteUrl, queryKey );
 
