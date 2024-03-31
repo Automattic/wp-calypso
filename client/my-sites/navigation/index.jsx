@@ -9,7 +9,7 @@ import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -107,18 +107,20 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
 			const siteDomain = getSiteDomain( state, siteId );
 			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			return {
 				siteDomain,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isUnifiedSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
 			};
 		},
 		{

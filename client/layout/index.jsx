@@ -41,7 +41,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -460,10 +460,11 @@ export default withCurrentRoute(
 				siteId,
 				sectionGroup
 			);
-			const shouldShowUnifiedSiteSidebar = getShouldShowGlobalSiteSidebar(
+			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			const noMasterbarForRoute =
 				isJetpackLogin ||
