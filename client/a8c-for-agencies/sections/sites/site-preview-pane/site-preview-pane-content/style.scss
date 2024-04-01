@@ -49,7 +49,6 @@
 .site-preview-pane__boost-content {
 	.site-expanded-content__card-content-column {
 		flex: unset;
-		margin-right: 24px;
 		max-width: 285px;
 	}
 }
@@ -95,11 +94,19 @@
 	.shortened-number {
 		font-size: 2rem;
 	}
+
+	.site-expanded-content__card-content-column {
+		margin-right: 24px;
+	}
 }
 
 .site-preview-pane__boost-content {
 
 	.expanded-card {
 		padding: 16px 24px !important;
+	}
+
+	.site-expanded-content__card-content-column {
+		margin-right: 32px;
 	}
 }
