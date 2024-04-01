@@ -6,11 +6,22 @@
 	overflow-y: auto;
 
 	.expanded-card {
-		max-width: 320px;
 		width: auto;
+		max-width: unset !important;
 
 		.site-expanded-content__card-footer {
-			justify-content: center;
+			justify-content: unset !important;
+		}
+
+		.expanded-card__header {
+			font-size: 1.25rem;
+			text-overflow: ellipsis;
+			font-weight: 500;
+			text-align: left;
+		}
+
+		.site-expanded-content__card-content-score {
+			text-align: left;
 		}
 	}
 
@@ -30,20 +41,23 @@
 	.site-preview-pane__plugins-icon {
 		fill: #fff;
 		padding-left: 8px;
-
 	}
 
+}
+
+.site-preview-pane__stats-content,
+.site-preview-pane__boost-content {
+	.site-expanded-content__card-content-column {
+		flex: unset;
+		margin-right: 24px;
+		max-width: 285px;
+	}
 }
 
 .site-preview-pane__monitor-content {
 
 	text-align: unset !important;
 
-	.expanded-card__header {
-		font-size: 1.25rem;
-		text-overflow: ellipsis;
-		font-weight: 500;
-	}
 
 	.site-expanded-content__card-content-column {
 		max-width: unset;
@@ -70,9 +84,6 @@
 		text-align: unset;
 	}
 
-	.expanded-card {
-		max-width: unset !important;
-	}
 
 	.site-expanded-content__chart .chart .chart__bar.site-expanded-content__chart-bar-is-uptime .chart__bar-section {
 		border-radius: 2px;
@@ -80,32 +91,15 @@
 }
 
 .site-preview-pane__stats-content {
-	.expanded-card__header {
-		font-size: 1.25rem;
-		font-weight: 500;
-		text-align: left;
-		text-overflow: ellipsis;
-	}
-
-	.site-expanded-content__card-content-column {
-		flex: unset;
-		margin-right: 24px;
-		max-width: unset;
-	}
-
-	.site-expanded-content__card-content-score {
-		text-align: left;
-	}
-
-	.expanded-card .site-expanded-content__card-footer {
-		justify-content: unset !important;
-	}
 
 	.shortened-number {
 		font-size: 2rem;
 	}
+}
+
+.site-preview-pane__boost-content {
 
 	.expanded-card {
-		max-width: unset !important;
+		padding: 16px 24px !important;
 	}
 }
