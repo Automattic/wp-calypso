@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -6,6 +7,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { getTracksPatternType } from '../lib/get-tracks-pattern-type';
 import { PatternTypeFilter, PatternView } from '../types';
+import type { AppState } from 'calypso/types';
 
 type PatternsPageViewTrackerProps = {
 	category: string;
@@ -25,7 +27,10 @@ export function PatternsPageViewTracker( {
 	error,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	// Default to `undefined` while user settings are loading
+	const isDevAccount = useSelector( ( state: AppState ) =>
+		state.userSettings ? getUserSetting( state, 'is_dev_account' ) : undefined
+	);
 	const [ debouncedSearchTerm, setDebouncedSearchTerm ] = useState( searchTerm );
 
 	// We debounce the search term because search happens instantaneously, without the user
@@ -41,7 +46,7 @@ export function PatternsPageViewTracker( {
 	}, [ searchTerm ] );
 
 	useEffect( () => {
-		if ( category ) {
+		if ( category && isDevAccount !== undefined ) {
 			recordTracksEvent( 'calypso_pattern_library_filter', {
 				category,
 				is_logged_in: isLoggedIn,
@@ -52,16 +57,18 @@ export function PatternsPageViewTracker( {
 	}, [ category, isDevAccount, isLoggedIn, patternTypeFilter ] );
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_pattern_library_view', {
-			category,
-			is_logged_in: isLoggedIn,
-			user_is_dev_account: isDevAccount ? '1' : '0',
-			search_term: debouncedSearchTerm,
-			type: getTracksPatternType( patternTypeFilter ),
-			view,
-			referrer,
-			error,
-		} );
+		if ( isDevAccount !== undefined ) {
+			recordTracksEvent( 'calypso_pattern_library_view', {
+				category,
+				is_logged_in: isLoggedIn,
+				user_is_dev_account: isDevAccount ? '1' : '0',
+				search_term: debouncedSearchTerm,
+				type: getTracksPatternType( patternTypeFilter ),
+				view,
+				referrer,
+				error,
+			} );
+		}
 
 		// We want to avoid resubmitting the event whenever
 		// `category` changes, which is why we deliberately don't include it in the dependency array
@@ -69,9 +76,6 @@ export function PatternsPageViewTracker( {
 	}, [ isDevAccount, isLoggedIn, debouncedSearchTerm, patternTypeFilter, view ] );
 
 	let path: string = '';
-	const properties: Record< string, string | boolean > = {
-		is_logged_in: isLoggedIn,
-	};
 
 	if ( ! category ) {
 		path = '/patterns';
@@ -83,9 +87,18 @@ export function PatternsPageViewTracker( {
 		path += '/:search';
 	}
 
-	const key = path + debouncedSearchTerm;
-
 	return (
-		<PageViewTracker key={ key } path={ path } properties={ properties } title="Pattern Library" />
+		<>
+			<QueryUserSettings />
+
+			<PageViewTracker
+				key={ path + debouncedSearchTerm }
+				path={ path }
+				properties={ {
+					is_logged_in: isLoggedIn,
+				} }
+				title="Pattern Library"
+			/>
+		</>
 	);
 }
