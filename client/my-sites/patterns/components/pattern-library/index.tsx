@@ -272,7 +272,7 @@ export const PatternLibrary = ( {
 								icon: <Icon icon={ iconCategory } size={ 26 } />,
 								label: translate( 'All Categories' ),
 								link: addLocaleToPathLocaleInFront( '/patterns' ),
-								isActive: isHomePage,
+								isActive: ! category,
 							},
 						] }
 						categories={ categoryNavList }
