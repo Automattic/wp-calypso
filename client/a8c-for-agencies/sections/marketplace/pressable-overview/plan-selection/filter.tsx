@@ -69,27 +69,28 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 	return (
 		<section className="pressable-overview-plan-selection__filter">
 			<div className="pressable-overview-plan-selection__filter-type">
-				<strong className="pressable-overview-plan-selection__filter-label">
+				<p className="pressable-overview-plan-selection__filter-label">
 					{ translate( 'Filter by:' ) }
-				</strong>
+				</p>
+				<div className="pressable-overview-plan-selection__filter-buttons">
+					<Button
+						className={ classNames( 'pressable-overview-plan-selection__filter-button', {
+							'is-selected': filterType === FILTER_TYPE_INSTALL,
+						} ) }
+						onClick={ onSelectInstallFilterType }
+					>
+						{ translate( 'WordPress installs' ) }
+					</Button>
 
-				<Button
-					className={ classNames( 'pressable-overview-plan-selection__filter-button', {
-						'is-selected': filterType === FILTER_TYPE_INSTALL,
-					} ) }
-					onClick={ onSelectInstallFilterType }
-				>
-					{ translate( 'WordPress installs' ) }
-				</Button>
-
-				<Button
-					className={ classNames( 'pressable-overview-plan-selection__filter-button', {
-						'is-selected': filterType === FILTER_TYPE_VISITS,
-					} ) }
-					onClick={ onSelectVisitFilterType }
-				>
-					{ translate( 'Number of visits' ) }
-				</Button>
+					<Button
+						className={ classNames( 'pressable-overview-plan-selection__filter-button', {
+							'is-selected': filterType === FILTER_TYPE_VISITS,
+						} ) }
+						onClick={ onSelectVisitFilterType }
+					>
+						{ translate( 'Number of visits' ) }
+					</Button>
+				</div>
 			</div>
 
 			<A4ASlider value={ selectedOption } onChange={ onSelectOption } options={ options } />
