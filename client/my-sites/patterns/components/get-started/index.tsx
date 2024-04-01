@@ -5,6 +5,7 @@ import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-starte
 import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.png';
 import imageBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/use-block-patterns.png';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
+import { getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
@@ -29,7 +30,7 @@ export function PatternsGetStarted() {
 			<div className="patterns-get-started__buttons">
 				<Button
 					className="patterns-get-started__start-button"
-					href={ localizeUrl( '//wordpress.com/setup/assembler-first', locale, isLoggedIn ) }
+					href={ getOnboardingUrl( locale, isLoggedIn ) }
 				>
 					{ translate( 'Build a site' ) }
 				</Button>

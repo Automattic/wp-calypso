@@ -31,6 +31,7 @@ import {
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -47,6 +48,7 @@ import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -201,7 +203,7 @@ const LayoutLoggedOut = ( {
 				sectionName={ sectionName }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
 				{ ...( sectionName === 'patterns' && {
-					startUrl: localizeUrl( '//wordpress.com/setup/assembler-first', locale, isLoggedIn ),
+					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
 				} ) }
 			/>
 		);
