@@ -27,8 +27,11 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined )
 	// Fuzzier matches
 	const urlMatchKey = Object.keys( urlMapping ).find( ( key ) => currentRoute?.startsWith( key ) );
 	const urlSearchQuery = urlMatchKey ? urlMapping[ urlMatchKey as keyof typeof urlMapping ] : '';
-	const tailoredArticles = urlMatchKey
-		? tailoredArticlesMapping[ urlMatchKey as keyof typeof tailoredArticlesMapping ]
+	const tailoredArticlesMatchKey = Object.keys( tailoredArticlesMapping ).find(
+		( key ) => currentRoute?.startsWith( key )
+	);
+	const tailoredArticles = tailoredArticlesMatchKey
+		? tailoredArticlesMapping[ tailoredArticlesMatchKey as keyof typeof tailoredArticlesMapping ]
 		: [];
 
 	// Find exact URL matches
