@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { memo, useRef, useState } from 'react';
+import { memo, useRef, useState, ReactNode } from 'react';
 import * as React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch as useReduxDispatch } from 'react-redux';
@@ -80,7 +80,7 @@ const Column = styled.td< { tabletHidden?: boolean } >`
 	}
 `;
 
-const SiteColumn = styled< { deletedSite?: boolean } >( Column )`
+const SiteColumn = styled< { deletedSite?: boolean; children?: ReactNode } >( Column )`
 	${ MEDIA_QUERIES.small } {
 		${ ( props ) => props.deletedSite && 'width: 80%;' };
 	}
