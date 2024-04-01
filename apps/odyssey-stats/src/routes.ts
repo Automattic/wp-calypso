@@ -25,6 +25,7 @@ import {
 import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './lib/config-api';
+import { getApiNamespace, getApiPath } from './lib/get-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 import 'calypso/my-sites/stats/style.scss';
 
@@ -46,7 +47,10 @@ const siteSelection = ( context: Context, next: () => void ) => {
 
 	dispatch( { type: SITE_REQUEST, siteId: siteId } );
 	wpcom.req
-		.get( { path: '/site', apiNamespace: 'jetpack/v4' } )
+		.get( {
+			path: getApiPath( '/site', { siteId } ),
+			apiNamespace: getApiNamespace(),
+		} )
 		.then( ( site: { data: string } ) => JSON.parse( site.data ) )
 		.then( ( site: SiteDetails ) => {
 			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );

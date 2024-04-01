@@ -11,6 +11,11 @@
 	position: sticky;
 	top: 0;
 	z-index: 3;
+	transition: box-shadow 0.2s linear;
+
+	&.pattern-library__pill-navigation--sticky {
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08);
+	}
 
 	.category-pill-navigation {
 		@include patterns-page-width;
@@ -24,6 +29,14 @@
 			.category-pill-navigation__list-inner {
 				padding: 0 24px;
 			}
+		}
+	}
+
+	@media ( max-width: $break-mobile ) {
+		position: static;
+
+		.category-pill-navigation {
+			padding: 24px;
 		}
 	}
 }

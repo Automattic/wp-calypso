@@ -2,8 +2,8 @@ import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordp
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
-import ShortenedNumber from '../number-formatters';
 import CountComparisonCard from './count-comparison-card';
+import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
 
@@ -15,11 +15,7 @@ type AnnualHighlightCounts = {
 	followers: number | null;
 };
 
-type AnnualHighlightsMobileProps = {
-	counts: AnnualHighlightCounts;
-};
-
-type AnnualHighlightsStandardProps = {
+type AnnualHighlightsProps = {
 	counts: AnnualHighlightCounts;
 };
 
@@ -31,64 +27,21 @@ type AnnualHighlightCardsProps = {
 	navigation?: React.ReactNode;
 };
 
-function AnnualHighlightsMobile( { counts }: AnnualHighlightsMobileProps ) {
+function AnnualHighlightsMobile( { counts }: AnnualHighlightsProps ) {
 	const translate = useTranslate();
-	return (
-		<div className="highlight-cards-list-mobile">
-			<div className="highlight-cards-list-mobile__item" key="posts">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ postContent } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Posts' ) }</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.posts ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="words">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ paragraph } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Words' ) }</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.words ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="likes">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ starEmpty } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.likes ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="comments">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ comment } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">
-					{ translate( 'Comments' ) }
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.comments ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="subscribers">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ people } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">
-					{ translate( 'Subscribers' ) }
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.followers ?? null } />
-				</span>
-			</div>
-		</div>
-	);
+
+	const highlights = [
+		{ heading: translate( 'Posts' ), count: counts?.posts, icon: postContent },
+		{ heading: translate( 'Words' ), count: counts?.words, icon: paragraph },
+		{ heading: translate( 'Likes' ), count: counts?.likes, icon: starEmpty },
+		{ heading: translate( 'Comments' ), count: counts?.comments, icon: comment },
+		{ heading: translate( 'Subscribers' ), count: counts?.followers, icon: people },
+	];
+
+	return <MobileHighlightCardListing highlights={ highlights } />;
 }
 
-function AnnualHighlightsStandard( { counts }: AnnualHighlightsStandardProps ) {
+function AnnualHighlightsStandard( { counts }: AnnualHighlightsProps ) {
 	const translate = useTranslate();
 	return (
 		<div className="highlight-cards-list">
