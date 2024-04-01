@@ -35,7 +35,6 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 	const sites = useSelector( getSites );
 
 	const showStickyContent = useBreakpoint( '>660px' ) && selectedCartItems.length > 0;
-	const isNarrowView = useBreakpoint( '<660px' );
 
 	useEffect( () => {
 		if ( siteId && sites.length > 0 ) {
@@ -52,22 +51,10 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			withBorder
 		>
 			<LayoutTop>
-				{ ! isNarrowView ? (
-					<LayoutHeader showStickyContent={ showStickyContent }>
-						<Title>{ translate( 'Marketplace' ) } </Title>
+				<LayoutHeader showStickyContent={ showStickyContent }>
+					<Title>{ translate( 'Marketplace' ) } </Title>
 
-						<Actions>
-							<ShoppingCart
-								items={ selectedCartItems }
-								onRemoveItem={ onRemoveCartItem }
-								onCheckout={ () => {
-									page( A4A_MARKETPLACE_CHECKOUT_LINK );
-								} }
-							/>
-						</Actions>
-					</LayoutHeader>
-				) : (
-					<Actions className="a4a-layout-header-mobile">
+					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
 
 						<ShoppingCart
@@ -78,7 +65,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 							} }
 						/>
 					</Actions>
-				) }
+				</LayoutHeader>
 			</LayoutTop>
 
 			<LayoutBody>

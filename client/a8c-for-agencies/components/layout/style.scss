@@ -75,6 +75,7 @@ html,
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
+		border-block-end: 1px solid var(--color-neutral-5);
 	}
 }
 
@@ -151,25 +152,14 @@ html,
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
+		align-items: center;
 		justify-content: space-between;
 		> * {
 			flex-grow: 0;
 		}
-	}
-}
-
-.a4a-layout-header-mobile {
-	align-items: center;
-	border-bottom: 1px solid var(--color-neutral-10);
-
-	.shopping-cart {
-		margin-inline-end: 32px;
-		margin-inline-start: auto;
-		flex-grow: 0;
-	}
-
-	.current-section button {
-		border: none;
+		.current-section button {
+			border: none;
+		}
 	}
 }
 
