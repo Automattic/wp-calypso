@@ -41,7 +41,7 @@ import './style.scss';
 // `useCx` hook in `ToggleGroupControl`
 const PatternLibraryBody = styled.div``;
 
-export const pillNavigationClassName = 'pattern-library__filters';
+export const patternFiltersClassName = 'pattern-library__filters';
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -219,7 +219,7 @@ export const PatternLibrary = ( {
 
 			<div className="pattern-library__wrapper">
 				<div
-					className={ classNames( pillNavigationClassName, {
+					className={ classNames( patternFiltersClassName, {
 						'pattern-library__filters--sticky': isSticky,
 					} ) }
 					ref={ navRef }
