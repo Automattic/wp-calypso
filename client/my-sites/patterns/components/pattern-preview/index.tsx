@@ -141,10 +141,10 @@ function PatternPreviewFragment( {
 		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
 	}, [ nodeSize.width, nodeSize.height ] );
 
-	// We deliberately use `window.scrollBy` instead of setting an ID attribute on the
-	// `.pattern-preview` element to avoid a janky experience for users while the page is loading.
-	// This way, the browser doesn't scroll down to the relevant patterns until patterns are mostly
-	// finished loading.
+	// When a URL with a single-pattern hash is loaded, scroll to that pattern preview. We use
+	// `window.scrollBy` instead of setting an ID attribute on the relevant pattern preview to avoid
+	// a janky experience for users while the page is loading. This way, the browser doesn't scroll
+	// down to the relevant patterns until patterns are mostly finished loading.
 	useEffect( () => {
 		if (
 			window.location.hash !== `#${ idAttr }` ||
