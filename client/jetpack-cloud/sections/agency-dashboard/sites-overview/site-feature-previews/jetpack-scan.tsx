@@ -10,7 +10,7 @@ import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-conte
 import 'calypso/my-sites/scan/style.scss';
 
 type Props = {
-	sideId: number;
+	siteId: number;
 };
 type ContextHandler = ( context: object, next: () => void ) => void;
 
@@ -24,7 +24,7 @@ function processContextsChain( contextsChain: ContextHandler[], context: object 
 	next( 0 );
 }
 
-export function JetpackScanPreview( { sideId }: Props ) {
+export function JetpackScanPreview( { siteId }: Props ) {
 	const contextsChain: ContextHandler[] = [
 		showNotAuthorizedForNonAdmins,
 		showJetpackIsDisconnected,
@@ -37,7 +37,7 @@ export function JetpackScanPreview( { sideId }: Props ) {
 	const context = {
 		primary: null,
 		params: {
-			site: sideId,
+			site: siteId,
 		},
 	};
 
@@ -46,7 +46,7 @@ export function JetpackScanPreview( { sideId }: Props ) {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				{ sideId ? context.primary : <div>Loading Scan page...</div> }
+				{ siteId ? context.primary : <div>Loading Scan page...</div> }
 			</SitePreviewPaneContent>
 		</>
 	);
