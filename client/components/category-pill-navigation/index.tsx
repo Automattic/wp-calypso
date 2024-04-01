@@ -1,3 +1,6 @@
+import { SelectDropdown } from '@automattic/components';
+import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
 import { Icon, chevronRight } from '@wordpress/icons';
@@ -26,6 +29,8 @@ export const CategoryPillNavigation = ( {
 	categories,
 	selectedCategoryId,
 }: CategoryPillNavigationProps ) => {
+	const locale = useLocale();
+	const isMobile = useMobileBreakpoint();
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 	const listRef = useRef< HTMLDivElement | null >( null );
@@ -69,6 +74,39 @@ export const CategoryPillNavigation = ( {
 			inline: 'center',
 		} );
 	}, [ selectedCategoryId ] );
+
+	if ( isMobile ) {
+		const selectedItem =
+			buttons?.find( ( { isActive } ) => isActive ) ||
+			categories.find( ( { id } ) => id === selectedCategoryId );
+		return (
+			<div className="category-pill-navigation">
+				<SelectDropdown
+					className="category-pill-navigation__mobile-select"
+					selectedText={ selectedItem?.label }
+				>
+					{ buttons?.map( ( button ) => (
+						<SelectDropdown.Item
+							key={ button.label }
+							path={ addLocaleToPathLocaleInFront( button.link, locale ) }
+							selected={ button.isActive }
+						>
+							{ button.label }
+						</SelectDropdown.Item>
+					) ) }
+					{ categories?.map( ( category ) => (
+						<SelectDropdown.Item
+							key={ category.id }
+							path={ addLocaleToPathLocaleInFront( category.link, locale ) }
+							selected={ category.id === selectedCategoryId }
+						>
+							{ category.label }
+						</SelectDropdown.Item>
+					) ) }
+				</SelectDropdown>
+			</div>
+		);
+	}
 
 	return (
 		<div className="category-pill-navigation">
