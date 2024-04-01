@@ -78,3 +78,34 @@
 		border-radius: 2px;
 	}
 }
+
+.site-preview-pane__stats-content {
+	.expanded-card__header {
+		font-size: 1.25rem;
+		font-weight: 500;
+		text-align: left;
+		text-overflow: ellipsis;
+	}
+
+	.site-expanded-content__card-content-column {
+		flex: unset;
+		margin-right: 24px;
+		max-width: unset;
+	}
+
+	.site-expanded-content__card-content-score {
+		text-align: left;
+	}
+
+	.expanded-card .site-expanded-content__card-footer {
+		justify-content: unset !important;
+	}
+
+	.shortened-number {
+		font-size: 2rem;
+	}
+
+	.expanded-card {
+		max-width: unset !important;
+	}
+}

@@ -39,6 +39,10 @@
 }
 
 .theme-a8c-for-agencies {
+	.button {
+		border-radius: 4px;
+	}
+
 	.button.is-primary {
 		background-color: var(--studio-automattic-40);
 		border-color: var(--studio-automattic-40);
