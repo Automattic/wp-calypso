@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
-import { memo, useRef, useState, ReactNode } from 'react';
+import { memo, useRef, useState } from 'react';
 import * as React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDispatch as useReduxDispatch } from 'react-redux';
@@ -57,7 +57,7 @@ const Row = styled.tr`
 	border-block-end: 1px solid #eee;
 `;
 
-const Column = styled.td< { tabletHidden?: boolean } >`
+const Column = styled.td< { tabletHidden?: boolean; deletedSite?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 12px;
@@ -75,14 +75,12 @@ const Column = styled.td< { tabletHidden?: boolean } >`
 		padding-inline-end: 0;
 	}
 
-	.stats-sparkline__bar {
-		fill: var( --studio-gray-60 );
-	}
-`;
-
-const SiteColumn = styled< { deletedSite?: boolean; children?: ReactNode } >( Column )`
 	${ MEDIA_QUERIES.small } {
 		${ ( props ) => props.deletedSite && 'width: 80%;' };
+	}
+
+	.stats-sparkline__bar {
+		fill: var( --studio-gray-60 );
 	}
 `;
 
@@ -288,7 +286,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	return (
 		<Row ref={ ref }>
-			<SiteColumn deletedSite={ site.is_deleted }>
+			<Column deletedSite={ site.is_deleted }>
 				<SiteListTile
 					contentClassName={ css`
 						min-width: 0;
@@ -325,7 +323,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</>
 					}
 				/>
-			</SiteColumn>
+			</Column>
 			<Column tabletHidden>
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
