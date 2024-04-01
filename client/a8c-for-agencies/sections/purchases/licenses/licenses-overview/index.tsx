@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -46,7 +45,6 @@ export default function LicensesOverview( {
 	const dispatch = useDispatch();
 
 	const title = translate( 'Licenses' );
-	const isNarrowView = useBreakpoint( '<660px' );
 
 	const context = {
 		filter,
@@ -67,13 +65,7 @@ export default function LicensesOverview( {
 	const showEmptyStateContent = isFetched && data?.[ LicenseFilter.NotRevoked ] === 0;
 
 	return (
-		<Layout
-			className="licenses-overview"
-			title={ title }
-			wide
-			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="licenses-overview" title={ title } wide withBorder>
 			<PageViewTracker
 				title="Purchases > Licenses"
 				path="/purchases/licenses/:filter"
@@ -82,14 +74,14 @@ export default function LicensesOverview( {
 			<LicensesOverviewContext.Provider value={ context }>
 				<LayoutTop withNavigation>
 					<LayoutHeader>
-						{ ! isNarrowView && <Title>{ title } </Title> }
-						<Actions>
+						<Title>{ title } </Title>
+						<Actions className="a4a-licenses__header-actions">
+							<MobileSidebarNavigation />
 							<Button
 								disabled={ ! partnerCanIssueLicense }
 								href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
 								onClick={ onIssueNewLicenseClick }
 								primary
-								style={ { marginLeft: 'auto' } }
 							>
 								{ translate( 'Issue New License' ) }
 							</Button>

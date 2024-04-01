@@ -19,7 +19,7 @@ html,
 		padding: 0;
 
 		button {
-			padding: 20px 8px;
+			padding: 20px 0;
 		}
 	}
 }
@@ -160,6 +160,10 @@ html,
 		.current-section button {
 			border: none;
 		}
+
+		.current-section .gridicons-menu {
+			margin: 0;
+		}
 	}
 }
 
@@ -233,6 +237,10 @@ html,
 	margin: 8px 0 0 0;
 	font-weight: 400;
 	line-height: 1.2;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: none;
+	}
 }
 
 .section-nav.a4a-layout__navigation {

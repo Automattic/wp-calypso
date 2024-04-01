@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
@@ -14,31 +13,28 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingDetails from './billing-details';
 import BillingSummary from './billing-summary';
 
+import './style.scss';
+
 export default function BillingDashboard() {
 	const translate = useTranslate();
 
 	const title = translate( 'Billing' );
 
 	const partnerCanIssueLicense = true; // FIXME: get this from state
-	const isNarrowView = useBreakpoint( '<660px' );
 
 	const onIssueNewLicenseClick = () => {
 		// TODO: dispatch action to open issue license modal
 	};
 
 	return (
-		<Layout
-			className="billing-dashboard"
-			title={ title }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="billing-dashboard" title={ title } wide>
 			<PageViewTracker title="Purchases > Billing" path="/purchases/billing" />
 
 			<LayoutTop>
 				<LayoutHeader>
-					{ ! isNarrowView && <Title>{ title } </Title> }
-					<Actions>
+					<Title>{ title } </Title>
+					<Actions className="a4a-billing__header-actions">
+						<MobileSidebarNavigation />
 						<Button
 							disabled={ ! partnerCanIssueLicense }
 							href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
