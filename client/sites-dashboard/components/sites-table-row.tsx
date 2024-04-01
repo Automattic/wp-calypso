@@ -1,10 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, ListTile, Popover } from '@automattic/components';
 import {
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
 	useSiteLaunchStatusLabel,
 } from '@automattic/sites';
-import { isEnabled } from '@automattic/calypso-config';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
@@ -13,7 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
 import * as React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useDispatch } from 'react-redux';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
@@ -201,7 +201,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
 	const userId = useSelector( getCurrentUserId );
-	const dispatch = useDispatch();
+	const reduxDispatch = useReduxDispatch();
 	const queryClient = useQueryClient();
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -235,14 +235,16 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					'deleted',
 				],
 			} );
-			dispatch(
+			reduxDispatch(
 				successNotice( __( 'The site has been restored.' ), {
 					duration: 3000,
 				} )
 			);
 		},
 		onError: () => {
-			dispatch( errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } ) );
+			reduxDispatch(
+				errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
+			);
 		},
 	} );
 
