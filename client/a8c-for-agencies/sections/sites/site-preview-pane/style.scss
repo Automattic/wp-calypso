@@ -48,7 +48,7 @@
 
 		@media (max-width: 850px) {
 			.section-nav__panel {
-				overflow: scroll;
+				overflow-x: auto;
 			}
 		}
 
