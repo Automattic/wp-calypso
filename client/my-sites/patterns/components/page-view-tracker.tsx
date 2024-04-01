@@ -28,9 +28,13 @@ export function PatternsPageViewTracker( {
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	// Default to `undefined` while user settings are loading
-	const isDevAccount = useSelector( ( state: AppState ) =>
-		state.userSettings ? getUserSetting( state, 'is_dev_account' ) : undefined
-	);
+	const isDevAccount = useSelector( ( state: AppState ) => {
+		if ( Object.keys( state.userSettings?.settings ?? {} ).length > 0 ) {
+			return getUserSetting( state, 'is_dev_account' ) ?? false;
+		}
+
+		return undefined;
+	} );
 	const [ debouncedSearchTerm, setDebouncedSearchTerm ] = useState( searchTerm );
 
 	// We debounce the search term because search happens instantaneously, without the user
