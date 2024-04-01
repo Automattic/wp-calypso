@@ -172,3 +172,17 @@
 		color: var(--color-text-inverted);
 	}
 }
+
+.pressable-overview-plan-selection__filter {
+	.a4a-slider__marker-label {
+		height: 0.95rem;
+	}
+}
+
+.a4a-pressable-filter-wrapper-visits {
+	@include breakpoint-deprecated( "<660px" ) {
+		.a4a-slider__marker-label {
+			font-size: 0.75rem;
+		}
+	}
+}

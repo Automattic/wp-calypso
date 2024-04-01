@@ -66,8 +66,17 @@ export default function PlanSelectionFilter( { selectedPlan, plans, onSelectPlan
 		);
 	}, [ dispatch ] );
 
+	const additionalWrapperClass =
+		filterType === FILTER_TYPE_INSTALL
+			? 'a4a-pressable-filter-wrapper-install'
+			: 'a4a-pressable-filter-wrapper-visits';
+	const wrapperClass = classNames(
+		additionalWrapperClass,
+		'pressable-overview-plan-selection__filter'
+	);
+
 	return (
-		<section className="pressable-overview-plan-selection__filter">
+		<section className={ wrapperClass }>
 			<div className="pressable-overview-plan-selection__filter-type">
 				<p className="pressable-overview-plan-selection__filter-label">
 					{ translate( 'Filter by:' ) }
