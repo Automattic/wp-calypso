@@ -17,6 +17,7 @@ import {
 } from 'calypso/my-sites/patterns/types';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { PatternsContext } from './context';
 import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
 
 function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
@@ -35,19 +36,23 @@ function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
-				<PatternLibrary
-					category={ context.params.category }
-					categoryGallery={ CategoryGalleryClient }
-					isGridView={ !! context.query.grid }
-					patternGallery={ PatternGalleryClient }
-					patternTypeFilter={
-						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
-					}
-					referrer={ context.query.ref }
-					searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
-				/>
-			</PatternsWrapper>
+			<PatternsContext.Provider
+				value={ {
+					searchTerm: context.query[ QUERY_PARAM_SEARCH ] || '',
+					category: context.params.category,
+					isGridView: !! context.query.grid,
+					patternTypeFilter:
+						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+					referrer: context.query.ref,
+				} }
+			>
+				<PatternsWrapper>
+					<PatternLibrary
+						categoryGallery={ CategoryGalleryClient }
+						patternGallery={ PatternGalleryClient }
+					/>
+				</PatternsWrapper>
+			</PatternsContext.Provider>
 		);
 	}
 

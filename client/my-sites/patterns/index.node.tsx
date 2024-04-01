@@ -17,23 +17,28 @@ import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { PatternsContext } from './context';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'renderPatterns' );
 
 	context.primary = (
-		<PatternsWrapper>
-			<PatternLibrary
-				category={ context.params.category }
-				categoryGallery={ CategoryGalleryServer }
-				isGridView={ !! context.query.grid }
-				patternGallery={ PatternGalleryServer }
-				patternTypeFilter={
-					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
-				}
-				searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
-			/>
-		</PatternsWrapper>
+		<PatternsContext.Provider
+			value={ {
+				searchTerm: context.query[ QUERY_PARAM_SEARCH ] || '',
+				category: context.params.category,
+				isGridView: !! context.query.grid,
+				patternTypeFilter:
+					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+			} }
+		>
+			<PatternsWrapper>
+				<PatternLibrary
+					categoryGallery={ CategoryGalleryServer }
+					patternGallery={ PatternGalleryServer }
+				/>
+			</PatternsWrapper>
+		</PatternsContext.Provider>
 	);
 
 	next();

@@ -8,7 +8,7 @@ import {
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
@@ -17,10 +17,7 @@ import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
-import {
-	usePatternSearchTerm,
-	filterPatternsByTerm,
-} from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
+import { filterPatternsByTerm } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
@@ -34,7 +31,9 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { usePatternsContext } from '../../context';
 import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
+import { PatternsSearchField } from '../search-field';
 
 import './style.scss';
 
@@ -42,7 +41,7 @@ import './style.scss';
 // `useCx` hook in `ToggleGroupControl`
 const PatternLibraryBody = styled.div``;
 
-export const pillNavigationClassName = 'pattern-library__pill-navigation';
+export const pillNavigationClassName = 'pattern-library__filters';
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -73,34 +72,19 @@ function getPatternPermalink(
 }
 
 type PatternLibraryProps = {
-	category: string;
 	categoryGallery: CategoryGalleryFC;
-	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
-	patternTypeFilter: PatternTypeFilter;
-	referrer?: string;
-	searchTerm?: string;
 };
 
 export const PatternLibrary = ( {
-	category,
 	categoryGallery: CategoryGallery,
-	isGridView,
 	patternGallery: PatternGallery,
-	patternTypeFilter,
-	referrer,
-	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
-
-	// Helps prevent resetting the search input if a search term was provided through the URL
-	const isInitialRender = useRef( true );
-	// Helps reset the search input when navigating between categories
-	const [ searchFormKey, setSearchFormKey ] = useState( category );
 	const navRef = useRef< HTMLDivElement >( null );
+	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
 
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
@@ -146,24 +130,7 @@ export const PatternLibrary = ( {
 		page( url.href.replace( url.origin, '' ) );
 	};
 
-	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
 	useEffect( () => {
-		if ( ! urlQuerySearchTerm ) {
-			setSearchTerm( '' );
-			setSearchFormKey( Math.random().toString() );
-		}
-	}, [ urlQuerySearchTerm ] );
-
-	useEffect( () => {
-		if ( isInitialRender.current ) {
-			isInitialRender.current = false;
-			return;
-		}
-
-		// Reset the search term when the category changes
-		setSearchTerm( '' );
-		setSearchFormKey( category );
-
 		// If the user has scrolled below the anchoring position of `.pattern-library__pill-navigation`,
 		// then we scroll back up when the category changes
 		if ( navRef.current ) {
@@ -237,10 +204,7 @@ export const PatternLibrary = ( {
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
 				key={ `${ category }-tracker` }
-				// We pass `urlQuerySearchTerm` instead of `searchTerm` since the former is
-				// immediately reset when navigating to a new category, whereas the latter is reset
-				// *after* the first render (which triggers an additional, incorrect, page view)
-				searchTerm={ urlQuerySearchTerm }
+				searchTerm={ searchTerm }
 				referrer={ referrer }
 			/>
 
@@ -250,33 +214,33 @@ export const PatternLibrary = ( {
 				description={ translate(
 					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
 				) }
-				initialSearchTerm={ searchTerm }
-				key={ `${ searchFormKey }-search` }
-				onSearch={ ( query ) => {
-					setSearchTerm( query );
-				} }
 				title={ translate( "It's Easier With Patterns" ) }
 			/>
 
 			<div className="pattern-library__wrapper">
 				<div
 					className={ classNames( pillNavigationClassName, {
-						'pattern-library__pill-navigation--sticky': isSticky,
+						'pattern-library__filters--sticky': isSticky,
 					} ) }
 					ref={ navRef }
 				>
-					<CategoryPillNavigation
-						selectedCategoryId={ category }
-						buttons={ [
-							{
-								icon: <Icon icon={ iconCategory } size={ 26 } />,
-								label: translate( 'All Categories' ),
-								link: addLocaleToPathLocaleInFront( '/patterns' ),
-								isActive: isHomePage,
-							},
-						] }
-						categories={ categoryNavList }
-					/>
+					<div className="pattern-library__filters-inner">
+						<CategoryPillNavigation
+							selectedCategoryId={ category }
+							buttons={ [
+								{
+									icon: <Icon icon={ iconCategory } size={ 26 } />,
+									label: translate( 'All Categories' ),
+									link: addLocaleToPathLocaleInFront( '/patterns' ),
+									isActive: isHomePage,
+								},
+							] }
+							categories={ categoryNavList }
+						/>
+						<div className="pattern-library__body-search">
+							<PatternsSearchField isOpen={ false } />
+						</div>
+					</div>
 				</div>
 
 				{ isHomePage && (
