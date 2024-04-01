@@ -76,6 +76,12 @@ const Column = styled.td< { tabletHidden?: boolean } >`
 	}
 `;
 
+const SiteColumn = styled< { deletedSite?: boolean } >( Column )`
+	${ MEDIA_QUERIES.small } {
+		${ ( props ) => props.deletedSite && 'width: 80%;' };
+	}
+`;
+
 const SiteListTile = styled( ListTile )`
 	margin-inline-end: 0;
 
@@ -137,6 +143,12 @@ const DeletedStatus = styled.div`
 	}
 	button {
 		padding: 4px;
+	}
+
+	${ MEDIA_QUERIES.small } {
+		span {
+			display: none;
+		}
 	}
 `;
 
@@ -246,7 +258,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	return (
 		<Row ref={ ref }>
-			<Column>
+			<SiteColumn deletedSite={ site.is_deleted }>
 				<SiteListTile
 					contentClassName={ css`
 						min-width: 0;
@@ -276,7 +288,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</ListTileSubtitle>
 					}
 				/>
-			</Column>
+			</SiteColumn>
 			<Column tabletHidden>
 				<SitePlan site={ site } userId={ userId } />
 			</Column>
@@ -330,8 +342,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					</>
 				) }
 			</StatsColumnStyled>
-			<Column style={ { width: '24px' } }>
-				{ ! site.is_deleted && inView && <SitesEllipsisMenu site={ site } /> }
+			<Column style={ site.is_deleted ? { display: 'none' } : { width: '24px' } }>
+				{ inView && <SitesEllipsisMenu site={ site } /> }
 			</Column>
 		</Row>
 	);
