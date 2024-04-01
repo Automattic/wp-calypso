@@ -1,0 +1,49 @@
+.guided-tour__popover {
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+	}
+}
+
+.guided-tour__popover-heading {
+	color: var(--studio-gray-100);
+	font-size: rem(14px);
+	line-height: 1.5;
+	font-weight: 500;
+}
+
+.guided-tour__popover-description {
+	color: var(--studio-gray-80);
+	font-size: rem(12px);
+	line-height: 1.5;
+	max-width: 220px;
+	text-align: left;
+	margin-block-end: 0;
+}
+
+.guided-tour__popover-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+
+	.guided-tour__popover-step-count {
+		color: var(--studio-gray-60);
+		font-size: rem(12px);
+	}
+
+	.guided-tour__popover-footer-right-content {
+		display: flex;
+		gap: 8px;
+
+		button {
+			padding: 4px 8px;
+			font-size: rem(12px);
+		}
+	}
+}

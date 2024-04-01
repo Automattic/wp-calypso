@@ -30,6 +30,14 @@ export default function OverviewBodyNextSteps() {
 
 	const noActiveSite = useNoActiveSite();
 
+	const resetTour = ( prefSlugs: string[] ): void => {
+		prefSlugs.forEach( ( slug ) => {
+			if ( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ] ) {
+				dispatch( savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], null ) );
+			}
+		} );
+	};
+
 	const tasks: Task[] = [
 		{
 			calypso_path: A4A_SITES_LINK_WALKTHROUGH_TOUR,
@@ -37,9 +45,7 @@ export default function OverviewBodyNextSteps() {
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_get_familiar_click' ) );
-				dispatch(
-					savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'sitesWalkthrough' ], true )
-				);
+				resetTour( [ 'sitesWalkthrough' ] );
 			},
 			id: 'get_familiar',
 			title: translate( 'Get familiar with the sites management dashboard' ),
