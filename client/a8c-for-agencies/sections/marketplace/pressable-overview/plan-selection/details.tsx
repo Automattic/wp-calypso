@@ -144,7 +144,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 						translate( '24/7 WordPress hosting support' ),
 						translate( 'WP Cloud platform' ),
 						translate( 'Jetpack Security (optional)' ),
-						translate( 'Free sites migration' ),
+						translate( 'Free site migrations' ),
 					] }
 				/>
 			</div>
