@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { PatternTypeFilter, PatternView } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { getTracksPatternType } from '../lib/get-tracks-pattern-type';
-import { PatternTypeFilter, PatternView } from '../types';
 
 type PatternsPageViewTrackerProps = {
 	category: string;
