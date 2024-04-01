@@ -5,10 +5,11 @@
 .navigation-header {
 	box-sizing: border-box;
 	width: 100%;
-	padding: 16px;
+	padding: 0 0 24px 0;
 	margin-bottom: 0;
-	@include break-small {
-		padding: 0 0 24px 0;
+
+	@media (max-width: $break-small ) {
+		padding: 16px;
 	}
 
 	.breadcrumbs {
@@ -45,10 +46,6 @@
 	align-items: flex-start;
 	box-sizing: border-box;
 	column-gap: 10px;
-
-	@media ( max-width: 660px ) {
-		min-height: 60px;
-	}
 
 	> .formatted-header {
 		flex: 1;

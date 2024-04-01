@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { addQueryArgs } from 'calypso/lib/url';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 
 /**
  * Creates a URL that refers to the Jetpack 'Contact Support' page,

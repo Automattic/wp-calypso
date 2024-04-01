@@ -8,6 +8,7 @@ import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import {
+	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
@@ -45,11 +46,13 @@ const useSiteMenuItems = () => {
 	const shouldShowGlobalSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSidebar( state, selectedSiteId, currentSection?.group );
 	} );
+	const shouldShowCollapsedGlobalSidebar = useSelector( ( state ) => {
+		return getShouldShowCollapsedGlobalSidebar( state, selectedSiteId, currentSection?.group );
+	} );
 	const shouldShowGlobalSiteSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSiteSidebar( state, selectedSiteId, currentSection?.group );
 	} );
 	const isDesktop = useBreakpoint( '>782px' );
-
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
@@ -117,9 +120,10 @@ const useSiteMenuItems = () => {
 		} );
 	}, [ isJetpack, menuItems, siteDomain, translate ] );
 
-	if ( shouldShowGlobalSidebar ) {
+	if ( shouldShowGlobalSidebar || shouldShowCollapsedGlobalSidebar ) {
 		return globalSidebarMenu();
 	}
+
 	if ( shouldShowGlobalSiteSidebar ) {
 		return globalSiteSidebarMenu( {
 			siteDomain,

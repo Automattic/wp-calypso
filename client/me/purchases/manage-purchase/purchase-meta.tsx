@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -22,7 +23,6 @@ import {
 	isRenewing,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';

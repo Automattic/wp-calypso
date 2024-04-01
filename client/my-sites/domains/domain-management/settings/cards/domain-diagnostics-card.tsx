@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -8,7 +9,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
-import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
