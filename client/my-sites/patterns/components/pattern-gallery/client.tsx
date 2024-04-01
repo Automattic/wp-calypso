@@ -25,12 +25,16 @@ function debounce( callback: () => void ) {
 }
 
 function calculateMasonryLayout( element: HTMLElement ) {
-	const columnCount = getComputedStyle( element ).gridTemplateColumns.split( ' ' ).length;
+	const elementStyle = getComputedStyle( element );
+	const columnCount = elementStyle.gridTemplateColumns.split( ' ' ).length;
+	const parsedRowGap = /(\d+(\.\d+)?)px/.exec( elementStyle.rowGap );
+	const rowGap = parseFloat( parsedRowGap?.[ 1 ] ?? '0' );
+
 	const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
 
 	if ( columnCount === 1 ) {
 		items.forEach( ( item ) => {
-			item.style.removeProperty( 'transform' );
+			item.style.removeProperty( 'margin-top' );
 		} );
 
 		return;
@@ -38,21 +42,26 @@ function calculateMasonryLayout( element: HTMLElement ) {
 
 	// Always reset all items on the first row, since the number of grid columns is variable
 	items.slice( 0, columnCount ).forEach( ( item ) => {
-		item.style.removeProperty( 'transform' );
+		item.style.removeProperty( 'margin-top' );
 	} );
 
 	// We calculate the difference between the top coordinates of each `.pattern-preview` with the
 	// bottom coordinates of the first `.pattern-preview` in the same column. This value is then
-	// used to set a negative `translateY` transform, simulating a Masonry layout
+	// used to set a negative `margin-top`, simulating a Masonry layout
 	items.slice( columnCount ).forEach( ( item, i ) => {
 		const firstRowBottom = items[ i ].getBoundingClientRect().bottom;
 		const thisRowTop = item.getBoundingClientRect().top;
-		const parsedTransform = /translateY\((-?\d+(\.\d+)?px)/.exec( item.style.transform );
-		const currentTransform = parsedTransform?.[ 1 ] ?? '0';
 
-		item.style.transform = `translateY(${
-			firstRowBottom - thisRowTop + parseFloat( currentTransform )
-		}px)`;
+		const parsedMarginTop = /(-?\d+(\.\d+)?)px/.exec( item.style.marginTop );
+		const currentMarginTop = parseFloat( parsedMarginTop?.[ 1 ] ?? '0' );
+
+		const marginTop = firstRowBottom - thisRowTop + rowGap + currentMarginTop;
+
+		if ( marginTop <= -1 ) {
+			item.style.marginTop = `${ marginTop }px`;
+		} else {
+			item.style.removeProperty( 'margin-top' );
+		}
 	} );
 }
 
@@ -61,8 +70,8 @@ type MasonryGalleryProps = PropsWithChildren< {
 	enableMasonry: boolean;
 } >;
 
-// Simulates a Masonry layout by applying negative `translateY` transform on every item that doesn't
-// sit in the first row
+// Simulates a Masonry layout by applying negative `margin-top` on every item that doesn't sit in
+// the first row
 function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryProps ) {
 	const ref = useRef< HTMLDivElement >( null );
 
@@ -132,11 +141,11 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 								'pattern-preview--list': ! isGridView,
 							} ) }
 							getPatternPermalink={ getPatternPermalink }
+							isGridView={ isGridView }
 							isResizable={ ! isGridView }
 							key={ pattern.ID }
 							pattern={ pattern }
 							patternTypeFilter={ patternTypeFilter }
-							isGridView={ isGridView }
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }

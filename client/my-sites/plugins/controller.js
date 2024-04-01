@@ -115,18 +115,33 @@ export function plugins( context, next ) {
 export function updatesManager( context, next ) {
 	const siteSlug = context?.params?.site_slug;
 	const scheduleId = context?.params?.schedule_id;
+	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/${ siteSlug }` );
 
 	if ( ! siteSlug ) {
 		sites( context, next );
 		return;
 	}
 
+	if ( context.params.action === 'logs' && ! scheduleId ) {
+		goToScheduledUpdatesList();
+		return;
+	}
+
 	switch ( context.params.action ) {
+		case 'logs':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				scheduleId,
+				context: 'logs',
+				onNavBack: goToScheduledUpdatesList,
+			} );
+			break;
+
 		case 'create':
 			context.primary = createElement( PluginsUpdateManager, {
 				siteSlug,
 				context: 'create',
-				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
+				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
 
@@ -135,7 +150,7 @@ export function updatesManager( context, next ) {
 				siteSlug,
 				scheduleId,
 				context: 'edit',
-				onNavBack: () => page.show( `/plugins/scheduled-updates/${ siteSlug }` ),
+				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
 
