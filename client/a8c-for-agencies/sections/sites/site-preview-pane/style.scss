@@ -46,6 +46,12 @@
 			height: revert;
 		}
 
+		@media (max-width: 850px) {
+			.section-nav__panel {
+				overflow: scroll;
+			}
+		}
+
 		@media (min-width: 481px) {
 			.section-nav-group {
 				.is-dropdown {
