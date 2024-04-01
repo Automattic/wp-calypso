@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
-import PaginatedSurvey from 'calypso/components/paginated-survey';
+import SurveyContainer from 'calypso/components/survey-container';
+import { mockQuestions } from './mock';
 import EcommerceSegmentationSurveyProvider from './provider';
-import { questions } from './questions';
 import './style.scss';
 import type { Step } from '../../types';
 
@@ -13,8 +13,11 @@ const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 	}
 
 	return (
-		<EcommerceSegmentationSurveyProvider navigation={ navigation } totalPages={ questions.length }>
-			<PaginatedSurvey questions={ questions } recordTracksEvent={ recordTracksEvent } />
+		<EcommerceSegmentationSurveyProvider
+			navigation={ navigation }
+			totalPages={ mockQuestions.length }
+		>
+			<SurveyContainer questions={ mockQuestions } recordTracksEvent={ recordTracksEvent } />
 		</EcommerceSegmentationSurveyProvider>
 	);
 };

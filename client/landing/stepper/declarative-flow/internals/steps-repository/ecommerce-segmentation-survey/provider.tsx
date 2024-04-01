@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
-import { PaginatedSurveyContext } from 'calypso/components/paginated-survey/context';
+import { PaginatedSurveyContext } from 'calypso/components/survey-container/context';
 import type { NavigationControls } from '../../types';
 
 const PAGE_QUERY_PARAM = 'page';

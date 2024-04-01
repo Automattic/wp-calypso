@@ -22,7 +22,4 @@ export type Question = {
 	options: Option[];
 };
 
-export type Answer = {
-	questionKey: string;
-	value: string[];
-};
+export type Answers = Record< string, string[] >;

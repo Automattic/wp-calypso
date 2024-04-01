@@ -7,13 +7,14 @@ import QuestionMultipleOptions from './question-multiple-selection';
 import QuestionSingleOption from './question-single-selection';
 import './style.scss';
 
-const questionsMap = {
+const questionTypeComponentMap = {
 	[ QuestionType.SINGLE_CHOICE ]: QuestionSingleOption,
 	[ QuestionType.MULTIPLE_CHOICE ]: QuestionMultipleOptions,
 };
 
 export type QuestionSelectionType = {
 	question: Question;
+	value: string[];
 	onChange: ( questionKey: string, value: string[] ) => void;
 };
 
@@ -29,11 +30,12 @@ const QuestionStep = ( {
 	nextPage,
 	skip,
 	question,
+	value,
 	onChange,
 	recordTracksEvent,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
-	const SelectionComponent = questionsMap[ question.type ];
+	const SelectionComponent = questionTypeComponentMap[ question.type ];
 
 	return (
 		<StepContainer
@@ -51,7 +53,7 @@ const QuestionStep = ( {
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">
-					<SelectionComponent question={ question } onChange={ onChange } />
+					<SelectionComponent question={ question } value={ value } onChange={ onChange } />
 					<Button className="question-step__continue-button" onClick={ nextPage } variant="primary">
 						{ translate( 'Continue' ) }
 					</Button>
