@@ -160,6 +160,12 @@ const DeletedStatus = styled.div`
 	}
 `;
 
+const RestoreButton = styled( Button )`
+	color: var( --color-link ) !important;
+	font-size: 12px;
+	text-decoration: underline;
+`;
+
 const StatsOffContainer = styled.div`
 	text-align: left;
 `;
@@ -327,15 +333,14 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.is_deleted ? (
 					<DeletedStatus>
 						<span>{ __( 'Deleted' ) }</span>
-						<Button
-							primary
+						<RestoreButton
 							borderless
 							busy={ isRestoring }
 							disabled={ isRestoring }
 							onClick={ handleRestoreSite }
 						>
 							{ __( 'Restore' ) }
-						</Button>
+						</RestoreButton>
 					</DeletedStatus>
 				) : (
 					<WithAtomicTransfer site={ site }>
