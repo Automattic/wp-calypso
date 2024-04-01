@@ -277,6 +277,7 @@ export function SitesDashboard( {
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+										showDeletedStatus
 									/>
 								) }
 								{ hasSitesSortingPreferenceLoaded && (
