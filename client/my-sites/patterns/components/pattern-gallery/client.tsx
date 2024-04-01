@@ -1,6 +1,8 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { PropsWithChildren, useLayoutEffect, useRef } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
@@ -24,13 +26,13 @@ function debounce( callback: () => void ) {
 	};
 }
 
-function calculateMasonryLayout( element: HTMLElement ) {
+function calculateMasonryLayout( element: HTMLElement, itemSelector: string ) {
 	const elementStyle = getComputedStyle( element );
 	const columnCount = elementStyle.gridTemplateColumns.split( ' ' ).length;
 	const parsedRowGap = /(\d+(\.\d+)?)px/.exec( elementStyle.rowGap );
 	const rowGap = parseFloat( parsedRowGap?.[ 1 ] ?? '0' );
 
-	const items = [ ...element.querySelectorAll< HTMLElement >( '.pattern-preview' ) ];
+	const items = [ ...element.querySelectorAll< HTMLElement >( itemSelector ) ];
 
 	if ( columnCount === 1 ) {
 		items.forEach( ( item ) => {
@@ -45,9 +47,9 @@ function calculateMasonryLayout( element: HTMLElement ) {
 		item.style.removeProperty( 'margin-top' );
 	} );
 
-	// We calculate the difference between the top coordinates of each `.pattern-preview` with the
-	// bottom coordinates of the first `.pattern-preview` in the same column. This value is then
-	// used to set a negative `margin-top`, simulating a Masonry layout
+	// We calculate the difference between the top coordinates of each item with the bottom
+	// coordinates of the first item in the same column. This value is then used to set a negative
+	// `margin-top`, simulating a Masonry layout
 	items.slice( columnCount ).forEach( ( item, i ) => {
 		const firstRowBottom = items[ i ].getBoundingClientRect().bottom;
 		const thisRowTop = item.getBoundingClientRect().top;
@@ -68,11 +70,17 @@ function calculateMasonryLayout( element: HTMLElement ) {
 type MasonryGalleryProps = PropsWithChildren< {
 	className?: string;
 	enableMasonry: boolean;
+	itemSelector: string;
 } >;
 
 // Simulates a Masonry layout by applying negative `margin-top` on every item that doesn't sit in
 // the first row
-function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryProps ) {
+function MasonryGallery( {
+	children,
+	className,
+	enableMasonry,
+	itemSelector,
+}: MasonryGalleryProps ) {
 	const ref = useRef< HTMLDivElement >( null );
 
 	useLayoutEffect( () => {
@@ -82,14 +90,14 @@ function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryP
 
 		const element = ref.current;
 
-		calculateMasonryLayout( element );
-		const onLayoutChange = debounce( () => calculateMasonryLayout( element ) );
+		calculateMasonryLayout( element, itemSelector );
+		const onLayoutChange = debounce( () => calculateMasonryLayout( element, itemSelector ) );
 		element.addEventListener( 'patternPreviewResize', onLayoutChange );
 
 		return () => {
 			element.removeEventListener( 'patternPreviewResize', onLayoutChange );
 		};
-	}, [ enableMasonry ] );
+	}, [ enableMasonry, itemSelector ] );
 
 	return (
 		<div className={ className } ref={ ref }>
@@ -99,6 +107,7 @@ function MasonryGallery( { children, className, enableMasonry }: MasonryGalleryP
 }
 
 const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
+const PATTERNS_PER_PAGE_COUNT = 9;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const {
@@ -109,11 +118,20 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 		patternTypeFilter,
 	} = props;
 
+	const translate = useTranslate();
+	const [ patternDisplayCount, setPatternDisplayCount ] = useState( PATTERNS_PER_PAGE_COUNT );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
 	const isPageLayouts = patternTypeFilter === PatternTypeFilter.PAGES;
+
+	const patternsToDisplay = patterns.slice( 0, patternDisplayCount );
+	const isDisplayingPaginationButton = patternsToDisplay.length < patterns.length;
+	const nextPageCount = Math.min(
+		patterns.length - patternsToDisplay.length,
+		PATTERNS_PER_PAGE_COUNT
+	);
 
 	return (
 		<BlockRendererProvider
@@ -131,8 +149,9 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 						'pattern-gallery--pages': isPageLayouts,
 					} ) }
 					enableMasonry={ isGridView && isPageLayouts }
+					itemSelector=".pattern-preview"
 				>
-					{ patterns.map( ( pattern, i ) => (
+					{ patternsToDisplay.map( ( pattern, i ) => (
 						<PatternPreview
 							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
 							category={ category }
@@ -149,6 +168,24 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
+
+					{ isDisplayingPaginationButton && (
+						<div className="pattern-gallery__pagination-button-wrapper">
+							<Button
+								className="pattern-gallery__pagination-button"
+								onClick={ () => {
+									setPatternDisplayCount( patternDisplayCount + PATTERNS_PER_PAGE_COUNT );
+								} }
+								transparent
+							>
+								{ translate( 'Load %(count)d more pattern', 'Load %(count)d more patterns', {
+									count: nextPageCount,
+									args: { count: nextPageCount },
+									comment: 'Pagination button on Pattern Library pages',
+								} ) }
+							</Button>
+						</div>
+					) }
 				</MasonryGallery>
 			</PatternsRendererProvider>
 		</BlockRendererProvider>
