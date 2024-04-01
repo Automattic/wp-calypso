@@ -12,7 +12,8 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
+import { pillNavigationClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import type {
 	Pattern,
 	PatternGalleryProps,
@@ -124,15 +125,19 @@ function PatternPreviewFragment( {
 				? parseInt( masterbarHeightRaw )
 				: 0;
 
-			const stickyNav = document.querySelector( '.pattern-library__pill-navigation' );
+			const stickyNav = document.querySelector( `.${ pillNavigationClassName }` );
 			const stickyNavCoords = stickyNav?.getBoundingClientRect();
 			const stickyNavHeight = stickyNavCoords && ! isMobile() ? stickyNavCoords.height : 0;
 
 			const elementCoords = element.getBoundingClientRect();
 
+			const EXTRA_VERTICAL_MARGIN = 16;
+
+			// We deliberately avoid smooth scrolling, since this will trigger lazy loading on the
+			// iframes above the target, potentially causing the layout to shift, which suddenly
+			// makes the scroll target incorrect
 			window.scrollBy( {
-				behavior: 'smooth',
-				top: elementCoords.top - stickyNavHeight - masterbarHeight - 16,
+				top: elementCoords.top - stickyNavHeight - masterbarHeight - EXTRA_VERTICAL_MARGIN,
 			} );
 		}, 1000 );
 
