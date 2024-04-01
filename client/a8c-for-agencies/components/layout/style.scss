@@ -75,7 +75,6 @@ html,
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
-		padding-block-start: 16px;
 	}
 }
 
@@ -146,6 +145,13 @@ html,
 
 	@include break-medium {
 		width: auto;
+		> * {
+			flex-grow: 0;
+		}
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		justify-content: space-between;
 		> * {
 			flex-grow: 0;
 		}
@@ -225,6 +231,10 @@ html,
 	font-size: 2.25rem;
 	font-weight: 600;
 	line-height: 1.2;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: none;
+	}
 }
 
 .a4a-layout__header-subtitle {
