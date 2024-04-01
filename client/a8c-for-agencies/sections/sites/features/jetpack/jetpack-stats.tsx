@@ -11,7 +11,7 @@ type Props = {
 export function JetpackStatsPreview( { site, trackEvent }: Props ) {
 	return (
 		<>
-			<SitePreviewPaneContent>
+			<SitePreviewPaneContent className="site-preview-pane__stats-content">
 				<InsightsStats
 					stats={ site.site_stats }
 					siteUrlWithScheme={ site.url_with_scheme }
