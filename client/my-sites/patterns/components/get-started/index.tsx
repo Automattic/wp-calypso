@@ -37,70 +37,68 @@ export function PatternsGetStarted() {
 			</div>
 
 			<div className="patterns-get-started__list">
-				<div className="patterns-get-started__list-inner">
-					<a
-						className="patterns-get-started__item"
-						href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/block-pattern/' ) }
-					>
-						<img
-							className="patterns-get-started__item-image"
-							src={ imageBlockPatterns }
-							alt=""
-							width="1200"
-							height="675"
-							loading="lazy"
-						/>
-						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
-						<div className="patterns-get-started__item-description">
-							{ translate( 'Block Patterns', {
-								comment:
-									'This string is a copy of the page title from wordpress.com/support/wordpress-editor/block-pattern/',
-							} ) }
-						</div>
-					</a>
+				<a
+					className="patterns-get-started__item"
+					href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/block-pattern/' ) }
+				>
+					<img
+						className="patterns-get-started__item-image"
+						src={ imageBlockPatterns }
+						alt=""
+						width="1200"
+						height="675"
+						loading="lazy"
+					/>
+					<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
+					<div className="patterns-get-started__item-description">
+						{ translate( 'Block Patterns', {
+							comment:
+								'This string is a copy of the page title from wordpress.com/support/wordpress-editor/block-pattern/',
+						} ) }
+					</div>
+				</a>
 
-					<a
-						className="patterns-get-started__item"
-						href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/page-layouts/' ) }
-					>
-						<img
-							className="patterns-get-started__item-image"
-							src={ imagePageLayouts }
-							alt=""
-							width="1200"
-							height="675"
-							loading="lazy"
-						/>
-						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
-						<div className="patterns-get-started__item-description">
-							{ translate( 'Use Pre-Made Page Layouts', {
-								comment:
-									'This string is a copy of the page title from wordpress.com/support/wordpress-editor/page-layouts/',
-							} ) }
-						</div>
-					</a>
+				<a
+					className="patterns-get-started__item"
+					href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/page-layouts/' ) }
+				>
+					<img
+						className="patterns-get-started__item-image"
+						src={ imagePageLayouts }
+						alt=""
+						width="1200"
+						height="675"
+						loading="lazy"
+					/>
+					<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
+					<div className="patterns-get-started__item-description">
+						{ translate( 'Use Pre-Made Page Layouts', {
+							comment:
+								'This string is a copy of the page title from wordpress.com/support/wordpress-editor/page-layouts/',
+						} ) }
+					</div>
+				</a>
 
-					<a
-						className="patterns-get-started__item"
-						href={ localizeUrl( 'https://wordpress.com/learn/webinars/compelling-homepages/' ) }
-					>
-						<img
-							className="patterns-get-started__item-image"
-							src={ imagePreviewPublish }
-							alt=""
-							width="1137"
-							height="639"
-							loading="lazy"
-						/>
-						<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
-						<div className="patterns-get-started__item-description">
-							{ translate( 'Design Your Homepage', {
-								comment:
-									'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
-							} ) }
-						</div>
-					</a>
-				</div>
+				<a
+					className="patterns-get-started__item"
+					href={ localizeUrl( 'https://wordpress.com/learn/webinars/compelling-homepages/' ) }
+				>
+					<img
+						className="patterns-get-started__item-image"
+						src={ imagePreviewPublish }
+						alt=""
+						width="1137"
+						height="639"
+						loading="lazy"
+					/>
+					<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
+					<div className="patterns-get-started__item-description">
+						{ translate( 'Design Your Homepage', {
+							comment:
+								'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
+						} ) }
+					</div>
+				</a>
 			</div>
 		</PatternsSection>
 	);
