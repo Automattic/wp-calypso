@@ -1,5 +1,10 @@
 import config from '@automattic/calypso-config';
-import { ComponentSwapper, CountComparisonCard, ShortenedNumber } from '@automattic/components';
+import {
+	ComponentSwapper,
+	CountComparisonCard,
+	MobileHighlightCardListing,
+	Spinner,
+} from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import useSubscribersOverview from 'calypso/my-sites/stats/hooks/use-subscribers-overview';
@@ -96,18 +101,11 @@ function SubscriberHighlightsStandard( {
 }
 
 function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighlightsRenderProps ) {
-	return (
-		<div className="highlight-cards-list-mobile">
-			{ highlights.map( ( highlight ) => (
-				<div className="highlight-cards-list-mobile__item" key={ highlight.heading }>
-					<span className="highlight-cards-list-mobile__item-heading">{ highlight.heading }</span>
-					<span className="highlight-cards-list-mobile__item-count">
-						{ isLoading ? '-' : <ShortenedNumber value={ highlight.count } /> }
-					</span>
-				</div>
-			) ) }
-		</div>
-	);
+	if ( isLoading ) {
+		return <Spinner />;
+	}
+
+	return <MobileHighlightCardListing highlights={ highlights } />;
 }
 
 export default function SubscribersHighlightSection( { siteId }: { siteId: number | null } ) {
