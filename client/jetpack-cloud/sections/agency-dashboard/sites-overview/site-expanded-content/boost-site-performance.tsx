@@ -1,5 +1,5 @@
-import { Button, Gridicon, Tooltip } from '@automattic/components';
-import { Icon, help } from '@wordpress/icons';
+import { Button, Tooltip } from '@automattic/components';
+import { Icon, help, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useMemo } from 'react';
@@ -198,7 +198,15 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 								primary={ ctaButton.primary }
 								compact
 							>
-								{ ctaButton.label } { !! ctaButton.href && <Gridicon icon="external" /> }
+								{ ctaButton.label }{ ' ' }
+								{ !! ctaButton.href && (
+									<Icon
+										icon={ external }
+										size={ 16 }
+										className="site-preview-pane__boost-icon"
+										viewBox="0 0 20 20"
+									/>
+								) }
 							</Button>
 						) ) }
 					</div>
