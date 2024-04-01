@@ -66,7 +66,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck,
 	isLargeCurrency,
 	hasFreeTrialPlan,
-	onPlanCtaClick,
+	onCtaClick,
 	planActionOverrides,
 }: {
 	planSlug: PlanSlug;
@@ -75,7 +75,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	onPlanCtaClick: () => void;
+	onCtaClick: ( isFreeTrialCTA?: boolean ) => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
@@ -90,7 +90,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 		},
 	} );
 
-	const onClick = () => onPlanCtaClick();
+	const onClick = () => onCtaClick();
 
 	if ( isFreePlan( planSlug ) ) {
 		btnText = translate( 'Start with Free' );
@@ -120,16 +120,11 @@ const SignupFlowPlanFeatureActionButton = ( {
 	if ( hasFreeTrialPlan ) {
 		return (
 			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
+				<PlanButton planSlug={ planSlug } onClick={ () => onCtaClick( true ) } busy={ busy }>
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton
-						planSlug={ planSlug }
-						// onClick={ () => onPlanCtaClick( { isFreeTrialPlan: false } ) }
-						onClick={ () => onPlanCtaClick() }
-						borderless
-					>
+					<PlanButton planSlug={ planSlug } onClick={ onClick } borderless>
 						{ btnText }
 					</PlanButton>
 				) }
@@ -157,14 +152,14 @@ const LaunchPagePlanFeatureActionButton = ( {
 	priceString,
 	isStuck,
 	isLargeCurrency,
-	onPlanCtaClick,
+	onCtaClick,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
-	onPlanCtaClick: () => void;
+	onCtaClick: ( isFreeTrialCTA?: boolean ) => void;
 } ) => {
 	const translate = useTranslate();
 
@@ -194,7 +189,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	}
 
 	return (
-		<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick }>
+		<PlanButton planSlug={ planSlug } onClick={ () => onCtaClick() }>
 			{ buttonText }
 		</PlanButton>
 	);
@@ -207,7 +202,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency,
 	isMonthlyPlan,
 	planTitle,
-	onPlanCtaClick,
+	onCtaClick,
 	planSlug,
 	currentSitePlanSlug,
 	buttonText,
@@ -220,7 +215,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
-	onPlanCtaClick: () => void;
+	onCtaClick: ( isFreeTrialCTA?: boolean ) => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
@@ -230,6 +225,8 @@ const LoggedInPlansFeatureActionButton = ( {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex, siteId } = usePlansGridContext();
+	const onClick = () => onCtaClick();
+
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
@@ -261,13 +258,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planActionOverrides?.loggedInFreePlan ) {
 			return (
-				<PlanButton
-					planSlug={ planSlug }
-					// TODO: Replace planActionOverrides callback
-					// onClick={ planActionOverrides.loggedInFreePlan.callback }
-					onClick={ onPlanCtaClick }
-					current={ current }
-				>
+				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
 					{ planActionOverrides.loggedInFreePlan.text }
 				</PlanButton>
 			);
@@ -296,12 +287,12 @@ const LoggedInPlansFeatureActionButton = ( {
 				</PlanButton>
 			);
 		} else if ( planActionOverrides?.currentPlan ) {
-			const { callback, text } = planActionOverrides.currentPlan;
+			const { text } = planActionOverrides.currentPlan;
 			return (
 				<PlanButton
 					planSlug={ planSlug }
-					disabled={ ! callback }
-					onClick={ callback }
+					disabled={ ! isFreePlan( planSlug ) }
+					onClick={ onClick }
 					current={ current }
 				>
 					{ text }
@@ -347,7 +338,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</PlanButton>
 			);
@@ -355,7 +346,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</PlanButton>
 			);
@@ -363,7 +354,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Yearly' ) }
 				</PlanButton>
 			);
@@ -398,7 +389,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( availableForPurchase ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick } current={ current }>
+			<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
 				{ buttonTextFallback }
 			</PlanButton>
 		);
@@ -442,11 +433,10 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	const translate = useTranslate();
 	const {
 		gridPlansIndex,
-		helpers: { getActionCallback },
-		selectedSiteId,
+		helpers: { useActionCallback },
+		siteId,
 	} = usePlansGridContext();
 	const {
-		current,
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
 		freeTrialPlanSlug,
@@ -460,21 +450,21 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	const selectedStorageAddOn = useSelectedStorageAddOn( {
 		planSlug,
-		selectedSiteId,
+		selectedSiteId: siteId,
 		storageAddOnsForPlan,
 	} );
 
-	const onPlanCtaClick = getActionCallback( {
+	// TODO: Do we need a param to make a distinction between isInSignup on L494 and the plans page?
+	// Can we derive the param in the useActionCallback hook?
+	const onCtaClick = useActionCallback( {
 		planSlug,
 		cartItemForPlan,
-		currentPlan: current,
-		freeTrialPlanSlug,
 		selectedStorageAddOn,
 	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ onPlanCtaClick }>
+			<PlanButton planSlug={ planSlug } onClick={ () => onCtaClick }>
 				{ translate( 'Learn more' ) }
 			</PlanButton>
 		);
@@ -497,20 +487,11 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				priceString={ priceString }
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
-				onPlanCtaClick={ onPlanCtaClick }
+				onCtaClick={ onCtaClick }
 			/>
 		);
 	}
 	if ( isInSignup ) {
-		const onPlanCtaClick = getActionCallback( {
-			planSlug,
-			cartItemForPlan,
-			currentPlan: current,
-			freeTrialPlanSlug,
-			isFreeTrialPlan: !! freeTrialPlanSlug,
-			selectedStorageAddOn,
-		} );
-
 		return (
 			<SignupFlowPlanFeatureActionButton
 				planSlug={ planSlug }
@@ -519,7 +500,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isStuck={ isStuck }
 				isLargeCurrency={ !! isLargeCurrency }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
-				onPlanCtaClick={ onPlanCtaClick }
+				onCtaClick={ onCtaClick }
 				planActionOverrides={ planActionOverrides }
 			/>
 		);
@@ -529,7 +510,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		<LoggedInPlansFeatureActionButton
 			planSlug={ planSlug }
 			availableForPurchase={ availableForPurchase }
-			onPlanCtaClick={ onPlanCtaClick }
+			onCtaClick={ onCtaClick }
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			planActionOverrides={ planActionOverrides }

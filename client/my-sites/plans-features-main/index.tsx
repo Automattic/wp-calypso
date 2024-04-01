@@ -6,8 +6,7 @@ import {
 	isPersonalPlan,
 	PLAN_PERSONAL,
 	WPComStorageAddOnSlug,
-	// TODO: FIX THIS
-	// PLAN_FREE,
+	PLAN_FREE,
 	type PlanSlug,
 	UrlFriendlyTermType,
 	isValidFeatureKey,
@@ -15,8 +14,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, AddOns } from '@automattic/data-stores';
-import { useCurrentPlan } from '@automattic/data-stores/src/plans';
+import { WpcomPlansUI, Plans, AddOns } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -67,7 +65,7 @@ import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/s
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
-import useActionCallback from './hooks/use-action-callback';
+import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
@@ -257,11 +255,13 @@ const PlansFeaturesMain = ( {
 	onPlanIntervalUpdate,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	// TODO: Remove temporary eslint disable
+	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const currentPlan = useCurrentPlan( { siteId } );
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
@@ -373,8 +373,8 @@ const PlansFeaturesMain = ( {
 			showDomainUpsellDialog();
 			return true;
 		}
-
-		setLastClickedPlan( planSlug );
+		// TODO: Figure out why this is being invoked on component mount
+		// setLastClickedPlan( planSlug );
 
 		const displayedModal = resolveModal( planSlug );
 		if ( displayedModal ) {
@@ -385,14 +385,16 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const getActionCallback = useActionCallback(
-		intent,
+	const useActionCallback = useGenerateActionCallback(
+		currentPlan,
+		eligibleForFreeHostingTrial,
+		onUpgradeClick,
 		flowName,
+		intent,
+		planActionCallback,
 		sitePlanSlug,
 		siteSlug,
-		withDiscount,
-		planActionCallback,
-		onUpgradeClick
+		withDiscount
 	);
 	const hiddenPlans = {
 		hideFreePlan,
@@ -414,7 +416,6 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
-		getActionCallback,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
@@ -435,7 +436,6 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
-		getActionCallback,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
@@ -612,7 +612,6 @@ const PlansFeaturesMain = ( {
 				actionOverrides = {
 					currentPlan: {
 						text: canUserManageCurrentPlan ? translate( 'Manage plan' ) : translate( 'View plan' ),
-						callback: () => {},
 					},
 				};
 			}
@@ -734,6 +733,8 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
+	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
+
 	return (
 		<>
 			<div
@@ -794,11 +795,7 @@ const PlansFeaturesMain = ( {
 							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
 							{
 								components: {
-									link: (
-										// TODO: Fix onClick callback here
-										// <Button onClick={ () => featuresGridPlanActions[ PLAN_FREE ]?.() } borderless />
-										<Button borderless />
-									),
+									link: <Button onClick={ () => onFreePlanCTAClick() } borderless />,
 								},
 							}
 						) }
@@ -837,7 +834,6 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
-										getActionCallback={ getActionCallback }
 										gridPlanForSpotlight={ gridPlanForSpotlight }
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }
@@ -859,6 +855,7 @@ const PlansFeaturesMain = ( {
 										siteId={ siteId }
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
+										useActionCallback={ useActionCallback }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -908,7 +905,6 @@ const PlansFeaturesMain = ( {
 													className="plans-features-main__comparison-grid"
 													coupon={ coupon }
 													currentSitePlanSlug={ sitePlanSlug }
-													getActionCallback={ getActionCallback }
 													gridPlans={ gridPlansForComparisonGrid }
 													hideUnavailableFeatures={ hideUnavailableFeatures }
 													intent={ intent }
@@ -931,6 +927,7 @@ const PlansFeaturesMain = ( {
 													siteId={ siteId }
 													stickyRowOffset={ comparisonGridStickyRowOffset }
 													showRefundPeriod={ isAnyHostingFlow( flowName ) }
+													useActionCallback={ useActionCallback }
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}

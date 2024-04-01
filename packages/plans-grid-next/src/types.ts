@@ -1,4 +1,5 @@
 import { Plans, AddOns } from '@automattic/data-stores';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -77,7 +78,6 @@ export interface PlanActionOverrides {
 	};
 	currentPlan?: {
 		text?: TranslateResult;
-		callback?: () => void;
 	};
 	trialAlreadyUsed?: {
 		postButtonText?: TranslateResult;
@@ -134,14 +134,17 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
-export type GetActionCallbackParams = {
+export type UseActionCallbackParams = {
 	planSlug: PlanSlug;
-	cartItemForPlan?: { product_slug: string } | null;
-	currentPlan?: boolean;
-	freeTrialPlanSlug?: PlanSlug;
-	isFreeTrialPlan?: boolean;
+	cartItemForPlan?: MinimalRequestCartProduct | null;
 	selectedStorageAddOn?: AddOns.AddOnMeta | null;
 };
+
+export type UseActionCallback = ( {
+	planSlug,
+	cartItemForPlan,
+	selectedStorageAddOn,
+}: UseActionCallbackParams ) => ( isFreeTrialCTA?: boolean ) => void;
 
 export type GridContextProps = {
 	gridPlans: GridPlan[];
@@ -149,7 +152,7 @@ export type GridContextProps = {
 	intent?: PlansIntent;
 	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	getActionCallback: ( options: GetActionCallbackParams ) => () => void;
+	useActionCallback: UseActionCallback;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;

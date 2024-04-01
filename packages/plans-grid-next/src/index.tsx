@@ -22,7 +22,7 @@ const WrappedComparisonGrid = ( {
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
-	getActionCallback,
+	useActionCallback,
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
@@ -66,7 +66,7 @@ const WrappedComparisonGrid = ( {
 				siteId={ siteId }
 				gridPlans={ gridPlans }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-				getActionCallback={ getActionCallback }
+				useActionCallback={ useActionCallback }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
@@ -96,7 +96,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		intent,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
-		getActionCallback,
+		useActionCallback,
 		recordTracksEvent,
 		allFeaturesList,
 		coupon,
@@ -128,7 +128,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				gridPlans={ gridPlans }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-				getActionCallback={ getActionCallback }
+				useActionCallback={ useActionCallback }
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 			>

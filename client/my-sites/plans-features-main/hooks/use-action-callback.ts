@@ -1,5 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
-	PLAN_FREE,
+	applyTestFiltersToPlansList,
 	PRODUCT_1GB_SPACE,
 	type PlanSlug,
 	isWpcomEnterpriseGridPlan,
@@ -7,38 +8,29 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { useMemo, useCallback } from '@wordpress/element';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; //TODO: move this out
+import { AddOns, Plans } from '@automattic/data-stores';
+import { useCallback } from '@wordpress/element';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import type { GetActionCallbackParams, GridPlan, PlansIntent } from '@automattic/plans-grid-next';
+import type {
+	UseActionCallbackParams,
+	PlansIntent,
+	UseActionCallback,
+} from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function useUpgradeHandler(
-	sitePlanSlug?: PlanSlug | null,
 	siteSlug?: string | null,
 	withDiscount?: string,
-	planActionCallback?: ( planSlug: PlanSlug ) => void,
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ) {
 	// TODO:
 	// - clickedPlanSlug can likely be removed
-	// - those `recordTracksEvent` should be moved out
 	const processCartItems = useCallback(
-		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
+		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
-			const planSlug = clickedPlanSlug ?? PLAN_FREE;
-
-			if ( isFreePlan( planSlug ) ) {
-				recordTracksEvent( 'calypso_signup_free_plan_click' );
-			}
-
-			const earlyReturn = planActionCallback?.( planSlug );
-
-			if ( earlyReturn ) {
-				return;
-			}
 
 			const cartItemForStorageAddOn = cartItems?.find(
 				( items ) => items.product_slug === PRODUCT_1GB_SPACE
@@ -69,133 +61,128 @@ function useUpgradeHandler(
 			);
 
 			page( checkoutUrlWithArgs );
+			return;
 		},
-		[ siteSlug, withDiscount, planActionCallback, cartHandler ]
+		[ siteSlug, withDiscount, cartHandler ]
 	);
 
-	const processCartItemsForPlanAndAddOns = useCallback(
-		( params: GetActionCallbackParams ) => {
-			const {
-				cartItemForPlan,
-				isFreeTrialPlan,
-				freeTrialPlanSlug,
-				planSlug,
-				selectedStorageAddOn,
-			} = params;
-
-			if ( isFreeTrialPlan && freeTrialPlanSlug ) {
-				const freeTrialCartItem = { product_slug: freeTrialPlanSlug };
-				processCartItems?.( [ freeTrialCartItem ], freeTrialPlanSlug );
+	return useCallback(
+		( {
+			cartItemForPlan,
+			isFreeTrialCta,
+			selectedStorageAddOn,
+		}: {
+			cartItemForPlan?: MinimalRequestCartProduct | null;
+			isFreeTrialCta: boolean | undefined;
+			selectedStorageAddOn?: AddOns.AddOnMeta | null;
+		} ) => {
+			/* 1. Process free trial plan for checkout. Exclude add-ons. */
+			if ( isFreeTrialCta && cartItemForPlan ) {
+				processCartItems?.( [ cartItemForPlan ] );
 				return;
 			}
 
+			/* 2. Process plan and add-ons for checkout. */
 			const storageAddOnCartItem = selectedStorageAddOn &&
 				! selectedStorageAddOn.purchased && {
 					product_slug: selectedStorageAddOn.productSlug,
 					quantity: selectedStorageAddOn.quantity,
 					volume: 1,
-					// TODO: figure out how to pass storageAddOnSlug
-					// extra: { feature_slug: storageAddOnSlug },
+					extra: { feature_slug: selectedStorageAddOn?.featureSlugs?.[ 0 ] },
 				};
 
 			if ( cartItemForPlan ) {
-				processCartItems?.(
-					[ cartItemForPlan, ...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ) ],
-					planSlug
+				processCartItems?.( [
+					cartItemForPlan,
+					...( storageAddOnCartItem ? [ storageAddOnCartItem ] : [] ),
+				] );
+				return;
+			}
+
+			/* 3. Process free plan for checkout */
+			processCartItems?.( null );
+			return;
+		},
+		[ processCartItems ]
+	);
+}
+
+function useGenerateActionCallback(
+	// TODO: Reevaluate param types and whether or not they should be optional
+	currentPlan: Plans.SitePlan | undefined,
+	eligibleForFreeHostingTrial: boolean,
+	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void,
+	flowName?: string | null,
+	intent?: PlansIntent | null,
+	planActionCallback?: ( planSlug: PlanSlug ) => boolean,
+	sitePlanSlug?: PlanSlug | null,
+	siteSlug?: string | null,
+	withDiscount?: string
+): UseActionCallback {
+	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
+		intent: intent ?? 'default',
+		eligibleForFreeHostingTrial,
+	} );
+	const currentPlanManageHref = useCurrentPlanManageHref();
+	const handleUpgrade = useUpgradeHandler( siteSlug, withDiscount, cartHandler );
+
+	return ( { planSlug, cartItemForPlan, selectedStorageAddOn }: UseActionCallbackParams ) => {
+		return ( isFreeTrialCta?: boolean ) => {
+			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
+			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
+			let upgradePlanSlug = planSlug;
+			let upgradeCartItem = cartItemForPlan;
+
+			if ( isFreeTrialCta ) {
+				upgradePlanSlug = freeTrialPlanSlug as PlanSlug;
+				upgradeCartItem = { product_slug: freeTrialPlanSlug as PlanSlug };
+			}
+
+			const earlyReturn = upgradePlanSlug && planActionCallback?.( upgradePlanSlug );
+			if ( earlyReturn ) {
+				return;
+			}
+
+			/* 1. Send user to VIP if it's an enterprise plan */
+			if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
+				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
+				window.open(
+					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
+					'_blank'
 				);
 				return;
 			}
 
-			processCartItems?.( null, planSlug );
-		},
-		[ processCartItems ]
-	);
-
-	return useCallback(
-		( params: GetActionCallbackParams ) => {
-			return () => {
-				const { isFreeTrialPlan, freeTrialPlanSlug, planSlug } = params;
-				const upgradePlan = isFreeTrialPlan && freeTrialPlanSlug ? freeTrialPlanSlug : planSlug;
-
-				if ( ! isFreePlan( planSlug ) ) {
-					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
-						current_plan: sitePlanSlug,
-						upgrading_to: upgradePlan,
-						saw_free_trial_offer: !! freeTrialPlanSlug,
-					} );
+			/* 2. Send user to either manage add-ons or plan in case of current plan selection */
+			if ( sitePlanSlug && currentPlan?.productSlug === planSlug && intent !== 'plans-p2' ) {
+				if ( isFreePlan( planSlug ) ) {
+					page.redirect( `/add-ons/${ siteSlug }` );
+				} else {
+					page.redirect( currentPlanManageHref );
 				}
-				processCartItemsForPlanAndAddOns?.( params );
-			};
-		},
-		[ sitePlanSlug, processCartItemsForPlanAndAddOns ]
-	);
-}
+				return;
+			}
 
-function useActionCallback(
-	intent?: PlansIntent | null,
-	flowName?: string | null,
-	sitePlanSlug?: PlanSlug | null,
-	siteSlug?: string | null,
-	withDiscount?: string,
-	planActionCallback?: ( planSlug: PlanSlug ) => void,
-	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
-) {
-	const upgradeHandler = useUpgradeHandler(
-		sitePlanSlug,
-		siteSlug,
-		withDiscount,
-		planActionCallback,
-		cartHandler
-	);
+			/* 3. Handle plan upgrade and plan upgrade tracks events */
+			if ( ! isFreePlan( upgradePlanSlug ) ) {
+				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
+					current_plan: sitePlanSlug,
+					upgrading_to: upgradePlanSlug,
+					saw_free_trial_offer: !! freeTrialPlanSlug,
+				} );
+			} else {
+				recordTracksEvent( 'calypso_signup_free_plan_click' );
+			}
 
-	const currentPlanManageHref = useCurrentPlanManageHref();
-
-	const [ managePlan, manageAddon, gotoVip ] = useMemo( () => {
-		const composePlanActionCallback = ( callback: () => void ) => {
-			return ( gridPlan: GridPlan ) => {
-				const earlyReturn = planActionCallback?.( gridPlan.planSlug );
-
-				if ( earlyReturn ) {
-					return;
-				}
-
-				callback();
-			};
+			handleUpgrade( {
+				cartItemForPlan: upgradeCartItem,
+				isFreeTrialCta,
+				selectedStorageAddOn,
+			} );
+			return;
 		};
-		const managePlan = composePlanActionCallback( () => page( currentPlanManageHref ) );
-		const manageAddon = composePlanActionCallback( () =>
-			page.redirect( `/add-ons/${ siteSlug }` )
-		);
-		const gotoVip = composePlanActionCallback( () => {
-			recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-			window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
-		} );
-
-		return [ managePlan, manageAddon, gotoVip ];
-	}, [ currentPlanManageHref, flowName, planActionCallback, siteSlug ] );
-
-	return (
-		params: GetActionCallbackParams = {
-			planSlug: PLAN_FREE,
-			cartItemForPlan: { product_slug: '' },
-			currentPlan: false,
-			freeTrialPlanSlug: undefined,
-			isFreeTrialPlan: false,
-			selectedStorageAddOn: undefined,
-		}
-	) => {
-		const { currentPlan, planSlug } = params;
-
-		if ( planSlug && isWpcomEnterpriseGridPlan( planSlug ) ) {
-			return gotoVip;
-		}
-
-		if ( sitePlanSlug && currentPlan && intent !== 'plans-p2' ) {
-			return isFreePlan( sitePlanSlug ) ? manageAddon : managePlan;
-		}
-
-		return upgradeHandler( params );
 	};
 }
 
-export default useActionCallback;
+export default useGenerateActionCallback;
