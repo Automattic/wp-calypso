@@ -294,7 +294,9 @@ export class SiteSettingsFormSEO extends Component {
 							);
 						} )() }
 					>
-						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
+						<NoticeAction href={ generalTabUrl }>
+							{ translate( 'Privacy Settings', { context: 'Site visibility settings' } ) }
+						</NoticeAction>
 					</Notice>
 				) }
 				{ conflictedSeoPlugin && (
