@@ -1,6 +1,7 @@
 import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { HTTPS_SSL } from '@automattic/urls';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
@@ -26,7 +27,6 @@ import {
 	isHstsRequired,
 	isDotGayNoticeRequired,
 } from 'calypso/lib/domains';
-import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';

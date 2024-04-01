@@ -1,4 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { DNS_TXT_RECORD_CHAR_LIMIT } from '@automattic/urls';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +9,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { DNS_TXT_RECORD_CHAR_LIMIT } from 'calypso/lib/url/support';
 
 class TxtRecord extends Component {
 	static propTypes = {

@@ -7,7 +7,7 @@ export const getFetchLicenseCountsQueryKey = ( agencyId?: number ) => {
 	return [ 'a4a-license-counts', agencyId ];
 };
 
-export default function useFetchLicenseCounts() {
+export default function useFetchLicenseCounts( staleTime = 0 ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
@@ -24,5 +24,6 @@ export default function useFetchLicenseCounts() {
 			),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
+		staleTime,
 	} );
 }

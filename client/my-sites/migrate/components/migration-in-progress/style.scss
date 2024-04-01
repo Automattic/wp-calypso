@@ -1,0 +1,35 @@
+@import "@automattic/typography/styles/fonts";
+
+.migration-in-progress {
+	height: calc(100svh - 120px);
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 0 20px;
+	box-sizing: border-box;
+	p {
+		margin: 0;
+	}
+}
+
+.migration-in-progress__title {
+	font-family: $brand-serif;
+	font-weight: 400;
+	font-size: 1.75rem;
+	line-height: 2;
+	color: var(--studio-gray-100);
+	margin: 0;
+}
+
+.migration-in-progress__loading {
+	height: 20px;
+	margin-top: 32px;
+}
+
+// Remove extra top spacing form the loading bar
+.migration-in-progress__loading > div {
+	top: 0;
+}

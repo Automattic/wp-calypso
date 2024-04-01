@@ -6,6 +6,7 @@ import {
 	LicenseAction,
 	LicenseType,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -24,6 +25,8 @@ export default function useLicenseActions(
 			return [];
 		}
 
+		const siteSlug = urlToSlug( siteUrl );
+
 		const handleClickMenuItem = ( eventName: string ) => {
 			dispatch( recordTracksEvent( eventName ) );
 		};
@@ -32,35 +35,35 @@ export default function useLicenseActions(
 		return [
 			{
 				name: translate( 'Set up site' ),
-				href: '', // FIXME: Add correct URL
+				href: `https://wordpress.com/home/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_site_set_up_click' ),
 				isExternalLink: true,
 				isEnabled: true,
 			},
 			{
 				name: translate( 'Change domain' ),
-				href: '', // FIXME: Add correct URL
+				href: `https://wordpress.com/domains/manage/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_change_domain_click' ),
 				isExternalLink: true,
 				isEnabled: true,
 			},
 			{
 				name: translate( 'Hosting configuration' ),
-				href: '', // FIXME: Add correct URL
+				href: `https://wordpress.com/hosting-config/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
 				isExternalLink: true,
 				isEnabled: true,
 			},
 			{
 				name: translate( 'Edit site in WP Admin' ),
-				href: '', // FIXME: Add correct URL
+				href: `${ siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_edit_site_click' ),
 				isExternalLink: true,
 				isEnabled: true,
 			},
 			{
 				name: translate( 'Debug site' ),
-				href: '', // FIXME: Add correct URL
+				href: `https://jptools.wordpress.com/debug/?url=${ siteUrl }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_debug_site_click' ),
 				isExternalLink: true,
 				isEnabled: licenseState === LicenseState.Attached,

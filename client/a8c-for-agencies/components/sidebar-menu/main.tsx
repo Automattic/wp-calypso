@@ -1,10 +1,9 @@
-import { category, home, plugins, tag, currencyDollar } from '@wordpress/icons';
+import { category, home, tag, currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Sidebar from '../sidebar';
 import {
 	A4A_OVERVIEW_LINK,
-	A4A_PLUGINS_LINK,
 	A4A_SITES_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_PURCHASES_LINK,
@@ -40,6 +39,8 @@ export default function ( { path }: Props ) {
 				},
 				withChevron: true,
 			},
+			/*
+			// Hide this section until we support plugin management in A4A
 			{
 				icon: plugins,
 				path: '/',
@@ -49,6 +50,7 @@ export default function ( { path }: Props ) {
 					menu_item: 'Automattic for Agencies / Plugins',
 				},
 			},
+			*/
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,

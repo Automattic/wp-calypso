@@ -1253,6 +1253,7 @@ $breakpoint-mobile: 660px;
 			letter-spacing: -0.025px;
 			color: var(--studio-gray-60);
 			-webkit-font-smoothing: initial;
+			text-align: center;
 
 			a {
 				color: $woo-purple-50;
@@ -1317,15 +1318,6 @@ $breakpoint-mobile: 660px;
 					max-width: $max-width;
 					margin: 0;
 				}
-
-				.login__form-userdata .form-label {
-					color: var(--color-gray-100);
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 600;
-					line-height: 24px;
-					margin-bottom: 16px;
-				}
 			}
 
 			.auth-form__separator {
@@ -1333,6 +1325,17 @@ $breakpoint-mobile: 660px;
 					margin-block: 0;
 				}
 			}
+		}
+
+		label.form-label,
+		.logged-out-form label.form-label,
+		.magic-login__form label.form-label {
+			color: var(--color-gray-100);
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 600;
+			line-height: 24px;
+			margin-bottom: 10px;
 		}
 
 		.wp-login__main-footer {
@@ -1596,15 +1599,6 @@ $breakpoint-mobile: 660px;
 						max-width: $max-width;
 					}
 				}
-
-				label.form-label {
-					color: var(--studio-gray-100);
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 600;
-					line-height: 24px;
-					margin-bottom: 16px;
-				}
 			}
 
 			.magic-login__form p.magic-login__form-sub-header,
@@ -1670,15 +1664,6 @@ $breakpoint-mobile: 660px;
 		.logged-out-form {
 			padding: 0;
 			margin: 0;
-
-			label.form-label {
-				color: var(--color-gray-100);
-				font-size: 1rem;
-				font-style: normal;
-				font-weight: 600;
-				line-height: 24px;
-				margin-bottom: 16px;
-			}
 		}
 
 		.login__lostpassword-form {
@@ -1720,6 +1705,16 @@ $breakpoint-mobile: 660px;
 					width: 100%;
 				}
 
+				.verification-code-form__help-text {
+					@media screen and ( max-width: 660px ) {
+						max-width: 450px;
+					}
+
+					@media ( max-width: $break-mobile ) {
+						max-width: $max-width;
+					}
+				}
+
 				.security-key-form__help-text,
 				.security-key-form__add-wait-for-key {
 					margin-bottom: 48px;
@@ -1727,7 +1722,26 @@ $breakpoint-mobile: 660px;
 					p:first-child {
 						margin-bottom: 12px;
 					}
+
+					@media screen and ( max-width: 660px ) {
+						text-align: center;
+						max-width: 450px;
+					}
+
+					@media ( max-width: $break-mobile ) {
+						text-align: left;
+						max-width: $max-width;
+					}
 				}
+			}
+
+			.two-factor-authentication__small-print {
+				max-width: $max-width;
+				color: $gray-50;
+				text-align: center;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 18px;
 			}
 
 			.two-factor-authentication__actions.card {
@@ -1735,6 +1749,9 @@ $breakpoint-mobile: 660px;
 				border: 0;
 				margin-bottom: 32px;
 				clip-path: none;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
 
 				.button {
 					min-height: 48px;

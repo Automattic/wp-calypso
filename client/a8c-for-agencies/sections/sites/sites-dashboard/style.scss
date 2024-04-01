@@ -6,29 +6,58 @@
 }
 
 .main.a4a-layout.sites-dashboard {
-	background: inherit;
 	padding-block-start: 0;
+
+	.a4a-layout__header-actions {
+		white-space: nowrap;
+	}
 
 	.site-preview-pane .a4a-layout-column__container {
 		display: flex;
 	}
 
-	.dataviews-view-table-wrapper {
-		height: calc(100vh - 265px); /* It subtracts the header height to allow scrolling in this block */
-		overflow-y: auto;
+	.site-actions__actions-large-screen {
+		display: block;
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+
+	.site-actions__actions-small-screen {
+		position: unset;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 
 	@media (min-width: $break-large) {
+		background: inherit;
+
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
 			font-size: 1.25rem;
 			font-weight: 500;
 		}
+
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
+			display: none;
+		}
+
+		.dataviews-view-table {
+			padding-left: 48px;
+		}
+	}
+
+	@media (max-width: 660px) {
+		.a4a-layout__header-main {
 			display: none;
 		}
 	}
 
 	@media (max-width: $break-large) {
+		height: calc(100vh - 120px); /* Matches the offset defined in PR #65520 */
+
+		.section-nav__mobile-header {
+			padding: 13px;
+		}
+
 		&.sites-dashboard__layout {
 			.sites-overview {
 				overflow: hidden;
@@ -61,22 +90,6 @@
 					flex-grow: 0;
 				}
 
-				.split-button__main,
-				button.split-button__toggle {
-					width: 28px;
-					height: 28px;
-					line-height: 11px;
-					font-size: rem(12px);
-					padding: 0;
-				}
-
-				.split-button .button .gridicon {
-					top: 0;
-					margin-top: 0;
-					width: 16px;
-					height: 16px;
-				}
-
 				.sites-overview__tabs,
 				.dataviews-filters__view-actions {
 					border-bottom: 1px solid var(--studio-gray-5);
@@ -88,6 +101,10 @@
 					margin-top: 16px;
 				}
 			}
+		}
+
+		.dataviews-view-table {
+			padding-left: 16px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -128,7 +145,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+3):nth-child(-n+9) {
+		td:nth-child(n+2):nth-child(-n+8) {
 			display: none;
 		}
 
@@ -140,7 +157,20 @@
 			padding-inline-end: 8px;
 		}
 
+		.site-preview__content {
+			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
+
+			.backup__page .main {
+				/* Prevents the backup page from overriding our padding and overflow settings. */
+				padding-bottom: 88px; /* 88px matches the padding from PR #39201. */
+				overflow: hidden;
+			}
+		}
+
 		.dataviews-view-table-wrapper {
+			overflow-y: auto;
+			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
+
 			table {
 				width: 100%;
 				max-width: 100vw;
@@ -180,6 +210,13 @@
 	}
 
 	@media (min-width: $break-wide) {
+		&.sites-dashboard__layout {
+			.dataviews-view-table-wrapper {
+				overflow-y: auto;
+				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
+			}
+		}
+
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			.sites-overview {
 				padding: 0;
@@ -235,19 +272,6 @@
 				padding: 0 24px;
 			}
 
-			.split-button__main,
-			.split-button__toggle {
-				height: 28px;
-				line-height: 11px;
-				font-size: rem(12px);
-			}
-
-			.split-button .button .gridicon {
-				top: 0;
-				width: 16px;
-				height: 16px;
-			}
-
 			.sites-overview__page-title {
 				font-size: rem(20px);
 				font-weight: 500;
@@ -266,7 +290,7 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 165px); /* It subtracts the header height to allow scrolling in this block */
+				max-height: calc(100vh - 175px); /* It subtracts the header height to allow scrolling in this block, plus a 10px margin */
 
 				li {
 					padding: 8px 24px;

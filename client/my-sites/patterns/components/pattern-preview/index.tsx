@@ -6,11 +6,17 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { PatternTypeFilter, Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
@@ -40,21 +46,28 @@ function useTimeoutToResetBoolean(
 }
 
 type PatternPreviewProps = {
-	className?: string;
 	canCopy?: boolean;
+	category?: string;
+	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
+	patternTypeFilter?: PatternTypeFilter;
+	isGridView?: boolean;
 	viewportWidth?: number;
 };
 
 function PatternPreviewFragment( {
-	className,
 	canCopy = true,
+	category,
+	className,
 	getPatternPermalink = () => '',
 	pattern,
+	patternTypeFilter,
+	isGridView,
 	viewportWidth,
 }: PatternPreviewProps ) {
+	const ref = useRef< HTMLDivElement >( null );
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
 
@@ -68,20 +81,70 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	const titleTooltipText = isPermalinkCopied ? 'Copied link to pattern' : 'Copy link to pattern';
+	const translate = useTranslate();
 
-	let copyButtonText = isPreviewLarge ? 'Copy pattern' : 'Copy';
+	const titleTooltipText = isPermalinkCopied
+		? translate( 'Copied link to pattern', {
+				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
+				textOnly: true,
+		  } )
+		: translate( 'Copy link to pattern', {
+				comment: 'Tooltip text in Pattern Library',
+				textOnly: true,
+		  } );
+
+	let copyButtonText = isPreviewLarge
+		? translate( 'Copy pattern', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } )
+		: translate( 'Copy', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } );
 
 	if ( isPatternCopied ) {
-		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
+		copyButtonText = isPreviewLarge
+			? translate( 'Pattern copied!', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } )
+			: translate( 'Copied', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } );
 	}
+
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const recordCopyEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
+	useEffect( () => {
+		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
+	}, [ nodeSize.width, nodeSize.height ] );
+
 	if ( ! pattern ) {
 		return null;
 	}
+
+	const recordGetAccessEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
 
 	return (
 		<div
@@ -92,6 +155,7 @@ function PatternPreviewFragment( {
 				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
 			id={ idAttr }
+			ref={ ref }
 		>
 			{ resizeObserver }
 
@@ -122,6 +186,7 @@ function PatternPreviewFragment( {
 					<ClipboardButton
 						className="pattern-preview__copy"
 						onCopy={ () => {
+							recordCopyEvent( 'calypso_pattern_library_copy' );
 							setIsPatternCopied( true );
 						} }
 						text={ pattern?.html ?? '' }
@@ -134,10 +199,17 @@ function PatternPreviewFragment( {
 				{ ! canCopy && (
 					<Button
 						className="pattern-preview__get-access"
-						onClick={ () => setIsAuthModalOpen( true ) }
+						onClick={ () => {
+							setIsAuthModalOpen( true );
+							recordGetAccessEvent( 'calypso_pattern_library_get_access' );
+						} }
 						transparent
 					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
+						<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
+						{ translate( 'Get access', {
+							comment:
+								'Button label shown when logged-out users need to sign up to be able to use a pattern',
+						} ) }
 					</Button>
 				) }
 			</div>
@@ -145,14 +217,17 @@ function PatternPreviewFragment( {
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
 				onClose={ () => setIsAuthModalOpen( false ) }
+				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>
 	);
 }
 
 export function PatternPreview( props: PatternPreviewProps ) {
-	const { isResizable, pattern } = props;
+	const { category, isResizable, pattern, patternTypeFilter } = props;
 	const isMobile = useMobileBreakpoint();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
 	if ( ! pattern ) {
 		return null;
@@ -161,6 +236,16 @@ export function PatternPreview( props: PatternPreviewProps ) {
 	if ( ! isResizable || isMobile ) {
 		return <PatternPreviewFragment { ...props } />;
 	}
+
+	const recordResizeEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			is_logged_in: isLoggedIn,
+			user_is_dev_account: isDevAccount ? '1' : '0',
+		} );
+	};
 
 	return (
 		<ResizableBox
@@ -177,6 +262,9 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			handleWrapperClass="pattern-preview__resizer"
 			minWidth={ 375 }
 			maxWidth="100%"
+			onResizeStop={ () => {
+				recordResizeEvent( 'calypso_pattern_library_resize' );
+			} }
 		>
 			<PatternPreviewFragment { ...props } />
 		</ResizableBox>

@@ -1,9 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT } from '@automattic/urls';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
