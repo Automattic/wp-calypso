@@ -158,6 +158,7 @@
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/privacy-toolset": "workspace:^",
 		"@automattic/typography": "workspace:^",
+		"@automattic/urls": "workspace:^",
 		"@automattic/verbum-block-editor": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",

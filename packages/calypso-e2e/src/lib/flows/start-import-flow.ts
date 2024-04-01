@@ -93,7 +93,9 @@ export class StartImportFlow {
 	 * Validates that we've landed on the upgrade plan page.
 	 */
 	async validateUpgradePlanPage(): Promise< void > {
-		await this.page.locator( selectors.startBuildingHeader( 'Upgrade your plan' ) ).waitFor();
+		await this.page
+			.locator( selectors.startBuildingHeader( 'Take your site to the next level' ) )
+			.waitFor();
 	}
 
 	/**

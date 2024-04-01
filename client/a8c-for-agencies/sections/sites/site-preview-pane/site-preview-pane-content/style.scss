@@ -13,4 +13,22 @@
 			justify-content: center;
 		}
 	}
+
+	.site-preview-pane__plugins-content {
+		padding: 16px;
+		box-shadow: 0 0 0 1px #dcdcde;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		border-radius: 0.5rem;
+		text-align: left;
+	}
+
+	.site-preview-pane__plugins-caption {
+		padding-top: 16px;
+		font-size: small;
+	}
+
+	.site-preview-pane__plugins-icon {
+		fill: #fff;
+		padding-left: 8px;
+	}
 }

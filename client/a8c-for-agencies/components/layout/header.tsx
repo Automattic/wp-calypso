@@ -6,6 +6,7 @@ import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 type Props = {
 	showStickyContent?: boolean;
 	children: ReactNode;
+	className?: string;
 };
 
 export function LayoutHeaderTitle( { children }: Props ) {
@@ -28,7 +29,7 @@ export function LayoutHeaderBreadcrumb( { items }: { items: BreadcrumbItem[] } )
 	);
 }
 
-export default function LayoutHeader( { showStickyContent, children }: Props ) {
+export default function LayoutHeader( { showStickyContent, children, className }: Props ) {
 	const headerBreadcrumb = Children.toArray( children ).find(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( child: any ) => child.type === LayoutHeaderBreadcrumb
@@ -52,6 +53,7 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 	const [ divRef, hasCrossed ] = useDetectWindowBoundary();
 
 	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
+	const wrapperClass = classNames( className, 'a4a-layout__viewport' );
 
 	const [ minHeaderHeight, setMinHeaderHeight ] = useState( 0 );
 
@@ -79,7 +81,7 @@ export default function LayoutHeader( { showStickyContent, children }: Props ) {
 
 	return (
 		<div
-			className="a4a-layout__viewport"
+			className={ wrapperClass }
 			{ ...outerDivProps }
 			style={ showStickyContent ? { minHeight: `${ minHeaderHeight }px` } : {} }
 		>

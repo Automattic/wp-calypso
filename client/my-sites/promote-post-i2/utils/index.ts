@@ -99,8 +99,8 @@ export const getCampaignStatus = ( status?: string ) => {
 };
 
 const calculateDurationDays = ( start: Date, end: Date ) => {
-	const diffTime = Math.abs( end.getTime() - start.getTime() );
-	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+	const diffTime = end.getTime() - start.getTime();
+	return diffTime < 0 ? 0 : Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
 };
 
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
@@ -136,7 +136,7 @@ export const getCampaignDurationFormatted = (
 			return `${ dateStartFormatted } - ${ todayFormatted }`;
 		}
 
-		if ( status === 'scheduled' ) {
+		if ( status === 'scheduled' || status === 'created' ) {
 			return '-';
 		}
 	}

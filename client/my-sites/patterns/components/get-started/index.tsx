@@ -1,5 +1,6 @@
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.png';
 import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.png';
 import imageBlockPatterns from 'calypso/my-sites/patterns/components/get-started/images/use-block-patterns.png';
@@ -10,6 +11,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 export function PatternsGetStarted() {
+	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
@@ -17,16 +19,19 @@ export function PatternsGetStarted() {
 	return (
 		<PatternsSection
 			bodyFullWidth
-			description="Take a look at our how-to guides to get started with patterns."
+			description={ translate( 'Take a look at our how-to guides to get started with patterns.' ) }
 			theme="dark"
-			title="All about patterns"
+			title={ translate( 'All about patterns', {
+				comment: 'Heading text in a section with informative links about block patterns',
+				textOnly: true,
+			} ) }
 		>
 			<div className="patterns-get-started__buttons">
 				<Button
 					className="patterns-get-started__start-button"
 					href={ localizeUrl( '//wordpress.com/setup/assembler-first', locale, isLoggedIn ) }
 				>
-					Build a site
+					{ translate( 'Build a site' ) }
 				</Button>
 			</div>
 
@@ -44,8 +49,13 @@ export function PatternsGetStarted() {
 							height="675"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">Video tutorial</div>
-						<div className="patterns-get-started__item-description">Block Patterns</div>
+						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
+						<div className="patterns-get-started__item-description">
+							{ translate( 'Block Patterns', {
+								comment:
+									'This string is a copy of the page title from wordpress.com/support/wordpress-editor/block-pattern/',
+							} ) }
+						</div>
 					</a>
 
 					<a
@@ -60,8 +70,13 @@ export function PatternsGetStarted() {
 							height="675"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">Video tutorial</div>
-						<div className="patterns-get-started__item-description">Use Pre-Made Page Layouts</div>
+						<div className="patterns-get-started__item-name">{ translate( 'Video tutorial' ) }</div>
+						<div className="patterns-get-started__item-description">
+							{ translate( 'Use Pre-Made Page Layouts', {
+								comment:
+									'This string is a copy of the page title from wordpress.com/support/wordpress-editor/page-layouts/',
+							} ) }
+						</div>
 					</a>
 
 					<a
@@ -76,8 +91,13 @@ export function PatternsGetStarted() {
 							height="639"
 							loading="lazy"
 						/>
-						<div className="patterns-get-started__item-name">Free course</div>
-						<div className="patterns-get-started__item-description">Design Your Homepage</div>
+						<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
+						<div className="patterns-get-started__item-description">
+							{ translate( 'Design Your Homepage', {
+								comment:
+									'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
+							} ) }
+						</div>
 					</a>
 				</div>
 			</div>

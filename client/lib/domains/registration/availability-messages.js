@@ -1,16 +1,16 @@
 /* eslint-disable no-case-declarations */
 
 import { localizeUrl } from '@automattic/i18n-utils';
-import { translate } from 'i18n-calypso';
-import moment from 'moment';
-import { getTld } from 'calypso/lib/domains';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS,
 	MAP_EXISTING_DOMAIN,
-} from 'calypso/lib/url/support';
+} from '@automattic/urls';
+import { translate } from 'i18n-calypso';
+import moment from 'moment';
+import { getTld } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
