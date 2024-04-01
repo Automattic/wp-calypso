@@ -309,18 +309,27 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</ListTileTitle>
 					}
 					subtitle={
-						<>
-							<ListTileSubtitle>
-								<SiteUrl href={ siteUrl } title={ siteUrl }>
-									<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-								</SiteUrl>
-							</ListTileSubtitle>
-							<ListTileSubtitle>
-								<SiteAdminLink href={ getSiteWpAdminUrl( site ) } title={ __( 'Visit WP Admin' ) }>
-									{ __( 'WP Admin' ) }
-								</SiteAdminLink>
-							</ListTileSubtitle>
-						</>
+						site.is_deleted ? (
+							<>
+								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+							</>
+						) : (
+							<>
+								<ListTileSubtitle>
+									<SiteUrl href={ siteUrl } title={ siteUrl }>
+										<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+									</SiteUrl>
+								</ListTileSubtitle>
+								<ListTileSubtitle>
+									<SiteAdminLink
+										href={ getSiteWpAdminUrl( site ) }
+										title={ __( 'Visit WP Admin' ) }
+									>
+										{ __( 'WP Admin' ) }
+									</SiteAdminLink>
+								</ListTileSubtitle>
+							</>
+						)
 					}
 				/>
 			</Column>
