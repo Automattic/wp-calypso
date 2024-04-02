@@ -34,7 +34,7 @@
 	}
 
 	.pattern-gallery__pagination-button-wrapper {
-		grid-column: span 3;
+		grid-column: 1 / -1;
 		padding-top: 40px;
 	}
 }
