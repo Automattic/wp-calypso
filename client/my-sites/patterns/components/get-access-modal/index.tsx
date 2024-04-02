@@ -3,8 +3,6 @@ import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Icon, close as iconClose } from '@wordpress/icons';
 import { buildQueryString } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { usePatternsContext } from 'calypso/my-sites/patterns/context';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 
 import './style.scss';
 
@@ -22,11 +20,10 @@ export const PatternsGetAccessModal = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
-	const { category, isGridView, patternTypeFilter } = usePatternsContext();
 
 	const isLoggedIn = false;
 	const redirectUrl =
-		getCategoryUrlPath( category, patternTypeFilter ) + ( isGridView ? '?grid=1' : '' );
+		typeof window !== 'undefined' ? location.href.replace( location.origin, '' ) : '';
 
 	const signupUrl = localizeUrl(
 		`//wordpress.com/start/account/user?${ buildQueryString( { redirect_to: redirectUrl } ) }`,
