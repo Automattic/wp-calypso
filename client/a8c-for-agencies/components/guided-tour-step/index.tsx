@@ -55,9 +55,6 @@ export function GuidedTourStep( { id, tourId, context, hideSteps, className }: P
 				tour: id,
 			} )
 		);
-		// if ( redirectAfterTourEnds ) {
-		// 	page.redirect( redirectAfterTourEnds );
-		// }
 	}, [ dispatch, tourId, preference, id ] );
 
 	// Record an event when the tour starts
