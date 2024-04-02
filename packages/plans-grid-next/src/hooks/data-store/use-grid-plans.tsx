@@ -23,6 +23,7 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
+import { PLAN_P2_PLUS } from '@automattic/calypso-products/src/constants/wpcom';
 import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
@@ -274,10 +275,18 @@ const useGridPlans = ( {
 		const storageAddOnsForPlan =
 			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
 
+		let isVisible = planSlugsForIntent.includes( planSlug );
+
+		// 2024-04-02 Disable upgrade to P2+
+		// hide P2 unless it is the current plan
+		if ( planSlug === PLAN_P2_PLUS && ! isCurrentPlan ) {
+			isVisible = false;
+		}
+
 		return {
 			planSlug,
 			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
-			isVisible: planSlugsForIntent.includes( planSlug ),
+			isVisible,
 			tagline,
 			availableForPurchase,
 			productNameShort,
