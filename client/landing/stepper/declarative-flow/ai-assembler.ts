@@ -117,7 +117,9 @@ const withAIAssemblerFlow: Flow = {
 
 					Promise.all( pendingActions ).then( ( results ) => {
 						// URL is in the results from the first promise.
-						window.location.assign( results[ 0 ].URL + '/wp-admin/site-editor.php' );
+						window.location.assign(
+							results[ 0 ].URL + '/wp-admin/site-editor.php?postType=page&postId=1&canvas=edit'
+						);
 					} );
 				} );
 			} );
