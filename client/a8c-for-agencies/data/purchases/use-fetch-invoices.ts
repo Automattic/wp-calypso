@@ -61,6 +61,7 @@ export default function useFetchInvoices(
 				),
 			} ),
 		refetchOnWindowFocus: false,
+		enabled: !! agencyId,
 		select: selectInvoices,
 		...options,
 	} );

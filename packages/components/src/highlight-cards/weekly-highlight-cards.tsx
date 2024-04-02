@@ -12,10 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import ComponentSwapper from '../component-swapper';
 import { eye } from '../icons';
-import ShortenedNumber from '../number-formatters';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import CountComparisonCard, { TrendComparison } from './count-comparison-card';
+import CountComparisonCard from './count-comparison-card';
+import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
 
@@ -201,74 +201,34 @@ type WeeklyHighlighCardsMobileProps = {
 
 function WeeklyHighlighCardsMobile( { counts, previousCounts }: WeeklyHighlighCardsMobileProps ) {
 	const translate = useTranslate();
-	return (
-		<div className="highlight-cards-list-mobile">
-			<div className="highlight-cards-list-mobile__item" key="visitors">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ people } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">
-					{ translate( 'Visitors' ) }
-				</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.visitors ?? null }
-						previousCount={ previousCounts?.visitors ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.visitors ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="views">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ eye } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Views' ) }</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.views ?? null }
-						previousCount={ previousCounts?.views ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.views ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="likes">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ starEmpty } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">{ translate( 'Likes' ) }</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.likes ?? null }
-						previousCount={ previousCounts?.likes ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.likes ?? null } />
-				</span>
-			</div>
-			<div className="highlight-cards-list-mobile__item" key="comments">
-				<span className="highlight-cards-list-mobile__item-icon">
-					<Icon icon={ commentContent } />
-				</span>
-				<span className="highlight-cards-list-mobile__item-heading">
-					{ translate( 'Comments' ) }
-				</span>
-				<span className="highlight-cards-list-mobile__item-trend">
-					<TrendComparison
-						count={ counts?.comments ?? null }
-						previousCount={ previousCounts?.comments ?? null }
-					/>
-				</span>
-				<span className="highlight-cards-list-mobile__item-count">
-					<ShortenedNumber value={ counts?.comments ?? null } />
-				</span>
-			</div>
-		</div>
-	);
+	const highlights = [
+		{
+			heading: translate( 'Visitors' ),
+			count: counts?.visitors,
+			previousCount: previousCounts?.visitors,
+			icon: people,
+		},
+		{
+			heading: translate( 'Views' ),
+			count: counts?.views,
+			previousCount: previousCounts?.views,
+			icon: eye,
+		},
+		{
+			heading: translate( 'Likes' ),
+			count: counts?.likes,
+			previousCount: previousCounts?.likes,
+			icon: starEmpty,
+		},
+		{
+			heading: translate( 'Comments' ),
+			count: counts?.comments,
+			previousCount: previousCounts?.comments,
+			icon: commentContent,
+		},
+	];
+
+	return <MobileHighlightCardListing highlights={ highlights } />;
 }
 
 export default function WeeklyHighlightCards( {

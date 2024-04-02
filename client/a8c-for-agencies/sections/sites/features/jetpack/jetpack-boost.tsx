@@ -12,7 +12,7 @@ type Props = {
 export function JetpackBoostPreview( { site, trackEvent, hasError = false }: Props ) {
 	return (
 		<>
-			<SitePreviewPaneContent>
+			<SitePreviewPaneContent className="site-preview-pane__boost-content">
 				<BoostSitePerformance site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			</SitePreviewPaneContent>
 			<SitePreviewPaneFooter />

@@ -1113,7 +1113,7 @@ const ComparisonGrid = ( {
 	 * Some padding is applied in the stylesheet to cover the badges/labels.
 	 */
 	const hasHighlightedPlan = gridPlans.some( ( { highlightLabel } ) => !! highlightLabel );
-	const classes = classNames( 'plan-comparison-grid', {
+	const classes = classNames( 'plans-grid-next-comparison-grid', {
 		'has-highlighted-plan': hasHighlightedPlan,
 	} );
 

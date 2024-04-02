@@ -32,6 +32,7 @@ const WrappedComparisonGrid = ( {
 	onStorageAddOnClick,
 	stickyRowOffset,
 	coupon,
+	className,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -46,7 +47,7 @@ const WrappedComparisonGrid = ( {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__comparison-grid', {
+	const classNames = classnames( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-smedium': 'smedium' === gridSize,
 		'is-medium': 'medium' === gridSize,
@@ -95,6 +96,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		allFeaturesList,
 		coupon,
 		isInAdmin,
+		className,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -107,11 +109,10 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		] ),
 	} );
 
-	const classNames = classnames( 'plans-grid-next', 'plans-grid-next__features-grid', {
+	const classNames = classnames( 'plans-grid-next', className, {
 		'is-small': 'small' === gridSize,
 		'is-medium': 'medium' === gridSize,
 		'is-large': 'large' === gridSize,
-		'is-visible': true,
 	} );
 
 	return (

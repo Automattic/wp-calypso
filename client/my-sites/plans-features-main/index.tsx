@@ -28,7 +28,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 } from '@automattic/plans-grid-next';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -727,9 +727,9 @@ const PlansFeaturesMain = ( {
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
-
-	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
-	const stickyPlanTypeSelectorHeight = isMobile() ? 62 : 48;
+	const isMobile = useMobileBreakpoint();
+	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
+	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
@@ -858,6 +858,7 @@ const PlansFeaturesMain = ( {
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+									className="plans-features-main__features-grid"
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -923,6 +924,7 @@ const PlansFeaturesMain = ( {
 												coupon={ coupon }
 												recordTracksEvent={ recordTracksEvent }
 												planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+												className="plans-features-main__comparison-grid"
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

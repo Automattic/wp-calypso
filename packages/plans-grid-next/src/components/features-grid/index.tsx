@@ -84,7 +84,7 @@ const MobileView = ( {
 		}, [] as GridPlan[] )
 		.map( ( gridPlan, index ) => {
 			const planCardClasses = classNames(
-				'plan-features-2023-grid__mobile-plan-card',
+				'plans-grid-next-features-grid__mobile-plan-card',
 				getPlanClass( gridPlan.planSlug )
 			);
 
@@ -122,6 +122,7 @@ const MobileView = ( {
 						header={ translate( 'Show all features' ) }
 						planSlug={ gridPlan.planSlug }
 						key={ `${ gridPlan.planSlug }-${ index }` }
+						className="plans-grid-next-features-grid__mobile-plan-card-foldable-container"
 						expanded={
 							selectedFeature &&
 							gridPlan.features.wpcomFeatures.some(
@@ -274,7 +275,7 @@ const FeaturesGrid = ( {
 	};
 
 	return (
-		<>
+		<div className="plans-grid-next-features-grid">
 			{ 'small' !== gridSize && <SpotlightPlan { ...spotlightPlanProps } /> }
 			<div className="plan-features">
 				<div className="plan-features-2023-grid__content">
@@ -297,7 +298,7 @@ const FeaturesGrid = ( {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
