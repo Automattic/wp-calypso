@@ -41,7 +41,7 @@ $brand-text: "SF Pro Text", $sans;
 		// Resetting these colors to prevent bleeding from dashboard color schemes
 		--color-sidebar-text: var(--studio-gray-80);
 		--color-sidebar-text-alternative: var(--studio-gray-40);
-		--color-sidebar-text-alternative-selected: var(--studio-gray-10);
+		--color-sidebar-text-alternative-selected: rgba(255, 255, 255, 0.7);
 		--color-sidebar-menu-selected-background: #3858e9;
 		--color-sidebar-menu-selected-text: var(--studio-white);
 		--color-sidebar-menu-hover-text: var(--studio-black);
