@@ -3,7 +3,10 @@ import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
-import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import {
+	type ScheduleUpdates,
+	useUpdateScheduleQuery,
+} from 'calypso/data/plugins/use-update-schedules-query';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -42,7 +45,7 @@ export const ScheduleLogs = ( props: Props ) => {
 					) }
 				</div>
 				<Text>
-					{ translate( 'Logs' ) } - { prepareScheduleName( schedule ) }
+					{ translate( 'Logs' ) } - { prepareScheduleName( schedule as ScheduleUpdates ) }
 				</Text>
 				<div className="ch-placeholder"></div>
 			</CardHeader>
