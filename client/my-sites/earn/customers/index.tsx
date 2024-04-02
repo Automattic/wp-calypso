@@ -1,5 +1,6 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { Tooltip } from '@wordpress/components';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
@@ -140,7 +141,13 @@ function CustomerSection() {
 								<span className="supporters-list__since-column" role="columnheader">
 									{ translate( 'Since' ) }
 								</span>
-								<span className="supporters-list__menu-column" role="columnheader"></span>
+								<span className="supporters-list__menu-column" role="columnheader">
+									<Tooltip text={ translate( 'Download list as CSV' ) } delay={ 0 }>
+										<Button onClick={ downloadSubscriberList } compact>
+											{ translate( 'Export' ) }
+										</Button>
+									</Tooltip>
+								</span>
 							</li>
 							{ orderBy( Object.values( subscribers ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
 								renderSubscriber( sub )
@@ -151,11 +158,6 @@ function CustomerSection() {
 							subscriberToCancel={ subscriberToCancel }
 							setSubscriberToCancel={ setSubscriberToCancel }
 						/>
-						<div className="memberships__module-footer">
-							<Button onClick={ downloadSubscriberList }>
-								{ translate( 'Download list as CSV' ) }
-							</Button>
-						</div>
 					</>
 				) }
 			</div>
