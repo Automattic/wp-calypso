@@ -31,7 +31,6 @@
 	@media ( max-width: $break-wide ) {
 		.pattern-library__filters-inner {
 			padding: 24px;
-			flex-direction: column-reverse;
 		}
 	}
 
@@ -39,6 +38,7 @@
 		position: static;
 
 		.category-pill-navigation {
+			flex: 1;
 			overflow: visible;
 		}
 	}
@@ -58,8 +58,8 @@
 	display: flex;
 	margin-left: 16px;
 
-	@media ( max-width: $break-wide ) {
-		margin: 0 0 12px 0;
+	@media ( max-width: $break-medium ) {
+		display: none;
 	}
 
 	.search {
@@ -112,7 +112,6 @@
 		}
 	}
 }
-
 
 .pattern-library {
 	@include patterns-page-width;
