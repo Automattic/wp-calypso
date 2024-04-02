@@ -7,7 +7,7 @@ type MobileHighlightCardProps = {
 	heading: string;
 	count: number | null;
 	previousCount?: number | null;
-	icon?: any;
+	icon?: React.ReactElement;
 };
 
 function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHighlightCardProps ) {
