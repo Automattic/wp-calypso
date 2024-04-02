@@ -18,7 +18,7 @@ function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHig
 	}
 	// We require two counts to display a trendline.
 	// The icon is optional.
-	const displayTrendline = count !== null && previousCount !== null;
+	const displayTrendline = previousCount !== null && previousCount !== undefined;
 	const displayIcon = icon !== undefined;
 	return (
 		<div className="mobile-highlight-cards__item">
