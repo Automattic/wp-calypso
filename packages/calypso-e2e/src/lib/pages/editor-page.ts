@@ -49,7 +49,7 @@ const selectors = {
  */
 export class EditorPage {
 	private page: Page;
-	public editor: EditorComponent;
+	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
