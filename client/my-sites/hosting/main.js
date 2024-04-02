@@ -210,6 +210,7 @@ const Hosting = ( props ) => {
 				transferStates.REVERTED,
 			].includes( transferState )
 	);
+	const [ shouldPoolTransferResults, setShouldPoolTransferResults ] = useState( true );
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
@@ -227,6 +228,12 @@ const Hosting = ( props ) => {
 
 	const trialRequested = () => {
 		setHasTransferring( true );
+		setShouldPoolTransferResults( true );
+	};
+
+	const activationRequested = () => {
+		setShouldPoolTransferResults( true );
+		clickActivate();
 	};
 
 	const requestUpdatedSiteData = useCallback(
@@ -238,8 +245,16 @@ const Hosting = ( props ) => {
 			if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 				fetchUpdatedData();
 			}
+
+			if ( isTransferCompleted && ! isTransferring ) {
+				setShouldPoolTransferResults( false );
+			}
+
+			if ( ! isSiteAtomic && ! hasTransfer ) {
+				setShouldPoolTransferResults( false );
+			}
 		},
-		[]
+		[ hasTransfer ]
 	);
 
 	const getUpgradeBanner = () => {
@@ -277,7 +292,10 @@ const Hosting = ( props ) => {
 					icon="globe"
 				>
 					<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-					<NoticeAction onClick={ clickActivate } href={ `/hosting-config/activate/${ siteSlug }` }>
+					<NoticeAction
+						onClick={ activationRequested }
+						href={ `/hosting-config/activate/${ siteSlug }` }
+					>
 						{ translate( 'Activate' ) }
 					</NoticeAction>
 				</Notice>
@@ -332,13 +350,15 @@ const Hosting = ( props ) => {
 				title={ translate( 'Hosting' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
-			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
-				<HostingActivateStatus
-					context="hosting"
-					onTick={ requestUpdatedSiteData }
-					keepAlive={ ! isSiteAtomic && hasTransfer }
-				/>
-			) }
+			{ shouldPoolTransferResults &&
+				! showHostingActivationBanner &&
+				! isTrialAcknowledgeModalOpen && (
+					<HostingActivateStatus
+						context="hosting"
+						onTick={ requestUpdatedSiteData }
+						keepAlive={ ! isSiteAtomic && hasTransfer }
+					/>
+				) }
 			{ ! isBusinessTrial && banner }
 			{ isBusinessTrial && ( ! hasTransfer || isSiteAtomic ) && (
 				<TrialBanner
