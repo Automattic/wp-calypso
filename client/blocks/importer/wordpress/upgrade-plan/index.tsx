@@ -79,6 +79,53 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		);
 	}, [] );
 
+	const renderCTAs = () => {
+		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
+		const trialText = translate( 'Try 7 days for free' );
+
+		if ( ! isEnabled( 'plans/migration-trial' ) ) {
+			return (
+				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+					{ cta }
+				</NextButton>
+			);
+		}
+
+		if ( isEligibleForTrialPlan ) {
+			return (
+				<>
+					<NextButton isBusy={ isAddingTrial } onClick={ onFreeTrialClick }>
+						{ trialText }
+					</NextButton>
+					<Button
+						busy={ isBusy }
+						disabled={ isAddingTrial }
+						transparent={ ! isAddingTrial }
+						onClick={ onCtaClick }
+					>
+						{ cta }
+					</Button>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+					{ cta }
+				</NextButton>
+				<Button disabled={ true } transparent={ true }>
+					{ trialText }
+				</Button>
+				<small>
+					{ translate(
+						'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
+					) }
+				</small>
+			</>
+		);
+	};
+
 	return (
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
@@ -116,38 +163,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			<UpgradePlanDetails>
-				{ isEnabled( 'plans/migration-trial' ) ? (
-					<>
-						<NextButton
-							isBusy={ isAddingTrial }
-							disabled={ ! isEligibleForTrialPlan }
-							onClick={ onFreeTrialClick }
-						>
-							{ translate( 'Try 7 days for free' ) }
-						</NextButton>
-						{ ! isEligibleForTrialPlan && (
-							<small>
-								{ translate(
-									'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
-								) }
-							</small>
-						) }
-						<Button
-							busy={ isBusy }
-							disabled={ isAddingTrial }
-							transparent={ ! isAddingTrial }
-							onClick={ onCtaClick }
-						>
-							{ ctaText === '' ? translate( 'Continue' ) : ctaText }
-						</Button>
-					</>
-				) : (
-					<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
-						{ ctaText }
-					</NextButton>
-				) }
-			</UpgradePlanDetails>
+			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
 		</div>
 	);
 };
