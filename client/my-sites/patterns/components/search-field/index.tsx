@@ -1,32 +1,20 @@
 import page from '@automattic/calypso-router';
-import { useLocale } from '@automattic/i18n-utils';
-import { ENTER } from '@wordpress/keycodes';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
-import Search from 'calypso/components/search';
+import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
-import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
-import { usePatternsContext } from '../../context';
 
 type PatternsSearchFieldProps = {
-	isOpen?: boolean;
+	isCollapsible?: boolean;
 };
 
-export const PatternsSearchField = ( { isOpen = true }: PatternsSearchFieldProps ) => {
+export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFieldProps ) => {
 	const translate = useTranslate();
-	const { searchTerm, category } = usePatternsContext();
-	const locale = useLocale();
-	const { isRefetching: isRefetchingPatterns } = usePatterns( locale, category );
-	const [ tmpSearchTerm, setTmpSearchTerm ] = useState< string | null >( null );
+	const { searchTerm } = usePatternsContext();
+	const isPinned = ! ( isCollapsible || searchTerm );
 
-	const value = tmpSearchTerm !== null ? tmpSearchTerm : searchTerm;
-
-	useEffect( () => {
-		setTmpSearchTerm( null );
-	}, [ searchTerm ] );
-
-	const handleSearch = ( newValue: string = value ) => {
+	const handleSearch = ( newValue: string ) => {
 		const url = new URL( window.location.href );
 
 		if ( newValue ) {
@@ -46,22 +34,13 @@ export const PatternsSearchField = ( { isOpen = true }: PatternsSearchFieldProps
 
 	return (
 		<Search
-			placeholder={ translate( 'Search patterns…' ) }
-			additionalClasses={ classNames( { 'search-has-value': !! value } ) }
-			isOpen={ isOpen }
-			pinned={ ! isOpen } // need for `isOpen` prop, otherwise it won't work
-			disabled={ isRefetchingPatterns }
+			additionalClasses={ classNames( { 'is-filled': !! searchTerm } ) }
 			initialValue={ searchTerm }
-			value={ value }
-			onSearch={ setTmpSearchTerm }
-			onKeyDown={ ( event: React.KeyboardEvent< HTMLInputElement > ) => {
-				const keyCode = event.keyCode as unknown as number;
-
-				if ( keyCode === ENTER ) {
-					handleSearch();
-				}
-			} }
-			onSearchClose={ () => handleSearch( '' ) }
+			onSearch={ handleSearch }
+			placeholder={ translate( 'Search patterns…' ) }
+			searchMode={ SEARCH_MODE_ON_ENTER }
+			value={ searchTerm }
+			{ ...( isPinned ? { pinned: true } : {} ) }
 		/>
 	);
 };

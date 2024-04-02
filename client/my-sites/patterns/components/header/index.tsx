@@ -14,7 +14,7 @@ export const PatternsHeader = ( { description, title }: PatternsHeaderProps ) =>
 				<h1>{ title }</h1>
 				<div className="patterns-header__description">{ description }</div>
 				<div className="patterns-header__search-input">
-					<PatternsSearchField />
+					<PatternsSearchField isCollapsible />
 				</div>
 			</div>
 		</header>

@@ -237,8 +237,9 @@ export const PatternLibrary = ( {
 							] }
 							categories={ categoryNavList }
 						/>
+
 						<div className="pattern-library__body-search">
-							<PatternsSearchField isOpen={ false } />
+							<PatternsSearchField />
 						</div>
 					</div>
 				</div>
