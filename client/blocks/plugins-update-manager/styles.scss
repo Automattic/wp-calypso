@@ -143,6 +143,10 @@
 
 	.timeline {
 		margin: 0;
+
+		.timeline-event.is-disabled {
+			background: var(--studio-gray-0);
+		}
 	}
 }
 
