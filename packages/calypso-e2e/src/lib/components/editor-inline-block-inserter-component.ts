@@ -38,7 +38,7 @@ export class EditorInlineBlockInserterComponent {
 	/**
 	 * Selects the maching result from the block inserter.
 	 *
-	 * Where mulltiple matches exist (eg. due to partial matching), the first
+	 * Where multiple matches exist (eg. due to partial matching), the first
 	 * result will be chosen.
 	 */
 	async selectBlockInserterResult( name: string ): Promise< void > {
