@@ -71,6 +71,30 @@ function getPatternPermalink(
 	return url.toString();
 }
 
+// Scroll to anchoring position of category pill navigation element
+function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
+	const coords = stickyFiltersElement.getBoundingClientRect();
+	const style = getComputedStyle( stickyFiltersElement );
+	const parsedTop = /(\d+(\.\d+)?)px/.exec( style.top );
+	const topStyle = parseFloat( parsedTop?.[ 1 ] ?? '0' );
+
+	if ( onlyIfBelowThreshold && coords.top > topStyle ) {
+		return;
+	}
+
+	stickyFiltersElement.style.position = 'static';
+
+	requestAnimationFrame( () => {
+		const staticCoords = stickyFiltersElement.getBoundingClientRect();
+		stickyFiltersElement.style.removeProperty( 'position' );
+
+		window.scrollBy( {
+			behavior: 'smooth',
+			top: staticCoords.top,
+		} );
+	} );
+}
+
 type PatternLibraryProps = {
 	categoryGallery: CategoryGalleryFC;
 	patternGallery: PatternGalleryFC;
@@ -130,33 +154,20 @@ export const PatternLibrary = ( {
 		page( url.href.replace( url.origin, '' ) );
 	};
 
+	// If the user has scrolled below the anchoring position of the category pill navigation then we
+	// scroll back up when the category changes
 	useEffect( () => {
-		// If the user has scrolled below the anchoring position of `.pattern-library__pill-navigation`,
-		// then we scroll back up when the category changes
 		if ( navRef.current ) {
-			const element = navRef.current;
-			const coords = element.getBoundingClientRect();
-			const style = getComputedStyle( element );
-			const parsedTop = /(\d+(\.\d+)?)px/.exec( style.top );
-			const topStyle = parseFloat( parsedTop?.[ 1 ] ?? '0' );
-
-			if ( coords.top > topStyle ) {
-				return;
-			}
-
-			element.style.position = 'static';
-
-			requestAnimationFrame( () => {
-				const staticCoords = element.getBoundingClientRect();
-				element.style.removeProperty( 'position' );
-
-				window.scrollBy( {
-					behavior: 'smooth',
-					top: staticCoords.top,
-				} );
-			} );
+			scrollToPatternView( navRef.current, true );
 		}
 	}, [ category ] );
+
+	// Scroll to anchoring position of category pill navigation when the search form is submitted
+	useEffect( () => {
+		if ( navRef.current && searchTerm ) {
+			scrollToPatternView( navRef.current );
+		}
+	}, [ searchTerm ] );
 
 	const [ isSticky, setIsSticky ] = useState( false );
 	const prevNavTopValue = useRef( 0 );

@@ -27,6 +27,11 @@ export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFi
 			url.searchParams.delete( QUERY_PARAM_SEARCH );
 		}
 
+		// Blur the input field when the search form is submitted
+		if ( document.activeElement instanceof HTMLInputElement ) {
+			document.activeElement.blur();
+		}
+
 		if ( url.href !== location.href ) {
 			page( url.href.replace( url.origin, '' ) );
 		}
