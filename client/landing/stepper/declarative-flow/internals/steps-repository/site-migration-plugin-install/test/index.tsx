@@ -62,7 +62,7 @@ describe( 'SiteMigrationPluginInstall', () => {
 		expect( getProgress() ).toBe( 1 );
 	} );
 
-	it( 'installs the and active plugin when it is not installed', async () => {
+	it( 'installs and activates the plugin when it is not installed', async () => {
 		jest.spyOn( global, 'setTimeout' ).mockImplementation( quickerSetTimeout );
 		render();
 
