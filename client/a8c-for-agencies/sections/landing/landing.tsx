@@ -33,6 +33,7 @@ export default function Landing() {
 
 			if ( returnQuery ) {
 				page.redirect( returnQuery );
+				return;
 			}
 
 			page.redirect( A4A_OVERVIEW_LINK );
