@@ -88,7 +88,7 @@ describe( 'SiteMigrationPluginInstall', () => {
 		expect( getProgress() ).toBe( 1 );
 	} );
 
-	it( 'pools the plugin endpoint until have information about the plugins', async () => {
+	it( 'polls the plugin endpoint until we have information about the plugins', async () => {
 		jest.spyOn( global, 'setTimeout' ).mockImplementation( quickerSetTimeout );
 		render();
 
