@@ -1,4 +1,4 @@
-import { PatternsSearchField } from '../search-field';
+import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 
 import './style.scss';
 

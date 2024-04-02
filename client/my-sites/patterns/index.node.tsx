@@ -4,9 +4,10 @@ import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/l
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
+import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { getPatternCategoriesQueryOptions } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
-import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { getPatternsQueryOptions } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import {
 	PatternTypeFilter,
 	type RouterContext,
@@ -17,7 +18,6 @@ import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { PatternsContext } from './context';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'renderPatterns' );

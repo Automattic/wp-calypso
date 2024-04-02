@@ -11,7 +11,7 @@ type PatternsSearchFieldProps = {
 
 export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFieldProps ) => {
 	const translate = useTranslate();
-	const { category, searchTerm } = usePatternsContext();
+	const { searchTerm } = usePatternsContext();
 	const isPinned = ! ( isCollapsible || searchTerm );
 
 	const handleSearch = ( newValue: string ) => {
@@ -27,7 +27,6 @@ export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFi
 			url.searchParams.delete( QUERY_PARAM_SEARCH );
 		}
 
-		// Blur the input field when the search form is submitted
 		if ( document.activeElement instanceof HTMLInputElement ) {
 			document.activeElement.blur();
 		}
@@ -41,7 +40,6 @@ export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFi
 		<Search
 			additionalClasses={ classNames( { 'is-filled': !! searchTerm } ) }
 			initialValue={ searchTerm }
-			key={ `search-${ category }` }
 			onSearch={ handleSearch }
 			placeholder={ translate( 'Search patterns…' ) }
 			searchMode={ SEARCH_MODE_ON_ENTER }

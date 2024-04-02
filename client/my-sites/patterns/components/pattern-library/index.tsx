@@ -16,9 +16,12 @@ import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-sta
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
+import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
@@ -31,9 +34,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { usePatternsContext } from '../../context';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
-import { PatternsSearchField } from '../search-field';
 
 import './style.scss';
 

@@ -9,7 +9,8 @@ import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/cate
 import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
+import { PatternsContext } from 'calypso/my-sites/patterns/context';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import {
 	PatternTypeFilter,
 	type RouterContext,
@@ -17,7 +18,6 @@ import {
 } from 'calypso/my-sites/patterns/types';
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { PatternsContext } from './context';
 import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
 
 function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
