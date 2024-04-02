@@ -5,6 +5,7 @@
 	"client_slug": "browser",
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
+	"logout_url": "https://automattic.com/for/agencies",
 	"site_name": "Automattic For Agencies",
 	"features": {
 		"a8c-for-agencies": true,
