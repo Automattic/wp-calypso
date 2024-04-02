@@ -215,7 +215,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Post content is found in published post', async function () {
 			publishedPostPage = new PublishedPostPage( newPage );
 			await publishedPostPage.validateTitle( title );
-			for ( const part in quote.split( '\n' ) ) {
+			for ( const part of quote.split( '\n' ) ) {
 				await publishedPostPage.validateTextInPost( part );
 			}
 		} );
