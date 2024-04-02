@@ -10,10 +10,7 @@ import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
-import type {
-	Command as PaletteCommand,
-	CommandCallBackParams,
-} from './commands/use-single-site-commands';
+import type { Command as PaletteCommand, CommandCallBackParams } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
@@ -441,5 +438,5 @@ const CommandPalette = ( {
 };
 
 export default CommandPalette;
-export type { Command, CommandCallBackParams } from './commands/use-single-site-commands';
-export { COMMANDS } from './commands/use-single-site-commands';
+export type { Command, CommandCallBackParams } from './commands';
+export { COMMANDS } from './commands';

@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import type { CommandCallBackParams } from './commands/use-single-site-commands';
+import type { CommandCallBackParams } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 
 export function isCustomDomain( siteSlug: string | null | undefined ): boolean {
