@@ -9,7 +9,6 @@ export type Pattern = {
 	pattern_meta?: Record< string, boolean | undefined >;
 	html?: string;
 	tags: Record< string, Tag | undefined >;
-	can_be_copied_without_account?: boolean;
 };
 
 export type PatternType = 'header' | 'footer' | 'section';

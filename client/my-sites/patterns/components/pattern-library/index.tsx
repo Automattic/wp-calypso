@@ -16,6 +16,7 @@ import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-sta
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
+import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import {
 	usePatternSearchTerm,
@@ -47,7 +48,7 @@ export const pillNavigationClassName = 'pattern-library__pill-navigation';
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
 		const categorySlugs = Object.keys( pattern.categories );
-		const isPage = categorySlugs.includes( 'page' );
+		const isPage = categorySlugs.includes( CATEGORY_PAGE );
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
