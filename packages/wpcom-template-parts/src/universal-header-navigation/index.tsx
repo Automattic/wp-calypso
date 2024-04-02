@@ -215,6 +215,17 @@ const UniversalNavbarHeader = ( {
 														/>
 														<ClickableItem
 															titleValue=""
+															content={ __( 'WordPress Patterns', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl(
+																'//wordpress.com/patterns',
+																locale,
+																isLoggedIn,
+																true
+															) }
+															type="dropdown"
+														/>
+														<ClickableItem
+															titleValue=""
 															content={ __( 'Google Apps', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/google/' ) }
 															type="dropdown"
@@ -541,6 +552,17 @@ const UniversalNavbarHeader = ( {
 												content={ __( 'WordPress Plugins', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl(
 													'//wordpress.com/plugins',
+													locale,
+													isLoggedIn,
+													true
+												) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue=""
+												content={ __( 'WordPress Patterns', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/patterns',
 													locale,
 													isLoggedIn,
 													true

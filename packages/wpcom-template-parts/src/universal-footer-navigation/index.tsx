@@ -171,6 +171,14 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
+									<a
+										href={ localizeUrl( 'https://wordpress.com/patterns/', locale, isLoggedIn ) }
+										target="_self"
+									>
+										{ __( 'WordPress Patterns', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/google/' ) } target="_self">
 										{ __( 'Google Apps', __i18n_text_domain__ ) }
 									</a>
