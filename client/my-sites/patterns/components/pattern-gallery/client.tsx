@@ -127,7 +127,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const isPageLayouts = patternTypeFilter === PatternTypeFilter.PAGES;
 
 	const patternsToDisplay = patterns.slice( 0, patternDisplayCount );
-	const isDisplayingPaginationButton = patternsToDisplay.length < patterns.length;
+	const shouldDisplayPaginationButton = patternsToDisplay.length < patterns.length;
 	const nextPageCount = Math.min(
 		patterns.length - patternsToDisplay.length,
 		PATTERNS_PER_PAGE_COUNT
@@ -169,7 +169,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 						/>
 					) ) }
 
-					{ isDisplayingPaginationButton && (
+					{ shouldDisplayPaginationButton && (
 						<div className="pattern-gallery__pagination-button-wrapper">
 							<Button
 								className="pattern-gallery__pagination-button"
