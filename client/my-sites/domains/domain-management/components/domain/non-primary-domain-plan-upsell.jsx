@@ -1,8 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SETTING_PRIMARY_DOMAIN } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { SETTING_PRIMARY_DOMAIN } from 'calypso/lib/url/support';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';

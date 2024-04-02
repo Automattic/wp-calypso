@@ -1,20 +1,28 @@
 import { Context, type Callback } from '@automattic/calypso-router';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import SitesSidebar from '../../components/sidebar-menu/sites';
+import {
+	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
+	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+} from './constants';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
 
-function configureSitesContext( isFavorites: boolean, context: Context ) {
-	const category = context.params.category;
+function configureSitesContext( context: Context ) {
+	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
 	const siteUrl = context.params.siteUrl;
-	const siteFeature = context.params.feature;
+	const siteFeature = context.params.feature || A4A_SITES_DASHBOARD_DEFAULT_FEATURE;
 	const hideListingInitialState = !! siteUrl;
 
-	const { s: search, page: contextPage, issue_types, sort_field, sort_direction } = context.query;
-	const filter = {
-		issueTypes: issue_types?.split( ',' ),
-		showOnlyFavorites: context.params.filter === 'favorites',
-	};
+	const {
+		s: search,
+		page: contextPage,
+		issue_types,
+		sort_field,
+		sort_direction,
+		is_favorite,
+	} = context.query;
+
 	const sort = {
 		field: sort_field,
 		direction: sort_direction,
@@ -27,10 +35,13 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 			siteUrlInitialState={ siteUrl }
 			siteFeatureInitialState={ siteFeature }
 			hideListingInitialState={ hideListingInitialState }
+			showOnlyFavoritesInitialState={
+				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
 			path={ context.path }
-			search={ search }
+			searchQuery={ search }
 			currentPage={ currentPage }
-			filter={ filter }
+			issueTypes={ issue_types }
 			sort={ sort }
 			showSitesDashboardV2={ true }
 		>
@@ -45,6 +56,6 @@ function configureSitesContext( isFavorites: boolean, context: Context ) {
 }
 
 export const sitesContext: Callback = ( context, next ) => {
-	configureSitesContext( false, context );
+	configureSitesContext( context );
 	next();
 };

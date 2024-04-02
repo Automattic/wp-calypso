@@ -1,4 +1,3 @@
-import { BACKUP_RETENTION_UPDATE_REQUEST } from '../retention/constants';
 import type { AppState } from 'calypso/types';
 import 'calypso/state/rewind/init';
 
@@ -9,7 +8,6 @@ import 'calypso/state/rewind/init';
  * @returns The the status of the request.
  */
 const getBackupRetentionUpdateRequestStatus = ( state: AppState, siteId: number ): string =>
-	state.rewind[ siteId ]?.updateBackupRetentionRequestStatus ??
-	BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED;
+	state.rewind[ siteId ].retention.requestStatus;
 
 export default getBackupRetentionUpdateRequestStatus;

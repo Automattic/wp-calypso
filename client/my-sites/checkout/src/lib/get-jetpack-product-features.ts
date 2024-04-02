@@ -66,6 +66,7 @@ function getFeatureStrings(
 		case 'boost':
 			return [
 				translate( 'Automated critical CSS generation' ),
+				translate( 'Faster server response with Page Cache' ),
 				translate( 'Reduce image sizes with Image Guide' ),
 				translate( 'Historical site performance chart' ),
 				translate( 'Additional image quality control options' ),
@@ -74,7 +75,6 @@ function getFeatureStrings(
 				translate( 'One-click optimization' ),
 				translate( 'Deferred non-essential JavaScript' ),
 				translate( 'Optimized CSS loading' ),
-				translate( 'Lazy image loading' ),
 				translate( 'CDN for images' ),
 			];
 		case 'complete':

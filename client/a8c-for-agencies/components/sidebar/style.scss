@@ -4,6 +4,15 @@
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 .a4a-sidebar {
+	--color-sidebar-background: #021a23;
+	--color-sidebar-menu-hover-background: #02395c;
+	--color-sidebar-menu-hover-text: #fff;
+	--color-sidebar-menu-selected-background: #02395c;
+	--color-sidebar-menu-selected-text: #fff;
+	--color-sidebar-text: #fff;
+	--color-sidebar-text-alternative: #bbe0fa;
+	--color-sidebar-gridicon-fill: #bbe0fa;
+
 	.a4a-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
 	}

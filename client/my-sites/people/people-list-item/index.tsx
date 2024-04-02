@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
 import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
+import { userCan } from 'calypso/lib/site/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
@@ -128,6 +129,10 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 		}
 	};
 
+	const shouldShowInviteButton = ( isInvite: boolean | undefined ) => {
+		const canSendInvite = site && userCan( 'promote_users', site );
+		return canReceiveInvite() && ! isInvite && canSendInvite;
+	};
 	const renderInviteButton = () => {
 		return (
 			<div className="people-list-item__invite-status">
@@ -179,7 +184,6 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 	} );
 
 	const tagName = canLinkToProfile() ? 'a' : 'span';
-	const inviteButton = renderInviteButton();
 
 	return (
 		<CompactCard
@@ -198,7 +202,7 @@ const PeopleListItem: React.FC< PeopleListItemProps > = ( {
 					showRole={ !! maybeGetCardLink() }
 				/>
 			</div>
-			{ canReceiveInvite() && ! isInvite && inviteButton }
+			{ shouldShowInviteButton( isInvite ) && renderInviteButton() }
 			{ onRemove && (
 				<div className="people-list-item__actions">
 					<Button

@@ -3,8 +3,8 @@ import { HelpCenter } from '@automattic/data-stores';
 import { shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-new';
-import { useDispatch, useSelect } from '@wordpress/data';
+import WhatsNewGuide, { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
+import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useState } from 'react';
@@ -39,8 +39,9 @@ import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
+	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -100,40 +101,15 @@ function SidebarScrollSynchronizer() {
 }
 
 function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { fetchSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
 	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
 
-	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
-
 	useEffect( () => {
-		fetchSeenWhatsNewAnnouncements();
-	}, [ fetchSeenWhatsNewAnnouncements ] );
-
-	const { seenWhatsNewAnnouncements } = useSelect( ( select ) => {
-		const helpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			seenWhatsNewAnnouncements: helpCenterSelect.getSeenWhatsNewAnnouncements(),
-		};
-	}, [] );
-
-	useEffect( () => {
-		if (
-			data &&
-			data.length > 0 &&
-			! isLoading &&
-			seenWhatsNewAnnouncements &&
-			typeof seenWhatsNewAnnouncements.indexOf === 'function'
-		) {
-			if ( config.isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-				data.forEach( ( item ) => {
-					if ( item.critical && -1 === seenWhatsNewAnnouncements.indexOf( item.announcementId ) ) {
-						setShowWhatsNew( true );
-						return;
-					}
-				} );
-			}
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
 		}
-	}, [ data, isLoading, seenWhatsNewAnnouncements, setShowWhatsNew ] );
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
 
 	const handleClose = useCallback( () => {
 		setShowWhatsNew( false );
@@ -196,6 +172,23 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	}, [ layoutFocus ] );
 
 	return null;
+}
+
+function AppBannerLoader( { siteId } ) {
+	const { data: shouldShowCriticalAnnouncements, isLoading } =
+		useShouldShowCriticalAnnouncementsQuery( siteId );
+	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
+			setShowWhatsNew( true );
+		}
+	}, [ shouldShowCriticalAnnouncements, isLoading ] );
+
+	return (
+		! isLoading &&
+		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+	);
 }
 
 class Layout extends Component {
@@ -273,9 +266,7 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		const globalSidebarDesktop =
-			this.state.isDesktop &&
-			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
 			return <EmptyMasterbar />;
 		}
@@ -303,9 +294,7 @@ class Layout extends Component {
 	}
 
 	render() {
-		const globalSidebarDesktop =
-			this.state.isDesktop &&
-			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
@@ -321,7 +310,8 @@ class Layout extends Component {
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
 			woo: this.props.isWooCoreProfilerFlow,
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
-			'is-global-site-sidebar-visible': this.props.isGlobalSiteSidebarVisible,
+			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
+			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 		} );
 
 		const optionalBodyProps = () => {
@@ -343,7 +333,7 @@ class Layout extends Component {
 			this.props.userAllowedToHelpCenter;
 
 		const shouldDisableSidebarScrollSynchronizer =
-			this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible;
+			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
 		return (
 			<div className={ sectionClass }>
@@ -422,7 +412,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
+					<AppBannerLoader siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
@@ -465,10 +455,16 @@ export default withCurrentRoute(
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 				isWooCommerceCoreProfilerFlow( state );
 			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 				state,
 				siteId,
 				sectionGroup
+			);
+			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
 			);
 			const noMasterbarForRoute =
 				isJetpackLogin ||
@@ -539,7 +535,8 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter,
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
+				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
+				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
 				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),

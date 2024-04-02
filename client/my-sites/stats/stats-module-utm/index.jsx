@@ -4,10 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { isA8CSpecialBlog } from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
-import useUTMMetricTopPostsQuery from '../hooks/use-utm-metric-top-posts-query';
 import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleDataQuery from '../stats-module/stats-module-data-query';
@@ -34,36 +32,18 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 	// Fetch UTM metrics with switched UTM parameters.
-	const { isFetching: isFetchingUTM, metrics } = useUTMMetricsQuery(
+	const { isFetching: isFetchingUTM, metrics: data } = useUTMMetricsQuery(
 		siteId,
 		selectedOption,
 		query,
 		postId
 	);
-	// Fetch top posts for all UTM metric items.
-	const { topPosts } = useUTMMetricTopPostsQuery( siteId, selectedOption, metrics );
 
-	const isSiteInternal =
-		isA8CSpecialBlog( siteId ) || ( ! isFetchingUsage && usageData?.is_internal );
+	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isFetchingUTM;
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 
 	// TODO: trigger useUTMMetricsQuery manually once isAdvancedFeatureEnabled === true
-
-	// Combine metrics with top posts.
-	const data = metrics.map( ( metric ) => {
-		const paramValues = metric.paramValues;
-		const children = topPosts[ paramValues ] || [];
-
-		if ( ! children.length ) {
-			return metric;
-		}
-
-		return {
-			...metric,
-			children,
-		};
-	} );
 
 	// Hide the module if the specific post is the Home page.
 	if ( postId === 0 ) {

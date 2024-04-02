@@ -148,6 +148,12 @@
 }
 
 .preview-hidden {
+	@media (max-width: $break-large) {
+		.sites-dataviews__site-name {
+			width: calc(35vw);  /* 35vw provides a comfortable experience on small resolutions when the preview is hidden. */
+		}
+	}
+
 	@media (min-width: 2040px) {
 		.sites-dataviews__site-name {
 			width: 250px;
@@ -185,6 +191,31 @@
 .dataviews-wrapper {
 	.dataviews-no-results,
 	.dataviews-loading {
-		padding-left: 16px;
+		padding-top: 1rem;
+		text-align: center;
+	}
+
+	.spinner-wrapper {
+		display: none;
+	}
+
+}
+
+.dataviews-wrapper:has(.dataviews-loading) {
+	.spinner-wrapper {
+		display: block;
+	}
+	.dataviews-loading p {
+		display: none;
+	}
+
+	.dataviews-view-table-wrapper {
+		height: 0 !important;
+	}
+}
+
+.dataviews-wrapper:has(.dataviews-no-results) {
+	.spinner-wrapper {
+		display: none;
 	}
 }

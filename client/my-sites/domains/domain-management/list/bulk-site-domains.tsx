@@ -10,6 +10,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector, useDispatch } from 'calypso/state';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -22,6 +23,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
+import PrimaryDomainSelector from '../components/primary-domain-selector';
 import {
 	createBulkAction,
 	deleteBulkActionStatus,
@@ -86,6 +88,39 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		( allDomains || [] ).length > 1 &&
 		[ ...new Set( ( allDomains || [] ).map( ( domain ) => domain.blog_id ) ) ].length > 1;
 
+	const onSetPrimaryDomain = async (
+		domain: string,
+		onComplete: () => void,
+		type: string
+	): Promise< void > => {
+		if ( site ) {
+			dispatch(
+				recordGoogleEvent(
+					'Domain Management',
+					'Changed Primary Domain in Site Domains',
+					'Domain Name',
+					domain
+				)
+			);
+			dispatch(
+				recordTracksEvent( 'calypso_domain_management_settings_change_primary_domain_dropdown', {
+					section: type,
+					mode: 'dropdown',
+				} )
+			);
+			try {
+				await dispatch( setPrimaryDomain( site.ID, domain ) );
+				dispatch( showUpdatePrimaryDomainSuccessNotice( domain ) );
+				page.replace( domainManagementList( domain ) );
+				await refetch();
+			} catch ( error ) {
+				dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );
+			} finally {
+				onComplete();
+			}
+		}
+	};
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
@@ -94,6 +129,11 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white', 'is-bulk-domains-page' ] } />
 				<DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ buttons } />
 				{ ! isLoading && <GoogleDomainOwnerBanner /> }
+				<PrimaryDomainSelector
+					domains={ data?.domains }
+					site={ site }
+					onSetPrimaryDomain={ onSetPrimaryDomain }
+				/>
 				<DomainsTable
 					isLoadingDomains={ isLoading }
 					domains={ data?.domains }

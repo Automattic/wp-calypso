@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
+import { useCommandMenuGroupContext, useCommandPaletteContext } from './context';
 import { SiteType } from './commands';
 import { isCustomDomain, commandNavigation } from './utils';
 import type { Command, CommandCallBackParams } from './commands';
@@ -28,17 +29,6 @@ const EmptySiteIcon = styled.div( {
 	justifyContent: 'center',
 	alignItems: 'center',
 } );
-
-interface useCommandPaletteOptions {
-	currentSiteId: number | null;
-	selectedCommandName: string;
-	setSelectedCommandName: ( name: string ) => void;
-	search: string;
-	useCommands: () => Command[];
-	currentRoute: string;
-	useSites: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
-}
 
 interface SiteToActionParameters {
 	selectedCommand: Command;
@@ -142,25 +132,19 @@ const isCommandAvailableOnSite = (
 	return true;
 };
 
-export const useCommandPalette = ( {
-	currentSiteId,
-	selectedCommandName,
-	setSelectedCommandName,
-	search,
-	useCommands,
-	currentRoute,
-	useSites = () => [],
-	userCapabilities = {},
-}: useCommandPaletteOptions ): {
+export const useCommandPalette = (): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
+	const { search, selectedCommandName, setSelectedCommandName } = useCommandMenuGroupContext();
+	const { currentSiteId, navigate, useCommands, currentRoute, useSites, userCapabilities } =
+		useCommandPaletteContext();
 	const siteToAction = useSiteToAction( { currentRoute } );
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
-	const sites = useSites();
+	const sites = useSites?.() || [];
 
 	const commands = useCommands() as Command[];
 

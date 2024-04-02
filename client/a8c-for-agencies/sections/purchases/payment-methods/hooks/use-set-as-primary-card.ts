@@ -1,10 +1,43 @@
+import {
+	useMutation,
+	UseMutationOptions,
+	UseMutationResult,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useEffect } from 'react';
+import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getFetchStoredCardsKey } from './use-stored-cards';
 import type { SetAsPrimaryCardProps } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 const NOTIFICATION_DURATION = 3000;
+
+interface APIResponse {
+	success: boolean;
+}
+
+function useSetAsPrimaryCardMutation< TContext = unknown >(
+	options?: UseMutationOptions< APIResponse, Error, SetAsPrimaryCardProps, TContext >
+): UseMutationResult< APIResponse, Error, SetAsPrimaryCardProps, TContext > {
+	const agencyId = useSelector( getActiveAgencyId );
+
+	return useMutation< APIResponse, Error, SetAsPrimaryCardProps, TContext >( {
+		...options,
+		mutationFn: ( { paymentMethodId, useAsPrimaryPaymentMethod } ) =>
+			wpcom.req.post( {
+				apiNamespace: 'wpcom/v2',
+				path: `/jetpack-licensing/stripe/payment-method`,
+				body: {
+					...( agencyId && { agency_id: agencyId } ),
+					payment_method_id: paymentMethodId,
+					use_as_primary_payment_method: useAsPrimaryPaymentMethod,
+				},
+			} ),
+	} );
+}
 
 export function useSetAsPrimaryCard(): {
 	setAsPrimaryCard: ( params: SetAsPrimaryCardProps ) => void;
@@ -13,29 +46,18 @@ export function useSetAsPrimaryCard(): {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	// FIXME: Need to remove this with actual API call.
-	const [ isSuccess, setIsSuccess ] = useState( false );
-	const [ isPending, setIsPending ] = useState( false );
-	const [ isError, setIsError ] = useState( false );
-	const setAsPrimaryCard = ( { paymentMethodId }: SetAsPrimaryCardProps ) => {
-		setIsPending( true );
-		setIsError( false );
-		setIsSuccess( false );
-		setTimeout( () => {
-			setIsPending( false );
+	const queryClient = useQueryClient();
+	const agencyId = useSelector( getActiveAgencyId );
 
-			if ( paymentMethodId === '2' ) {
-				setIsSuccess( true );
-			} else {
-				setIsError( true );
-			}
-		}, 1000 );
-	};
+	const { mutate, isPending, isSuccess, isError } = useSetAsPrimaryCardMutation( {
+		retry: false,
+	} );
 
 	useEffect( () => {
 		if ( isSuccess ) {
-			// FIXME: Need to refetch cards
-
+			queryClient.invalidateQueries( {
+				queryKey: getFetchStoredCardsKey( agencyId ),
+			} );
 			dispatch(
 				successNotice( translate( 'Card set as primary.' ), {
 					duration: NOTIFICATION_DURATION,
@@ -43,7 +65,7 @@ export function useSetAsPrimaryCard(): {
 				} )
 			);
 		}
-	}, [ dispatch, isSuccess, translate ] );
+	}, [ agencyId, dispatch, isSuccess, queryClient, translate ] );
 
 	useEffect( () => {
 		if ( isError ) {
@@ -57,7 +79,7 @@ export function useSetAsPrimaryCard(): {
 	}, [ dispatch, isError, translate ] );
 
 	return {
-		setAsPrimaryCard,
+		setAsPrimaryCard: mutate,
 		isSetAsPrimaryCardPending: isPending,
 	};
 }

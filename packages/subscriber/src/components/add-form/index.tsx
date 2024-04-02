@@ -19,12 +19,11 @@ import {
 	useRef,
 	useCallback,
 } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import { tip } from './icon';
+
 import './style.scss';
 
 interface Props {
@@ -48,6 +47,7 @@ interface Props {
 	subtitleText?: string;
 	showSkipLink?: boolean;
 	hidden?: boolean;
+	isWPCOMSite?: boolean;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -77,6 +77,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		subtitleText,
 		showSkipLink,
 		hidden = false,
+		isWPCOMSite = false,
 	} = props;
 
 	const {
@@ -358,7 +359,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvDisclaimerMsg() {
-		const importSubscribersUrl = isJetpackCloud()
+		const importSubscribersUrl = ! isWPCOMSite
 			? 'https://jetpack.com/support/newsletter/import-subscribers/'
 			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
 
@@ -393,7 +394,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
 			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
 
-		const importSubscribersUrl = isJetpackCloud()
+		const importSubscribersUrl = ! isWPCOMSite
 			? 'https://jetpack.com/support/newsletter/import-subscribers/'
 			: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
 

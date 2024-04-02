@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CUSTOM_DNS } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
-import { CUSTOM_DNS } from 'calypso/lib/url/support';
 
 class DnsDetails extends PureComponent {
 	render() {

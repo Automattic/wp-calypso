@@ -133,7 +133,14 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 					busy={ isSettingPrimaryDomain }
 					disabled={ shouldDisableSetAsPrimaryButton }
 				>
-					{ translate( 'Set this domain as primary' ) }
+					{ translate( 'Set {{strong}}%(domainName)s{{/strong}} as primary', {
+						args: {
+							domainName: domain.name,
+						},
+						components: {
+							strong: <strong />,
+						},
+					} ) }
 				</Button>
 			</Accordion>
 		</div>

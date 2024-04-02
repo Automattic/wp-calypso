@@ -27,11 +27,22 @@ export function generateFlows( {
 
 	const flows = [
 		{
+			name: 'hosting', // This flow is to be removed once the Landpack changes are completed.
+			steps: [ userSocialStep, 'hosting-decider' ],
+			destination: getHostingFlowDestination,
+			description: 'To be deleted.',
+			lastModified: '2024-03-22',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
+			hideProgressIndicator: true,
+		},
+		{
 			name: HOSTING_LP_FLOW,
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'hosting-decider' ],
 			destination: getHostingFlowDestination,
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
-			lastModified: '2023-07-18',
+			lastModified: '2024-03-22',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],

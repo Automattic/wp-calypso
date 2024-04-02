@@ -158,6 +158,7 @@
 	"sections": {
 		"a8c-for-agencies": false,
 		"a8c-for-agencies-auth": false,
+		"a8c-for-agencies-landing": false,
 		"a8c-for-agencies-overview": false,
 		"a8c-for-agencies-plugins": false,
 		"a8c-for-agencies-sites": false,
@@ -208,6 +209,7 @@
 		"site-content-collection",
 		"importer",
 		"hosting",
+		"hosting-start",
 		"import",
 		"import-light",
 		"from",

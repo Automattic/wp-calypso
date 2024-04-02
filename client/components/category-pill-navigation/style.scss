@@ -24,9 +24,12 @@
 		display: flex;
 		gap: 16px;
 		align-items: center;
+		// Chrome, Edge, Firefox
+		scrollbar-width: none;
 
+		// Safari
 		&::-webkit-scrollbar {
-			display: none; /* for browsers that support this */
+			display: none;
 		}
 	}
 
@@ -104,4 +107,8 @@
 	padding-left: 32px;
 	flex: none;
 	margin-left: auto;
+}
+
+.category-pill-navigation__mobile-select .select-dropdown__container {
+	width: 100%;
 }
