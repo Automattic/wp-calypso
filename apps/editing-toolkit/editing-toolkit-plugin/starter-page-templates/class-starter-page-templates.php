@@ -279,7 +279,7 @@ class Starter_Page_Templates {
 	public function get_page_templates( string $locale ) {
 		$page_template_data   = get_transient( $this->get_templates_cache_key( $locale ) );
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
-		$disable_cache        = is_automattician() || false !== $override_source_site || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE );
+		$disable_cache        = function_exists( 'is_automattician' ) && is_automattician() || false !== $override_source_site || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE );
 
 		// Load fresh data if is automattician or we don't have any data.
 		if ( $disable_cache || false === $page_template_data ) {

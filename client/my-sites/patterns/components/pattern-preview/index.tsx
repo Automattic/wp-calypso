@@ -1,6 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
@@ -12,11 +13,16 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
+import { pillNavigationClassName } from 'calypso/my-sites/patterns/components/pattern-library';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
-import { PatternTypeFilter, Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import type {
+	Pattern,
+	PatternGalleryProps,
+	PatternTypeFilter,
+} from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
@@ -68,6 +74,8 @@ function PatternPreviewFragment( {
 	viewportWidth,
 }: PatternPreviewProps ) {
 	const ref = useRef< HTMLDivElement >( null );
+	const hasScrolledToAnchorRef = useRef< boolean >( false );
+
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
 
@@ -133,6 +141,52 @@ function PatternPreviewFragment( {
 		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
 	}, [ nodeSize.width, nodeSize.height ] );
 
+	// When a URL with a single-pattern hash is loaded, scroll to that pattern preview. We use
+	// `window.scrollBy` instead of setting an ID attribute on the relevant pattern preview to avoid
+	// a janky experience for users while the page is loading. This way, the browser doesn't scroll
+	// down to the relevant patterns until patterns are mostly finished loading.
+	useEffect( () => {
+		if (
+			window.location.hash !== `#${ idAttr }` ||
+			hasScrolledToAnchorRef.current ||
+			! ref.current
+		) {
+			return;
+		}
+
+		const element = ref.current;
+
+		const timeoutId = setTimeout( function () {
+			hasScrolledToAnchorRef.current = true;
+
+			const masterbarHeightRaw = getComputedStyle( document.documentElement ).getPropertyValue(
+				'--masterbar-height'
+			);
+			const masterbarHeight = /^\d+px$/.test( masterbarHeightRaw )
+				? parseInt( masterbarHeightRaw )
+				: 0;
+
+			const stickyNav = document.querySelector( `.${ pillNavigationClassName }` );
+			const stickyNavCoords = stickyNav?.getBoundingClientRect();
+			const stickyNavHeight = stickyNavCoords && ! isMobile() ? stickyNavCoords.height : 0;
+
+			const elementCoords = element.getBoundingClientRect();
+
+			const EXTRA_VERTICAL_MARGIN = 16;
+
+			// We deliberately avoid smooth scrolling, since this will trigger lazy loading on the
+			// iframes above the target, potentially causing the layout to shift, which suddenly
+			// makes the scroll target incorrect
+			window.scrollBy( {
+				top: elementCoords.top - stickyNavHeight - masterbarHeight - EXTRA_VERTICAL_MARGIN,
+			} );
+		}, 1000 );
+
+		return () => {
+			clearTimeout( timeoutId );
+		};
+	}, [ renderedPattern, idAttr ] );
+
 	if ( ! pattern ) {
 		return null;
 	}
@@ -154,7 +208,6 @@ function PatternPreviewFragment( {
 				// SSR markup to client-side React code, which is why we need the `is-targeted` class
 				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
-			id={ idAttr }
 			ref={ ref }
 		>
 			{ resizeObserver }

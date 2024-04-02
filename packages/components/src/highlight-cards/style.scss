@@ -452,13 +452,13 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
-.highlight-cards-list-mobile {
+.mobile-highlight-cards-listing {
 	display: flex;
 	flex-direction: column;
-	row-gap: 16px;
-	margin: 24px;
+	row-gap: 8px;
+	margin: 16px;
 
-	.highlight-cards-list-mobile__item {
+	.mobile-highlight-cards__item {
 		display: flex;
 		align-items: center;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
@@ -467,26 +467,26 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		padding: 12px;
 	}
 
-	.highlight-cards-list-mobile__item-heading {
+	.mobile-highlight-cards__item-heading {
 		font-weight: 500;
 		font-size: 0.875rem;
 		line-height: 20px;
 	}
-	.highlight-cards-list-mobile__item-count {
+	.mobile-highlight-cards__item-count {
 		margin-left: auto;
 		font-size: 1.5rem;
 		line-height: 32px;
 
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-family: $highlight-card-count-font;
 	}
-	.highlight-cards-list-mobile__item-icon {
+	.mobile-highlight-cards__item-icon {
 		padding-right: 12px;
 
 		svg {
 			vertical-align: middle;
 		}
 	}
-	.highlight-cards-list-mobile__item-trend {
+	.mobile-highlight-cards__item-trend {
 		padding-left: 8px;
 	}
 }

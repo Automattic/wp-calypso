@@ -42,6 +42,8 @@ import './style.scss';
 // `useCx` hook in `ToggleGroupControl`
 const PatternLibraryBody = styled.div``;
 
+export const pillNavigationClassName = 'pattern-library__pill-navigation';
+
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
 		const categorySlugs = Object.keys( pattern.categories );
@@ -96,6 +98,7 @@ export const PatternLibrary = ( {
 	const isInitialRender = useRef( true );
 	// Helps reset the search input when navigating between categories
 	const [ searchFormKey, setSearchFormKey ] = useState( category );
+	const navRef = useRef< HTMLDivElement >( null );
 
 	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
@@ -151,19 +154,44 @@ export const PatternLibrary = ( {
 		}
 	}, [ urlQuerySearchTerm ] );
 
-	// Resets the search term whenever the category changes
 	useEffect( () => {
 		if ( isInitialRender.current ) {
 			isInitialRender.current = false;
 			return;
 		}
 
+		// Reset the search term when the category changes
 		setSearchTerm( '' );
 		setSearchFormKey( category );
+
+		// If the user has scrolled below the anchoring position of `.pattern-library__pill-navigation`,
+		// then we scroll back up when the category changes
+		if ( navRef.current ) {
+			const element = navRef.current;
+			const coords = element.getBoundingClientRect();
+			const style = getComputedStyle( element );
+			const parsedTop = /(\d+(\.\d+)?)px/.exec( style.top );
+			const topStyle = parseFloat( parsedTop?.[ 1 ] ?? '0' );
+
+			if ( coords.top > topStyle ) {
+				return;
+			}
+
+			element.style.position = 'static';
+
+			requestAnimationFrame( () => {
+				const staticCoords = element.getBoundingClientRect();
+				element.style.removeProperty( 'position' );
+
+				window.scrollBy( {
+					behavior: 'smooth',
+					top: staticCoords.top,
+				} );
+			} );
+		}
 	}, [ category ] );
 
 	const [ isSticky, setIsSticky ] = useState( false );
-	const navRef = useRef< HTMLDivElement >( null );
 	const prevNavTopValue = useRef( 0 );
 
 	useEffect( () => {
@@ -232,7 +260,7 @@ export const PatternLibrary = ( {
 
 			<div className="pattern-library__wrapper">
 				<div
-					className={ classNames( 'pattern-library__pill-navigation', {
+					className={ classNames( pillNavigationClassName, {
 						'pattern-library__pill-navigation--sticky': isSticky,
 					} ) }
 					ref={ navRef }
