@@ -117,19 +117,15 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 			) }
 
 			<UpgradePlanDetails>
-				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ onCtaClick }>
-					{ ctaText }
-				</NextButton>
-				{ isEnabled( 'plans/migration-trial' ) && (
+				{ isEnabled( 'plans/migration-trial' ) ? (
 					<>
-						<Button
-							busy={ isAddingTrial }
+						<NextButton
+							isBusy={ isAddingTrial }
 							disabled={ ! isEligibleForTrialPlan }
-							transparent={ ! isAddingTrial }
 							onClick={ onFreeTrialClick }
 						>
 							{ translate( 'Try 7 days for free' ) }
-						</Button>
+						</NextButton>
 						{ ! isEligibleForTrialPlan && (
 							<small>
 								{ translate(
@@ -137,7 +133,19 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 								) }
 							</small>
 						) }
+						<Button
+							busy={ isBusy }
+							disabled={ isAddingTrial }
+							transparent={ ! isAddingTrial }
+							onClick={ onCtaClick }
+						>
+							{ ctaText === '' ? translate( 'Continue' ) : ctaText }
+						</Button>
 					</>
+				) : (
+					<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+						{ ctaText }
+					</NextButton>
 				) }
 			</UpgradePlanDetails>
 		</div>

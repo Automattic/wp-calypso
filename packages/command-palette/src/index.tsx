@@ -8,32 +8,19 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useCommandsParams } from './commands/types';
 import useSingleSiteCommands from './commands/use-single-site-commands';
-import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import {
-	Command as PaletteCommand,
-	CommandCallBackParams,
-	useCommandPalette,
-} from './use-command-palette';
-import type { SiteExcerptData } from '@automattic/sites';
+	CommandMenuGroupContext,
+	CommandMenuGroupContextProvider,
+	CommandPaletteContext,
+	CommandPaletteContextProvider,
+	useCommandMenuGroupContext,
+	useCommandPaletteContext,
+} from './context';
+import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
+import { useCommandPalette } from './use-command-palette';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
-
-interface CommandMenuGroupProps
-	extends Pick< CommandCallBackParams, 'close' | 'setSearch' | 'setPlaceholderOverride' > {
-	currentSiteId: number | null;
-	search: string;
-	selectedCommandName: string;
-	setSelectedCommandName: ( name: string ) => void;
-	setFooterMessage?: ( message: string ) => void;
-	setEmptyListNotice?: ( message: string ) => void;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	currentRoute: string | null;
-	useSites: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
-}
 
 const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {
@@ -96,40 +83,17 @@ const StyledCommandsFooter = styled.div( {
 	color: 'var(--studio-gray-50)',
 } );
 
-export function CommandMenuGroup( {
-	currentSiteId,
-	search,
-	close,
-	setSearch,
-	setPlaceholderOverride,
-	selectedCommandName,
-	setSelectedCommandName,
-	setFooterMessage,
-	setEmptyListNotice,
-	navigate,
-	useCommands,
-	currentRoute,
-	useSites,
-	userCapabilities,
-}: CommandMenuGroupProps ) {
-	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
-		currentSiteId,
-		selectedCommandName,
-		setSelectedCommandName,
-		search,
-		navigate,
-		useCommands,
-		currentRoute,
-		useSites,
-		userCapabilities,
-	} );
+export function CommandMenuGroup() {
+	const { search, close, setSearch, setPlaceholderOverride, setFooterMessage, setEmptyListNotice } =
+		useCommandMenuGroupContext();
+	const { commands, filterNotice, emptyListNotice } = useCommandPalette();
 
 	useEffect( () => {
-		setFooterMessage?.( filterNotice ?? '' );
+		setFooterMessage( filterNotice ?? '' );
 	}, [ setFooterMessage, filterNotice ] );
 
 	useEffect( () => {
-		setEmptyListNotice?.( emptyListNotice ?? '' );
+		setEmptyListNotice( emptyListNotice ?? '' );
 	}, [ setEmptyListNotice, emptyListNotice ] );
 
 	if ( ! commands.length ) {
@@ -188,19 +152,11 @@ export function CommandMenuGroup( {
 
 interface CommandInputProps {
 	isOpen: boolean;
-	search: string;
-	setSearch: ( search: string ) => void;
-	selectedCommandName: string;
-	placeholder?: string;
 }
 
-function CommandInput( {
-	isOpen,
-	search,
-	setSearch,
-	placeholder,
-	selectedCommandName,
-}: CommandInputProps ) {
+function CommandInput( { isOpen }: CommandInputProps ) {
+	const { placeHolderOverride, search, selectedCommandName, setSearch } =
+		useCommandMenuGroupContext();
 	const commandMenuInput = useRef< HTMLInputElement >( null );
 	const itemValue = useCommandState( ( state ) => state.value );
 	const itemId = useMemo( () => cleanForSlug( itemValue ), [ itemValue ] );
@@ -218,36 +174,15 @@ function CommandInput( {
 			ref={ commandMenuInput }
 			value={ search }
 			onValueChange={ setSearch }
-			placeholder={ placeholder || __( 'Search for commands', __i18n_text_domain__ ) }
+			placeholder={ placeHolderOverride || __( 'Search for commands', __i18n_text_domain__ ) }
 			aria-activedescendant={ itemId }
 		/>
 	);
 }
 
-interface NotFoundMessageProps {
-	selectedCommandName: string;
-	search: string;
-	emptyListNotice?: string;
-	currentRoute: string | null;
-}
-
-interface CommandPaletteProps {
-	currentSiteId: number | null;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	currentRoute: string | null;
-	isOpenGlobal?: boolean;
-	onClose?: () => void;
-	useSites?: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
-}
-
-const NotFoundMessage = ( {
-	selectedCommandName,
-	search,
-	emptyListNotice,
-	currentRoute,
-}: NotFoundMessageProps ) => {
+const NotFoundMessage = () => {
+	const { emptyListNotice, search, selectedCommandName } = useCommandMenuGroupContext();
+	const { currentRoute } = useCommandPaletteContext();
 	const trackNotFoundDebounced = useDebounce( () => {
 		recordTracksEvent( 'calypso_hosting_command_palette_not_found', {
 			current_route: currentRoute,
@@ -266,16 +201,8 @@ const NotFoundMessage = ( {
 	return <>{ emptyListNotice || __( 'No results found.', __i18n_text_domain__ ) }</>;
 };
 
-const CommandPalette = ( {
-	currentSiteId,
-	navigate,
-	useCommands,
-	currentRoute,
-	isOpenGlobal,
-	onClose = () => {},
-	useSites = () => [],
-	userCapabilities = {},
-}: CommandPaletteProps ) => {
+const CommandPalette = () => {
+	const { currentRoute, isOpenGlobal, onClose } = useCommandPaletteContext();
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
 	const [ selectedCommandName, setSelectedCommandName ] = useState( '' );
@@ -289,10 +216,10 @@ const CommandPalette = ( {
 			current_route: currentRoute,
 		} );
 	}, [ currentRoute ] );
-	const close = useCallback< CommandMenuGroupProps[ 'close' ] >(
+	const close = useCallback< CommandMenuGroupContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
 			setIsOpenLocal( false );
-			onClose();
+			onClose?.();
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {
 				// For nested commands the command.name would be the siteId
 				// For root commands the selectedCommandName would be empty
@@ -373,75 +300,88 @@ const CommandPalette = ( {
 	};
 
 	return (
-		<Modal
-			className="commands-command-menu"
-			overlayClassName="commands-command-menu__overlay"
-			onRequestClose={ closeAndReset }
-			__experimentalHideHeader
+		<CommandMenuGroupContextProvider
+			search={ search }
+			close={ ( commandName, isExecuted ) => {
+				close( commandName, isExecuted );
+				reset();
+			} }
+			emptyListNotice={ emptyListNotice }
+			placeHolderOverride={ placeHolderOverride }
+			selectedCommandName={ selectedCommandName }
+			setEmptyListNotice={ setEmptyListNotice }
+			setFooterMessage={ setFooterMessage }
+			setPlaceholderOverride={ setPlaceholderOverride }
+			setSearch={ setSearch }
+			setSelectedCommandName={ setSelectedCommandName }
 		>
-			<StyledCommandsMenuContainer className="commands-command-menu__container">
-				<Command
-					label={ __( 'Command palette', __i18n_text_domain__ ) }
-					onKeyDown={ onKeyDown }
-					filter={ commandFilter }
-				>
-					<div className="commands-command-menu__header">
-						{ selectedCommandName ? (
-							<BackButton
-								type="button"
-								onClick={ () => goBackToRootCommands( false ) }
-								aria-label={ __( 'Go back to the previous screen', __i18n_text_domain__ ) }
-							>
-								<Icon icon={ backIcon } />
-							</BackButton>
-						) : (
-							<Icon icon={ inputIcon } />
-						) }
-						<CommandInput
-							selectedCommandName={ selectedCommandName }
-							search={ search }
-							setSearch={ setSearch }
-							isOpen={ isOpen }
-							placeholder={ placeHolderOverride }
-						/>
-					</div>
-					<Command.List ref={ commandListRef }>
-						<StyledCommandsEmpty>
-							<NotFoundMessage
-								selectedCommandName={ selectedCommandName }
-								search={ search }
-								emptyListNotice={ emptyListNotice }
-								currentRoute={ currentRoute }
-							/>
-						</StyledCommandsEmpty>
-						<CommandMenuGroup
-							currentSiteId={ currentSiteId }
-							search={ search }
-							close={ ( commandName, isExecuted ) => {
-								close( commandName, isExecuted );
-								reset();
-							} }
-							setSearch={ setSearch }
-							setPlaceholderOverride={ setPlaceholderOverride }
-							selectedCommandName={ selectedCommandName }
-							setSelectedCommandName={ setSelectedCommandName }
-							setFooterMessage={ setFooterMessage }
-							setEmptyListNotice={ setEmptyListNotice }
-							navigate={ navigate }
-							useCommands={ useCommands }
-							currentRoute={ currentRoute }
-							useSites={ useSites }
-							userCapabilities={ userCapabilities }
-						/>
-					</Command.List>
-				</Command>
-				{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
-			</StyledCommandsMenuContainer>
-		</Modal>
+			<Modal
+				className="commands-command-menu"
+				overlayClassName="commands-command-menu__overlay"
+				onRequestClose={ closeAndReset }
+				__experimentalHideHeader
+			>
+				<StyledCommandsMenuContainer className="commands-command-menu__container">
+					<Command
+						label={ __( 'Command palette', __i18n_text_domain__ ) }
+						onKeyDown={ onKeyDown }
+						filter={ commandFilter }
+					>
+						<div className="commands-command-menu__header">
+							{ selectedCommandName ? (
+								<BackButton
+									type="button"
+									onClick={ () => goBackToRootCommands( false ) }
+									aria-label={ __( 'Go back to the previous screen', __i18n_text_domain__ ) }
+								>
+									<Icon icon={ backIcon } />
+								</BackButton>
+							) : (
+								<Icon icon={ inputIcon } />
+							) }
+							<CommandInput isOpen={ isOpen } />
+						</div>
+						<Command.List ref={ commandListRef }>
+							<StyledCommandsEmpty>
+								<NotFoundMessage />
+							</StyledCommandsEmpty>
+							<CommandMenuGroup />
+						</Command.List>
+					</Command>
+					{ footerMessage && <StyledCommandsFooter>{ footerMessage }</StyledCommandsFooter> }
+				</StyledCommandsMenuContainer>
+			</Modal>
+		</CommandMenuGroupContextProvider>
 	);
 };
 
-export default CommandPalette;
+const CommandPaletteWithProvider = ( {
+	currentSiteId,
+	navigate,
+	useCommands,
+	currentRoute,
+	isOpenGlobal,
+	onClose = () => {},
+	useSites = () => [],
+	userCapabilities = {},
+}: CommandPaletteContext ) => {
+	return (
+		<CommandPaletteContextProvider
+			currentSiteId={ currentSiteId }
+			navigate={ navigate }
+			useCommands={ useCommands }
+			currentRoute={ currentRoute }
+			isOpenGlobal={ isOpenGlobal }
+			onClose={ onClose }
+			useSites={ useSites }
+			userCapabilities={ userCapabilities }
+		>
+			<CommandPalette />
+		</CommandPaletteContextProvider>
+	);
+};
+
+export default CommandPaletteWithProvider;
 export type { Command, CommandCallBackParams } from './use-command-palette';
 export type { useCommandsParams } from './commands/types';
 export { useSingleSiteCommands };
