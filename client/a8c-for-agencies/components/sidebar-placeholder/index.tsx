@@ -4,6 +4,7 @@ import Sidebar, {
 	SidebarV2Footer as SidebarFooter,
 } from 'calypso/layout/sidebar-v2';
 
+import '../sidebar/style.scss'; // Need to import styling from sidebar.
 import './style.scss';
 
 export default function A4ASidebarPlaceholder() {
