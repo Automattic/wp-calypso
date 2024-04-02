@@ -26,7 +26,10 @@ export const PatternsGetAccessModal = ( {
 		typeof window !== 'undefined' ? location.href.replace( location.origin, '' ) : '';
 
 	const signupUrl = localizeUrl(
-		`//wordpress.com/start/account/user?${ buildQueryString( { redirect_to: redirectUrl } ) }`,
+		`//wordpress.com/start/account/user?${ buildQueryString( {
+			redirect_to: redirectUrl,
+			ref: 'pattern-library',
+		} ) }`,
 		locale,
 		isLoggedIn
 	);

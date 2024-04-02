@@ -1,4 +1,5 @@
 import { addLocaleToPathLocaleInFront, localizeUrl } from '@automattic/i18n-utils';
+import { buildQueryString } from '@wordpress/url';
 import { PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 import type { Locale } from '@automattic/i18n-utils';
 
@@ -16,5 +17,11 @@ export function getCategoryUrlPath(
 }
 
 export function getOnboardingUrl( locale: Locale, isLoggedIn: boolean ) {
-	return localizeUrl( 'https://wordpress.com/setup/assembler-first', locale, isLoggedIn );
+	return localizeUrl(
+		`https://wordpress.com/setup/assembler-first?${ buildQueryString( {
+			ref: 'pattern-library',
+		} ) }`,
+		locale,
+		isLoggedIn
+	);
 }
