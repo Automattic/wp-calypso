@@ -6,6 +6,7 @@ import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-h
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUpload } from './components/media-upload';
+import { CHARACTER_LIMIT } from './constants';
 import { useChangeHandlers } from './hooks/use-change-handlers';
 import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
@@ -43,6 +44,15 @@ export function DefaultPageDetails( {
 				label={ description }
 				disabled={ !! page.useFillerContent }
 				hasFillerContentCheckbox={ isEnglishLocale }
+				characterLimit={ CHARACTER_LIMIT }
+				characterLimitError={ translate(
+					'You’ve exceeded the character limit for this section. Please reduce the text to under %(characterLimit)d characters for optimal presentation. If the text remains over this limit, we will optimize it with AI for you.',
+					{
+						args: {
+							characterLimit: CHARACTER_LIMIT,
+						},
+					}
+				) }
 			/>
 			{ isEnglishLocale && (
 				<CheckboxField
