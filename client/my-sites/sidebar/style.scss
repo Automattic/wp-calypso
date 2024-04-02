@@ -41,6 +41,7 @@ $brand-text: "SF Pro Text", $sans;
 		// Resetting these colors to prevent bleeding from dashboard color schemes
 		--color-sidebar-text: var(--studio-gray-80);
 		--color-sidebar-text-alternative: var(--studio-gray-40);
+		--color-sidebar-text-alternative-selected: var(--studio-gray-10);
 		--color-sidebar-menu-selected-background: #3858e9;
 		--color-sidebar-menu-selected-text: var(--studio-white);
 		--color-sidebar-menu-hover-text: var(--studio-black);
@@ -759,9 +760,14 @@ $font-size: rem(14px);
 			border-color: var(--color-sidebar-submenu-hover-text);
 		}
 
-		.selected .sidebar__menu-link .count {
-			color: var(--color-sidebar-submenu-selected-text);
-			border-color: var(--color-sidebar-submenu-selected-text);
+		.selected .sidebar__menu-link {
+			.count {
+				color: var(--color-sidebar-submenu-selected-text);
+				border-color: var(--color-sidebar-submenu-selected-text);
+			}
+			.sidebar__menu-item-last-updated {
+				color: var(--color-sidebar-text-alternative-selected);
+			}
 		}
 
 		.sidebar__menu.sidebar__menu--selected {
