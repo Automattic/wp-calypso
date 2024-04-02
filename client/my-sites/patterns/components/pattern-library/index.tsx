@@ -229,6 +229,9 @@ export const PatternLibrary = ( {
 	} );
 
 	const isHomePage = ! category && ! searchTerm;
+	const patternGalleryKey = searchTerm
+		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
+		: `${ category }-${ patternTypeFilter }`;
 
 	return (
 		<>
@@ -379,6 +382,7 @@ export const PatternLibrary = ( {
 								getPatternPermalink( pattern, category, patternTypeFilter, categories )
 							}
 							isGridView={ isGridView }
+							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
 							patternTypeFilter={ patternTypeFilter }
 						/>
