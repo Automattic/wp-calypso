@@ -8,13 +8,9 @@ import { cleanForSlug } from '@wordpress/url';
 import classnames from 'classnames';
 import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useCommandsParams } from './commands/types';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
-import {
-	Command as PaletteCommand,
-	CommandCallBackParams,
-	useCommandPalette,
-} from './use-command-palette';
+import { useCommandPalette } from './use-command-palette';
+import type { Command as PaletteCommand, CommandCallBackParams } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
@@ -27,10 +23,11 @@ interface CommandMenuGroupProps
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
-	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	currentRoute: string | null;
+	useCommands: () => PaletteCommand[];
+	currentRoute: string;
 	useSites: () => SiteExcerptData[];
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -108,6 +105,7 @@ export function CommandMenuGroup( {
 	currentRoute,
 	useSites,
 	userCapabilities,
+	navigate,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -143,11 +141,13 @@ export function CommandMenuGroup( {
 						key={ command.name }
 						value={ itemValue }
 						onSelect={ () =>
-							command.callback( {
+							command.callback?.( {
 								close: () => close( command.name, true ),
 								setSearch,
 								setPlaceholderOverride,
 								command,
+								navigate,
+								currentRoute,
 							} )
 						}
 						id={ cleanForSlug( itemValue ) }
@@ -163,7 +163,7 @@ export function CommandMenuGroup( {
 							<LabelWrapper>
 								<Label>
 									<TextHighlight
-										text={ `${ command.label }${ command.siteFunctions ? '…' : '' }` }
+										text={ `${ command.label }${ command.siteSelector ? '…' : '' }` }
 										highlight={ search }
 									/>
 								</Label>
@@ -224,16 +224,17 @@ interface NotFoundMessageProps {
 	selectedCommandName: string;
 	search: string;
 	emptyListNotice?: string;
-	currentRoute: string | null;
+	currentRoute: string;
 }
 
 interface CommandPaletteProps {
 	currentSiteId: number | null;
-	useCommands: ( options: useCommandsParams ) => PaletteCommand[];
-	currentRoute: string | null;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
+	useCommands: () => PaletteCommand[];
+	currentRoute: string;
 	isOpenGlobal?: boolean;
 	onClose?: () => void;
-	useSites?: () => SiteExcerptData[];
+	useSites: () => SiteExcerptData[];
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
@@ -263,6 +264,7 @@ const NotFoundMessage = ( {
 
 const CommandPalette = ( {
 	currentSiteId,
+	navigate,
 	useCommands,
 	currentRoute,
 	isOpenGlobal,
@@ -421,6 +423,7 @@ const CommandPalette = ( {
 							setSelectedCommandName={ setSelectedCommandName }
 							setFooterMessage={ setFooterMessage }
 							setEmptyListNotice={ setEmptyListNotice }
+							navigate={ navigate }
 							useCommands={ useCommands }
 							currentRoute={ currentRoute }
 							useSites={ useSites }
@@ -435,6 +438,5 @@ const CommandPalette = ( {
 };
 
 export default CommandPalette;
-export type { Command, CommandCallBackParams } from './use-command-palette';
-export type { useCommandsParams } from './commands';
+export type { Command, CommandCallBackParams } from './commands';
 export { COMMANDS } from './commands';

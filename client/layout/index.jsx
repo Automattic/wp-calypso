@@ -29,6 +29,7 @@ import WooCoreProfilerMasterbar from 'calypso/layout/masterbar/woo-core-profiler
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
+import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
@@ -436,6 +437,7 @@ class Layout extends Component {
 						isOpenGlobal={ this.props.isCommandPaletteOpen }
 						onClose={ this.props.closeCommandPalette }
 						currentSiteId={ this.props.siteId }
+						navigate={ navigate }
 						useCommands={ useCommandsCalypso }
 						currentRoute={ this.props.currentRoutePattern }
 						useSites={ useSiteExcerptsSorted }
@@ -538,7 +540,7 @@ export default withCurrentRoute(
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
 				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
-				currentRoutePattern: getCurrentRoutePattern( state ),
+				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
 				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			};

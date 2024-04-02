@@ -1,17 +1,31 @@
 import type { SiteExcerptData } from '@automattic/sites';
 
 export const useSites = (): SiteExcerptData[] => {
-	// Only the current site is available on WP Admin.
-	const { siteId, isAtomic, isStaging, isPrivate, isComingSoon, isP2, siteHostname } =
-		window.commandPaletteConfig;
+	const {
+		siteId,
+		isAtomic,
+		isStaging,
+		isPrivate,
+		isComingSoon,
+		isP2,
+		siteHostname,
+		shouldUseWpAdmin,
+		isWpcomStore,
+	} = window.commandPaletteConfig;
 
+	// Only the current site is available on WP Admin.
 	return [
 		{
 			ID: siteId,
 			slug: siteHostname,
+			jetpack: isAtomic,
 			is_wpcom_atomic: isAtomic,
 			is_coming_soon: isComingSoon,
-			options: { is_wpforteams_site: isP2 },
+			options: {
+				is_wpforteams_site: isP2,
+				wpcom_admin_interface: shouldUseWpAdmin ? 'wp-admin' : 'calypso',
+				is_wpcom_store: isWpcomStore,
+			},
 			is_private: isPrivate,
 			is_wpcom_staging_site: isStaging,
 		},

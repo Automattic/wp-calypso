@@ -25,6 +25,8 @@ function CommandPaletteApp() {
 
 	const currentRoute = window.location.pathname + window.location.search;
 
+	const navigate = ( url, openInNewTab ) => window.open( url, openInNewTab ? '_blank' : '_self' );
+
 	const locale = document.documentElement.lang ?? 'en';
 	setLocale( locale );
 
@@ -33,6 +35,7 @@ function CommandPaletteApp() {
 	return (
 		<QueryClientProvider client={ new QueryClient() }>
 			<CommandPalette
+				navigate={ navigate }
 				currentRoute={ currentRoute }
 				useCommands={ useCommandsWpAdmin }
 				currentSiteId={ siteId }
