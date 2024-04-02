@@ -246,7 +246,12 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		this.props.flowName === 'website-design-services' && addHotJarScript();
+
+		if (
+			[ 'website-design-services', 'site-content-collection' ].includes( this.props.flowName )
+		) {
+			addHotJarScript();
+		}
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 

@@ -59,6 +59,7 @@ const useGetLicenseIssuedMessage = () => {
 };
 
 type UseIssueAndAssignLicensesOptions = {
+	onSuccess?: () => void;
 	onIssueError?: ( ( error: APIError ) => void ) | ( () => void );
 	onAssignError?: ( ( error: Error ) => void ) | ( () => void );
 };
@@ -103,6 +104,9 @@ function useIssueAndAssignLicenses(
 				} )
 			);
 
+			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
+			options.onSuccess?.();
+
 			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
 
 			// TODO: Move dispatch events and redirects outside this function
@@ -146,6 +150,7 @@ function useIssueAndAssignLicenses(
 		isAssignReady,
 		isIssueReady,
 		issueLicenses,
+		options,
 		selectedSite?.ID,
 	] );
 }

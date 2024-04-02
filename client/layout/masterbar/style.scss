@@ -81,6 +81,12 @@ body.is-mobile-app-view {
 		color: var(--color-checkout-masterbar-text);
 		height: var(--masterbar-height);
 		position: absolute;
+		padding-inline-end: 1.5em;
+
+		&.masterbar--is-akismet,
+		&.masterbar--is-jetpack {
+			padding-inline-start: 1.5em;
+		}
 
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
@@ -243,6 +249,7 @@ body.is-mobile-app-view {
 	.masterbar--is-checkout & {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
+		padding: 0;
 		@include break-mobile {
 			height: var(--masterbar-checkout-height);
 			line-height: var(--masterbar-checkout-height);
@@ -382,6 +389,10 @@ body.is-mobile-app-view {
 		width: 150px;
 		height: 25px;
 		margin: 0 5px;
+
+		.masterbar--is-checkout & {
+			margin: 0;
+		}
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -395,6 +406,10 @@ body.is-mobile-app-view {
 			width: 24px;
 			margin-left: 5px;
 			fill: var(--color-text-inverted);
+
+			.masterbar--is-checkout & {
+				margin-left: 0;
+			}
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -888,47 +903,53 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
-	margin-left: 24px;
+
+	.masterbar--is-akismet &,
+	.masterbar--is-jetpack & {
+		column-gap: 1em;
+	}
 
 	.masterbar__wpcom-wordmark {
 		color: var(--color-checkout-masterbar-text);
 		fill: var(--color-checkout-masterbar-text);
-		margin-right: 5px;
 	}
 
 	.masterbar__jetpack-wordmark {
 		height: 25px;
-		margin: 0 5px;
+
 	}
 
-	.masterbar__akismet-wordmark {
-		margin: 0 5px;
-	}
+	/* empty for now, saved for future use if needed
+		.masterbar__akismet-wordmark {
+		}
+	*/
 
 	.masterbar__close-button {
 		flex: initial;
 		width: initial;
-		margin-right: 10px;
+		padding: 1em;
 
-		@include break-mobile {
-			margin-right: 0;
+		@include breakpoint-deprecated( ">480px" ) {
+			padding: 1.5em;
 		}
 	}
 
 	.masterbar__secure-checkout-text {
 		color: var(--color-checkout-masterbar-text);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.2em;
 		font-size: 0.75rem;
-		margin-left: 5px;
 		position: relative;
 		top: -0.5px;
+
+		/* Hide the secure checkout text on very small devices */
+		@media screen and ( max-width: 300px ) {
+			display: none;
+		}
 
 		@include breakpoint-deprecated( ">480px" ) {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
-			margin-left: 0;
 		}
+
 
 		.masterbar--is-jetpack & {
 			transform: translateY(0.5px);

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ListTile, Popover } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -5,15 +6,17 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
+import * as React from 'react';
 import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { hasSiteStatsQueryFailed } from 'calypso/state/stats/lists/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	displaySiteUrl,
 	getDashboardUrl,
@@ -24,6 +27,7 @@ import {
 } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
+import { SiteAdminLink } from './sites-site-admin-link';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
@@ -47,7 +51,7 @@ const Row = styled.tr`
 const Column = styled.td< { tabletHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
-	padding-inline-end: 24px;
+	padding-inline-end: 12px;
 	vertical-align: middle;
 	font-size: 14px;
 	line-height: 20px;
@@ -90,6 +94,10 @@ const ListTileTitle = styled.div`
 const ListTileSubtitle = styled.div`
 	display: flex;
 	align-items: center;
+
+	&:not( :last-child ) {
+		margin-block-end: 2px;
+	}
 `;
 
 const StatsOffIndicatorStyled = styled.div`
@@ -180,6 +188,20 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		siteUrl = site.options?.unmapped_url;
 	}
 
+	const dispatch = useDispatch();
+	const onSiteClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
+		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+			event.stopPropagation();
+			event.preventDefault();
+			dispatch( setSelectedSiteId( site.ID ) );
+		}
+	};
+
+	let title = __( 'Visit Dashboard' );
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		title = __( 'View Site Details' );
+	}
+
 	return (
 		<Row ref={ ref }>
 			<Column>
@@ -188,13 +210,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						min-width: 0;
 					` }
 					leading={
-						<ListTileLeading href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+						<ListTileLeading href={ dashboardUrl } title={ title } onClick={ onSiteClick }>
 							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
 						</ListTileLeading>
 					}
 					title={
 						<ListTileTitle>
-							<SiteName href={ dashboardUrl } title={ __( 'Visit Dashboard' ) }>
+							<SiteName href={ dashboardUrl } title={ title } onClick={ onSiteClick }>
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
@@ -205,11 +227,18 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</ListTileTitle>
 					}
 					subtitle={
-						<ListTileSubtitle>
-							<SiteUrl href={ siteUrl } title={ siteUrl }>
-								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-							</SiteUrl>
-						</ListTileSubtitle>
+						<>
+							<ListTileSubtitle>
+								<SiteUrl href={ siteUrl } title={ siteUrl }>
+									<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+								</SiteUrl>
+							</ListTileSubtitle>
+							<ListTileSubtitle>
+								<SiteAdminLink href={ getSiteWpAdminUrl( site ) } title={ __( 'Visit WP Admin' ) }>
+									{ __( 'WP Admin' ) }
+								</SiteAdminLink>
+							</ListTileSubtitle>
+						</>
 					}
 				/>
 			</Column>
@@ -228,7 +257,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 									<SiteLaunchNag site={ site } />
 								</div>
 								{ isDIFMInProgress && (
-									<BadgeDIFM className="site__badge">{ __( 'Built By Express' ) }</BadgeDIFM>
+									<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 								) }
 							</>
 						)

@@ -3,6 +3,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { A4A_PAYMENT_METHODS_ADD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import { serializeQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import { containEquivalentItems } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/hooks/use-submit-form';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -14,12 +15,21 @@ import useIssueAndAssignLicenses from '../../hooks/use-issue-and-assign-licenses
 import { IssueLicenseRequest } from '../../hooks/use-issue-licenses';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs?: string[] ) => {
+type Props = {
+	selectedSite?: SiteDetails | null;
+	suggestedProductSlugs?: string[];
+	onSuccessCallback?: () => void;
+};
+
+const useSubmitForm = ( { selectedSite, suggestedProductSlugs, onSuccessCallback }: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
 		useIssueAndAssignLicenses( selectedSite, {
+			onSuccess: () => {
+				onSuccessCallback?.();
+			},
 			onIssueError: ( error: APIError ) => {
 				if ( error.code === 'missing_valid_payment_method' ) {
 					dispatch(
@@ -44,7 +54,8 @@ const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs
 			onAssignError: ( error: Error ) =>
 				dispatch( errorNotice( error.message, { isPersistent: true } ) ),
 		} );
-	const paymentMethodRequired = false; // FIXME: Fix this with actual data
+
+	const { paymentMethodRequired } = usePaymentMethod();
 
 	const maybeTrackUnsuggestedSelection = useCallback(
 		( selectedLicenses: IssueLicenseRequest[] ) => {

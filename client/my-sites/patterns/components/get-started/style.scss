@@ -15,6 +15,11 @@
 		padding: 0 17px;
 		border-radius: 2px;
 		background: #3858e9;
+
+		&:hover {
+			background: #1d35b4;
+			color: inherit;
+		}
 	}
 }
 

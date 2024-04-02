@@ -4,12 +4,13 @@ import {
 	makeLayout,
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
-	notFound,
 } from 'calypso/controller/index.web';
 import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/category-gallery/client';
+import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
+import { PatternsContext } from 'calypso/my-sites/patterns/context';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import {
 	PatternTypeFilter,
 	type RouterContext,
@@ -19,21 +20,39 @@ import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPatternCategoriesQueryOptions } from './hooks/use-pattern-categories';
 
+function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
+	context.primary = (
+		<PatternsWrapper>
+			<PatternsCategoryNotFound
+				category={ context.params.category }
+				referrer={ context.query.ref }
+			/>
+		</PatternsWrapper>
+	);
+
+	next();
+}
+
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
-				<PatternLibrary
-					category={ context.params.category }
-					categoryGallery={ CategoryGalleryClient }
-					isGridView={ !! context.query.grid }
-					patternGallery={ PatternGalleryClient }
-					patternTypeFilter={
-						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
-					}
-					searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
-				/>
-			</PatternsWrapper>
+			<PatternsContext.Provider
+				value={ {
+					searchTerm: context.query[ QUERY_PARAM_SEARCH ] || '',
+					category: context.params.category,
+					isGridView: !! context.query.grid,
+					patternTypeFilter:
+						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+					referrer: context.query.ref,
+				} }
+			>
+				<PatternsWrapper>
+					<PatternLibrary
+						categoryGallery={ CategoryGalleryClient }
+						patternGallery={ PatternGalleryClient }
+					/>
+				</PatternsWrapper>
+			</PatternsContext.Provider>
 		);
 	}
 
@@ -51,7 +70,8 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 				const categoryNames = categories.map( ( category ) => category.name );
 
 				if ( ! categoryNames.includes( params.category ) ) {
-					notFound( context, next );
+					renderCategoryNotFound( context, next );
+
 					return;
 				}
 			}
@@ -72,6 +92,7 @@ export default function ( router: typeof clientRouter ) {
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		...middleware
 	);
+
 	router(
 		`/${ langParam }/patterns/:type(layouts)/:category?`,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,

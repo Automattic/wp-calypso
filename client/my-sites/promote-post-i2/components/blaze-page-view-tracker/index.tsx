@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import { UnconnectedPageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { getDSPOrigin, useDspOriginProps } from 'calypso/lib/promote-post';
 import { getSiteFragment } from 'calypso/lib/route';
 import {
@@ -27,7 +27,7 @@ interface Props {
 const BlazePageViewTracker = ( props: Props ) => {
 	const dspOriginProps = useDspOriginProps();
 	return (
-		<PageViewTracker
+		<UnconnectedPageViewTracker
 			{ ...props }
 			properties={ { ...props.properties, origin: getDSPOrigin( dspOriginProps ) } }
 		/>

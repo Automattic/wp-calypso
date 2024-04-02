@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { CloudLogo, Button, PlanPrice } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,6 +14,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
+import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
 	children: React.ReactNode;
@@ -20,6 +22,7 @@ interface Props {
 
 export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	const { children } = props;
@@ -66,36 +69,39 @@ export const UpgradePlanDetails = ( props: Props ) => {
 			</div>
 
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
-				<div className={ classnames( 'import__upgrade-plan-header' ) }>
-					<Plans2023Tooltip
-						text={ __(
-							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
-						) }
-						id="wp-cloud-logo"
-						setActiveTooltipId={ setActiveTooltipId }
-						activeTooltipId={ activeTooltipId }
-					>
-						<CloudLogo />
-					</Plans2023Tooltip>
-					<Title className="plan-title" tagName="h2">
-						{ plan?.getTitle() }
-					</Title>
-					<small>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</small>
-				</div>
+				<div className={ classnames( 'import__upgrade-plan-features-container' ) }>
+					<div className={ classnames( 'import__upgrade-plan-header' ) }>
+						<Plans2023Tooltip
+							text={ __(
+								'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
+							) }
+							id="wp-cloud-logo"
+							setActiveTooltipId={ setActiveTooltipId }
+							activeTooltipId={ activeTooltipId }
+						>
+							<CloudLogo />
+						</Plans2023Tooltip>
+						<Title className="plan-title" tagName="h2">
+							{ plan?.getTitle() }
+						</Title>
+						<small>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</small>
+					</div>
 
-				<div className={ classnames( 'import__upgrade-plan-price' ) }>
-					<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
-					<span className={ classnames( 'plan-time-frame' ) }>
-						<small>{ plan?.getBillingTimeFrame() }</small>
-						<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
-					</span>
-				</div>
+					<div className={ classnames( 'import__upgrade-plan-price' ) }>
+						<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
+						<span className={ classnames( 'plan-time-frame' ) }>
+							<small>{ plan?.getBillingTimeFrame() }</small>
+							<small>{ __( 'Refundable within 14 days. No questions asked.' ) }</small>
+						</span>
+					</div>
 
-				<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
+					<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
 
-				<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
-					<UpgradePlanFeatureList plan={ plan } />
+					<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
+						<UpgradePlanFeatureList plan={ plan } />
+					</div>
 				</div>
+				{ isEnglishLocale && <UpgradePlanHostingDetails /> }
 			</div>
 		</div>
 	);

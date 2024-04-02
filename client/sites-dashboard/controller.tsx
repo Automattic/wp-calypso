@@ -9,6 +9,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -45,7 +46,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 }
 
 export function sitesDashboard( context: PageJSContext, next: () => void ) {
-	let sitesDashboardGlobalStyles = css`
+	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: #ffffff;
 
@@ -60,32 +61,25 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 				overflow: inherit;
 			}
 		}
+
+		// Update body margin to account for the sidebar width
+		@media only screen and ( min-width: 782px ) {
+			div.layout.is-global-sidebar-visible {
+				.layout__primary {
+					margin-inline-start: var( --sidebar-width-max );
+				}
+			}
+		}
+
+		@media only screen and ( max-width: 781px ) {
+			div.layout.is-global-sidebar-visible {
+				.layout__primary {
+					overflow-x: auto;
+				}
+			}
+		}
 	`;
-
-	// Update body margin to account for the sidebar width if the new nav is enabled
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-		sitesDashboardGlobalStyles = css`
-			${ sitesDashboardGlobalStyles }
-			@media only screen and ( min-width: 782px ) {
-				div.layout.is-global-sidebar-visible {
-					.layout__primary {
-						margin-inline-start: var( --sidebar-width-max );
-					}
-				}
-			}
-
-			@media only screen and ( max-width: 781px ) {
-				div.layout.is-global-sidebar-visible {
-					.layout__primary {
-						overflow-x: auto;
-					}
-				}
-			}
-		`;
-	}
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) ) {
-		context.secondary = <MySitesNavigation path={ context.path } />;
-	}
+	context.secondary = <MySitesNavigation path={ context.path } />;
 
 	context.primary = (
 		<>
@@ -105,6 +99,11 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			/>
 		</>
 	);
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		// By definition, Sites Management does not select any one specific site
+		context.store.dispatch( setAllSitesSelected() );
+	}
 	next();
 }
 

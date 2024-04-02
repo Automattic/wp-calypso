@@ -621,7 +621,6 @@ class MasterbarLoggedIn extends Component {
 			loadHelpCenterIcon,
 			currentSelectedSiteId,
 			isGlobalSiteView,
-			isGlobalView,
 		} = this.props;
 		const { isMobile } = this.state;
 
@@ -635,7 +634,7 @@ class MasterbarLoggedIn extends Component {
 					<Masterbar className="masterbar__global-nav">
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderSidebarMobileMenu() }
-							{ isGlobalView && this.renderGlobalMySites() }
+							{ this.renderGlobalMySites() }
 							{ isGlobalSiteView && currentSelectedSiteId && (
 								<Site
 									siteId={ currentSelectedSiteId }
@@ -719,6 +718,8 @@ class MasterbarLoggedIn extends Component {
 export default connect(
 	( state ) => {
 		const sectionGroup = getSectionGroup( state );
+		const sectionName = getSectionName( state );
+
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
@@ -737,7 +738,8 @@ export default connect(
 		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup
+			sectionGroup,
+			sectionName
 		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
@@ -770,8 +772,7 @@ export default connect(
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			currentRoute: getCurrentRoute( state ),
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
-			isMobileGlobalNavVisible:
-				( shouldShowGlobalSidebar || shouldShowGlobalSiteSidebar ) && ! isDesktop,
+			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
 			isGlobalView: shouldShowGlobalSidebar,
 			isGlobalSiteView: shouldShowGlobalSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),

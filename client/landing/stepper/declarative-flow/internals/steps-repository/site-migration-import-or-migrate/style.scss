@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .import-or-migrate {
 	max-width: 602px;
 	padding: 0 12px;
@@ -11,8 +14,14 @@
 	.import-or-migrate__content {
 		display: flex;
 		flex-direction: column;
-		gap: 80px;
+		gap: 50px;
+		padding-bottom: 108px;
 		align-items: center;
+
+		@include break-mobile {
+			gap: 80px;
+			padding-bottom: revert;
+		}
 	}
 
 	.import-or-migrate__list {
