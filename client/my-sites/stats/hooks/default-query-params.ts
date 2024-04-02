@@ -6,9 +6,6 @@ const defaultQueryParams: Partial< UseQueryOptions > = {
 	retryDelay: 3 * 1000, // 3 seconds,
 	retryOnMount: false,
 	refetchOnWindowFocus: false,
-	refetchOnMount: false,
-	refetchInterval: false,
-	refetchIntervalInBackground: false,
 };
 
 const getDefaultQueyrParams = < T1 >() => {
