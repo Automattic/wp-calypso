@@ -12,7 +12,7 @@ type MobileHighlightCardProps = {
 
 function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHighlightCardProps ) {
 	// We require at minimum a heading and a count.
-	const isValidHighlight = count !== null || heading.length > 0;
+	const isValidHighlight = count !== null && heading.length > 0;
 	if ( ! isValidHighlight ) {
 		return null;
 	}
