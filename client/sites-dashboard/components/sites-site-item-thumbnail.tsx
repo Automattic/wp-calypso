@@ -12,8 +12,13 @@ import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from '@automattic/sites';
 
-const NoIcon = styled.div( {
+const NoIconLargeText = styled.div( {
 	fontSize: 'xx-large',
+	textTransform: 'uppercase',
+} );
+
+const NoIconSmallText = styled.div( {
+	fontSize: 'small',
 	textTransform: 'uppercase',
 } );
 
@@ -26,16 +31,20 @@ interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbn
 	site: SiteExcerptData;
 	alt?: string;
 	showPlaceholder?: boolean;
+	isSmall?: boolean;
 }
 
 export const SiteItemThumbnail = ( {
 	displayMode,
 	showPlaceholder,
 	site,
+	isSmall,
 	...props
 }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 	const classes = classNames( props.className, disallowSelection );
+
+	const NoIcon = isSmall ? NoIconSmallText : NoIconLargeText;
 
 	// Allow parent component to lazy load the entire component.
 	if ( showPlaceholder === true ) {
@@ -126,6 +135,7 @@ export const SiteItemThumbnail = ( {
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
 			alt={ site.title || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
+			isSmall={ isSmall }
 		>
 			{ renderFallback() }
 		</SiteThumbnail>

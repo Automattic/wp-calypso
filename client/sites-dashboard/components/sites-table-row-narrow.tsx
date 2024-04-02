@@ -9,6 +9,7 @@ import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-m
 import { useDispatch, useSelector } from 'calypso/state';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	displaySiteUrl,
 	getDashboardUrl,
@@ -33,6 +34,10 @@ interface SiteTableRowProps {
 const Row = styled.tr`
 	line-height: 2em;
 	border-block-end: 1px solid #eee;
+`;
+
+const RowSelected = styled( Row )`
+	border-left: 4px solid var( --studio-blue-50 );
 `;
 
 const Column = styled.td< { tabletHidden?: boolean } >`
@@ -116,9 +121,10 @@ function SitesTableNarrowRow( { site }: SiteTableRowProps ) {
 	};
 
 	const title = __( 'View Site Details' );
-
+	const isSiteSelected = useSelector( ( state ) => getSelectedSiteId( state ) === site.ID );
+	const RowStyledComponent = isSiteSelected ? RowSelected : Row;
 	return (
-		<Row ref={ ref }>
+		<RowStyledComponent ref={ ref }>
 			<Column>
 				<SiteListTile
 					contentClassName={ css`
@@ -126,7 +132,12 @@ function SitesTableNarrowRow( { site }: SiteTableRowProps ) {
 					` }
 					leading={
 						<ListTileLeading href={ dashboardUrl } title={ title } onClick={ onSiteClick }>
-							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
+							<SiteItemThumbnail
+								displayMode="list"
+								showPlaceholder={ ! inView }
+								site={ site }
+								isSmall={ true }
+							/>
 						</ListTileLeading>
 					}
 					title={
@@ -157,7 +168,7 @@ function SitesTableNarrowRow( { site }: SiteTableRowProps ) {
 					}
 				/>
 			</Column>
-		</Row>
+		</RowStyledComponent>
 	);
 }
 export default memo( SitesTableNarrowRow );

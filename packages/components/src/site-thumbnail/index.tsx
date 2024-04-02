@@ -8,8 +8,10 @@ import { getTextColorFromBackground } from './utils';
 export type SizeCss = { width: number; height: number };
 
 export const DEFAULT_THUMBNAIL_SIZE = { width: 106, height: 76.55 };
+export const MIN_THUMBNAIL_SIZE = { width: 50, height: 30 };
 
 const DEFAULT_CLASSNAME = css( DEFAULT_THUMBNAIL_SIZE );
+const MIN_CLASSNAME = css( MIN_THUMBNAIL_SIZE );
 
 const VIEWPORT_BASE = 1200;
 
@@ -26,6 +28,7 @@ type Props = {
 	bgColorImgUrl?: string;
 	viewport?: number;
 	mshotsOption?: MShotsOptions;
+	isSmall?: boolean;
 };
 
 export const SiteThumbnail = ( {
@@ -41,6 +44,7 @@ export const SiteThumbnail = ( {
 	sizesAttr = '',
 	viewport = VIEWPORT_BASE,
 	mshotsOption,
+	isSmall,
 }: Props ) => {
 	const options: MShotsOptions = {
 		vpw: viewport,
@@ -59,7 +63,7 @@ export const SiteThumbnail = ( {
 	const classes = classnames(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
-		DEFAULT_CLASSNAME,
+		isSmall ? MIN_CLASSNAME : DEFAULT_CLASSNAME,
 		className
 	);
 
