@@ -234,6 +234,10 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 
 	const { percentSavings, priceBreakdown, finalBreakdown } = calculatedDiscounts;
 
+	if ( percentSavings <= 0 ) {
+		return null;
+	}
+
 	const hasIntroductoryOffers = priceBreakdown.some(
 		( breakdown ) => breakdown.isIntroductoryOffer
 	);
