@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
@@ -362,6 +363,19 @@ export const PatternLibrary = ( {
 							patterns={ patterns }
 							patternTypeFilter={ patternTypeFilter }
 						/>
+
+						{ searchTerm && ! patterns.length && category && (
+							<div>
+								<Button
+									className="pattern-gallery__search-all-categories"
+									href={ `/patterns${ window.location.search }` }
+								>
+									{ translate( 'Search in all categories', {
+										comment: 'Button to make search of patterns in all categories',
+									} ) }
+								</Button>
+							</div>
+						) }
 					</PatternLibraryBody>
 				) }
 

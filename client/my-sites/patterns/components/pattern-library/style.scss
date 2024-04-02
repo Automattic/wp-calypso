@@ -193,3 +193,15 @@
 		}
 	}
 }
+
+.pattern-gallery__search-all-categories {
+	border-color: currentColor;
+	color: #3858e9;
+	background: none;
+
+	&:enabled:hover,
+	&:focus {
+		border-color: currentColor;
+		color: #1d35b4;
+	}
+}
