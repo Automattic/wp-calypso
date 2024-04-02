@@ -61,8 +61,10 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		editorPage = new EditorPage( page );
 		// Allow some time for CPU and/or network to catch up.
 		await editorPage.selectTemplateCategory( 'About', { timeout: 20 * 1000 } );
+
+		const editorParent = await editorPage.editor.parent();
 		pageTemplateToSelect =
-			( await page.getByRole( 'option' ).first().getAttribute( 'aria-label' ) ) ?? '';
+			( await editorParent.getByRole( 'option' ).first().getAttribute( 'aria-label' ) ) ?? '';
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
 
