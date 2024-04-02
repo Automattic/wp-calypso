@@ -1,15 +1,15 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { CATEGORY_FEATURED, CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
-import type { Pattern } from 'calypso/my-sites/patterns/types';
+import { Pattern, PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 
 interface PatternCount {
 	[ key: string ]: number;
 }
 
 interface PatternCounts {
-	page: PatternCount;
-	regular: PatternCount;
+	[ PatternTypeFilter.PAGES ]: PatternCount;
+	[ PatternTypeFilter.REGULAR ]: PatternCount;
 }
 
 export function getPatternsQueryOptions(
@@ -29,15 +29,17 @@ export function getPatternsQueryOptions(
 		...queryOptions,
 		select( patterns: Pattern[] ) {
 			const patternCounts: PatternCounts = {
-				page: {},
-				regular: {},
+				[ PatternTypeFilter.PAGES ]: {},
+				[ PatternTypeFilter.REGULAR ]: {},
 			};
 
 			// Limits the number of patterns that can be copied to the first three patterns from each category
 			for ( const pattern of patterns ) {
 				const categoryNames = Object.keys( pattern.categories );
 
-				const patternType = categoryNames.includes( CATEGORY_PAGE ) ? 'page' : 'regular';
+				const patternType = categoryNames.includes( CATEGORY_PAGE )
+					? PatternTypeFilter.PAGES
+					: PatternTypeFilter.REGULAR;
 
 				for ( const categoryName of categoryNames ) {
 					// Skips categories that are not used for navigation
