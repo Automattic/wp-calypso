@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
+import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
@@ -72,6 +72,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
+	const isEnglishLocale = useIsEnglishLocale();
 	const renderEmail = useShouldRenderEmailOption();
 	const {
 		hasActiveChats,
@@ -104,7 +105,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
+		if ( isEnglishLocale || ! hasTranslation( 'Live chat (English)' ) ) {
 			return __( 'Live chat', __i18n_text_domain__ );
 		}
 
@@ -112,7 +113,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	}, [ __, locale ] );
 
 	const emailHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) ) {
+		if ( isEnglishLocale ) {
 			return __( 'Email', __i18n_text_domain__ );
 		}
 
@@ -139,7 +140,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 	}, [ __, locale ] );
 
 	const forumHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) ) {
+		if ( isEnglishLocale ) {
 			return __( 'Community forums', __i18n_text_domain__ );
 		}
 		return __( 'Community forums (English)', __i18n_text_domain__ );
