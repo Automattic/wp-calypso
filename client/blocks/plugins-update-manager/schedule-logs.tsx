@@ -16,6 +16,7 @@ import {
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
+import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
@@ -27,6 +28,13 @@ export const ScheduleLogs = ( props: Props ) => {
 	const translate = useTranslate();
 	const { scheduleId, onNavBack } = props;
 
+	const {
+		dateFormat: phpDateFormat,
+		timeFormat: phpTimeFormat,
+		convertPhpToMomentFormat,
+	} = useSiteDateTimeFormat( siteSlug );
+	const dateFormat = convertPhpToMomentFormat( phpDateFormat );
+	const timeFormat = convertPhpToMomentFormat( phpTimeFormat );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
@@ -73,20 +81,20 @@ export const ScheduleLogs = ( props: Props ) => {
 			<Timeline>
 				<TimelineEvent
 					date={ new Date( '30 March 2024, 10:01 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Plugins update completed"
 					icon="checkmark"
 					iconBackground="warning"
 				/>
 				<TimelineEvent
 					date={ new Date( '30 March 2024, 10:00:48 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Gravity Forms updated from 2.5.8 to 2.6.0"
 					icon="checkmark"
 				/>
 				<TimelineEvent
 					date={ new Date( '30 March 2024, 10:00:39 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Move to WordPress.com update from 5.9.3 to 6.0.0 failed [ Rolledback to 5.9.3 ]"
 					icon="sync"
 					iconBackground="warning"
@@ -96,12 +104,13 @@ export const ScheduleLogs = ( props: Props ) => {
 				/>
 				<TimelineEvent
 					date={ new Date( '30 March 2024, 10:00:12 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Elementor Pro updated from 3.0.9 to 3.1.0"
 					icon="checkmark"
 				/>
 				<TimelineEvent
 					date={ new Date( '30 March 2024' ) }
+					dateFormat={ `${ dateFormat } ${ timeFormat }` }
 					detail="Plugins update starts"
 					icon="calendar"
 					disabled
@@ -110,32 +119,33 @@ export const ScheduleLogs = ( props: Props ) => {
 			<Timeline>
 				<TimelineEvent
 					date={ new Date( '27 March 2024, 10:01 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Plugins update completed successfully"
 					icon="checkmark"
 					iconBackground="success"
 				/>
 				<TimelineEvent
 					date={ new Date( '27 March 2024, 10:00:48 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Gravity Forms updated from 2.5.8 to 2.6.0"
 					icon="checkmark"
 				/>
 				<TimelineEvent
 					date={ new Date( '27 March 2024, 10:00:39 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Move to WordPress.com update from 5.9.3 to 6.0.0"
 					icon="checkmark"
 				/>
 				<TimelineEvent
 					date={ new Date( '27 March 2024, 10:00:12 am' ) }
-					dateFormat="HH:mm:ss a"
+					dateFormat={ timeFormat }
 					detail="Elementor Pro updated from 3.0.9 to 3.1.0"
 					icon="checkmark"
 					iconBackground="info"
 				/>
 				<TimelineEvent
-					date={ new Date( '27 March 2024' ) }
+					date={ new Date( '27 March 2024, 10:00:00 am' ) }
+					dateFormat={ `${ dateFormat } ${ timeFormat }` }
 					detail="Plugins update starts"
 					icon="calendar"
 					disabled
