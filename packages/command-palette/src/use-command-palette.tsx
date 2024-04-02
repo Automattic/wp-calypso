@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { SiteType } from './commands';
+import { SiteType } from './commands/use-single-site-commands';
 import { isCustomDomain, commandNavigation } from './utils';
-import type { Command, CommandCallBackParams } from './commands';
+import type { Command, CommandCallBackParams } from './commands/use-single-site-commands';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const FillDefaultIconWhite = styled.div( {

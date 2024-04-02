@@ -10,7 +10,10 @@ import { Command, useCommandState } from 'cmdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { COMMAND_SEPARATOR, useCommandFilter } from './use-command-filter';
 import { useCommandPalette } from './use-command-palette';
-import type { Command as PaletteCommand, CommandCallBackParams } from './commands';
+import type {
+	Command as PaletteCommand,
+	CommandCallBackParams,
+} from './commands/use-single-site-commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
 import '@wordpress/commands/build-style/style.css';
@@ -23,11 +26,11 @@ interface CommandMenuGroupProps
 	setSelectedCommandName: ( name: string ) => void;
 	setFooterMessage?: ( message: string ) => void;
 	setEmptyListNotice?: ( message: string ) => void;
+	navigate: ( path: string, openInNewTab?: boolean ) => void;
 	useCommands: () => PaletteCommand[];
 	currentRoute: string;
 	useSites: () => SiteExcerptData[];
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
 }
 
 const StyledCommandsMenuContainer = styled.div( {
@@ -101,11 +104,11 @@ export function CommandMenuGroup( {
 	setSelectedCommandName,
 	setFooterMessage,
 	setEmptyListNotice,
+	navigate,
 	useCommands,
 	currentRoute,
 	useSites,
 	userCapabilities,
-	navigate,
 }: CommandMenuGroupProps ) {
 	const { commands, filterNotice, emptyListNotice } = useCommandPalette( {
 		currentSiteId,
@@ -438,5 +441,5 @@ const CommandPalette = ( {
 };
 
 export default CommandPalette;
-export type { Command, CommandCallBackParams } from './commands';
-export { COMMANDS } from './commands';
+export type { Command, CommandCallBackParams } from './commands/use-single-site-commands';
+export { COMMANDS } from './commands/use-single-site-commands';
