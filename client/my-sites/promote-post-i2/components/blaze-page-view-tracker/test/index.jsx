@@ -10,7 +10,7 @@ import BlazePageViewTracker from '../';
 const mockPageViewTrackerProps = jest.fn();
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/page-view-tracker' ),
-	PageViewTracker: ( props ) => {
+	UnconnectedPageViewTracker: ( props ) => {
 		mockPageViewTrackerProps( props );
 		return null;
 	},

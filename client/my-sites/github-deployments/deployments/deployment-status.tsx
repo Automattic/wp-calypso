@@ -1,4 +1,6 @@
 import { __ } from '@wordpress/i18n';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const DeployStatus = {
 	STATUS_PENDING: 'pending',
@@ -38,8 +40,17 @@ function getText( status: DeploymentStatusValue ) {
 }
 
 export const DeploymentStatus = ( { status, href }: DeploymentStatusProps ) => {
+	const dispatch = useDispatch();
+
 	return (
 		<a
+			onClick={ () =>
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_github_log_status_click', {
+						status,
+					} )
+				)
+			}
 			href={ href }
 			className={ `github-deployments-status github-deployments-status__${ status }` }
 		>
