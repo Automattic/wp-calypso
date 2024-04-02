@@ -314,6 +314,17 @@ body.is-section-earn.theme-default.color-scheme {
 	}
 }
 
+.memberships__module-footer {
+	display: none;
+	margin-top: 20px;
+}
+
+@media (max-width: $break-small) {
+	.memberships__module-footer {
+		display: block;
+	}
+}
+
 .memberships__module-plans-title,
 .memberships__products-card-title {
 	color: var(--color-neutral-100);

@@ -158,6 +158,9 @@ function CustomerSection() {
 							subscriberToCancel={ subscriberToCancel }
 							setSubscriberToCancel={ setSubscriberToCancel }
 						/>
+						<div className="memberships__module-footer">
+							<Button onClick={ downloadSubscriberList }>{ translate( 'Export as CSV' ) }</Button>
+						</div>
 					</>
 				) }
 			</div>
