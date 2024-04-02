@@ -210,7 +210,7 @@ const Hosting = ( props ) => {
 				transferStates.REVERTED,
 			].includes( transferState )
 	);
-	const [ shouldPoolTransferResults, setShouldPoolTransferResults ] = useState( true );
+	const [ shouldPullTransferResults, setShouldPullTransferResults ] = useState( true );
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
@@ -228,11 +228,11 @@ const Hosting = ( props ) => {
 
 	const trialRequested = () => {
 		setHasTransferring( true );
-		setShouldPoolTransferResults( true );
+		setShouldPullTransferResults( true );
 	};
 
 	const activationRequested = () => {
-		setShouldPoolTransferResults( true );
+		setShouldPullTransferResults( true );
 		clickActivate();
 	};
 
@@ -247,11 +247,11 @@ const Hosting = ( props ) => {
 			}
 
 			if ( isTransferCompleted && ! isTransferring ) {
-				setShouldPoolTransferResults( false );
+				setShouldPullTransferResults( false );
 			}
 
 			if ( ! isSiteAtomic && ! hasTransfer ) {
-				setShouldPoolTransferResults( false );
+				setShouldPullTransferResults( false );
 			}
 		},
 		[ hasTransfer ]
@@ -350,7 +350,7 @@ const Hosting = ( props ) => {
 				title={ translate( 'Hosting' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
-			{ shouldPoolTransferResults &&
+			{ shouldPullTransferResults &&
 				! showHostingActivationBanner &&
 				! isTrialAcknowledgeModalOpen && (
 					<HostingActivateStatus

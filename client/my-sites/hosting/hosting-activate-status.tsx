@@ -2,7 +2,6 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { useDispatch } from 'calypso/state';
 import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferInProgress, transferStates } from 'calypso/state/automated-transfer/constants';
@@ -32,7 +31,6 @@ const HostingActivateStatus = ( {
 		refetchInterval: 5000,
 	} );
 
-	const dispatch = useDispatch();
 	const isTransferCompleted =
 		! transferInProgress.includes( transferStatus as ( typeof transferInProgress )[ number ] ) &&
 		transferStatus !== transferStates.REVERTED &&
@@ -46,9 +44,6 @@ const HostingActivateStatus = ( {
 		}
 		if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 			setWasTransferring( false );
-		}
-		if ( ! isTransferCompleted ) {
-			dispatch( fetchAutomatedTransferStatus( siteId ?? 0 ) );
 		}
 		onTick?.( isTransferring, wasTransferring, isTransferCompleted );
 	}, [ isTransferCompleted, isTransferring, onTick, wasTransferring ] );
