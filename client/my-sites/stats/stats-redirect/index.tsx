@@ -53,7 +53,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
-	const { isQualified } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
+	const { isNewSite, isQualified } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
 		config.isEnabled( 'stats/checkout-flows-v2' ) &&
@@ -84,6 +84,8 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		const queryParams = new URLSearchParams();
 
 		queryParams.set( 'productType', 'commercial' );
+		// `cmp-red` means `compulsory redirection` here.
+		queryParams.set( 'from', `cmp-red${ isNewSite ? '-new-site' : '' }` );
 		if ( currentParams.has( 'irclickid' ) ) {
 			queryParams.set( 'irclickid', currentParams.get( 'irclickid' ) || '' );
 		}
