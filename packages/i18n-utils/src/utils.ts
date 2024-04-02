@@ -24,12 +24,12 @@ export function getPathParts( path: string ) {
 }
 
 /**
- * Checks if provided locale is a default one - eg. en; en-GB; en-AU.
+ * Checks if provided locale is a default one.
  * @param {string} locale - locale slug (eg: 'fr')
  * @returns {boolean} true when the default locale is provided
  */
 export function isDefaultLocale( locale: string | null ) {
-	return locale?.startsWith( config( 'i18n_default_locale_slug' ) );
+	return locale === config( 'i18n_default_locale_slug' );
 }
 
 /**
