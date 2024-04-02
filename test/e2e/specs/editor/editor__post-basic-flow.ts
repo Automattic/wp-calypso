@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'About Page 3';
+		const patternName = 'About';
 
 		it( `Add ${ patternName } pattern`, async function () {
 			await editorPage.addPatternFromSidebar( patternName );
