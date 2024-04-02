@@ -17,7 +17,7 @@ import { Page, Browser, Response } from 'playwright';
 import { skipDescribeIf, skipItIf } from '../../jest-helpers';
 
 const quote =
-	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\n- Abraham Lincoln';
+	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\nby Abraham Lincoln';
 const title = DataHelper.getRandomPhrase();
 const category = 'Uncategorized';
 const tag = 'test-tag';
