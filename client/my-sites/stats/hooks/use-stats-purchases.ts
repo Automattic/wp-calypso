@@ -6,12 +6,14 @@ import {
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 } from '@automattic/calypso-products';
+import { createSelector } from '@automattic/state-utils';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import {
 	isFetchingSitePurchases,
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
+	getPurchases,
 } from 'calypso/state/purchases/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -32,8 +34,13 @@ const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) =
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
 
+const getPurchasesBySiteId = createSelector(
+	( state, siteId ) => getSitePurchases( state, siteId ),
+	getPurchases
+);
+
 export default function useStatsPurchases( siteId: number | null ) {
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
 	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 
