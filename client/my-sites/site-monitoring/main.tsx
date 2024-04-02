@@ -3,7 +3,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
 import { isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -30,7 +29,6 @@ export function SiteMetrics( { tab = 'metrics' }: SiteMetricsProps ) {
 
 	return (
 		<Main className="site-monitoring" fullWidthLayout>
-			<PageViewTracker path="/site-monitoring/:site" title="Site Monitoring" />
 			<DocumentHead title={ titleHeader } />
 			<FormattedHeader
 				className="site-monitoring__formatted-header modernized-header"
