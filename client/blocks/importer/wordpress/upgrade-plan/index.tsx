@@ -139,7 +139,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 							transparent={ ! isAddingTrial }
 							onClick={ onCtaClick }
 						>
-							{ ctaText }
+							{ ctaText === '' ? translate( 'Continue' ) : ctaText }
 						</Button>
 					</>
 				) : (
