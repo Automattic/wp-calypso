@@ -1,5 +1,11 @@
-import { __experimentalText as Text, Button, Card, CardHeader } from '@wordpress/components';
-import { arrowLeft } from '@wordpress/icons';
+import {
+	__experimentalText as Text,
+	Button,
+	Card,
+	CardHeader,
+	Tooltip,
+} from '@wordpress/components';
+import { arrowLeft, Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
@@ -8,6 +14,7 @@ import {
 	useUpdateScheduleQuery,
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteSlug } from './hooks/use-site-slug';
 
@@ -21,6 +28,7 @@ export const ScheduleLogs = ( props: Props ) => {
 	const { scheduleId, onNavBack } = props;
 
 	const { prepareScheduleName } = usePrepareScheduleName();
+	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
@@ -47,7 +55,21 @@ export const ScheduleLogs = ( props: Props ) => {
 				<Text>
 					{ translate( 'Logs' ) } - { prepareScheduleName( schedule as ScheduleUpdates ) }
 				</Text>
-				<div className="ch-placeholder"></div>
+				<div className="ch-placeholder">
+					<Text isBlock={ true } align="end" lineHeight={ 2.5 }>
+						{ schedule?.args?.length }
+						{ schedule?.args && (
+							<Tooltip
+								text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
+								position="middle button"
+								delay={ 0 }
+								hideOnClick={ false }
+							>
+								<Icon className="icon-info" icon={ info } size={ 16 } />
+							</Tooltip>
+						) }
+					</Text>
+				</div>
 			</CardHeader>
 			<Timeline>
 				<TimelineEvent
