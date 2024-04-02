@@ -11,7 +11,7 @@ type PatternsSearchFieldProps = {
 
 export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFieldProps ) => {
 	const translate = useTranslate();
-	const { searchTerm } = usePatternsContext();
+	const { searchTerm, category } = usePatternsContext();
 
 	const handleSearch = ( newValue: string ) => {
 		const url = new URL( window.location.href );
@@ -39,6 +39,7 @@ export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFi
 		<Search
 			additionalClasses={ classNames( { 'is-filled': !! searchTerm } ) }
 			initialValue={ searchTerm }
+			key={ `search-${ category }` }
 			onSearch={ handleSearch }
 			placeholder={ translate( 'Search patterns…' ) }
 			searchMode={ SEARCH_MODE_ON_ENTER }
