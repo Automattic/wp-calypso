@@ -247,6 +247,9 @@ function PaymentMethodForm() {
 				A4A_MARKETPLACE_LINK
 			);
 		}
+		if ( returnQueryArg.startsWith( A4A_MARKETPLACE_LINK ) ) {
+			return A4A_MARKETPLACE_LINK;
+		}
 		return A4A_PAYMENT_METHODS_LINK;
 	};
 
