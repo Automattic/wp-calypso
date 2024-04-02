@@ -13,7 +13,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import { pillNavigationClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -166,7 +166,7 @@ function PatternPreviewFragment( {
 				? parseInt( masterbarHeightRaw )
 				: 0;
 
-			const stickyNav = document.querySelector( `.${ pillNavigationClassName }` );
+			const stickyNav = document.querySelector( `.${ patternFiltersClassName }` );
 			const stickyNavCoords = stickyNav?.getBoundingClientRect();
 			const stickyNavHeight = stickyNavCoords && ! isMobile() ? stickyNavCoords.height : 0;
 

@@ -22,6 +22,8 @@ import { JetpackPluginsPreview } from './jetpack-plugins';
 import { JetpackScanPreview } from './jetpack-scan';
 import { JetpackStatsPreview } from './jetpack-stats';
 
+import './style.scss';
+
 export function JetpackPreviewPane( {
 	site,
 	closeSitePreviewPane,

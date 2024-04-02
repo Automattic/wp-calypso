@@ -89,3 +89,6 @@ export const WOOEXPRESS_AFFILIATE_VENDOR_ID = '67386441';
 export const WPCOM_AFFILIATE_VENDOR_ID = '67402';
 
 export const WPCOM_CLARITY_URI = 'https://www.clarity.ms/tag/j0cc1i1dba';
+
+export const REDDIT_TRACKING_SCRIPT_URL = 'https://www.redditstatic.com/ads/pixel.js';
+export const WPCOM_REDDIT_PIXEL_ID = 'a2_ehx23cq176s3';
