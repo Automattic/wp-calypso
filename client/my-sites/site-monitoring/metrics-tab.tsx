@@ -488,7 +488,7 @@ const useErrorHttpCodeSeries = () => {
 };
 
 export const MetricsTab = () => {
-	const { __ } = useI18n();
+	const { __, _x } = useI18n();
 	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
 	const { handleTimeRangeChange } = timeRange;
@@ -598,11 +598,15 @@ export const MetricsTab = () => {
 					className="site-monitoring-php-static-pie-chart"
 					data={ getFormattedDataForPieChart( phpVsStaticFormattedData, {
 						php: {
-							name: __( 'Dynamic' ),
+							name:
+								/* translators: Page response type */
+								_x( 'Dynamic', 'response type' ),
 							className: 'dynamic',
 						},
 						static: {
-							name: __( 'Static' ),
+							name:
+								/* translators: Page response type */
+								_x( 'Static', 'response type' ),
 							className: 'static',
 						},
 					} ) }
