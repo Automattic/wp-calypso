@@ -12,7 +12,6 @@ type PatternsSearchFieldProps = {
 export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFieldProps ) => {
 	const translate = useTranslate();
 	const { searchTerm } = usePatternsContext();
-	const isPinned = ! ( isCollapsible || searchTerm );
 
 	const handleSearch = ( newValue: string ) => {
 		const url = new URL( window.location.href );
@@ -44,7 +43,7 @@ export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFi
 			placeholder={ translate( 'Search patterns…' ) }
 			searchMode={ SEARCH_MODE_ON_ENTER }
 			value={ searchTerm }
-			{ ...( isPinned ? { pinned: true } : {} ) }
+			pinned={ isCollapsible }
 		/>
 	);
 };

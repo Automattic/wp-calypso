@@ -250,7 +250,7 @@ export const PatternLibrary = ( {
 						/>
 
 						<div className="pattern-library__body-search">
-							<PatternsSearchField />
+							<PatternsSearchField isCollapsible />
 						</div>
 					</div>
 				</div>
