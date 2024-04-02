@@ -137,18 +137,17 @@ class TermFormDialog extends Component {
 
 		savePromise
 			.then( ( savedTerm ) => {
-				this.setState( { saving: false } );
 				this.props.onSuccess( savedTerm );
-				this.closeDialog();
 			} )
 			.catch( () => {
-				this.setState( { saving: false } );
-				this.closeDialog();
-
 				this.props.errorNotice( translate( 'Something went wrong. Please try again.' ), {
 					id: 'taxonomy-manager-save',
 					duration: 4000,
 				} );
+			} )
+			.finally( () => {
+				this.setState( { saving: false } );
+				this.closeDialog();
 			} );
 	};
 
