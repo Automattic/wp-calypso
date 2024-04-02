@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
-import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 
 type PatternsSearchFieldProps = {
 	isCollapsible?: boolean;

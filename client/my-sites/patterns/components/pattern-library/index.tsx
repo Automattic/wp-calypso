@@ -19,8 +19,8 @@ import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patte
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
-import { filterPatternsByTerm } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
