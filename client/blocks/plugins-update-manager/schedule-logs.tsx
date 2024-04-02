@@ -103,7 +103,7 @@ export const ScheduleLogs = ( props: Props ) => {
 				<TimelineEvent
 					date={ new Date( '30 March 2024' ) }
 					detail="Plugins update starts"
-					icon="time"
+					icon="calendar"
 					disabled
 				/>
 			</Timeline>
@@ -137,7 +137,7 @@ export const ScheduleLogs = ( props: Props ) => {
 				<TimelineEvent
 					date={ new Date( '27 March 2024' ) }
 					detail="Plugins update starts"
-					icon="time"
+					icon="calendar"
 					disabled
 				/>
 			</Timeline>
