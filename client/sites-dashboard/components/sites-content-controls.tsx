@@ -6,6 +6,8 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { getSection } from 'calypso/state/ui/selectors';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
@@ -121,6 +123,19 @@ export const SitesContentControls = ( {
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 	const searchRef = useRef< SearchImperativeHandle >( null );
+	const section = useSelector( getSection );
+	const handleSearch = ( term: string ) => {
+		const queryParams = { search: term?.trim(), page: undefined };
+
+		// There is a chance that the URL is not up to date when it mounts, so delay
+		// the onQueryParamChange call to avoid it getting the incorrect URL and then
+		// redirecting back to the previous path.
+		if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
+			onQueryParamChange( queryParams );
+		} else {
+			window.setTimeout( () => onQueryParamChange( queryParams ) );
+		}
+	};
 
 	useSearchShortcut( () => {
 		searchRef.current?.focus();
@@ -130,7 +145,7 @@ export const SitesContentControls = ( {
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SearchIcon /> }
-				onSearch={ ( term ) => onQueryParamChange( { search: term?.trim(), page: undefined } ) }
+				onSearch={ handleSearch }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
