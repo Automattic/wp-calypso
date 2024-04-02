@@ -198,18 +198,23 @@ function HelpSearchResults( {
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_inlinehelp_article_select', {
-				link,
-				post_id,
-				blog_id,
-				source,
-				search_term: searchQuery,
-				location,
-				section: sectionName,
-			} )
-		);
+		const eventData = {
+			link,
+			post_id,
+			blog_id,
+			source,
+			search_term: searchQuery,
+			location,
+			section: sectionName,
+		};
 
+		const eventName = tailoredArticles.find( ( article ) =>
+			article.post_ids.includes( post_id ?? 0 )
+		)
+			? 'calypso_inlinehelp_tailored_article_select'
+			: 'calypso_inlinehelp_article_select';
+
+		dispatch( recordTracksEvent( eventName, eventData ) );
 		onSelect( event, result );
 	};
 
