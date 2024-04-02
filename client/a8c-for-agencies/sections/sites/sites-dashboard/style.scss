@@ -13,6 +13,12 @@
 		display: flex;
 	}
 
+	.a4a-layout-column {
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
+	}
+
 	.site-actions__actions-large-screen {
 		display: block;
 		margin-left: 10px;
