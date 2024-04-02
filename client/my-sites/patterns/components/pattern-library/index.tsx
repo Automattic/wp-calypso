@@ -111,7 +111,7 @@ export const PatternLibrary = ( {
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [] } = usePatterns( locale, category, {
+	const { data: patterns } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
 			return filterPatternsByTerm( patternsByType, searchTerm );
@@ -123,8 +123,8 @@ export const PatternLibrary = ( {
 
 	const recordClickEvent = (
 		tracksEventName: string,
-		view: PatternView,
-		typeFilter: PatternTypeFilter
+		view?: PatternView,
+		typeFilter?: PatternTypeFilter
 	) => {
 		recordTracksEvent( tracksEventName, {
 			category,
@@ -212,6 +212,8 @@ export const PatternLibrary = ( {
 		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
 		: `${ category }-${ patternTypeFilter }`;
 
+	const patternsLength = patterns ? patterns.length : undefined;
+
 	return (
 		<>
 			<PatternsPageViewTracker
@@ -221,6 +223,7 @@ export const PatternLibrary = ( {
 				key={ `${ category }-tracker` }
 				searchTerm={ searchTerm }
 				referrer={ referrer }
+				numPatterns={ patternsLength }
 			/>
 
 			<PatternsDocumentHead category={ category } />
@@ -280,8 +283,8 @@ export const PatternLibrary = ( {
 							<h1 className="pattern-library__title">
 								{ searchTerm &&
 									translate( '%(count)d pattern', '%(count)d patterns', {
-										count: patterns.length,
-										args: { count: patterns.length },
+										count: patternsLength,
+										args: { count: patternsLength },
 									} ) }
 								{ ! searchTerm &&
 									patternTypeFilter === PatternTypeFilter.PAGES &&
@@ -364,11 +367,14 @@ export const PatternLibrary = ( {
 							patternTypeFilter={ patternTypeFilter }
 						/>
 
-						{ searchTerm && ! patterns.length && category && (
+						{ searchTerm && ! patternsLength && category && (
 							<div>
 								<Button
 									className="pattern-gallery__search-all-categories"
-									href={ `/patterns${ window.location.search }` }
+									onClick={ () => {
+										recordClickEvent( 'calypso_pattern_library_search_in_all' );
+										page( `/patterns${ window.location.search }` );
+									} }
 								>
 									{ translate( 'Search in all categories', {
 										comment: 'Button to make search of patterns in all categories',
