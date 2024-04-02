@@ -61,7 +61,6 @@ export const ScheduleLogs = ( props: Props ) => {
 						{ schedule?.args && (
 							<Tooltip
 								text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
-								position="middle button"
 								delay={ 0 }
 								hideOnClick={ false }
 							>
