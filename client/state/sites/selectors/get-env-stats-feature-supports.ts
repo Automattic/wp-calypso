@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { createSelector } from '@automattic/state-utils';
 import version_compare from 'calypso/lib/version-compare';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
@@ -11,7 +12,7 @@ const version_greater_than_or_equal = (
 	return !! ( ! isOdysseyStats || ( version && version_compare( version, compareVersion, '>=' ) ) );
 };
 
-export default function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
+function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const statsAdminVersion = getJetpackStatsAdminVersion( state, siteId );
 	const isSiteJetpackNotAtomic = isJetpackSite( state, siteId, {
@@ -57,3 +58,16 @@ export default function getEnvStatsFeatureSupportChecks( state: object, siteId: 
 		),
 	};
 }
+
+const getEnvStatsFeatureSupportChecksMemoized = createSelector(
+	getEnvStatsFeatureSupportChecks,
+	( state, siteId ) => [
+		getJetpackStatsAdminVersion( state, siteId ),
+		isJetpackSite( state, siteId, {
+			treatAtomicAsJetpackSite: false,
+		} ),
+		config.isEnabled( 'is_running_in_jetpack_site' ),
+	]
+);
+
+export default getEnvStatsFeatureSupportChecksMemoized;
