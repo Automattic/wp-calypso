@@ -116,7 +116,11 @@ const SitesDataViews = ( {
 								{ translate( 'Site' ).toUpperCase() }
 							</span>
 						</SiteSort>
-						<GuidedTourStep id="sites-walkthrough-intro" context={ introRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-intro"
+							tourId="sitesWalkthrough"
+							context={ introRef }
+						/>
 					</>
 				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.url,
@@ -146,7 +150,11 @@ const SitesDataViews = ( {
 						>
 							STATS
 						</span>
-						<GuidedTourStep id="sites-walkthrough-stats" context={ statsRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-stats"
+							tourId="sitesWalkthrough"
+							context={ statsRef }
+						/>
 					</div>
 				),
 				getValue: () => '-',
@@ -164,7 +172,11 @@ const SitesDataViews = ( {
 						>
 							BOOST
 						</span>
-						<GuidedTourStep id="sites-walkthrough-boost" context={ boostRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-boost"
+							tourId="sitesWalkthrough"
+							context={ boostRef }
+						/>
 					</>
 				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.boost.status,
@@ -182,7 +194,11 @@ const SitesDataViews = ( {
 						>
 							BACKUP
 						</span>
-						<GuidedTourStep id="sites-walkthrough-backup" context={ backupRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-backup"
+							tourId="sitesWalkthrough"
+							context={ backupRef }
+						/>
 					</>
 				),
 				getValue: () => '-',
@@ -200,7 +216,11 @@ const SitesDataViews = ( {
 						>
 							MONITOR
 						</span>
-						<GuidedTourStep id="sites-walkthrough-monitor" context={ monitorRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-monitor"
+							tourId="sitesWalkthrough"
+							context={ monitorRef }
+						/>
 					</>
 				),
 				getValue: () => '-',
@@ -218,7 +238,11 @@ const SitesDataViews = ( {
 						>
 							SCAN
 						</span>
-						<GuidedTourStep id="sites-walkthrough-scan" context={ scanRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-scan"
+							tourId="sitesWalkthrough"
+							context={ scanRef }
+						/>
 					</>
 				),
 				getValue: () => '-',
@@ -236,7 +260,11 @@ const SitesDataViews = ( {
 						>
 							PLUGINS
 						</span>
-						<GuidedTourStep id="sites-walkthrough-plugins" context={ pluginsRef } />
+						<GuidedTourStep
+							id="sites-walkthrough-plugins"
+							tourId="sitesWalkthrough"
+							context={ pluginsRef }
+						/>
 					</>
 				),
 				getValue: () => '-',
@@ -309,7 +337,13 @@ const SitesDataViews = ( {
 						</div>
 					);
 				},
-				header: <GuidedTourStep id="sites-walkthrough-site-preview" context={ actionsRef } />,
+				header: (
+					<GuidedTourStep
+						id="sites-walkthrough-site-preview"
+						tourId="sitesWalkthrough"
+						context={ actionsRef }
+					/>
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},

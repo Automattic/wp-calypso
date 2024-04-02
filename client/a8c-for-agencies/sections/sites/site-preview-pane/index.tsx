@@ -95,7 +95,11 @@ export default function SitePreviewPane( {
 					) : null }
 				</SectionNav>
 			</div>
-			<GuidedTourStep id="sites-walkthrough-site-preview-tabs" context={ navRef } />
+			<GuidedTourStep
+				id="sites-walkthrough-site-preview-tabs"
+				tourId="sitesWalkthrough"
+				context={ navRef }
+			/>
 			{ selectedFeature.preview }
 		</div>
 	);

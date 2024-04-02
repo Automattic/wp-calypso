@@ -34,7 +34,9 @@ export default function OverviewBodyNextSteps() {
 	const resetTour = ( prefSlugs: string[] ): void => {
 		prefSlugs.forEach( ( slug ) => {
 			if ( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ] ) {
-				dispatch( savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], null ) );
+				dispatch(
+					savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], { dismiss: false } )
+				);
 			}
 		} );
 	};

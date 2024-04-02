@@ -15,11 +15,11 @@ export default function SitesHeaderActions() {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 
-	const [ tourStepRef, setTourStepRef ] = useState( null );
+	const [ tourStepRef, setTourStepRef ] = useState< React.LegacyRef< HTMLElement | null > >( null );
 
 	return (
 		<div className="sites-header__actions">
-			<div ref={ setTourStepRef }>
+			<div ref={ ( ref ) => setTourStepRef( ref as React.LegacyRef< HTMLElement | null > ) }>
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isMobile }
 					onClickAddNewSite={ () =>
@@ -36,7 +36,7 @@ export default function SitesHeaderActions() {
 					}
 				/>
 			</div>
-			<GuidedTourStep id="add-new-site" context={ tourStepRef } />
+			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button
 				primary
 				href={ A4A_MARKETPLACE_PRODUCTS_LINK }
