@@ -15,10 +15,8 @@ export const StatsGlobalValuesProvider: React.FC< StatsGlobalValuesProviderProps
 	children,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-
-	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
-
-	const isInternal = ! isFetchingUsage && !! usageData?.is_internal;
+	const { isPending, data: usageData } = usePlanUsageQuery( siteId );
+	const isInternal = ! isPending && !! usageData?.is_internal;
 
 	return (
 		<StatsGlobalValuesContext.Provider value={ isInternal }>

@@ -45,6 +45,38 @@ jest.mock( 'calypso/state/atomic-transfer/use-atomic-transfer-query', () => {
 } );
 
 describe( 'index', () => {
+	test( 'Transfer status COMPLETED should return isTransferCompleted true', async () => {
+		mockTransferStatus = transferStates.COMPLETED;
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
+
+		const onTick = jest.fn();
+
+		render(
+			<Provider store={ store }>
+				<HostingActivateStatus onTick={ onTick } context="hosting" />
+			</Provider>
+		);
+
+		expect( onTick ).toHaveBeenCalledWith( true, false, true );
+	} );
+
+	test( 'Transfer status NONE should return isTransferCompleted false', async () => {
+		mockTransferStatus = transferStates.NONE;
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
+
+		const onTick = jest.fn();
+
+		render(
+			<Provider store={ store }>
+				<HostingActivateStatus onTick={ onTick } context="hosting" />
+			</Provider>
+		);
+
+		expect( onTick ).toHaveBeenCalledWith( true, false, false );
+	} );
+
 	test( 'Should show the transferring notice when the site is transferring to Atomic based on context', async () => {
 		mockTransferStatus = transferStates.PENDING;
 		const mockStore = configureStore();
