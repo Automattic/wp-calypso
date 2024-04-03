@@ -270,6 +270,7 @@ function PatternPreviewFragment( {
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
 				onClose={ () => setIsAuthModalOpen( false ) }
+				pattern={ pattern }
 				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>

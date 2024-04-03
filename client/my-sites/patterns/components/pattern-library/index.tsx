@@ -21,12 +21,12 @@ import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
-	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
@@ -50,25 +50,6 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
-}
-
-// We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
-// it will be more confusing for users to land in grid view when they have a single-pattern permalink
-function getPatternPermalink(
-	pattern: Pattern,
-	activeCategory: string,
-	patternTypeFilter: PatternTypeFilter,
-	categories: Category[]
-) {
-	// Get the first pattern category that is also included in the `usePatternCategories` data
-	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
-		categories.find( ( { name } ) => name === categorySlug )
-	);
-	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternTypeFilter );
-
-	const url = new URL( pathname, location.origin );
-	url.hash = `#pattern-${ pattern.ID }`;
-	return url.toString();
 }
 
 // Scroll to anchoring position of category pill navigation element
