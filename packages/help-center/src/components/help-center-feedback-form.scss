@@ -1,15 +1,22 @@
 .help-center-feedback__form {
-	padding: 16px 36px !important;
+	margin-top: 2.5rem;
 	p {
 		font-size: 0.875rem;
 		font-style: italic;
 		margin-bottom: 0.5rem;
 	}
-	button {
-		cursor: pointer;
-		color: var(--color-neutral-80);
-		&.help-center-feedback-form__no-button {
-			margin-left: 0.25rem;
+	.help-center-feedback-form__buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 20px;
+
+		button {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 5px;
+			cursor: pointer;
+			color: var(--color-neutral-80);
 		}
 	}
 

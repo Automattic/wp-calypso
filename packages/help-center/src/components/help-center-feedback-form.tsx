@@ -1,36 +1,54 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
+import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 import './help-center-feedback-form.scss';
 
 const HelpCenterFeedbackForm: React.FC = () => {
 	const { __ } = useI18n();
-	const [ feedbackSent, setFeedbackSent ] = useState< boolean | null >( null );
+	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
+	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
-	const handleFeedbackClick = () => {
-		setFeedbackSent( true );
+	const handleFeedbackClick = ( value: number ) => {
+		setStartedFeedback( true );
+		setAnswerValue( value );
 	};
 
-	const FeedbackButtons = () => {
-		return (
-			<>
-				<button onClick={ handleFeedbackClick }>{ __( 'Yes' ) } &#128077;</button>
-				<button className="help-center-feedback-form__no-button" onClick={ handleFeedbackClick }>
-					{ __( 'No' ) } &#128078;
+	const FeedbackButtons = () => (
+		<>
+			<p>{ __( 'Did you find the answer to your question?' ) }</p>
+			<div className="help-center-feedback-form__buttons">
+				<button
+					// 1 is used as `yes` in crowdsignal as well, do not change
+					onClick={ () => handleFeedbackClick( 1 ) }
+				>
+					{ __( 'Yes' ) } <ThumbsUpIcon />
 				</button>
-			</>
-		);
-	};
+				<button
+					// 2 is used as `no` in crowdsignal as well, do no change
+					onClick={ () => handleFeedbackClick( 2 ) }
+				>
+					{ __( 'No' ) } <ThumbsDownIcon />
+				</button>
+			</div>
+		</>
+	);
 
-	const FeedbackTextArea = () => {
-		return <>textarea here</>;
-	};
-
-	const feedbackButtons = FeedbackButtons();
+	const FeedbackTextArea = () => (
+		<>
+			<p>{ __( 'How we can improve?' ) }</p>
+			<iframe
+				title="Feedback Form"
+				// This is the URL of the feedback form,
+				// `answerValue` is either 1 or 2 and it is used to skip the first question since we are already asking it here.
+				// it is necessary to help crowd signal to `skip` ( display none with css ) the first question and save the correct value.
+				src={ `https://wordpressdotcom.survey.fm/helpcenter-articles-feedback?q_1_choice=${ answerValue }` }
+			></iframe>
+		</>
+	);
 
 	return (
 		<div className="help-center-feedback__form">
-			<p>{ __( 'Did you find the answer to your question?' ) }</p>
-			{ feedbackSent === null ? feedbackButtons : FeedbackTextArea() }
+			{ startedFeedback === null ? <FeedbackButtons /> : <FeedbackTextArea /> }
 		</div>
 	);
 };
