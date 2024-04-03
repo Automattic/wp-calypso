@@ -3,10 +3,10 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { useCommandMenuGroupContext, useCommandPaletteContext } from './context';
 import { SiteType } from './commands';
+import { useCommandPaletteContext } from './context';
 import { isCustomDomain, commandNavigation } from './utils';
-import type { Command, CommandCallBackParams } from './commands';
+import type { Command as CommandWithOptionalCallback, CommandCallBackParams } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const FillDefaultIconWhite = styled.div( {
@@ -30,20 +30,25 @@ const EmptySiteIcon = styled.div( {
 	alignItems: 'center',
 } );
 
-interface SiteToActionParameters {
-	selectedCommand: Command;
+export interface CommandWithCallback extends CommandWithOptionalCallback {
+	callback: ( params: CommandCallBackParams ) => void;
+}
+
+interface SiteToCommandParameters {
+	selectedCommand: CommandWithOptionalCallback;
 	filteredSitesLength: number;
 	listVisibleCount: number;
 	search: string;
 }
 
-const useSiteToAction = ( { currentRoute }: { currentRoute: string } ) => {
-	const siteToAction = useCallback(
+const useSiteToCommand = () => {
+	const { currentRoute } = useCommandPaletteContext();
+	return useCallback(
 		(
 			callback: ( params: CommandCallBackParams ) => void,
-			{ selectedCommand, filteredSitesLength, listVisibleCount, search }: SiteToActionParameters
+			{ selectedCommand, filteredSitesLength, listVisibleCount, search }: SiteToCommandParameters
 		) =>
-			( site: SiteExcerptData ): Command => {
+			( site: SiteExcerptData ): CommandWithCallback => {
 				const siteName = site.name || site.URL; // Use site.name if present, otherwise default to site.URL
 				return {
 					name: `${ site.ID }`,
@@ -88,12 +93,10 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string } ) => {
 			},
 		[ currentRoute ]
 	);
-
-	return siteToAction;
 };
 
 const isCommandAvailableOnSite = (
-	command: Command,
+	command: CommandWithOptionalCallback,
 	site: SiteExcerptData,
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } }
 ): boolean => {
@@ -132,23 +135,42 @@ const isCommandAvailableOnSite = (
 	return true;
 };
 
+const runCommandCallback = (
+	command: CommandWithOptionalCallback,
+	params: CommandCallBackParams
+) => {
+	if ( command.callback ) {
+		command.callback( params );
+	} else if ( command.url ) {
+		// Adds a default callback that navigates to the command's URL.
+		commandNavigation( command.url )( params );
+	}
+};
+
 export const useCommandPalette = (): {
-	commands: Command[];
+	commands: CommandWithCallback[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
-	const { search, selectedCommandName, setSelectedCommandName } = useCommandMenuGroupContext();
-	const { currentSiteId, navigate, useCommands, currentRoute, useSites, userCapabilities } =
-		useCommandPaletteContext();
-	const siteToAction = useSiteToAction( { currentRoute } );
+	const {
+		currentSiteId,
+		useCommands,
+		currentRoute,
+		useSites,
+		userCapabilities,
+		search,
+		selectedCommandName,
+		setSelectedCommandName,
+	} = useCommandPaletteContext();
+	const siteToCommand = useSiteToCommand();
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
-	const sites = useSites?.() || [];
+	const sites = useSites();
 
-	const commands = useCommands() as Command[];
+	const commands = useCommands();
 
-	const trackSelectedCommand = ( command: Command ) => {
+	const trackSelectedCommand = ( command: CommandWithOptionalCallback ) => {
 		recordTracksEvent( 'calypso_hosting_command_palette_command_select', {
 			command: command.name,
 			has_nested_commands: !! command.siteSelector,
@@ -159,25 +181,6 @@ export const useCommandPalette = (): {
 		} );
 	};
 
-	const trackCompletedCommand = ( command: Command ) => {
-		recordTracksEvent( 'calypso_hosting_command_palette_command_complete', {
-			command: command.name,
-			list_count: commands.length,
-			list_visible_count: listVisibleCount,
-			current_route: currentRoute,
-			search_text: search,
-		} );
-	};
-
-	const runCommandCallback = ( command: Command, params: CommandCallBackParams ) => {
-		if ( command.callback ) {
-			command.callback( params );
-		} else if ( command.url ) {
-			// Adds a default callback that navigates to the command's URL.
-			commandNavigation( command.url )( params );
-		}
-	};
-
 	// Logic for selected command (sites)
 	if ( selectedCommandName ) {
 		const selectedCommand = commands.find( ( c ) => c.name === selectedCommandName );
@@ -185,11 +188,6 @@ export const useCommandPalette = (): {
 		let filterNotice = undefined;
 		let emptyListNotice = undefined;
 		if ( selectedCommand?.siteSelector ) {
-			const callback = ( params: CommandCallBackParams ) => {
-				runCommandCallback( selectedCommand, params );
-				trackCompletedCommand( params.command );
-			};
-
 			let filteredSites = sites.filter( ( site ) =>
 				isCommandAvailableOnSite( selectedCommand, site, userCapabilities )
 			);
@@ -215,14 +213,17 @@ export const useCommandPalette = (): {
 				}
 			}
 
-			// Map filtered sites to actions using the onClick function
+			// Map filtered sites to commands using the callback of the selected command.
 			sitesToPick = filteredSites.map(
-				siteToAction( callback, {
-					selectedCommand,
-					filteredSitesLength: filteredSites.length,
-					listVisibleCount,
-					search,
-				} )
+				siteToCommand(
+					( params: CommandCallBackParams ) => runCommandCallback( selectedCommand, params ),
+					{
+						selectedCommand,
+						filteredSitesLength: filteredSites.length,
+						listVisibleCount,
+						search,
+					}
+				)
 			);
 		}
 
@@ -270,7 +271,7 @@ export const useCommandPalette = (): {
 			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
 
-		sortedCommands = sortedCommands.map( ( command: Command ) => ( {
+		sortedCommands = sortedCommands.map( ( command: CommandWithOptionalCallback ) => ( {
 			...command,
 			siteSelector: false,
 			callback: ( params ) => {
@@ -288,9 +289,6 @@ export const useCommandPalette = (): {
 			callback: ( params: CommandCallBackParams ) => {
 				// Inject a tracks event on the callback of each command.
 				trackSelectedCommand( command );
-				if ( ! command.siteSelector ) {
-					trackCompletedCommand( command );
-				}
 
 				// Change the label when the site selector shows up and bail (the actual
 				// callback should be executed only after a site has been selected).
@@ -304,7 +302,7 @@ export const useCommandPalette = (): {
 				runCommandCallback( command, params );
 			},
 		};
-	} );
+	} ) as CommandWithCallback[];
 
 	// Add the "viewMySites" command to the beginning in all contexts except "/sites"
 	if ( currentRoute !== '/sites' ) {
