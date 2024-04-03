@@ -64,8 +64,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		const editorParent = await editorPage.getEditorParent();
 		pageTemplateToSelect =
-			( await editorParent.locator( '[role="option"]' ).first().getAttribute( 'aria-label' ) ) ??
-			'';
+			( await editorParent
+				.getByRole( 'listbox', { name: 'Block patterns' } )
+				.getByRole( 'option' )
+				.first()
+				.getAttribute( 'aria-label' ) ) ?? '';
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
 
