@@ -83,6 +83,8 @@ const StatsPurchasePage = ( {
 	}, [ siteSlug, isSiteJetpackNotAtomic ] );
 
 	useEffect( () => {
+		// Scroll to top on page load
+		window.scrollTo( 0, 0 );
 		// track different upgrade sources
 		let triggeredEvent;
 
@@ -104,7 +106,7 @@ const StatsPurchasePage = ( {
 		if ( triggeredEvent ) {
 			recordTracksEvent( triggeredEvent );
 		}
-	}, [ siteSlug, query, query?.from ] );
+	}, [ siteSlug, query?.from ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
