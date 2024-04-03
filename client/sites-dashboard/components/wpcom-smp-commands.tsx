@@ -18,7 +18,7 @@ import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
 import type { Command } from '@automattic/command-palette';
 
-export const useCommandsCalypso = () => {
+export const useCommandsCalypso = (): Command[] => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -179,7 +179,7 @@ export const useCommandsCalypso = () => {
 		'source-command-palette': 'true',
 	} ).toString() }`;
 
-	const commands: Command[] = Object.values(
+	const commands = Object.values(
 		deepmerge( COMMANDS, {
 			getHelp: {
 				callback: ( { close } ) => {
@@ -231,7 +231,7 @@ export const useCommandsCalypso = () => {
 				},
 			},
 		} )
-	);
+	) as Command[];
 
 	return commands;
 };

@@ -30,5 +30,5 @@ export const useCommandsWpAdmin = (): Command[] => {
 		},
 	} );
 
-	return Object.values( commands );
+	return Object.values( commands ) as Command[];
 };
