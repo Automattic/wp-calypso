@@ -33,6 +33,7 @@ const endStates: TransferStates[] = [
 	transferStates.FAILURE,
 	transferStates.ERROR,
 	transferStates.REVERTED,
+	transferStates.NULL,
 ];
 
 const HostingActivateStatus = ( {
@@ -45,7 +46,7 @@ const HostingActivateStatus = ( {
 
 	const isTransferring =
 		! endStates.includes( transferStatus as TransferStates ) &&
-		transferStatus !== transferStates.NULL;
+		transferStatus !== transferStates.INQUIRING;
 
 	const dispatch = useDispatch();
 	const isTransferCompleted = endStates.includes(
