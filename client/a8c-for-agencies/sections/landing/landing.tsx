@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { Spinner } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -15,6 +14,8 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+
+import './style.scss';
 
 export default function Landing() {
 	const translate = useTranslate();
@@ -43,14 +44,20 @@ export default function Landing() {
 	}, [ agency, hasFetched ] );
 
 	return (
-		<Layout title={ title } wide>
+		<Layout className="a4a-landing" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ title }</Title>
+					<Title>
+						<div className="a4a-landing__title-placeholder"></div>
+					</Title>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<Spinner />
+				<div className="a4a-landing__section-placeholder">
+					<div className="a4a-landing__section-placeholder-title"></div>
+					<div className="a4a-landing__section-placeholder-body"></div>
+					<div className="a4a-landing__section-placeholder-footer"></div>
+				</div>
 			</LayoutBody>
 		</Layout>
 	);
