@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
+import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,6 +11,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { dismissBlock } from './actions';
 
 import './mini-carousel-block.scss';
+
+const debug = debugFactory( 'mini-carousel-block' );
 
 const MiniCarouselBlock = ( {
 	clickEvent,
@@ -28,6 +31,7 @@ const MiniCarouselBlock = ( {
 	const onClick = useCallback( () => {
 		const isHrefRelative = href.startsWith( '/' );
 		recordTracksEvent( clickEvent );
+		debug( 'onClick', { href, hostname, isHrefRelative, isWpcomDomain } );
 
 		// Use Calypso router when the page is under a WPCOM domain.
 		if ( isWpcomDomain && isHrefRelative ) {
