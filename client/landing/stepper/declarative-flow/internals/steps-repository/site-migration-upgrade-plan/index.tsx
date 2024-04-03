@@ -1,5 +1,6 @@
 import { PLAN_BUSINESS, getPlan, getPlanByPathSlug } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,6 +13,7 @@ import type { Step } from '../../types';
 const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;
@@ -27,7 +29,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	const stepContent = (
 		<UpgradePlan
 			site={ siteItem }
-			ctaText=""
+			ctaText={ translate( 'Upgrade and migrate' ) }
 			subTitleText=""
 			isBusy={ false }
 			hideTitleAndSubTitle
