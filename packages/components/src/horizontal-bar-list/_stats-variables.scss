@@ -19,7 +19,6 @@ $stats-avatar-size: 20px;
 $stats-avatar-spacer: 8px;
 
 @mixin additional-columns-wrapper() {
-	//display: flex;
 	text-align: right;
 	gap: 0 4px;
 	padding: 0 4px;
