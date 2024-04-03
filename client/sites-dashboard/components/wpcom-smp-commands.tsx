@@ -16,7 +16,7 @@ import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
-import type { Command } from '@automattic/command-palette';
+import type { Command, CommandCallBackParams } from '@automattic/command-palette';
 
 export const useCommandsCalypso = (): Command[] => {
 	const { __ } = useI18n();
@@ -182,49 +182,61 @@ export const useCommandsCalypso = (): Command[] => {
 	const commands = Object.values(
 		deepmerge( COMMANDS, {
 			getHelp: {
-				callback: ( { close } ) => {
+				callback: ( { close }: CommandCallBackParams ) => {
 					close();
 					setShowHelpCenter( true );
 				},
 			},
 			clearCache: {
-				callback: ( { site, close } ) => {
+				callback: async ( { site, close }: CommandCallBackParams ) => {
 					close();
-					clearEdgeCache( site.ID );
+					if ( site ) {
+						await clearEdgeCache( site.ID );
+					}
 				},
 			},
 			enableEdgeCache: {
-				callback: ( { site, close } ) => {
+				callback: async ( { site, close }: CommandCallBackParams ) => {
 					close();
-					enableEdgeCache( site.ID );
+					if ( site ) {
+						await enableEdgeCache( site.ID );
+					}
 				},
 			},
 			disableEdgeCache: {
-				callback: ( { site, close } ) => {
+				callback: async ( { site, close }: CommandCallBackParams ) => {
 					close();
-					disableEdgeCache( site.ID );
+					if ( site ) {
+						await disableEdgeCache( site.ID );
+					}
 				},
 			},
 			openPHPmyAdmin: {
-				callback: async ( { site, close } ) => {
+				callback: async ( { site, close }: CommandCallBackParams ) => {
 					close();
-					await openPhpMyAdmin( site.ID );
+					if ( site ) {
+						await openPhpMyAdmin( site.ID );
+					}
 				},
 			},
 			copySshConnectionString: {
-				callback: async ( { site, close } ) => {
+				callback: async ( { site, close }: CommandCallBackParams ) => {
 					close();
-					await copySshSftpDetails( site.ID, 'connectionString', site.slug );
+					if ( site ) {
+						await copySshSftpDetails( site.ID, 'connectionString', site.slug );
+					}
 				},
 			},
 			resetSshSftpPassword: {
-				callback: async ( { site, close } ) => {
+				callback: async ( { site, close }: CommandCallBackParams ) => {
 					close();
-					resetSshSftpPassword( site.ID, site.slug );
+					if ( site ) {
+						await resetSshSftpPassword( site.ID, site.slug );
+					}
 				},
 			},
 			sendFeedback: {
-				callback: ( { close }: { close: () => void } ) => {
+				callback: ( { close }: CommandCallBackParams ) => {
 					close();
 					setInitialRoute( emailUrl );
 					setShowHelpCenter( true );
