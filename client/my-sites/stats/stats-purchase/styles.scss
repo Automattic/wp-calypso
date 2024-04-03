@@ -424,11 +424,6 @@ $button-padding: 8px 32px;
 	}
 
 	.components-button {
-		@media (max-width: $break-small) {
-			width: 100%;
-			justify-content: center;
-		}
-
 		&.is-primary {
 			border-radius: 4px;
 			color: var(--jp-white);
@@ -561,6 +556,13 @@ $button-padding: 8px 32px;
 
 	.components-button + button.components-button {
 		margin: 0;
+	}
+
+	button {
+		@media (max-width: $break-small) {
+			width: 100%;
+			justify-content: center;
+		}
 	}
 }
 
