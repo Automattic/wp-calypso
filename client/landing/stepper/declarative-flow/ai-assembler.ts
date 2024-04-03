@@ -69,7 +69,6 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.NEW_OR_EXISTING_SITE,
 			STEPS.SITE_PICKER,
 			STEPS.SITE_CREATION_STEP,
-			STEPS.SITE_PROMPT,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
@@ -93,6 +92,9 @@ const withAIAssemblerFlow: Flow = {
 			useDispatch( SITE_STORE );
 
 		const exitFlow = ( selectedSiteId: string, selectedSiteSlug: string ) => {
+			// Setting "About" as the static homepage. We may want to change that.
+			const homePagePostId = 1;
+
 			setPendingAction( () => {
 				return new Promise( () => {
 					if ( ! selectedSiteId || ! selectedSiteSlug ) {
@@ -103,22 +105,21 @@ const withAIAssemblerFlow: Flow = {
 						resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 					];
 
+					// Set the assembler theme
 					pendingActions.push(
 						setDesignOnSite( selectedSiteSlug, {
 							theme: 'assembler',
 						} )
 					);
 
-					// Setting "About" as the static homepage. We may want to change that.
-					pendingActions.push( setStaticHomepageOnSite( selectedSiteId, 1 ) );
-
-					// TODO: Somehow pass the informaation that would lead to setting a sticker.
-					// I was thinking we could use SiteIntent.
+					// Set static homepage.
+					pendingActions.push( setStaticHomepageOnSite( selectedSiteId, homePagePostId ) );
 
 					Promise.all( pendingActions ).then( ( results ) => {
 						// URL is in the results from the first promise.
 						window.location.assign(
-							results[ 0 ].URL + '/wp-admin/site-editor.php?postType=page&postId=1&canvas=edit'
+							results[ 0 ].URL +
+								`/wp-admin/site-editor.php?postType=page&postId=${ homePagePostId }&canvas=edit`
 						);
 					} );
 				} );
@@ -181,16 +182,6 @@ const withAIAssemblerFlow: Flow = {
 
 				case 'freePostSetup': {
 					return navigate( 'launchpad' );
-				}
-
-				case 'site-prompt': {
-					if ( providedDependencies?.aiSitePrompt ) {
-						await saveSiteSettings( siteId, {
-							wpcom_ai_site_prompt: providedDependencies.aiSitePrompt,
-						} );
-					}
-
-					return navigate( 'pattern-assembler' );
 				}
 
 				case 'processing': {
