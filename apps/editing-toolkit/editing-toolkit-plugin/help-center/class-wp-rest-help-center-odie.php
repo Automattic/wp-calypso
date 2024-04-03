@@ -87,11 +87,22 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_chat_messages( \WP_REST_Request $request ) {
-		$bot_name_slug = $request->get_param( 'bot_name_slug' );
-		$chat_id       = $request->get_param( 'chat_id' );
+		$bot_name_slug    = $request->get_param( 'bot_name_slug' );
+		$chat_id          = $request->get_param( 'chat_id' );
+		$page             = $request->get_param( 'page_number' );
+		$per_page         = $request->get_param( 'items_per_page' );
+		$include_feedback = $request->get_param( 'include_feedback' );
+
+		$url_query_params = http_build_query(
+			array(
+				'page_number'      => $page,
+				'items_per_page'   => $per_page,
+				'include_feedback' => $include_feedback,
+			)
+		);
 
 		$body = Client::wpcom_json_api_request_as_user(
-			'/odie/chat/' . $bot_name_slug . '/' . $chat_id
+			'/odie/chat/' . $bot_name_slug . '/' . $chat_id . '?' . $url_query_params
 		);
 
 		if ( is_wp_error( $body ) ) {
