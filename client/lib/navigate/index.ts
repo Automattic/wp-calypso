@@ -15,6 +15,12 @@ function isCurrentPathOutOfScope( currentPath: string ): boolean {
 	return paths.some( ( path ) => currentPath.startsWith( path ) );
 }
 
+function shouldNavigateWithinSamePage( path: string ): boolean {
+	const currentPath = window.location.pathname;
+	const targetUrl = new URL( path, window.location.origin );
+	return currentPath === targetUrl.pathname && !! targetUrl.hash;
+}
+
 export function navigate( path: string, openInNewTab = false ): void {
 	if ( isSameOrigin( path ) ) {
 		if ( openInNewTab ) {
@@ -23,6 +29,19 @@ export function navigate( path: string, openInNewTab = false ): void {
 			const state = { path };
 			window.history.pushState( state, '', path );
 			dispatchEvent( new PopStateEvent( 'popstate', { state } ) );
+		} else if ( shouldNavigateWithinSamePage( path ) ) {
+			const targetUrl = new URL( path, window.location.origin );
+			const element = document.querySelector( targetUrl.hash );
+			if ( element ) {
+				// Offset by the height of the navigation header from the top of the page.
+				const fixedHeaderHeight = 72;
+				const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+				const offsetPosition = elementPosition - fixedHeaderHeight;
+				window.scrollTo( {
+					top: offsetPosition,
+					behavior: 'smooth',
+				} );
+			}
 		} else {
 			page.show( path );
 		}
