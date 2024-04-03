@@ -10,6 +10,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleFetchingContent from './help-center-article-fetching-content';
+import HelpCenterFeedbackForm from './help-center-feedback-form';
 
 export const HelpCenterEmbedResult: React.FC = () => {
 	const { search } = useLocation();
@@ -89,6 +90,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			<div className="help-center-embed-result">
 				<ArticleFetchingContent articleUrl={ link } postId={ +( postId || 0 ) } blogId={ blogId } />
 			</div>
+			<HelpCenterFeedbackForm />
 			<BackToTopButton />
 		</>
 	);
