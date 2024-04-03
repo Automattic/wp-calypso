@@ -27,13 +27,6 @@ interface BaseProps< T = MinimumSite > extends Attributes {
 type FilteringProps = { filtering?: SitesFilterOptions };
 
 const addFiltering = < T extends BaseProps >( enabled: boolean, baseProps: T ) => {
-	const { status } = baseProps.grouping ?? {};
-
-	// we only show deleted sites if this status was requested and not part of "all"
-	if ( status !== 'deleted' ) {
-		baseProps.sites = baseProps.sites.filter( ( site ) => ! site.is_deleted );
-	}
-
 	if ( enabled ) {
 		const props = baseProps as T & FilteringProps;
 
