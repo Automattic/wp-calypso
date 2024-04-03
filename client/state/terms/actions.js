@@ -45,7 +45,6 @@ export function addTerm( siteId, taxonomy, term ) {
 					dispatch( receiveTerm( siteId, taxonomy, data ) );
 					return data;
 				},
-				() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
 			)
 			.then( ( data ) => {
 				dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
