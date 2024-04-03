@@ -67,10 +67,6 @@ const HostingActivateStatus = ( {
 		onTick?.( isTransferring, wasTransferring, isTransferCompleted );
 	}, [ isTransferCompleted, isTransferring, onTick, wasTransferring ] );
 
-	if ( isTransferCompleted ) {
-		return null;
-	}
-
 	const getLoadingText = () => {
 		switch ( context ) {
 			case 'theme':
@@ -95,6 +91,10 @@ const HostingActivateStatus = ( {
 
 	if ( transferStatus === transferStates.ERROR ) {
 		return <Notice status="is-error" showDismiss={ false } text={ getErrorText() } icon="bug" />;
+	}
+
+	if ( isTransferCompleted ) {
+		return null;
 	}
 
 	if ( isTransferring || keepAlive ) {
