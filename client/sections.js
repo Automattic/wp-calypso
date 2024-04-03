@@ -770,6 +770,12 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
 	},
+	{
+		name: 'ecommerce-segmentation-survey',
+		paths: [ '/ecommerce-segmentation-survey' ],
+		module: 'calypso/my-sites/ecommerce-segmentation-survey',
+		enableLoggedOut: true,
+	},
 ];
 
 module.exports = sections;
