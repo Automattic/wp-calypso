@@ -32,7 +32,7 @@ const CommissionFees = ( {
 
 	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 
-	const upgradeLinkHost = isJetpackNotAtomic ? 'https://jetpack.com' : 'https://wordpress.com';
+	const upgradeLinkHost = ! isJetpackNotAtomic ? 'https://wordpress.com' : '';
 
 	const upgradeLink =
 		commission === 0 || isPlan100YearPlan ? null : (
