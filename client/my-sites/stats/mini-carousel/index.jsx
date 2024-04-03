@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
@@ -38,8 +37,6 @@ const EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS = 'calypso_stats_google_analytics_ba
 
 const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const baseUrl =
-		typeof window !== 'undefined' && window.location.hostname === slug ? config( 'hostname' ) : '';
 
 	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
 		useHasNeverPublishedPost( selectedSiteId ?? null, true, {
@@ -128,7 +125,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
 				ctaText={ translate( 'Launch your site' ) }
-				href={ `${ baseUrl }/settings/general/${ slug }` }
+				href={ `/settings/general/${ slug }` }
 				key="launch-your-site"
 			/>
 		);
@@ -145,7 +142,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Sites with content get more visitors. We’ve found that adding some personality and introducing yourself is a great start to click with your audience.'
 				) }
 				ctaText={ translate( 'Write a post' ) }
-				href={ `${ baseUrl }/post/${ slug }` }
+				href={ `/post/${ slug }` }
 				key="write-a-post"
 			/>
 		);
@@ -162,7 +159,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Grow your audience by promoting your content. Reach millions of users across Tumblr and WordPress.com'
 				) }
 				ctaText={ translate( 'Create campaign' ) }
-				href={ `${ baseUrl }/advertising/${ slug || '' }` }
+				href={ `/advertising/${ slug || '' }` }
 				key="blaze"
 			/>
 		);
@@ -179,7 +176,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
 				) }
 				ctaText={ translate( 'Get Yoast' ) }
-				href={ `${ baseUrl }/plugins/wordpress-seo-premium/${ slug || '' }` }
+				href={ `/plugins/wordpress-seo-premium/${ slug || '' }` }
 				key="yoast"
 			/>
 		);
@@ -203,7 +200,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					// Translators: %(plan) is the name of a plan, e.g. "Explorer" or "Premium"
 					translate( 'Get %(plan)s', { args: { plan: premiumPlanName } } )
 				}
-				href={ `${ baseUrl }/checkout/premium/${ slug || '' }` }
+				href={ `/checkout/premium/${ slug || '' }` }
 				key="google-analytics"
 			/>
 		);
