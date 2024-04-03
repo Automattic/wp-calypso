@@ -4,7 +4,6 @@ export function createMockSite( {
 	URL,
 	is_private = false,
 	is_coming_soon = false,
-	is_deleted = false,
 	visible = true,
 	options = {
 		is_redirect: false,
@@ -16,7 +15,6 @@ export function createMockSite( {
 	URL?: string;
 	is_private?: boolean;
 	is_coming_soon?: boolean;
-	is_deleted?: boolean;
 	visible?: boolean;
 	options?: {
 		is_redirect?: boolean;
@@ -32,7 +30,6 @@ export function createMockSite( {
 		title: name ?? slug,
 		is_private,
 		is_coming_soon,
-		is_deleted,
 		visible,
 		options,
 	};

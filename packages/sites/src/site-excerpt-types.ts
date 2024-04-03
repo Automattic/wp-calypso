@@ -18,6 +18,5 @@ export type SiteExcerptData = Pick<
 	| ( typeof SITE_EXCERPT_COMPUTED_FIELDS )[ number ]
 > & {
 	title: string;
-	is_deleted?: boolean;
 	options?: Pick< SiteDetailsOptions, ( typeof SITE_EXCERPT_REQUEST_OPTIONS )[ number ] >;
 };
