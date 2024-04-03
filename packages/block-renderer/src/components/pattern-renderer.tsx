@@ -37,7 +37,7 @@ const PatternRenderer = ( {
 		patternHtml = transformHtml( patternHtml );
 	}
 
-	let patternStyles = pattern?.styles ? [ ...styles, ...pattern.styles ] : [ ...styles ];
+	let patternStyles = [ ...styles, ...( pattern?.styles ?? [] ) ];
 	if ( shouldShufflePosts ) {
 		const css = shufflePosts( patternId, patternHtml );
 		patternStyles = [ ...patternStyles, { css } as RenderedStyle ];
