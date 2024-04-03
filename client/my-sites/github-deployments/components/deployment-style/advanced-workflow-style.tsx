@@ -44,7 +44,6 @@ export const AdvancedWorkflowStyle = ( {
 					repository={ repository }
 					repositoryBranch={ branchName }
 					onWorkflowCreated={ onWorkflowCreation }
-					useComposerWorkflow={ useComposerWorkflow }
 					templateName={ templateName }
 					exampleTemplate={ templateContents }
 				/>
