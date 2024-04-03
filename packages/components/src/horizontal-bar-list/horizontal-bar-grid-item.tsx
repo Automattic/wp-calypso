@@ -72,6 +72,7 @@ const HorizontalBarListItem = ( {
 					? label.map( ( item ) => (
 							<>
 								<Icon
+									key={ item.labelIcon }
 									className="stats-icon"
 									icon={ item.labelIcon === 'folder' ? file : tag }
 									size={ 22 }
