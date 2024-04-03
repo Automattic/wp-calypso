@@ -4,10 +4,10 @@ import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import statsStrings from '../stats-strings';
-import StatsModuleDataQuery from './stats-module-data-query';
+import StatsModuleUTM from './stats-module-utm';
 import StatsModuleUTMOverlay from './stats-module-utm-overlay';
 
-const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } ) => {
+const StatsModuleUTMWrapper = ( { siteId, period, postId, query, summary, className } ) => {
 	const moduleStrings = statsStrings();
 
 	// Check if blog is internal.
@@ -42,7 +42,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 				<StatsModuleUTMOverlay className={ className } siteId={ siteId } />
 			) }
 			{ ! isFetching && isAdvancedFeatureEnabled && (
-				<StatsModuleDataQuery
+				<StatsModuleUTM
 					path="utm"
 					className={ classNames( className, 'stats-module-utm' ) }
 					moduleStrings={ moduleStrings.utm }
@@ -57,4 +57,4 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	);
 };
 
-export { StatsModuleUTM as default, StatsModuleUTM };
+export { StatsModuleUTMWrapper as default };

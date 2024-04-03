@@ -43,7 +43,7 @@ function generateFileNameForDownload( siteSlug, period ) {
 	return newFileName.replace( /\//g, '_' );
 }
 
-const StatsModuleDataQuery = ( {
+const StatsModuleUTM = ( {
 	path,
 	className,
 	useShortLabel,
@@ -165,4 +165,4 @@ const StatsModuleDataQuery = ( {
 	);
 };
 
-export { StatsModuleDataQuery as default, OPTION_KEYS };
+export { StatsModuleUTM as default, OPTION_KEYS };
