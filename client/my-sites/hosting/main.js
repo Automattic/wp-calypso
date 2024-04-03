@@ -229,10 +229,6 @@ const Hosting = ( props ) => {
 		setHasTransferring( true );
 	};
 
-	const activationRequested = () => {
-		clickActivate();
-	};
-
 	const requestUpdatedSiteData = useCallback(
 		( isTransferring, wasTransferring, isTransferCompleted ) => {
 			if ( isTransferring && ! hasTransfer ) {
@@ -281,10 +277,7 @@ const Hosting = ( props ) => {
 					icon="globe"
 				>
 					<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
-					<NoticeAction
-						onClick={ activationRequested }
-						href={ `/hosting-config/activate/${ siteSlug }` }
-					>
+					<NoticeAction onClick={ clickActivate } href={ `/hosting-config/activate/${ siteSlug }` }>
 						{ translate( 'Activate' ) }
 					</NoticeAction>
 				</Notice>
