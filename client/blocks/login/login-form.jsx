@@ -705,7 +705,7 @@ export class LoginForm extends Component {
 	}
 
 	handleAcceptEmailSuggestion() {
-		this.props.recordTracksEvent( 'calypso_signup_domain_suggestion_confirmation', {
+		this.props.recordTracksEvent( 'calypso_login_email_suggestion_confirmation', {
 			original_email: JSON.stringify( this.state.usernameOrEmail ),
 			suggested_email: JSON.stringify( this.state.emailSuggestion ),
 		} );
