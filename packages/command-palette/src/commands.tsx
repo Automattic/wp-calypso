@@ -474,16 +474,14 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/hosting-config/:site#sftp-credentials',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to copy SSH connection string', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: keyIcon,
 	},
 	openSshCredentials: {
 		name: 'openSshCredentials',
 		label: __( 'Open SFTP/SSH credentials', __i18n_text_domain__ ),
 		url: '/hosting-config/:site#sftp-credentials',
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: keyIcon,
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open SFTP/SSH credentials', __i18n_text_domain__ ),
@@ -494,8 +492,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/hosting-config/:site#sftp-credentials',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to reset SFTP/SSH password', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: keyIcon,
 	},
 	openJetpackStats: {
@@ -524,7 +521,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		callback: ( params ) =>
 			commandNavigation(
 				`${
-					siteUsesWpAdminInterface( params.site )
+					params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
 						? 'https://jetpack.com/redirect/?source=calypso-activity-log&site='
 						: '/activity-log/'
 				}:site`
@@ -542,7 +539,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		callback: ( params ) =>
 			commandNavigation(
 				`${
-					siteUsesWpAdminInterface( params.site )
+					params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
 						? 'https://jetpack.com/redirect/?source=calypso-backups&site='
 						: '/backup/'
 				}:site`
@@ -561,8 +558,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/site-monitoring/:site',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to view monitoring metrics', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: statsIcon,
 	},
 	openGitHubDeployments: {
@@ -576,8 +572,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		].join( ' ' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open GitHub Deployments', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: (
 			<svg
 				width={ 18 }
@@ -616,8 +611,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/site-monitoring/:site/php',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open PHP logs', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: acitvityLogIcon,
 	},
 	openWebServerLogs: {
@@ -637,8 +631,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/site-monitoring/:site/web',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open web server logs', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: acitvityLogIcon,
 	},
 	manageStagingSites: {
@@ -674,8 +667,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/hosting-config/:site#staging-site',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage staging sites', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: toolIcon,
 	},
 	changePHPVersion: {
@@ -684,8 +676,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/hosting-config/:site#web-server-settings',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to change PHP version', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: toolIcon,
 	},
 	changeAdminInterfaceStyle: {
@@ -706,8 +697,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		url: '/hosting-config/:site#admin-interface-style',
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to change admin interface style', __i18n_text_domain__ ),
-		capability: SiteCapabilities.MANAGE_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		...siteFilters.hostingEnabled,
 		icon: pageIcon,
 	},
 	addNewPost: {
@@ -866,7 +856,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to install theme', __i18n_text_domain__ ),
 		capability: SiteCapabilities.EDIT_THEME_OPTIONS,
-		siteType: SiteType.ATOMIC,
+		siteType: SiteType.JETPACK,
 		icon: brushIcon,
 	},
 	managePlugins: {
@@ -905,6 +895,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to install plugin', __i18n_text_domain__ ),
 		capability: SiteCapabilities.ACTIVATE_PLUGINS,
+		siteType: SiteType.JETPACK,
 		icon: pluginsIcon,
 	},
 	changePlan: {
@@ -984,7 +975,14 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'import subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 			_x( 'upload subscribers', 'Keyword for the Add subscribers command', __i18n_text_domain__ ),
 		].join( ' ' ),
-		url: '/subscribers/:site#add-subscribers',
+		callback: ( params ) =>
+			commandNavigation(
+				`${
+					params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
+						? 'https://cloud.jetpack.com/subscribers/'
+						: '/subscribers/'
+				}:site#add-subscribers`
+			),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to add subscribers', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -993,7 +991,14 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	manageSubscribers: {
 		name: 'manageSubscribers',
 		label: __( 'Manage subscribers', __i18n_text_domain__ ),
-		url: '/subscribers/:site',
+		callback: ( params ) =>
+			commandNavigation(
+				`${
+					params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
+						? 'https://cloud.jetpack.com/subscribers/'
+						: '/subscribers/'
+				}:site`
+			),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage subscribers', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
