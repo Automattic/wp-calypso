@@ -11,14 +11,14 @@
 }
 
 .guided-tour__popover-heading {
-	color: var(--studio-gray-100);
+	color: var(--color-neutral-100);
 	font-size: rem(14px);
 	line-height: 1.5;
 	font-weight: 500;
 }
 
 .guided-tour__popover-description {
-	color: var(--studio-gray-80);
+	color: var(--color-neutral-80);
 	font-size: rem(12px);
 	line-height: 1.5;
 	max-width: 220px;
@@ -33,7 +33,7 @@
 	width: 100%;
 
 	.guided-tour__popover-step-count {
-		color: var(--studio-gray-60);
+		color: var(--color-neutral-60);
 		font-size: rem(12px);
 	}
 
