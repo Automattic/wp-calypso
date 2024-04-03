@@ -2,10 +2,14 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { useDispatch } from 'calypso/state';
-import { useAtomicTransferQuery } from 'calypso/state/atomic-transfer/use-atomic-transfer-query';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferInProgress, transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	TransferStates,
+	transferInProgress,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -22,23 +26,38 @@ interface HostingActivateStatusProps {
 	) => void;
 }
 
+const endStates: TransferStates[] = [
+	transferStates.NONE,
+	transferStates.COMPLETE,
+	transferStates.COMPLETED,
+	transferStates.FAILURE,
+	transferStates.ERROR,
+	transferStates.REVERTED,
+];
+
 const HostingActivateStatus = ( {
 	context,
 	siteId,
 	onTick,
 	keepAlive,
 }: HostingActivateStatusProps ) => {
-	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
-		refetchInterval: 5000,
-	} );
+	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+
+	const isTransferring =
+		! endStates.includes( transferStatus as TransferStates ) &&
+		transferStatus !== transferStates.NULL;
+
+	// console.log( 'isTransferring: ', isTransferring );
+	// console.log( 'transferStatus: ', transferStatus );
+	// console.log( 'automatedTransferStatus: ', automatedTransferStatus );
 
 	const dispatch = useDispatch();
-	const isTransferCompleted =
-		! transferInProgress.includes( transferStatus as ( typeof transferInProgress )[ number ] ) &&
-		transferStatus !== transferStates.REVERTED &&
-		transferStatus !== transferStates.NONE &&
-		transferStatus !== undefined;
+	const isTransferCompleted = endStates.includes(
+		transferStatus as ( typeof transferInProgress )[ number ]
+	);
 	const [ wasTransferring, setWasTransferring ] = useState( false );
+
+	// console.log( 'isTransferCompleted: ', isTransferCompleted );
 
 	useEffect( () => {
 		if ( isTransferring && ! wasTransferring ) {
@@ -48,6 +67,7 @@ const HostingActivateStatus = ( {
 			setWasTransferring( false );
 		}
 		if ( ! isTransferCompleted ) {
+			// console.log( 'will dispatch fetchAutomatedTransferStatus' );
 			dispatch( fetchAutomatedTransferStatus( siteId ?? 0 ) );
 		}
 		onTick?.( isTransferring, wasTransferring, isTransferCompleted );
