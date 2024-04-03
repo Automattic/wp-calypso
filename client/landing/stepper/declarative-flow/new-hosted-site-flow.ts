@@ -15,7 +15,7 @@ import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
@@ -41,6 +41,10 @@ const hosting: Flow = {
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const getPlanCartItem = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			[]
+		);
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -88,9 +92,10 @@ const hosting: Flow = {
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
-					if ( ! providedDependencies.goToCheckout ) {
+					// If the product is a free trial, record the trial start event for ad tracking.
+					const planCartItem = getPlanCartItem();
+					isFreeHostingTrial( planCartItem?.product_slug || '' ) &&
 						recordFreeHostingTrialStarted( flowName );
-					}
 
 					if ( providedDependencies.goToCheckout ) {
 						return window.location.assign(
