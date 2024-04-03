@@ -367,7 +367,7 @@ export const PatternLibrary = ( {
 						/>
 
 						{ searchTerm && ! patterns.length && category && (
-							<div>
+							<div className="pattern-gallery__body-no-search-results">
 								<Button
 									className="pattern-gallery__search-all-categories"
 									onClick={ () => {

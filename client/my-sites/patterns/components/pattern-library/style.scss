@@ -194,14 +194,19 @@
 	}
 }
 
-.pattern-gallery__search-all-categories {
-	border-color: currentColor;
-	color: #3858e9;
-	background: none;
+.pattern-gallery__body-no-search-results {
+	text-align: center;
+	padding: 48px 0 24px;
 
-	&:enabled:hover,
-	&:focus {
+	.pattern-gallery__search-all-categories {
 		border-color: currentColor;
-		color: #1d35b4;
+		color: #3858e9;
+		background: none;
+
+		&:hover,
+		&:focus {
+			border-color: currentColor;
+			color: #1d35b4;
+		}
 	}
 }
