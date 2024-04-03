@@ -211,7 +211,10 @@ function WebsiteContentStep( {
 					<h1>{ translate( 'Are you ready to submit your content?' ) }</h1>
 					<p>
 						{ translate(
-							'Click the Submit button if you have finished adding content. We will build your new website and then email you within 4 business days with details about your new site.'
+							"If you have reviewed our content guidelines and added your final content to the form, click “Submit” to send us your content. We'll then build your new site and email you the details within %d business days.",
+							{
+								args: [ 4 ],
+							}
 						) }
 					</p>
 				</DialogContent>
