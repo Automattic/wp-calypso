@@ -21,7 +21,7 @@ type Props = {
 	items: ShoppingCartItem[];
 };
 
-const CART_URL_HASH_FRAGMENT = '#cart';
+export const CART_URL_HASH_FRAGMENT = '#cart';
 
 export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props ) {
 	const [ showShoppingCart, setShowShoppingCart ] = useState(
