@@ -1,19 +1,24 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
-import { PaginatedSurveyContext } from 'calypso/components/survey-container/context';
+import { SurveyContext } from 'calypso/components/survey-container/context';
 import type { NavigationControls } from '../../types';
 
 const PAGE_QUERY_PARAM = 'page';
 
+const updatePath = ( newPage: number ) =>
+	addQueryArgs( page.current, { [ PAGE_QUERY_PARAM ]: newPage } );
+
 type EcommerceSegmentationSurveyProviderType = {
 	children: React.ReactNode;
 	navigation: NavigationControls;
+	onSubmitQuestion: ( currentPage: number, skip: boolean ) => void;
 	totalPages: number;
 };
 
 const EcommerceSegmentationSurveyProvider = ( {
 	children,
 	navigation,
+	onSubmitQuestion,
 	totalPages,
 }: EcommerceSegmentationSurveyProviderType ) => {
 	const searchParams = new URLSearchParams( page.current.split( '?' )[ 1 ] );
@@ -25,24 +30,26 @@ const EcommerceSegmentationSurveyProvider = ( {
 			return;
 		}
 
-		const updatedPath = addQueryArgs( page.current, { [ PAGE_QUERY_PARAM ]: currentPage - 1 } );
-		page.show( updatedPath );
+		page.show( updatePath( currentPage - 1 ) );
 	};
 
-	const nextPage = () => {
+	const nextPage = ( skip: boolean = false ) => {
+		onSubmitQuestion( currentPage, skip );
+
 		if ( currentPage === totalPages ) {
 			navigation.submit?.();
 			return;
 		}
 
-		const updatedPath = addQueryArgs( page.current, { [ PAGE_QUERY_PARAM ]: currentPage + 1 } );
-		page.show( updatedPath );
+		page.show( updatePath( currentPage + 1 ) );
 	};
 
 	return (
-		<PaginatedSurveyContext.Provider value={ { currentPage, previousPage, nextPage } }>
+		<SurveyContext.Provider
+			value={ { currentPage, previousPage, nextPage, skip: () => nextPage( true ) } }
+		>
 			{ children }
-		</PaginatedSurveyContext.Provider>
+		</SurveyContext.Provider>
 	);
 };
 

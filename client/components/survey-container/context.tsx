@@ -1,17 +1,19 @@
 import { createContext, useContext } from 'react';
 
-export type PaginatedSurveyContextType = {
+export type SurveyContextType = {
 	currentPage: number;
 	previousPage: () => void;
 	nextPage: () => void;
+	skip: () => void;
 };
 
-export const PaginatedSurveyContext = createContext< PaginatedSurveyContextType >( {
+export const SurveyContext = createContext< SurveyContextType >( {
 	currentPage: 1,
 	previousPage: () => {},
 	nextPage: () => {},
+	skip: () => {},
 } );
 
-export const usePaginatedSurveyContext = () => {
-	return useContext( PaginatedSurveyContext );
+export const useSurveyContext = () => {
+	return useContext( SurveyContext );
 };
