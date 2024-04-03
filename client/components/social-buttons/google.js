@@ -46,50 +46,20 @@ class GoogleSocialButton extends Component {
 		showError: false,
 		errorRef: null,
 		eventTimeStamp: null,
-		isDisabled: true,
+		isDisabled: isNonceEnabled ? false : true,
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.handleClick = this.handleClick.bind( this );
+		this.handleClickNew = this.handleClickNew.bind( this );
 		this.showError = this.showError.bind( this );
 		this.hideError = this.hideError.bind( this );
 	}
 
 	componentDidMount() {
-		if ( isNonceEnabled ) {
-			const initialize = async () => {
-				try {
-					const response = await wpcomRequest( {
-						path: '/generate-authorization-nonce',
-						apiNamespace: 'wpcom/v2',
-						apiVersion: '2',
-						method: 'GET',
-					} );
-					const nonce = response.nonce;
-					this.setState( { nonce } );
-
-					if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
-						this.handleAuthorizationCode( {
-							auth_code: this.props.authCodeFromRedirect,
-							redirect_uri: this.props.redirectUri,
-							state: nonce,
-						} );
-					}
-
-					await this.initializeGoogleSignIn();
-				} catch ( error ) {
-					this.props.showErrorNotice(
-						this.props.translate(
-							'Error fetching nonce or initializing Google sign-in. Please try again.'
-						)
-					);
-				}
-			};
-
-			initialize();
-		} else {
+		if ( ! isNonceEnabled ) {
 			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
 				this.handleAuthorizationCode( {
 					auth_code: this.props.authCodeFromRedirect,
@@ -194,6 +164,62 @@ class GoogleSocialButton extends Component {
 		this.props.responseHandler( { access_token, id_token } );
 	}
 
+	async fetchNonceAndInitializeGoogleSignIn() {
+		try {
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				method: 'GET',
+			} );
+			const nonce = response.nonce;
+			this.setState( { nonce } );
+
+			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+				this.handleAuthorizationCode( {
+					auth_code: this.props.authCodeFromRedirect,
+					redirect_uri: this.props.redirectUri,
+					state: nonce,
+				} );
+			}
+
+			await this.initializeGoogleSignIn();
+		} catch ( error ) {
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Error fetching nonce or initializing Google sign-in. Please try again.'
+				)
+			);
+		}
+	}
+
+	async handleClickNew( event ) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
+			this.setState( {
+				showError: ! this.state.showError,
+				errorRef: event.currentTarget,
+				eventTimeStamp: event.timeStamp,
+			} );
+		}
+
+		if ( this.state.isDisabled ) {
+			return;
+		}
+
+		await this.fetchNonceAndInitializeGoogleSignIn();
+
+		this.props.onClick( event );
+
+		if ( this.state.error ) {
+			return;
+		}
+
+		this.client.requestCode();
+	}
+
 	handleClick( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -248,7 +274,7 @@ class GoogleSocialButton extends Component {
 		if ( children ) {
 			const childProps = {
 				className: classNames( { disabled: isDisabled } ),
-				onClick: this.handleClick,
+				onClick: isNonceEnabled ? this.handleClickNew : this.handleClick,
 				onMouseOver: this.showError,
 				onFocus: this.showError,
 				onMouseOut: this.hideError,
@@ -265,7 +291,7 @@ class GoogleSocialButton extends Component {
 				) : (
 					<button
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-						onClick={ this.handleClick }
+						onClick={ isNonceEnabled ? this.handleClickNew : this.handleClick }
 						onMouseEnter={ this.showError }
 						onMouseLeave={ this.hideError }
 						disabled={ isDisabled }
