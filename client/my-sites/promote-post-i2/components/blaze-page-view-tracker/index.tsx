@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import { UnconnectedPageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
 import { getDSPOrigin } from 'calypso/lib/promote-post';
 import { getSiteFragment } from 'calypso/lib/route';
 import {
@@ -25,7 +25,10 @@ interface Props {
 // This component will pass through all properties to PageViewTracker unconnected component from the analytics library
 // We do this to make it compatible with the Blaze Jetpack version of the dashboard that uses hashbang for navigation
 const BlazePageViewTracker = ( props: Props ) => (
-	<PageViewTracker { ...props } properties={ { ...props.properties, origin: getDSPOrigin() } } />
+	<UnconnectedPageViewTracker
+		{ ...props }
+		properties={ { ...props.properties, origin: getDSPOrigin() } }
+	/>
 );
 
 const mapStateToProps = ( state: Record< string, unknown > ) => {
