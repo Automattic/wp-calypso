@@ -75,18 +75,23 @@ export const SitesDashboardProvider = ( {
 		}
 
 		const issueTypesArray = issueTypes?.split( ',' );
-
 		setSitesViewState( ( previousState ) => ( {
 			...previousState,
-			filters:
-				issueTypesArray?.map( ( issueType ) => {
-					return {
-						field: 'status',
-						operator: 'in',
-						value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-					};
-				} ) || [],
-			search: searchQuery,
+			...( siteUrlInitialState
+				? {}
+				: {
+						filters:
+							issueTypesArray?.map( ( issueType ) => {
+								return {
+									field: 'status',
+									operator: 'in',
+									value:
+										filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref ||
+										1,
+								};
+							} ) || [],
+				  } ),
+			...( siteUrlInitialState ? {} : { search: searchQuery } ),
 			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
 			...( siteUrlInitialState ? {} : { type: 'table' } ),
 		} ) );
