@@ -1,7 +1,8 @@
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useCallback, useState } from 'react';
+import { useContext, useEffect, useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -59,6 +60,7 @@ export default function SitesDashboard() {
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
+	const isNarrowView = useBreakpoint( '<660px' );
 	const { data: products } = useProductsQuery();
 
 	const {
@@ -206,7 +208,7 @@ export default function SitesDashboard() {
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation>
 						<LayoutHeader>
-							<Title>{ translate( 'Sites' ) }</Title>
+							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
 							<Actions>
 								{ /* TODO: We were using a component from the overview header actions. We have to check if this is the best header available for the sites page. */ }
 								<OverviewHeaderActions />

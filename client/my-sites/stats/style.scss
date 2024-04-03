@@ -4,7 +4,7 @@
 @import "calypso/my-sites/stats/modernized-layout-styles.scss";
 @import "calypso/my-sites/stats/theme-override-mixin.scss";
 
-$stats-card-min-width: 500px;
+$stats-card-min-width: 390px;
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {

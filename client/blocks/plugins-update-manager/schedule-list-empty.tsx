@@ -1,22 +1,19 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
+import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
 	canCreateSchedules: boolean;
 	onCreateNewSchedule?: () => void;
 }
 export const ScheduleListEmpty = ( props: Props ) => {
+	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
+
 	const { onCreateNewSchedule, canCreateSchedules } = props;
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins();
-	const siteId = useSelector( getSelectedSiteId );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const managePluginsUrl = `${ siteAdminUrl }plugins.php`;
-	const translate = useTranslate();
 
 	return (
 		<div className="empty-state">
@@ -40,9 +37,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 						<Button
 							__next40pxDefaultSize
 							variant={ canCreateSchedules ? 'primary' : 'secondary' }
-							onClick={ () => {
-								window.location.href = managePluginsUrl;
-							} }
+							href={ `/plugins/${ siteSlug }` }
 						>
 							{ translate( 'Explore plugins' ) }
 						</Button>

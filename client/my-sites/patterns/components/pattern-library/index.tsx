@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
@@ -17,16 +18,17 @@ import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
+import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
-	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
@@ -46,29 +48,10 @@ export const patternFiltersClassName = 'pattern-library__filters';
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
 		const categorySlugs = Object.keys( pattern.categories );
-		const isPage = categorySlugs.includes( 'page' );
+		const isPage = categorySlugs.includes( CATEGORY_PAGE );
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
-}
-
-// We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
-// it will be more confusing for users to land in grid view when they have a single-pattern permalink
-function getPatternPermalink(
-	pattern: Pattern,
-	activeCategory: string,
-	patternTypeFilter: PatternTypeFilter,
-	categories: Category[]
-) {
-	// Get the first pattern category that is also included in the `usePatternCategories` data
-	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
-		categories.find( ( { name } ) => name === categorySlug )
-	);
-	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternTypeFilter );
-
-	const url = new URL( pathname, location.origin );
-	url.hash = `#pattern-${ pattern.ID }`;
-	return url.toString();
 }
 
 // Scroll to anchoring position of category pill navigation element
@@ -110,9 +93,10 @@ export const PatternLibrary = ( {
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [] } = usePatterns( locale, category, {
+	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
+
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
@@ -122,11 +106,12 @@ export const PatternLibrary = ( {
 
 	const recordClickEvent = (
 		tracksEventName: string,
-		view: PatternView,
-		typeFilter: PatternTypeFilter
+		view?: PatternView,
+		typeFilter?: PatternTypeFilter
 	) => {
 		recordTracksEvent( tracksEventName, {
 			category,
+			search_term: searchTerm || undefined,
 			is_logged_in: isLoggedIn,
 			type: getTracksPatternType( typeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',
@@ -217,9 +202,9 @@ export const PatternLibrary = ( {
 				category={ category }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
-				key={ `${ category }-tracker` }
 				searchTerm={ searchTerm }
 				referrer={ referrer }
+				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 			/>
 
 			<PatternsDocumentHead category={ category } />
@@ -362,6 +347,22 @@ export const PatternLibrary = ( {
 							patterns={ patterns }
 							patternTypeFilter={ patternTypeFilter }
 						/>
+
+						{ searchTerm && ! patterns.length && category && (
+							<div className="pattern-gallery__body-no-search-results">
+								<Button
+									className="pattern-gallery__search-all-categories"
+									onClick={ () => {
+										recordClickEvent( 'calypso_pattern_library_search_in_all' );
+										page( `/patterns${ window.location.search }` );
+									} }
+								>
+									{ translate( 'Search in all categories', {
+										comment: 'Button to make search of patterns in all categories',
+									} ) }
+								</Button>
+							</div>
+						) }
 					</PatternLibraryBody>
 				) }
 

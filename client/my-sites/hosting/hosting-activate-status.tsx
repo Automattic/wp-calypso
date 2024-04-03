@@ -31,10 +31,13 @@ const HostingActivateStatus = ( {
 	const { isTransferring, transferStatus } = useAtomicTransferQuery( siteId ?? 0, {
 		refetchInterval: 5000,
 	} );
+
 	const dispatch = useDispatch();
-	const isTransferCompleted = ! transferInProgress.includes(
-		transferStatus as ( typeof transferInProgress )[ number ]
-	);
+	const isTransferCompleted =
+		! transferInProgress.includes( transferStatus as ( typeof transferInProgress )[ number ] ) &&
+		transferStatus !== transferStates.REVERTED &&
+		transferStatus !== transferStates.NONE &&
+		transferStatus !== undefined;
 	const [ wasTransferring, setWasTransferring ] = useState( false );
 
 	useEffect( () => {
