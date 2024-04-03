@@ -8,6 +8,7 @@ import {
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useQueryClient } from '@tanstack/react-query';
+import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useRef, useState } from 'react';
@@ -245,10 +246,18 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				} )
 			);
 		},
-		onError: () => {
-			reduxDispatch(
-				errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
-			);
+		onError: ( error ) => {
+			if ( error.status === 403 ) {
+				reduxDispatch(
+					errorNotice( __( 'Only the original owner can restore a deleted site.' ), {
+						duration: 5000,
+					} )
+				);
+			} else {
+				reduxDispatch(
+					errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
+				);
+			}
 		},
 	} );
 
@@ -340,14 +349,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.is_deleted ? (
 					<DeletedStatus>
 						<span>{ __( 'Deleted' ) }</span>
-						<RestoreButton
-							borderless
-							busy={ isRestoring }
-							disabled={ isRestoring }
-							onClick={ handleRestoreSite }
-						>
-							{ __( 'Restore' ) }
-						</RestoreButton>
+						{ isRestoring ? (
+							<Spinner />
+						) : (
+							<RestoreButton borderless onClick={ handleRestoreSite }>
+								{ __( 'Restore' ) }
+							</RestoreButton>
+						) }
 					</DeletedStatus>
 				) : (
 					<WithAtomicTransfer site={ site }>
