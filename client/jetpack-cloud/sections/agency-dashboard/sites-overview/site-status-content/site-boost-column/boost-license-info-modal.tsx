@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo } from 'react';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import ExternalLink from 'calypso/components/external-link';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -21,6 +23,7 @@ interface Props {
 
 export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: Props ) {
 	const translate = useTranslate();
+	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 	const { isLargeScreen } = useContext( DashboardDataContext );
@@ -66,6 +69,10 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 		}
 	}, [ status, onClose ] );
 
+	const productPurchaseLink = isA4AEnabled
+		? `${ A4A_MARKETPLACE_PRODUCTS_LINK }?product_slug=jetpack-boost&source=sitesdashboard&site_id=${ siteId }`
+		: undefined;
+
 	return (
 		<LicenseInfoModal
 			className="site-boost-column__upgrade-modal"
@@ -80,7 +87,9 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			onCtaClick={ handlePurchaseBoost }
 			isCTAExternalLink={ is_atomic }
 			ctaHref={
-				is_atomic ? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard` : undefined
+				is_atomic
+					? `${ url_with_scheme }/wp-admin/admin.php?page=jetpack#/dashboard`
+					: productPurchaseLink
 			}
 			showPaymentPlan={ ! is_atomic }
 			extraAsideContent={
