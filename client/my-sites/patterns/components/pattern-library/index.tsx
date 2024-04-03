@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
@@ -92,7 +93,7 @@ export const PatternLibrary = ( {
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [] } = usePatterns( locale, category, {
+	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
 
@@ -105,11 +106,12 @@ export const PatternLibrary = ( {
 
 	const recordClickEvent = (
 		tracksEventName: string,
-		view: PatternView,
-		typeFilter: PatternTypeFilter
+		view?: PatternView,
+		typeFilter?: PatternTypeFilter
 	) => {
 		recordTracksEvent( tracksEventName, {
 			category,
+			search_term: searchTerm || undefined,
 			is_logged_in: isLoggedIn,
 			type: getTracksPatternType( typeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',
@@ -200,9 +202,9 @@ export const PatternLibrary = ( {
 				category={ category }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
-				key={ `${ category }-tracker` }
 				searchTerm={ searchTerm }
 				referrer={ referrer }
+				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 			/>
 
 			<PatternsDocumentHead category={ category } />
@@ -345,6 +347,22 @@ export const PatternLibrary = ( {
 							patterns={ patterns }
 							patternTypeFilter={ patternTypeFilter }
 						/>
+
+						{ searchTerm && ! patterns.length && category && (
+							<div className="pattern-gallery__body-no-search-results">
+								<Button
+									className="pattern-gallery__search-all-categories"
+									onClick={ () => {
+										recordClickEvent( 'calypso_pattern_library_search_in_all' );
+										page( `/patterns${ window.location.search }` );
+									} }
+								>
+									{ translate( 'Search in all categories', {
+										comment: 'Button to make search of patterns in all categories',
+									} ) }
+								</Button>
+							</div>
+						) }
 					</PatternLibraryBody>
 				) }
 
