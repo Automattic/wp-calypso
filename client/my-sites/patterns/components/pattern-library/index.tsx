@@ -221,7 +221,6 @@ export const PatternLibrary = ( {
 				category={ category }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
-				key={ `${ category }-tracker` }
 				searchTerm={ searchTerm }
 				referrer={ referrer }
 				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }

@@ -68,11 +68,17 @@ export function PatternsPageViewTracker( {
 				num_patterns: searchTerm ? patternsCount : undefined,
 			} );
 		}
-
-		// We want to avoid resubmitting the event whenever
-		// `category` changes, which is why we deliberately don't include it in the dependency array
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isDevAccount, isLoggedIn, searchTerm, patternTypeFilter, view ] );
+	}, [
+		category,
+		error,
+		isDevAccount,
+		isLoggedIn,
+		patternsCount,
+		patternTypeFilter,
+		referrer,
+		searchTerm,
+		view,
+	] );
 
 	let path: string = '';
 
