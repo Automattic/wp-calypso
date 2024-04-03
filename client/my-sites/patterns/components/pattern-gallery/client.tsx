@@ -119,8 +119,16 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	} = props;
 
 	const translate = useTranslate();
-	const [ patternDisplayCount, setPatternDisplayCount ] = useState( PATTERNS_PER_PAGE_COUNT );
+
+	const [ patternDisplayCount, setPatternDisplayCount ] = useState( () => {
+		if ( /#pattern-/.test( window.location.hash ) ) {
+			return Infinity;
+		}
+
+		return PATTERNS_PER_PAGE_COUNT;
+	} );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
