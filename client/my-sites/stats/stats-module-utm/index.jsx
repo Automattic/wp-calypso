@@ -29,7 +29,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	// Check if blog is internal.
-	const { isFetching: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
+	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
 	// Fetch UTM metrics with switched UTM parameters.
 	const { isFetching: isFetchingUTM, metrics: data } = useUTMMetricsQuery(
