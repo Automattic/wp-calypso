@@ -16,7 +16,7 @@ export const redirectToOverviewContext: Callback = () => {
 export const requireAccessContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
-	const { pathname, search } = window.location;
+	const { pathname, search, hash } = window.location;
 
 	if ( agency ) {
 		next();
@@ -26,7 +26,7 @@ export const requireAccessContext: Callback = ( context, next ) => {
 	page.redirect(
 		addQueryArgs(
 			{
-				return: pathname + search,
+				return: pathname + hash + search,
 			},
 			'/landing'
 		)
