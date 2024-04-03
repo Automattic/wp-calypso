@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
@@ -22,17 +21,11 @@ const MiniCarouselBlock = ( {
 	dismissText,
 } ) => {
 	const dispatch = useDispatch();
-	const isOdysseyStats = isEnabled( 'is_running_in_jetpack_site' );
 
 	const onClick = useCallback( () => {
 		recordTracksEvent( clickEvent );
-		if ( ! isOdysseyStats ) {
-			page( href );
-		}
-
-		// If it is Odyssey, redirect since the path might not be registered in the router.
-		location.href = href;
-	}, [ clickEvent, href, isOdysseyStats ] );
+		page( href );
+	}, [ clickEvent, href ] );
 
 	const onDismiss = useCallback( () => {
 		recordTracksEvent( dismissEvent );
