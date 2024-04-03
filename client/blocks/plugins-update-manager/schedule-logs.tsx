@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { arrowLeft, Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
 import {
@@ -16,6 +17,7 @@ import {
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
+import { useSiteAdminUrl } from './hooks/use-site-admin-url';
 import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 
@@ -28,6 +30,7 @@ export const ScheduleLogs = ( props: Props ) => {
 	const translate = useTranslate();
 	const { scheduleId, onNavBack } = props;
 
+	const siteAdminUrl = useSiteAdminUrl();
 	const {
 		dateFormat: phpDateFormat,
 		timeFormat: phpTimeFormat,
@@ -44,6 +47,10 @@ export const ScheduleLogs = ( props: Props ) => {
 		isPending,
 	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+
+	const goToPluginsPage = useCallback( () => {
+		window.location.href = `${ siteAdminUrl }plugins.php`;
+	}, [ siteAdminUrl ] );
 
 	if ( isPending ) {
 		return null;
@@ -104,7 +111,7 @@ export const ScheduleLogs = ( props: Props ) => {
 					iconBackground="warning"
 					actionLabel="Try manual update"
 					actionIsPrimary={ true }
-					onActionClick={ () => {} }
+					onActionClick={ goToPluginsPage }
 				/>
 				<TimelineEvent
 					date={ new Date( '30 March 2024, 10:00:12 am' ) }
