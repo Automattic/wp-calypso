@@ -46,6 +46,7 @@ describe( 'usePatterns', () => {
 				ID: 1,
 				html: '<div>Test pattern</div>',
 				title: 'Test pattern',
+				categories: { about: {} },
 			},
 		];
 

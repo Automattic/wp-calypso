@@ -17,6 +17,7 @@ import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
+import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
@@ -46,7 +47,7 @@ export const patternFiltersClassName = 'pattern-library__filters';
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
 		const categorySlugs = Object.keys( pattern.categories );
-		const isPage = categorySlugs.includes( 'page' );
+		const isPage = categorySlugs.includes( CATEGORY_PAGE );
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
@@ -113,6 +114,7 @@ export const PatternLibrary = ( {
 	const { data: patterns = [] } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
+
 			return filterPatternsByTerm( patternsByType, searchTerm );
 		},
 	} );
