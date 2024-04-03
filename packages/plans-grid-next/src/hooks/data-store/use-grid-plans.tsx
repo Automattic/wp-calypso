@@ -23,7 +23,6 @@ import {
 	isEcommercePlan,
 	TYPE_P2_PLUS,
 } from '@automattic/calypso-products';
-import { PLAN_P2_PLUS } from '@automattic/calypso-products/src/constants/wpcom';
 import { Plans, type AddOnMeta } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
 import useHighlightLabels from './use-highlight-labels';
@@ -133,7 +132,14 @@ const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-p2':
-			planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
+			planTypes = [ TYPE_FREE ];
+
+			// 2024-04-02 Disable upgrade to P2+
+			// only include P2+ if it is the current plan
+			if ( TYPE_P2_PLUS === currentSitePlanType ) {
+				planTypes.push( TYPE_P2_PLUS );
+			}
+
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [
@@ -275,18 +281,10 @@ const useGridPlans = ( {
 		const storageAddOnsForPlan =
 			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
 
-		let isVisible = planSlugsForIntent.includes( planSlug );
-
-		// 2024-04-02 Disable upgrade to P2+
-		// hide P2 unless it is the current plan
-		if ( planSlug === PLAN_P2_PLUS && ! isCurrentPlan ) {
-			isVisible = false;
-		}
-
 		return {
 			planSlug,
 			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
-			isVisible,
+			isVisible: planSlugsForIntent.includes( planSlug ),
 			tagline,
 			availableForPurchase,
 			productNameShort,
