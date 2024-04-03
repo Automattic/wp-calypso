@@ -2,6 +2,7 @@
 @import "@automattic/components/src/styles/typography.scss";
 
 $date-control-shortcut-min-width: 140px;
+$date-control-mobile-layout-switch: $break-small;
 
 .stats-date-control-picker-date {
 	margin: 16px;
@@ -42,6 +43,11 @@ $date-control-shortcut-min-width: 140px;
 	padding: 16px;
 	border-left: 1px solid var(--gray-gray-5, #dcdcde);
 	box-sizing: border-box;
+
+	@media (max-width: $date-control-mobile-layout-switch) {
+		border-left: 0 none;
+		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+	}
 }
 
 .date-control-picker-shortcuts__list {
@@ -132,6 +138,10 @@ $date-control-shortcut-min-width: 140px;
 	display: flex;
 	min-width: 320px;
 	flex-direction: row-reverse;
+
+	@media (max-width: $date-control-mobile-layout-switch) {
+		flex-direction: column;
+	}
 }
 
 .stats-date-control-picker__popover-wrapper {
@@ -146,6 +156,19 @@ $date-control-shortcut-min-width: 140px;
 
 	.components-button + .components-button {
 		margin-left: 12px;
+	}
+
+	@media (max-width: $date-control-mobile-layout-switch) {
+		flex-direction: column-reverse;
+		justify-content: stretch;
+
+		.components-button {
+			justify-content: center;
+
+			& + .components-button {
+				margin-left: 0;
+			}
+		}
 	}
 }
 
