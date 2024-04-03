@@ -32,17 +32,15 @@ const CommissionFees = ( {
 
 	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 
-	const upgradeLinkHost = ! isJetpackNotAtomic ? 'https://wordpress.com' : '';
+	const upgradeLinkHost = isJetpackNotAtomic
+		? 'https://jetpack.com/creator/#pricing'
+		: `https://wordpress.com/plans/${ siteSlug ? siteSlug : '' }`;
 
 	const upgradeLink =
 		commission === 0 || isPlan100YearPlan ? null : (
 			<>
 				{ ' ' }
-				<a
-					href={
-						siteSlug ? `${ upgradeLinkHost }/plans/${ siteSlug }` : `${ upgradeLinkHost }/plans`
-					}
-				>
+				<a href={ upgradeLinkHost }>
 					{ /* translators: 'Upgrade to a paid plan to lower transaction fee % for payment features. */ }
 					{ translate( 'Upgrade to lower it.' ) }
 				</a>
