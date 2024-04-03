@@ -25,13 +25,13 @@ export default function Hosting() {
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ translate( 'Marketplace' ) }</Title>
 
 					<Actions>
+						<MobileSidebarNavigation />
 						<ShoppingCart
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }

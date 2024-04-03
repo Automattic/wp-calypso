@@ -18,11 +18,12 @@ export default function Overview() {
 	const title = translate( 'Agency HQ Overview' );
 
 	return (
-		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>
-					<Actions>
+					<Actions className="a4a-overview__header-actions">
+						<MobileSidebarNavigation />
 						<OverviewHeaderActions />
 					</Actions>
 				</LayoutHeader>

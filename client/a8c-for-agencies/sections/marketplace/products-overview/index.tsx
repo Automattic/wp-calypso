@@ -49,13 +49,14 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 			title={ translate( 'Product Marketplace' ) }
 			wide
 			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
 				<LayoutHeader showStickyContent={ showStickyContent }>
 					<Title>{ translate( 'Marketplace' ) } </Title>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
+						<MobileSidebarNavigation />
+
 						<ShoppingCart
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }

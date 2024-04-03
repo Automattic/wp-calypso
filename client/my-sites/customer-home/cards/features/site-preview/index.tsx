@@ -103,6 +103,7 @@ const SitePreview = ( {
 							loading="lazy"
 							title={ __( 'Site Preview' ) }
 							src={ iframeSrcKeepHomepage }
+							tabIndex={ -1 }
 						/>
 					) : (
 						<div className="home-site-preview__thumbnail-placeholder" />
