@@ -106,7 +106,7 @@ const StatsPurchasePage = ( {
 		if ( triggeredEvent ) {
 			recordTracksEvent( triggeredEvent );
 		}
-	}, [ siteSlug, query?.from ] );
+	}, [ siteSlug, query, query?.from ] );
 
 	const commercialProduct = useSelector( ( state ) =>
 		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
