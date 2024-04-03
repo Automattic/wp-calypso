@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
+import { URL_REFERRER_PARAM } from 'calypso/my-sites/patterns/paths';
 import { Pattern } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
@@ -35,7 +36,7 @@ export const PatternsGetAccessModal = ( {
 	const signupUrl = localizeUrl(
 		`//wordpress.com/start/account/user?${ buildQueryString( {
 			redirect_to: redirectUrl,
-			ref: 'pattern-library',
+			ref: URL_REFERRER_PARAM,
 		} ) }`,
 		locale,
 		isLoggedIn
