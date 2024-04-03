@@ -37,6 +37,7 @@ export function navigate( path: string, openInNewTab = false ): void {
 				const fixedHeaderHeight = 72;
 				const elementPosition = element.getBoundingClientRect().top + window.scrollY;
 				const offsetPosition = elementPosition - fixedHeaderHeight;
+				window.location.hash = targetUrl.hash;
 				window.scrollTo( {
 					top: offsetPosition,
 					behavior: 'smooth',
