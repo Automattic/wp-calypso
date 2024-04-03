@@ -111,7 +111,7 @@ export const PatternLibrary = ( {
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns } = usePatterns( locale, category, {
+	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
 			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
 			return filterPatternsByTerm( patternsByType, searchTerm );
@@ -213,8 +213,6 @@ export const PatternLibrary = ( {
 		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
 		: `${ category }-${ patternTypeFilter }`;
 
-	const patternsLength = patterns ? patterns.length : undefined;
-
 	return (
 		<>
 			<PatternsPageViewTracker
@@ -224,7 +222,7 @@ export const PatternLibrary = ( {
 				key={ `${ category }-tracker` }
 				searchTerm={ searchTerm }
 				referrer={ referrer }
-				numPatterns={ patternsLength }
+				patternsCount={ isFetchingPatterns ? patterns.length : undefined }
 			/>
 
 			<PatternsDocumentHead category={ category } />
@@ -284,8 +282,8 @@ export const PatternLibrary = ( {
 							<h1 className="pattern-library__title">
 								{ searchTerm &&
 									translate( '%(count)d pattern', '%(count)d patterns', {
-										count: patternsLength,
-										args: { count: patternsLength },
+										count: patterns.length,
+										args: { count: patterns.length },
 									} ) }
 								{ ! searchTerm &&
 									patternTypeFilter === PatternTypeFilter.PAGES &&
@@ -368,7 +366,7 @@ export const PatternLibrary = ( {
 							patternTypeFilter={ patternTypeFilter }
 						/>
 
-						{ searchTerm && ! patternsLength && category && (
+						{ searchTerm && ! patterns.length && category && (
 							<div>
 								<Button
 									className="pattern-gallery__search-all-categories"
