@@ -329,6 +329,9 @@ function StatsBenefitsListing( {
 					</li>
 				) }
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No UTM tracking' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }
 				</li>
 			</ul>

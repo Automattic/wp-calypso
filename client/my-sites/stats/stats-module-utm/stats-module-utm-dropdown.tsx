@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { Icon, chevronDown, chevronUp, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useRef } from 'react';
-import { OPTION_KEYS as SELECTED_OPTION_KEYS } from './';
+import { OPTION_KEYS as SELECTED_OPTION_KEYS } from './stats-module-utm';
 
 import './stats-module-utm-dropdown.scss';
 
