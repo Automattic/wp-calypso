@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Icon, chevronDown } from '@wordpress/icons';
+import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -9,6 +10,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { dismissBlock } from './actions';
 
 import './mini-carousel-block.scss';
+
+const debug = debugFactory( 'stats:mini-carousel' );
 
 const MiniCarouselBlock = ( {
 	clickEvent,
@@ -23,6 +26,8 @@ const MiniCarouselBlock = ( {
 	const dispatch = useDispatch();
 
 	const onClick = useCallback( () => {
+		debug( 'onClick', { href } );
+
 		recordTracksEvent( clickEvent );
 		page( href );
 	}, [ clickEvent, href ] );
