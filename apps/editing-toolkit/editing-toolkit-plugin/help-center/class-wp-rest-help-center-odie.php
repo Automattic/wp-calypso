@@ -200,6 +200,38 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Save feedback for a chat message.
+	 *
+	 * @param \WP_REST_Request $request The request sent to the API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function save_chat_message_feedback( \WP_REST_Request $request ) {
+		$bot_id       = $request->get_param( 'bot_id' );
+		$chat_id      = $request->get_param( 'chat_id' );
+		$message_id   = $request->get_param( 'message_id' );
+		$rating_value = $request->get_param( 'rating_value' );
+
+		// Forward the request body to the feedback endpoint.
+		$body = Client::wpcom_json_api_request_as_user(
+			'/odie/chat/' . $bot_id . '/' . $chat_id . '/' . $message_id . '/feedback',
+			2,
+			array( 'method' => 'POST' ),
+			array(
+				'rating_value' => $rating_value,
+			)
+		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
 	 * Callback to determine whether the request can proceed.
 	 *
 	 * @return boolean
