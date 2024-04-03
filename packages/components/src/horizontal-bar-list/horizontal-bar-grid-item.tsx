@@ -69,8 +69,8 @@ const HorizontalBarListItem = ( {
 		labelText = (
 			<>
 				{ label.length > 1
-					? label.map( ( item ) => (
-							<Fragment key={ item.labelIcon }>
+					? label.map( ( item, index ) => (
+							<Fragment key={ index }>
 								<Icon
 									className="stats-icon"
 									icon={ item.labelIcon === 'folder' ? file : tag }
