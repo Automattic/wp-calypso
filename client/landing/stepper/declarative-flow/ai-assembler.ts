@@ -6,6 +6,7 @@ import { AI_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
@@ -92,9 +93,6 @@ const withAIAssemblerFlow: Flow = {
 			useDispatch( SITE_STORE );
 
 		const exitFlow = ( selectedSiteId: string, selectedSiteSlug: string ) => {
-			// Setting "About" as the static homepage. We may want to change that.
-			const homePagePostId = 1;
-
 			setPendingAction( () => {
 				return new Promise( () => {
 					if ( ! selectedSiteId || ! selectedSiteSlug ) {
@@ -105,6 +103,20 @@ const withAIAssemblerFlow: Flow = {
 						resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 					];
 
+					// TODO: Query if we are indeed missing home page before creating new one.
+					// Create the homepage.
+					pendingActions.push(
+						wpcomRequest( {
+							path: '/sites/' + selectedSiteId + '/pages',
+							method: 'POST',
+							apiNamespace: 'wp/v2',
+							body: {
+								title: 'Home',
+								status: 'publish',
+							},
+						} )
+					);
+
 					// Set the assembler theme
 					pendingActions.push(
 						setDesignOnSite( selectedSiteSlug, {
@@ -112,15 +124,15 @@ const withAIAssemblerFlow: Flow = {
 						} )
 					);
 
-					// Set static homepage.
-					pendingActions.push( setStaticHomepageOnSite( selectedSiteId, homePagePostId ) );
-
 					Promise.all( pendingActions ).then( ( results ) => {
 						// URL is in the results from the first promise.
-						window.location.assign(
-							results[ 0 ].URL +
-								`/wp-admin/site-editor.php?postType=page&postId=${ homePagePostId }&canvas=edit`
+						const siteURL = results[ 0 ].URL;
+						const homePagePostId = results[ 1 ].id;
+						// This will redirect and we will never resolve.
+						setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
+							window.location.assign( `${ siteURL }/wp-admin/site-editor.php` )
 						);
+						return Promise.resolve();
 					} );
 				} );
 			} );
