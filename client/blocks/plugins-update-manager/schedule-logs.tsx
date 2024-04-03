@@ -38,14 +38,18 @@ export const ScheduleLogs = ( props: Props ) => {
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
-	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
-		siteSlug,
-		isEligibleForFeature
-	);
+	const {
+		data: schedules = [],
+		isFetched,
+		isPending,
+	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
 
+	if ( isPending ) {
+		return null;
+	}
 	// If the schedule is not found, navigate back to the list
-	if ( isFetched && ! schedule ) {
+	else if ( isFetched && ! schedule ) {
 		onNavBack && onNavBack();
 		return null;
 	}
