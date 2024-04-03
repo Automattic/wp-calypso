@@ -141,7 +141,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const onClickPromote = useOpenPromoteWidget( {
 		keyValue: `post-${ getPostIdFromURN( target_urn || '' ) }`, // + campaignId,
-		entrypoint: 'promoted_posts-post_item',
+		entrypoint: 'promoted_posts-campaign-details-header',
 	} );
 
 	// Target block
