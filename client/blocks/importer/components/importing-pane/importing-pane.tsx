@@ -11,7 +11,6 @@ import {
 	ImportingPane as ImportingPaneBase,
 	resourcesRemaining,
 } from 'calypso/my-sites/importer/importing-pane';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import './importing-pane.scss';
 
@@ -105,7 +104,6 @@ class ImportingPane extends ImportingPaneBase {
 }
 
 export default connect( null, {
-	loadTrackingTool,
 	mapAuthor,
 	startImporting,
 } )( localize( ImportingPane ) );
