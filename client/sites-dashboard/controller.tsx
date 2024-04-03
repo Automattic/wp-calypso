@@ -1,17 +1,23 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { type Callback, Context, Context as PageJSContext } from '@automattic/calypso-router';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
 } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
+import {
+	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
+	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+} from 'calypso/a8c-for-agencies/sections/sites/constants';
+import A4ASitesDashboard from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard';
+import { SitesDashboardProvider } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-provider';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
@@ -115,3 +121,55 @@ export function maybeRemoveCheckoutSuccessNotice( context: PageJSContext, next: 
 	}
 	next();
 }
+
+function configureSitesContext( context: Context ) {
+	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
+	const siteUrl = context.params.siteUrl;
+	const siteFeature = context.params.feature || A4A_SITES_DASHBOARD_DEFAULT_FEATURE;
+	const hideListingInitialState = !! siteUrl;
+
+	const {
+		s: search,
+		page: contextPage,
+		issue_types,
+		sort_field,
+		sort_direction,
+		is_favorite,
+	} = context.query;
+
+	const sort = {
+		field: sort_field,
+		direction: sort_direction,
+	};
+	const currentPage = parseInt( contextPage ) || 1;
+
+	context.primary = (
+		<SitesDashboardProvider
+			categoryInitialState={ category }
+			siteUrlInitialState={ siteUrl }
+			siteFeatureInitialState={ siteFeature }
+			hideListingInitialState={ hideListingInitialState }
+			showOnlyFavoritesInitialState={
+				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
+			path={ context.path }
+			searchQuery={ search }
+			currentPage={ currentPage }
+			issueTypes={ issue_types }
+			sort={ sort }
+			showSitesDashboardV2={ true }
+		>
+			<A4ASitesDashboard />
+		</SitesDashboardProvider>
+	);
+
+	context.secondary = <MySitesNavigation path={ context.path } />;
+
+	// By definition, Sites Management does not select any one specific site
+	context.store.dispatch( setAllSitesSelected() );
+}
+
+export const sitesContext: Callback = ( context, next ) => {
+	configureSitesContext( context );
+	next();
+};
