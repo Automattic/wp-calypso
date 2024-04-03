@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const WooCommerceLogo = ( { height = 24, width = 90 } ) => {
+const WooCommerceLogo = ( { height = 18, width = 97 } ) => {
 	return (
 		<svg
 			className="woocommerce-logo"
