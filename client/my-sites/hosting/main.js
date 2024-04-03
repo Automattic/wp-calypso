@@ -210,7 +210,6 @@ const Hosting = ( props ) => {
 				transferStates.REVERTED,
 			].includes( transferState )
 	);
-	const [ shouldPullTransferResults, setShouldPullTransferResults ] = useState( true );
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
@@ -228,11 +227,9 @@ const Hosting = ( props ) => {
 
 	const trialRequested = () => {
 		setHasTransferring( true );
-		setShouldPullTransferResults( true );
 	};
 
 	const activationRequested = () => {
-		setShouldPullTransferResults( true );
 		clickActivate();
 	};
 
@@ -244,14 +241,6 @@ const Hosting = ( props ) => {
 
 			if ( ! isTransferring && wasTransferring && isTransferCompleted ) {
 				fetchUpdatedData();
-			}
-
-			if ( isTransferCompleted && ! isTransferring ) {
-				setShouldPullTransferResults( false );
-			}
-
-			if ( ! isSiteAtomic && ! hasTransfer ) {
-				setShouldPullTransferResults( false );
 			}
 		},
 		[ hasTransfer ]
@@ -350,15 +339,13 @@ const Hosting = ( props ) => {
 				title={ translate( 'Hosting' ) }
 				subtitle={ translate( 'Access your website’s database and more advanced settings.' ) }
 			/>
-			{ shouldPullTransferResults &&
-				! showHostingActivationBanner &&
-				! isTrialAcknowledgeModalOpen && (
-					<HostingActivateStatus
-						context="hosting"
-						onTick={ requestUpdatedSiteData }
-						keepAlive={ ! isSiteAtomic && hasTransfer }
-					/>
-				) }
+			{ ! showHostingActivationBanner && ! isTrialAcknowledgeModalOpen && (
+				<HostingActivateStatus
+					context="hosting"
+					onTick={ requestUpdatedSiteData }
+					keepAlive={ ! isSiteAtomic && hasTransfer }
+				/>
+			) }
 			{ ! isBusinessTrial && banner }
 			{ isBusinessTrial && ( ! hasTransfer || isSiteAtomic ) && (
 				<TrialBanner

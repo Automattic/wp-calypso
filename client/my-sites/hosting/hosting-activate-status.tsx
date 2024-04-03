@@ -47,17 +47,11 @@ const HostingActivateStatus = ( {
 		! endStates.includes( transferStatus as TransferStates ) &&
 		transferStatus !== transferStates.NULL;
 
-	// console.log( 'isTransferring: ', isTransferring );
-	// console.log( 'transferStatus: ', transferStatus );
-	// console.log( 'automatedTransferStatus: ', automatedTransferStatus );
-
 	const dispatch = useDispatch();
 	const isTransferCompleted = endStates.includes(
 		transferStatus as ( typeof transferInProgress )[ number ]
 	);
 	const [ wasTransferring, setWasTransferring ] = useState( false );
-
-	// console.log( 'isTransferCompleted: ', isTransferCompleted );
 
 	useEffect( () => {
 		if ( isTransferring && ! wasTransferring ) {
@@ -67,11 +61,14 @@ const HostingActivateStatus = ( {
 			setWasTransferring( false );
 		}
 		if ( ! isTransferCompleted ) {
-			// console.log( 'will dispatch fetchAutomatedTransferStatus' );
 			dispatch( fetchAutomatedTransferStatus( siteId ?? 0 ) );
 		}
 		onTick?.( isTransferring, wasTransferring, isTransferCompleted );
 	}, [ isTransferCompleted, isTransferring, onTick, wasTransferring ] );
+
+	if ( isTransferCompleted ) {
+		return null;
+	}
 
 	const getLoadingText = () => {
 		switch ( context ) {
