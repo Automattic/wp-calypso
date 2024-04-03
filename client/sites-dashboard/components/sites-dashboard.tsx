@@ -176,17 +176,10 @@ export function SitesDashboard( {
 		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
-	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
-
-	const { data: deletedSites = [] } = useSiteExcerptsQuery(
-		[],
-		( site ) => ! site.options?.is_domain_only,
-		'deleted'
-	);
-
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const elementRef = useRef( window );
 
@@ -203,8 +196,6 @@ export function SitesDashboard( {
 	} );
 
 	const isMobile = useMobileBreakpoint();
-
-	const allSites = liveSites.concat( deletedSites );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
@@ -277,7 +268,6 @@ export function SitesDashboard( {
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
-										showDeletedStatus
 									/>
 								) }
 								{ hasSitesSortingPreferenceLoaded && (
@@ -289,25 +279,6 @@ export function SitesDashboard( {
 													sites={ paginatedSites }
 													className={ sitesMarginTable }
 												/>
-												{ selectedStatus.name === 'deleted' && (
-													<div
-														style={ {
-															display: 'flex',
-															alignItems: 'center',
-															gap: '8px',
-														} }
-													>
-														<Gridicon icon="info" size={ 18 } />
-														<span>
-															{ createInterpolateElement(
-																__(
-																	'These sites will be permanently removed after <strong>30 days.</strong>'
-																),
-																{ strong: <strong /> }
-															) }
-														</span>
-													</div>
-												) }
 												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 													<PageBodyBottomContainer>
 														<Pagination

@@ -90,7 +90,6 @@ type SitesContentControlsProps = {
 	onQueryParamChange?: ( params: Partial< SitesDashboardQueryParams > ) => void;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
-	showDeletedStatus?: boolean;
 } & ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
 /**
@@ -121,7 +120,6 @@ export const SitesContentControls = ( {
 	sitesSorting,
 	onSitesSortingChange,
 	hasSitesSortingPreferenceLoaded,
-	showDeletedStatus = false,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 	const searchRef = useRef< SearchImperativeHandle >( null );
@@ -142,10 +140,6 @@ export const SitesContentControls = ( {
 	useSearchShortcut( () => {
 		searchRef.current?.focus();
 	} );
-
-	if ( ! showDeletedStatus ) {
-		statuses = statuses.filter( ( status ) => status.name !== 'deleted' );
-	}
 
 	return (
 		<FilterBar>
