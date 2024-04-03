@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
@@ -37,7 +36,6 @@ export const PatternsSearchField = ( { isCollapsible = false }: PatternsSearchFi
 
 	return (
 		<Search
-			additionalClasses={ classNames( { 'is-filled': !! searchTerm } ) }
 			initialValue={ searchTerm }
 			key={ `search-${ category }` }
 			onSearch={ handleSearch }

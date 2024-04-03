@@ -101,7 +101,7 @@
 			}
 		}
 
-		&.is-open.is-filled {
+		&:has(.search__input[value]:not([value=""])) {
 			.search__open-icon {
 				display: none;
 			}
