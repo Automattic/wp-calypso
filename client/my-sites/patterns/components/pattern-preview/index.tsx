@@ -337,9 +337,9 @@ export function PatternPreview( props: PatternPreviewProps ) {
 		<ResizableBox
 			enable={ {
 				top: false,
-				right: isRtl ? false : true,
+				right: ! isRtl,
 				bottom: false,
-				left: isRtl ? true : false,
+				left: isRtl,
 				topRight: false,
 				bottomRight: false,
 				bottomLeft: false,
