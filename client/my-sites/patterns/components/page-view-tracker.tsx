@@ -36,6 +36,10 @@ export function PatternsPageViewTracker( {
 			return getUserSetting( state, 'is_dev_account' ) ?? false;
 		}
 
+		if ( state.userSettings.failed ) {
+			return false;
+		}
+
 		return undefined;
 	} );
 
