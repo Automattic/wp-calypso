@@ -13,12 +13,13 @@ import {
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
+import type { SyncSuccessParams } from './types';
 
 import './schedule-form.scss';
 
 interface Props {
 	scheduleForEdit?: ScheduleUpdates;
-	onSyncSuccess?: () => void;
+	onSyncSuccess?: ( params: SyncSuccessParams ) => void;
 	onSyncError?: ( error: string ) => void;
 }
 export const ScheduleForm = ( props: Props ) => {
@@ -26,15 +27,8 @@ export const ScheduleForm = ( props: Props ) => {
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 
-	const serverSyncCallbacks = {
-		onSuccess: () => onSyncSuccess && onSyncSuccess(),
-		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
-	};
-
 	const { data: schedulesData = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedules = schedulesData.filter( ( s ) => s.id !== scheduleForEdit?.id ) ?? [];
-	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
-	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >(
 		scheduleForEdit?.args || []
@@ -55,6 +49,21 @@ export const ScheduleForm = ( props: Props ) => {
 		timestamp: validateTimeSlot( { frequency, timestamp }, scheduledTimeSlots ),
 	} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
+
+	const serverSyncCallbacks = {
+		onSuccess: () => {
+			const date = new Date( timestamp * 1000 );
+			onSyncSuccess?.( {
+				plugins: selectedPlugins,
+				frequency,
+				hours: date.getHours(),
+				weekday: frequency === 'weekly' ? date.getDay() : undefined,
+			} );
+		},
+		onError: ( e: Error ) => onSyncError && onSyncError( e.message ),
+	};
+	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
+	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 
 	const onFormSubmit = () => {
 		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;

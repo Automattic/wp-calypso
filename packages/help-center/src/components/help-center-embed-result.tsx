@@ -42,6 +42,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			result_url: link,
 			post_id: postId,
 			blog_id: blogId,
+			search_query: query,
 		} );
 		if ( canNavigateBack ) {
 			navigate( -1 );

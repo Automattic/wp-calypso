@@ -1,10 +1,10 @@
 import { Badge, Card } from '@automattic/components';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import classNames from 'classnames';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import Notice from 'calypso/components/notice';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

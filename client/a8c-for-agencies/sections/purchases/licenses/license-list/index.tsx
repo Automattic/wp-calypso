@@ -4,8 +4,6 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
 import Pagination from 'calypso/components/pagination';
-import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty'; // FIXME: Fix for A4A
-import LicenseListHeader from 'calypso/jetpack-cloud/sections/partner-portal/license-list/header'; // FIXME: Fix for A4A
 import { LicensePreviewPlaceholder } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import { LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -14,6 +12,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import LicensePreview from '../license-preview';
 import LicensesOverviewContext from '../licenses-overview/context';
+import LicenseListEmpty from './empty';
+import LicenseListHeader from './header';
 
 import './style.scss';
 

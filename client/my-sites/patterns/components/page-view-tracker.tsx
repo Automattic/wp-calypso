@@ -1,19 +1,41 @@
 import { useEffect, useState } from 'react';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { PatternTypeFilter, PatternView } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import type { AppState } from 'calypso/types';
 
 type PatternsPageViewTrackerProps = {
 	category: string;
-	searchTerm: string;
+	searchTerm?: string;
+	patternTypeFilter?: PatternTypeFilter;
+	view?: PatternView;
+	referrer?: string;
+	error?: string;
 };
 
-export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageViewTrackerProps ) {
+export function PatternsPageViewTracker( {
+	category,
+	searchTerm,
+	patternTypeFilter,
+	view,
+	referrer,
+	error,
+}: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
-	const [ debouncedSeachTerm, setDebouncedSearchTerm ] = useState( searchTerm );
+	// Default to `undefined` while user settings are loading
+	const isDevAccount = useSelector( ( state: AppState ) => {
+		if ( Object.keys( state.userSettings?.settings ?? {} ).length > 0 ) {
+			return getUserSetting( state, 'is_dev_account' ) ?? false;
+		}
+
+		return undefined;
+	} );
+	const [ debouncedSearchTerm, setDebouncedSearchTerm ] = useState( searchTerm );
 
 	// We debounce the search term because search happens instantaneously, without the user
 	// submitting the search form
@@ -28,34 +50,36 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 	}, [ searchTerm ] );
 
 	useEffect( () => {
-		if ( category ) {
+		if ( category && isDevAccount !== undefined ) {
 			recordTracksEvent( 'calypso_pattern_library_filter', {
 				category,
 				is_logged_in: isLoggedIn,
 				user_is_dev_account: isDevAccount ? '1' : '0',
+				type: getTracksPatternType( patternTypeFilter ),
 			} );
 		}
-	}, [ category, isDevAccount, isLoggedIn ] );
+	}, [ category, isDevAccount, isLoggedIn, patternTypeFilter ] );
 
 	useEffect( () => {
-		if ( debouncedSeachTerm ) {
-			recordTracksEvent( 'calypso_pattern_library_search', {
+		if ( isDevAccount !== undefined ) {
+			recordTracksEvent( 'calypso_pattern_library_view', {
 				category,
 				is_logged_in: isLoggedIn,
 				user_is_dev_account: isDevAccount ? '1' : '0',
-				search_term: debouncedSeachTerm,
+				search_term: debouncedSearchTerm,
+				type: getTracksPatternType( patternTypeFilter ),
+				view,
+				referrer,
+				error,
 			} );
 		}
 
-		// We want to avoid resubmitting the `calypso_pattern_library_search` event whenever
+		// We want to avoid resubmitting the event whenever
 		// `category` changes, which is why we deliberately don't include it in the dependency array
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isDevAccount, isLoggedIn, debouncedSeachTerm ] );
+	}, [ isDevAccount, isLoggedIn, debouncedSearchTerm, patternTypeFilter, view ] );
 
 	let path: string = '';
-	const properties: Record< string, string | boolean > = {
-		is_logged_in: isLoggedIn,
-	};
 
 	if ( ! category ) {
 		path = '/patterns';
@@ -63,13 +87,22 @@ export function PatternsPageViewTracker( { category, searchTerm }: PatternsPageV
 		path = `/patterns/${ category }`;
 	}
 
-	if ( debouncedSeachTerm ) {
+	if ( debouncedSearchTerm ) {
 		path += '/:search';
 	}
 
-	const key = path + debouncedSeachTerm;
-
 	return (
-		<PageViewTracker key={ key } path={ path } properties={ properties } title="Pattern Library" />
+		<>
+			<QueryUserSettings />
+
+			<PageViewTracker
+				key={ path + debouncedSearchTerm }
+				path={ path }
+				properties={ {
+					is_logged_in: isLoggedIn,
+				} }
+				title="Pattern Library"
+			/>
+		</>
 	);
 }

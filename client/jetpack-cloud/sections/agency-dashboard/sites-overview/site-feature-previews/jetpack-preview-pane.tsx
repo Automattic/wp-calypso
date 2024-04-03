@@ -1,12 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitePreviewPane, { createFeaturePreview } from '../site-preview-pane';
 import { SitePreviewPaneProps } from '../site-preview-pane/types';
-import { JetpackActivityPreview } from './jetpack-activity';
+import { JetpackActivityPreview } from './activity';
 import { JetpackBackupPreview } from './jetpack-backup';
 import { JetpackBoostPreview } from './jetpack-boost';
 import { JetpackMonitorPreview } from './jetpack-monitor';
@@ -24,20 +22,23 @@ export function JetpackPreviewPane( {
 	const translate = useTranslate();
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
 
-	const dispatch = useDispatch();
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const trackEvent = useCallback(
+		( eventName: string ) => {
+			recordEvent( eventName );
+		},
+		[ recordEvent ]
+	);
+
+	const { selectedSiteFeature, setSelectedSiteFeature } = useContext( SitesDashboardContext );
 
 	useEffect( () => {
-		if ( site ) {
-			dispatch( setSelectedSiteId( site.blog_id ) );
+		if ( selectedSiteFeature === undefined ) {
+			setSelectedSiteFeature( 'jetpack_boost' );
 		}
-	}, [ site ] );
-
-	const trackEvent = ( eventName: string ) => {
-		recordEvent( eventName );
-	};
-
-	const [ selectedFeatureId, setSelectedFeatureId ] = useState( 'jetpack_boost' );
+		return () => {
+			setSelectedSiteFeature( undefined );
+		};
+	}, [] );
 
 	// Jetpack features: Boost, Backup, Monitor, Stats
 	const features = useMemo(
@@ -46,40 +47,40 @@ export function JetpackPreviewPane( {
 				'jetpack_boost',
 				'Boost',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature ?? 'jetpack_boost',
+				setSelectedSiteFeature,
 				<JetpackBoostPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			),
 			createFeaturePreview(
 				'jetpack_backup',
 				'Backup',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackBackupPreview />
 			),
 			createFeaturePreview(
 				'jetpack_scan',
 				'Scan',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
-				<JetpackScanPreview sideId={ site.blog_id } />
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<JetpackScanPreview siteId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				'jetpack_monitor',
 				'Monitor',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackMonitorPreview site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			),
 			createFeaturePreview(
 				'jetpack_plugins',
 				translate( 'Plugins' ),
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackPluginsPreview
 					link={ '/plugins/manage/' + site.url }
 					linkLabel={ translate( 'Manage Plugins' ) }
@@ -92,20 +93,20 @@ export function JetpackPreviewPane( {
 				'jetpack_stats',
 				'Stats',
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<JetpackStatsPreview site={ site } trackEvent={ trackEvent } />
 			),
 			createFeaturePreview(
 				'jetpack_activity',
 				translate( 'Activity' ),
 				true,
-				selectedFeatureId,
-				setSelectedFeatureId,
-				<JetpackActivityPreview isLoading={ ! selectedSiteId } />
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<JetpackActivityPreview />
 			),
 		],
-		[ site, selectedFeatureId, translate ]
+		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
 	);
 
 	return (

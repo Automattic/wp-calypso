@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -436,8 +435,7 @@ export const SitesEllipsisMenu = ( {
 		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
 	);
 
-	const isWpAdminInterface =
-		isEnabled( 'layout/dotcom-nav-redesign' ) && adminInterface === 'wp-admin';
+	const isWpAdminInterface = adminInterface === 'wp-admin';
 
 	const props: SitesMenuItemProps = {
 		site,

@@ -51,6 +51,7 @@ import {
 	MaterialIcon,
 } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import classNames from 'classnames';
 import { localize, LocalizeProps, numberFormat, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -97,7 +98,6 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { DOMAIN_CANCEL, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -1454,7 +1454,7 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 
 	const BBESupportLink = (
 		<a
-			href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+			href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
 				`I have a question about my project: ${ siteSlug }`
 			) }` }
 		/>

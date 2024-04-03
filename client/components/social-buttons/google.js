@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -17,6 +18,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import './style.scss';
 
 const noop = () => {};
+const isNonceEnabled = config.isEnabled( 'login/google-login-update' );
 
 class GoogleSocialButton extends Component {
 	static propTypes = {
@@ -56,14 +58,47 @@ class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
-			this.handleAuthorizationCode( {
-				auth_code: this.props.authCodeFromRedirect,
-				redirect_uri: this.props.redirectUri,
-			} );
-		}
+		if ( isNonceEnabled ) {
+			const initialize = async () => {
+				try {
+					const response = await wpcomRequest( {
+						path: '/generate-authorization-nonce',
+						apiNamespace: 'wpcom/v2',
+						apiVersion: '2',
+						method: 'GET',
+					} );
+					const nonce = response.nonce;
+					this.setState( { nonce } );
 
-		this.initializeGoogleSignIn();
+					if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+						this.handleAuthorizationCode( {
+							auth_code: this.props.authCodeFromRedirect,
+							redirect_uri: this.props.redirectUri,
+							state: nonce,
+						} );
+					}
+
+					await this.initializeGoogleSignIn();
+				} catch ( error ) {
+					this.props.showErrorNotice(
+						this.props.translate(
+							'Error fetching nonce or initializing Google sign-in. Please try again.'
+						)
+					);
+				}
+			};
+
+			initialize();
+		} else {
+			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+				this.handleAuthorizationCode( {
+					auth_code: this.props.authCodeFromRedirect,
+					redirect_uri: this.props.redirectUri,
+				} );
+			}
+
+			this.initializeGoogleSignIn();
+		}
 	}
 
 	async initializeGoogleSignIn() {
@@ -82,6 +117,7 @@ class GoogleSocialButton extends Component {
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
+			state: isNonceEnabled ? this.state.nonce : undefined,
 			callback: ( response ) => {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
@@ -93,7 +129,11 @@ class GoogleSocialButton extends Component {
 					return;
 				}
 
-				this.handleAuthorizationCode( { auth_code: response.code } );
+				if ( isNonceEnabled ) {
+					this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
+				} else {
+					this.handleAuthorizationCode( { auth_code: response.code } );
+				}
 			},
 		} );
 
@@ -113,7 +153,7 @@ class GoogleSocialButton extends Component {
 		return window?.google?.accounts?.oauth2 ?? null;
 	}
 
-	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
+	async handleAuthorizationCode( { auth_code, redirect_uri, state } ) {
 		let response;
 		try {
 			response = await postLoginRequest( 'exchange-social-auth-code', {
@@ -122,6 +162,7 @@ class GoogleSocialButton extends Component {
 				redirect_uri,
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
+				state,
 			} );
 		} catch ( httpError ) {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
@@ -227,6 +268,7 @@ class GoogleSocialButton extends Component {
 						onClick={ this.handleClick }
 						onMouseEnter={ this.showError }
 						onMouseLeave={ this.hideError }
+						disabled={ isDisabled }
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }

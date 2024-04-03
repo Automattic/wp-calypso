@@ -24,7 +24,13 @@
 		display: flex;
 		gap: 16px;
 		align-items: center;
+		// Chrome, Edge, Firefox
 		scrollbar-width: none;
+
+		// Safari
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 
 	.category-pill-navigation__arrow {
@@ -101,4 +107,8 @@
 	padding-left: 32px;
 	flex: none;
 	margin-left: auto;
+}
+
+.category-pill-navigation__mobile-select .select-dropdown__container {
+	width: 100%;
 }

@@ -6,7 +6,10 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import HostingOverview from './hosting-overview';
+import PressableOverview from './pressable-overview';
+import DownloadProducts from './primary/download-products';
 import ProductsOverview from './products-overview';
+import WpcomOverview from './wpcom-overview';
 
 export const marketplaceContext: Callback = () => {
 	page.redirect( A4A_MARKETPLACE_PRODUCTS_LINK );
@@ -22,6 +25,18 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 export const marketplaceHostingContext: Callback = ( context, next ) => {
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = <HostingOverview />;
+	next();
+};
+
+export const marketplacePressableContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = <PressableOverview />;
+	next();
+};
+
+export const marketplaceWpcomContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = <WpcomOverview />;
 	next();
 };
 
@@ -41,5 +56,11 @@ export const assignLicenseContext: Callback = ( context, next ) => {
 	context.primary = (
 		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
 	);
+	next();
+};
+
+export const downloadProductsContext: Callback = ( context, next ) => {
+	context.secondary = <MarketplaceSidebar path={ context.path } />;
+	context.primary = <DownloadProducts />;
 	next();
 };

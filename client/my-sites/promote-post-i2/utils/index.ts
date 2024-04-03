@@ -99,8 +99,8 @@ export const getCampaignStatus = ( status?: string ) => {
 };
 
 const calculateDurationDays = ( start: Date, end: Date ) => {
-	const diffTime = Math.abs( end.getTime() - start.getTime() );
-	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+	const diffTime = end.getTime() - start.getTime();
+	return diffTime < 0 ? 0 : Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
 };
 
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
@@ -136,7 +136,7 @@ export const getCampaignDurationFormatted = (
 			return `${ dateStartFormatted } - ${ todayFormatted }`;
 		}
 
-		if ( status === 'scheduled' ) {
+		if ( status === 'scheduled' || status === 'created' ) {
 			return '-';
 		}
 	}
@@ -165,9 +165,15 @@ export const getCampaignBudgetData = (
 	budget_cents: number,
 	start_date: string,
 	end_date: string,
-	spent_budget_cents: number
+	spent_budget_cents: number,
+	is_evergreen = 0
 ) => {
-	const campaignDays = getCampaignDurationDays( start_date, end_date );
+	let campaignDays;
+	if ( is_evergreen ) {
+		campaignDays = 7;
+	} else {
+		campaignDays = getCampaignDurationDays( start_date, end_date );
+	}
 
 	const spentBudgetCents =
 		spent_budget_cents > budget_cents * campaignDays
@@ -177,6 +183,7 @@ export const getCampaignBudgetData = (
 	const totalBudget = ( budget_cents * campaignDays ) / 100;
 	const totalBudgetUsed = spentBudgetCents / 100;
 	const totalBudgetLeft = totalBudget - totalBudgetUsed;
+
 	return {
 		totalBudget,
 		totalBudgetUsed,

@@ -15,3 +15,5 @@ export interface AssignLicenseProps {
 	suggestedProduct?: string;
 	quantity?: number;
 }
+
+export type HostingType = 'pressable-hosting' | 'wpcom-hosting';

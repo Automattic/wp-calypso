@@ -58,6 +58,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -245,7 +246,12 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		this.props.flowName === 'website-design-services' && addHotJarScript();
+
+		if (
+			[ 'website-design-services', 'site-content-collection' ].includes( this.props.flowName )
+		) {
+			addHotJarScript();
+		}
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
@@ -329,7 +335,7 @@ class Signup extends Component {
 	};
 
 	getRecordProps() {
-		const { signupDependencies, hostingFlow, queryObject } = this.props;
+		const { signupDependencies, hostingFlow, queryObject, wccomFrom, oauth2Client } = this.props;
 		const mainFlow = queryObject?.main_flow;
 
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
@@ -346,6 +352,8 @@ class Signup extends Component {
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 			is_in_hosting_flow: hostingFlow,
+			wccom_from: wccomFrom,
+			oauth2_client_id: oauth2Client?.id,
 			...( mainFlow ? { flow: mainFlow } : {} ),
 		};
 	}
@@ -965,6 +973,7 @@ export default connect(
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			wccomFrom: getWccomFrom( state ),
 			hostingFlow,
 		};
 	},

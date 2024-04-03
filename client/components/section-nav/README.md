@@ -118,7 +118,7 @@ Text displayed above tabs group when:
 
 ## Nav Segmented
 
-The segmented sub component utilizes [`SegmentedControl`](/client/components/segmented-control) to display `NavItems` inline.
+The segmented sub component utilizes [`SegmentedControl`](/packages/components/segmented-control) to display `NavItems` inline.
 
 ![Nav Segmented Example](https://cldup.com/tPEfoQ78pR.png)
 

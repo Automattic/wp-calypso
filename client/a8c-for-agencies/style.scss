@@ -21,14 +21,8 @@
 
 	--color-surface-backdrop: #021a23;
 
-	--color-sidebar-background: #021a23;
-	--color-sidebar-menu-hover-background: #02395c;
-	--color-sidebar-menu-hover-text: #fff;
-	--color-sidebar-menu-selected-background: #02395c;
-	--color-sidebar-menu-selected-text: #fff;
-	--color-sidebar-text: #fff;
+	--color-text-gray: "#333";
 	--color-sidebar-text-alternative: #bbe0fa;
-	--color-sidebar-gridicon-fill: #bbe0fa;
 
 	--color-scary-0: var(--studio-red-0);
 	--color-scary-5: var(--studio-red-5);
@@ -45,6 +39,10 @@
 }
 
 .theme-a8c-for-agencies {
+	.button {
+		border-radius: 4px;
+	}
+
 	.button.is-primary {
 		background-color: var(--studio-automattic-40);
 		border-color: var(--studio-automattic-40);
@@ -148,7 +146,7 @@
 }
 
 .theme-a8c-for-agencies .current-section {
-	margin: -32px 0 0;
+	margin: 0;
 }
 
 // Universal Text Styles

@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
-import { category, chevronLeft, formatListBulletsRTL, starEmpty } from '@wordpress/icons';
+import { category, chevronLeft, starEmpty, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import Sidebar from '../sidebar';
 import {
 	A4A_OVERVIEW_LINK,
@@ -18,11 +19,32 @@ type Props = {
 export default function ( { path }: Props ) {
 	const translate = useTranslate();
 
+	const noActiveSite = useNoActiveSite();
+
 	const menuItems = useMemo( () => {
+		if ( noActiveSite ) {
+			// We hide the rest of the options when we do not have sites yet.
+			return [
+				createItem(
+					{
+						id: 'sites-all-menu-item',
+						icon: category,
+						path: A4A_SITES_LINK,
+						link: A4A_SITES_LINK,
+						title: translate( 'All' ),
+						trackEventProps: {
+							menu_item: 'Automattic for Agencies / Sites / All',
+						},
+					},
+					path
+				),
+			];
+		}
+
 		return [
 			createItem(
 				{
-					icon: formatListBulletsRTL,
+					icon: warning,
 					path: A4A_SITES_LINK,
 					link: A4A_SITES_LINK_NEEDS_ATTENTION,
 					title: translate( 'Needs Attention' ),
@@ -58,7 +80,7 @@ export default function ( { path }: Props ) {
 				path
 			),
 		].map( ( item ) => createItem( item, path ) );
-	}, [ path, translate ] );
+	}, [ noActiveSite, path, translate ] );
 
 	return (
 		<Sidebar

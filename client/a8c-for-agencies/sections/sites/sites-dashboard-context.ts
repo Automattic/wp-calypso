@@ -1,12 +1,10 @@
 import { createContext } from 'react';
+import { initialSitesViewState } from './constants';
 import type { SitesDashboardContextInterface } from './types';
 
 const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedCategory: undefined,
 	setSelectedCategory: () => {},
-
-	selectedSiteUrl: undefined,
-	setSelectedSiteUrl: () => {},
 
 	selectedSiteFeature: undefined,
 	setSelectedSiteFeature: () => {},
@@ -14,10 +12,17 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	hideListing: undefined,
 	setHideListing: () => {},
 
+	showOnlyFavorites: undefined,
+	setShowOnlyFavorites: () => {},
+
+	sitesViewState: initialSitesViewState,
+	setSitesViewState: () => {
+		return undefined;
+	},
+
+	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
-	search: '',
-	filter: { issueTypes: [], showOnlyFavorites: false },
 	isBulkManagementActive: false,
 	showSitesDashboardV2: false,
 	setIsBulkManagementActive: () => {
