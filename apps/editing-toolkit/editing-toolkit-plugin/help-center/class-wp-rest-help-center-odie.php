@@ -28,33 +28,70 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 	public function register_rest_route() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/question',
+			$this->rest_base . '/chat/{bot_name_slug}/{chat_id}',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_chat_messages' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/chat/{bot_name_slug}/{chat_id}',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
-				'callback'            => array( $this, 'support_chat_response' ),
+				'callback'            => array( $this, 'send_chat_message' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 			)
 		);
 	}
 
 	/**
-	 * Should return a response to the question.
+	 * Send a message to the support chat.
 	 *
 	 * @param \WP_REST_Request $request The request sent to the API.
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function support_chat_response( \WP_REST_Request $request ) {
+	public function send_chat_message( \WP_REST_Request $request ) {
+		$bot_name_slug = $request->get_param( 'bot_name_slug' );
+		$chat_id       = $request->get_param( 'chat_id' );
+
 		// Forward the request body to the support chat endpoint.
 		$body = Client::wpcom_json_api_request_as_user(
-			'/odie/support/chat/respond',
+			'/odie/chat/' . $bot_name_slug . '/' . $chat_id,
 			2,
 			array( 'method' => 'POST' ),
 			array(
-				'question' => $request['question'],
-				'context'  => $request['context'],
-				'chat_id'  => $request['chat_id'],
+				'message' => $request['message'],
+				'context' => $request['context'],
+				'version' => $request['version'],
 			)
+		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Get the chat messages.
+	 *
+	 * @param \WP_REST_Request $request The request sent to the API.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_chat_messages( \WP_REST_Request $request ) {
+		$bot_name_slug = $request->get_param( 'bot_name_slug' );
+		$chat_id       = $request->get_param( 'chat_id' );
+
+		$body = Client::wpcom_json_api_request_as_user(
+			'/odie/chat/' . $bot_name_slug . '/' . $chat_id
 		);
 
 		if ( is_wp_error( $body ) ) {
