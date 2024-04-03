@@ -16,6 +16,7 @@ type PatternsPageViewTrackerProps = {
 	view?: PatternView;
 	referrer?: string;
 	error?: string;
+	numPatterns: number;
 };
 
 export function PatternsPageViewTracker( {
@@ -25,6 +26,7 @@ export function PatternsPageViewTracker( {
 	view,
 	referrer,
 	error,
+	numPatterns,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -49,7 +51,7 @@ export function PatternsPageViewTracker( {
 	}, [ category, isDevAccount, isLoggedIn, patternTypeFilter ] );
 
 	useEffect( () => {
-		if ( isDevAccount !== undefined ) {
+		if ( isDevAccount !== undefined && numPatterns !== undefined ) {
 			recordTracksEvent( 'calypso_pattern_library_view', {
 				category,
 				is_logged_in: isLoggedIn,
@@ -59,6 +61,7 @@ export function PatternsPageViewTracker( {
 				view,
 				referrer,
 				error,
+				num_patterns: debouncedSearchTerm ? numPatterns : undefined,
 			} );
 		}
 
