@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -27,6 +27,7 @@ export function PatternsPageViewTracker( {
 	error,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	// Default to `undefined` while user settings are loading
 	const isDevAccount = useSelector( ( state: AppState ) => {
 		if ( Object.keys( state.userSettings?.settings ?? {} ).length > 0 ) {
@@ -35,19 +36,6 @@ export function PatternsPageViewTracker( {
 
 		return undefined;
 	} );
-	const [ debouncedSearchTerm, setDebouncedSearchTerm ] = useState( searchTerm );
-
-	// We debounce the search term because search happens instantaneously, without the user
-	// submitting the search form
-	useEffect( () => {
-		const timeoutId = window.setTimeout( () => {
-			setDebouncedSearchTerm( searchTerm );
-		}, 1500 );
-
-		return () => {
-			window.clearTimeout( timeoutId );
-		};
-	}, [ searchTerm ] );
 
 	useEffect( () => {
 		if ( category && isDevAccount !== undefined ) {
@@ -66,7 +54,7 @@ export function PatternsPageViewTracker( {
 				category,
 				is_logged_in: isLoggedIn,
 				user_is_dev_account: isDevAccount ? '1' : '0',
-				search_term: debouncedSearchTerm,
+				search_term: searchTerm,
 				type: getTracksPatternType( patternTypeFilter ),
 				view,
 				referrer,
@@ -77,7 +65,7 @@ export function PatternsPageViewTracker( {
 		// We want to avoid resubmitting the event whenever
 		// `category` changes, which is why we deliberately don't include it in the dependency array
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isDevAccount, isLoggedIn, debouncedSearchTerm, patternTypeFilter, view ] );
+	}, [ isDevAccount, isLoggedIn, searchTerm, patternTypeFilter, view ] );
 
 	let path: string = '';
 
@@ -87,7 +75,7 @@ export function PatternsPageViewTracker( {
 		path = `/patterns/${ category }`;
 	}
 
-	if ( debouncedSearchTerm ) {
+	if ( searchTerm ) {
 		path += '/:search';
 	}
 
@@ -96,7 +84,7 @@ export function PatternsPageViewTracker( {
 			<QueryUserSettings />
 
 			<PageViewTracker
-				key={ path + debouncedSearchTerm }
+				key={ path + searchTerm }
 				path={ path }
 				properties={ {
 					is_logged_in: isLoggedIn,
