@@ -8,7 +8,6 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import wp from 'calypso/lib/wp';
 import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
-import { requestUserProfileLinks } from 'calypso/state/profile-links/actions';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
@@ -92,7 +91,6 @@ TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function () {
 		reduxDispatch( accountRecoverySettingsFetch() );
 		reduxDispatch( fetchUserSettings() );
 		reduxDispatch( requestConnectedApplications() );
-		reduxDispatch( requestUserProfileLinks() );
 	}
 	this.data.two_step_reauthorization_required = false;
 	this.invalidCode = false;
