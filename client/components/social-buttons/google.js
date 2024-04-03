@@ -175,7 +175,13 @@ class GoogleSocialButton extends Component {
 			const nonce = response.nonce;
 			this.setState( { nonce } );
 
-			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+			const currentPath = window.location.pathname;
+
+			if (
+				this.props.authCodeFromRedirect &&
+				this.props.serviceFromRedirect !== 'github' &&
+				currentPath !== '/me/security/social-login'
+			) {
 				this.handleAuthorizationCode( {
 					auth_code: this.props.authCodeFromRedirect,
 					redirect_uri: this.props.redirectUri,
