@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -59,7 +59,7 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const [ showLoader, setShowLoader ] = useState( isLoading );
+
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
 	const optionLabels = {
@@ -97,12 +97,8 @@ const StatsModuleUTM = ( {
 
 	// Show error and loading based on the query
 	const hasError = false;
-
 	const displaySummaryLink = data && ! hideSummaryLink;
-
-	useEffect( () => {
-		setShowLoader( isLoading, isFetchingUTM );
-	}, [ isLoading, isFetchingUTM ] );
+	const showLoader = isLoading || isFetchingUTM;
 
 	const getHref = () => {
 		// Some modules do not have view all abilities
