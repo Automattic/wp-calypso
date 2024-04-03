@@ -137,6 +137,11 @@
 			box-sizing: border-box;
 			border: 1px solid var(--studio-gray-10);
 			margin-top: -2px;
+
+			.is-sticky-plan-type-selector & {
+				border-bottom-right-radius: 0;
+				border-bottom-left-radius: 0;
+			}
 		}
 		.components-custom-select-control__item {
 			grid-template-columns: auto min-content;
