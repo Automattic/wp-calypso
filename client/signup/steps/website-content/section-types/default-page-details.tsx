@@ -1,5 +1,5 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { TextAreaField, CheckboxField } from 'calypso/signup/accordion-form/form-components';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
@@ -46,11 +46,12 @@ export function DefaultPageDetails( {
 				hasFillerContentCheckbox={ isEnglishLocale }
 				characterLimit={ CHARACTER_LIMIT }
 				characterLimitError={ translate(
-					"Please shorten your text to under %(characterLimit)d characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
+					"Please shorten your text to under %(characterLimit)s characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
 					{
 						args: {
-							characterLimit: CHARACTER_LIMIT,
+							characterLimit: numberFormat( CHARACTER_LIMIT, {} ),
 						},
+						comment: '%(characterLimit)s is a formatted number, eg: 5,000.',
 					}
 				) }
 			/>

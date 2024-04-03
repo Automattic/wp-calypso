@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { TextAreaField, ContactInformation } from 'calypso/signup/accordion-form/form-components';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import { useSelector } from 'calypso/state';
@@ -33,11 +33,12 @@ export function ContactPageDetails( {
 				label={ description }
 				characterLimit={ CHARACTER_LIMIT }
 				characterLimitError={ translate(
-					"Please shorten your text to under %(characterLimit)d characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
+					"Please shorten your text to under %(characterLimit)s characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
 					{
 						args: {
-							characterLimit: CHARACTER_LIMIT,
+							characterLimit: numberFormat( CHARACTER_LIMIT, {} ),
 						},
+						comment: '%(characterLimit)s is a formatted number, eg: 5,000.',
 					}
 				) }
 			/>
