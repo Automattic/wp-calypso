@@ -43,13 +43,3 @@ export const commandNavigation =
 		close();
 		navigate( url, openInNewTab );
 	};
-
-export const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
-	const element = document.querySelector< HTMLElement >( selector );
-	if ( element ) {
-		element.click();
-	} else if ( attempt <= 5 ) {
-		// Try again in 250ms, but no more than 5 times.
-		setTimeout( () => waitForElementAndClick( selector, attempt + 1 ), 250 );
-	}
-};

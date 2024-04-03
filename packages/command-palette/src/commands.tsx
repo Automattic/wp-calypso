@@ -55,8 +55,7 @@ export interface Command {
 	label: string;
 	subLabel?: string;
 	searchLabel?: string;
-	url?: string;
-	callback?: ( params: CommandCallBackParams ) => void;
+	callback: ( params: CommandCallBackParams ) => void;
 	context?: ( string | { path: string; match: string } )[];
 	icon?: JSX.Element;
 	image?: JSX.Element;
@@ -93,7 +92,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	viewMySites: {
 		name: 'viewMySites',
 		label: __( 'View my sites', __i18n_text_domain__ ),
-		url: '/sites',
+		callback: commandNavigation( '/sites' ),
 		searchLabel: [
 			_x( 'view my sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 			_x( 'manage sites', 'Keyword for the View my sites command', __i18n_text_domain__ ),
@@ -104,6 +103,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	getHelp: {
 		name: 'getHelp',
 		label: __( 'Get help', __i18n_text_domain__ ),
+		callback: commandNavigation( '/help' ),
 		searchLabel: [
 			_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
@@ -114,7 +114,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	clearCache: {
 		name: 'clearCache',
 		label: __( 'Clear cache', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#cache',
+		callback: commandNavigation( '/hosting-config/:site#cache' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select a site to clear cache', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -123,7 +123,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	enableEdgeCache: {
 		name: 'enableEdgeCache',
 		label: __( 'Enable edge cache', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#edge',
+		callback: commandNavigation( '/hosting-config/:site#edge' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select a site to enable edge cache', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabledAndPublic,
@@ -132,7 +132,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	disableEdgeCache: {
 		name: 'disableEdgeCache',
 		label: __( 'Disable edge cache', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#edge',
+		callback: commandNavigation( '/hosting-config/:site#edge' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select a site to disable edge cache', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabledAndPublic,
@@ -141,7 +141,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	manageCacheSettings: {
 		name: 'manageCacheSettings',
 		label: __( 'Manage cache settings', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#cache',
+		callback: commandNavigation( '/hosting-config/:site#cache' ),
 		searchLabel: [
 			_x(
 				'manage cache settings',
@@ -185,7 +185,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openSiteDashboard: {
 		name: 'openSiteDashboard',
 		label: __( 'Open site dashboard', __i18n_text_domain__ ),
-		url: '/home/:site',
+		callback: commandNavigation( '/home/:site' ),
 		searchLabel: [
 			_x(
 				'open site dashboard',
@@ -203,7 +203,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openHostingConfiguration: {
 		name: 'openHostingConfiguration',
 		label: __( 'Open hosting configuration', __i18n_text_domain__ ),
-		url: '/hosting-config/:site',
+		callback: commandNavigation( '/hosting-config/:site' ),
 		searchLabel: [
 			_x(
 				'open hosting configuration',
@@ -253,7 +253,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openPHPmyAdmin: {
 		name: 'openPHPmyAdmin',
 		label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#database-access',
+		callback: commandNavigation( '/hosting-config/:site#database-access' ),
 		searchLabel: [
 			_x(
 				'open database in phpmyadmin',
@@ -277,7 +277,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openProfile: {
 		name: 'openProfile',
 		label: __( 'Open my profile', __i18n_text_domain__ ),
-		url: '/me',
+		callback: commandNavigation( '/me' ),
 		searchLabel: [
 			_x( 'open my profile', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
 			_x( 'account', 'Keyword for the Open my profile command', __i18n_text_domain__ ),
@@ -290,7 +290,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	viewDeveloperFeatures: {
 		name: 'viewDeveloperFeatures',
 		label: __( 'View developer features', __i18n_text_domain__ ),
-		url: '/me/developer',
+		callback: commandNavigation( '/me/developer' ),
 		searchLabel: [
 			_x(
 				'view developer features',
@@ -304,7 +304,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openReader: {
 		name: 'openReader',
 		label: __( 'Open reader', __i18n_text_domain__ ),
-		url: '/read',
+		callback: commandNavigation( '/read' ),
 		icon: (
 			<svg height="24" viewBox="4 4 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 				<clipPath id="a">
@@ -319,7 +319,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openJetpackSettings: {
 		name: 'openJetpackSettings',
 		label: __( 'Open Jetpack settings', __i18n_text_domain__ ),
-		url: '/wp-admin/admin.php?page=jetpack#/dashboard',
+		callback: commandNavigation( '/wp-admin/admin.php?page=jetpack#/dashboard' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open Jetpack settings', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -331,7 +331,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	addJetpack: {
 		name: 'addJetpack',
 		label: __( 'Add Jetpack to a self-hosted site', __i18n_text_domain__ ),
-		url: '/jetpack/connect?cta_from=command-palette',
+		callback: commandNavigation( '/jetpack/connect?cta_from=command-palette' ),
 		searchLabel: [
 			_x(
 				'Add Jetpack to a self-hosted site',
@@ -349,7 +349,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	manageJetpackModules: {
 		name: 'manageJetpackModules',
 		label: __( 'Manage Jetpack modules', __i18n_text_domain__ ),
-		url: '/wp-admin/admin.php?page=jetpack_modules',
+		callback: commandNavigation( '/wp-admin/admin.php?page=jetpack_modules' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage Jetpack modules', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -361,7 +361,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	importSite: {
 		name: 'importSite',
 		label: __( 'Import site to WordPress.com', __i18n_text_domain__ ),
-		url: '/start/import?ref=command-palette',
+		callback: commandNavigation( '/start/import?ref=command-palette' ),
 		searchLabel: [
 			_x(
 				'Import site to WordPress.com',
@@ -379,7 +379,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	addNewSite: {
 		name: 'addNewSite',
 		label: __( 'Add new site', __i18n_text_domain__ ),
-		url: '/start?source=command-palette',
+		callback: commandNavigation( '/start?source=command-palette' ),
 		searchLabel: [
 			_x( 'add new site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
 			_x( 'create site', 'Keyword for the Add new site command', __i18n_text_domain__ ),
@@ -390,7 +390,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openAccountSettings: {
 		name: 'openAccountSettings',
 		label: __( 'Open account settings', __i18n_text_domain__ ),
-		url: '/me/account',
+		callback: commandNavigation( '/me/account' ),
 		searchLabel: [
 			_x(
 				'open account settings',
@@ -406,7 +406,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	accessPurchases: {
 		name: 'accessPurchases',
 		label: __( 'View my purchases', __i18n_text_domain__ ),
-		url: '/me/purchases',
+		callback: commandNavigation( '/me/purchases' ),
 		searchLabel: [
 			_x( 'view my purchases', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
 			_x( 'manage purchases', 'Keyword for the View my purchases command', __i18n_text_domain__ ),
@@ -422,14 +422,14 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	registerDomain: {
 		name: 'registerDomain',
 		label: __( 'Register new domain', __i18n_text_domain__ ),
-		url: '/start/domain/domain-only?ref=command-palette',
+		callback: commandNavigation( '/start/domain/domain-only?ref=command-palette' ),
 		context: [ '/sites' ],
 		icon: domainsIcon,
 	},
 	manageDomains: {
 		name: 'manageDomains',
 		label: __( 'Manage domains', __i18n_text_domain__ ),
-		url: '/domains/manage',
+		callback: commandNavigation( '/domains/manage' ),
 		searchLabel: [
 			_x( 'manage domains', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
 			_x( 'dns', 'Keyword for the Manage domains command', __i18n_text_domain__ ),
@@ -447,7 +447,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	manageDns: {
 		name: 'manageDns',
 		label: __( 'Manage DNS records', __i18n_text_domain__ ),
-		url: '/domains/manage/:site/dns/:site',
+		callback: commandNavigation( '/domains/manage/:site/dns/:site' ),
 		searchLabel: [
 			_x(
 				'manage dns records',
@@ -471,7 +471,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	copySshConnectionString: {
 		name: 'copySshConnectionString',
 		label: __( 'Copy SSH connection string', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#sftp-credentials',
+		callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to copy SSH connection string', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -480,7 +480,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openSshCredentials: {
 		name: 'openSshCredentials',
 		label: __( 'Open SFTP/SSH credentials', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#sftp-credentials',
+		callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
 		...siteFilters.hostingEnabled,
 		icon: keyIcon,
 		siteSelector: true,
@@ -489,7 +489,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	resetSshSftpPassword: {
 		name: 'resetSshSftpPassword',
 		label: __( 'Reset SFTP/SSH password', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#sftp-credentials',
+		callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to reset SFTP/SSH password', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -555,7 +555,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	viewSiteMonitoringMetrics: {
 		name: 'viewSiteMonitoringMetrics',
 		label: __( 'View site monitoring metrics', __i18n_text_domain__ ),
-		url: '/site-monitoring/:site',
+		callback: commandNavigation( '/site-monitoring/:site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to view monitoring metrics', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -564,7 +564,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	openGitHubDeployments: {
 		name: 'openGitHubDeployments',
 		label: __( 'Open GitHub Deployments' ),
-		url: '/github-deployments/:site',
+		callback: commandNavigation( '/github-deployments/:site' ),
 		searchLabel: [
 			_x( 'open github deployments', 'Keyword for the Open GitHub Deployments command' ),
 			_x( 'github', 'Keyword for the Open GitHub Deployments command' ),
@@ -608,7 +608,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'php errors', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
 			_x( 'php warnings', 'Keyword for the Open PHP logs command', __i18n_text_domain__ ),
 		].join( ' ' ),
-		url: '/site-monitoring/:site/php',
+		callback: commandNavigation( '/site-monitoring/:site/php' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open PHP logs', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -628,7 +628,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'nginx logs', 'Keyword for the Open web server logs command', __i18n_text_domain__ ),
 			_x( 'request logs', 'Keyword for the Open web server logs command', __i18n_text_domain__ ),
 		].join( ' ' ),
-		url: '/site-monitoring/:site/web',
+		callback: commandNavigation( '/site-monitoring/:site/web' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to open web server logs', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -664,7 +664,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 				__i18n_text_domain__
 			),
 		].join( ' ' ),
-		url: '/hosting-config/:site#staging-site',
+		callback: commandNavigation( '/hosting-config/:site#staging-site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage staging sites', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -673,7 +673,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	changePHPVersion: {
 		name: 'changePHPVersion',
 		label: __( 'Change PHP version', __i18n_text_domain__ ),
-		url: '/hosting-config/:site#web-server-settings',
+		callback: commandNavigation( '/hosting-config/:site#web-server-settings' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to change PHP version', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -694,7 +694,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 				__i18n_text_domain__
 			),
 		].join( ' ' ),
-		url: '/hosting-config/:site#admin-interface-style',
+		callback: commandNavigation( '/hosting-config/:site#admin-interface-style' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to change admin interface style', __i18n_text_domain__ ),
 		...siteFilters.hostingEnabled,
@@ -906,7 +906,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'change plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
 			_x( 'add plan', 'Keyword for the Change site plan command', __i18n_text_domain__ ),
 		].join( ' ' ),
-		url: '/plans/:site',
+		callback: commandNavigation( '/plans/:site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to change plan', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -922,7 +922,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'manage plan', 'Keyword for the Manage site plan command', __i18n_text_domain__ ),
 			_x( 'plan features', 'Keyword for the Manage site plan command', __i18n_text_domain__ ),
 		].join( ' ' ),
-		url: '/plans/my-plan/:site',
+		callback: commandNavigation( '/plans/my-plan/:site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage your plan', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1021,7 +1021,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		name: 'import',
 		label: __( 'Import content to the site', __i18n_text_domain__ ),
 		context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
-		url: '/import/:site',
+		callback: commandNavigation( '/import/:site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to import content', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1122,7 +1122,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		name: 'manageSettingsPodcast',
 		label: __( 'Manage podcast settings', __i18n_text_domain__ ),
 		context: [ '/settings', '/wp-admin/options-' ],
-		url: '/settings/podcasting/:site',
+		callback: commandNavigation( '/settings/podcasting/:site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage podcast settings', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1131,6 +1131,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	sendFeedback: {
 		name: 'sendFeedback',
 		label: __( 'Send feedback', __i18n_text_domain__ ),
+		callback: commandNavigation( '/help' ),
 		searchLabel: _x(
 			'suggest command',
 			'Keyword for the Send feedback command',
