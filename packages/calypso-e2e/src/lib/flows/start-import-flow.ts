@@ -90,6 +90,13 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the upgrade plan page (site-migration).
+	 */
+	async validateUpgradePlanPageSiteMigration(): Promise< void > {
+		await this.page.locator( selectors.startBuildingHeader( 'Upgrade your plan' ) ).waitFor();
+	}
+
+	/**
 	 * Validates that we've landed on the upgrade plan page.
 	 */
 	async validateUpgradePlanPage(): Promise< void > {

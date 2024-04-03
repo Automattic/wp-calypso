@@ -48,7 +48,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
-			await startImportFlow.validateUpgradePlanPage();
+			await startImportFlow.validateUpgradePlanPageSiteMigration();
 		} );
 
 		it( 'Should render "Install Jetpack" screen', async () => {
@@ -70,7 +70,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
-			await startImportFlow.validateUpgradePlanPage();
+			await startImportFlow.validateUpgradePlanPageSiteMigration();
 		} );
 
 		it( 'Should redirect to "Checkout" page', async () => {
@@ -113,7 +113,7 @@ describe( DataHelper.createSuiteTitle( 'Stepper: setup/import-focused' ), () => 
 		} );
 
 		it( 'Should render "Upgrade Plan" screen', async () => {
-			await startImportFlow.validateUpgradePlanPage();
+			await startImportFlow.validateUpgradePlanPageSiteMigration();
 		} );
 
 		it( 'Should redirect to "Checkout" page', async () => {
