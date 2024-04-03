@@ -26,6 +26,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -207,7 +208,15 @@ const siteMigration: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
+				case STEPS.VERIFY_EMAIL.slug: {
+					return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug );
+				}
+
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.verifyEmail ) {
+						return navigate( STEPS.VERIFY_EMAIL.slug );
+					}
+
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = addQueryArgs(
 							{
@@ -230,10 +239,6 @@ const siteMigration: Flow = {
 							siteId,
 							siteSlug,
 						} );
-					}
-					if ( providedDependencies?.verifyEmail ) {
-						// not yet implemented
-						return;
 					}
 				}
 
