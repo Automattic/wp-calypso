@@ -30,6 +30,35 @@ import './style.scss';
 export const DESKTOP_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
 
+// This style is injected into pattern preview iframes to prevent users from navigating away from
+// the pattern preview page and from submitting forms.
+const noClickStyle = {
+	css: 'a, button, input { pointer-events: none; }',
+	isGlobalStyles: true,
+};
+
+// Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
+// hacky script is injected into pattern preview iframes to force rerender those elements.
+function forceRedraw() {
+	const elements = document.querySelectorAll< HTMLElement >( '[style*="writing-mode"]' );
+
+	elements.forEach( ( element ) => {
+		element.style.display = 'none';
+	} );
+
+	setTimeout( () => {
+		elements.forEach( ( element ) => {
+			element.style.removeProperty( 'display' );
+		} );
+	}, 200 );
+}
+
+const redrawScript = `
+<script defer>
+(${ forceRedraw.toString() })();
+</script>
+`;
+
 // Abstraction for resetting `isPatternCopied` and `isPermalinkCopied` after a given delay
 function useTimeoutToResetBoolean(
 	value: boolean,
@@ -216,6 +245,8 @@ function PatternPreviewFragment( {
 				<PatternRenderer
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
+					scripts={ redrawScript }
+					styles={ [ noClickStyle ] }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>
