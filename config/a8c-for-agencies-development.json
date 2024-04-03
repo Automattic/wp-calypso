@@ -9,6 +9,20 @@
 	"port": 3000,
 	"logout_url": "https://automattic.com/for/agencies",
 	"site_name": "Automattic For Agencies",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:image",
+			"content": "https://agencies.automattic.com/calypso/images/a8c-for-agencies/automattic-logo.png"
+		}
+	],
 	"oauth_client_id": 95928,
 	"features": {
 		"a8c-for-agencies": true,
