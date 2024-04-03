@@ -53,7 +53,6 @@ export default function PressableOverview() {
 			wide
 			withBorder
 			compact
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
 				<LayoutHeader>
@@ -74,6 +73,7 @@ export default function PressableOverview() {
 					/>
 
 					<Actions>
+						<MobileSidebarNavigation />
 						<ShoppingCart
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }

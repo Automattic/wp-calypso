@@ -8,7 +8,8 @@ import { useContext, useEffect, useState } from 'react';
 import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import type {
@@ -30,7 +31,8 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-
+	const agency = useSelector( getActiveAgency );
+	const agencyId = agency ? agency.id : undefined;
 	const { sitesViewState, showOnlyFavorites, currentPage, sort } =
 		useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
@@ -47,12 +49,21 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 	}, [ sitesViewState.filters, showOnlyFavorites ] );
 	const search = sitesViewState.search;
 
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
+	const queryKey = [
+		'jetpack-agency-dashboard-sites',
+		search,
+		currentPage,
+		filter,
+		sort,
+		...( agencyId ? [ agencyId ] : [] ),
+	];
+
 	const siblingQueryKey = [
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
 		{ ...filter, ...sort, showOnlyFavorites: ! showOnlyFavorites },
+		...( agencyId ? [ agencyId ] : [] ),
 	];
 	const successNoticeId = 'success-notice';
 
@@ -154,7 +165,11 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
 	const handleFavoriteChange = () => {
-		mutate( { siteId, isFavorite } );
+		mutate( {
+			siteId,
+			isFavorite,
+			agencyId: agencyId || 0, // Provide a default value for agencyId
+		} );
 		dispatch(
 			recordTracksEvent(
 				isFavorite

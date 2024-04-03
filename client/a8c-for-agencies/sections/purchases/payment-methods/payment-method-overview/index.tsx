@@ -106,12 +106,7 @@ export default function PaymentMethodOverview() {
 	] );
 
 	return (
-		<Layout
-			className="payment-method-overview"
-			title={ translate( 'Payment Methods' ) }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="payment-method-overview" title={ translate( 'Payment Methods' ) } wide>
 			<PageViewTracker title="Purchases > Payment Methods" path="/purchases/payment-methods" />
 
 			<LayoutTop>
@@ -120,7 +115,9 @@ export default function PaymentMethodOverview() {
 					<Subtitle>
 						{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
 					</Subtitle>
-					<Actions>
+					<Actions className="a4a-payment-methods__header-actions">
+						<MobileSidebarNavigation />
+
 						{ hasStoredCards && (
 							<Button href={ A4A_PAYMENT_METHODS_ADD_LINK } onClick={ onAddNewCardClick } primary>
 								{ translate( 'Add new card' ) }
@@ -130,7 +127,12 @@ export default function PaymentMethodOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ content }</LayoutBody>
+			<LayoutBody>
+				<p className="a4a-payment-methods__mobile-description">
+					{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
+				</p>
+				{ content }
+			</LayoutBody>
 		</Layout>
 	);
 }

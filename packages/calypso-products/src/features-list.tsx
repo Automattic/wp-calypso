@@ -1556,20 +1556,10 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const hasTranslation =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation(
-					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
-				);
-
-			return hasTranslation
-				? i18n.translate(
-						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
-				  )
-				: '';
-		},
+		getDescription: () =>
+			i18n.translate(
+				'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+			),
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
@@ -2045,7 +2035,16 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' ),
+		getTitle: () => {
+			const localeSlug = i18n.getLocaleSlug();
+			const shouldShowNewString =
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
+				i18n.hasTranslation( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' );
+
+			return shouldShowNewString
+				? i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' )
+				: i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' );
+		},
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
@@ -2295,16 +2294,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Paid content gating' );
-
-			return shouldShowNewString
-				? i18n.translate( 'Paid content gating' )
-				: i18n.translate( 'Gated content' );
-		},
+		getTitle: () => i18n.translate( 'Paid content gating' ),
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
@@ -2715,13 +2705,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SENSEI_STORAGE ]: {
 		getSlug: () => FEATURE_SENSEI_STORAGE,
-		getTitle: () => {
-			// If we have the new CTA translated or the locale is EN, return the new string, otherwise use the simpler already translated one.
-			return i18n.hasTranslation( '50GB file and video storage' ) ||
-				[ 'en', 'en-gb' ].includes( i18n.getLocaleSlug() || '' )
-				? i18n.translate( '50 GB file and video storage' )
-				: i18n.translate( '50 GB Storage' );
-		},
+		getTitle: () => i18n.translate( '50 GB file and video storage' ),
 	},
 	[ FEATURE_SENSEI_HOSTING ]: {
 		getSlug: () => FEATURE_SENSEI_HOSTING,
