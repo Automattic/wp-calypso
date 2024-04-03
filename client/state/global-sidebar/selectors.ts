@@ -2,6 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isGlobalSiteViewEnabled } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
 
+// Calypso pages for which we show the Global Site View.
+// Calypso pages not listed here will be shown in nav unification instead.
+// See: pfsHM7-Dn-p2.
+//
+// TODO: for now, we show all Calypso pages in nav unification,
+// as the Global Site View is still in development.
+const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [];
+
 export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, sectionGroup: string ) => {
 	return (
 		sectionGroup === 'me' ||
@@ -25,8 +33,27 @@ export const getShouldShowCollapsedGlobalSidebar = (
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string
+	sectionGroup: string,
+	sectionName: string
 ) => {
-	// Global Site View should be limited to classic interface users only for now.
-	return isGlobalSiteViewEnabled( state, siteId ) && sectionGroup === 'sites' && !! siteId;
+	return (
+		!! siteId &&
+		isGlobalSiteViewEnabled( state, siteId ) &&
+		sectionGroup === 'sites' &&
+		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
+	);
+};
+
+export const getShouldShowUnifiedSiteSidebar = (
+	state: AppState,
+	siteId: number,
+	sectionGroup: string,
+	sectionName: string
+) => {
+	return (
+		!! siteId &&
+		isGlobalSiteViewEnabled( state, siteId ) &&
+		sectionGroup === 'sites' &&
+		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
+	);
 };

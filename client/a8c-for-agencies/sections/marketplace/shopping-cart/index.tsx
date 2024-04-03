@@ -1,8 +1,14 @@
+import page from '@automattic/calypso-router';
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState } from 'react';
+import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
+	A4A_PAYMENT_METHODS_ADD_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import usePaymentMethod from '../../purchases/payment-methods/hooks/use-payment-method';
 import ShoppingCartIcon from './shopping-cart-icon';
 import ShoppingCartMenu from './shopping-cart-menu';
 import type { ShoppingCartItem } from '../types';
@@ -18,8 +24,18 @@ type Props = {
 export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props ) {
 	const [ showShoppingCart, setShowShoppingCart ] = useState( false );
 
+	const { paymentMethodRequired } = usePaymentMethod();
+
 	const toggleShoppingCart = () => {
 		setShowShoppingCart( ( prevState ) => ! prevState );
+	};
+
+	const handleOnCheckout = () => {
+		if ( paymentMethodRequired ) {
+			page( `${ A4A_PAYMENT_METHODS_ADD_LINK }?return=${ A4A_MARKETPLACE_CHECKOUT_LINK }` );
+			return;
+		}
+		onCheckout();
 	};
 
 	return (
@@ -41,7 +57,7 @@ export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props
 				<ShoppingCartMenu
 					onClose={ () => setShowShoppingCart( false ) }
 					items={ items }
-					onCheckout={ onCheckout }
+					onCheckout={ handleOnCheckout }
 					onRemoveItem={ onRemoveItem }
 				/>
 			) }

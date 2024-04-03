@@ -5,14 +5,6 @@
 $table-cell-max-width: 344px;
 $mobile-card-max-width: 440px;
 
-.plans-grid-next__features-grid {
-	display: none;
-
-	&.is-visible {
-		display: block;
-	}
-}
-
 .plan-features-2023-grid__header {
 	display: flex;
 	position: relative;
@@ -721,7 +713,10 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-.plan-comparison-grid {
+.plans-grid-next-comparison-grid {
+	// fixes mobile view cards in features grid not containing content properly
+	min-width: fit-content;
+
 	&.has-highlighted-plan {
 		@include plans-grid-medium-large {
 			padding-top: 43px; // enough to cover `plans-grid__popular-badge` repositioning (top: -43px)
