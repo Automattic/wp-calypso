@@ -33,7 +33,12 @@ export function ContactPageDetails( {
 				label={ description }
 				characterLimit={ CHARACTER_LIMIT }
 				characterLimitError={ translate(
-					'You’ve exceeded the character limit for this section. Please reduce the text to under 5000 characters for optimal presentation. If the text remains over this limit, we will optimize it with AI for you.'
+					"Please shorten your text to under %(characterLimit)d characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
+					{
+						args: {
+							characterLimit: CHARACTER_LIMIT,
+						},
+					}
 				) }
 			/>
 			<ContactInformation
