@@ -29,7 +29,12 @@ const MiniCarouselBlock = ( {
 		debug( 'onClick', { href } );
 
 		recordTracksEvent( clickEvent );
-		page( href );
+		if ( href.startsWith( '/' ) ) {
+			page( href );
+			return;
+		}
+
+		location.href = href;
 	}, [ clickEvent, href ] );
 
 	const onDismiss = useCallback( () => {
