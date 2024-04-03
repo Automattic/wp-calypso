@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getSectionName } from 'calypso/state/ui/selectors';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import SkipNavigation from '../sidebar/skip-navigation';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
 import SidebarNotifications from './menu-items/notifications';
