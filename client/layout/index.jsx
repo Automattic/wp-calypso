@@ -41,7 +41,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -266,9 +266,7 @@ class Layout extends Component {
 	}
 
 	renderMasterbar( loadHelpCenterIcon ) {
-		const globalSidebarDesktop =
-			this.state.isDesktop &&
-			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		if ( this.props.masterbarIsHidden || globalSidebarDesktop ) {
 			return <EmptyMasterbar />;
 		}
@@ -296,9 +294,7 @@ class Layout extends Component {
 	}
 
 	render() {
-		const globalSidebarDesktop =
-			this.state.isDesktop &&
-			( this.props.isGlobalSidebarVisible || this.props.isGlobalSiteSidebarVisible );
+		const globalSidebarDesktop = this.state.isDesktop && this.props.isGlobalSidebarVisible;
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
@@ -315,7 +311,7 @@ class Layout extends Component {
 			woo: this.props.isWooCoreProfilerFlow,
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
-			'is-global-site-sidebar-visible': this.props.isGlobalSiteSidebarVisible,
+			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 		} );
 
 		const optionalBodyProps = () => {
@@ -337,9 +333,7 @@ class Layout extends Component {
 			this.props.userAllowedToHelpCenter;
 
 		const shouldDisableSidebarScrollSynchronizer =
-			this.props.isGlobalSidebarVisible ||
-			this.props.isGlobalSidebarCollapsed ||
-			this.props.isGlobalSiteSidebarVisible;
+			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
 		return (
 			<div className={ sectionClass }>
@@ -466,10 +460,11 @@ export default withCurrentRoute(
 				siteId,
 				sectionGroup
 			);
-			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			const noMasterbarForRoute =
 				isJetpackLogin ||
@@ -541,7 +536,7 @@ export default withCurrentRoute(
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
 				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
+				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ),
 				userCapabilities: state.currentUser.capabilities,
 				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),

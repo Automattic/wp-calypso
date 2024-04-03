@@ -13,7 +13,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import { pillNavigationClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -29,6 +29,35 @@ import './style.scss';
 
 export const DESKTOP_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
+
+// This style is injected into pattern preview iframes to prevent users from navigating away from
+// the pattern preview page and from submitting forms.
+const noClickStyle = {
+	css: 'a, button, input { pointer-events: none; }',
+	isGlobalStyles: true,
+};
+
+// Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
+// hacky script is injected into pattern preview iframes to force rerender those elements.
+function forceRedraw() {
+	const elements = document.querySelectorAll< HTMLElement >( '[style*="writing-mode"]' );
+
+	elements.forEach( ( element ) => {
+		element.style.display = 'none';
+	} );
+
+	setTimeout( () => {
+		elements.forEach( ( element ) => {
+			element.style.removeProperty( 'display' );
+		} );
+	}, 200 );
+}
+
+const redrawScript = `
+<script defer>
+(${ forceRedraw.toString() })();
+</script>
+`;
 
 // Abstraction for resetting `isPatternCopied` and `isPermalinkCopied` after a given delay
 function useTimeoutToResetBoolean(
@@ -166,7 +195,7 @@ function PatternPreviewFragment( {
 				? parseInt( masterbarHeightRaw )
 				: 0;
 
-			const stickyNav = document.querySelector( `.${ pillNavigationClassName }` );
+			const stickyNav = document.querySelector( `.${ patternFiltersClassName }` );
 			const stickyNavCoords = stickyNav?.getBoundingClientRect();
 			const stickyNavHeight = stickyNavCoords && ! isMobile() ? stickyNavCoords.height : 0;
 
@@ -216,6 +245,8 @@ function PatternPreviewFragment( {
 				<PatternRenderer
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
+					scripts={ redrawScript }
+					styles={ [ noClickStyle ] }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>
@@ -270,6 +301,7 @@ function PatternPreviewFragment( {
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
 				onClose={ () => setIsAuthModalOpen( false ) }
+				pattern={ pattern }
 				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>

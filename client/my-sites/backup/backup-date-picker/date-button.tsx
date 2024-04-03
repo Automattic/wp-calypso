@@ -15,6 +15,7 @@ const DateButton: React.FC< Props > = ( {
 	onDateSelected,
 	firstBackupDate,
 	disabledDates,
+	disabled = false,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -40,7 +41,7 @@ const DateButton: React.FC< Props > = ( {
 					return new Date( momentDate.year(), momentDate.month(), momentDate.date() );
 			  } )
 			: [];
-	}, [ disabledDates ] );
+	}, [ disabledDates, moment ] );
 
 	const renderPicker = () => {
 		if ( pickerVisible ) {
@@ -91,7 +92,11 @@ const DateButton: React.FC< Props > = ( {
 
 	return (
 		<div className="backup-date-picker__date-button-container">
-			<Button className="backup-date-picker__date-button-button" onClick={ handlePickerToggle }>
+			<Button
+				className="backup-date-picker__date-button-button"
+				onClick={ handlePickerToggle }
+				disabled={ disabled }
+			>
 				<Gridicon icon="calendar" />
 				{ translate( 'Select Date' ) }
 			</Button>
@@ -105,6 +110,7 @@ type Props = {
 	firstBackupDate: Moment | undefined;
 	onDateSelected: ( m: Moment ) => void;
 	disabledDates: Array< string >;
+	disabled?: boolean;
 };
 
 export default DateButton;

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	purchasesContext,
@@ -13,11 +14,12 @@ export default function () {
 	// FIXME: check access, TOS consent, and partner key selection
 
 	// Purchases
-	page( '/purchases', purchasesContext, makeLayout, clientRender );
+	page( '/purchases', requireAccessContext, purchasesContext, makeLayout, clientRender );
 
 	// Licenses
 	page(
 		'/purchases/licenses/:filter(unassigned|assigned|revoked|standard)?',
+		requireAccessContext,
 		licensesContext,
 		makeLayout,
 		clientRender
@@ -26,12 +28,24 @@ export default function () {
 	page( `/purchases/licenses/*`, '/purchases/licenses' ); // Redirect invalid license list filters back to the main portal page.
 
 	// Billing
-	page( '/purchases/billing', billingContext, makeLayout, clientRender );
+	page( '/purchases/billing', requireAccessContext, billingContext, makeLayout, clientRender );
 
 	// Payment Methods
-	page( '/purchases/payment-methods', paymentMethodsContext, makeLayout, clientRender );
-	page( '/purchases/payment-methods/add', paymentMethodsAddContext, makeLayout, clientRender );
+	page(
+		'/purchases/payment-methods',
+		requireAccessContext,
+		paymentMethodsContext,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/purchases/payment-methods/add',
+		requireAccessContext,
+		paymentMethodsAddContext,
+		makeLayout,
+		clientRender
+	);
 
 	// Invoices
-	page( '/purchases/invoices', invoicesContext, makeLayout, clientRender );
+	page( '/purchases/invoices', requireAccessContext, invoicesContext, makeLayout, clientRender );
 }

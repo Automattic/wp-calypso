@@ -5,6 +5,7 @@
 	"client_slug": "browser",
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
+	"logout_url": "https://automattic.com/for/agencies",
 	"site_name": "Automattic For Agencies",
 	"features": {
 		"a8c-for-agencies": true,
@@ -15,6 +16,7 @@
 	"sections": {
 		"a8c-for-agencies": true,
 		"a8c-for-agencies-auth": true,
+		"a8c-for-agencies-landing": true,
 		"a8c-for-agencies-overview": true,
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,

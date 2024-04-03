@@ -25,7 +25,3 @@ export function isFetchingAgency( state: A4AStore ): boolean {
 export function getAgencyRequestError( state: A4AStore ): APIError | null {
 	return state.a8cForAgencies.agencies.error;
 }
-
-export function hasValidPaymentMethod(): boolean {
-	return true; // FIXME: Replace with actual implementation
-}

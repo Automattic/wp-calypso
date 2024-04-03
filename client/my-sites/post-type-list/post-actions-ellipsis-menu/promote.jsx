@@ -1,16 +1,11 @@
 import { Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	recordDSPEntryPoint,
-	usePromoteWidget,
-	PromoteWidgetStatus,
-} from 'calypso/lib/promote-post';
-import { useRouteModal } from 'calypso/lib/route-modal';
+import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import { getPost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -24,16 +19,18 @@ function PostActionsEllipsisMenuPromote( {
 	password,
 	siteId,
 } ) {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const openPromoteModal = useOpenPromoteWidget( {
+		keyValue: globalId,
+		entrypoint: bumpStatKey,
+	} );
+
 	const isSitePrivate =
 		useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 
 	const isComingSoon =
 		useSelector( ( state ) => siteId && isSiteComingSoon( state, siteId ) ) || false;
-
-	const keyValue = globalId;
-	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const widgetEnabled = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
@@ -78,9 +75,8 @@ function PostActionsEllipsisMenuPromote( {
 	}
 
 	const showDSPWidget = () => {
-		dispatch( recordDSPEntryPoint( bumpStatKey ) );
 		recordTracksEvent( 'calypso_post_type_list_blaze' );
-		openModal();
+		openPromoteModal();
 	};
 
 	return (

@@ -78,6 +78,12 @@ export async function retarget( urlPath ) {
 		window.adRoll.trackPageview();
 	}
 
+	// Reddit
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		debug( 'retarget: [Reddit]' );
+		window.rdt( 'track', 'PageVisit' );
+	}
+
 	// Rate limited retargeting (secondary trackers)
 
 	const nowTimestamp = Date.now() / 1000;

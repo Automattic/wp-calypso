@@ -4,6 +4,22 @@
 .pattern-gallery {
 	display: grid;
 	gap: 48px;
+
+	.pattern-gallery__pagination-button-wrapper {
+		display: flex;
+		justify-content: center;
+	}
+
+	.pattern-gallery__pagination-button {
+		border-color: currentColor;
+		color: #3858e9;
+
+		&:enabled:hover,
+		&:focus {
+			border-color: currentColor;
+			color: #1d35b4;
+		}
+	}
 }
 
 .pattern-gallery--grid {
@@ -15,6 +31,11 @@
 
 	@include break-huge {
 		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.pattern-gallery__pagination-button-wrapper {
+		grid-column: 1 / -1;
+		padding-top: 40px;
 	}
 }
 

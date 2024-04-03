@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { PageViewTracker } from '../';
+import { UnconnectedPageViewTracker as PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
 	beforeEach( () => {

@@ -19,11 +19,11 @@ $stats-avatar-size: 20px;
 $stats-avatar-spacer: 8px;
 
 @mixin additional-columns-wrapper() {
-	display: flex;
 	text-align: right;
 	gap: 0 4px;
 	padding: 0 4px;
 	font-weight: 400;
+	flex: 0 0 75px;
 
 	> div,
 	> span {

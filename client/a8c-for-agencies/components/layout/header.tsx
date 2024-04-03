@@ -17,8 +17,9 @@ export function LayoutHeaderSubtitle( { children }: Props ) {
 	return <h2 className="a4a-layout__header-subtitle">{ children }</h2>;
 }
 
-export function LayoutHeaderActions( { children }: Props ) {
-	return <div className="a4a-layout__header-actions">{ children }</div>;
+export function LayoutHeaderActions( { children, className }: Props ) {
+	const wrapperClass = classNames( className, 'a4a-layout__header-actions' );
+	return <div className={ wrapperClass }>{ children }</div>;
 }
 
 export function LayoutHeaderBreadcrumb( { items }: { items: BreadcrumbItem[] } ) {

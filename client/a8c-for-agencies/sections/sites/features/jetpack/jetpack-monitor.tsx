@@ -12,7 +12,7 @@ type Props = {
 export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: Props ) {
 	return (
 		<>
-			<SitePreviewPaneContent>
+			<SitePreviewPaneContent className="site-preview-pane__monitor-content">
 				<MonitorActivity
 					hasMonitor={ site.monitor_settings.monitor_active }
 					site={ site }
