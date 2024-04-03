@@ -117,7 +117,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 		},
 		{
 			name: 'getHelp',
-			label: __( 'Get help', __i18n_text_domain__ ),
+			label: __( 'Get helping', __i18n_text_domain__ ),
 			searchLabel: [
 				_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
 				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
