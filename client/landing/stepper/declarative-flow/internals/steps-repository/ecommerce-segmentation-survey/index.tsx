@@ -13,13 +13,8 @@ import './style.scss';
 
 const mockSurveyKey = 'ecommerce-segmentation-survey';
 
-type CustomDocumentHeadType = {
-	questions: Question[];
-};
-
-const CustomDocumentHead = ( { questions }: CustomDocumentHeadType ) => {
-	const { currentPage } = useSurveyContext();
-	const currentQuestion = questions[ currentPage - 1 ];
+const CustomDocumentHead = () => {
+	const { currentQuestion } = useSurveyContext();
 
 	if ( ! currentQuestion ) {
 		return null;
@@ -48,9 +43,7 @@ const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 		setAnswers( newAnswers );
 	};
 
-	const onSubmitQuestion = ( currentPage: number, skip: boolean ) => {
-		const currentQuestion = questions[ currentPage - 1 ];
-
+	const onSubmitQuestion = ( currentQuestion: Question, skip: boolean ) => {
 		mutate( {
 			questionKey: currentQuestion.key,
 			answerKeys: skip ? [] : answers[ currentQuestion.key ] || [],
@@ -61,14 +54,13 @@ const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 		<EcommerceSegmentationSurveyProvider
 			navigation={ navigation }
 			onSubmitQuestion={ onSubmitQuestion }
-			totalPages={ questions.length }
+			questions={ questions }
 		>
-			<CustomDocumentHead questions={ questions } />
+			<CustomDocumentHead />
 
 			<SurveyContainer
 				answers={ answers }
 				onChange={ onChangeAnswer }
-				questions={ questions }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</EcommerceSegmentationSurveyProvider>

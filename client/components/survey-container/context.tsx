@@ -1,6 +1,8 @@
 import { createContext, useContext } from 'react';
+import { Question } from './types';
 
 export type SurveyContextType = {
+	currentQuestion?: Question;
 	currentPage: number;
 	previousPage: () => void;
 	nextPage: () => void;

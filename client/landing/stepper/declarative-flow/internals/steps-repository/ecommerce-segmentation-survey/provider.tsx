@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
 import { SurveyContext } from 'calypso/components/survey-container/context';
+import { Question } from 'calypso/components/survey-container/types';
 import type { NavigationControls } from '../../types';
 
 const PAGE_QUERY_PARAM = 'page';
@@ -11,18 +12,19 @@ const updatePath = ( newPage: number ) =>
 type EcommerceSegmentationSurveyProviderType = {
 	children: React.ReactNode;
 	navigation: NavigationControls;
-	onSubmitQuestion: ( currentPage: number, skip: boolean ) => void;
-	totalPages: number;
+	onSubmitQuestion: ( currentQuestion: Question, skip: boolean ) => void;
+	questions: Question[];
 };
 
 const EcommerceSegmentationSurveyProvider = ( {
 	children,
 	navigation,
 	onSubmitQuestion,
-	totalPages,
+	questions,
 }: EcommerceSegmentationSurveyProviderType ) => {
 	const searchParams = new URLSearchParams( page.current.split( '?' )[ 1 ] );
 	const currentPage = parseInt( searchParams.get( PAGE_QUERY_PARAM ) || '1', 10 );
+	const currentQuestion = questions[ currentPage - 1 ];
 
 	const previousPage = () => {
 		if ( currentPage === 1 ) {
@@ -34,9 +36,9 @@ const EcommerceSegmentationSurveyProvider = ( {
 	};
 
 	const nextPage = ( skip: boolean = false ) => {
-		onSubmitQuestion( currentPage, skip );
+		onSubmitQuestion( currentQuestion, skip );
 
-		if ( currentPage === totalPages ) {
+		if ( currentPage === questions.length ) {
 			navigation.submit?.();
 			return;
 		}
@@ -46,7 +48,13 @@ const EcommerceSegmentationSurveyProvider = ( {
 
 	return (
 		<SurveyContext.Provider
-			value={ { currentPage, previousPage, nextPage, skip: () => nextPage( true ) } }
+			value={ {
+				currentQuestion,
+				currentPage,
+				previousPage,
+				nextPage,
+				skip: () => nextPage( true ),
+			} }
 		>
 			{ children }
 		</SurveyContext.Provider>

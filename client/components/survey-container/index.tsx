@@ -1,22 +1,15 @@
 import QuestionStep from './components/question-step';
 import { useSurveyContext } from './context';
-import { Answers, Question } from './types';
+import { Answers } from './types';
 
 type SurveyContainerType = {
-	questions: Question[];
 	answers: Answers;
 	onChange: ( questionKey: string, value: string[] ) => void;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 };
 
-const SurveyContainer = ( {
-	questions,
-	answers,
-	onChange,
-	recordTracksEvent,
-}: SurveyContainerType ) => {
-	const { currentPage, nextPage, previousPage, skip } = useSurveyContext();
-	const currentQuestion = questions[ currentPage - 1 ];
+const SurveyContainer = ( { answers, onChange, recordTracksEvent }: SurveyContainerType ) => {
+	const { currentQuestion, nextPage, previousPage, skip } = useSurveyContext();
 
 	if ( ! currentQuestion ) {
 		return null;
