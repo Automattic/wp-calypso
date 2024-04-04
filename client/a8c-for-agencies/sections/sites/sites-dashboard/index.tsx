@@ -224,7 +224,7 @@ export default function SitesDashboard() {
 					</LayoutTop>
 
 					<SiteNotifications />
-					{ ( true || tourId ) && <GuidedTour defaultTourId={ tourId } /> }
+					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
 
 					<DashboardDataContext.Provider
 						value={ {

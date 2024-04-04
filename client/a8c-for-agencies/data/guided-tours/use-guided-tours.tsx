@@ -1,7 +1,7 @@
 import useAddNewSiteTour from './tours/use-add-new-site-tour';
 import useSitesWalkthroughTour from './tours/use-sites-walkthrough-tour';
 
-export type TourId = 'sites-walkthrough' | 'add-new-site';
+export type TourId = 'sites-walkthrough' | 'add-site-step-1';
 
 export default function useGuidedTour( id: TourId | null ) {
 	const sitesWalkthrough = useSitesWalkthroughTour();
@@ -9,7 +9,7 @@ export default function useGuidedTour( id: TourId | null ) {
 
 	const tours = {
 		'sites-walkthrough': sitesWalkthrough,
-		'add-new-site': addNewSite,
+		'add-site-step-1': addNewSite,
 	};
 
 	return id ? tours[ id ] : [];

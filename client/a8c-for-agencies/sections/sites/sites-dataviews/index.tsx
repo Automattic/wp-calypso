@@ -70,14 +70,14 @@ const SitesDataViews = ( {
 	);
 
 	// Legacy refs for guided tour popovers
-	const [ introRef, setIntroRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ statsRef, setStatsRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ boostRef, setBoostRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ backupRef, setBackupRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ monitorRef, setMonitorRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ scanRef, setScanRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ pluginsRef, setPluginsRef ] = useState< React.LegacyRef< HTMLElement | null > >();
-	const [ actionsRef, setActionsRef ] = useState< React.LegacyRef< HTMLElement | null > >();
+	const [ introRef, setIntroRef ] = useState< HTMLElement | null >();
+	const [ statsRef, setStatsRef ] = useState< HTMLElement | null >();
+	const [ boostRef, setBoostRef ] = useState< HTMLElement | null >();
+	const [ backupRef, setBackupRef ] = useState< HTMLElement | null >();
+	const [ monitorRef, setMonitorRef ] = useState< HTMLElement | null >();
+	const [ scanRef, setScanRef ] = useState< HTMLElement | null >();
+	const [ pluginsRef, setPluginsRef ] = useState< HTMLElement | null >();
+	const [ actionsRef, setActionsRef ] = useState< HTMLElement | null >();
 
 	// todo - refactor: extract fields, along actions, to the upper component
 	const fields = useMemo(
@@ -111,14 +111,14 @@ const SitesDataViews = ( {
 						<SiteSort isSortable={ true } columnKey="site">
 							<span
 								className="sites-dataview__site-header sites-dataview__site-header--sort"
-								ref={ ( ref ) => setIntroRef( ref as React.LegacyRef< HTMLElement | null > ) }
+								ref={ ( ref ) => setIntroRef( ref as HTMLElement | null ) }
 							>
 								{ translate( 'Site' ).toUpperCase() }
 							</span>
 						</SiteSort>
 						<GuidedTourStep
 							id="sites-walkthrough-intro"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ introRef }
 						/>
 					</>
@@ -146,13 +146,13 @@ const SitesDataViews = ( {
 					<div>
 						<span
 							className="sites-dataview__stats-header"
-							ref={ ( ref ) => setStatsRef( ref as React.LegacyRef< HTMLElement | null > ) }
+							ref={ ( ref ) => setStatsRef( ref as HTMLElement | null ) }
 						>
 							STATS
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-stats"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ statsRef }
 						/>
 					</div>
@@ -168,13 +168,13 @@ const SitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__boost-header"
-							ref={ ( ref ) => setBoostRef( ref as React.LegacyRef< HTMLElement | null > ) }
+							ref={ ( ref ) => setBoostRef( ref as HTMLElement | null ) }
 						>
 							BOOST
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-boost"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ boostRef }
 						/>
 					</>
@@ -190,13 +190,13 @@ const SitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__backup-header"
-							ref={ ( ref ) => setBackupRef( ref as React.LegacyRef< HTMLElement | null > ) }
+							ref={ ( ref ) => setBackupRef( ref as HTMLElement | null ) }
 						>
 							BACKUP
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-backup"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ backupRef }
 						/>
 					</>
@@ -212,13 +212,13 @@ const SitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__monitor-header"
-							ref={ ( ref ) => setMonitorRef( ref as React.LegacyRef< HTMLElement | null > ) }
+							ref={ ( ref ) => setMonitorRef( ref as HTMLElement | null ) }
 						>
 							MONITOR
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-monitor"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ monitorRef }
 						/>
 					</>
@@ -234,13 +234,13 @@ const SitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__scan-header"
-							ref={ ( ref ) => setScanRef( ref as React.LegacyRef< HTMLElement | null > ) }
+							ref={ ( ref ) => setScanRef( ref as HTMLElement | null ) }
 						>
 							SCAN
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-scan"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ scanRef }
 						/>
 					</>
@@ -256,13 +256,13 @@ const SitesDataViews = ( {
 					<>
 						<span
 							className="sites-dataview__plugins-header"
-							ref={ ( ref ) => setPluginsRef( ref as React.LegacyRef< HTMLElement | null > ) }
+							ref={ ( ref ) => setPluginsRef( ref as HTMLElement | null ) }
 						>
 							PLUGINS
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-plugins"
-							tourId="sitesWalkthrough"
+							tourId="sites-walkthrough"
 							context={ pluginsRef }
 						/>
 					</>
@@ -325,12 +325,7 @@ const SitesDataViews = ( {
 								onClick={ () => openSitePreviewPane( item.site.value ) }
 								className="site-preview__open"
 								borderless
-								ref={ ( ref ) =>
-									setActionsRef(
-										( current: HTMLElement | null ) =>
-											current || ( ref as React.LegacyRef< HTMLElement | null > )
-									)
-								}
+								ref={ ( ref ) => setActionsRef( ( current ) => current || ref ) }
 							>
 								<Gridicon icon="chevron-right" />
 							</Button>
@@ -340,7 +335,7 @@ const SitesDataViews = ( {
 				header: (
 					<GuidedTourStep
 						id="sites-walkthrough-site-preview"
-						tourId="sitesWalkthrough"
+						tourId="sites-walkthrough"
 						context={ actionsRef }
 					/>
 				),
