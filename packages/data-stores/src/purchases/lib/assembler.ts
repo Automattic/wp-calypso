@@ -79,6 +79,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		),
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,
+		partnerType: purchase.partner_type,
 		partnerKeyId: purchase.partner_key_id,
 		payment: {
 			name: purchase.payment_name,

@@ -53,7 +53,6 @@ export default function SitesDashboard() {
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
-		sort,
 		showOnlyFavorites,
 		hideListing,
 		setHideListing,
@@ -88,7 +87,7 @@ export default function SitesDashboard() {
 		searchQuery: sitesViewState.search,
 		currentPage: sitesViewState.page,
 		filter: agencyDashboardFilter,
-		sort,
+		sort: sitesViewState.sort,
 		perPage: sitesViewState.perPage,
 		agencyId,
 	} );
@@ -143,7 +142,7 @@ export default function SitesDashboard() {
 			search: sitesViewState.search,
 			currentPage: sitesViewState.page,
 			sort: sitesViewState.sort,
-			showOnlyFavorites: showOnlyFavorites,
+			showOnlyFavorites,
 		} );
 	}, [
 		sitesViewState.selectedSite,

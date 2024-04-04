@@ -33,8 +33,7 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 	const queryClient = useQueryClient();
 	const agency = useSelector( getActiveAgency );
 	const agencyId = agency ? agency.id : undefined;
-	const { sitesViewState, showOnlyFavorites, currentPage, sort } =
-		useContext( SitesDashboardContext );
+	const { sitesViewState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
@@ -54,7 +53,8 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 		search,
 		currentPage,
 		filter,
-		sort,
+		sitesViewState.sort,
+		sitesViewState.perPage,
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 
@@ -62,7 +62,7 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
-		{ ...filter, ...sort, showOnlyFavorites: ! showOnlyFavorites },
+		{ ...filter, ...sitesViewState.sort, showOnlyFavorites: ! showOnlyFavorites },
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 	const successNoticeId = 'success-notice';
