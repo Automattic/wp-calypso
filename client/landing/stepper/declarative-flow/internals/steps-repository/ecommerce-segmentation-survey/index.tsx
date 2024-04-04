@@ -11,7 +11,7 @@ import useSegmentationSurveyQuery from './queries/use-segmentation-survey-query'
 import type { Step } from '../../types';
 import './style.scss';
 
-const mockSurveyKey = 'ecommerce-segmentation-survey';
+const surveyKey = 'ecommerce-segmentation-survey';
 
 const CustomDocumentHead = () => {
 	const { currentQuestion } = useSurveyContext();
@@ -24,12 +24,10 @@ const CustomDocumentHead = () => {
 };
 
 const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
-	const { data: survey } = useSegmentationSurveyQuery();
-	const surveyKey = survey?.key ?? mockSurveyKey;
-
-	const { mutate } = useSaveAnswersMutation( { surveyKey } );
+	const { data: survey } = useSegmentationSurveyQuery( { surveyKey } );
 	const questions = survey?.questions ?? mockQuestions;
 
+	const { mutate } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers } = useCachedAnswers( surveyKey );
 
 	const recordTracksEvent = () => {};
