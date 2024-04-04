@@ -19,6 +19,7 @@ interface Props {
 	issueTypes: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
+	featurePreview?: ReactNode | null;
 }
 
 const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
@@ -47,6 +48,7 @@ export const SitesDashboardProvider = ( {
 	issueTypes,
 	currentPage,
 	sort,
+	featurePreview,
 }: Props ) => {
 	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
@@ -136,6 +138,7 @@ export const SitesDashboardProvider = ( {
 		setIsPopoverOpen,
 		sitesViewState,
 		setSitesViewState,
+		featurePreview,
 	};
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>

@@ -46,6 +46,7 @@ function configureSitesContext( context: Context ) {
 			currentPage={ currentPage }
 			issueTypes={ issue_types }
 			sort={ sort }
+			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
 		>
 			<SitesDashboard />
 		</SitesDashboardProvider>
@@ -57,7 +58,7 @@ function configureSitesContext( context: Context ) {
 	context.store.dispatch( setAllSitesSelected() );
 }
 
-export const sitesContext: Callback = ( context, next ) => {
+export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
 	next();
 };
