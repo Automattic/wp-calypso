@@ -65,7 +65,7 @@ export const showUnavailableForVaultPressSites = ( context, next ) => {
 	);
 
 	context.featurePreview = (
-		<HasVaultPressSwitch trueComponent={ message } falseComponent={ context.primary } />
+		<HasVaultPressSwitch trueComponent={ message } falseComponent={ context.featurePreview } />
 	);
 
 	next();
