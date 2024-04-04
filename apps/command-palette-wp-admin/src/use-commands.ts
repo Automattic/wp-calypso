@@ -1,5 +1,4 @@
 import { COMMANDS } from '@automattic/command-palette';
-import deepmerge from 'deepmerge';
 import type { Command, CommandCallBackParams } from '@automattic/command-palette';
 
 const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
@@ -15,22 +14,16 @@ const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
 export const useCommandsWpAdmin = (): Command[] => {
 	// Only override commands that need a specific behavior for WP Admin.
 	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
-	const commands = deepmerge( COMMANDS, {
-		getHelp: {
-			callback: ( { close }: CommandCallBackParams ) => {
-				close();
-				waitForElementAndClick( '#wp-admin-bar-help-center' );
-			},
-		},
-		sendFeedback: {
-			callback: ( { close }: CommandCallBackParams ) => {
-				close();
-				waitForElementAndClick( '#wp-admin-bar-help-center' );
-				waitForElementAndClick( '.help-center-contact-page__button' );
-				waitForElementAndClick( '.help-center-contact-page__box.email' );
-			},
-		},
-	} );
+	COMMANDS.getHelp.callback = ( { close }: CommandCallBackParams ) => {
+		close();
+		waitForElementAndClick( '#wp-admin-bar-help-center' );
+	};
+	COMMANDS.sendFeedback.callback = ( { close }: CommandCallBackParams ) => {
+		close();
+		waitForElementAndClick( '#wp-admin-bar-help-center' );
+		waitForElementAndClick( '.help-center-contact-page__button' );
+		waitForElementAndClick( '.help-center-contact-page__box.email' );
+	};
 
-	return Object.values( commands ) as Command[];
+	return Object.values( COMMANDS ) as Command[];
 };

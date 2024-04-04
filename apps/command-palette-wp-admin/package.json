@@ -31,7 +31,6 @@
 		"@wordpress/dom-ready": "^3.54.0",
 		"@wordpress/i18n": "^4.54.0",
 		"calypso": "workspace:^",
-		"deepmerge": "^4.3.0",
 		"i18n-calypso": "workspace:^",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
