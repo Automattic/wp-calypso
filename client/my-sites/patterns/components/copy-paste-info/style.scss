@@ -9,7 +9,7 @@
 	scroll-snap-type: x proximity;
 	scroll-padding-left: 24px;
 
-	@media ( max-width: $break-wide ) {
+	@media ( max-width: $break-huge ) {
 		padding: 0 24px;
 	}
 }
