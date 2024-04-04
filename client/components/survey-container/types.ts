@@ -1,6 +1,5 @@
 export type Survey = {
 	key: string;
-	title: string;
 	questions: Question[];
 };
 
