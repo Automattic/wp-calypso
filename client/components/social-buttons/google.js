@@ -46,7 +46,7 @@ class GoogleSocialButton extends Component {
 		showError: false,
 		errorRef: null,
 		eventTimeStamp: null,
-		isDisabled: isNonceEnabled ? false : true,
+		isDisabled: ! isNonceEnabled,
 	};
 
 	constructor( props ) {
