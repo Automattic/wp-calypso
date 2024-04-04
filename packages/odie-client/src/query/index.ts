@@ -35,7 +35,7 @@ const buildSendChatMessage = async (
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message, version, context: { selectedSiteId } },
+				data: { message: message.content, version, context: { selectedSiteId } },
 		  } );
 };
 
