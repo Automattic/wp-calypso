@@ -95,9 +95,11 @@ export const PatternLibrary = ( {
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
-			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
+			if ( searchTerm ) {
+				return filterPatternsByTerm( patterns, searchTerm );
+			}
 
-			return filterPatternsByTerm( patternsByType, searchTerm );
+			return filterPatternsByType( patterns, patternTypeFilter );
 		},
 	} );
 
@@ -177,6 +179,8 @@ export const PatternLibrary = ( {
 	}, [] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
+	const shouldDisplayPatternTypeToggle =
+		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
 		const patternTypeFilterFallback =
@@ -283,7 +287,7 @@ export const PatternLibrary = ( {
 									} ) }
 							</h1>
 
-							{ category && !! categoryObject?.pagePatternCount && (
+							{ shouldDisplayPatternTypeToggle && (
 								<ToggleGroupControl
 									className="pattern-library__toggle--pattern-type"
 									isBlock
