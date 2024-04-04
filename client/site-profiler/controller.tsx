@@ -64,7 +64,7 @@ export const siteProfilerReportContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
-				<SiteProfiler routerDomain={ routerDomain } hash={ context.params.hash ?? '' } />
+				<SiteProfiler routerDomain={ routerDomain } hash={ context.params.hash } />
 			</Main>
 
 			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
