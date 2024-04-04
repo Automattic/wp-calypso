@@ -383,7 +383,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<StatsColumnStyled tabletHidden>
 				{ inView && (
 					<>
-						{ hasStatsLoadingError ? (
+						{ hasStatsLoadingError || site.is_deleted ? (
 							<StatsOffIndicator />
 						) : (
 							<a href={ `/stats/day/${ site.slug }` }>
