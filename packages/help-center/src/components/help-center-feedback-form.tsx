@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
@@ -14,6 +15,11 @@ const HelpCenterFeedbackForm = ( { postId, blogId }: HelpCenterFeedbackFormProps
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
 		setAnswerValue( value );
+
+		recordTracksEvent( `calypso_inlinehelp_article_feedback_click`, {
+			did_the_article_help: value === 1 ? 'yes' : 'no',
+			post_id: postId,
+		} );
 	};
 
 	const FeedbackButtons = () => (
