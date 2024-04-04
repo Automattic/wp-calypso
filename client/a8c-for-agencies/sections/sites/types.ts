@@ -22,7 +22,6 @@ export interface SitesDashboardContextInterface {
 	initialSelectedSiteUrl?: string;
 	path: string;
 	currentPage: number;
-	showSitesDashboardV2: boolean;
 
 	isBulkManagementActive: boolean;
 	setIsBulkManagementActive: ( value: boolean ) => void;

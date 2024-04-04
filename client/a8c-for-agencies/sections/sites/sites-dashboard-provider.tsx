@@ -19,7 +19,6 @@ interface Props {
 	issueTypes: string;
 	currentPage: number;
 	sort: DashboardSortInterface;
-	showSitesDashboardV2: boolean;
 }
 
 const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
@@ -137,7 +136,6 @@ export const SitesDashboardProvider = ( {
 		setIsPopoverOpen,
 		sitesViewState,
 		setSitesViewState,
-		showSitesDashboardV2: true,
 	};
 	return (
 		<SitesDashboardContext.Provider value={ sitesDashboardContextValue }>

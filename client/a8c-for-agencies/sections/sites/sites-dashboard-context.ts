@@ -21,7 +21,6 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
-	showSitesDashboardV2: false,
 
 	isBulkManagementActive: false,
 	setIsBulkManagementActive: () => {},

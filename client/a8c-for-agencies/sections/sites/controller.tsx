@@ -46,7 +46,6 @@ function configureSitesContext( context: Context ) {
 			currentPage={ currentPage }
 			issueTypes={ issue_types }
 			sort={ sort }
-			showSitesDashboardV2={ true }
 		>
 			<SitesDashboard />
 		</SitesDashboardProvider>
