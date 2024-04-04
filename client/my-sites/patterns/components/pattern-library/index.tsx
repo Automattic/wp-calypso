@@ -231,7 +231,7 @@ export const PatternLibrary = ( {
 									icon: <Icon icon={ iconCategory } size={ 26 } />,
 									label: translate( 'All Categories' ),
 									link: addLocaleToPathLocaleInFront( '/patterns' ),
-									isActive: isHomePage,
+									isActive: ! category,
 								},
 							] }
 							categories={ categoryNavList }
@@ -261,7 +261,11 @@ export const PatternLibrary = ( {
 				{ ! isHomePage && (
 					<PatternLibraryBody className="pattern-library">
 						<div className="pattern-library__header">
-							<h1 className="pattern-library__title">
+							<h1
+								className={ classNames( 'pattern-library__title', {
+									'pattern-library__title--search': searchTerm,
+								} ) }
+							>
 								{ searchTerm &&
 									translate( '%(count)d pattern', '%(count)d patterns', {
 										count: patterns.length,
