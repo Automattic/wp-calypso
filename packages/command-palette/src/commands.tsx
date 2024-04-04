@@ -985,7 +985,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 						? 'https://cloud.jetpack.com/subscribers/'
 						: '/subscribers/'
 				}:site#add-subscribers`
-			),
+			)( params ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to add subscribers', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
@@ -1001,7 +1001,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 						? 'https://cloud.jetpack.com/subscribers/'
 						: '/subscribers/'
 				}:site`
-			),
+			)( params ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to manage subscribers', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
