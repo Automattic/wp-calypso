@@ -2,7 +2,7 @@ import { Button, FormLabel } from '@automattic/components';
 import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, FormEventHandler, useCallback, useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -72,9 +72,12 @@ export default function UserContactSupportModalForm( { show, onClose }: Props ) 
 		setSite( event.currentTarget.value );
 	}, [] );
 
-	const onProductChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
-		setProduct( event.currentTarget.value );
-	}, [] );
+	const onProductChange: FormEventHandler = useCallback(
+		( event: ChangeEvent< HTMLSelectElement > ) => {
+			setProduct( event.currentTarget.value );
+		},
+		[]
+	);
 
 	const onMessageChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {
 		setMessage( event.currentTarget.value );
