@@ -64,7 +64,7 @@
 .a4a-contact-support-modal-form__footer {
 	padding: 24px 40px;
 	text-align: right;
-	background-color: var(--studio-gray-0);
+	background-color: var(--color-neutral-0);
 	border-radius: 4px;
 }
 
@@ -86,4 +86,10 @@
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 		border-radius: 4px;
 	}
+}
+
+.button.is-primary.a4a-contact-support-modal-form__footer-submit:disabled {
+	color: var(--color-neutral-20);
+	background-color: var(--color-surface);
+	border-color: var(--color-neutral-5);
 }

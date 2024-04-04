@@ -9,7 +9,7 @@ interface APIResponse {
 function mutationSubmitSupportForm( params: SubmitContactSupportParams ): Promise< APIResponse > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
-		path: '/a4a/help/zendesk/create-ticket',
+		path: '/agency/help/zendesk/create-ticket',
 		body: params,
 	} );
 }
