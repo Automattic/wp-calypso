@@ -17,6 +17,10 @@
 			gap: 5px;
 			cursor: pointer;
 			color: var(--color-neutral-80);
+			// Atomic fix
+			background-color: transparent;
+			border: none;
+			padding: 0;
 		}
 	}
 

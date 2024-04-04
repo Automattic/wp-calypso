@@ -11,9 +11,18 @@ interface ArticleContentProps {
 	title: string;
 	link: string;
 	isLoading?: boolean;
+	postId: number;
+	blogId?: string | null;
 }
 
-const ArticleContent = ( { content, title, link, isLoading = false }: ArticleContentProps ) => {
+const ArticleContent = ( {
+	content,
+	title,
+	link,
+	postId,
+	blogId,
+	isLoading = false,
+}: ArticleContentProps ) => {
 	const post = { title: title, url: link };
 	return (
 		<article className="help-center-article-content__story">
@@ -28,7 +37,7 @@ const ArticleContent = ( { content, title, link, isLoading = false }: ArticleCon
 							// eslint-disable-next-line react/no-danger
 							dangerouslySetInnerHTML={ { __html: content } }
 						/>
-						<HelpCenterFeedbackForm />
+						<HelpCenterFeedbackForm postId={ postId } blogId={ blogId } />
 					</EmbedContainer>
 				</>
 			) }
