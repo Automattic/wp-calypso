@@ -2292,7 +2292,9 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SPAM_JP,
 		getTitle: () => i18n.translate( 'Spam protection with Akismet' ),
 		getDescription: () =>
-			i18n.translate( 'Kill spam comments with fire, without lifting a finger.' ),
+			i18n.translate(
+				'Never worry about spam with Akismet, which is included at no additional cost.'
+			),
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
