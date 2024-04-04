@@ -47,7 +47,8 @@ export default function SiteStatsColumn( { type, rows, metadata, disabled }: Pro
 	);
 
 	const partner = useSelector( getCurrentPartner );
-	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
+	const partnerCanIssueLicense =
+		isEnabled( 'a8c-for-agencies' ) || Boolean( partner?.can_issue_licenses ); // FIXME: get this from state when isEnabled( 'a8c-for-agencies' )
 
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
