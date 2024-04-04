@@ -46,10 +46,12 @@ const buildQueryString = ( {
 		urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
 	}
 
-	let queryString = urlQuery.toString();
 	if ( showOnlyFavorites ) {
-		queryString = queryString ? `is_favorite&${ queryString }` : 'is_favorite';
+		urlQuery.set( 'is_favorite', '' );
 	}
+
+	const queryString = urlQuery.toString().replace( 'is_favorite=', 'is_favorite' );
+
 	return queryString ? `?${ queryString }` : '';
 };
 
@@ -83,7 +85,7 @@ export const updateSitesDashboardUrl = ( {
 	const baseUrl = '/sites';
 	let url = baseUrl;
 	let shouldAddQueryArgs = true;
-	// We are not using { addQueryArgs } from 'calypso/lib/url'; because it doesn't support empty keys (e.g. /sites?is_favorite)
+
 	const queryString = buildQueryString( {
 		filters,
 		search,
