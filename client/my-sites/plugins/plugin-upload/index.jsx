@@ -34,6 +34,7 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteAdminUrl,
@@ -202,9 +203,8 @@ const mapStateToProps = ( state ) => {
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	// This value is hardcoded to 'false' to disable the free trial banner
-	// see https://github.com/Automattic/wp-calypso/pull/89217
-	const isEligibleForHostingTrial = false;
+	const isEligibleForHostingTrial =
+		isUserEligibleForFreeHostingTrial( state ) && site?.plan?.is_free;
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);

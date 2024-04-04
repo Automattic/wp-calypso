@@ -117,6 +117,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 		isGridView = false,
 		patterns = [],
 		patternTypeFilter,
+		searchTerm,
 	} = props;
 
 	const translate = useTranslate();
@@ -184,6 +185,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 										type: getTracksPatternType( patternTypeFilter ),
 										view: isGridView ? 'grid' : 'list',
 										load_more_page: currentPage,
+										search_term: searchTerm,
 									} );
 								} }
 								transparent
