@@ -2061,10 +2061,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
-		getTitle: () =>
-			i18n.hasTranslation( 'DDoS protection and mitigation' )
-				? i18n.translate( 'DDoS protection and mitigation' )
-				: i18n.translate( 'DDOS protection and mitigation' ),
+		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
 	},
