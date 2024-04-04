@@ -79,13 +79,14 @@ export const SitesDashboardProvider = ( {
 		...initialSitesViewState,
 		page: currentPage,
 		search: searchQuery,
+		sort,
 		filters: buildFilters( { issueTypes } ),
 	} );
 
 	useEffect( () => {
 		setInitialSelectedSiteUrl( siteUrlInitialState );
 		if ( ! siteUrlInitialState ) {
-			setShowOnlyFavorites( () => showOnlyFavoritesInitialState );
+			setShowOnlyFavorites( showOnlyFavoritesInitialState );
 			setHideListing( false );
 		}
 
@@ -97,6 +98,7 @@ export const SitesDashboardProvider = ( {
 						filters: buildFilters( { issueTypes } ),
 				  } ),
 			...( siteUrlInitialState ? {} : { search: searchQuery } ),
+			...( siteUrlInitialState ? {} : { sort } ),
 			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
 			...( siteUrlInitialState ? {} : { type: 'table' } ),
 		} ) );
@@ -104,6 +106,7 @@ export const SitesDashboardProvider = ( {
 		setSitesViewState,
 		showOnlyFavoritesInitialState,
 		searchQuery,
+		sort,
 		issueTypes,
 		siteUrlInitialState,
 		setInitialSelectedSiteUrl,
@@ -120,7 +123,6 @@ export const SitesDashboardProvider = ( {
 		setShowOnlyFavorites: setShowOnlyFavorites,
 		path,
 		currentPage,
-		sort,
 		isBulkManagementActive,
 		initialSelectedSiteUrl: initialSelectedSiteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,

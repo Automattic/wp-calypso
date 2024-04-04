@@ -95,9 +95,11 @@ export const PatternLibrary = ( {
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
-			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
+			if ( searchTerm ) {
+				return filterPatternsByTerm( patterns, searchTerm );
+			}
 
-			return filterPatternsByTerm( patternsByType, searchTerm );
+			return filterPatternsByType( patterns, patternTypeFilter );
 		},
 	} );
 
@@ -177,6 +179,8 @@ export const PatternLibrary = ( {
 	}, [] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
+	const shouldDisplayPatternTypeToggle =
+		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
 		const patternTypeFilterFallback =
@@ -231,7 +235,7 @@ export const PatternLibrary = ( {
 									icon: <Icon icon={ iconCategory } size={ 26 } />,
 									label: translate( 'All Categories' ),
 									link: addLocaleToPathLocaleInFront( '/patterns' ),
-									isActive: isHomePage,
+									isActive: ! category,
 								},
 							] }
 							categories={ categoryNavList }
@@ -261,7 +265,11 @@ export const PatternLibrary = ( {
 				{ ! isHomePage && (
 					<PatternLibraryBody className="pattern-library">
 						<div className="pattern-library__header">
-							<h1 className="pattern-library__title">
+							<h1
+								className={ classNames( 'pattern-library__title', {
+									'pattern-library__title--search': searchTerm,
+								} ) }
+							>
 								{ searchTerm &&
 									translate( '%(count)d pattern', '%(count)d patterns', {
 										count: patterns.length,
@@ -279,7 +287,7 @@ export const PatternLibrary = ( {
 									} ) }
 							</h1>
 
-							{ category && !! categoryObject?.pagePatternCount && (
+							{ shouldDisplayPatternTypeToggle && (
 								<ToggleGroupControl
 									className="pattern-library__toggle--pattern-type"
 									isBlock
@@ -345,7 +353,7 @@ export const PatternLibrary = ( {
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
-							patternTypeFilter={ patternTypeFilter }
+							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
 						/>
 
 						{ searchTerm && ! patterns.length && category && (

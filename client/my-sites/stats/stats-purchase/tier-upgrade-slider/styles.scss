@@ -1,4 +1,5 @@
 @use "sass:math";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography.scss";
 
 $slider-height: 40px;
@@ -112,23 +113,39 @@ $track-height: 4px;
 .tier-upgrade-slider__step-callouts {
 	display: flex;
 	justify-content: space-between;
+	align-items: end;
 
 	h2 {
 		font-size: $font-body-small;
 		font-weight: 600;
+
+		@media (max-width: $break-medium) {
+			font-size: $font-body-extra-small;
+		}
 	}
+
 	p {
 		font-size: $font-headline-small;
 		font-weight: bold;
 		margin: 0;
+
+		@media (max-width: $break-medium) {
+			font-size: $font-title-medium;
+		}
 	}
+
 	.right-aligned {
 		text-align: right;
 	}
+
 	.full-price-label {
 		font-size: $font-title-medium;
 		color: var(--studio-gray-40);
 		text-decoration: line-through;
+
+		@media (max-width: $break-medium) {
+			font-size: $font-body-large;
+		}
 	}
 
 	svg {
