@@ -138,7 +138,7 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'send_chat_message' ),
-					'permission_callback' => array( $this, 'can_access_chat' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
 					'args'                => array(
 						'bot_id'  => array(
 							'description' => __( 'The bot id to chat with.', 'full-site-editing' ),
