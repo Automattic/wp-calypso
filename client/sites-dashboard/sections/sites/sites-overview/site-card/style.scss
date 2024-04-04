@@ -1,0 +1,123 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-card__card-toggle-icon {
+	vertical-align: middle;
+	margin-inline-start: 32px;
+}
+
+.site-card__header {
+	position: relative;
+	padding: 16px 16px 16px 8px;
+	height: 50px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+}
+
+.site-card__title {
+	display: inline-flex;
+	align-items: center;
+	width: 100%;
+}
+
+.site-card__card.is-compact {
+	padding: 0;
+}
+
+.site-card__expanded-content {
+	padding: 0 0.3em;
+
+	a {
+		display: flex;
+	}
+}
+
+.site-card__expanded-content-list {
+	margin: 0 -5px;
+	position: relative;
+	padding: 0.7em 1em;
+	opacity: 0.5;
+}
+
+.site-card__content-list-no-error {
+	opacity: 1;
+
+	&:nth-child(odd) {
+		background: var(--studio-gray-0);
+	}
+}
+
+.site-card__expanded-content-key {
+	font-size: 0.875rem;
+	display: flex;
+}
+
+.site-card__expanded-content-value,
+.site-card__expanded-content-status {
+	position: absolute;
+	right: 16px;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+
+	.site-host-info {
+		display: inline-flex;
+		justify-content: end;
+		margin-inline-end: 0;
+	}
+
+	.site-host-info__plan-name {
+		font-size: 0.875rem;
+		text-wrap: nowrap;
+		margin-inline-start: 8px;
+		display: none;
+
+		@include break-mobile {
+			display: inline-block;
+			max-width: 250px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
+}
+
+.site-card__actions-small-screen {
+	cursor: pointer;
+	position: absolute;
+	right: 16px;
+	display: inline;
+}
+
+.site-card__card-disabled {
+	background: unset !important;
+
+	.sites-overview__overlay {
+		background: unset !important;
+	}
+}
+
+.site-card__card-active {
+	border-width: 0 1px;
+	border-style: solid;
+	border-color: var(--studio-gray-5);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+	margin-inline: -1px;
+}
+
+.site-card__expanded-column {
+	width: 20px;
+
+	button {
+		display: flex;
+		position: relative;
+		left: 16px;
+		top: 2px;
+	}
+}
+
+.site-card__expanded-content-header {
+	position: relative;
+}

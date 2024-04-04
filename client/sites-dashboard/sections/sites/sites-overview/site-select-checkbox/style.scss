@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-select-checkbox {
+	input[type="checkbox"] {
+		position: absolute;
+		margin: 0;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		inset-inline-start: 16px;
+	}
+}
+
+.site-select-checkbox__tooltip {
+	margin-block-start: 20px;
+}

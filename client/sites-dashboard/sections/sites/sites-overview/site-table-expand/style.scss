@@ -1,0 +1,31 @@
+#site-table-expand-popover {
+	.popover__inner {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+	}
+
+	.site-table__expand-popover-content {
+		padding: 16px;
+		width: 250px;
+		text-align: left;
+
+		.site-table__expand-popover-header {
+			font-weight: 600;
+			font-size: 1rem;
+			line-height: 18px;
+			color: var(--studio-gray-100);
+		}
+
+		.site-table__expand-popover-body {
+			padding: 16px 0;
+			font-size: 0.875rem;
+			line-height: 16px;
+			letter-spacing: -0.24px;
+			color: var(--studio-gray-70);
+		}
+
+		.site-table__expand-popover-footer button {
+			color: var(--studio-black) !important;
+		}
+	}
+}

@@ -1,0 +1,18 @@
+.overview-header__actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	.button {
+		border-radius: 4px;
+	}
+
+	.split-button__main {
+		border-radius: 4px 0 0 4px;
+	}
+
+	.split-button__toggle {
+		border-radius: 0 4px 4px 0;
+	}
+
+}
