@@ -170,12 +170,16 @@
 				}
 			}
 
-			.timeline-event__icon-wrapper::before {
-				display: none;
-			}
-
 			.timeline-event__icon-wrapper {
 				align-content: center;
+
+				&::before {
+					display: none;
+				}
+			}
+
+			.timeline-event__action-button-wrapper {
+				align-self: center;
 			}
 
 			.timeline-event__title {
