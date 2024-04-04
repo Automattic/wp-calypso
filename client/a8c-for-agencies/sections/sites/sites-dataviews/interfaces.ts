@@ -19,7 +19,7 @@ export interface SitesDataViewsProps {
 
 export interface Sort {
 	field: string;
-	direction: 'asc' | 'desc';
+	direction: 'asc' | 'desc' | '';
 }
 
 export interface Filter {
