@@ -666,19 +666,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderHosting() {
-		const { siteSlug, translate } = this.props;
-		return (
-			<Item
-				className="masterbar__item-hosting"
-				url={ `/home/${ siteSlug }` }
-				icon={ <span className="dashicons-before dashicons-cloud" /> }
-			>
-				{ translate( 'Hosting' ) }
-			</Item>
-		);
-	}
-
 	render() {
 		const {
 			isInEditor,
@@ -731,7 +718,6 @@ class MasterbarLoggedIn extends Component {
 							: this.renderWordPressIcon() }
 						{ this.renderAllSites() }
 						{ this.renderCurrentSite() }
-						{ this.renderHosting() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
 						{ this.renderCart() }
