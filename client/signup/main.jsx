@@ -47,7 +47,6 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	isUserLoggedIn,
@@ -131,7 +130,6 @@ class Signup extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
-		loadTrackingTool: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -980,7 +978,6 @@ export default connect(
 	{
 		submitSignupStep,
 		removeStep,
-		loadTrackingTool,
 		addStep,
 	}
 )( Signup );
