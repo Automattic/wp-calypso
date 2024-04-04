@@ -88,6 +88,9 @@ const siteFilters = {
 	},
 };
 
+// Commands can be overridden with specific behavior for Calypso and/or WP Admin.
+// - Calypso: `client/sites-dashboard/components/wpcom-smp-commands.tsx`.
+// - WP Admin: `apps/command-palette-wp-admin/src/use-commands.ts`.
 export const COMMANDS: { [ key: string ]: Command } = {
 	viewMySites: {
 		name: 'viewMySites',

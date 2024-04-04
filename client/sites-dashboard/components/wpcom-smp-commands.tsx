@@ -179,6 +179,8 @@ export const useCommandsCalypso = (): Command[] => {
 		'source-command-palette': 'true',
 	} ).toString() }`;
 
+	// Only override commands that need a specific behavior for Calypso.
+	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
 	const commands = Object.values(
 		deepmerge( COMMANDS, {
 			getHelp: {

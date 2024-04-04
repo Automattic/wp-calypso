@@ -13,6 +13,8 @@ const waitForElementAndClick = ( selector: string, attempt = 1 ) => {
 };
 
 export const useCommandsWpAdmin = (): Command[] => {
+	// Only override commands that need a specific behavior for WP Admin.
+	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
 	const commands = deepmerge( COMMANDS, {
 		getHelp: {
 			callback: ( { close }: CommandCallBackParams ) => {
