@@ -202,6 +202,8 @@ const mapStateToProps = ( state ) => {
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
 	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	// This value is hardcoded to 'false' to disable the free trial banner
+	// see https://github.com/Automattic/wp-calypso/pull/89217
 	const isEligibleForHostingTrial = false;
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
