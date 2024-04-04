@@ -189,6 +189,8 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			)
 		);
 
+		l( 'send_chat_message', $body );
+
 		if ( is_wp_error( $body ) ) {
 			return $body;
 		}
