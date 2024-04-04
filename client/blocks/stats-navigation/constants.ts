@@ -47,11 +47,13 @@ const traffic = {
 	path: '/stats',
 	showIntervals: true,
 } as NavItem;
+
 const insights = {
 	label: translate( 'Insights' ),
 	path: '/stats/insights',
 	showIntervals: false,
 } as NavItem;
+
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
@@ -61,19 +63,28 @@ const subscribers = {
 	path: '/stats/subscribers',
 	showIntervals: false,
 } as NavItem;
+
 const store = {
 	label: translate( 'Store' ),
 	path: '/store/stats/orders',
 	showIntervals: true,
 } as NavItem;
+
 const wordads = {
 	label: translate( 'Ads' ),
 	path: '/stats/ads',
 	showIntervals: true,
 } as NavItem;
+
 const googleMyBusiness = {
 	label: translate( 'Google Business Profile' ),
 	path: '/google-my-business/stats',
+	showIntervals: false,
+} as NavItem;
+
+const utmBuilder = {
+	label: translate( 'UTM builder' ),
+	path: '/stats/utm-builder',
 	showIntervals: false,
 } as NavItem;
 
@@ -84,6 +95,7 @@ export interface NavItems {
 	wordads: NavItem;
 	googleMyBusiness: NavItem;
 	subscribers?: NavItem;
+	utmBuilder?: NavItem;
 }
 
 const assembleNavItems = () => {
@@ -94,6 +106,7 @@ const assembleNavItems = () => {
 		store,
 		wordads,
 		googleMyBusiness,
+		utmBuilder,
 	} as NavItems;
 
 	return navItems;
