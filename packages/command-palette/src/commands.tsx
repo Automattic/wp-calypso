@@ -166,7 +166,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	visitSite: {
 		name: 'visitSite',
 		label: __( 'Visit site homepage', __i18n_text_domain__ ),
-		callback: ( params ) => commandNavigation( 'https://:site', true )( params ),
+		callback: commandNavigation( 'https://:site', true ),
 		searchLabel: [
 			_x(
 				'visit site homepage',
@@ -1007,11 +1007,10 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	downloadSubscribers: {
 		name: 'downloadSubscribers',
 		label: __( 'Download subscribers as CSV', __i18n_text_domain__ ),
-		callback: ( params ) =>
-			commandNavigation(
-				'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:siteId&blog_subscribers=csv&type=all',
-				true
-			)( params ),
+		callback: commandNavigation(
+			'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:siteId&blog_subscribers=csv&type=all',
+			true
+		),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to download subscribers', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
