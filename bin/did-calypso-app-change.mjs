@@ -43,7 +43,7 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 			console.info( stdout );
 			return true;
 		}
-		// throw new Error( `Unexpected error code ${ code } while diffing ${ slug } build: ${ stderr }` );
+		throw new Error( `Unexpected error code ${ code } while diffing ${ slug } build: ${ stderr }` );
 	}
 }
 
@@ -56,9 +56,9 @@ async function downloadPrevBuild( appSlug, dir ) {
 
 	const { body, status } = await fetch( prevBuildUrl );
 	if ( status !== 200 ) {
-		// throw new Error(
-		// 	`Could not fetch previous build for ${ appSlug }! Response code ${ status }.`
-		// );
+		throw new Error(
+			`Could not fetch previous build for ${ appSlug }! Response code ${ status }.`
+		);
 	}
 
 	console.info( `Extracting downloaded archive for ${ appSlug }...` );
