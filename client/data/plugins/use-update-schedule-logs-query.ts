@@ -3,7 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteSlug } from 'calypso/types';
 
 type ScheduleLogsApiReturn = {
-	timestamp: string;
+	timestamp: number;
 	action: string;
 	message: string | null;
 	context: unknown;
@@ -11,7 +11,7 @@ type ScheduleLogsApiReturn = {
 
 type ScheduleLogs = {
 	date: Date;
-	timestamp: string;
+	timestamp: number;
 	action: string;
 	message: string | null;
 	context: unknown;
@@ -36,7 +36,7 @@ export const useUpdateScheduleLogsQuery = (
 			return data
 				.map( ( run ) => {
 					return run.map( ( log ) => ( {
-						date: new Date( parseInt( log.timestamp, 10 ) * 1000 ),
+						date: new Date( log.timestamp * 1000 ),
 						timestamp: log.timestamp,
 						action: log.action,
 						message: log.message,
