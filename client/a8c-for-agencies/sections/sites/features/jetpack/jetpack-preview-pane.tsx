@@ -11,6 +11,7 @@ import {
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
+import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
 import SitePreviewPane, { createFeaturePreview } from '../../site-preview-pane';
 import { PreviewPaneProps } from '../../site-preview-pane/types';
 import { JetpackActivityPreview } from './activity';
@@ -42,7 +43,7 @@ export function JetpackPreviewPane( {
 
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( JETPACK_BOOST_ID );
+			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
 		}
 		return () => {
 			setSelectedSiteFeature( undefined );

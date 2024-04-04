@@ -12,6 +12,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { StatsGlobalValuesProvider } from './../pages/providers/global-provider';
 import StatsRedirectFlow from './index';
 
 type AsyncLoadProps = {
@@ -101,9 +102,11 @@ export default function LoadStatsPage( { children }: AsyncLoadProps ) {
 	}
 
 	return (
-		<>
-			<QuerySitePurchases siteId={ siteId } />
-			<StatsRedirectFlow>{ children }</StatsRedirectFlow>
-		</>
+		<StatsGlobalValuesProvider>
+			<>
+				<QuerySitePurchases siteId={ siteId } />
+				<StatsRedirectFlow>{ children }</StatsRedirectFlow>
+			</>
+		</StatsGlobalValuesProvider>
 	);
 }

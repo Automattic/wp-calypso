@@ -14,12 +14,21 @@ import useIssueAndAssignLicenses from '../../hooks/use-issue-and-assign-licenses
 import { IssueLicenseRequest } from '../../hooks/use-issue-licenses';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const useSubmitForm = ( selectedSite?: SiteDetails | null, suggestedProductSlugs?: string[] ) => {
+type Props = {
+	selectedSite?: SiteDetails | null;
+	suggestedProductSlugs?: string[];
+	onSuccessCallback?: () => void;
+};
+
+const useSubmitForm = ( { selectedSite, suggestedProductSlugs, onSuccessCallback }: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
 		useIssueAndAssignLicenses( selectedSite, {
+			onSuccess: () => {
+				onSuccessCallback?.();
+			},
 			onIssueError: ( error: APIError ) => {
 				if ( error.code === 'missing_valid_payment_method' ) {
 					dispatch(

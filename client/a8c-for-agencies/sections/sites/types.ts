@@ -1,5 +1,5 @@
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
-	AgencyDashboardFilterOption,
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -10,19 +10,21 @@ export interface SitesDashboardContextInterface {
 	selectedCategory?: string;
 	setSelectedCategory: ( category: string ) => void;
 
-	selectedSiteUrl?: string;
-	setSelectedSiteUrl: ( siteUrl: string ) => void;
-
 	selectedSiteFeature?: string;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
+
+	sitesViewState: SitesViewState;
+	setSitesViewState: React.Dispatch< React.SetStateAction< SitesViewState > >;
 
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;
 
+	showOnlyFavorites?: boolean;
+	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
+
+	initialSelectedSiteUrl?: string;
 	path: string;
-	search: string;
 	currentPage: number;
-	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 
@@ -41,7 +43,4 @@ export interface SitesDashboardContextInterface {
 
 	isPopoverOpen: boolean;
 	setIsPopoverOpen: React.Dispatch< React.SetStateAction< boolean > >;
-
-	isFavoriteFilter: boolean;
-	setIsFavoriteFilter: React.Dispatch< React.SetStateAction< boolean > >;
 }

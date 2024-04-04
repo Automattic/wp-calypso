@@ -92,22 +92,22 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: (
 			<>
-				VaultPress Backup <em>Daily</em>
+				VaultPress Backup <span>Daily</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: (
 			<>
-				VaultPress Backup <em>Daily</em>
+				VaultPress Backup <span>Daily</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: (
 			<>
-				VaultPress Backup <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+				VaultPress Backup <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: (
 			<>
-				VaultPress Backup <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+				VaultPress Backup <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: 'VaultPress Backup',
@@ -122,12 +122,12 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: 'Boost',
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: (
 			<>
-				Scan <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+				Scan <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: (
 			<>
-				Scan <em style={ { whiteSpace: 'nowrap' } }>Real-time</em>
+				Scan <span style={ { whiteSpace: 'nowrap' } }>Real-time</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_SCAN_BI_YEARLY ]: 'Scan',
@@ -141,17 +141,17 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: 'Search',
 		[ PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY ]: (
 			<>
-				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+				Akismet <span style={ { whiteSpace: 'nowrap' } }>Anti-spam</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: (
 			<>
-				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+				Akismet <span style={ { whiteSpace: 'nowrap' } }>Anti-spam</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: (
 			<>
-				Akismet <em style={ { whiteSpace: 'nowrap' } }>Anti-spam</em>
+				Akismet <span style={ { whiteSpace: 'nowrap' } }>Anti-spam</span>
 			</>
 		),
 		[ PRODUCT_JETPACK_VIDEOPRESS_BI_YEARLY ]: 'VideoPress',

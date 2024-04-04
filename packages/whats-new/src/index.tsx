@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenter } from '@automattic/data-stores';
-import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Guide from './components/guide';
+import { useSeenWhatsNewAnnouncementsMutation } from './hooks/use-seen-whats-new-announcements-mutation';
 import { useWhatsNewAnnouncementsQuery } from './hooks/use-whats-new-announcements-query';
 import WhatsNewPage from './whats-new-page';
 import './style.scss';
@@ -12,6 +12,7 @@ export {
 	useWhatsNewAnnouncementsQuery,
 	type WhatsNewAnnouncement,
 } from './hooks/use-whats-new-announcements-query';
+export { useShouldShowCriticalAnnouncementsQuery } from './hooks/use-should-show-critical-announcements-query';
 
 interface Props {
 	onClose: () => void;
@@ -19,16 +20,16 @@ interface Props {
 }
 
 const WhatsNewGuide: React.FC< Props > = ( { onClose, siteId } ) => {
-	const { setSeenWhatsNewAnnouncements } = useDispatch( HELP_CENTER_STORE );
 	const { data, isLoading } = useWhatsNewAnnouncementsQuery( siteId );
+	const { mutate } = useSeenWhatsNewAnnouncementsMutation();
 
 	useEffect( () => {
 		// check for whether the announcement has been seen already.
 		if ( data && data.length ) {
 			const announcementIds = data.map( ( item ) => item.announcementId );
-			setSeenWhatsNewAnnouncements( announcementIds );
+			mutate( announcementIds );
 		}
-	}, [ data, setSeenWhatsNewAnnouncements ] );
+	}, [ data, mutate ] );
 
 	if ( ! data || isLoading ) {
 		return null;

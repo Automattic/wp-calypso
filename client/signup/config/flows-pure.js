@@ -35,6 +35,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
+			hideProgressIndicator: true,
 		},
 		{
 			name: HOSTING_LP_FLOW,

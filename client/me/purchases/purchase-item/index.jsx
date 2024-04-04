@@ -10,6 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -41,7 +42,6 @@ import {
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import {
 	isTemporarySitePurchase,

@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { isA8CSpecialBlog } from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import useUTMMetricsQuery from '../hooks/use-utm-metrics-query';
@@ -40,8 +39,7 @@ const StatsModuleUTM = ( { siteId, period, postId, query, summary, className } )
 		postId
 	);
 
-	const isSiteInternal =
-		isA8CSpecialBlog( siteId ) || ( ! isFetchingUsage && usageData?.is_internal );
+	const isSiteInternal = ! isFetchingUsage && usageData?.is_internal;
 	const isFetching = isFetchingUsage || isLoadingFeatureCheck || isFetchingUTM;
 	const isAdvancedFeatureEnabled = isSiteInternal || supportCommercialUse;
 

@@ -22,6 +22,10 @@
 	justify-content: space-between;
 	position: relative;
 
+	&:not(.pattern-preview--category-gallery) iframe {
+		pointer-events: initial !important;
+	}
+
 	.pattern-preview__renderer {
 		background: var(--color-surface);
 		border-radius: 4px;
@@ -127,11 +131,6 @@
 	.pattern-preview__get-access {
 		padding-left: 12px;
 	}
-}
-
-.pattern-preview--page {
-	break-inside: avoid;
-	margin-bottom: 16px;
 }
 
 .pattern-preview--category-gallery {

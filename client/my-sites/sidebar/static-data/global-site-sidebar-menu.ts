@@ -92,12 +92,6 @@ export default function globalSiteSidebarMenu( {
 			url: `/earn/${ siteDomain }`,
 		},
 		{
-			slug: 'subscribers',
-			title: translate( 'Subscribers' ),
-			type: 'menu-item',
-			url: `/subscribers/${ siteDomain }`,
-		},
-		{
 			slug: 'connections',
 			title: translate( 'Connections' ),
 			type: 'menu-item',

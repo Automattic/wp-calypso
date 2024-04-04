@@ -184,7 +184,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 		[ dispatch, handleSelectBundleLicense, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+	const { isReady } = useSubmitForm( { selectedSite, suggestedProductSlugs } );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>

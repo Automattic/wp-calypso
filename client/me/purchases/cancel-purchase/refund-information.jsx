@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -15,7 +16,6 @@ import {
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 
 const CancelPurchaseRefundInformation = ( {

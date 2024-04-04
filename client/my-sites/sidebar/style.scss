@@ -61,11 +61,17 @@ $brand-text: "SF Pro Text", $sans;
 		--color-global-masterbar-hover-background: var(--studio-gray-80);
 	}
 
+	.is-global-sidebar-collapsed {
+		--sidebar-width-max: 69px;
+		--sidebar-width-min: 69px;
+
+	}
+
 	.layout__secondary {
 		overflow: initial;
 
 		.global-sidebar {
-			overflow: hidden;
+			overflow: unset;
 		}
 	}
 }
@@ -393,9 +399,6 @@ $font-size: rem(14px);
 
 				&::before {
 					transition: none;
-				}
-				&.svg_all-sites {
-					margin: -2px 6px -2px -2px;
 				}
 			}
 

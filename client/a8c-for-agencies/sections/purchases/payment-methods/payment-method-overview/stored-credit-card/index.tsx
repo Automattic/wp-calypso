@@ -1,10 +1,13 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useContext } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { PaymentMethodOverviewContext } from '../../context';
 import { useDeleteCard } from '../../hooks/use-delete-card';
 import { useSetAsPrimaryCard } from '../../hooks/use-set-as-primary-card';
+import useStoredCards from '../../hooks/use-stored-cards';
 import StoredCreditCardDeleteDialog from '../stored-credit-card-delete-dialog';
 import CreditCardActions from './credit-card-actions';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
@@ -35,8 +38,16 @@ export default function StoredCreditCard( {
 		: translate( 'Secondary Card' );
 
 	const { isSetAsPrimaryCardPending, setAsPrimaryCard } = useSetAsPrimaryCard();
+
+	const { paging } = useContext( PaymentMethodOverviewContext );
+
+	// Fetch the stored cards from the cache if they are available.
+	const {
+		data: { allStoredCards },
+	} = useStoredCards( paging, { staleTime: Infinity } );
+
 	const { isDeleteDialogVisible, setIsDeleteDialogVisible, handleDelete, isDeleteInProgress } =
-		useDeleteCard( creditCard );
+		useDeleteCard( creditCard, allStoredCards );
 
 	const dispatch = useDispatch();
 	const cardActions = [

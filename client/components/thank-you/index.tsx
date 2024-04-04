@@ -1,9 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT, SUPPORT_ROOT } from '@automattic/urls';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import type {
 	ThankYouNextStepProps,
 	ThankYouProps,

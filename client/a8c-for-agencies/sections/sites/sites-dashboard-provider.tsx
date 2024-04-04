@@ -1,50 +1,50 @@
 import { ReactNode, useEffect, useState } from 'react';
+import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
-	AgencyDashboardFilterOption,
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { filtersMap, initialSitesViewState } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
+	showOnlyFavoritesInitialState?: boolean;
 	hideListingInitialState?: boolean;
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
-	isFavoriteFilterInitialState: boolean;
+	searchQuery: string;
 	children: ReactNode;
 	path: string;
-	search: string;
+	issueTypes: string;
 	currentPage: number;
-	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 	sort: DashboardSortInterface;
 	showSitesDashboardV2: boolean;
 }
 
 export const SitesDashboardProvider = ( {
 	hideListingInitialState = false,
+	showOnlyFavoritesInitialState = false,
 	categoryInitialState,
 	siteUrlInitialState,
 	siteFeatureInitialState,
-	isFavoriteFilterInitialState,
 	children,
 	path,
-	search,
+	searchQuery,
+	issueTypes,
 	currentPage,
-	filter,
 	sort,
 }: Props ) => {
 	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
-	const [ selectedSiteUrl, setSelectedSiteUrl ] = useState( siteUrlInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
-	const [ isFavoriteFilter, setIsFavoriteFilter ] = useState( isFavoriteFilterInitialState );
-
+	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
 	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 	const [ currentLicenseInfo, setCurrentLicenseInfo ] = useState< string | null >( null );
 	const [ mostRecentConnectedSite, setMostRecentConnectedSite ] = useState< string | null >( null );
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
 
 	const handleSetBulkManagementActive = ( isActive: boolean ) => {
 		setIsBulkManagementActive( isActive );
@@ -61,25 +61,58 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
+	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
+		...initialSitesViewState,
+		page: currentPage,
+		search: searchQuery,
+	} );
+
 	useEffect( () => {
-		setIsFavoriteFilter( isFavoriteFilterInitialState );
-	}, [ isFavoriteFilterInitialState ] );
+		setInitialSelectedSiteUrl( siteUrlInitialState );
+		if ( ! siteUrlInitialState ) {
+			setShowOnlyFavorites( () => showOnlyFavoritesInitialState );
+			setHideListing( false );
+		}
+
+		const issueTypesArray = issueTypes?.split( ',' );
+
+		setSitesViewState( ( previousState ) => ( {
+			...previousState,
+			filters:
+				issueTypesArray?.map( ( issueType ) => {
+					return {
+						field: 'status',
+						operator: 'in',
+						value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
+					};
+				} ) || [],
+			search: searchQuery,
+			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
+			...( siteUrlInitialState ? {} : { type: 'table' } ),
+		} ) );
+	}, [
+		setSitesViewState,
+		showOnlyFavoritesInitialState,
+		searchQuery,
+		issueTypes,
+		siteUrlInitialState,
+		setInitialSelectedSiteUrl,
+	] );
 
 	const sitesDashboardContextValue = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
-		selectedSiteUrl: selectedSiteUrl,
-		setSelectedSiteUrl: setSelectedSiteUrl,
 		selectedSiteFeature: selectedSiteFeature,
 		setSelectedSiteFeature: setSelectedSiteFeature,
 		hideListing: hideListing,
 		setHideListing: setHideListing,
+		showOnlyFavorites: showOnlyFavorites,
+		setShowOnlyFavorites: setShowOnlyFavorites,
 		path,
-		search,
 		currentPage,
-		filter,
 		sort,
 		isBulkManagementActive,
+		initialSelectedSiteUrl: initialSelectedSiteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,
 		selectedSites,
 		setSelectedSites,
@@ -90,8 +123,8 @@ export const SitesDashboardProvider = ( {
 		setMostRecentConnectedSite,
 		isPopoverOpen,
 		setIsPopoverOpen,
-		isFavoriteFilter,
-		setIsFavoriteFilter,
+		sitesViewState,
+		setSitesViewState,
 		showSitesDashboardV2: true,
 	};
 	return (

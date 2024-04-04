@@ -10,7 +10,7 @@ import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import useStoredCards, { getFetchStoredCardsKey } from './use-stored-cards';
+import { getFetchStoredCardsKey } from './use-stored-cards';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 const NOTIFICATION_DURATION = 3000;
@@ -45,13 +45,8 @@ function useDeleteCardMutation< TContext = unknown >(
 	} );
 }
 
-export function useDeleteCard( card: PaymentMethod ) {
+export function useDeleteCard( card: PaymentMethod, allStoredCards: PaymentMethod[] ) {
 	const [ isDeleteDialogVisible, setIsDeleteDialogVisible ] = useState( false );
-
-	// Fetch the stored cards from the cache if they are available.
-	const {
-		data: { allStoredCards },
-	} = useStoredCards( Infinity );
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();

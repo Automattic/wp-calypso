@@ -1,5 +1,5 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useI18n } from '@wordpress/react-i18n';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { Container, Title, ErrorIcon, TryAgain, ContactSupport } from './components';
 
 export const SenseiStepError = () => {

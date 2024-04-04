@@ -29,6 +29,8 @@ const StatsInsights = ( props ) => {
 	const statsModuleListClass = classNames(
 		'stats__module-list--insights',
 		'stats__module--unified',
+		'stats__module-list',
+		'stats__flexible-grid-container',
 		{
 			'is-odyssey-stats': isOdysseyStats,
 			'is-jetpack': isJetpack,
@@ -64,11 +66,34 @@ const StatsInsights = ( props ) => {
 						moduleStrings={ moduleStrings.tags }
 						statType="statsTags"
 						hideSummaryLink
+						className={ classNames(
+							{
+								'stats__flexible-grid-item--half': isJetpack,
+								'stats__flexible-grid-item--full--large': isJetpack,
+							},
+							{
+								'stats__flexible-grid-item--full': ! isJetpack,
+							}
+						) }
 					/>
-					<Comments path="comments" />
+					<Comments
+						path="comments"
+						className={ classNames(
+							'stats__flexible-grid-item--half',
+							'stats__flexible-grid-item--full--large'
+						) }
+					/>
 
 					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
-					{ ! isJetpack && <StatShares siteId={ siteId } /> }
+					{ ! isJetpack && (
+						<StatShares
+							siteId={ siteId }
+							className={ classNames(
+								'stats__flexible-grid-item--half',
+								'stats__flexible-grid-item--full--large'
+							) }
+						/>
+					) }
 				</div>
 				<JetpackColophon />
 			</div>

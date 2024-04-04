@@ -7,6 +7,7 @@ import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+
 import './style.scss';
 
 const A4A_PRODUCTS_MARKETPLACE_LINK = '/marketplace/products';

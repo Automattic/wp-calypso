@@ -258,6 +258,7 @@ export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferSta
 			[ action.siteId ]: {
 				status: AtomicTransferStatus.IN_PROGRESS,
 				softwareSet: action.softwareSet,
+				transferIntent: action.transferIntent,
 				errorCode: undefined,
 			},
 		};
@@ -268,6 +269,7 @@ export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferSta
 			[ action.siteId ]: {
 				status: AtomicTransferStatus.SUCCESS,
 				softwareSet: action.softwareSet,
+				transferIntent: action.transferIntent,
 				errorCode: undefined,
 			},
 		};

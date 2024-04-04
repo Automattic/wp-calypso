@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -36,7 +37,6 @@ import {
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import {

@@ -1,12 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
+jest.mock( '../../utils/checkout' );
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -65,6 +67,27 @@ describe( 'Site Migration Flow', () => {
 				state: {
 					bundleProcessing: true,
 				},
+			} );
+		} );
+
+		it( 'redirects the user to the checkout page with the correct destination params', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL:
+					'/setup/site-migration-upgrade-plan?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com',
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					goToCheckout: true,
+				},
+			} );
+
+			expect( goToCheckout ).toHaveBeenCalledWith( {
+				destination:
+					'/setup/site-migration/bundleTransfer?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com',
+				flowName: 'site-migration',
+				siteSlug: 'example.wordpress.com',
+				stepName: 'site-migration-upgrade-plan',
 			} );
 		} );
 

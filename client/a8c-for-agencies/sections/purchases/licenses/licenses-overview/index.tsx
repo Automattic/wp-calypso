@@ -9,17 +9,20 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import LicenseList from '../license-list';
 import LicenseSearch from '../license-search';
 import LicenseStateFilter from '../license-state-filter';
 import LicensesOverviewContext from './context';
 import EmptyState from './empty-state';
-import type {
-	LicenseFilter,
-	LicenseSortDirection,
-	LicenseSortField,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 import './style.scss';
 
@@ -39,6 +42,7 @@ export default function LicensesOverview( {
 	sortField,
 }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const title = translate( 'Licenses' );
 
@@ -53,10 +57,12 @@ export default function LicensesOverview( {
 	const partnerCanIssueLicense = true; // FIXME: get this from state
 
 	const onIssueNewLicenseClick = () => {
-		// TODO: dispatch action to open issue license modal
+		dispatch( recordTracksEvent( 'calypso_a4a_license_list_issue_license_click' ) );
 	};
 
-	const showEmptyStateContent = false; // FIXME: get this from state
+	const { data, isFetched } = useFetchLicenseCounts();
+
+	const showEmptyStateContent = isFetched && data?.[ LicenseFilter.NotRevoked ] === 0;
 
 	return (
 		<Layout
@@ -71,13 +77,11 @@ export default function LicensesOverview( {
 				path="/purchases/licenses/:filter"
 				properties={ { filter } }
 			/>
-			{ /*  TODO: <FETCH_LICENSES_HERE /> */ }
 			<LicensesOverviewContext.Provider value={ context }>
 				<LayoutTop withNavigation>
 					<LayoutHeader>
 						<Title>{ title } </Title>
 						<Actions>
-							{ /* TODO: <SHOW_PARTNER_KEY_SELECTION_HERE /> */ }
 							<Button
 								disabled={ ! partnerCanIssueLicense }
 								href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
@@ -90,7 +94,7 @@ export default function LicensesOverview( {
 						</Actions>
 					</LayoutHeader>
 
-					<LicenseStateFilter />
+					<LicenseStateFilter data={ data } />
 				</LayoutTop>
 
 				<LayoutBody>

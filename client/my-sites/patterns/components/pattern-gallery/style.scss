@@ -19,13 +19,5 @@
 }
 
 .pattern-gallery--grid.pattern-gallery--pages {
-	display: block;
-
-	@include break-medium {
-		column-count: 2;
-	}
-
-	@include break-huge {
-		column-count: 3;
-	}
+	align-items: start;
 }

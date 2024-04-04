@@ -1,9 +1,9 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { States } from 'calypso/state/exporter/constants';
 import { getExportingState, getDownloadUrl } from 'calypso/state/exporter/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

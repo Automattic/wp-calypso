@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import { useOdieAssistantContext } from '../../context';
+import { uriTransformer } from './uri-transformer';
 
 import './style.scss';
 
@@ -24,17 +25,19 @@ const CustomALink = ( {
 		'odie-sources-inline': inline,
 	} );
 
+	const transformedHref = uriTransformer( href );
+
 	return (
 		<span className={ classNames }>
 			<a
 				className="odie-sources-link"
-				href={ href }
+				href={ transformedHref }
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ () => {
 					trackEvent( 'chat_message_action_click', {
 						action: 'link',
-						href: href,
+						href: transformedHref,
 					} );
 				} }
 			>

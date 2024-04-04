@@ -4,10 +4,10 @@ import {
 	WPCOM_FEATURES_SCHEDULED_UPDATES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SCHEDULED_UPDATES_SUPPORT } from '@automattic/urls';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { SCHEDULED_UPDATES_SUPPORT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

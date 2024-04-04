@@ -26,6 +26,10 @@
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
 			display: none;
 		}
+
+		.dataviews-view-table {
+			padding-left: 48px;
+		}
 	}
 
 	@media (max-width: $break-large) {
@@ -88,6 +92,10 @@
 					margin-top: 16px;
 				}
 			}
+		}
+
+		.dataviews-view-table {
+			padding-left: 16px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {

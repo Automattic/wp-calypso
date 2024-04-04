@@ -7,9 +7,14 @@ import './style.scss';
 type PatternsGetAccessModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
+	tracksEventHandler: ( eventName: string ) => void;
 };
 
-export const PatternsGetAccessModal = ( { isOpen, onClose }: PatternsGetAccessModalProps ) => {
+export const PatternsGetAccessModal = ( {
+	isOpen,
+	onClose,
+	tracksEventHandler,
+}: PatternsGetAccessModalProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
 
@@ -22,10 +27,19 @@ export const PatternsGetAccessModal = ( { isOpen, onClose }: PatternsGetAccessMo
 			isVisible={ isOpen }
 			additionalClassNames="patterns-get-access-modal"
 			additionalOverlayClassNames="patterns-get-access-modal__backdrop"
-			onClose={ onClose }
+			onClose={ () => {
+				onClose();
+				tracksEventHandler( 'calypso_pattern_library_get_access_dismiss' );
+			} }
 		>
 			<div className="patterns-get-access-modal__content">
-				<button className="patterns-get-access-modal__close" onClick={ onClose }>
+				<button
+					className="patterns-get-access-modal__close"
+					onClick={ () => {
+						onClose();
+						tracksEventHandler( 'calypso_pattern_library_get_access_dismiss' );
+					} }
+				>
 					<Icon icon={ iconClose } size={ 24 } />
 				</button>
 				<div className="patterns-get-access-modal__inner">
@@ -35,10 +49,18 @@ export const PatternsGetAccessModal = ( { isOpen, onClose }: PatternsGetAccessMo
 						WordPress.com account to get started.
 					</div>
 					<div className="patterns-get-access-modal__upgrade-buttons">
-						<Button primary href={ startUrl }>
+						<Button
+							primary
+							href={ startUrl }
+							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_signup' ) }
+						>
 							Create a free account
 						</Button>
-						<Button transparent href={ loginUrl }>
+						<Button
+							transparent
+							href={ loginUrl }
+							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_login' ) }
+						>
 							Log in
 						</Button>
 					</div>

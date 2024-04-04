@@ -6,6 +6,11 @@
 // and extending the component custom-a-link.tsx to handle it. That's it.
 const protocols = [ 'http', 'https', 'mailto', 'tel', 'prompt' ];
 
+const referralCodes: { [ key: string ]: string } = {
+	https: 'odie',
+	http: 'odie',
+};
+
 /**
  * @param {string} uri
  * @returns {string}
@@ -29,7 +34,10 @@ export function uriTransformer( uri: string ) {
 		const protocol = protocols[ index ];
 
 		if ( colon === protocol.length && url.slice( 0, protocol.length ).toLowerCase() === protocol ) {
-			return url;
+			// Add referral code to the URL
+			const urlObj = new URL( url );
+			urlObj.searchParams.set( 'ref', referralCodes[ protocol ] );
+			return urlObj.toString();
 		}
 	}
 

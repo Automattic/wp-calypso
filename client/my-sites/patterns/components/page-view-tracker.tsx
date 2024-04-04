@@ -9,9 +9,11 @@ import { PatternTypeFilter, PatternView } from '../types';
 
 type PatternsPageViewTrackerProps = {
 	category: string;
-	searchTerm: string;
-	patternTypeFilter: PatternTypeFilter;
-	view: PatternView;
+	searchTerm?: string;
+	patternTypeFilter?: PatternTypeFilter;
+	view?: PatternView;
+	referrer?: string;
+	error?: string;
 };
 
 export function PatternsPageViewTracker( {
@@ -19,6 +21,8 @@ export function PatternsPageViewTracker( {
 	searchTerm,
 	patternTypeFilter,
 	view,
+	referrer,
+	error,
 }: PatternsPageViewTrackerProps ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
@@ -55,6 +59,8 @@ export function PatternsPageViewTracker( {
 			search_term: debouncedSearchTerm,
 			type: getTracksPatternType( patternTypeFilter ),
 			view,
+			referrer,
+			error,
 		} );
 
 		// We want to avoid resubmitting the event whenever

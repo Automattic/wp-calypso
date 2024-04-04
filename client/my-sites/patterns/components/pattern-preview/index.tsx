@@ -6,11 +6,17 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import type { Pattern, PatternGalleryProps } from 'calypso/my-sites/patterns/types';
+import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
+import type {
+	Pattern,
+	PatternGalleryProps,
+	PatternTypeFilter,
+} from 'calypso/my-sites/patterns/types';
 import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
@@ -40,21 +46,28 @@ function useTimeoutToResetBoolean(
 }
 
 type PatternPreviewProps = {
-	className?: string;
 	canCopy?: boolean;
+	category: string;
+	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
+	patternTypeFilter: PatternTypeFilter;
+	isGridView?: boolean;
 	viewportWidth?: number;
 };
 
 function PatternPreviewFragment( {
-	className,
 	canCopy = true,
+	category,
+	className,
 	getPatternPermalink = () => '',
 	pattern,
+	patternTypeFilter,
+	isGridView,
 	viewportWidth,
 }: PatternPreviewProps ) {
+	const ref = useRef< HTMLDivElement >( null );
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
 
@@ -79,9 +92,26 @@ function PatternPreviewFragment( {
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
 
+	useEffect( () => {
+		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
+	}, [ nodeSize.width, nodeSize.height ] );
+
 	if ( ! pattern ) {
 		return null;
 	}
+
+	// This handler will be used to fire each of the different 'Get Access'
+	// events for logged out users: opening the modal, closing the modal,
+	// signing up, and logging in. The handler will be passed the name of the
+	// event to fire, and the event props will be the same for each.
+	const recordGetAccessEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
 
 	return (
 		<div
@@ -92,6 +122,7 @@ function PatternPreviewFragment( {
 				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
 			id={ idAttr }
+			ref={ ref }
 		>
 			{ resizeObserver }
 
@@ -134,7 +165,10 @@ function PatternPreviewFragment( {
 				{ ! canCopy && (
 					<Button
 						className="pattern-preview__get-access"
-						onClick={ () => setIsAuthModalOpen( true ) }
+						onClick={ () => {
+							setIsAuthModalOpen( true );
+							recordGetAccessEvent( 'calypso_pattern_library_get_access' );
+						} }
 						transparent
 					>
 						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
@@ -145,6 +179,7 @@ function PatternPreviewFragment( {
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
 				onClose={ () => setIsAuthModalOpen( false ) }
+				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>
 	);

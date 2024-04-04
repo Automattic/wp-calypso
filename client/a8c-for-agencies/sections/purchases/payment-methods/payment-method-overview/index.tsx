@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -17,17 +17,21 @@ import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/pay
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { PaymentMethodOverviewContext } from '../context';
 import useStoredCards from '../hooks/use-stored-cards';
 import useStoredCardsPagination from '../hooks/use-stored-cards-pagination';
 import EmptyState from './empty-state';
 import LoadingState from './loading-state';
 import StoredCreditCard from './stored-credit-card';
+import type { StoredCardPaging } from '../types';
 
 import './style.scss';
 
 export default function PaymentMethodOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ paging, setPaging ] = useState< StoredCardPaging | undefined >( undefined );
 
 	const {
 		data: {
@@ -39,12 +43,13 @@ export default function PaymentMethodOverview() {
 			hasMoreStoredCards,
 		},
 		isFetching,
-	} = useStoredCards();
+	} = useStoredCards( paging );
 
 	const { page, showPagination, onPageClick } = useStoredCardsPagination( {
 		storedCards: allStoredCards,
 		enabled: ! isFetching,
 		hasMoreStoredCards,
+		setPaging,
 	} );
 
 	const onAddNewCardClick = useCallback( () => {
@@ -58,7 +63,7 @@ export default function PaymentMethodOverview() {
 
 		if ( hasStoredCards ) {
 			return (
-				<>
+				<PaymentMethodOverviewContext.Provider value={ { paging, setPaging } }>
 					<div className="payment-method-overview__stored-cards">
 						{ primaryStoredCard && <StoredCreditCard creditCard={ primaryStoredCard } /> }
 						{ secondaryStoredCards.map( ( card: PaymentMethod, index: number ) => (
@@ -82,7 +87,7 @@ export default function PaymentMethodOverview() {
 							perPage={ pageSize }
 						/>
 					) }
-				</>
+				</PaymentMethodOverviewContext.Provider>
 			);
 		}
 
@@ -94,6 +99,7 @@ export default function PaymentMethodOverview() {
 		onPageClick,
 		page,
 		pageSize,
+		paging,
 		primaryStoredCard,
 		secondaryStoredCards,
 		showPagination,

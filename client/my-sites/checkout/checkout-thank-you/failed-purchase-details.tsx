@@ -1,6 +1,6 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import type { FailedReceiptPurchase, ReceiptPurchase } from 'calypso/state/receipts/types';
 
 export default function FailedPurchaseDetails( {

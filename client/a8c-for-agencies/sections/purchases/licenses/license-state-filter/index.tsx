@@ -4,19 +4,16 @@ import LayoutNavigation, {
 	LayoutNavigationTabs,
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import { A4A_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useFetchLicenseCounts from 'calypso/a8c-for-agencies/data/purchases/use-fetch-license-counts';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/lib/license-filters';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import LicenseListContext from '../licenses-overview/context';
 
-function LicenseStateFilter() {
+function LicenseStateFilter( { data }: { data: Record< LicenseFilter, number > } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { filter } = useContext( LicenseListContext );
-
-	const { data } = useFetchLicenseCounts();
 
 	const navItems = [
 		{

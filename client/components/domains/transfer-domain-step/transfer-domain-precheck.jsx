@@ -1,5 +1,11 @@
 import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
+} from '@automattic/urls';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -10,12 +16,6 @@ import migratingHostImage from 'calypso/assets/images/illustrations/migrating-ho
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
-import {
-	CALYPSO_CONTACT,
-	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
-	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
-	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
-} from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isSupportSession as hasEnteredSupportSession } from 'calypso/state/support/selectors';
 

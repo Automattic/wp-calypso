@@ -11,7 +11,7 @@ import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
-const StatShares = ( { siteId } ) => {
+const StatShares = ( { siteId, className } ) => {
 	const translate = useTranslate();
 	const isLoading = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats' )
@@ -43,6 +43,7 @@ const StatShares = ( { siteId } ) => {
 		<>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
 			<StatsListCard
+				className={ className }
 				moduleType="shares"
 				data={ data }
 				title={ translate( 'Number of Shares' ) }
@@ -52,8 +53,6 @@ const StatShares = ( { siteId } ) => {
 				splitHeader
 				useShortNumber
 				// Shares don't have a summary page yet.
-				// TODO: limit to 5 items after summary page is added.
-				// showMore={ ... }
 				error={
 					( hasError || ( ! isLoading && ! siteStats?.stats?.shares ) ) && (
 						<ErrorPanel message={ translate( 'No shares recorded' ) } />

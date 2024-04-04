@@ -36,7 +36,11 @@ export default function Checkout() {
 		?.toString()
 		.split( ',' );
 
-	const { isReady, submitForm } = useSubmitForm( selectedSite, suggestedProductSlugs );
+	const { isReady, submitForm } = useSubmitForm( {
+		selectedSite,
+		suggestedProductSlugs,
+		onSuccessCallback: onClearCart,
+	} );
 
 	const sortedSelectedItems = useMemo( () => {
 		return Object.values(

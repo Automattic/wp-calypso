@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
+import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import NoSitePurchasesMessage from '../empty-content';
 

@@ -561,3 +561,10 @@ $button-padding: 8px 32px;
 		}
 	}
 }
+
+.stats-purchase-single__error-msg {
+	color: var(--gray-gray-50);
+	font-style: italic;
+	font-size: $font-body-small;
+	margin-top: 24px;
+}
