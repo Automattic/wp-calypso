@@ -95,35 +95,40 @@ export const ScheduleLogs = ( props: Props ) => {
 					dateFormat={ timeFormat }
 					detail="Plugins update completed"
 					icon="checkmark"
-					iconBackground="warning"
+					iconBackground="success"
 				/>
 				<TimelineEvent
+					className="indent"
 					date={ new Date( '30 March 2024, 10:00:48 am' ) }
 					dateFormat={ timeFormat }
 					detail="Gravity Forms updated from 2.5.8 to 2.6.0"
 					icon="checkmark"
+					iconBackground="success"
 				/>
 				<TimelineEvent
+					className="indent"
 					date={ new Date( '30 March 2024, 10:00:39 am' ) }
 					dateFormat={ timeFormat }
 					detail="Move to WordPress.com update from 5.9.3 to 6.0.0 failed [ Rolledback to 5.9.3 ]"
-					icon="sync"
-					iconBackground="warning"
+					icon="cross"
+					iconBackground="error"
 					actionLabel="Try manual update"
 					actionIsPrimary={ true }
 					onActionClick={ goToPluginsPage }
 				/>
 				<TimelineEvent
+					className="indent"
 					date={ new Date( '30 March 2024, 10:00:12 am' ) }
 					dateFormat={ timeFormat }
 					detail="Elementor Pro updated from 3.0.9 to 3.1.0"
 					icon="checkmark"
+					iconBackground="success"
 				/>
 				<TimelineEvent
 					date={ new Date( '30 March 2024' ) }
 					dateFormat={ `${ dateFormat } ${ timeFormat }` }
 					detail="Plugins update starts"
-					icon="calendar"
+					icon="sync"
 					disabled
 				/>
 			</Timeline>
@@ -136,29 +141,34 @@ export const ScheduleLogs = ( props: Props ) => {
 					iconBackground="success"
 				/>
 				<TimelineEvent
+					className="indent"
 					date={ new Date( '27 March 2024, 10:00:48 am' ) }
 					dateFormat={ timeFormat }
 					detail="Gravity Forms updated from 2.5.8 to 2.6.0"
 					icon="checkmark"
+					iconBackground="success"
 				/>
 				<TimelineEvent
+					className="indent"
 					date={ new Date( '27 March 2024, 10:00:39 am' ) }
 					dateFormat={ timeFormat }
 					detail="Move to WordPress.com update from 5.9.3 to 6.0.0"
 					icon="checkmark"
+					iconBackground="success"
 				/>
 				<TimelineEvent
+					className="indent"
 					date={ new Date( '27 March 2024, 10:00:12 am' ) }
 					dateFormat={ timeFormat }
 					detail="Elementor Pro updated from 3.0.9 to 3.1.0"
 					icon="checkmark"
-					iconBackground="info"
+					iconBackground="success"
 				/>
 				<TimelineEvent
 					date={ new Date( '27 March 2024, 10:00:00 am' ) }
 					dateFormat={ `${ dateFormat } ${ timeFormat }` }
 					detail="Plugins update starts"
-					icon="calendar"
+					icon="sync"
 					disabled
 				/>
 			</Timeline>
