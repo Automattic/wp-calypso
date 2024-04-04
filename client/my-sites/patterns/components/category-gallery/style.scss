@@ -87,4 +87,14 @@
 		color: #50575e;
 		line-height: 1.6;
 	}
+
+	.pattern-preview {
+		.pattern-preview__renderer {
+			aspect-ratio: auto;
+		}
+
+		.pattern-preview__header {
+			display: none;
+		}
+	}
 }
