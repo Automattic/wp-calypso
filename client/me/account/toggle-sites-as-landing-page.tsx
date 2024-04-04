@@ -38,7 +38,9 @@ function ToggleSitesAsLandingPage() {
 				checked={ !! useSitesAsLandingPage }
 				onChange={ handleToggle }
 				disabled={ isSaving }
-				label={ translate( 'Show me all my sites when logging in to WordPress.com' ) }
+				label={ translate(
+					'Display all my sites instead of just my primary site when I visit WordPress.com.'
+				) }
 			/>
 		</div>
 	);
