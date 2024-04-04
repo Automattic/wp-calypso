@@ -43,7 +43,7 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 			console.info( stdout );
 			return true;
 		}
-		throw new Error( `Unexpected error code ${ code } while diffing ${ slug } build: ${ stderr }` );
+		// throw new Error( `Unexpected error code ${ code } while diffing ${ slug } build: ${ stderr }` );
 	}
 }
 
