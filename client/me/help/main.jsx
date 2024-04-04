@@ -88,7 +88,7 @@ class Help extends PureComponent {
 			},
 			{
 				link: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
-				title: this.props.translate( 'Privacy Settings' ),
+				title: this.props.translate( 'Privacy Settings', { context: 'Site visibility settings' } ),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
 				),

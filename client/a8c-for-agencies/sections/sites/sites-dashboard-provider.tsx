@@ -22,6 +22,20 @@ interface Props {
 	showSitesDashboardV2: boolean;
 }
 
+const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
+	const issueTypesArray = issueTypes?.split( ',' );
+
+	return (
+		issueTypesArray?.map( ( issueType ) => {
+			return {
+				field: 'status',
+				operator: 'in',
+				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
+			};
+		} ) || []
+	);
+};
+
 export const SitesDashboardProvider = ( {
 	hideListingInitialState = false,
 	showOnlyFavoritesInitialState = false,
@@ -65,28 +79,26 @@ export const SitesDashboardProvider = ( {
 		...initialSitesViewState,
 		page: currentPage,
 		search: searchQuery,
+		sort,
+		filters: buildFilters( { issueTypes } ),
 	} );
 
 	useEffect( () => {
 		setInitialSelectedSiteUrl( siteUrlInitialState );
 		if ( ! siteUrlInitialState ) {
-			setShowOnlyFavorites( () => showOnlyFavoritesInitialState );
+			setShowOnlyFavorites( showOnlyFavoritesInitialState );
 			setHideListing( false );
 		}
 
-		const issueTypesArray = issueTypes?.split( ',' );
-
 		setSitesViewState( ( previousState ) => ( {
 			...previousState,
-			filters:
-				issueTypesArray?.map( ( issueType ) => {
-					return {
-						field: 'status',
-						operator: 'in',
-						value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-					};
-				} ) || [],
-			search: searchQuery,
+			...( siteUrlInitialState
+				? {}
+				: {
+						filters: buildFilters( { issueTypes } ),
+				  } ),
+			...( siteUrlInitialState ? {} : { search: searchQuery } ),
+			...( siteUrlInitialState ? {} : { sort } ),
 			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
 			...( siteUrlInitialState ? {} : { type: 'table' } ),
 		} ) );
@@ -94,6 +106,7 @@ export const SitesDashboardProvider = ( {
 		setSitesViewState,
 		showOnlyFavoritesInitialState,
 		searchQuery,
+		sort,
 		issueTypes,
 		siteUrlInitialState,
 		setInitialSelectedSiteUrl,
@@ -110,7 +123,6 @@ export const SitesDashboardProvider = ( {
 		setShowOnlyFavorites: setShowOnlyFavorites,
 		path,
 		currentPage,
-		sort,
 		isBulkManagementActive,
 		initialSelectedSiteUrl: initialSelectedSiteUrl,
 		setIsBulkManagementActive: handleSetBulkManagementActive,

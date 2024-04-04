@@ -6,6 +6,7 @@ import {
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { A4A_ONBOARDING_TOURS_PREFERENCE_NAME } from 'calypso/a8c-for-agencies/sections/onboarding-tours/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -26,6 +27,8 @@ export default function OverviewBodyNextSteps() {
 		}
 		return false;
 	};
+
+	const noActiveSite = useNoActiveSite();
 
 	const tasks: Task[] = [
 		{
@@ -58,19 +61,27 @@ export default function OverviewBodyNextSteps() {
 			title: translate( 'Explore the marketplace' ),
 			useCalypsoPath: true,
 		},
-		{
-			calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
-			completed: checkTourCompletion( 'addSiteStep1' ),
-			disabled: false,
-			actionDispatch: () => {
-				dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
-				dispatch( savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ], true ) );
-			},
-			id: 'add_sites',
-			title: translate( 'Learn how to add new sites' ),
-			useCalypsoPath: true,
-		},
 	];
+
+	const addNewSiteTask: Task = {
+		calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
+		completed: checkTourCompletion( 'addSiteStep1' ),
+		disabled: false,
+		actionDispatch: () => {
+			dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
+			dispatch( savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ], true ) );
+		},
+		id: 'add_sites',
+		title: translate( 'Learn how to add new sites' ),
+		useCalypsoPath: true,
+	};
+
+	// If we do not have an active site, we want to show the add new site task first in the list.
+	if ( noActiveSite ) {
+		tasks.unshift( addNewSiteTask );
+	} else {
+		tasks.push( addNewSiteTask );
+	}
 
 	const numberOfTasks = tasks.length;
 	const completedTasks = tasks.filter( ( task ) => task.completed ).length;

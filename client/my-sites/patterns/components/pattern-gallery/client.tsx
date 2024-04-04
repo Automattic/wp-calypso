@@ -106,7 +106,6 @@ function MasonryGallery( {
 	);
 }
 
-const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
 const PATTERNS_PER_PAGE_COUNT = 9;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
@@ -151,9 +150,9 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 					enableMasonry={ isGridView && isPageLayouts }
 					itemSelector=".pattern-preview"
 				>
-					{ patternsToDisplay.map( ( pattern, i ) => (
+					{ patternsToDisplay.map( ( pattern ) => (
 						<PatternPreview
-							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
+							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
 							category={ category }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,

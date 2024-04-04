@@ -239,7 +239,7 @@ const Hosting = ( props ) => {
 				fetchUpdatedData();
 			}
 		},
-		[]
+		[ hasTransfer ]
 	);
 
 	const getUpgradeBanner = () => {

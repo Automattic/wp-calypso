@@ -1,6 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useMemo } from 'react';
+import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import ExternalLink from 'calypso/components/external-link';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -23,6 +26,9 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 	const translate = useTranslate();
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+
+	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
+
 	const { isLargeScreen } = useContext( DashboardDataContext );
 
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], isLargeScreen );
@@ -33,15 +39,29 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	// queryKey is needed to optimistically update the site list
 	const queryKey = useMemo(
-		() => [
-			'jetpack-agency-dashboard-sites',
-			search,
-			currentPage,
-			filter,
-			sort,
-			...( agencyId ? [ agencyId ] : [] ),
-		],
-		[ search, currentPage, filter, sort, agencyId ]
+		() =>
+			isEnabled( 'a8c-for-agencies' )
+				? [
+						'jetpack-agency-dashboard-sites',
+						sitesViewState?.search,
+						sitesViewState?.page,
+						{
+							issueTypes: getSelectedFilters( sitesViewState?.filters ),
+							showOnlyFavorites: showOnlyFavorites || false,
+						},
+						sitesViewState.sort,
+						sitesViewState?.perPage,
+						...( agencyId ? [ agencyId ] : [] ),
+				  ]
+				: [
+						'jetpack-agency-dashboard-sites',
+						search,
+						currentPage,
+						filter,
+						sort,
+						...( agencyId ? [ agencyId ] : [] ),
+				  ],
+		[ sitesViewState, showOnlyFavorites, agencyId, search, currentPage, filter, sort ]
 	);
 	const { installBoost, status } = useInstallBoost( siteId, siteUrl, queryKey );
 

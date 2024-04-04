@@ -12,7 +12,6 @@ $brand-text: "SF Pro Text", $sans;
 	top: 0;
 	transition: all 220ms ease-out;
 	background-color: var(--color-sidebar-background);
-	box-shadow: 5px 0 8px -5px var(--color-sidebar-border);
 
 	ul.sidebar__menu:not(.is-togglable) {
 		height: 100%;
