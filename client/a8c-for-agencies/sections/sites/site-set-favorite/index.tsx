@@ -55,6 +55,7 @@ export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Pro
 		currentPage,
 		filter,
 		sort,
+		sitesViewState.perPage,
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 
