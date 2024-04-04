@@ -25,7 +25,7 @@ export default function useToggleActivateMonitor(
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { sitesViewState, sort: sortV2, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
 
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -38,7 +38,7 @@ export default function useToggleActivateMonitor(
 					issueTypes: getSelectedFilters( sitesViewState.filters ),
 					showOnlyFavorites: showOnlyFavorites || false,
 				},
-				sortV2,
+				sitesViewState.sort,
 				sitesViewState.perPage,
 				...( agencyId ? [ agencyId ] : [] ),
 		  ]
