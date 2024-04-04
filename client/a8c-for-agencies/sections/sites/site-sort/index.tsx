@@ -7,8 +7,6 @@ import {
 	ascendingSortIcon,
 	descendingSortIcon,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/icons';
-import { useDispatch } from 'calypso/state';
-import { updateSort } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { AllowedTypes } from '../types';
 
 import './style.scss';
@@ -32,15 +30,14 @@ export default function A4ASiteSort( {
 	children?: React.ReactNode;
 	isSortable?: boolean;
 } ) {
-	const { sort } = useContext( SitesDashboardContext );
-	const dispatch = useDispatch();
+	const { sitesViewState, setSitesViewState } = useContext( SitesDashboardContext );
 
-	const { field, direction } = sort;
+	const { field, direction } = sitesViewState.sort;
 
 	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
 
 	const setSort = () => {
-		const updatedSort = { ...sort };
+		const updatedSort = { ...sitesViewState.sort };
 		if ( isDefault ) {
 			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
 			updatedSort.direction = SORT_DIRECTION_ASC;
@@ -51,7 +48,10 @@ export default function A4ASiteSort( {
 			updatedSort.direction = '';
 		}
 
-		dispatch( updateSort( updatedSort ) );
+		setSitesViewState( ( sitesViewState ) => ( {
+			...sitesViewState,
+			sort: updatedSort,
+		} ) );
 	};
 
 	const getSortIcon = () => {
