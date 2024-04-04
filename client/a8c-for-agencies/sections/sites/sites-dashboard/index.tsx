@@ -238,7 +238,9 @@ export default function SitesDashboard() {
 						} }
 					>
 						<SitesDataViews
-							className="sites-overview__content"
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }

@@ -447,6 +447,10 @@
 
 			.sites-overview__content {
 				margin-top: 24px;
+
+				&.is-hiding-navigation {
+					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
+				}
 			}
 		}
 
