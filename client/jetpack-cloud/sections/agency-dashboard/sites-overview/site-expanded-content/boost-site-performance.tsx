@@ -66,7 +66,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 			return [
 				{
-					label: translate( 'Upgrade to Auto-optimize' ),
+					label: translate( 'Upgrade to optimize' ),
 					onClick: () => {
 						trackEvent( 'boost_expandable_block_auto_optimize_click' );
 						showBoostModal( true );
