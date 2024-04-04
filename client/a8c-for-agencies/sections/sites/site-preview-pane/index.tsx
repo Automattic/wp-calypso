@@ -97,7 +97,7 @@ export default function SitePreviewPane( {
 			</div>
 			<GuidedTourStep
 				id="sites-walkthrough-site-preview-tabs"
-				tourId="sites-walkthrough"
+				tourId="sitesWalkthrough"
 				context={ navRef }
 			/>
 			{ selectedFeature.preview }

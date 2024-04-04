@@ -118,7 +118,7 @@ const SitesDataViews = ( {
 						</SiteSort>
 						<GuidedTourStep
 							id="sites-walkthrough-intro"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ introRef }
 						/>
 					</>
@@ -152,7 +152,7 @@ const SitesDataViews = ( {
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-stats"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ statsRef }
 						/>
 					</div>
@@ -174,7 +174,7 @@ const SitesDataViews = ( {
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-boost"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ boostRef }
 						/>
 					</>
@@ -196,7 +196,7 @@ const SitesDataViews = ( {
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-backup"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ backupRef }
 						/>
 					</>
@@ -218,7 +218,7 @@ const SitesDataViews = ( {
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-monitor"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ monitorRef }
 						/>
 					</>
@@ -240,7 +240,7 @@ const SitesDataViews = ( {
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-scan"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ scanRef }
 						/>
 					</>
@@ -262,7 +262,7 @@ const SitesDataViews = ( {
 						</span>
 						<GuidedTourStep
 							id="sites-walkthrough-plugins"
-							tourId="sites-walkthrough"
+							tourId="sitesWalkthrough"
 							context={ pluginsRef }
 						/>
 					</>
@@ -335,7 +335,7 @@ const SitesDataViews = ( {
 				header: (
 					<GuidedTourStep
 						id="sites-walkthrough-site-preview"
-						tourId="sites-walkthrough"
+						tourId="sitesWalkthrough"
 						context={ actionsRef }
 					/>
 				),

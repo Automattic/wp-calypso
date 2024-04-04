@@ -36,7 +36,7 @@ export default function SitesHeaderActions() {
 					}
 				/>
 			</div>
-			<GuidedTourStep id="add-new-site" tourId="add-site-step-1" context={ tourStepRef } />
+			<GuidedTourStep id="add-new-site" tourId="addSiteStep1" context={ tourStepRef } />
 			<Button
 				primary
 				href={ A4A_MARKETPLACE_PRODUCTS_LINK }

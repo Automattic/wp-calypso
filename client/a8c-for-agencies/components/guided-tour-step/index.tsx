@@ -13,6 +13,8 @@ import {
 	preferencesLastFetchedTimestamp,
 } from 'calypso/state/preferences/selectors';
 
+import './style.scss';
+
 type Props = {
 	id: string;
 	tourId: TourId;

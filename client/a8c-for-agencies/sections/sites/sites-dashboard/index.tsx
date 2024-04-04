@@ -189,9 +189,12 @@ export default function SitesDashboard() {
 	};
 
 	const urlParams = new URLSearchParams( window.location.search );
-	const tourId = [ 'sites-walkthrough', 'add-new-site' ].includes( urlParams.get( 'tour' ) || '' )
-		? ( urlParams.get( 'tour' ) as TourId )
-		: null;
+	let tourId = null;
+	if ( urlParams.get( 'tour' ) === 'sites-walkthrough' ) {
+		tourId = 'sitesWalkthrough';
+	} else if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
+		tourId = 'addSiteStep1';
+	}
 
 	if ( noActiveSite ) {
 		return <EmptyState />;
@@ -224,7 +227,7 @@ export default function SitesDashboard() {
 					</LayoutTop>
 
 					<SiteNotifications />
-					{ tourId && <GuidedTour defaultTourId={ tourId } /> }
+					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
 
 					<DashboardDataContext.Provider
 						value={ {
