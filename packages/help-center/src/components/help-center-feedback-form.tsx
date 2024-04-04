@@ -33,7 +33,7 @@ const HelpCenterFeedbackForm = ( { postId, blogId }: HelpCenterFeedbackFormProps
 					{ __( 'Yes' ) } <ThumbsUpIcon />
 				</button>
 				<button
-					// 2 is used as `no` in crowdsignal as well, do no change
+					// 2 is used as `no` in crowdsignal as well, do not change
 					onClick={ () => handleFeedbackClick( 2 ) }
 				>
 					{ __( 'No' ) } <ThumbsDownIcon />
