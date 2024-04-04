@@ -1,11 +1,8 @@
-import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
 import { useSurveyContext } from 'calypso/components/survey-container/context';
 import { Question } from 'calypso/components/survey-container/types';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import useCachedAnswers from './hooks/use-cached-answers';
 import { mockQuestions } from './mock';
 import useSaveAnswersMutation from './mutations/use-save-answers-mutation';
@@ -34,14 +31,8 @@ const CustomDocumentHead = ( { questions }: CustomDocumentHeadType ) => {
 const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 	const { data: survey } = useSegmentationSurveyQuery();
 	const surveyKey = survey?.key ?? mockSurveyKey;
-	const userId = useSelector( getCurrentUserId );
-	const anonId = getTracksAnonymousUserId();
 
-	const { mutate } = useSaveAnswersMutation( {
-		surveyKey,
-		userId,
-		anonId,
-	} );
+	const { mutate } = useSaveAnswersMutation( { surveyKey } );
 	const questions = survey?.questions ?? mockQuestions;
 
 	const { answers, setAnswers } = useCachedAnswers( surveyKey );
