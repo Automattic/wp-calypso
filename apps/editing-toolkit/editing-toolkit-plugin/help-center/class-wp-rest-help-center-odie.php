@@ -183,9 +183,9 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			2,
 			array( 'method' => 'POST' ),
 			array(
-				'message' => $request['message'],
-				'context' => $request['context'],
-				'version' => $request['version'],
+				'message' => $request->get_param( 'message' ),
+				'context' => $request->get_param( 'context' ) ?? array(),
+				'version' => $request->get_param( 'version' ) ?? null,
 			)
 		);
 
