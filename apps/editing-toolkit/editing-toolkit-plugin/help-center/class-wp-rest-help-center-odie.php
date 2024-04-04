@@ -32,7 +32,7 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			array(
 				// Get a chat. Supports pagination of messages.
 				array(
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_chat' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 					'args'                => array(
@@ -67,7 +67,7 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 				),
 				// Add a message to a chat.
 				array(
-					'methods'             => WP_REST_Server::CREATABLE,
+					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'send_chat_message' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 					'args'                => array(
@@ -102,7 +102,7 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			$this->rest_base . '/chat/(?P<bot_id>[a-zA-Z0-9-]+)/(?P<chat_id>\d+)/(?P<message_id>\d+)/feedback',
 			array(
 				array(
-					'methods'             => WP_REST_Server::CREATABLE,
+					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'save_chat_message_feedback' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 					'args'                => array(
