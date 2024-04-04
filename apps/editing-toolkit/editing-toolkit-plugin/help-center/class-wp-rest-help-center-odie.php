@@ -131,25 +131,39 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 			)
 		);
 
-		// Register test route
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/test',
+			$this->rest_base . '/chat/(?P<bot_id>[a-zA-Z0-9-]+)',
 			array(
-				'methods'             => \WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'test' ),
-				'permission_callback' => array( $this, 'permission_callback' ),
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'send_chat_message' ),
+					'permission_callback' => array( $this, 'can_access_chat' ),
+					'args'                => array(
+						'bot_id'  => array(
+							'description' => __( 'The bot id to chat with.', 'full-site-editing' ),
+							'type'        => 'string',
+							'required'    => true,
+						),
+						'context' => array(
+							'description' => __( 'The context to continue the chat with.', 'full-site-editing' ),
+							'type'        => 'object',
+							'required'    => false,
+						),
+						'message' => array(
+							'description' => __( 'The message to add to the chat', 'full-site-editing' ),
+							'type'        => 'string',
+							'required'    => true,
+						),
+						'test'    => array(
+							'description' => __( 'Whether to mark this as a test chat (a11n-only).', 'full-site-editing' ),
+							'type'        => 'boolean',
+							'required'    => false,
+						),
+					),
+				),
 			)
 		);
-	}
-
-	/**
-	 * Test endpoint.
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function test() {
-		return rest_ensure_response( 'hello' );
 	}
 
 	/**
