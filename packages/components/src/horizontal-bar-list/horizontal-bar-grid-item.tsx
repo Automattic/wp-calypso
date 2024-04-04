@@ -2,7 +2,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import classnames from 'classnames';
 import { numberFormat } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import ShortenedNumber from '../number-formatters';
 import type { HorizontalBarListItemProps } from './types';
 
@@ -69,15 +69,15 @@ const HorizontalBarListItem = ( {
 		labelText = (
 			<>
 				{ label.length > 1
-					? label.map( ( item ) => (
-							<>
+					? label.map( ( item, index ) => (
+							<Fragment key={ index }>
 								<Icon
 									className="stats-icon"
 									icon={ item.labelIcon === 'folder' ? file : tag }
 									size={ 22 }
 								/>
 								<span>{ decodeEntities( item.label ) }</span>
-							</>
+							</Fragment>
 					  ) )
 					: label[ 0 ].label }
 			</>
