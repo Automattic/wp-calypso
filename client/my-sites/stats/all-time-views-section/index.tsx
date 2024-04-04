@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useSelector } from 'calypso/state';
-import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
+import { getSiteStatsViewSummaryMemoized } from 'calypso/state/stats/lists/selectors';
 import StatsHeatMapLegend from '../stats-heap-map/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Months from '../stats-views/months';
@@ -21,7 +21,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 	const query = { quantity: -1, stat_fields: 'views' };
 	const translate = useTranslate();
 	const [ chartOption, setChartOption ] = useState( 'total' );
-	const viewData = useSelector( ( state ) => getSiteStatsViewSummary( state, siteId ) );
+	const viewData = useSelector( ( state ) => getSiteStatsViewSummaryMemoized( state, siteId ) );
 	const monthViewOptions = useMemo( () => {
 		return [
 			{ value: 'total', label: translate( 'Months and years' ) },
