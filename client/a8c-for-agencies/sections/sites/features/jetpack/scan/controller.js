@@ -1,39 +1,37 @@
-//import { isJetpackScanSlug } from '@automattic/calypso-products';
-import { Context, type Callback } from '@automattic/calypso-router';
-//import { ReactElement, ReactNode } from 'react';
-//import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import { isJetpackScanSlug } from '@automattic/calypso-products';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
-//import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
-//import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index';
-//import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
+import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
+import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index';
+import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ScanHistoryPage from 'calypso/my-sites/scan/history';
 import ScanPage from 'calypso/my-sites/scan/main';
 import ScanUpsellPage from 'calypso/my-sites/scan/scan-upsell';
 import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-scan-upsell';
-//import WpcomScanUpsellPlaceholder from 'calypso/my-sites/scan/wpcom-scan-upsell-placeholder';
-//import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
-//import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import WpcomScanUpsellPlaceholder from 'calypso/my-sites/scan/wpcom-scan-upsell-placeholder';
+import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-/*export const showUpsellIfNoScan: Callback = ( context: Context, next ) => {
+export const showUpsellIfNoScan = ( context, next ) => {
 	const ScanUpsellPlaceholder = isJetpackCloud()
 		? UpsellProductCardPlaceholder
 		: WpcomScanUpsellPlaceholder;
 	context.featurePreview = scanUpsellSwitcher( <ScanUpsellPlaceholder />, context.featurePreview );
 	next();
-};*/
+};
 
-/*export const showUpsellIfNoScanHistory: Callback = ( context: Context, next ) => {
+export const showUpsellIfNoScanHistory = ( context, next ) => {
 	context.featurePreview = scanUpsellSwitcher( <ScanHistoryPlaceholder />, context.featurePreview );
 	next();
-};*/
+};
 
-export const showNotAuthorizedForNonAdmins: Callback = ( context: Context, next ) => {
+export const showNotAuthorizedForNonAdmins = ( context, next ) => {
 	context.featurePreview = (
 		<IsCurrentUserAdminSwitch
 			trueComponent={ context.featurePreview }
@@ -44,7 +42,7 @@ export const showNotAuthorizedForNonAdmins: Callback = ( context: Context, next 
 	next();
 };
 
-export const showJetpackIsDisconnected: Callback = ( context: Context, next ) => {
+export const showJetpackIsDisconnected = ( context, next ) => {
 	const JetpackConnectionFailed = isJetpackCloud() ? (
 		<ScanUpsellPage reason="no_connected_jetpack" />
 	) : (
@@ -59,7 +57,7 @@ export const showJetpackIsDisconnected: Callback = ( context: Context, next ) =>
 	next();
 };
 
-export const showUnavailableForVaultPressSites: Callback = ( context: Context, next ) => {
+export const showUnavailableForVaultPressSites = ( context, next ) => {
 	const message = isJetpackCloud() ? (
 		<ScanUpsellPage reason="vp_active_on_site" />
 	) : (
@@ -73,7 +71,7 @@ export const showUnavailableForVaultPressSites: Callback = ( context: Context, n
 	next();
 };
 
-export const showUnavailableForMultisites: Callback = ( context: Context, next ) => {
+export const showUnavailableForMultisites = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	if ( siteId && isJetpackSiteMultiSite( state, siteId ) ) {
@@ -87,26 +85,26 @@ export const showUnavailableForMultisites: Callback = ( context: Context, next )
 	next();
 };
 
-export const scan: Callback = ( context: Context, next ) => {
+export const scan = ( context, next ) => {
 	const { filter } = context.params;
 	context.featurePreview = <ScanPage filter={ filter } />;
 	next();
 };
 
-export const scanHistory: Callback = ( context: Context, next ) => {
+export const scanHistory = ( context, next ) => {
 	const { filter } = context.params;
 	context.featurePreview = <ScanHistoryPage filter={ filter } />;
 	next();
 };
 
-/*function scanUpsellSwitcher( placeholder: ReactNode, primary: ReactElement ) {
+function scanUpsellSwitcher( placeholder, primary ) {
 	const UpsellComponent = isJetpackCloud() ? ScanUpsellPage : WPCOMScanUpsellPage;
 	return (
 		<UpsellSwitch
 			UpsellComponent={ UpsellComponent }
 			QueryComponent={ QueryJetpackScan }
 			getStateForSite={ getSiteScanState }
-			isRequestingForSite={ ( state, siteId: number ) =>
+			isRequestingForSite={ ( state, siteId ) =>
 				'pending' === getSiteScanRequestStatus( state, siteId )
 			}
 			display={ primary }
@@ -115,4 +113,4 @@ export const scanHistory: Callback = ( context: Context, next ) => {
 			{ placeholder }
 		</UpsellSwitch>
 	);
-}*/
+}
