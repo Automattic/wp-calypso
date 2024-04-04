@@ -38,7 +38,7 @@ const OfferingItem: React.FC< OfferingItemProps > = ( {
 					</li>
 				) ) }
 			</ul>
-			<Button className="a4a-offering-item__button" onClick={ actionHandler }>
+			<Button className="a4a-offering-item__button" onClick={ actionHandler } primary>
 				{ buttonTitle }
 			</Button>
 		</FoldableCard>

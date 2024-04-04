@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -8,6 +9,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -97,6 +99,11 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			/>
 		</>
 	);
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		// By definition, Sites Management does not select any one specific site
+		context.store.dispatch( setAllSitesSelected() );
+	}
 	next();
 }
 

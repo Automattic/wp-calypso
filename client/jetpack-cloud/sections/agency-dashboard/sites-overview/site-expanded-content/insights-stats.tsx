@@ -1,5 +1,5 @@
 import { Button, ShortenedNumber } from '@automattic/components';
-import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
+import { Icon, arrowUp, arrowDown, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import ExpandedCard from './expanded-card';
@@ -88,6 +88,12 @@ export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }:
 						compact
 					>
 						{ translate( 'See all stats' ) }
+						<Icon
+							icon={ external }
+							size={ 14 }
+							className="site-preview-pane__stats-icon"
+							viewBox="0 0 20 20"
+						/>
 					</Button>
 				</div>
 			</div>

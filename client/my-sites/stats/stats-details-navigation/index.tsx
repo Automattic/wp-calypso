@@ -21,17 +21,14 @@ function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: prop
 			clicks: translate( 'Email clicks' ),
 		} ),
 		[ translate ]
-	);
+	) as { [ key: string ]: string };
+
+	const selectedTab = statType ? statType : 'highlights';
 
 	const navItems = useCallback(
-		(
-			postId: number,
-			period: string | undefined = 'day',
-			statType: string | undefined,
-			givenSiteId: string | number
-		) => {
+		( postId: number, period: string | undefined = 'day', givenSiteId: string | number ) => {
 			return Object.keys( tabs ).map( ( item ) => {
-				const selected = statType ? statType === item : 'highlights' === item;
+				const selected = selectedTab === item;
 				const pathParam = [ 'opens', 'clicks' ].includes( item )
 					? `email/${ item }/${ period }`
 					: `post`;
@@ -46,12 +43,12 @@ function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: prop
 				return <NavItem { ...attr }>{ label }</NavItem>;
 			} );
 		},
-		[ tabs ]
+		[ tabs, selectedTab ]
 	);
 
 	return (
-		<SectionNav>
-			<NavTabs label="Stats">{ navItems( postId, period, statType, givenSiteId ) }</NavTabs>
+		<SectionNav selectedText={ tabs[ selectedTab ] }>
+			<NavTabs label="Stats">{ navItems( postId, period, givenSiteId ) }</NavTabs>
 		</SectionNav>
 	);
 }

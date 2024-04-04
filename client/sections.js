@@ -663,6 +663,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-monetize',
+		paths: [ '/monetize' ],
+		module: 'calypso/my-sites/earn',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'woocommerce-installation',
 		paths: [ '/woocommerce-installation' ],
 		module: 'calypso/my-sites/woocommerce',
@@ -696,6 +702,13 @@ const sections = [
 		name: 'a8c-for-agencies',
 		paths: [ '/' ],
 		module: 'calypso/a8c-for-agencies',
+		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'a8c-for-agencies-landing',
+		paths: [ '/landing' ],
+		module: 'calypso/a8c-for-agencies/sections/landing',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
 	},

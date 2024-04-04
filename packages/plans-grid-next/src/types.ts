@@ -151,6 +151,7 @@ export type GridContextProps = {
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
+		className?: string;
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
@@ -162,6 +163,7 @@ export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 		FeaturesGridProps,
 		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
 	> & {
+		className?: string;
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
@@ -6,26 +7,28 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
-import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy-paste-info';
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
+import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
+import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
+import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
-import {
-	usePatternSearchTerm,
-	filterPatternsByTerm,
-} from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
-	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
@@ -33,7 +36,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
 
 import './style.scss';
 
@@ -41,67 +43,63 @@ import './style.scss';
 // `useCx` hook in `ToggleGroupControl`
 const PatternLibraryBody = styled.div``;
 
+export const patternFiltersClassName = 'pattern-library__filters';
+
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
 		const categorySlugs = Object.keys( pattern.categories );
-		const isPage = categorySlugs.includes( 'page' );
+		const isPage = categorySlugs.includes( CATEGORY_PAGE );
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
 }
 
-// We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
-// it will be more confusing for users to land in grid view when they have a single-pattern permalink
-function getPatternPermalink(
-	pattern: Pattern,
-	activeCategory: string,
-	patternTypeFilter: PatternTypeFilter,
-	categories: Category[]
-) {
-	// Get the first pattern category that is also included in the `usePatternCategories` data
-	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
-		categories.find( ( { name } ) => name === categorySlug )
-	);
-	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternTypeFilter );
+// Scroll to anchoring position of category pill navigation element
+function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
+	const coords = stickyFiltersElement.getBoundingClientRect();
+	const style = getComputedStyle( stickyFiltersElement );
+	const parsedTop = /(\d+(\.\d+)?)px/.exec( style.top );
+	const topStyle = parseFloat( parsedTop?.[ 1 ] ?? '0' );
 
-	const url = new URL( pathname, location.origin );
-	url.hash = `#pattern-${ pattern.ID }`;
-	return url.toString();
+	if ( onlyIfBelowThreshold && coords.top > topStyle ) {
+		return;
+	}
+
+	stickyFiltersElement.style.position = 'static';
+
+	requestAnimationFrame( () => {
+		const staticCoords = stickyFiltersElement.getBoundingClientRect();
+		stickyFiltersElement.style.removeProperty( 'position' );
+
+		window.scrollBy( {
+			behavior: 'smooth',
+			top: staticCoords.top,
+		} );
+	} );
 }
 
 type PatternLibraryProps = {
-	category: string;
 	categoryGallery: CategoryGalleryFC;
-	isGridView?: boolean;
 	patternGallery: PatternGalleryFC;
-	patternTypeFilter: PatternTypeFilter;
-	referrer?: string;
-	searchTerm?: string;
 };
 
 export const PatternLibrary = ( {
-	category,
 	categoryGallery: CategoryGallery,
-	isGridView,
 	patternGallery: PatternGallery,
-	patternTypeFilter,
-	referrer,
-	searchTerm: urlQuerySearchTerm = '',
 }: PatternLibraryProps ) => {
 	const locale = useLocale();
-	const translate_not_yet = useTranslate();
+	const translate = useTranslate();
+	const navRef = useRef< HTMLDivElement >( null );
+	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
 
-	// Helps prevent resetting the search input if a search term was provided through the URL
-	const isInitialRender = useRef( true );
-	// Helps reset the search input when navigating between categories
-	const [ searchFormKey, setSearchFormKey ] = useState( category );
-
-	const [ searchTerm, setSearchTerm ] = usePatternSearchTerm( urlQuerySearchTerm );
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [] } = usePatterns( locale, category, {
+	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
-			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
-			return filterPatternsByTerm( patternsByType, searchTerm );
+			if ( searchTerm ) {
+				return filterPatternsByTerm( patterns, searchTerm );
+			}
+
+			return filterPatternsByType( patterns, patternTypeFilter );
 		},
 	} );
 
@@ -110,11 +108,12 @@ export const PatternLibrary = ( {
 
 	const recordClickEvent = (
 		tracksEventName: string,
-		view: PatternView,
-		typeFilter: PatternTypeFilter
+		view?: PatternView,
+		typeFilter?: PatternTypeFilter
 	) => {
 		recordTracksEvent( tracksEventName, {
 			category,
+			search_term: searchTerm || undefined,
 			is_logged_in: isLoggedIn,
 			type: getTracksPatternType( typeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',
@@ -142,26 +141,46 @@ export const PatternLibrary = ( {
 		page( url.href.replace( url.origin, '' ) );
 	};
 
-	// Resets the search term when navigating from `/patterns?s=lorem` to `/patterns`
+	// If the user has scrolled below the anchoring position of the category pill navigation then we
+	// scroll back up when the category changes
 	useEffect( () => {
-		if ( ! urlQuerySearchTerm ) {
-			setSearchTerm( '' );
-			setSearchFormKey( Math.random().toString() );
+		if ( navRef.current ) {
+			scrollToPatternView( navRef.current, true );
 		}
-	}, [ urlQuerySearchTerm ] );
-
-	// Resets the search term whenever the category changes
-	useEffect( () => {
-		if ( isInitialRender.current ) {
-			isInitialRender.current = false;
-			return;
-		}
-
-		setSearchTerm( '' );
-		setSearchFormKey( category );
 	}, [ category ] );
 
+	// Scroll to anchoring position of category pill navigation when the search form is submitted
+	useEffect( () => {
+		if ( navRef.current && searchTerm ) {
+			scrollToPatternView( navRef.current );
+		}
+	}, [ searchTerm ] );
+
+	const [ isSticky, setIsSticky ] = useState( false );
+	const prevNavTopValue = useRef( 0 );
+
+	useEffect( () => {
+		const handleScroll = () => {
+			if ( ! navRef.current ) {
+				return;
+			}
+
+			const navbarPosition = navRef.current.getBoundingClientRect().top;
+
+			setIsSticky( navbarPosition === prevNavTopValue.current );
+
+			prevNavTopValue.current = navbarPosition;
+		};
+
+		window.addEventListener( 'scroll', handleScroll, { passive: true } );
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [] );
+
 	const categoryObject = categories?.find( ( { name } ) => name === category );
+	const shouldDisplayPatternTypeToggle =
+		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
 		const patternTypeFilterFallback =
@@ -177,6 +196,9 @@ export const PatternLibrary = ( {
 	} );
 
 	const isHomePage = ! category && ! searchTerm;
+	const patternGalleryKey = searchTerm
+		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
+		: `${ category }-${ patternTypeFilter }`;
 
 	return (
 		<>
@@ -184,48 +206,55 @@ export const PatternLibrary = ( {
 				category={ category }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
-				key={ `${ category }-tracker` }
-				// We pass `urlQuerySearchTerm` instead of `searchTerm` since the former is
-				// immediately reset when navigating to a new category, whereas the latter is reset
-				// *after* the first render (which triggers an additional, incorrect, page view)
-				searchTerm={ urlQuerySearchTerm }
+				searchTerm={ searchTerm }
 				referrer={ referrer }
+				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 			/>
 
-			<DocumentHead title={ translate_not_yet( 'WordPress Patterns - Category' ) } />
+			<PatternsDocumentHead category={ category } />
 
 			<PatternsHeader
-				description={ translate_not_yet(
+				description={ translate(
 					'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.'
 				) }
-				initialSearchTerm={ searchTerm }
-				key={ `${ searchFormKey }-search` }
-				onSearch={ ( query ) => {
-					setSearchTerm( query );
-				} }
-				title={ translate_not_yet( 'It’s Easier With Patterns' ) }
+				title={ translate( "It's Easier With Patterns" ) }
 			/>
 
 			<div className="pattern-library__wrapper">
-				<div className="pattern-library__pill-navigation">
-					<CategoryPillNavigation
-						selectedCategoryId={ category }
-						buttons={ [
-							{
-								icon: <Icon icon={ iconCategory } size={ 26 } />,
-								label: translate_not_yet( 'All Categories' ),
-								link: addLocaleToPathLocaleInFront( '/patterns' ),
-								isActive: isHomePage,
-							},
-						] }
-						categories={ categoryNavList }
-					/>
+				<div
+					className={ classNames( patternFiltersClassName, {
+						'pattern-library__filters--sticky': isSticky,
+					} ) }
+					ref={ navRef }
+				>
+					<div className="pattern-library__filters-inner">
+						<CategoryPillNavigation
+							selectedCategoryId={ category }
+							buttons={ [
+								{
+									icon: <Icon icon={ iconCategory } size={ 26 } />,
+									label: translate( 'All Categories' ),
+									link: addLocaleToPathLocaleInFront( '/patterns' ),
+									isActive: ! category,
+								},
+							] }
+							categories={ categoryNavList }
+						/>
+
+						<div className="pattern-library__body-search">
+							<PatternsSearchField isCollapsible />
+						</div>
+					</div>
 				</div>
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate_not_yet( 'Ship faster, ship more' ) }
-						description={ translate_not_yet(
+						title={ translate( 'Ship faster, ship more', {
+							comment:
+								'Heading text for a section in the Pattern Library with links to block pattern categories',
+							textOnly: true,
+						} ) }
+						description={ translate(
 							'Choose from a library of beautiful, functional design patterns to build exactly the pages you need—or your client needs—in no time.'
 						) }
 						categories={ categories }
@@ -236,16 +265,29 @@ export const PatternLibrary = ( {
 				{ ! isHomePage && (
 					<PatternLibraryBody className="pattern-library">
 						<div className="pattern-library__header">
-							<h1 className="pattern-library__title">
-								{ searchTerm
-									? translate_not_yet( '%(count)d pattern', '%(count)d patterns', {
-											count: patterns.length,
-											args: { count: patterns.length },
-									  } )
-									: translate_not_yet( 'Patterns' ) }
+							<h1
+								className={ classNames( 'pattern-library__title', {
+									'pattern-library__title--search': searchTerm,
+								} ) }
+							>
+								{ searchTerm &&
+									translate( '%(count)d pattern', '%(count)d patterns', {
+										count: patterns.length,
+										args: { count: patterns.length },
+									} ) }
+								{ ! searchTerm &&
+									patternTypeFilter === PatternTypeFilter.PAGES &&
+									translate( 'Page Layouts', {
+										comment: 'Refers to block patterns that contain entire page layouts',
+									} ) }
+								{ ! searchTerm &&
+									patternTypeFilter === PatternTypeFilter.REGULAR &&
+									translate( 'Patterns', {
+										comment: 'Refers to block patterns',
+									} ) }
 							</h1>
 
-							{ category && !! categoryObject?.pagePatternCount && (
+							{ shouldDisplayPatternTypeToggle && (
 								<ToggleGroupControl
 									className="pattern-library__toggle--pattern-type"
 									isBlock
@@ -265,12 +307,18 @@ export const PatternLibrary = ( {
 								>
 									<ToggleGroupControlOption
 										className="pattern-library__toggle-option"
-										label={ translate_not_yet( 'Patterns' ) }
+										label={ translate( 'Patterns', {
+											comment: 'Refers to block patterns',
+											textOnly: true,
+										} ) }
 										value={ PatternTypeFilter.REGULAR }
 									/>
 									<ToggleGroupControlOption
 										className="pattern-library__toggle-option"
-										label={ translate_not_yet( 'Page layouts' ) }
+										label={ translate( 'Page Layouts', {
+											comment: 'Refers to block patterns that contain entire page layouts',
+											textOnly: true,
+										} ) }
 										value={ PatternTypeFilter.PAGES }
 									/>
 								</ToggleGroupControl>
@@ -303,9 +351,26 @@ export const PatternLibrary = ( {
 								getPatternPermalink( pattern, category, patternTypeFilter, categories )
 							}
 							isGridView={ isGridView }
+							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
-							patternTypeFilter={ patternTypeFilter }
+							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
 						/>
+
+						{ searchTerm && ! patterns.length && category && (
+							<div className="pattern-gallery__body-no-search-results">
+								<Button
+									className="pattern-gallery__search-all-categories"
+									onClick={ () => {
+										recordClickEvent( 'calypso_pattern_library_search_in_all' );
+										page( `/patterns${ window.location.search }` );
+									} }
+								>
+									{ translate( 'Search in all categories', {
+										comment: 'Button to make search of patterns in all categories',
+									} ) }
+								</Button>
+							</div>
+						) }
 					</PatternLibraryBody>
 				) }
 
@@ -313,8 +378,12 @@ export const PatternLibrary = ( {
 
 				{ isHomePage && (
 					<CategoryGallery
-						title={ translate_not_yet( 'Beautifully curated page layouts' ) }
-						description={ translate_not_yet(
+						title={ translate( 'Beautifully curated page layouts', {
+							comment:
+								'Heading text for a section in the Pattern Library with links to block pattern categories containing page layouts',
+							textOnly: true,
+						} ) }
+						description={ translate(
 							'Start even faster with ready-to-use pages and preassembled patterns. Then tweak the design until it’s just right.'
 						) }
 						categories={ categories?.filter( ( c ) => c.pagePatternCount ) }

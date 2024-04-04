@@ -6,11 +6,13 @@ import {
 	showUnavailableForVaultPressSites,
 	scan,
 } from 'calypso/my-sites/scan/controller';
+import { useDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 import 'calypso/my-sites/scan/style.scss';
 
 type Props = {
-	sideId: number;
+	siteId: number;
 };
 type ContextHandler = ( context: object, next: () => void ) => void;
 
@@ -24,7 +26,7 @@ function processContextsChain( contextsChain: ContextHandler[], context: object 
 	next( 0 );
 }
 
-export function JetpackScanPreview( { sideId }: Props ) {
+export function JetpackScanPreview( { siteId }: Props ) {
 	const contextsChain: ContextHandler[] = [
 		showNotAuthorizedForNonAdmins,
 		showJetpackIsDisconnected,
@@ -37,16 +39,22 @@ export function JetpackScanPreview( { sideId }: Props ) {
 	const context = {
 		primary: null,
 		params: {
-			site: sideId,
+			site: siteId,
 		},
 	};
+
+	const dispatch = useDispatch();
+
+	if ( siteId ) {
+		dispatch( setSelectedSiteId( siteId ) );
+	}
 
 	processContextsChain( contextsChain, context );
 
 	return (
 		<>
 			<SitePreviewPaneContent>
-				{ sideId ? context.primary : <div>Loading Scan page...</div> }
+				{ siteId ? context.primary : <div>Loading Scan page...</div> }
 			</SitePreviewPaneContent>
 		</>
 	);

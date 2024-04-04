@@ -13,10 +13,7 @@ export function PatternPreviewPlaceholder( {
 	pattern,
 }: PatternPreviewPlaceholderProps ) {
 	return (
-		<div
-			className={ classNames( 'pattern-preview is-loading', className ) }
-			id={ `pattern-${ pattern?.ID }` }
-		>
+		<div className={ classNames( 'pattern-preview is-loading', className ) }>
 			<div className="pattern-preview__renderer" />
 
 			<div className="pattern-preview__header">

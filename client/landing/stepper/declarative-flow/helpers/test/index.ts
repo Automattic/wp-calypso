@@ -10,6 +10,14 @@ describe( 'DeclarativeFlowHelpers', () => {
 				STEPS.SITE_MIGRATION_IDENTIFY.slug
 			)
 		).toBe( true );
+		expect(
+			shouldRedirectToSiteMigration(
+				STEPS.IMPORT_LIST.slug,
+				'wordpress',
+				'en-gb',
+				STEPS.SITE_MIGRATION_IDENTIFY.slug
+			)
+		).toBe( true );
 	} );
 
 	it( 'returns false when current step is not importList', () => {

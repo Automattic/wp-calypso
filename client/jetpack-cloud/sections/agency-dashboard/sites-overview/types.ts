@@ -285,6 +285,7 @@ export interface APIToggleFavorite {
 export interface ToggleFavoriteOptions {
 	siteId: number;
 	isFavorite: boolean;
+	agencyId?: number;
 }
 
 interface MonitorURLS {

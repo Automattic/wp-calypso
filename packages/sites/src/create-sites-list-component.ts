@@ -21,6 +21,7 @@ type Features< TGrouping extends boolean, TSorting extends boolean, TFiltering e
 
 interface BaseProps< T = MinimumSite > extends Attributes {
 	sites: T[];
+	grouping?: SitesGroupingOptions;
 }
 
 type FilteringProps = { filtering?: SitesFilterOptions };

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import config from '@automattic/calypso-config';
+import { isNewSiteMigrationFlow } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -34,7 +35,7 @@ export const transferStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
+const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestAtomicSoftwareStatus, requestLatestAtomicTransfer, initiateAtomicTransfer } =
@@ -119,7 +120,8 @@ const BundleTransfer: Step = function BundleTransfer( { navigation } ) {
 			// Ensure we don't have an existing transfer in progress before starting a new one.
 			if ( preTransferCheck?.status !== transferStates.ACTIVE ) {
 				// Initiate transfer
-				await initiateAtomicTransfer( siteId, softwareSet );
+				const transferIntent = isNewSiteMigrationFlow( flow ) ? 'migrate' : undefined;
+				await initiateAtomicTransfer( siteId, softwareSet, transferIntent );
 			}
 
 			// Poll for transfer status

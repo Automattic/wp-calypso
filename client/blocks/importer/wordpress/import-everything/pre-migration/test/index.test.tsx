@@ -112,7 +112,7 @@ describe( 'PreMigration', () => {
 			onContentOnlyClick,
 		} );
 
-		expect( screen.getByText( 'Upgrade your plan' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Take your site to the next level' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Upgrade and migrate' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'free content-only import option' ) ).toBeInTheDocument();
 

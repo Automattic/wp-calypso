@@ -3,6 +3,8 @@
 @import "@automattic/typography/styles/variables";
 
 .category-pill-navigation {
+	--color-accent: #3858e9;
+
 	background: var(--studio-white);
 }
 
@@ -94,7 +96,7 @@
 	}
 
 	&.is-active {
-		background: var(--Blueberry, #3858e9);
+		background: var(--color-accent);
 		color: var(--studio-white);
 
 		svg {
@@ -107,4 +109,8 @@
 	padding-left: 32px;
 	flex: none;
 	margin-left: auto;
+}
+
+.category-pill-navigation__mobile-select .select-dropdown__container {
+	width: 100%;
 }

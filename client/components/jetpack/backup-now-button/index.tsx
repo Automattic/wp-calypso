@@ -1,4 +1,5 @@
-import { Button, Tooltip } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -84,7 +85,8 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		<div>
 			{ /* Wrapped in a div to avoid disabled button blocking hover events from reaching Tooltip */ }
 			<Button
-				variant={ variant }
+				primary={ variant === 'primary' }
+				plain={ variant === 'tertiary' }
 				onClick={ enqueueBackup }
 				disabled={ backupCurrentlyInProgress || areBackupsStopped || disabled }
 			>

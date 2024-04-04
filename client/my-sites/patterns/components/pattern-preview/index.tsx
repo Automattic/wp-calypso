@@ -1,17 +1,23 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
+import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
-import { getTracksPatternType } from '../../lib/get-tracks-pattern-type';
+import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type {
 	Pattern,
 	PatternGalleryProps,
@@ -23,6 +29,35 @@ import './style.scss';
 
 export const DESKTOP_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
+
+// This style is injected into pattern preview iframes to prevent users from navigating away from
+// the pattern preview page and from submitting forms.
+const noClickStyle = {
+	css: 'a, button, input { pointer-events: none; }',
+	isGlobalStyles: true,
+};
+
+// Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
+// hacky script is injected into pattern preview iframes to force rerender those elements.
+function forceRedraw() {
+	const elements = document.querySelectorAll< HTMLElement >( '[style*="writing-mode"]' );
+
+	elements.forEach( ( element ) => {
+		element.style.display = 'none';
+	} );
+
+	setTimeout( () => {
+		elements.forEach( ( element ) => {
+			element.style.removeProperty( 'display' );
+		} );
+	}, 200 );
+}
+
+const redrawScript = `
+<script defer>
+(${ forceRedraw.toString() })();
+</script>
+`;
 
 // Abstraction for resetting `isPatternCopied` and `isPermalinkCopied` after a given delay
 function useTimeoutToResetBoolean(
@@ -47,12 +82,12 @@ function useTimeoutToResetBoolean(
 
 type PatternPreviewProps = {
 	canCopy?: boolean;
-	category: string;
+	category?: string;
 	className?: string;
 	getPatternPermalink?: PatternGalleryProps[ 'getPatternPermalink' ];
 	isResizable?: boolean;
 	pattern: Pattern | null;
-	patternTypeFilter: PatternTypeFilter;
+	patternTypeFilter?: PatternTypeFilter;
 	isGridView?: boolean;
 	viewportWidth?: number;
 };
@@ -68,6 +103,8 @@ function PatternPreviewFragment( {
 	viewportWidth,
 }: PatternPreviewProps ) {
 	const ref = useRef< HTMLDivElement >( null );
+	const hasScrolledToAnchorRef = useRef< boolean >( false );
+
 	const [ isPermalinkCopied, setIsPermalinkCopied ] = useState( false );
 	const [ isPatternCopied, setIsPatternCopied ] = useState( false );
 
@@ -81,13 +118,50 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	const titleTooltipText = isPermalinkCopied ? 'Copied link to pattern' : 'Copy link to pattern';
+	const translate = useTranslate();
 
-	let copyButtonText = isPreviewLarge ? 'Copy pattern' : 'Copy';
+	const titleTooltipText = isPermalinkCopied
+		? translate( 'Copied link to pattern', {
+				comment: 'Tooltip text in Pattern Library for when the user just clicked a button',
+				textOnly: true,
+		  } )
+		: translate( 'Copy link to pattern', {
+				comment: 'Tooltip text in Pattern Library',
+				textOnly: true,
+		  } );
+
+	let copyButtonText = isPreviewLarge
+		? translate( 'Copy pattern', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } )
+		: translate( 'Copy', {
+				comment: 'Button label for copying a pattern',
+				textOnly: true,
+		  } );
 
 	if ( isPatternCopied ) {
-		copyButtonText = isPreviewLarge ? 'Pattern copied!' : 'Copied';
+		copyButtonText = isPreviewLarge
+			? translate( 'Pattern copied!', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } )
+			: translate( 'Copied', {
+					comment: 'Button label for when a pattern was just copied',
+					textOnly: true,
+			  } );
 	}
+
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const recordCopyEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			user_is_dev_account: isDevAccount ? '1' : '0',
+			view: isGridView ? 'grid' : 'list',
+		} );
+	};
 
 	useTimeoutToResetBoolean( isPermalinkCopied, setIsPermalinkCopied );
 	useTimeoutToResetBoolean( isPatternCopied, setIsPatternCopied );
@@ -96,14 +170,56 @@ function PatternPreviewFragment( {
 		ref.current?.dispatchEvent( new CustomEvent( 'patternPreviewResize', { bubbles: true } ) );
 	}, [ nodeSize.width, nodeSize.height ] );
 
+	// When a URL with a single-pattern hash is loaded, scroll to that pattern preview. We use
+	// `window.scrollBy` instead of setting an ID attribute on the relevant pattern preview to avoid
+	// a janky experience for users while the page is loading. This way, the browser doesn't scroll
+	// down to the relevant patterns until patterns are mostly finished loading.
+	useEffect( () => {
+		if (
+			window.location.hash !== `#${ idAttr }` ||
+			hasScrolledToAnchorRef.current ||
+			! ref.current
+		) {
+			return;
+		}
+
+		const element = ref.current;
+
+		const timeoutId = setTimeout( function () {
+			hasScrolledToAnchorRef.current = true;
+
+			const masterbarHeightRaw = getComputedStyle( document.documentElement ).getPropertyValue(
+				'--masterbar-height'
+			);
+			const masterbarHeight = /^\d+px$/.test( masterbarHeightRaw )
+				? parseInt( masterbarHeightRaw )
+				: 0;
+
+			const stickyNav = document.querySelector( `.${ patternFiltersClassName }` );
+			const stickyNavCoords = stickyNav?.getBoundingClientRect();
+			const stickyNavHeight = stickyNavCoords && ! isMobile() ? stickyNavCoords.height : 0;
+
+			const elementCoords = element.getBoundingClientRect();
+
+			const EXTRA_VERTICAL_MARGIN = 16;
+
+			// We deliberately avoid smooth scrolling, since this will trigger lazy loading on the
+			// iframes above the target, potentially causing the layout to shift, which suddenly
+			// makes the scroll target incorrect
+			window.scrollBy( {
+				top: elementCoords.top - stickyNavHeight - masterbarHeight - EXTRA_VERTICAL_MARGIN,
+			} );
+		}, 1000 );
+
+		return () => {
+			clearTimeout( timeoutId );
+		};
+	}, [ renderedPattern, idAttr ] );
+
 	if ( ! pattern ) {
 		return null;
 	}
 
-	// This handler will be used to fire each of the different 'Get Access'
-	// events for logged out users: opening the modal, closing the modal,
-	// signing up, and logging in. The handler will be passed the name of the
-	// event to fire, and the event props will be the same for each.
 	const recordGetAccessEvent = ( tracksEventName: string ) => {
 		recordTracksEvent( tracksEventName, {
 			name: pattern.name,
@@ -121,7 +237,6 @@ function PatternPreviewFragment( {
 				// SSR markup to client-side React code, which is why we need the `is-targeted` class
 				'is-targeted': window.location.hash === `#${ idAttr }`,
 			} ) }
-			id={ idAttr }
 			ref={ ref }
 		>
 			{ resizeObserver }
@@ -130,6 +245,8 @@ function PatternPreviewFragment( {
 				<PatternRenderer
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
+					scripts={ redrawScript }
+					styles={ [ noClickStyle ] }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>
@@ -153,6 +270,7 @@ function PatternPreviewFragment( {
 					<ClipboardButton
 						className="pattern-preview__copy"
 						onCopy={ () => {
+							recordCopyEvent( 'calypso_pattern_library_copy' );
 							setIsPatternCopied( true );
 						} }
 						text={ pattern?.html ?? '' }
@@ -171,7 +289,11 @@ function PatternPreviewFragment( {
 						} }
 						transparent
 					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } /> Get access
+						<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
+						{ translate( 'Get access', {
+							comment:
+								'Button label shown when logged-out users need to sign up to be able to use a pattern',
+						} ) }
 					</Button>
 				) }
 			</div>
@@ -179,6 +301,7 @@ function PatternPreviewFragment( {
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
 				onClose={ () => setIsAuthModalOpen( false ) }
+				pattern={ pattern }
 				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>
@@ -186,8 +309,11 @@ function PatternPreviewFragment( {
 }
 
 export function PatternPreview( props: PatternPreviewProps ) {
-	const { isResizable, pattern } = props;
+	const { category, isResizable, pattern, patternTypeFilter } = props;
 	const isMobile = useMobileBreakpoint();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const isRtl = useRtl();
 
 	if ( ! pattern ) {
 		return null;
@@ -197,13 +323,23 @@ export function PatternPreview( props: PatternPreviewProps ) {
 		return <PatternPreviewFragment { ...props } />;
 	}
 
+	const recordResizeEvent = ( tracksEventName: string ) => {
+		recordTracksEvent( tracksEventName, {
+			name: pattern?.name,
+			category,
+			type: getTracksPatternType( patternTypeFilter ),
+			is_logged_in: isLoggedIn,
+			user_is_dev_account: isDevAccount ? '1' : '0',
+		} );
+	};
+
 	return (
 		<ResizableBox
 			enable={ {
 				top: false,
-				right: true,
+				right: ! isRtl,
 				bottom: false,
-				left: false,
+				left: isRtl,
 				topRight: false,
 				bottomRight: false,
 				bottomLeft: false,
@@ -212,6 +348,9 @@ export function PatternPreview( props: PatternPreviewProps ) {
 			handleWrapperClass="pattern-preview__resizer"
 			minWidth={ 375 }
 			maxWidth="100%"
+			onResizeStop={ () => {
+				recordResizeEvent( 'calypso_pattern_library_resize' );
+			} }
 		>
 			<PatternPreviewFragment { ...props } />
 		</ResizableBox>

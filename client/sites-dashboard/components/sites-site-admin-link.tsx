@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { ExternalLink } from '@wordpress/components';
 
-export const SiteAdminLink = styled( ExternalLink )`
+export const SiteAdminLink = styled.a`
 	display: flex;
 	align-items: center;
 	gap: 4px;

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

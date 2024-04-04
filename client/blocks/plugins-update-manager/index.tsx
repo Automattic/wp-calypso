@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from 'calypso/blocks/plugins-update-manager/hooks/use-site-has-eligible-plugins';
+import { ScheduleLogs } from 'calypso/blocks/plugins-update-manager/schedule-logs';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
@@ -23,7 +24,7 @@ import './styles.scss';
 
 interface Props {
 	siteSlug: string;
-	context: 'list' | 'create' | 'edit';
+	context: 'list' | 'create' | 'edit' | 'logs';
 	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
@@ -52,6 +53,10 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	}, [ context, siteSlug ] );
 
 	const { component, title } = {
+		logs: {
+			component: <ScheduleLogs scheduleId={ scheduleId as string } onNavBack={ onNavBack } />,
+			title: translate( 'Scheduled Updates Logs' ),
+		},
 		list: {
 			component: (
 				<ScheduleList

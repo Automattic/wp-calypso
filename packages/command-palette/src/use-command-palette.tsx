@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 import { useCommandState } from 'cmdk';
 import { useCallback } from 'react';
-import { useCommandsParams } from './commands/types';
+import { useCommandMenuGroupContext, useCommandPaletteContext } from './context';
 import { isCustomDomain } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -66,18 +66,6 @@ export interface Command {
 
 export interface useExtraCommandsParams {
 	setSelectedCommandName: ( name: string ) => void;
-}
-
-interface useCommandPaletteOptions {
-	currentSiteId: number | null;
-	selectedCommandName: string;
-	setSelectedCommandName: ( name: string ) => void;
-	search: string;
-	navigate: ( path: string, openInNewTab?: boolean ) => void;
-	useCommands: ( options: useCommandsParams ) => Command[];
-	currentRoute: string | null;
-	useSites: () => SiteExcerptData[];
-	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
 interface SiteToActionParameters {
@@ -150,26 +138,19 @@ const useSiteToAction = ( { currentRoute }: { currentRoute: string | null } ) =>
 	return siteToAction;
 };
 
-export const useCommandPalette = ( {
-	currentSiteId,
-	selectedCommandName,
-	setSelectedCommandName,
-	search,
-	navigate,
-	useCommands,
-	currentRoute,
-	useSites = () => [],
-	userCapabilities = {},
-}: useCommandPaletteOptions ): {
+export const useCommandPalette = (): {
 	commands: Command[];
 	filterNotice: string | undefined;
 	emptyListNotice: string | undefined;
 } => {
+	const { search, selectedCommandName, setSelectedCommandName } = useCommandMenuGroupContext();
+	const { currentSiteId, navigate, useCommands, currentRoute, useSites, userCapabilities } =
+		useCommandPaletteContext();
 	const siteToAction = useSiteToAction( { currentRoute } );
 
 	const listVisibleCount = useCommandState( ( state ) => state.filtered.count );
 
-	const sites = useSites();
+	const sites = useSites?.() || [];
 
 	// Call the generateCommandsArray function to get the commands array
 	const commands = useCommands( {
@@ -226,7 +207,7 @@ export const useCommandPalette = ( {
 			let filteredSites = filter ? sites.filter( filter ) : sites;
 			if ( capabilityFilter ) {
 				filteredSites = filteredSites.filter( ( site ) => {
-					const siteCapabilities = userCapabilities[ site.ID ];
+					const siteCapabilities = userCapabilities?.[ site.ID ];
 					return siteCapabilities?.[ capabilityFilter ];
 				} );
 			}

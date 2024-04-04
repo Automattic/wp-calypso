@@ -22,6 +22,8 @@ import { JetpackPluginsPreview } from './jetpack-plugins';
 import { JetpackScanPreview } from './jetpack-scan';
 import { JetpackStatsPreview } from './jetpack-stats';
 
+import './style.scss';
+
 export function JetpackPreviewPane( {
 	site,
 	closeSitePreviewPane,
@@ -67,7 +69,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview />
+				<JetpackBackupPreview siteId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -75,7 +77,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackScanPreview sideId={ site.blog_id } />
+				<JetpackScanPreview siteId={ site.blog_id } />
 			),
 			createFeaturePreview(
 				JETPACK_MONITOR_ID,
@@ -92,11 +94,14 @@ export function JetpackPreviewPane( {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<JetpackPluginsPreview
-					link={ '/plugins/manage/' + site.url }
-					linkLabel={ translate( 'Manage Plugins' ) }
+					link={ site.url_with_scheme + '/wp-admin/plugins.php' }
+					linkLabel={ translate( 'Manage Plugins in wp-admin' ) }
 					featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
 						args: { siteUrl: site.url },
 					} ) }
+					captionText={ translate(
+						"Note: We are currently working to make this section function from the Automattic for Agencies dashboard. In the meantime, you'll be taken to WP-Admin."
+					) }
 				/>
 			),
 			createFeaturePreview(
@@ -113,7 +118,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview />
+				<JetpackActivityPreview siteId={ site.blog_id } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]

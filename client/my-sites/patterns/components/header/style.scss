@@ -36,18 +36,20 @@
 		}
 
 		.patterns-header__search-input {
-			border-radius: 4px;
-			width: 450px;
-			height: 56px;
-			overflow: hidden;
-			margin-bottom: 0;
+			.search {
+				border-radius: 4px;
+				width: 450px;
+				height: 56px;
+				overflow: hidden;
+				margin-bottom: 0;
 
-			input[type="search"] {
-				font-family: $font-sf-pro-text;
-				letter-spacing: -0.32px;
+				input[type="search"] {
+					font-family: $font-sf-pro-text;
+					letter-spacing: -0.32px;
 
-				&::placeholder {
-					color: #01283d;
+					&::placeholder {
+						color: #01283d;
+					}
 				}
 			}
 		}
@@ -70,8 +72,10 @@
 			}
 
 			.patterns-header__search-input {
-				width: auto;
-				height: 52px;
+				.search {
+					width: auto;
+					height: 52px;
+				}
 			}
 		}
 	}
