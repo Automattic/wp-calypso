@@ -76,7 +76,12 @@ export const ScheduleLogs = ( props: Props ) => {
 				</Text>
 				<div className="ch-placeholder">
 					<Text isBlock={ true } align="end" lineHeight={ 2.5 }>
-						{ schedule?.args?.length }
+						{ translate( '%(pluginsNumber)d plugin', '%(pluginsNumber)d plugins', {
+							count: schedule?.args?.length || 0,
+							args: {
+								pluginsNumber: schedule?.args?.length || 0,
+							},
+						} ) }
 						{ schedule?.args && (
 							<Tooltip
 								text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
