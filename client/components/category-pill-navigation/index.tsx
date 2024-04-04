@@ -117,6 +117,24 @@ export const CategoryPillNavigation = ( {
 
 	return (
 		<div className="category-pill-navigation">
+			{ buttons && (
+				<>
+					{ buttons.map( ( button ) => (
+						<LocalizedLink
+							key={ button.label }
+							href={ button.link }
+							className={ classnames( 'category-pill-navigation__button', {
+								'is-active': button.isActive,
+							} ) }
+						>
+							{ button.icon }
+							{ button.label }
+						</LocalizedLink>
+					) ) }
+					<div className="category-pill-navigation__button-divider" />
+				</>
+			) }
+
 			<div className="category-pill-navigation__list">
 				{ showLeftArrow && (
 					<Button className="category-pill-navigation__arrow" onClick={ () => scrollTo( 'left' ) }>
@@ -138,24 +156,6 @@ export const CategoryPillNavigation = ( {
 					ref={ listInnerRef }
 					onScroll={ checkScrollArrows }
 				>
-					{ buttons && (
-						<>
-							{ buttons.map( ( button ) => (
-								<LocalizedLink
-									key={ button.label }
-									href={ button.link }
-									className={ classnames( 'category-pill-navigation__button', {
-										'is-active': button.isActive,
-									} ) }
-								>
-									{ button.icon }
-									{ button.label }
-								</LocalizedLink>
-							) ) }
-							<div className="category-pill-navigation__button-divider" />
-						</>
-					) }
-
 					{ categories.map( ( category ) => (
 						<LocalizedLink
 							key={ category.id }

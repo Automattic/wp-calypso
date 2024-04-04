@@ -6,6 +6,12 @@
 	--color-accent: #3858e9;
 
 	background: var(--studio-white);
+	display: flex;
+	align-items: center;
+
+	@media ( max-width: $break-mobile ) {
+		display: block;
+	}
 }
 
 .category-pill-navigation__button-divider {
@@ -15,6 +21,7 @@
 	display: block;
 	border-radius: 2px;
 	background: #2c3338;
+	margin-left: 16px;
 }
 
 .category-pill-navigation__list {
@@ -32,6 +39,10 @@
 		// Safari
 		&::-webkit-scrollbar {
 			display: none;
+		}
+
+		.category-pill-navigation__button:first-child {
+			margin-left: 16px;
 		}
 	}
 
