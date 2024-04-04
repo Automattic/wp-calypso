@@ -59,7 +59,15 @@ class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( ! isNonceEnabled ) {
+		if ( isNonceEnabled ) {
+			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+				this.handleAuthorizationCode( {
+					auth_code: this.props.authCodeFromRedirect,
+					redirect_uri: this.props.redirectUri,
+					state: this.props.state,
+				} );
+			}
+		} else {
 			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
 				this.handleAuthorizationCode( {
 					auth_code: this.props.authCodeFromRedirect,
@@ -71,7 +79,7 @@ class GoogleSocialButton extends Component {
 		}
 	}
 
-	async initializeGoogleSignIn() {
+	async initializeGoogleSignIn( state ) {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
 		if ( ! googleSignIn ) {
@@ -87,7 +95,7 @@ class GoogleSocialButton extends Component {
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
-			state: isNonceEnabled ? this.state.nonce : undefined,
+			state: isNonceEnabled ? state : undefined,
 			callback: ( response ) => {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
@@ -172,24 +180,9 @@ class GoogleSocialButton extends Component {
 				apiVersion: '2',
 				method: 'GET',
 			} );
-			const nonce = response.nonce;
-			this.setState( { nonce } );
+			const state = response.nonce;
 
-			const currentPath = window.location.pathname;
-
-			if (
-				this.props.authCodeFromRedirect &&
-				this.props.serviceFromRedirect !== 'github' &&
-				currentPath !== '/me/security/social-login'
-			) {
-				this.handleAuthorizationCode( {
-					auth_code: this.props.authCodeFromRedirect,
-					redirect_uri: this.props.redirectUri,
-					state: nonce,
-				} );
-			}
-
-			await this.initializeGoogleSignIn();
+			await this.initializeGoogleSignIn( state );
 		} catch ( error ) {
 			this.props.showErrorNotice(
 				this.props.translate(
@@ -337,6 +330,7 @@ export default connect(
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
 		serviceFromRedirect: getInitialQueryArguments( state ).service,
+		state: getInitialQueryArguments( state ).state,
 	} ),
 	{
 		recordTracksEvent,
