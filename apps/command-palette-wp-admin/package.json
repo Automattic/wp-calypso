@@ -26,6 +26,7 @@
 	},
 	"dependencies": {
 		"@automattic/command-palette": "workspace:^",
+		"@automattic/sites": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/data": "^9.24.0",
 		"@wordpress/dom-ready": "^3.54.0",
@@ -37,12 +38,10 @@
 		"redux": "^4.2.1"
 	},
 	"devDependencies": {
-		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@automattic/sites": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^5.5.0",
 		"gettext-parser": "^6.0.0",
