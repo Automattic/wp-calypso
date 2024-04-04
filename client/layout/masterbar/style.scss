@@ -285,6 +285,14 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
+	svg {
+		fill: var(--color-masterbar-text);
+	}
+
+	.dashicons-before {
+		height: 20px;
+	}
+
 	&:hover {
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
@@ -1015,5 +1023,33 @@ a.masterbar__quick-language-switcher {
 		.site__domain {
 			color: var(--color-global-masterbar-text);
 		}
+	}
+}
+
+.masterbar__unified {
+	.masterbar__item-wordpress {
+		padding-left: 7px;
+		padding-right: 1px;
+
+		&:hover {
+			background: var(--color-masterbar-item-background);
+		}
+	}
+
+	.masterbar__item-all-sites {
+		gap: 4px;
+	}
+
+	.masterbar__item-current-site {
+		gap: 6px;
+	}
+
+	.masterbar__item-hosting {
+		gap: 6px;
+		background: var(--color-masterbar-item-hover-background);
+	}
+
+	.masterbar__item-notifications {
+		margin-right: 0;
 	}
 }
