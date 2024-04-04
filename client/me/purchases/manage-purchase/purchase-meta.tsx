@@ -82,6 +82,8 @@ export default function PurchaseMeta( {
 			? translate( 'Renewal Price' )
 			: translate( 'Price' );
 
+	const hideTaxString = isIncludedWithPlan( purchase );
+
 	// To-do: There isn't currently a way to get the taxName based on the country.
 	// The country is not included in the purchase information envelope
 	// We should add this information so we can utilize useTaxName to retrieve the correct taxName
@@ -113,9 +115,11 @@ export default function PurchaseMeta( {
 						<PurchaseMetaPrice purchase={ purchase } />
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
-					<span>
-						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
-					</span>
+					{ ! hideTaxString && (
+						<span>
+							<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+						</span>
+					) }
 					<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
 				</li>
 				<PurchaseMetaExpiration
