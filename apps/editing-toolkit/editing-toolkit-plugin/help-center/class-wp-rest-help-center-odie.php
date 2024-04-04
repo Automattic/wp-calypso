@@ -130,6 +130,26 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 				),
 			)
 		);
+
+		// Register test route
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/test',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'test' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+			)
+		);
+	}
+
+	/**
+	 * Test endpoint.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function test() {
+		return rest_ensure_response( 'hello' );
 	}
 
 	/**
