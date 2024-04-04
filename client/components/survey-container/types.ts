@@ -18,7 +18,7 @@ export type Option = {
 export type Question = {
 	key: string;
 	headerText: string;
-	subHeaderText: string;
+	subHeaderText?: string;
 	type: QuestionType;
 	options: Option[];
 };
