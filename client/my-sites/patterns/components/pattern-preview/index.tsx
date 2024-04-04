@@ -7,7 +7,7 @@ import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, lock } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
@@ -313,6 +313,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 	const isMobile = useMobileBreakpoint();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const isRtl = useRtl();
 
 	if ( ! pattern ) {
 		return null;
@@ -336,9 +337,9 @@ export function PatternPreview( props: PatternPreviewProps ) {
 		<ResizableBox
 			enable={ {
 				top: false,
-				right: true,
+				right: ! isRtl,
 				bottom: false,
-				left: false,
+				left: isRtl,
 				topRight: false,
 				bottomRight: false,
 				bottomLeft: false,

@@ -24,18 +24,22 @@
 }
 
 .patterns-get-started__list {
+	display: flex;
+	gap: 24px;
 	overflow: auto;
+	padding: 0 110px;
+	scroll-snap-type: x proximity;
+	scroll-padding-left: 24px;
 
-	.patterns-get-started__list-inner {
-		min-width: 1100px;
-		padding: 0 110px;
-		display: flex;
-		gap: 24px;
+	@media ( max-width: $break-wide ) {
+		padding: 0 24px;
 	}
 }
 
 .patterns-get-started__item {
 	flex: 1;
+	min-width: 320px;
+	scroll-snap-align: start;
 
 	.patterns-get-started__item-image {
 		border-radius: 4px;
@@ -64,9 +68,5 @@
 	.patterns-get-started__buttons {
 		padding: 0 24px;
 		margin-top: -16px;
-	}
-
-	.patterns-get-started__list .patterns-get-started__list-inner {
-		padding: 0 24px;
 	}
 }

@@ -34,6 +34,9 @@ const AddNewSiteButton = ( {
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
 
+	/** @todo Remove this line once the A4A_SITES_CONNECT_URL_LINK URL exists. */
+	const showAddSitesByURLButton = false;
+
 	return (
 		<SplitButton
 			popoverContext={ popoverContext }
@@ -56,11 +59,15 @@ const AddNewSiteButton = ( {
 				<span>{ translate( 'Connect a site to Jetpack' ) }</span>
 			</PopoverMenuItem>
 
-			{ /** @todo The A4A_SITES_CONNECT_URL_LINK URL does not exist yet. It will need to be migrated over from cloud.jetpack.com/dashboard/connect-url. */ }
-			<PopoverMenuItem onClick={ onClickUrlMenuItem } href={ A4A_SITES_CONNECT_URL_LINK }>
-				<Gridicon icon="domains" size={ 18 } />
-				<span>{ translate( 'Add sites by URL' ) }</span>
-			</PopoverMenuItem>
+			{ showAddSitesByURLButton && (
+				<>
+					{ /** @todo The A4A_SITES_CONNECT_URL_LINK URL does not exist yet. It will need to be migrated over from cloud.jetpack.com/dashboard/connect-url. */ }
+					<PopoverMenuItem onClick={ onClickUrlMenuItem } href={ A4A_SITES_CONNECT_URL_LINK }>
+						<Gridicon icon="domains" size={ 18 } />
+						<span>{ translate( 'Add sites by URL' ) }</span>
+					</PopoverMenuItem>
+				</>
+			) }
 		</SplitButton>
 	);
 };
