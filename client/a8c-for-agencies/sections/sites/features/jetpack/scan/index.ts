@@ -12,17 +12,18 @@ import {
 	showUnavailableForMultisites,
 	scan,
 	scanHistory,
+	wrapInSiteOffsetProvider,
 } from './controller';
 
-/* Todo: This middleware has some issues with the current context.
-const notFoundIfNotEnabled = ( context, next ) => {
+/* Todo: This code from Jetpack Cloud is not working properly. Commented.
+const notFoundIfNotEnabled: Callback = ( context: Context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const showJetpackSection = isJetpackSectionEnabledForSite( state, siteId );
 	const isWPCOMSite = getIsSiteWPCOM( state, siteId );
 
 	if ( isWPCOMSite || ( ! isJetpackCloud() && ! showJetpackSection ) ) {
-		return notFound( context, next );
+		context.featurePreview = 'Not Connected';
 	}
 
 	next();
@@ -42,14 +43,14 @@ export default function ( basePath: string ) {
 		`${ basePath }/history/:filter?`,
 		processScanContext,
 		scanHistory,
-		sitesContext,
-		//wrapInSiteOffsetProvider,
+		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
-		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitesContext,
+		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		//notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -60,15 +61,16 @@ export default function ( basePath: string ) {
 		`${ basePath }/:filter?`,
 		processScanContext,
 		scan,
-		sitesContext,
-		//wrapInSiteOffsetProvider,
+		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		sitesContext,
 		//notFoundIfNotEnabled,
+		//wpcomAtomicTransfer( WPCOMScanUpsellPage ),
+		//
 		makeLayout,
 		clientRender
 	);

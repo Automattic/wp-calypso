@@ -7,6 +7,7 @@ import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
+import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ScanHistoryPage from 'calypso/my-sites/scan/history';
 import ScanPage from 'calypso/my-sites/scan/main';
@@ -113,4 +114,11 @@ function scanUpsellSwitcher( placeholder, primary ) {
 			{ placeholder }
 		</UpsellSwitch>
 	);
+}
+
+export function wrapInSiteOffsetProvider( context, next ) {
+	context.featurePreview = (
+		<SiteOffsetProvider site={ context.params.site }>{ context.featurePreview }</SiteOffsetProvider>
+	);
+	next();
 }
