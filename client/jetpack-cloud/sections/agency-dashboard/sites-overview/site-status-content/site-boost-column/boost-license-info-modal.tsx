@@ -27,7 +27,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { sitesViewState, sort: sortV2, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
 
 	const { isLargeScreen } = useContext( DashboardDataContext );
 
@@ -49,7 +49,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 							issueTypes: getSelectedFilters( sitesViewState?.filters ),
 							showOnlyFavorites: showOnlyFavorites || false,
 						},
-						sortV2,
+						sitesViewState.sort,
 						sitesViewState?.perPage,
 						...( agencyId ? [ agencyId ] : [] ),
 				  ]
@@ -61,7 +61,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 						sort,
 						...( agencyId ? [ agencyId ] : [] ),
 				  ],
-		[ sitesViewState, showOnlyFavorites, sortV2, agencyId, search, currentPage, filter, sort ]
+		[ sitesViewState, showOnlyFavorites, agencyId, search, currentPage, filter, sort ]
 	);
 	const { installBoost, status } = useInstallBoost( siteId, siteUrl, queryKey );
 
