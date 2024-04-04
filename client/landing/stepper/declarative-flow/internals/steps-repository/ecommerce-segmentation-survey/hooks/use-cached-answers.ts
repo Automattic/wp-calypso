@@ -14,6 +14,10 @@ const useCachedAnswers = ( surveyKey: string ) => {
 			setAnswersState( newAnswers );
 			localStorage.setItem( cacheKey, JSON.stringify( newAnswers ) );
 		},
+		clearAnswers: () => {
+			setAnswersState( {} );
+			localStorage.removeItem( cacheKey );
+		},
 	};
 };
 
