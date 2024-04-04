@@ -48,12 +48,23 @@
 
 	.patterns-category-gallery__item-preview--mirrored {
 		.patterns-category-gallery__item-preview-inner {
+			// necessary to trigger browser's repainting process to fix the appearance issue in FF and Safari
+			@keyframes initTransform {
+				from {
+					transform: translateY(-8px);
+				}
+				to {
+					transform: translateY(-10px);
+				}
+			}
+
 			align-items: end;
 			border-radius: 0 0 4px 4px;
 			display: grid;
 			margin: 0 30px 20px;
 			transform-origin: center top;
 			transform: translateY(-10px);
+			animation: initTransform 0.1s;
 		}
 	}
 
