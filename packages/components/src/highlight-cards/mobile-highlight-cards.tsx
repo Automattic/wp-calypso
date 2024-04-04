@@ -7,18 +7,18 @@ type MobileHighlightCardProps = {
 	heading: string;
 	count: number | null;
 	previousCount?: number | null;
-	icon?: any;
+	icon?: React.ReactElement;
 };
 
 function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHighlightCardProps ) {
 	// We require at minimum a heading and a count.
-	const isValidHighlight = count !== null || heading.length > 0;
+	const isValidHighlight = count !== null && heading.length > 0;
 	if ( ! isValidHighlight ) {
 		return null;
 	}
 	// We require two counts to display a trendline.
 	// The icon is optional.
-	const displayTrendline = count !== null && previousCount !== null;
+	const displayTrendline = previousCount !== null && previousCount !== undefined;
 	const displayIcon = icon !== undefined;
 	return (
 		<div className="mobile-highlight-cards__item">
@@ -30,11 +30,11 @@ function MobileHighlightCard( { heading, count, previousCount, icon }: MobileHig
 			<span className="mobile-highlight-cards__item-heading">{ heading }</span>
 			{ displayTrendline && (
 				<span className="mobile-highlight-cards__item-trend">
-					<TrendComparison count={ count ?? null } previousCount={ previousCount ?? null } />
+					<TrendComparison count={ count } previousCount={ previousCount } />
 				</span>
 			) }
 			<span className="mobile-highlight-cards__item-count">
-				<ShortenedNumber value={ count ?? null } />
+				<ShortenedNumber value={ count } />
 			</span>
 		</div>
 	);
