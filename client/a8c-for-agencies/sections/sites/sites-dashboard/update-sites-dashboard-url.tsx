@@ -3,6 +3,8 @@ import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-ov
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+	DEFAULT_SORT_DIRECTION,
+	DEFAULT_SORT_FIELD,
 } from '../constants';
 import { DashboardSortInterface, Site } from '../types';
 import { getSelectedFilters } from './get-selected-filters';
@@ -30,17 +32,13 @@ const buildQueryString = ( {
 		urlQuery.set( 'page', currentPage.toString() );
 	}
 
-	const queryParams = new URLSearchParams( window.location.search );
-
-	if ( queryParams.has( 'sort_field' ) || sort.field !== 'url' ) {
+	// ASC is the default sort direction for the URL
+	if (
+		sort.field !== DEFAULT_SORT_FIELD ||
+		( sort.field === DEFAULT_SORT_FIELD && sort.direction !== DEFAULT_SORT_DIRECTION )
+	) {
 		urlQuery.set( 'sort_field', sort.field );
-
-		if ( queryParams.has( 'sort_direction' ) || sort.direction !== 'asc' ) {
-			urlQuery.set(
-				'sort_direction',
-				queryParams.get( 'sort_direction' ) === 'asc' ? 'asc' : sort.direction
-			);
-		}
+		urlQuery.set( 'sort_direction', sort.direction );
 	}
 
 	if ( filters && filters.length > 0 ) {
