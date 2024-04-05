@@ -62,7 +62,8 @@ export const ScheduleList = ( props: Props ) => {
 		siteHasEligiblePluginsLoading;
 
 	const showScheduleListEmpty =
-		( schedules.length === 0 && ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
+		schedules.length === 0 &&
+		( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
 		( ! siteHasEligiblePlugins && ! siteHasEligiblePluginsLoading ) ||
 		( isFetched &&
 			! isLoadingCanCreateSchedules &&
