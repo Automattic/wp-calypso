@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-conditional-expect */
 import { Command, COMMANDS } from '../src';
 
 jest.mock( '../src/utils', () => ( {
@@ -10,74 +9,100 @@ jest.mock( '../src/utils', () => ( {
 // so executing the callback should return the path.
 const getNavigationPath = ( command: Command ) => command.callback( {} );
 
+const siteFilters = {
+	admin: { capability: 'manage_options' },
+	adminAtomic: { capability: 'manage_options', siteType: 'atomic' },
+	adminJetpack: { capability: 'manage_options', siteType: 'jetpack' },
+	adminP2SelfHosted: { capability: 'manage_options', filterP2: true, filterSelfHosted: true },
+	adminP2Staging: { capability: 'manage_options', filterP2: true, filterStaging: true },
+	adminPublicAtomic: { capability: 'manage_options', publicOnly: true, siteType: 'atomic' },
+	adminSelfHostedCustomDomain: {
+		capability: 'manage_options',
+		filterSelfHosted: true,
+		isCustomDomain: true,
+	},
+	comments: { capability: 'moderate_comments' },
+	media: { capability: 'upload_files' },
+	p2SelfHosted: { filterP2: true, filterSelfHosted: true },
+	pages: { capability: 'edit_pages' },
+	posts: { capability: 'edit_posts' },
+	users: { capability: 'list_users' },
+	themesJetpack: { capability: 'edit_theme_options', siteType: 'jetpack' },
+	themesP2: { capability: 'edit_theme_options', filterP2: true },
+	pluginsJetpack: { capability: 'activate_plugins', siteType: 'jetpack' },
+	pluginsP2: { capability: 'activate_plugins', filterP2: true },
+};
+
 const expectedCommandsResults = {
-	// <COMMAND_NAME>: [ <PATH>, <TYPE_OF_SITE_FILTER> ]
+	// <COMMAND_NAME>: [ <PATH>, <SITE_FILTERS> ]
 	viewMySites: [ '/sites' ],
 	getHelp: [ '/help' ],
-	clearCache: [ '/hosting-config/:site#cache', 'atomicAdmin' ],
-	enableEdgeCache: [ '/hosting-config/:site#edge', 'atomicAdminPublic' ],
-	disableEdgeCache: [ '/hosting-config/:site#edge', 'atomicAdminPublic' ],
-	manageCacheSettings: [ '/hosting-config/:site#cache', 'atomicAdmin' ],
+	clearCache: [ '/hosting-config/:site#cache', siteFilters.adminAtomic ],
+	enableEdgeCache: [ '/hosting-config/:site#edge', siteFilters.adminPublicAtomic ],
+	disableEdgeCache: [ '/hosting-config/:site#edge', siteFilters.adminPublicAtomic ],
+	manageCacheSettings: [ '/hosting-config/:site#cache', siteFilters.adminAtomic ],
 	visitSite: [ 'https://:site' ],
 	openSiteDashboard: [ '/home/:site' ],
-	openHostingConfiguration: [ '/hosting-config/:site', 'wpcomAdminP2' ],
-	openPHPmyAdmin: [ '/hosting-config/:site#database-access', 'atomicAdmin' ],
+	openHostingConfiguration: [ '/hosting-config/:site', siteFilters.adminP2SelfHosted ],
+	openPHPmyAdmin: [ '/hosting-config/:site#database-access', siteFilters.adminAtomic ],
 	openProfile: [ '/me' ],
 	viewDeveloperFeatures: [ '/me/developer' ],
 	openReader: [ '/read' ],
-	openJetpackSettings: [ '/wp-admin/admin.php?page=jetpack#/dashboard', 'jetpackAdmin' ],
+	openJetpackSettings: [ '/wp-admin/admin.php?page=jetpack#/dashboard', siteFilters.adminJetpack ],
 	addJetpack: [ '/jetpack/connect?cta_from=command-palette' ],
-	manageJetpackModules: [ '/wp-admin/admin.php?page=jetpack_modules', 'jetpackAdmin' ],
-	//
+	manageJetpackModules: [ '/wp-admin/admin.php?page=jetpack_modules', siteFilters.adminJetpack ],
 	importSite: [ '/start/import?ref=command-palette' ],
 	addNewSite: [ '/start?source=command-palette' ],
 	openAccountSettings: [ '/me/account' ],
 	accessPurchases: [ '/me/purchases' ],
 	registerDomain: [ '/start/domain/domain-only?ref=command-palette' ],
 	manageDomains: [ '/domains/manage' ],
-	manageDns: [ '/domains/manage/:site/dns/:site', 'wpcomAdminCustomDomain' ],
-	copySshConnectionString: [ '/hosting-config/:site#sftp-credentials', 'atomicAdmin' ],
-	openSshCredentials: [ '/hosting-config/:site#sftp-credentials', 'atomicAdmin' ],
-	resetSshSftpPassword: [ '/hosting-config/:site#sftp-credentials', 'atomicAdmin' ],
+	manageDns: [ '/domains/manage/:site/dns/:site', siteFilters.adminSelfHostedCustomDomain ],
+	copySshConnectionString: [ '/hosting-config/:site#sftp-credentials', siteFilters.adminAtomic ],
+	openSshCredentials: [ '/hosting-config/:site#sftp-credentials', siteFilters.adminAtomic ],
+	resetSshSftpPassword: [ '/hosting-config/:site#sftp-credentials', siteFilters.adminAtomic ],
 	openJetpackStats: [ '/wp-admin/admin.php?page=stats' ],
-	openActivityLog: [ '/activity-log/:site', 'wpcomP2' ],
-	openJetpackBackup: [ '/backup/:site', 'wpcomAdminP2' ],
-	viewSiteMonitoringMetrics: [ '/site-monitoring/:site', 'atomicAdmin' ],
-	openGitHubDeployments: [ '/github-deployments/:site', 'atomicAdmin' ],
-	openPHPLogs: [ '/site-monitoring/:site/php', 'atomicAdmin' ],
-	openWebServerLogs: [ '/site-monitoring/:site/web', 'atomicAdmin' ],
-	manageStagingSites: [ '/hosting-config/:site#staging-site', 'atomicAdmin' ],
-	changePHPVersion: [ '/hosting-config/:site#web-server-settings', 'atomicAdmin' ],
-	changeAdminInterfaceStyle: [ '/hosting-config/:site#admin-interface-style', 'atomicAdmin' ],
-	addNewPost: [ '/wp-admin/post-new.php', 'posts' ],
-	managePosts: [ '/wp-admin/edit.php', 'posts' ],
-	viewMediaUploads: [ '/wp-admin/upload.php', 'media' ],
-	uploadMedia: [ '/wp-admin/media-new.php', 'media' ],
-	managePages: [ '/wp-admin/edit.php?post_type=page', 'pages' ],
-	addNewPage: [ '/wp-admin/post-new.php?post_type=page', 'pages' ],
-	manageComments: [ '/wp-admin/edit-comments.php', 'comments' ],
-	manageThemes: [ '/wp-admin/themes.php', 'themesP2' ],
-	installTheme: [ '/wp-admin/theme-install.php', 'themesJetpack' ],
-	managePlugins: [ '/wp-admin/plugins.php', 'pluginsP2' ],
-	installPlugin: [ '/wp-admin/plugin-install.php', 'pluginsJetpack' ],
-	changePlan: [ '/plans/:site', 'adminStagingP2' ],
-	manageMyPlan: [ '/plans/my-plan/:site', 'adminStagingP2' ],
-	manageUsers: [ '/wp-admin/users.php', 'users' ],
-	addNewUser: [ '/wp-admin/user-new.php', 'users' ],
-	addSubscribers: [ '/subscribers/:site#add-subscribers', 'admin' ],
-	manageSubscribers: [ '/subscribers/:site', 'admin' ],
+	openActivityLog: [ '/activity-log/:site', siteFilters.p2SelfHosted ],
+	openJetpackBackup: [ '/backup/:site', siteFilters.adminP2SelfHosted ],
+	viewSiteMonitoringMetrics: [ '/site-monitoring/:site', siteFilters.adminAtomic ],
+	openGitHubDeployments: [ '/github-deployments/:site', siteFilters.adminAtomic ],
+	openPHPLogs: [ '/site-monitoring/:site/php', siteFilters.adminAtomic ],
+	openWebServerLogs: [ '/site-monitoring/:site/web', siteFilters.adminAtomic ],
+	manageStagingSites: [ '/hosting-config/:site#staging-site', siteFilters.adminAtomic ],
+	changePHPVersion: [ '/hosting-config/:site#web-server-settings', siteFilters.adminAtomic ],
+	changeAdminInterfaceStyle: [
+		'/hosting-config/:site#admin-interface-style',
+		siteFilters.adminAtomic,
+	],
+	addNewPost: [ '/wp-admin/post-new.php', siteFilters.posts ],
+	managePosts: [ '/wp-admin/edit.php', siteFilters.posts ],
+	viewMediaUploads: [ '/wp-admin/upload.php', siteFilters.media ],
+	uploadMedia: [ '/wp-admin/media-new.php', siteFilters.media ],
+	managePages: [ '/wp-admin/edit.php?post_type=page', siteFilters.pages ],
+	addNewPage: [ '/wp-admin/post-new.php?post_type=page', siteFilters.pages ],
+	manageComments: [ '/wp-admin/edit-comments.php', siteFilters.comments ],
+	manageThemes: [ '/wp-admin/themes.php', siteFilters.themesP2 ],
+	installTheme: [ '/wp-admin/theme-install.php', siteFilters.themesJetpack ],
+	managePlugins: [ '/wp-admin/plugins.php', siteFilters.pluginsP2 ],
+	installPlugin: [ '/wp-admin/plugin-install.php', siteFilters.pluginsJetpack ],
+	changePlan: [ '/plans/:site', siteFilters.adminP2Staging ],
+	manageMyPlan: [ '/plans/my-plan/:site', siteFilters.adminP2Staging ],
+	manageUsers: [ '/wp-admin/users.php', siteFilters.users ],
+	addNewUser: [ '/wp-admin/user-new.php', siteFilters.users ],
+	addSubscribers: [ '/subscribers/:site#add-subscribers', siteFilters.admin ],
+	manageSubscribers: [ '/subscribers/:site', siteFilters.admin ],
 	downloadSubscribers: [
 		'https://dashboard.wordpress.com/wp-admin/index.php?page=subscribers&blog=:siteId&blog_subscribers=csv&type=all',
-		'admin',
+		siteFilters.admin,
 	],
-	import: [ '/import/:site', 'admin' ],
-	openWooCommerceSettings: [ '/woocommerce-installation/:site', 'wpcomAdminP2' ],
-	manageSettingsGeneral: [ '/wp-admin/options-general.php', 'admin' ],
-	manageSettingsWriting: [ '/wp-admin/options-writing.php', 'admin' ],
-	manageSettingsReading: [ '/wp-admin/options-reading.php', 'admin' ],
-	manageSettingsDiscussion: [ '/wp-admin/options-discussion.php', 'admin' ],
-	manageSettingsNewsletter: [ '/wp-admin/admin.php?page=jetpack#/newsletter', 'admin' ],
-	manageSettingsPodcast: [ '/settings/podcasting/:site', 'admin' ],
+	import: [ '/import/:site', siteFilters.admin ],
+	openWooCommerceSettings: [ '/woocommerce-installation/:site', siteFilters.adminP2SelfHosted ],
+	manageSettingsGeneral: [ '/wp-admin/options-general.php', siteFilters.admin ],
+	manageSettingsWriting: [ '/wp-admin/options-writing.php', siteFilters.admin ],
+	manageSettingsReading: [ '/wp-admin/options-reading.php', siteFilters.admin ],
+	manageSettingsDiscussion: [ '/wp-admin/options-discussion.php', siteFilters.admin ],
+	manageSettingsNewsletter: [ '/wp-admin/admin.php?page=jetpack#/newsletter', siteFilters.admin ],
+	manageSettingsPodcast: [ '/settings/podcasting/:site', siteFilters.admin ],
 	sendFeedback: [ '/help' ],
 };
 
@@ -87,171 +112,16 @@ describe( 'COMMANDS', () => {
 			const expectedPath = expectedResults[ 0 ];
 			expect( getNavigationPath( COMMANDS[ command ] ) ).toEqual( expectedPath );
 
-			const expectedSiteFilter = expectedResults[ 1 ];
-			switch ( expectedSiteFilter ) {
-				case 'atomicAdmin':
-					expect( COMMANDS[ command ].siteType ).toEqual( 'atomic' );
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'atomicAdminPublic':
-					expect( COMMANDS[ command ].siteType ).toEqual( 'atomic' );
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeTruthy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'wpcomAdminP2':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeTruthy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeTruthy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'jetpackAdmin':
-					expect( COMMANDS[ command ].siteType ).toEqual( 'jetpack' );
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'wpcomAdminCustomDomain':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeTruthy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeTruthy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'wpcomP2':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toBeFalsy();
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeTruthy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeTruthy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'posts':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'edit_posts' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'media':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'upload_files' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'pages':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'edit_pages' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'comments':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'moderate_comments' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'themesP2':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'edit_theme_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeTruthy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'themesJetpack':
-					expect( COMMANDS[ command ].siteType ).toEqual( 'jetpack' );
-					expect( COMMANDS[ command ].capability ).toEqual( 'edit_theme_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'pluginsP2':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'activate_plugins' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeTruthy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'pluginsJetpack':
-					expect( COMMANDS[ command ].siteType ).toEqual( 'jetpack' );
-					expect( COMMANDS[ command ].capability ).toEqual( 'activate_plugins' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'adminStagingP2':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeTruthy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeTruthy();
-					break;
-				case 'users':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'list_users' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				case 'admin':
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toEqual( 'manage_options' );
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-				default:
-					expect( COMMANDS[ command ].siteType ).toBeFalsy();
-					expect( COMMANDS[ command ].capability ).toBeFalsy();
-					expect( COMMANDS[ command ].publicOnly ).toBeFalsy();
-					expect( COMMANDS[ command ].filterP2 ).toBeFalsy();
-					expect( COMMANDS[ command ].isCustomDomain ).toBeFalsy();
-					expect( COMMANDS[ command ].filterSelfHosted ).toBeFalsy();
-					expect( COMMANDS[ command ].filterStaging ).toBeFalsy();
-					break;
-			}
+			const expectedSiteFilters = expectedResults[ 1 ] ?? {};
+			expect( COMMANDS[ command ].capability ).toEqual( expectedSiteFilters.capability );
+			expect( COMMANDS[ command ].filterP2 ).toEqual( expectedSiteFilters.filterP2 );
+			expect( COMMANDS[ command ].filterSelfHosted ).toEqual(
+				expectedSiteFilters.filterSelfHosted
+			);
+			expect( COMMANDS[ command ].filterStaging ).toEqual( expectedSiteFilters.filterStaging );
+			expect( COMMANDS[ command ].isCustomDomain ).toEqual( expectedSiteFilters.isCustomDomain );
+			expect( COMMANDS[ command ].publicOnly ).toEqual( expectedSiteFilters.publicOnly );
+			expect( COMMANDS[ command ].siteType ).toEqual( expectedSiteFilters.siteType );
 		}
 	} );
 } );
