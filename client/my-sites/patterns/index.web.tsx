@@ -33,6 +33,17 @@ function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 	next();
 }
 
+const extractPatternIdFromHash = () => {
+	const pattern = /^#pattern-(\d+)$/;
+	const match = window.location.hash.match( pattern );
+
+	if ( match ) {
+		return parseInt( match[ 1 ], 10 );
+	}
+
+	return undefined;
+};
+
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
@@ -43,6 +54,7 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 					isGridView: !! context.query.grid,
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+					patternPermalinkId: extractPatternIdFromHash(),
 					referrer: context.query.ref,
 				} }
 			>
