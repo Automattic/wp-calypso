@@ -229,6 +229,55 @@ function PatternPreviewFragment( {
 		} );
 	};
 
+	const getPatternPreviewHeader = () => (
+		<div className="pattern-preview__header">
+			<Tooltip delay={ 300 } placement="top" text={ titleTooltipText }>
+				<ClipboardButton
+					borderless
+					className="pattern-preview__title"
+					onCopy={ () => {
+						setIsPermalinkCopied( true );
+					} }
+					text={ getPatternPermalink( pattern ) }
+					transparent
+				>
+					{ pattern.title }
+				</ClipboardButton>
+			</Tooltip>
+
+			{ canCopy && (
+				<ClipboardButton
+					className="pattern-preview__copy"
+					onCopy={ () => {
+						recordCopyEvent( 'calypso_pattern_library_copy' );
+						setIsPatternCopied( true );
+					} }
+					text={ pattern?.html ?? '' }
+					primary
+				>
+					{ copyButtonText }
+				</ClipboardButton>
+			) }
+
+			{ ! canCopy && (
+				<Button
+					className="pattern-preview__get-access"
+					onClick={ () => {
+						setIsAuthModalOpen( true );
+						recordGetAccessEvent( 'calypso_pattern_library_get_access' );
+					} }
+					transparent
+				>
+					<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
+					{ translate( 'Get access', {
+						comment:
+							'Button label shown when logged-out users need to sign up to be able to use a pattern',
+					} ) }
+				</Button>
+			) }
+		</div>
+	);
+
 	return (
 		<div
 			className={ classNames( 'pattern-preview', className, {
@@ -241,6 +290,8 @@ function PatternPreviewFragment( {
 		>
 			{ resizeObserver }
 
+			{ ! isGridView && getPatternPreviewHeader() }
+
 			<div className="pattern-preview__renderer">
 				<PatternRenderer
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
@@ -251,52 +302,7 @@ function PatternPreviewFragment( {
 				/>
 			</div>
 
-			<div className="pattern-preview__header">
-				<Tooltip delay={ 300 } placement="top" text={ titleTooltipText }>
-					<ClipboardButton
-						borderless
-						className="pattern-preview__title"
-						onCopy={ () => {
-							setIsPermalinkCopied( true );
-						} }
-						text={ getPatternPermalink( pattern ) }
-						transparent
-					>
-						{ pattern.title }
-					</ClipboardButton>
-				</Tooltip>
-
-				{ canCopy && (
-					<ClipboardButton
-						className="pattern-preview__copy"
-						onCopy={ () => {
-							recordCopyEvent( 'calypso_pattern_library_copy' );
-							setIsPatternCopied( true );
-						} }
-						text={ pattern?.html ?? '' }
-						primary
-					>
-						{ copyButtonText }
-					</ClipboardButton>
-				) }
-
-				{ ! canCopy && (
-					<Button
-						className="pattern-preview__get-access"
-						onClick={ () => {
-							setIsAuthModalOpen( true );
-							recordGetAccessEvent( 'calypso_pattern_library_get_access' );
-						} }
-						transparent
-					>
-						<Icon height={ 18 } icon={ lock } width={ 18 } />{ ' ' }
-						{ translate( 'Get access', {
-							comment:
-								'Button label shown when logged-out users need to sign up to be able to use a pattern',
-						} ) }
-					</Button>
-				) }
-			</div>
+			{ isGridView && getPatternPreviewHeader() }
 
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
