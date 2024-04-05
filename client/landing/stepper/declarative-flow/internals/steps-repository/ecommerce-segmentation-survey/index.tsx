@@ -37,10 +37,10 @@ const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 		setAnswers( newAnswers );
 	};
 
-	const onSubmitQuestion = ( currentQuestion: Question, skip: boolean ) => {
+	const onSubmitQuestion = ( currentQuestion: Question ) => {
 		mutate( {
 			questionKey: currentQuestion.key,
-			answerKeys: skip ? [] : answers[ currentQuestion.key ] || [],
+			answerKeys: answers[ currentQuestion.key ] || [],
 		} );
 	};
 

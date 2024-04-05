@@ -21,7 +21,7 @@ const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersHookArgs ) =>
 					blog_id: blogId,
 					survey_key: surveyKey,
 					question_key: questionKey,
-					answer_key: answerKeys,
+					answers: answerKeys,
 				},
 			} );
 		},

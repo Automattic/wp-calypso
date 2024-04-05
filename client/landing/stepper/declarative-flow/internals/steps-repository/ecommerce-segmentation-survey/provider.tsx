@@ -12,7 +12,7 @@ const updatePath = ( newPage: number ) =>
 type EcommerceSegmentationSurveyProviderType = {
 	children: React.ReactNode;
 	navigation: NavigationControls;
-	onSubmitQuestion: ( currentQuestion: Question, skip: boolean ) => void;
+	onSubmitQuestion: ( currentQuestion: Question ) => void;
 	questions: Question[];
 };
 
@@ -35,8 +35,10 @@ const EcommerceSegmentationSurveyProvider = ( {
 		page.show( updatePath( currentPage - 1 ) );
 	};
 
-	const nextPage = ( skip: boolean = false ) => {
-		onSubmitQuestion( currentQuestion, skip );
+	const nextPage = ( skip: boolean ) => {
+		if ( ! skip ) {
+			onSubmitQuestion( currentQuestion );
+		}
 
 		if ( currentPage === questions.length ) {
 			navigation.submit?.();
@@ -52,7 +54,7 @@ const EcommerceSegmentationSurveyProvider = ( {
 				currentQuestion,
 				currentPage,
 				previousPage,
-				nextPage,
+				nextPage: () => nextPage( false ),
 				skip: () => nextPage( true ),
 			} }
 		>
