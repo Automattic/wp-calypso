@@ -37,6 +37,7 @@ jobs:
     - name: Get Project Current Sprint
       run: |
         SERENITY_PROJECT_ID=964
+        GITHUB_TOKEN=${{ secrets.SERENITY_PROJECT_TOKEN }}
         CURRENT_DATE=$(date +%Y-%m-%d)
         
         gh api graphql -f query='
