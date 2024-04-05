@@ -193,7 +193,6 @@ export default function SitesDashboard() {
 
 	return (
 		<Layout
-			title="Sites"
 			className={ classNames(
 				'sites-dashboard',
 				'sites-dashboard__layout',
@@ -202,6 +201,7 @@ export default function SitesDashboard() {
 			wide
 			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
+			title={ sitesViewState.selectedSite ? null : translate( 'Sites' ) }
 		>
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
