@@ -21,7 +21,9 @@ export type ScheduleUpdates = {
 
 export const useUpdateScheduleQuery = (
 	siteSlug: SiteSlug,
-	isEligibleForFeature: boolean
+	isEligibleForFeature: boolean,
+	refetchInterval: number = 10 * 1000,
+	refetchOnWindowFocus: boolean = true
 ): UseQueryResult< ScheduleUpdates[] > => {
 	const select = ( data: ScheduleUpdates[] ) => {
 		return data.sort( ( a, b ) => {
@@ -48,8 +50,8 @@ export const useUpdateScheduleQuery = (
 			),
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
-		refetchOnWindowFocus: true,
-		refetchInterval: 10 * 1000,
+		refetchOnWindowFocus,
+		refetchInterval,
 		select,
 	} );
 };
