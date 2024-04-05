@@ -1,6 +1,7 @@
 import { Button, Dialog } from '@automattic/components';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Icon, close as iconClose } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { buildQueryString } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
@@ -25,6 +26,7 @@ export const PatternsGetAccessModal = ( {
 	tracksEventHandler,
 }: PatternsGetAccessModalProps ) => {
 	const locale = useLocale();
+	const { hasTranslation } = useI18n();
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const { category, patternTypeFilter } = usePatternsContext();
@@ -76,10 +78,17 @@ export const PatternsGetAccessModal = ( {
 								'This string is used as a title for the modal that prompts users to sign up or log in to access the full pattern library.',
 						} ) }
 					</div>
+
 					<div className="patterns-get-access-modal__description">
-						{ translate(
-							"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
-						) }
+						{ hasTranslation(
+							'Build sites faster using hundreds of professionally designed layouts. All you need is a WordPress.com account to get started.'
+						)
+							? translate(
+									'Build sites faster using hundreds of professionally designed layouts. All you need is a WordPress.com account to get started.'
+							  )
+							: translate(
+									"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
+							  ) }
 					</div>
 					<div className="patterns-get-access-modal__upgrade-buttons">
 						<Button
