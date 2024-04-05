@@ -1,6 +1,7 @@
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
+	PLAN_P2_PLUS,
 	getPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
@@ -49,6 +50,11 @@ export default function ( state, siteId, planKey ) {
 		isSiteAutomatedTransfer( state, siteId )
 	) {
 		return true;
+	}
+
+	// 2024-04-02 Disable upgrade to P2+
+	if ( PLAN_P2_PLUS === planKey ) {
+		return false;
 	}
 
 	return get( getPlan( planKey ), [ 'availableFor' ], () => false )( currentPlanSlug );

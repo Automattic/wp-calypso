@@ -19,6 +19,7 @@ export default function OverviewBodyNextSteps() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const noActiveSite = useNoActiveSite();
 	const preferences = useSelector( getAllRemotePreferences );
 
 	const checkTourCompletion = ( prefSlug: string ): boolean => {
@@ -28,7 +29,28 @@ export default function OverviewBodyNextSteps() {
 		return false;
 	};
 
-	const noActiveSite = useNoActiveSite();
+	const resetTour = ( prefSlugs: string[] ): void => {
+		prefSlugs.forEach( ( slug ) => {
+			if ( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ] ) {
+				dispatch(
+					savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ slug ], { dismiss: false } )
+				);
+			}
+		} );
+	};
+
+	const addNewSiteTask: Task = {
+		calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
+		completed: checkTourCompletion( 'addSiteStep1' ),
+		disabled: false,
+		actionDispatch: () => {
+			dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
+			resetTour( [ 'addSiteStep1', 'addSiteStep2' ] );
+		},
+		id: 'add_sites',
+		title: translate( 'Learn how to add new sites' ),
+		useCalypsoPath: true,
+	};
 
 	const tasks: Task[] = [
 		{
@@ -37,9 +59,7 @@ export default function OverviewBodyNextSteps() {
 			disabled: false,
 			actionDispatch: () => {
 				dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_get_familiar_click' ) );
-				dispatch(
-					savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'sitesWalkthrough' ], true )
-				);
+				resetTour( [ 'sitesWalkthrough' ] );
 			},
 			id: 'get_familiar',
 			title: translate( 'Get familiar with the sites management dashboard' ),
@@ -62,24 +82,11 @@ export default function OverviewBodyNextSteps() {
 			useCalypsoPath: true,
 		},
 	];
-
-	const addNewSiteTask: Task = {
-		calypso_path: A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
-		completed: checkTourCompletion( 'addSiteStep1' ),
-		disabled: false,
-		actionDispatch: () => {
-			dispatch( recordTracksEvent( 'calypso_a4a_overview_next_steps_add_sites_click' ) );
-			dispatch( savePreference( A4A_ONBOARDING_TOURS_PREFERENCE_NAME[ 'addSiteStep1' ], true ) );
-		},
-		id: 'add_sites',
-		title: translate( 'Learn how to add new sites' ),
-		useCalypsoPath: true,
-	};
-
-	// If we do not have an active site, we want to show the add new site task first in the list.
 	if ( noActiveSite ) {
+		// When the user has no active site, the "Add new site" task should be the first step.
 		tasks.unshift( addNewSiteTask );
 	} else {
+		// Otherwise, it should be the last step.
 		tasks.push( addNewSiteTask );
 	}
 
