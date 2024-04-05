@@ -1,11 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
 import { TASK_PROMOTE_POST } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const PromotePost = () => {
 	const translate = useTranslate();
