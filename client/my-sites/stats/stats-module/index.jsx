@@ -176,7 +176,7 @@ class StatsModule extends Component {
 											? translate( 'View all', {
 													context: 'Stats: Button link to show more detailed stats information',
 											  } )
-											: translate( 'View detailsssss', {
+											: translate( 'View details', {
 													context: 'Stats: Button label to see the detailed content of a panel',
 											  } ),
 							  }
