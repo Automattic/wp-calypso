@@ -22,7 +22,7 @@ type Props = {
 	disabled?: boolean;
 };
 
-export default function SiteStatsColumn( { type, rows, metadata, disabled }: Props ) {
+export default function SiteStatusColumn( { type, rows, metadata, disabled }: Props ) {
 	const {
 		link,
 		isExternalLink,
