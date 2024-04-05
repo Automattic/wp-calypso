@@ -116,7 +116,9 @@ export default function SitesDashboard() {
 				type: 'list',
 			} ) );
 		}
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState ] );
+		// Omitting sitesViewState to prevent infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState, setHideListing ] );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
