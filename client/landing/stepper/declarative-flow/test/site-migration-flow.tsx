@@ -122,6 +122,38 @@ describe( 'Site Migration Flow', () => {
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
+
+		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					verifyEmail: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.VERIFY_EMAIL.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from verifyEmail back to upgrade-plan', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.VERIFY_EMAIL.slug,
+				dependencies: {
+					verifyEmail: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }`,
+				state: null,
+			} );
+		} );
 	} );
 
 	describe( 'goBack', () => {

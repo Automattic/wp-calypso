@@ -120,8 +120,15 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	} = props;
 
 	const translate = useTranslate();
-	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const [ currentPage, setCurrentPage ] = useState( () => {
+		if ( /#pattern-/.test( window.location.hash ) ) {
+			return Infinity;
+		}
+
+		return 1;
+	} );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
