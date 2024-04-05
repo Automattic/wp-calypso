@@ -1,7 +1,7 @@
 import BackupsPage from 'calypso/my-sites/backup/main';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import SitePreviewPaneContent from '../../site-preview-pane/site-preview-pane-content';
+import SitePreviewPaneContent from '../../../site-preview-pane/site-preview-pane-content';
 
 type Props = {
 	siteId: number;
