@@ -991,6 +991,13 @@
 	}
 }
 
+/* Once LicenseLightboxJetpackManageLicense is ported to A4A, this can be removed */
+.is-section-a8c-for-agencies-sites {
+	.license-lightbox__jetpack-manage-license-title {
+		display: none;
+	}
+}
+
 .sites-dashboard__empty {
 	display: flex;
 	flex-direction: column;
