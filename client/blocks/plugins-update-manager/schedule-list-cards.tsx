@@ -37,6 +37,10 @@ export const ScheduleListCards = ( props: Props ) => {
 								onClick: () => onEditClick( schedule.id ),
 							},
 							{
+								title: translate( 'Logs' ),
+								onClick: () => onShowLogs( schedule.id ),
+							},
+							{
 								title: translate( 'Remove' ),
 								onClick: () => onRemoveClick( schedule.id ),
 							},
@@ -54,19 +58,6 @@ export const ScheduleListCards = ( props: Props ) => {
 								onClick={ () => onEditClick && onEditClick( schedule.id ) }
 							>
 								{ prepareScheduleName( schedule ) }
-							</Button>
-						</strong>
-					</div>
-
-					<div className="schedule-list--card-label">
-						<label htmlFor="name">{ translate( 'Logs' ) }</label>
-						<strong id="name">
-							<Button
-								className="schedule-name"
-								variant="link"
-								onClick={ () => onShowLogs && onShowLogs( schedule.id ) }
-							>
-								{ translate( 'View logs' ) }
 							</Button>
 						</strong>
 					</div>
