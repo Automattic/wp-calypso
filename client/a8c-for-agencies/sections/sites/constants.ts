@@ -5,6 +5,9 @@ import { AgencyDashboardFilterMap } from './types';
 export const A4A_SITES_DASHBOARD_DEFAULT_CATEGORY = 'overview';
 export const A4A_SITES_DASHBOARD_DEFAULT_FEATURE = JETPACK_BOOST_ID;
 
+export const DEFAULT_SORT_FIELD = 'url';
+export const DEFAULT_SORT_DIRECTION = 'asc';
+
 export const filtersMap: AgencyDashboardFilterMap[] = [
 	{ filterType: 'all_issues', ref: 1 },
 	{ filterType: 'backup_failed', ref: 2 },
@@ -20,8 +23,8 @@ export const initialSitesViewState: SitesViewState = {
 	perPage: 50,
 	page: 1,
 	sort: {
-		field: 'url',
-		direction: 'desc',
+		field: DEFAULT_SORT_FIELD,
+		direction: DEFAULT_SORT_DIRECTION,
 	},
 	search: '',
 	filters: [],
