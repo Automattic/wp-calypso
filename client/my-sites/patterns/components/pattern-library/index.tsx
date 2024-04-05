@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	Tooltip,
 } from '@wordpress/components';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -305,22 +306,32 @@ export const PatternLibrary = ( {
 									} }
 									value={ patternTypeFilter }
 								>
-									<ToggleGroupControlOption
-										className="pattern-library__toggle-option"
-										label={ translate( 'Patterns', {
-											comment: 'Refers to block patterns',
-											textOnly: true,
-										} ) }
-										value={ PatternTypeFilter.REGULAR }
-									/>
-									<ToggleGroupControlOption
-										className="pattern-library__toggle-option"
-										label={ translate( 'Page Layouts', {
-											comment: 'Refers to block patterns that contain entire page layouts',
-											textOnly: true,
-										} ) }
-										value={ PatternTypeFilter.PAGES }
-									/>
+									<Tooltip
+										text={ translate(
+											'A collection of blocks that make up one section of a page. (For example: an image gallery or contact form)'
+										) }
+									>
+										<ToggleGroupControlOption
+											className="pattern-library__toggle-option"
+											label={ translate( 'Patterns', {
+												comment: 'Refers to block patterns',
+												textOnly: true,
+											} ) }
+											value={ PatternTypeFilter.REGULAR }
+										/>
+									</Tooltip>
+									<Tooltip
+										text={ translate( 'A collection of patterns that form an entire page.' ) }
+									>
+										<ToggleGroupControlOption
+											className="pattern-library__toggle-option"
+											label={ translate( 'Page Layouts', {
+												comment: 'Refers to block patterns that contain entire page layouts',
+												textOnly: true,
+											} ) }
+											value={ PatternTypeFilter.PAGES }
+										/>
+									</Tooltip>
 								</ToggleGroupControl>
 							) }
 
