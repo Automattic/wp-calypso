@@ -4,7 +4,7 @@ import performanceMark from 'calypso/server/lib/performance-mark';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 
-const getLocalizedCanonicalUrl = ( path, locale ) => {
+export const getLocalizedCanonicalUrl = ( path, locale ) => {
 	const baseUrl = `https://wordpress.com${ path }`;
 	const baseUrlWithoutLang = baseUrl.replace(
 		new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),

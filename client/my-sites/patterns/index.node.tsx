@@ -1,6 +1,6 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
-import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import { getLocalizedCanonicalUrl, setHrefLangLinks } from 'calypso/controller/localized-links';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
@@ -17,7 +17,8 @@ import {
 import { PatternsWrapper } from 'calypso/my-sites/patterns/wrapper';
 import { serverRouter } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	performanceMark( context, 'renderPatterns' );
@@ -91,6 +92,30 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 		} );
 }
 
+// This is a modified version of `setLocalizedCanonicalUrl` from
+// `calypso/controller/localized-links`. The difference is that this function strips all query
+// parameters from the URL
+function setCanonicalUrl( context: RouterContext, next: RouterNext ) {
+	performanceMark( context, 'setCanonicalUrl' );
+
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+		next();
+		return;
+	}
+
+	const canonicalUrl = new URL( context.originalUrl, 'https://wordpress.com' );
+	canonicalUrl.search = '';
+	const canonicalUrlPath = canonicalUrl.href.replace( canonicalUrl.origin, '' );
+
+	const langParamSlug = context.i18n.getLocaleSlug();
+	const href = getLocalizedCanonicalUrl( canonicalUrlPath, langParamSlug );
+	const link = { rel: 'canonical', href };
+
+	context.store.dispatch( setDocumentHeadLink( link ) );
+
+	next();
+}
+
 export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
 
@@ -103,7 +128,7 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 		],
 		ssrSetupLocale,
 		setHrefLangLinks,
-		setLocalizedCanonicalUrl,
+		setCanonicalUrl,
 		fetchCategoriesAndPatterns,
 		renderPatterns,
 		makeLayout
