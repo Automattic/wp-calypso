@@ -7,7 +7,6 @@ import useCachedAnswers from './hooks/use-cached-answers';
 import { mockQuestions } from './mock';
 import useSaveAnswersMutation from './mutations/use-save-answers-mutation';
 import EcommerceSegmentationSurveyProvider from './provider';
-import useSegmentationSurveyQuery from './queries/use-segmentation-survey-query';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -24,9 +23,6 @@ const CustomDocumentHead = () => {
 };
 
 const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
-	const { data: survey } = useSegmentationSurveyQuery( { surveyKey } );
-	const questions = survey?.questions ?? mockQuestions;
-
 	const { mutate } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers } = useCachedAnswers( surveyKey );
 
@@ -52,7 +48,7 @@ const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 		<EcommerceSegmentationSurveyProvider
 			navigation={ navigation }
 			onSubmitQuestion={ onSubmitQuestion }
-			questions={ questions }
+			questions={ mockQuestions }
 		>
 			<CustomDocumentHead />
 
