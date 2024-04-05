@@ -29,7 +29,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	const stepContent = (
 		<UpgradePlan
 			site={ siteItem }
-			ctaText=""
+			ctaText={ translate( 'Upgrade and migrate' ) }
 			subTitleText=""
 			isBusy={ false }
 			hideTitleAndSubTitle
