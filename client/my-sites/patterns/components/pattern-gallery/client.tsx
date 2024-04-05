@@ -185,7 +185,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 										type: getTracksPatternType( patternTypeFilter ),
 										view: isGridView ? 'grid' : 'list',
 										load_more_page: currentPage,
-										search_term: searchTerm,
+										search_term: searchTerm ? searchTerm : undefined,
 									} );
 								} }
 								transparent
