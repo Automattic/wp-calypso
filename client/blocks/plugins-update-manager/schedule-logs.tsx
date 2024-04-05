@@ -122,7 +122,8 @@ export const ScheduleLogs = ( props: Props ) => {
 							className={ shouldIndentTimelineEvent( log ) ? 'indent' : '' }
 							disabled={ log.action === 'PLUGIN_UPDATES_START' }
 							actionLabel={
-								log.action === 'PLUGIN_UPDATE_FAILURE'
+								// show a button only for the most recent update failure
+								i === 0 && log.action === 'PLUGIN_UPDATE_FAILURE'
 									? translate( 'Try manual update' )
 									: undefined
 							}
