@@ -199,7 +199,7 @@
 	border-bottom-right-radius: 4px;
 	bottom: 0;
 	color: var(--Gray-Gray-40, #787c82);
-	font-size: 0.82;
+	font-size: 0.875rem;
 	font-weight: 400;
 	justify-content: space-between !important;
 	margin-bottom: 1rem;
@@ -216,7 +216,7 @@
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		width: calc(100% - ( var(--sidebar-width-max) + 49px));
+		width: calc(100% - ( var(--sidebar-width-max) + 48px));
 	}
 
 	@include breakpoint-deprecated( ">1400px" ) {
