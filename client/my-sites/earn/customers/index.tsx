@@ -1,10 +1,9 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import { useState, useEffect, useCallback, MouseEvent } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { shallowEqual } from 'react-redux';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -17,6 +16,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import {
@@ -60,54 +60,15 @@ function CustomerSection() {
 		[ dispatch, site, subscribers, totalSubscribers ]
 	);
 
-	function downloadSubscriberList( event: MouseEvent< HTMLButtonElement > ) {
-		event.preventDefault();
-		const fileName = [ site?.slug, 'memberships', 'subscribers' ].join( '_' ) + '.csv';
-
-		const csvData = [
-			[
-				'ID',
-				'status',
-				'start_date',
-				'end_date',
-				'user_name',
-				'user_email',
-				'plan_id',
-				'plan_title',
-				'renewal_price',
-				'currency',
-				'renew_interval',
-				'All time total',
-			]
-				.map( ( field ) => '"' + field + '"' )
-				.join( ',' ),
-		]
-			.concat(
-				Object.values( subscribers ).map( ( row ) =>
-					[
-						row.id,
-						row.status,
-						row.start_date,
-						row.end_date,
-						row.user.name,
-						row.user.user_email,
-						row.plan.connected_account_product_id,
-						row.plan.title,
-						row.plan.renewal_price,
-						row.plan.currency,
-						row.renew_interval,
-						row.all_time_total,
-					]
-						.map( ( field ) => ( field ? '"' + field + '"' : '""' ) )
-						.join( ',' )
-				)
-			)
-			.join( '\n' );
-
-		const blob = new window.Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
-
-		saveAs( blob, fileName );
-	}
+	const downloadCsvLink = addQueryArgs(
+		{
+			page: 'subscribers',
+			blog: site?.ID,
+			blog_subscribers: 'csv',
+			type: 'paid-supporter',
+		},
+		'https://dashboard.wordpress.com/wp-admin/index.php'
+	);
 
 	function renderSubscriberList() {
 		return (
@@ -162,9 +123,7 @@ function CustomerSection() {
 							setSubscriberToCancel={ setSubscriberToCancel }
 						/>
 						<div className="memberships__module-footer">
-							<Button onClick={ downloadSubscriberList }>
-								{ translate( 'Download list as CSV' ) }
-							</Button>
+							<Button href={ downloadCsvLink }>{ translate( 'Download list as CSV' ) }</Button>
 						</div>
 					</>
 				) }
