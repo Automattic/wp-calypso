@@ -1,4 +1,5 @@
 import { Icon, check, closeSmall, rotateRight } from '@wordpress/icons';
+import classnames from 'classnames';
 import type { ScheduleUpdates } from 'calypso/data/plugins/use-update-schedules-query';
 
 import './badge.scss';
@@ -9,8 +10,15 @@ interface Props {
 export const Badge = ( props: Props ) => {
 	const { type } = props;
 
+	const className = classnames( 'badge-component', {
+		'badge-component--failed':
+			type === 'failure-and-rollback' || type === 'failure' || type === 'failure-and-rollback-fail',
+		'badge-component--in-progress': type === 'in-progress',
+		'badge-component--success': type === 'success',
+	} );
+
 	return (
-		<span className={ `badge-component badge-component--${ type }` }>
+		<span className={ className }>
 			{ type === 'in-progress' && <Icon icon={ rotateRight } size={ 20 } /> }
 			{ type === 'success' && <Icon icon={ check } size={ 20 } /> }
 			{ type === 'failure-and-rollback' ||
