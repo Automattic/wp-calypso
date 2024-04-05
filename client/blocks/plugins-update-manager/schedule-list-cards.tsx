@@ -19,7 +19,7 @@ export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const translate = useTranslate();
-	const { onEditClick, onShowLogs, onRemoveClick } = props;
+	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
