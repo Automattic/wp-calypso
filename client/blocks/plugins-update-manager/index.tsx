@@ -29,11 +29,20 @@ interface Props {
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
+	onShowLogs: ( id: string ) => void;
 }
 
 export const PluginsUpdateManager = ( props: Props ) => {
 	const translate = useTranslate();
-	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
+	const {
+		siteSlug,
+		context,
+		scheduleId,
+		onNavBack,
+		onCreateNewSchedule,
+		onEditSchedule,
+		onShowLogs,
+	} = props;
 	const siteId = useSelector( getSelectedSiteId );
 
 	const { isEligibleForFeature, isSitePlansLoaded } = useIsEligibleForFeature();
@@ -43,7 +52,6 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins( siteSlug );
-
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 	useEffect( () => {
 		recordTracksEvent( 'calypso_scheduled_updates_page_view', {
@@ -63,6 +71,7 @@ export const PluginsUpdateManager = ( props: Props ) => {
 					onNavBack={ onNavBack }
 					onCreateNewSchedule={ onCreateNewSchedule }
 					onEditSchedule={ onEditSchedule }
+					onShowLogs={ onShowLogs }
 				/>
 			),
 			title: translate( 'Scheduled Updates' ),
