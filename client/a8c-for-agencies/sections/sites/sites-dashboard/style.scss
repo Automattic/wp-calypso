@@ -222,6 +222,11 @@
 				overflow-y: auto;
 				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
 			}
+
+			.is-hiding-navigation .dataviews-view-table-wrapper {
+				overflow-y: auto;
+				max-height: calc(100vh - 182px); /* 182px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
+			}
 		}
 
 		&.sites-dashboard__layout:not(.preview-hidden) {
@@ -447,6 +452,10 @@
 
 			.sites-overview__content {
 				margin-top: 24px;
+
+				&.is-hiding-navigation {
+					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
+				}
 			}
 		}
 
@@ -988,6 +997,13 @@
 				visibility: visible;
 			}
 		}
+	}
+}
+
+/* Once LicenseLightboxJetpackManageLicense is ported to A4A, this can be removed */
+.is-section-a8c-for-agencies-sites {
+	.license-lightbox__jetpack-manage-license-title {
+		display: none;
 	}
 }
 

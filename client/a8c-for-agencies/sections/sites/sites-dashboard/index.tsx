@@ -209,21 +209,22 @@ export default function SitesDashboard() {
 				! sitesViewState.selectedSite && 'preview-hidden'
 			) }
 			wide
-			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
-					<LayoutTop withNavigation>
+					<LayoutTop withNavigation={ navItems.length > 1 }>
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
 							<Actions>
 								<SitesHeaderActions />
 							</Actions>
 						</LayoutHeader>
-						<LayoutNavigation { ...selectedItemProps }>
-							<NavigationTabs { ...selectedItemProps } items={ navItems } />
-						</LayoutNavigation>
+						{ navItems.length > 1 && (
+							<LayoutNavigation { ...selectedItemProps }>
+								<NavigationTabs { ...selectedItemProps } items={ navItems } />
+							</LayoutNavigation>
+						) }
 					</LayoutTop>
 
 					<SiteNotifications />
@@ -246,7 +247,9 @@ export default function SitesDashboard() {
 						} }
 					>
 						<SitesDataViews
-							className="sites-overview__content"
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }
