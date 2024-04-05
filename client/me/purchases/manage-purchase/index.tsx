@@ -673,7 +673,7 @@ class ManagePurchase extends Component<
 		// but would receive another free domain credit instead.
 		if ( isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
 			refundText = translate(
-				'If you cancel this domain before {{refundDate/}}, you will be able to choose another free domain.',
+				"If you're unsure about this domain, cancel it before {{refundDate/}} to choose another free domain instead.",
 				{
 					components: {
 						refundDate: <FormattedDate date={ refundPeriod } format="LL" />,
@@ -693,12 +693,10 @@ class ManagePurchase extends Component<
 				<InfoPopover iconSize={ 16 } position="top left">
 					<span>
 						{ translate(
-							'The refund period for this purchase is %(refundPeriodInDays)s days. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							'The refund period for this purchase is %(refundPeriodInDays)s days. Questions? Check our {{link}refund policy{{/link}}.',
 							{
 								components: {
-									learnMoreLink: (
-										<InlineSupportLink supportContext="refund-periods" showIcon={ false } />
-									),
+									link: <InlineSupportLink supportContext="refund-periods" showIcon={ false } />,
 								},
 								args: {
 									refundPeriodInDays: purchase?.refundPeriodInDays,
