@@ -5,6 +5,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import { useSelector } from 'calypso/state';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
 import { hideFractionNumber } from './chart-utils';
@@ -84,6 +87,9 @@ export default function SubscribersChartSection( {
 		queryDate
 	) as UseQueryResult< SubscribersDataResult >;
 
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
 	const handleDateChange = useCallback(
 		( newDate: Date ) => setQueryDate( new Date( newDate.getTime() ) ), // unless new Date is created, the component won't rerender
 		[ setQueryDate ]
@@ -110,6 +116,10 @@ export default function SubscribersChartSection( {
 	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
 
+	const subscribersUrl =
+		isAtomic || isJetpack
+			? `https://cloud.jetpack.com/subscribers/${ slug }`
+			: `/people/subscribers/${ slug }`;
 	return (
 		<div className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
@@ -118,7 +128,7 @@ export default function SubscribersChartSection( {
 					{ translate( 'Subscribers' ) }{ ' ' }
 					{ isOdysseyStats ? null : (
 						<small>
-							<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
+							<a className="highlight-cards-heading-wrapper" href={ subscribersUrl }>
 								{ translate( 'View all subscribers' ) }
 							</a>
 						</small>

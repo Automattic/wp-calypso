@@ -7,7 +7,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -18,6 +19,7 @@ import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+
 import './style.scss';
 
 const MAX_FOLLOWERS_TO_SHOW = 10;
@@ -65,7 +67,8 @@ class StatModuleFollowers extends Component {
 			translate,
 			emailQuery,
 			wpcomQuery,
-			isOdysseyStats,
+			atomicSite,
+			jetpackSite,
 			className,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
@@ -77,12 +80,12 @@ class StatModuleFollowers extends Component {
 		const summaryPageSlug = siteSlug || '';
 		// email-followers is no longer available, so fallback to the new subscribers URL.
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
-		let summaryPageLink = '/people/subscribers/' + summaryPageSlug;
 
 		// Limit scope for Odyssey stats, as the Followers page is not yet available.
-		summaryPageLink = ! isOdysseyStats
-			? summaryPageLink
-			: 'https://wordpress.com' + summaryPageLink;
+		const summaryPageLink =
+			atomicSite || jetpackSite
+				? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
+				: '/people/subscribers/' + summaryPageSlug;
 
 		// Combine data sets, sort by recency, and limit to 10.
 		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
@@ -184,6 +187,8 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
+			isAtomic: isAtomicSite( state, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }
