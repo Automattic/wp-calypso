@@ -66,9 +66,13 @@ export const ScheduleListCards = ( props: Props ) => {
 						<label htmlFor="last-update">{ translate( 'Last update' ) }</label>
 						<span id="last-update">
 							{ schedule.last_run_timestamp && (
-								<a href={ `/plugins/scheduled-updates/logs/${ siteSlug }/${ schedule.id }` }>
+								<Button
+									className="schedule-last-run"
+									variant="link"
+									onClick={ () => onShowLogs( schedule.id ) }
+								>
 									{ prepareDateTime( schedule.last_run_timestamp ) }
-								</a>
+								</Button>
 							) }
 							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
