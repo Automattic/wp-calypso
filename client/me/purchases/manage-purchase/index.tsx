@@ -64,7 +64,10 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import FormattedDate from 'calypso/components/formatted-date';
 import HeaderCake from 'calypso/components/header-cake';
+import InfoPopover from 'calypso/components/info-popover';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -639,6 +642,75 @@ class ManagePurchase extends Component<
 		return null;
 	}
 
+	renderRefundText() {
+		const { purchase, translate } = this.props;
+
+		// Hide if refund window has lapsed.
+		if ( ! purchase?.isRefundable || ! purchase?.refundText || ! purchase?.mostRecentRenewDate ) {
+			return;
+		}
+
+		const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
+		const lastRenewal = new Date( purchase?.mostRecentRenewDate );
+		const refundPeriod = new Date(
+			lastRenewal.getTime() + purchase?.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
+		);
+
+		let refundText = translate(
+			'Eligible for a refund of %(refundAmount)s until {{refundDate/}}.',
+			{
+				components: {
+					refundDate: <FormattedDate date={ refundPeriod } format="LL" />,
+				},
+				args: {
+					refundAmount: purchase?.refundText,
+				},
+				context: 'refundAmount contains the currency and amount - eg. £20',
+			}
+		);
+
+		// Applies if the user wouldn't receive a financial refund,
+		// but would receive another free domain credit instead.
+		if ( isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
+			refundText = translate(
+				'If you cancel this domain before {{refundDate/}}, you will be able to choose another free domain.',
+				{
+					components: {
+						refundDate: <FormattedDate date={ refundPeriod } format="LL" />,
+					},
+				}
+			);
+		}
+
+		// Neither a financial refund nor another domain credit would be available.
+		if ( ! isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
+			return;
+		}
+
+		return (
+			<div className="manage-purchase__refund-text-wrapper">
+				<span className="manage-purchase__refund-text">{ refundText }</span>
+				<InfoPopover iconSize={ 16 } position="top left">
+					<span>
+						{ translate(
+							'The refund period for this purchase is %(refundPeriodInDays)s days. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink supportContext="refund-periods" showIcon={ false } />
+									),
+								},
+								args: {
+									refundPeriodInDays: purchase?.refundPeriodInDays,
+								},
+							}
+						) }
+					</span>
+				</InfoPopover>
+			</div>
+		);
+	}
+
 	renderRemovePurchaseNavItem() {
 		const {
 			hasLoadedSites,
@@ -680,6 +752,7 @@ class ManagePurchase extends Component<
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
+				{ this.renderRefundText() }
 			</RemovePurchase>
 		);
 	}
@@ -879,6 +952,7 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
+				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}
