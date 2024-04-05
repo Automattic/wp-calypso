@@ -124,8 +124,7 @@ function HighlightsSectionHeader( props ) {
 	);
 }
 
-function HighlightsListing( props ) {
-	const highlights = useHighlights( props.earnings );
+function HighlightsListing( { highlights } ) {
 	return (
 		<div className="highlight-cards-list">
 			{ highlights.map( ( highlight ) => (
@@ -140,8 +139,7 @@ function HighlightsListing( props ) {
 	);
 }
 
-function HighlightsListingMobile( props ) {
-	const highlights = useHighlights( props.earnings );
+function HighlightsListingMobile( { highlights } ) {
 	// Convert the highlights data for the MobileHighlightCardListing component.
 	// Use preformattedValue property as an override to the count.
 	// Send the raw SVG icon and zero out the count.
@@ -170,14 +168,15 @@ function HighlightsListingMobile( props ) {
 
 export default function HighlightsSection( props ) {
 	const earningsData = useSelector( ( state ) => getWordAdsEarnings( state, props.siteId ) );
+	const highlights = useHighlights( earningsData );
 
 	// TODO: Retain business logic here and refactor presentational logic into highlight-cards.
 	//       Maybe name it wordads-highlight-cards?
 	return (
 		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
 			<HighlightsSectionHeader earnings={ earningsData } />
-			<HighlightsListing earnings={ earningsData } />
-			<HighlightsListingMobile earnings={ earningsData } />
+			<HighlightsListing highlights={ highlights } />
+			<HighlightsListingMobile highlights={ highlights } />
 		</div>
 	);
 }
