@@ -170,8 +170,6 @@ export default function HighlightsSection( props ) {
 	const earningsData = useSelector( ( state ) => getWordAdsEarnings( state, props.siteId ) );
 	const highlights = useHighlights( earningsData );
 
-	// TODO: Retain business logic here and refactor presentational logic into highlight-cards.
-	//       Maybe name it wordads-highlight-cards?
 	return (
 		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
 			<HighlightsSectionHeader earnings={ earningsData } />
