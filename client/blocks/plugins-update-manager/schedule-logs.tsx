@@ -10,6 +10,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
+import { useUpdateScheduleLogsQuery } from 'calypso/data/plugins/use-update-schedule-logs-query';
 import {
 	type ScheduleUpdates,
 	useUpdateScheduleQuery,
@@ -20,6 +22,13 @@ import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteAdminUrl } from './hooks/use-site-admin-url';
 import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
+import {
+	getLogDetails,
+	getLogIcon,
+	getLogIconStatus,
+	addSecondsToFormat,
+	shouldIndentTimelineEvent,
+} from './schedule-logs.helper';
 
 interface Props {
 	scheduleId: string;
@@ -37,9 +46,10 @@ export const ScheduleLogs = ( props: Props ) => {
 		convertPhpToMomentFormat,
 	} = useSiteDateTimeFormat( siteSlug );
 	const dateFormat = convertPhpToMomentFormat( phpDateFormat );
-	const timeFormat = convertPhpToMomentFormat( phpTimeFormat );
+	const timeFormat = addSecondsToFormat( convertPhpToMomentFormat( phpTimeFormat ) );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { data: plugins = [] } = useCorePluginsQuery( siteSlug, true, true );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const {
 		data: schedules = [],
@@ -47,6 +57,7 @@ export const ScheduleLogs = ( props: Props ) => {
 		isPending,
 	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
+	const { data: scheduleLogs = [] } = useUpdateScheduleLogsQuery( siteSlug, scheduleId );
 
 	const goToPluginsPage = useCallback( () => {
 		window.location.href = `${ siteAdminUrl }plugins.php`;
@@ -94,89 +105,34 @@ export const ScheduleLogs = ( props: Props ) => {
 					</Text>
 				</div>
 			</CardHeader>
-			<Timeline>
-				<TimelineEvent
-					date={ new Date( '30 March 2024, 10:01 am' ) }
-					dateFormat={ timeFormat }
-					detail="Plugins update completed"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					className="indent"
-					date={ new Date( '30 March 2024, 10:00:48 am' ) }
-					dateFormat={ timeFormat }
-					detail="Gravity Forms updated from 2.5.8 to 2.6.0"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					className="indent"
-					date={ new Date( '30 March 2024, 10:00:39 am' ) }
-					dateFormat={ timeFormat }
-					detail="Move to WordPress.com update from 5.9.3 to 6.0.0 failed [ Rolledback to 5.9.3 ]"
-					icon="cross"
-					iconBackground="error"
-					actionLabel="Try manual update"
-					actionIsPrimary={ true }
-					onActionClick={ goToPluginsPage }
-				/>
-				<TimelineEvent
-					className="indent"
-					date={ new Date( '30 March 2024, 10:00:12 am' ) }
-					dateFormat={ timeFormat }
-					detail="Elementor Pro updated from 3.0.9 to 3.1.0"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					date={ new Date( '30 March 2024' ) }
-					dateFormat={ `${ dateFormat } ${ timeFormat }` }
-					detail="Plugins update starts"
-					icon="sync"
-					disabled
-				/>
-			</Timeline>
-			<Timeline>
-				<TimelineEvent
-					date={ new Date( '27 March 2024, 10:01 am' ) }
-					dateFormat={ timeFormat }
-					detail="Plugins update completed successfully"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					className="indent"
-					date={ new Date( '27 March 2024, 10:00:48 am' ) }
-					dateFormat={ timeFormat }
-					detail="Gravity Forms updated from 2.5.8 to 2.6.0"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					className="indent"
-					date={ new Date( '27 March 2024, 10:00:39 am' ) }
-					dateFormat={ timeFormat }
-					detail="Move to WordPress.com update from 5.9.3 to 6.0.0"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					className="indent"
-					date={ new Date( '27 March 2024, 10:00:12 am' ) }
-					dateFormat={ timeFormat }
-					detail="Elementor Pro updated from 3.0.9 to 3.1.0"
-					icon="checkmark"
-					iconBackground="success"
-				/>
-				<TimelineEvent
-					date={ new Date( '27 March 2024, 10:00:00 am' ) }
-					dateFormat={ `${ dateFormat } ${ timeFormat }` }
-					detail="Plugins update starts"
-					icon="sync"
-					disabled
-				/>
-			</Timeline>
+			{ scheduleLogs.map( ( logs, i ) => (
+				<Timeline key={ i }>
+					{ logs.reverse().map( ( log ) => (
+						<TimelineEvent
+							key={ log.timestamp }
+							date={ log.date }
+							dateFormat={
+								log.action === 'PLUGIN_UPDATES_START'
+									? `${ dateFormat } ${ timeFormat }`
+									: timeFormat
+							}
+							detail={ getLogDetails( log, plugins ) }
+							icon={ getLogIcon( log ) }
+							iconBackground={ getLogIconStatus( log ) }
+							className={ shouldIndentTimelineEvent( log ) ? 'indent' : '' }
+							disabled={ log.action === 'PLUGIN_UPDATES_START' }
+							actionLabel={
+								// show a button only for the most recent update failure
+								i === 0 && log.action === 'PLUGIN_UPDATE_FAILURE'
+									? translate( 'Try manual update' )
+									: undefined
+							}
+							actionIsPrimary={ true }
+							onActionClick={ goToPluginsPage }
+						/>
+					) ) }
+				</Timeline>
+			) ) }
 		</Card>
 	);
 };
