@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import { useUpdateScheduleLogsQuery } from 'calypso/data/plugins/use-update-schedule-logs-query';
 import {
 	type ScheduleUpdates,
@@ -48,6 +49,7 @@ export const ScheduleLogs = ( props: Props ) => {
 	const timeFormat = addSecondsToFormat( convertPhpToMomentFormat( phpTimeFormat ) );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { data: plugins = [] } = useCorePluginsQuery( siteSlug, true, true );
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const {
 		data: schedules = [],
@@ -114,7 +116,7 @@ export const ScheduleLogs = ( props: Props ) => {
 									? `${ dateFormat } ${ timeFormat }`
 									: timeFormat
 							}
-							detail={ getLogDetails( log ) }
+							detail={ getLogDetails( log, plugins ) }
 							icon={ getLogIcon( log ) }
 							iconBackground={ getLogIconStatus( log ) }
 							className={ shouldIndentTimelineEvent( log ) ? 'indent' : '' }

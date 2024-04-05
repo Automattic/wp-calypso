@@ -1,10 +1,13 @@
 import { translate } from 'i18n-calypso';
+import type { CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
 import type { ScheduleLog } from 'calypso/data/plugins/use-update-schedule-logs-query';
 
-export const getLogDetails = ( log: ScheduleLog ) => {
+export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
+	const pluginName =
+		plugins.find( ( p ) => p.plugin === log.context.plugin_name )?.name || log.context.plugin_name;
 	const pluginTranslateArgs = {
 		args: {
-			plugin: log.context.plugin_name,
+			plugin: pluginName,
 			from: log.context.old_version,
 			to: log.context.new_version,
 		},
