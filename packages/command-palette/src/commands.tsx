@@ -114,18 +114,16 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to switch to', __i18n_text_domain__ ),
 		callback: ( params ) => {
-			let newRoute = params.currentRoute;
-			newRoute = newRoute.replaceAll( ':site', params.site?.slug );
-			if ( newRoute === params.currentRoute ) {
-				// on a global page, navigate to the dashboard
-				newRoute = `/home/${ params.site?.slug }`;
+			let path;
+			if ( params.currentRoute.startsWith( '/wp-admin' ) ) {
+				path = `/switch-site?route=${ encodeURIComponent( params.currentRoute ) }`;
+			} else {
+				// On a global page, navigate to the dashboard, otherwise keep current route.
+				path = params.currentRoute.includes( ':site' ) ? params.currentRoute : '/home/:site';
 			}
-			return commandNavigation( newRoute )( params );
+			return commandNavigation( path )( params );
 		},
 		icon: switchIcon,
-		// This command is explicitly about switching sites, it should therefore always display the site selector
-		// where possible
-		alwaysUseSiteSelector: true,
 	},
 	getHelp: {
 		name: 'getHelp',
