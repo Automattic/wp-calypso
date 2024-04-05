@@ -82,7 +82,7 @@ export default function PurchaseMeta( {
 			? translate( 'Renewal Price' )
 			: translate( 'Price' );
 
-	const hideTaxString = isIncludedWithPlan( purchase );
+	const hideTaxString = isIncludedWithPlan( purchase ) || isOneTimePurchase( purchase );
 
 	// To-do: There isn't currently a way to get the taxName based on the country.
 	// The country is not included in the purchase information envelope
