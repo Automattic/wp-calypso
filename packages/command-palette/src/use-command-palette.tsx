@@ -254,16 +254,22 @@ export const useCommandPalette = (): {
 			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
 
-		sortedCommands = sortedCommands.map( ( command: Command ) => ( {
-			...command,
-			siteSelector: false,
-			callback: ( params ) => {
-				command.callback( {
-					...params,
-					site: currentSite,
-				} );
-			},
-		} ) );
+		sortedCommands = sortedCommands.map( ( command: Command ) => {
+			if ( command?.alwaysUseSiteSelector ) {
+				return command;
+			}
+
+			return {
+				...command,
+				siteSelector: false,
+				callback: ( params ) => {
+					command.callback( {
+						...params,
+						site: currentSite,
+					} );
+				},
+			};
+		} );
 	}
 
 	const finalSortedCommands = sortedCommands.map( ( command ) => {

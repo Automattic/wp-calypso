@@ -24,6 +24,7 @@ import {
 	postComments as postCommentsIcon,
 	reusableBlock as cacheIcon,
 	seen as seenIcon,
+	replace as switchIcon,
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
@@ -69,6 +70,7 @@ export interface Command {
 	filterSelfHosted?: boolean;
 	filterNotice?: string;
 	emptyListNotice?: string;
+	alwaysUseSiteSelector?: boolean;
 }
 
 const siteFilters = {
@@ -101,6 +103,29 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'sites dashboard', 'Keyword for the View my sites command', __i18n_text_domain__ ),
 		].join( ' ' ),
 		icon: wordpressIcon,
+	},
+	switchSite: {
+		name: 'switchSite',
+		label: __( 'Switch site', __i18n_text_domain__ ),
+		searchLabel: [
+			_x( 'change site', 'Keyword for the Switch site command', __i18n_text_domain__ ),
+			_x( 'swap site', 'Keyword for the Switch site command', __i18n_text_domain__ ),
+		].join( ' ' ),
+		siteSelector: true,
+		siteSelectorLabel: __( 'Select site to switch to', __i18n_text_domain__ ),
+		callback: ( params ) => {
+			let newRoute = params.currentRoute;
+			newRoute = newRoute.replaceAll( ':site', params.site?.slug );
+			if ( newRoute === params.currentRoute ) {
+				// on a global page, navigate to the dashboard
+				newRoute = `/home/${ params.site?.slug }`;
+			}
+			return commandNavigation( newRoute )( params );
+		},
+		icon: switchIcon,
+		// This command is explicitly about switching sites, it should therefore always display the site selector
+		// where possible
+		alwaysUseSiteSelector: true,
 	},
 	getHelp: {
 		name: 'getHelp',
