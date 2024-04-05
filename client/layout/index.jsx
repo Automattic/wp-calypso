@@ -36,7 +36,10 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
-import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
+import {
+	isCommandPaletteOpen as getIsCommandPaletteOpen,
+	getCommandPaletteSelectedCommand,
+} from 'calypso/state/command-palette/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
@@ -432,6 +435,7 @@ class Layout extends Component {
 						currentRoute={ this.props.currentRoutePattern }
 						useSites={ useSiteExcerptsSorted }
 						userCapabilities={ this.props.userCapabilities }
+						selectedCommand={ this.props.commandPaletteSelectedCommand }
 					/>
 				) }
 			</div>
@@ -540,6 +544,7 @@ export default withCurrentRoute(
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
 				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+				commandPaletteSelectedCommand: getCommandPaletteSelectedCommand( state ),
 			};
 		},
 		{

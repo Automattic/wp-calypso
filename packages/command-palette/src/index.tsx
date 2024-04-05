@@ -213,6 +213,7 @@ export interface CommandPaletteProps {
 	useCommands: () => PaletteCommand[];
 	useSites: () => SiteExcerptData[];
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
+	selectedCommand?: PaletteCommand;
 }
 
 const CommandPalette = ( {
@@ -224,6 +225,7 @@ const CommandPalette = ( {
 	useCommands,
 	useSites,
 	userCapabilities,
+	selectedCommand,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -277,6 +279,18 @@ const CommandPalette = ( {
 		return () => document.removeEventListener( 'keydown', down );
 	}, [ toggle ] );
 
+	useEffect( () => {
+		if ( ! selectedCommand ) {
+			return;
+		}
+
+		setSearch( '' );
+		setSelectedCommandName( selectedCommand.name );
+		if ( selectedCommand.siteSelector ) {
+			setPlaceholderOverride( selectedCommand.siteSelectorLabel || '' );
+		}
+	}, [ selectedCommand ] );
+
 	const reset = () => {
 		setPlaceholderOverride( '' );
 		setSearch( '' );
@@ -294,7 +308,11 @@ const CommandPalette = ( {
 			search_text: search,
 			from_keyboard: fromKeyboard,
 		} );
-		reset();
+		if ( selectedCommand ) {
+			history.back();
+		} else {
+			reset();
+		}
 	};
 
 	if ( ! isOpen ) {
@@ -342,7 +360,7 @@ const CommandPalette = ( {
 			setFooterMessage={ setFooterMessage }
 			setPlaceholderOverride={ setPlaceholderOverride }
 			setSearch={ setSearch }
-			setSelectedCommandName={ setSelectedCommandName }
+			selectedCommand={ selectedCommand }
 		>
 			<Modal
 				className="commands-command-menu"
