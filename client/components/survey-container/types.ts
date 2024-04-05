@@ -1,6 +1,6 @@
 export type Survey = {
 	key: string;
-	title: string;
+	questions: Question[];
 };
 
 export enum QuestionType {
@@ -17,7 +17,7 @@ export type Option = {
 export type Question = {
 	key: string;
 	headerText: string;
-	subHeaderText: string;
+	subHeaderText?: string;
 	type: QuestionType;
 	options: Option[];
 };
