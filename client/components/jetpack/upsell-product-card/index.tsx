@@ -196,7 +196,13 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 							</li>
 						) ) }
 				</ul>
-				{ hasJetpackPartnerAccess && <b>{ translate( 'Price per Jetpack Manage license:' ) }</b> }
+				{ hasJetpackPartnerAccess && (
+					<b>
+						{ isA4AEnabled
+							? translate( 'Price per license:' )
+							: translate( 'Price per Jetpack Manage license:' ) }
+					</b>
+				) }
 				<div className="upsell-product-card__price-container">
 					<DisplayPrice
 						isFree={ ! isFetchingPrices && originalPrice === 0 }
