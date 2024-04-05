@@ -9,8 +9,8 @@ import {
 	backupDownload,
 	backupGranularRestore,
 	backupRestore,
-	//backups,
-	//showUpsellIfNoBackup,
+	backups,
+	showUpsellIfNoBackup,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
 	showUnavailableForVaultPressSites,
@@ -91,24 +91,6 @@ export default function ( basePath: string ) {
 		clientRender
 	);
 
-	/* handles / */
-	/*page(
-		`${ basePath }`,
-		processBackupContext,
-		backups,
-		wrapInSiteOffsetProvider,
-		showUpsellIfNoBackup,
-		showUnavailableForVaultPressSites,
-		showJetpackIsDisconnected,
-		showUnavailableForMultisites,
-		showNotAuthorizedForNonAdmins,
-		sitesContext,
-		//wpcomAtomicTransfer( WPCOMUpsellPage ),
-		//notFoundIfNotEnabled,
-		makeLayout,
-		clientRender
-	);*/
-
 	/* handles /contents/:rewindId, see `backupContentsPath` */
 	page(
 		`${ basePath }/contents/:rewindId?`,
@@ -143,39 +125,52 @@ export default function ( basePath: string ) {
 		clientRender
 	);
 
+	/* handles the main page / */
+	page(
+		`${ basePath }`,
+		processBackupContext,
+		backups,
+		wrapInSiteOffsetProvider,
+		showUpsellIfNoBackup,
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		sitesContext,
+		//wpcomAtomicTransfer( WPCOMUpsellPage ),
+		//notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
 	handleJetpackCloudRedirections();
 }
 
 function handleJetpackCloudRedirections() {
-	page( '/backup/:site/download/:rewindId?', ( context, next ) => {
+	const backupSections = [ 'download', 'restore', 'clone', 'contents', 'granular-restore' ];
+	for ( const section of backupSections ) {
+		backupSectionRedirection( section );
+	}
+
+	//Main Backup page
+	page( `/backup/:site`, ( context, next ) => {
+		const { site } = context.params;
+		//todo: get the current selected feature family instead of the hardcoded 'overview'
+		page.replace( `/sites/overview/${ site }/${ JETPACK_BACKUP_ID }`, context.state, true, true );
+		next();
+	} );
+}
+
+function backupSectionRedirection( sectionName: string ) {
+	page( `/backup/:site/${ sectionName }/:rewindId?`, ( context, next ) => {
 		const { site, rewindId } = context.params;
 		//todo: get the current selected feature family instead of the hardcoded 'overview'
 		page.replace(
-			`/sites/overview/${ site }/${ JETPACK_BACKUP_ID }/download/${ rewindId ?? '' }`,
+			`/sites/overview/${ site }/${ JETPACK_BACKUP_ID }/${ sectionName }/${ rewindId ?? '' }`,
 			context.state,
 			true,
 			true
 		);
 		next();
 	} );
-
-	page( '/backup/:site/contents/:rewindId?', ( context, next ) => {
-		const { site, rewindId } = context.params;
-		//todo: get the current selected feature family instead of the hardcoded 'overview'
-		page.replace(
-			`/sites/overview/${ site }/${ JETPACK_BACKUP_ID }/contents/${ rewindId ?? '' }`,
-			context.state,
-			true,
-			true
-		);
-		next();
-	} );
-
-	/* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
-	/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
-	/* handles /backup/:site/clone, see `backupClonePath` */
-	/* handles /backup/:site, see `backupMainPath` */
-	/* handles /backup/:site/contents/:rewindId, see `backupContentsPath` */
-	/* handles /backup/:site/granular-restore/:rewindId, see `backupGranularRestorePath` */
-	/* handles /backups, see `backupMainPath` */
 }
