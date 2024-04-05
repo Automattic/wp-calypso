@@ -113,7 +113,7 @@ export const PatternLibrary = ( {
 	) => {
 		recordTracksEvent( tracksEventName, {
 			category,
-			search_term: searchTerm ? searchTerm : undefined,
+			search_term: searchTerm || undefined,
 			is_logged_in: isLoggedIn,
 			type: getTracksPatternType( typeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',

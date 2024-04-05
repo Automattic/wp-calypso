@@ -180,12 +180,12 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 									setCurrentPage( currentPage + 1 );
 
 									recordTracksEvent( 'calypso_pattern_library_load_more', {
-										category,
+										category: category || undefined,
 										is_logged_in: isLoggedIn,
 										type: getTracksPatternType( patternTypeFilter ),
 										view: isGridView ? 'grid' : 'list',
 										load_more_page: currentPage,
-										search_term: searchTerm ? searchTerm : undefined,
+										search_term: searchTerm || undefined,
 									} );
 								} }
 								transparent
