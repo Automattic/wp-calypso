@@ -65,10 +65,20 @@ export const AdvancedWorkflowStyle = ( {
 
 	return (
 		<div>
-			<p css={ { marginTop: 16, marginBottom: 0 } }>
+			<WorkflowPicker
+				isLoading={ isLoading || isFetching }
+				workflows={ workflows }
+				onChange={ onChooseWorkflow }
+				value={ workflowPath }
+			/>
+
+			<p
+				css={ { marginTop: 16, marginBottom: 0 } }
+				className="github-deployments-deployment-style__workflow-recipes"
+			>
 				{ createInterpolateElement(
 					translate(
-						'You can start with our basic workflow file then extend it. Looking for inspiration? See our <a>workflow recipes</a>.'
+						'You can start with our basic workflow file and extend it. Looking for inspiration? Check out our <a>workflow recipes</a>.'
 					),
 					{
 						a: (
@@ -77,13 +87,6 @@ export const AdvancedWorkflowStyle = ( {
 					}
 				) }
 			</p>
-
-			<WorkflowPicker
-				isLoading={ isLoading || isFetching }
-				workflows={ workflows }
-				onChange={ onChooseWorkflow }
-				value={ workflowPath }
-			/>
 
 			{ isLoading ? null : <div css={ { marginTop: '16px' } }>{ getContent() }</div> }
 		</div>
