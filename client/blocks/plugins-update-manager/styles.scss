@@ -101,6 +101,10 @@
 		td {
 			padding: 0.5rem 0;
 			vertical-align: middle;
+
+			&.last-update {
+				min-width: 200px;
+			}
 		}
 	}
 

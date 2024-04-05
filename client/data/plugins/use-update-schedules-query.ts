@@ -9,7 +9,13 @@ export type ScheduleUpdates = {
 	timestamp: number;
 	schedule: 'weekly' | 'daily';
 	args: string[];
-	last_run_status: 'success' | 'failure-and-rollback' | 'failure-and-rollback-fail' | null;
+	last_run_status:
+		| 'in-progress'
+		| 'success'
+		| 'failure'
+		| 'failure-and-rollback'
+		| 'failure-and-rollback-fail'
+		| null;
 	last_run_timestamp: number | null;
 };
 
@@ -42,7 +48,8 @@ export const useUpdateScheduleQuery = (
 			),
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
-		refetchOnWindowFocus: false,
+		refetchOnWindowFocus: true,
+		refetchInterval: 10 * 1000,
 		select,
 	} );
 };
