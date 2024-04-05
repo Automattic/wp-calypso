@@ -214,8 +214,7 @@ class Login extends Component {
 			! fromSite &&
 			! twoFactorEnabled &&
 			! loginEmailAddress &&
-			currentUser &&
-			! this.state.continueAsAnotherUser
+			currentUser
 		);
 	};
 
@@ -285,7 +284,7 @@ class Login extends Component {
 	};
 
 	handleContinueAsAnotherUser = () => {
-		this.setState( { continueAsAnotherUser: true } );
+		this.props.redirectToLogout( window.location.href );
 	};
 
 	rebootAfterLogin = () => {
