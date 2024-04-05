@@ -122,7 +122,6 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
-		continueAsAnotherUser: false,
 	};
 
 	static defaultProps = {
