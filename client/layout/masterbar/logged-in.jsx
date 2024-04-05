@@ -3,6 +3,7 @@ import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Icon, category } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -26,6 +27,7 @@ import {
 import {
 	getShouldShowGlobalSidebar,
 	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
@@ -40,7 +42,14 @@ import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migratio
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
-import { getSiteSlug, isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isJetpackSite,
+	getSitePlanSlug,
+	getSiteTitle,
+	getSiteUrl,
+	getSiteAdminUrl,
+} from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -203,6 +212,10 @@ class MasterbarLoggedIn extends Component {
 
 	preloadMySites = () => {
 		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
+	};
+
+	preloadAllSites = () => {
+		preload( 'sites' );
 	};
 
 	preloadReader = () => {
@@ -612,6 +625,47 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
+	renderWordPressIcon() {
+		const { siteAdminUrl } = this.props;
+		return (
+			<Item
+				url={ siteAdminUrl }
+				className="masterbar__item-wordpress"
+				icon={ <span className="dashicons-before dashicons-wordpress" /> }
+			/>
+		);
+	}
+
+	renderAllSites() {
+		const { translate } = this.props;
+		return (
+			<Item
+				url="/sites"
+				className="masterbar__item-all-sites"
+				tipTarget="my-sites"
+				icon={ <Icon icon={ category } /> }
+				tooltip={ translate( 'Manage your sites' ) }
+				preloadSection={ this.preloadAllSites }
+			>
+				{ translate( 'All Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+			</Item>
+		);
+	}
+
+	renderCurrentSite() {
+		const { translate, siteTitle, siteUrl } = this.props;
+		return (
+			<Item
+				className="masterbar__item-current-site"
+				url={ siteUrl }
+				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				tooltip={ translate( 'Visit your site' ) }
+			>
+				{ siteTitle }
+			</Item>
+		);
+	}
+
 	render() {
 		const {
 			isInEditor,
@@ -652,6 +706,26 @@ class MasterbarLoggedIn extends Component {
 						</div>
 					</Masterbar>
 				</>
+			);
+		}
+
+		if ( this.props.isUnifiedSiteView ) {
+			return (
+				<Masterbar className="masterbar__unified">
+					<div className="masterbar__section masterbar__section--left">
+						{ this.state.isResponsiveMenu
+							? this.renderSidebarMobileMenu()
+							: this.renderWordPressIcon() }
+						{ this.renderAllSites() }
+						{ this.renderCurrentSite() }
+					</div>
+					<div className="masterbar__section masterbar__section--right">
+						{ this.renderCart() }
+						{ loadHelpCenterIcon && this.renderHelpCenter() }
+						{ this.renderNotifications() }
+						{ this.renderMe() }
+					</div>
+				</Masterbar>
 			);
 		}
 
@@ -741,12 +815,21 @@ export default connect(
 			sectionGroup,
 			sectionName
 		);
+		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
+			state,
+			currentSelectedSiteId,
+			sectionGroup,
+			sectionName
+		);
 		const isDesktop = isWithinBreakpoint( '>782px' );
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			siteSlug: getSiteSlug( state, siteId ),
+			siteTitle: getSiteTitle( state, siteId ),
+			siteUrl: getSiteUrl( state, siteId ),
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
@@ -775,6 +858,7 @@ export default connect(
 			isMobileGlobalNavVisible: shouldShowGlobalSidebar && ! isDesktop,
 			isGlobalView: shouldShowGlobalSidebar,
 			isGlobalSiteView: shouldShowGlobalSiteSidebar,
+			isUnifiedSiteView: shouldShowUnifiedSiteSidebar,
 			isCommandPaletteOpen: getIsCommandPaletteOpen( state ),
 		};
 	},

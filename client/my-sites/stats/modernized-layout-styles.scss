@@ -7,7 +7,7 @@
 $stats-background-color: #fdfdfd;
 $stats-sections-max-width: 1224px;
 $stats-layout-contnet-padding-top: 79px;
-$sidebar-appearance-break-point: 783px;
+$sidebar-appearance-break-point: $break-medium;
 
 // Elements above main layout content per pages
 .stats__section-header,
