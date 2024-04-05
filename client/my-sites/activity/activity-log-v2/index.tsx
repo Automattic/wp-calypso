@@ -68,7 +68,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				</div>
 			</div>
 			<div className="activity-log-v2__header-right">
-				{ ( isJetpackCloud() || isAtomicA4AEnabled ) && selectedSiteSlug && (
+				{ ( isJetpackCloud() || isA4AEnabled ) && selectedSiteSlug && (
 					<Tooltip
 						text={ translate(
 							'To test your site changes, migrate or keep your data safe in another site'
