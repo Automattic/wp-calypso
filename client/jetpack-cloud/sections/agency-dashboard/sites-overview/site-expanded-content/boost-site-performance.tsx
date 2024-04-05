@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, Tooltip } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -23,6 +24,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 	const partner = useSelector( getCurrentPartner );
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
+	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const helpIconRef = useRef< HTMLElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -50,7 +52,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		'Your Overall Score is a summary of your website performance across both mobile and desktop devices.'
 	);
 
-	const isEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
+	const isBoostEnabled = hasBoost || Boolean( overallScore ) || hasPendingScore;
 
 	const showBoostModal = ( upgradeOnly: boolean ) => {
 		setBoostModalState( { show: true, upgradeOnly } );
@@ -64,7 +66,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 
 			return [
 				{
-					label: translate( 'Auto-optimize' ),
+					label: translate( 'Upgrade to auto-optimize' ),
 					onClick: () => {
 						trackEvent( 'boost_expandable_block_auto_optimize_click' );
 						showBoostModal( true );
@@ -99,7 +101,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		];
 	}, [ isAtomicSite, hasBoost, ScoreRating, translate, siteUrlWithScheme, trackEvent ] );
 
-	if ( ! isEnabled && ! partnerCanIssueLicense ) {
+	if ( ! isA4AEnabled && ! isBoostEnabled && ! partnerCanIssueLicense ) {
 		return null;
 	}
 
@@ -107,7 +109,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 		<>
 			<ExpandedCard
 				header={ translate( 'Boost site performance' ) }
-				isEnabled={ isEnabled }
+				isEnabled={ isBoostEnabled }
 				emptyContent={ translate(
 					'{{strong}}Get Score{{/strong}} to see your site performance scores',
 					{
@@ -117,7 +119,7 @@ export default function BoostSitePerformance( { site, trackEvent, hasError }: Pr
 				hasError={ hasError }
 				// Allow to click on the card only if Boost is not active
 				onClick={ () => {
-					if ( ! isEnabled ) {
+					if ( ! isBoostEnabled ) {
 						trackEvent( 'boost_expandable_block_get_score_click' );
 						showBoostModal( false );
 					}

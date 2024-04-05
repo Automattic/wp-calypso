@@ -1,5 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type { APIError } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 interface APIResponse {
@@ -9,10 +10,13 @@ interface APIResponse {
 interface InstallPluginParams {
 	site_id: number;
 	plugin_slug: string;
+	agency_id?: number;
 }
 
+const client = isEnabled( 'a8c-for-agencies' ) ? wpcom : wpcomJpl;
+
 function mutationInstallPlugin( params: InstallPluginParams ): Promise< APIResponse > {
-	return wpcomJpl.req.post( {
+	return client.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-agency/sites/plugins/install',
 		body: params,

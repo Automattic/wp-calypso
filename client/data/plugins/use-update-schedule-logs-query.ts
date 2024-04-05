@@ -2,26 +2,37 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteSlug } from 'calypso/types';
 
+export type ScheduleLogAction =
+	| 'PLUGIN_UPDATES_START'
+	| 'PLUGIN_UPDATES_SUCCESS'
+	| 'PLUGIN_UPDATES_FAILURE'
+	| 'PLUGIN_UPDATE_SUCCESS'
+	| 'PLUGIN_UPDATE_FAILURE'
+	| 'PLUGIN_SITE_HEALTH_CHECK_SUCCESS'
+	| 'PLUGIN_SITE_HEALTH_CHECK_FAILURE'
+	| 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK'
+	| 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK_FAIL';
+
 type ScheduleLogsApiReturn = {
 	timestamp: number;
-	action: string;
+	action: ScheduleLogAction;
 	message: string | null;
-	context: unknown;
+	context: { [ key: string ]: string | number };
 }[][];
 
-type ScheduleLogs = {
+export type ScheduleLog = {
 	date: Date;
 	timestamp: number;
-	action: string;
+	action: ScheduleLogAction;
 	message: string | null;
-	context: unknown;
-}[][];
+	context: { [ key: string ]: string | number };
+};
 
 export const useUpdateScheduleLogsQuery = (
 	siteSlug: SiteSlug,
 	scheduleId: string
-): UseQueryResult< ScheduleLogs > => {
-	return useQuery< ScheduleLogsApiReturn, Error, ScheduleLogs >( {
+): UseQueryResult< ScheduleLog[][] > => {
+	return useQuery< ScheduleLogsApiReturn, Error, ScheduleLog[][] >( {
 		queryKey: [ 'scheduled-logs', scheduleId, siteSlug ],
 		queryFn: () =>
 			wpcomRequest( {
@@ -32,7 +43,7 @@ export const useUpdateScheduleLogsQuery = (
 		enabled: !! siteSlug && !! scheduleId,
 		retry: false,
 		refetchOnWindowFocus: false,
-		select: ( data: ScheduleLogsApiReturn ): ScheduleLogs => {
+		select: ( data: ScheduleLogsApiReturn ): ScheduleLog[][] => {
 			return data
 				.map( ( run ) => {
 					return run.map( ( log ) => ( {

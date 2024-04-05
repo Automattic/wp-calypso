@@ -1,8 +1,11 @@
 .sites-dashboard {
-	.scan .section-nav {
-		display: none;
-	}
 	.activity-log-v2 .button.toolbar__button {
 		display: none !important;
 	}
+
+	.backup__last-backup-status {
+		padding: initial;
+		background: initial;
+	}
+
 }
