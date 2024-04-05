@@ -342,6 +342,14 @@
 		vertical-align: top;
 	}
 
+	tr.dataviews-view-table__row {
+		&:hover {
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
+		}
+	}
+
 	.sites-overview__content-wrapper {
 		max-width: none;
 	}
