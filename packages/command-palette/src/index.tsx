@@ -215,6 +215,11 @@ export interface CommandPaletteProps {
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
+const COMMAND_PALETTE_MODAL_OPEN_CLASSNAME = 'command-palette-modal-open';
+const toggleModalOpenClassnameOnDocumentHtmlElement = ( isModalOpen: boolean ) => {
+	document.documentElement.classList.toggle( COMMAND_PALETTE_MODAL_OPEN_CLASSNAME, isModalOpen );
+};
+
 const CommandPalette = ( {
 	currentRoute,
 	currentSiteId,
@@ -233,6 +238,8 @@ const CommandPalette = ( {
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const open = useCallback( () => {
+		toggleModalOpenClassnameOnDocumentHtmlElement( true );
+
 		setIsOpenLocal( true );
 		recordTracksEvent( 'calypso_hosting_command_palette_open', {
 			current_route: currentRoute,
@@ -240,6 +247,8 @@ const CommandPalette = ( {
 	}, [ currentRoute ] );
 	const close = useCallback< CommandPaletteContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
+			toggleModalOpenClassnameOnDocumentHtmlElement( false );
+
 			setIsOpenLocal( false );
 			onClose?.();
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {
@@ -345,6 +354,7 @@ const CommandPalette = ( {
 			setSelectedCommandName={ setSelectedCommandName }
 		>
 			<Modal
+				bodyOpenClassName={ COMMAND_PALETTE_MODAL_OPEN_CLASSNAME }
 				className="commands-command-menu"
 				overlayClassName="commands-command-menu__overlay"
 				onRequestClose={ closeAndReset }
