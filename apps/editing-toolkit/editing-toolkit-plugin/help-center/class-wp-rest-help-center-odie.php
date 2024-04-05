@@ -177,16 +177,23 @@ class WP_REST_Help_Center_Odie extends \WP_REST_Controller {
 		$bot_name_slug = $request->get_param( 'bot_name_slug' );
 		$chat_id       = $request->get_param( 'chat_id' );
 
+		// Construct the endpoint URL
+		$endpoint = '/odie/chat/' . $bot_name_slug;
+		if ( $chat_id ) {
+			$endpoint .= '/' . $chat_id;
+		}
+
 		// Forward the request body to the support chat endpoint.
 		$body = Client::wpcom_json_api_request_as_user(
-			'/odie/chat/' . $bot_name_slug . '/' . $chat_id,
+			$endpoint,
 			2,
 			array( 'method' => 'POST' ),
 			array(
 				'message' => $request->get_param( 'message' ),
 				'context' => $request->get_param( 'context' ) ?? array(),
 				'version' => $request->get_param( 'version' ) ?? null,
-			)
+			),
+			'wpcom'
 		);
 
 		if ( is_wp_error( $body ) ) {
