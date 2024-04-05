@@ -1,6 +1,7 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
 import { useState, useEffect, useCallback } from 'react';
@@ -111,7 +112,11 @@ function CustomerSection() {
 								<span className="supporters-list__since-column" role="columnheader">
 									{ translate( 'Since' ) }
 								</span>
-								<span className="supporters-list__menu-column" role="columnheader"></span>
+								<span className="supporters-list__menu-column" role="columnheader">
+									<Tooltip text={ translate( 'Download list as CSV' ) } delay={ 0 }>
+										<Button href={ downloadCsvLink }>{ translate( 'Export' ) }</Button>
+									</Tooltip>
+								</span>
 							</li>
 							{ orderBy( Object.values( subscribers ), [ 'id' ], [ 'desc' ] ).map( ( sub ) =>
 								renderSubscriber( sub )
@@ -123,7 +128,7 @@ function CustomerSection() {
 							setSubscriberToCancel={ setSubscriberToCancel }
 						/>
 						<div className="memberships__module-footer">
-							<Button href={ downloadCsvLink }>{ translate( 'Download list as CSV' ) }</Button>
+							<Button href={ downloadCsvLink }>{ translate( 'Export as CSV' ) }</Button>
 						</div>
 					</>
 				) }
