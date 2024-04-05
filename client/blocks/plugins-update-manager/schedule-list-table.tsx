@@ -56,7 +56,7 @@ export const ScheduleListTable = ( props: Props ) => {
 						</td>
 						<td>
 							{ schedule.last_run_status && (
-								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
+								<Badge type={ schedule.last_run_status } />
 							) }
 							{ schedule.last_run_timestamp && (
 								<Button

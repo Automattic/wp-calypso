@@ -45,7 +45,10 @@ export const ScheduleList = ( props: Props ) => {
 		isLoading: isLoadingSchedules,
 		isFetched,
 		refetch,
-	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
+	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature, {
+		refetchOnWindowFocus: true,
+		refetchInterval: 1000 * 10,
+	} );
 
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
