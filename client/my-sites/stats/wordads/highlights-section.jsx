@@ -1,4 +1,4 @@
-import { Popover } from '@automattic/components';
+import { MobileHighlightCardListing, Popover } from '@automattic/components';
 import CountCard from '@automattic/components/src/highlight-cards/count-card';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
@@ -140,6 +140,34 @@ function HighlightsListing( props ) {
 	);
 }
 
+function HighlightsListingMobile( props ) {
+	const highlights = useHighlights( props.earnings );
+	// Convert the highlights data for the MobileHighlightCardListing component.
+	// Use preformattedValue property as an override to the count.
+	// Send the raw SVG icon and zero out the count.
+	const mobileHighlights = [
+		{
+			...highlights[ 0 ],
+			preformattedValue: highlights[ 0 ].value,
+			icon: payment,
+			count: 0,
+		},
+		{
+			...highlights[ 1 ],
+			preformattedValue: highlights[ 1 ].value,
+			icon: receipt,
+			count: 0,
+		},
+		{
+			...highlights[ 2 ],
+			preformattedValue: highlights[ 2 ].value,
+			icon: tip,
+			count: 0,
+		},
+	];
+	return <MobileHighlightCardListing highlights={ mobileHighlights } />;
+}
+
 export default function HighlightsSection( props ) {
 	const earningsData = useSelector( ( state ) => getWordAdsEarnings( state, props.siteId ) );
 
@@ -149,6 +177,7 @@ export default function HighlightsSection( props ) {
 		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
 			<HighlightsSectionHeader earnings={ earningsData } />
 			<HighlightsListing earnings={ earningsData } />
+			<HighlightsListingMobile earnings={ earningsData } />
 		</div>
 	);
 }
