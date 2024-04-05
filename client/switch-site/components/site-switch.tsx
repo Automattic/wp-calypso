@@ -9,6 +9,7 @@ import {
 	selectCommandPaletteCommand,
 } from 'calypso/state/command-palette/actions';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
+import './style.scss';
 
 export function SiteSwitch( { redirectTo }: { redirectTo: string } ) {
 	const { __ } = useI18n();
