@@ -507,6 +507,7 @@
 				.sites-overview {
 					padding: 0;
 					overflow-x: auto;
+					overflow-y: auto;
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
@@ -1046,3 +1047,11 @@
 		justify-content: center;
 	}
 }
+
+/* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
+.layout__primary .preview-hidden {
+	@include breakpoint-deprecated( ">960px" ) {
+		padding-bottom: 0 !important;
+	}
+}
+
