@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
+import './style.scss';
+
 type InputFieldProps = {
 	id: string;
 	label: string;
@@ -30,7 +32,7 @@ const InputField: React.FC< InputFieldProps > = ( {
 	onChange,
 } ) => {
 	return (
-		<div>
+		<div className="stats-utm-builder__form-field">
 			<FormLabel htmlFor={ id }>{ label }</FormLabel>
 			<FormTextInput
 				type="text"
@@ -47,12 +49,9 @@ const InputField: React.FC< InputFieldProps > = ( {
 const UtmBuilder: React.FC = () => {
 	const [ url, setUrl ] = useState( '' );
 	const [ inputValues, setInputValues ] = useState< inputValuesType >( {
-		// url: '',
 		utm_source: '',
 		utm_medium: '',
 		utm_campaign: '',
-		utm_content: '',
-		utm_term: '',
 	} );
 
 	const fromLabels: formLabelsType = {
@@ -63,11 +62,6 @@ const UtmBuilder: React.FC = () => {
 		utm_source: { label: 'UTM source (utm_source)', placeholder: 'e.g. newsletter' },
 		utm_medium: { label: 'UTM medium (utm_medium)', placeholder: 'e.g. email, social' },
 		utm_campaign: { label: 'UTM campaign (utm_campaign)', placeholder: 'e.g. promotion' },
-		utm_content: {
-			label: 'UTM content (utm_content)',
-			placeholder: 'A headline or call to action',
-		},
-		utm_term: { label: 'UTM term (utm_term)', placeholder: 'Your keywords' },
 	};
 
 	const handleInputChange = ( e: React.ChangeEvent< HTMLInputElement > ) => {

@@ -58,7 +58,7 @@ const StatsUtmBuilderPage = () => {
 				{ isFetching && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ ! isFetching && (
 					<>
-						<h1>UTM Builder</h1>
+						<h1 className="stats-page__heading">UTM Builder</h1>
 						<StatsUtmBuilderForm />
 					</>
 				) }
