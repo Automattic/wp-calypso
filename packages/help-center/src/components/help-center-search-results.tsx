@@ -34,7 +34,7 @@ import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import PlaceholderLines from './placeholder-lines';
-import type { SearchResult, TailoredArticles } from '../types';
+import type { SearchResult } from '../types';
 
 interface SearchResultsSectionProps {
 	type: string;
@@ -131,7 +131,7 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute );
+	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute, locale );
 
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
@@ -142,9 +142,7 @@ function HelpSearchResults( {
 		sectionName,
 		debouncedQuery
 			? undefined // If there's a query, we don't need tailored articles
-			: tailoredArticles?.find(
-					( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale
-			  )
+			: tailoredArticles
 	);
 
 	const searchResults = searchData ?? [];
@@ -208,9 +206,7 @@ function HelpSearchResults( {
 			section: sectionName,
 		};
 
-		const eventName = tailoredArticles.find( ( article ) =>
-			article.post_ids.includes( post_id ?? 0 )
-		)
+		const eventName = tailoredArticles?.post_ids.includes( post_id ?? 0 )
 			? 'calypso_inlinehelp_tailored_article_select'
 			: 'calypso_inlinehelp_article_select';
 

@@ -1,6 +1,7 @@
 import { useSelect } from '@wordpress/data';
 import urlMapping from '../route-to-query-mapping.json';
 import tailoredArticlesMapping from '../tailored-post-ids-mapping.json';
+import type { TailoredArticles } from '../types';
 
 interface CoreBlockEditor {
 	getSelectedBlock: () => object;
@@ -12,7 +13,7 @@ interface BlockStore {
 }
 
 // When using a block in the editor, it will be used to search for help articles based on the block name.
-export function useContextBasedSearchMapping( currentRoute: string | undefined ) {
+export function useContextBasedSearchMapping( currentRoute: string | undefined, locale: string ) {
 	const blockSearchQuery = useSelect( ( select: ( store: string ) => CoreBlockEditor ) => {
 		const selectedBlock = select( 'core/block-editor' )?.getSelectedBlock();
 		if ( selectedBlock ) {
@@ -31,8 +32,10 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined )
 		( key ) => currentRoute?.startsWith( key )
 	);
 	const tailoredArticles = tailoredArticlesMatchKey
-		? tailoredArticlesMapping[ tailoredArticlesMatchKey as keyof typeof tailoredArticlesMapping ]
-		: [];
+		? tailoredArticlesMapping[
+				tailoredArticlesMatchKey as keyof typeof tailoredArticlesMapping
+		  ]?.find( ( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale )
+		: undefined;
 
 	// Find exact URL matches
 	const exactMatch = urlMapping[ currentRoute as keyof typeof urlMapping ];
