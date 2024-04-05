@@ -22,10 +22,9 @@ export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
 			return translate( 'Plugins update failed' );
 
 		case 'PLUGIN_UPDATE_SUCCESS':
-			return translate(
-				'%(plugin)s update from %(from)s to %(to)s completed',
-				pluginTranslateArgs
-			);
+			return log.message === 'already_up_to_date'
+				? translate( '%(plugin)s is already up to date', pluginTranslateArgs )
+				: translate( '%(plugin)s update from %(from)s to %(to)s completed', pluginTranslateArgs );
 		case 'PLUGIN_UPDATE_FAILURE':
 			return translate( '%(plugin)s update from %(from)s to %(to)s failed', pluginTranslateArgs );
 		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
