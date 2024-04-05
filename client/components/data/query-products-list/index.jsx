@@ -21,7 +21,7 @@ export function useQueryProductsList( { type = 'all', currency, persist, product
 
 	// Only runs on mount.
 	useEffect( () => {
-		dispatch( request( { type, currency, persist, productSlugList } ) );
+		dispatch( request( { type, currency, persist, product_slugs: productSlugList } ) );
 	}, [ dispatch, type, persist, currency, productSlugList ] );
 
 	return null;
