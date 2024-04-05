@@ -13,7 +13,6 @@ import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -35,7 +34,6 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
-import { getAdminColor } from 'calypso/state/admin-color/selectors';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -204,7 +202,7 @@ class Layout extends Component {
 		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
-		colorScheme: PropTypes.string,
+		colorSchemePreference: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -219,24 +217,40 @@ class Layout extends Component {
 			this.setState( { isDesktop } );
 		} );
 
-		this.refreshColorScheme( undefined, this.props.colorScheme );
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.colorScheme !== this.props.colorScheme ) {
-			this.refreshColorScheme( prevProps.colorScheme, this.props.colorScheme );
-		}
-	}
-
-	refreshColorScheme( prevColorScheme, nextColorScheme ) {
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
 
 		if ( typeof document !== 'undefined' ) {
+			if ( this.props.colorSchemePreference ) {
+				document
+					.querySelector( 'body' )
+					.classList.add( `is-${ this.props.colorSchemePreference }` );
+
+				const themeColor = getComputedStyle( document.body )
+					.getPropertyValue( '--color-masterbar-background' )
+					.trim();
+				const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+				// We only want to set `themeColor` if it's not set by a config value (i.e. for JetpackCloud)
+				if ( themeColorMeta && ! themeColorMeta.content ) {
+					themeColorMeta.content = themeColor;
+					themeColorMeta.setAttribute( 'data-colorscheme', 'true' );
+				}
+			}
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
+			return;
+		}
+		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
+			return;
+		}
+		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
-			classList.remove( `is-${ prevColorScheme }` );
-			classList.add( `is-${ nextColorScheme }` );
+			classList.remove( `is-${ prevProps.colorSchemePreference }` );
+			classList.add( `is-${ this.props.colorSchemePreference }` );
 
 			const themeColor = getComputedStyle( document.body )
 				.getPropertyValue( '--color-masterbar-background' )
@@ -348,9 +362,6 @@ class Layout extends Component {
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-				{ this.props.isUnifiedSiteSidebarVisible && (
-					<QuerySiteAdminColor siteId={ this.props.siteId } />
-				) }
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
@@ -492,11 +503,6 @@ export default withCurrentRoute(
 			const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 			const userAllowedToHelpCenter = config.isEnabled( 'calypso/help-center' );
 			const isCommandPaletteOpen = getIsCommandPaletteOpen( state );
-
-			const calypsoColorScheme = getPreference( state, 'colorScheme' );
-			const siteColorScheme = getAdminColor( state, siteId ) ?? calypsoColorScheme;
-			const colorScheme = shouldShowUnifiedSiteSidebar ? siteColorScheme : calypsoColorScheme;
-
 			return {
 				masterbarIsHidden,
 				sidebarIsHidden,
@@ -517,7 +523,7 @@ export default withCurrentRoute(
 				sectionJitmPath,
 				isOffline: isOffline( state ),
 				currentLayoutFocus: getCurrentLayoutFocus( state ),
-				colorScheme,
+				colorSchemePreference: getPreference( state, 'colorScheme' ),
 				siteId,
 				// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 				// request all sites before authorization has finished. That would cause the "all sites"
