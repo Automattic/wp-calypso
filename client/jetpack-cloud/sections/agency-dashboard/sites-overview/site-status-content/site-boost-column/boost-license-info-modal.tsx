@@ -111,7 +111,9 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			className="site-boost-column__upgrade-modal"
 			currentLicenseInfo="boost"
 			label={
-				upgradeOnly ? translate( 'Upgrade to optimize' ) : translate( 'Purchase Boost License' )
+				upgradeOnly
+					? translate( 'Upgrade to auto-optimize' )
+					: translate( 'Purchase Boost License' )
 			}
 			onClose={ onClose }
 			siteId={ siteId }
