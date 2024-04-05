@@ -41,7 +41,7 @@ const hosting: Flow = {
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
-		const getPlanCartItem = useSelect(
+		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
 		);
@@ -93,8 +93,9 @@ const hosting: Flow = {
 					setSignupCompleteFlowName( flowName );
 
 					// If the product is a free trial, record the trial start event for ad tracking.
-					isFreeHostingTrial( getPlanCartItem?.product_slug || '' ) &&
+					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
 						recordFreeHostingTrialStarted( flowName );
+					}
 
 					if ( providedDependencies.goToCheckout ) {
 						return window.location.assign(
