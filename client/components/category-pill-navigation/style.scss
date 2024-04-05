@@ -54,7 +54,6 @@
 		left: 0;
 		top: 0;
 		z-index: 2;
-		background: var(--studio-white);
 		transform: rotate(180deg);
 		cursor: pointer;
 
@@ -66,12 +65,17 @@
 			content: "";
 			position: absolute;
 			top: 0;
-			right: 100%;
-			width: 58px;
+			right: 0;
+			width: 68px;
 			height: 44px;
-			background: linear-gradient(270deg, var(--studio-white) 40.38%, transparent 100%);
+			background: linear-gradient(270deg, var(--studio-white) 45.38%, transparent 100%);
 			cursor: none;
 			pointer-events: none;
+		}
+
+		svg {
+			z-index: 2;
+			position: relative;
 		}
 
 		&.right {
