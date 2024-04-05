@@ -13,13 +13,14 @@ import { ellipsis } from './icons';
 interface Props {
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
+	onShowLogs: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 
-	const { onEditClick, onRemoveClick } = props;
+	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
@@ -89,6 +90,10 @@ export const ScheduleListTable = ( props: Props ) => {
 									{
 										title: translate( 'Edit' ),
 										onClick: () => onEditClick( schedule.id ),
+									},
+									{
+										title: translate( 'Logs' ),
+										onClick: () => onShowLogs( schedule.id ),
 									},
 									{
 										title: translate( 'Remove' ),

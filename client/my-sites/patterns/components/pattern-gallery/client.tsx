@@ -3,12 +3,14 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
 	DESKTOP_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
+import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -106,7 +108,6 @@ function MasonryGallery( {
 	);
 }
 
-const LOGGED_OUT_USERS_CAN_COPY_COUNT = 3;
 const PATTERNS_PER_PAGE_COUNT = 9;
 
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
@@ -119,13 +120,12 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	} = props;
 
 	const translate = useTranslate();
-
-	const [ patternDisplayCount, setPatternDisplayCount ] = useState( () => {
+	const [ currentPage, setCurrentPage ] = useState( () => {
 		if ( /#pattern-/.test( window.location.hash ) ) {
 			return Infinity;
 		}
 
-		return PATTERNS_PER_PAGE_COUNT;
+		return 1;
 	} );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -134,6 +134,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	};
 	const isPageLayouts = patternTypeFilter === PatternTypeFilter.PAGES;
 
+	const patternDisplayCount = currentPage * PATTERNS_PER_PAGE_COUNT;
 	const patternsToDisplay = patterns.slice( 0, patternDisplayCount );
 	const shouldDisplayPaginationButton = patternsToDisplay.length < patterns.length;
 	const nextPageCount = Math.min(
@@ -159,9 +160,9 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 					enableMasonry={ isGridView && isPageLayouts }
 					itemSelector=".pattern-preview"
 				>
-					{ patternsToDisplay.map( ( pattern, i ) => (
+					{ patternsToDisplay.map( ( pattern ) => (
 						<PatternPreview
-							canCopy={ isLoggedIn || i < LOGGED_OUT_USERS_CAN_COPY_COUNT }
+							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
 							category={ category }
 							className={ classNames( {
 								'pattern-preview--grid': isGridView,
@@ -182,7 +183,15 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							<Button
 								className="pattern-gallery__pagination-button"
 								onClick={ () => {
-									setPatternDisplayCount( patternDisplayCount + PATTERNS_PER_PAGE_COUNT );
+									setCurrentPage( currentPage + 1 );
+
+									recordTracksEvent( 'calypso_pattern_library_load_more', {
+										category,
+										is_logged_in: isLoggedIn,
+										type: getTracksPatternType( patternTypeFilter ),
+										view: isGridView ? 'grid' : 'list',
+										load_more_page: currentPage,
+									} );
 								} }
 								transparent
 							>

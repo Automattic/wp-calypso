@@ -16,41 +16,28 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	setShowOnlyFavorites: () => {},
 
 	sitesViewState: initialSitesViewState,
-	setSitesViewState: () => {
-		return undefined;
-	},
+	setSitesViewState: () => {},
 
 	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
+	featurePreview: null,
+
 	isBulkManagementActive: false,
-	showSitesDashboardV2: false,
-	setIsBulkManagementActive: () => {
-		return undefined;
-	},
+	setIsBulkManagementActive: () => {},
+
 	selectedSites: [],
-	setSelectedSites: () => {
-		return undefined;
-	},
+	setSelectedSites: () => {},
+
 	currentLicenseInfo: null,
-	showLicenseInfo: () => {
-		return undefined;
-	},
-	hideLicenseInfo: () => {
-		return undefined;
-	},
+	showLicenseInfo: () => {},
+	hideLicenseInfo: () => {},
+
 	mostRecentConnectedSite: null,
-	setMostRecentConnectedSite: () => {
-		return undefined;
-	},
+	setMostRecentConnectedSite: () => {},
+
 	isPopoverOpen: false,
-	setIsPopoverOpen: () => {
-		return undefined;
-	},
-	sort: {
-		field: 'url',
-		direction: 'asc',
-	},
+	setIsPopoverOpen: () => {},
 } );
 
 export default SitesDashboardContext;

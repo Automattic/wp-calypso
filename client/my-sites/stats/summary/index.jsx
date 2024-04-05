@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -94,10 +94,9 @@ class StatsSummary extends Component {
 				statType = 'statsReferrers';
 
 				summaryView = (
-					<>
+					<Fragment key="referrers-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="referrers-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.referrers }
 							period={ this.props.period }
@@ -106,7 +105,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -116,10 +115,9 @@ class StatsSummary extends Component {
 				statType = 'statsClicks';
 
 				summaryView = (
-					<>
+					<Fragment key="clicks-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="clicks-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.clicks }
 							period={ this.props.period }
@@ -128,7 +126,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -138,10 +136,9 @@ class StatsSummary extends Component {
 				statType = 'statsCountryViews';
 
 				summaryView = (
-					<>
+					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<Countries
-							key="countries-summary"
 							path={ path }
 							period={ this.props.period }
 							query={ moduleQuery }
@@ -163,7 +160,7 @@ class StatsSummary extends Component {
 								showIcon={ true }
 							/>
 						</div>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -173,10 +170,9 @@ class StatsSummary extends Component {
 				statType = 'statsTopPosts';
 
 				summaryView = (
-					<>
+					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="posts-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.posts }
 							period={ this.props.period }
@@ -185,7 +181,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -197,10 +193,9 @@ class StatsSummary extends Component {
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
-					<>
+					<Fragment key="authors-summary">
 						{ this.renderSummaryHeader( path, statType, true, query ) }
 						<StatsModule
-							key="authors-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.authors }
 							period={ this.props.period }
@@ -210,7 +205,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				break;
@@ -221,11 +216,10 @@ class StatsSummary extends Component {
 				statType = 'statsVideoPlays';
 
 				summaryView = (
-					<>
+					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
 								It can't use the shared header as long as the CSV download button stays there. */ }
 						<VideoPressStatsModule
-							key="videopress-stats-module"
 							path={ path }
 							moduleStrings={ StatsStrings.videoplays }
 							period={ this.props.period }
@@ -234,7 +228,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -244,10 +238,9 @@ class StatsSummary extends Component {
 				statType = 'statsFileDownloads';
 
 				summaryView = (
-					<>
+					<Fragment key="filedownloads-summary">
 						{ this.renderSummaryHeader( path, statType, true, query ) }
 						<StatsModule
-							key="filedownloads-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }
@@ -256,7 +249,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -307,10 +300,9 @@ class StatsSummary extends Component {
 				statType = 'statsSearchTerms';
 
 				summaryView = (
-					<>
+					<Fragment key="search-terms-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="search-terms-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.search }
 							period={ this.props.period }
@@ -319,7 +311,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 			case 'annualstats':

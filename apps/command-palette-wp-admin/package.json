@@ -26,6 +26,7 @@
 	},
 	"dependencies": {
 		"@automattic/command-palette": "workspace:^",
+		"@automattic/sites": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/data": "^9.24.0",
 		"@wordpress/dom-ready": "^3.54.0",

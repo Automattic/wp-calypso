@@ -1,6 +1,6 @@
 import type { Context } from '@automattic/calypso-router';
 import type { QueryClient } from '@tanstack/react-query';
-import type { Pattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
+import type { Pattern as AssemblerPattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
 import type { PartialContext as PerformanceMarkContext } from 'calypso/server/lib/performance-mark';
 
 export type RouterNext = ( error?: Error ) => void;
@@ -11,7 +11,9 @@ export type RouterContext = Context &
 		queryClient: QueryClient;
 	};
 
-export type { Pattern };
+export type Pattern = AssemblerPattern & {
+	can_be_copied_without_account?: boolean;
+};
 
 export enum PatternTypeFilter {
 	PAGES = 'pages',

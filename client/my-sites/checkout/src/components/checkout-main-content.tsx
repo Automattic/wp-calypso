@@ -1176,6 +1176,10 @@ const WPCheckoutWrapper = styled.div`
 			min-height: 100vh;
 		}
 	}
+
+	& *:focus {
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
+	}
 `;
 
 const WPCheckoutMainContent = styled.div`

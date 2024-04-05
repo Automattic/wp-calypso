@@ -1,3 +1,4 @@
+import DocumentHead from 'calypso/components/data/document-head';
 import InsightsStats from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/insights-stats';
 import SitePreviewPaneContent from '../../site-preview-pane/site-preview-pane-content';
 import SitePreviewPaneFooter from '../../site-preview-pane/site-preview-pane-footer';
@@ -11,6 +12,7 @@ type Props = {
 export function JetpackStatsPreview( { site, trackEvent }: Props ) {
 	return (
 		<>
+			<DocumentHead title="Stats" />
 			<SitePreviewPaneContent className="site-preview-pane__stats-content">
 				<InsightsStats
 					stats={ site.site_stats }

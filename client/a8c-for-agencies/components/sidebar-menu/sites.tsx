@@ -95,7 +95,6 @@ export default function ( { path }: Props ) {
 				},
 			} }
 			menuItems={ menuItems }
-			withSiteSelector
 			withGetHelpLink
 		/>
 	);
