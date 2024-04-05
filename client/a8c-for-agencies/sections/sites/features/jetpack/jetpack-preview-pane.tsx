@@ -20,7 +20,7 @@ import { JetpackBoostPreview } from './jetpack-boost';
 import { JetpackMonitorPreview } from './jetpack-monitor';
 import { JetpackPluginsPreview } from './jetpack-plugins';
 import { JetpackStatsPreview } from './jetpack-stats';
-import { JetpackScanPreview } from './scan/jetpack-scan';
+import { JetpackScanPreview } from './scan';
 
 import './style.scss';
 
