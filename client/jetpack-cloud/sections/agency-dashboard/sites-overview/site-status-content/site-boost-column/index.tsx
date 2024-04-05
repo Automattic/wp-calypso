@@ -1,11 +1,9 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon } from '@automattic/components';
-import { State } from '@automattic/data-stores/src/site/reducer';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useState } from 'react';
 import { useSelector } from 'calypso/state';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../../hooks';
 import DashboardDataContext from '../../dashboard-data-context';
@@ -26,7 +24,6 @@ export default function SiteBoostColumn( { site }: Props ) {
 	const overallScore = site.jetpack_boost_scores?.overall;
 	const hasBoost = site.has_boost;
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, site.blog_id ) );
-	const isAtomic = useSelector( ( state: State ) => isSiteAtomic( state, site.blog_id ) );
 
 	const { origin, pathname } = getUrlParts( adminUrl ?? '' );
 	const baseUrl = adminUrl
@@ -51,7 +48,7 @@ export default function SiteBoostColumn( { site }: Props ) {
 					'sites-overview__boost-score',
 					getBoostRatingClass( overallScore )
 				) }
-				href={ isAtomic ? jetpackHref : addBoostHref }
+				href={ site.is_atomic ? jetpackHref : addBoostHref }
 				target="_blank"
 				onClick={ () =>
 					recordEvent( 'boost_column_score_click', {
