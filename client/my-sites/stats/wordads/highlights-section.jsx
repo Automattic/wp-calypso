@@ -1,4 +1,4 @@
-import { MobileHighlightCardListing, Popover } from '@automattic/components';
+import { ComponentSwapper, MobileHighlightCardListing, Popover } from '@automattic/components';
 import CountCard from '@automattic/components/src/highlight-cards/count-card';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
@@ -173,8 +173,11 @@ export default function HighlightsSection( props ) {
 	return (
 		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
 			<HighlightsSectionHeader earnings={ earningsData } />
-			<HighlightsListing highlights={ highlights } />
-			<HighlightsListingMobile highlights={ highlights } />
+			<ComponentSwapper
+				breakpoint="<660px"
+				breakpointActiveComponent={ <HighlightsListingMobile highlights={ highlights } /> }
+				breakpointInactiveComponent={ <HighlightsListing highlights={ highlights } /> }
+			/>
 		</div>
 	);
 }
