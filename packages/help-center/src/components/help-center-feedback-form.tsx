@@ -46,7 +46,7 @@ const HelpCenterFeedbackForm = ( { postId, blogId }: HelpCenterFeedbackFormProps
 		<>
 			<p>{ __( 'How we can improve?' ) }</p>
 			<iframe
-				title="Feedback Form"
+				title={ __( 'Feedback Form' ) }
 				// This is the URL of the feedback form,
 				// `answerValue` is either 1 or 2 and it is used to skip the first question since we are already asking it here.
 				// it is necessary to help crowd signal to `skip` ( display none with css ) the first question and save the correct value.
