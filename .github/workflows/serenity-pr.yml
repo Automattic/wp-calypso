@@ -1,0 +1,72 @@
+name: Serenity - Assign Current Sprint to PR
+on:
+  pull_request:
+    types: [opened]
+jobs:
+  check-project-assignment:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check Project Assignment
+      run: |
+        PR_NUMBER=${{ github.event.pull_request.number }}
+        GITHUB_TOKEN=${{ secrets.SERENITY_PROJECT_TOKEN }}
+        PROJECT_NAME="Serenity" # Set your project name here
+
+        gh api graphql -f query='
+        query ($org: String!, $repo: String!, $pr: Int!) {
+          repository(owner: $org, name: $repo) {
+            pullRequest(number: $pr) {
+              projectItems(first: 100) {
+                nodes {
+                  project {
+                    id
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }' -f org=$ORGANIZATION -f repo=wp-calypso -F pr=$PR_NUMBER > project_data.json
+        
+        RESULT=$(jq 'any(.data.repository.pullRequest.projectItems.nodes[]; .project.title == "Serenity")' project_data.json)
+        if [ "$RESULT" != "true" ]; then
+          echo "PR is not part of the Serenity project, aborting"
+          exit 0
+        fi
+
+    - name: Get Project Current Sprint
+      run: |
+        SERENITY_PROJECT_ID=964
+        CURRENT_DATE=$(date +%Y-%m-%d)
+        
+        gh api graphql -f query='
+          query ($org: String!, $project: Int!) {
+            organization(login: $org) {
+              projectV2(number: $project) {
+                id
+                title
+                number
+                fields(first: 100) {
+                  nodes {
+                    ... on ProjectV2IterationField {
+                      id
+                      name
+                      configuration {
+                        iterations {
+                          id
+                          title
+                          startDate
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }'  -f org=$ORGANIZATION -F project=$SERENITY_PROJECT_ID > project_sprints.json
+
+          SPRINT_ID=$(jq '.data.organization.projectV2.fields.nodes[] | select(.configuration.iterations != null) | .configuration.iterations[] | select(.startDate <= "$CURRENT_DATE").id' project_sprints.json)
+          if [ -z "$SPRINT_ID" ]; then
+            echo "Unable to get the ID of the current sprint."
+            exit 0
+          fi
