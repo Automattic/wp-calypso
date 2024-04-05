@@ -249,7 +249,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		onError: ( error ) => {
 			if ( error.status === 403 ) {
 				reduxDispatch(
-					errorNotice( __( 'Only the original owner can restore a deleted site.' ), {
+					errorNotice( __( 'Only an administrator can restore a deleted site.' ), {
 						duration: 5000,
 					} )
 				);
