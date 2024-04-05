@@ -5,7 +5,7 @@ import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { Icon, lock } from '@wordpress/icons';
+import { Icon, check, copy, lock } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
@@ -276,6 +276,7 @@ function PatternPreviewFragment( {
 						text={ pattern?.html ?? '' }
 						primary
 					>
+						<Icon height={ 18 } icon={ isPatternCopied ? check : copy } width={ 18 } />{ ' ' }
 						{ copyButtonText }
 					</ClipboardButton>
 				) }
