@@ -3,6 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
+import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -14,12 +15,13 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
+import SitesDataViews from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilter,
@@ -30,13 +32,12 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import OverviewHeaderActions from '../../overview/header-actions';
 import SitesDashboardContext from '../sites-dashboard-context';
+import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
 import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
-
 import './style.scss';
 
 export default function SitesDashboard() {
@@ -53,7 +54,6 @@ export default function SitesDashboard() {
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
-		sort,
 		showOnlyFavorites,
 		hideListing,
 		setHideListing,
@@ -88,7 +88,7 @@ export default function SitesDashboard() {
 		searchQuery: sitesViewState.search,
 		currentPage: sitesViewState.page,
 		filter: agencyDashboardFilter,
-		sort,
+		sort: sitesViewState.sort,
 		perPage: sitesViewState.perPage,
 		agencyId,
 	} );
@@ -143,7 +143,7 @@ export default function SitesDashboard() {
 			search: sitesViewState.search,
 			currentPage: sitesViewState.page,
 			sort: sitesViewState.sort,
-			showOnlyFavorites: showOnlyFavorites,
+			showOnlyFavorites,
 		} );
 	}, [
 		sitesViewState.selectedSite,
@@ -188,6 +188,14 @@ export default function SitesDashboard() {
 		selectedText: selectedItem.label,
 	};
 
+	const urlParams = new URLSearchParams( window.location.search );
+	let tourId = null;
+	if ( urlParams.get( 'tour' ) === 'sites-walkthrough' ) {
+		tourId = 'sitesWalkthrough';
+	} else if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
+		tourId = 'addSiteStep1';
+	}
+
 	if ( noActiveSite ) {
 		return <EmptyState />;
 	}
@@ -210,8 +218,7 @@ export default function SitesDashboard() {
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
 							<Actions>
-								{ /* TODO: We were using a component from the overview header actions. We have to check if this is the best header available for the sites page. */ }
-								<OverviewHeaderActions />
+								<SitesHeaderActions />
 							</Actions>
 						</LayoutHeader>
 						<LayoutNavigation { ...selectedItemProps }>
@@ -220,6 +227,7 @@ export default function SitesDashboard() {
 					</LayoutTop>
 
 					<SiteNotifications />
+					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
 
 					<DashboardDataContext.Provider
 						value={ {

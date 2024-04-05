@@ -1247,7 +1247,7 @@ class ManagePurchase extends Component<
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
 								<div className="manage-purchase__contact-partner">
-									{ translate( 'Please contact your site host %(partnerName)s for details', {
+									{ translate( 'Please contact %(partnerName)s for details', {
 										args: {
 											partnerName: getPartnerName( purchase ) ?? '',
 										},
