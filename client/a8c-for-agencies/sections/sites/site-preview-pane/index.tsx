@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
+import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -36,6 +37,7 @@ export default function SitePreviewPane( {
 	className,
 }: PreviewPaneProps ) {
 	const [ canDisplayNavTabs, setCanDisplayNavTabs ] = useState( false );
+	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
 	// For future iterations lets consider something other than SectionNav due to the
 	// manipulation we need to make so that the navigation shows correctly on some smaller
@@ -86,11 +88,18 @@ export default function SitePreviewPane( {
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
-			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
-				{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
-					<NavTabs>{ navItems }</NavTabs>
-				) : null }
-			</SectionNav>
+			<div ref={ setNavRef }>
+				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+					{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
+						<NavTabs>{ navItems }</NavTabs>
+					) : null }
+				</SectionNav>
+			</div>
+			<GuidedTourStep
+				id="sites-walkthrough-site-preview-tabs"
+				tourId="sitesWalkthrough"
+				context={ navRef }
+			/>
 			{ selectedFeature.preview }
 		</div>
 	);
