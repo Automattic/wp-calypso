@@ -58,7 +58,11 @@ export const ScheduleListTable = ( props: Props ) => {
 							{ schedule.last_run_status && (
 								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
 							) }
-							{ schedule.last_run_timestamp && prepareDateTime( schedule.last_run_timestamp ) }
+							{ schedule.last_run_timestamp && (
+								<a href={ `/plugins/scheduled-updates/logs/${ siteSlug }/${ schedule.id }` }>
+									{ prepareDateTime( schedule.last_run_timestamp ) }
+								</a>
+							) }
 							{ ! schedule.last_run_status && ! schedule.last_run_timestamp && '-' }
 						</td>
 						<td>{ prepareDateTime( schedule.timestamp ) }</td>
