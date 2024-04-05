@@ -241,6 +241,16 @@ function PatternPreviewFragment( {
 		>
 			{ resizeObserver }
 
+			<div className="pattern-preview__renderer">
+				<PatternRenderer
+					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
+					patternId={ patternId }
+					scripts={ redrawScript }
+					styles={ [ noClickStyle ] }
+					viewportWidth={ viewportWidth }
+				/>
+			</div>
+
 			<div className="pattern-preview__header">
 				<Tooltip delay={ 300 } placement="top" text={ titleTooltipText }>
 					<ClipboardButton
@@ -286,16 +296,6 @@ function PatternPreviewFragment( {
 						} ) }
 					</Button>
 				) }
-			</div>
-
-			<div className="pattern-preview__renderer">
-				<PatternRenderer
-					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
-					patternId={ patternId }
-					scripts={ redrawScript }
-					styles={ [ noClickStyle ] }
-					viewportWidth={ viewportWidth }
-				/>
 			</div>
 
 			<PatternsGetAccessModal
