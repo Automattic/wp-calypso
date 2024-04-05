@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
@@ -32,6 +33,7 @@ import './style.scss';
 const ActivityLogV2: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
@@ -45,8 +47,10 @@ const ActivityLogV2: FunctionComponent = () => {
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
 	let upsellURL;
-	if ( hasJetpackPartnerAccess ) {
+	if ( hasJetpackPartnerAccess && ! isA4AEnabled ) {
 		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
+	} else if ( isA4AEnabled ) {
+		upsellURL = `/marketplace/products?site_id=${ siteId }`;
 	} else {
 		upsellURL = `/pricing/${ selectedSiteSlug }`;
 	}
@@ -113,7 +117,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
-			{ isJetpackCloud() ? (
+			{ isJetpackCloud() || isA4AEnabled ? (
 				jetpackCloudHeader
 			) : (
 				<NavigationHeader
