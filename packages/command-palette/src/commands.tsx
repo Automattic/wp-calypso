@@ -123,6 +123,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			}
 			return commandNavigation( path )( params );
 		},
+		emptyListNotice: __( "You don't have other sites to switch to.", __i18n_text_domain__ ),
 		icon: switchIcon,
 	},
 	getHelp: {

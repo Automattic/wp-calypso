@@ -192,10 +192,13 @@ export const useCommandPalette = (): {
 
 				if ( currentSite ) {
 					// Move current site to the top of the list
-					filteredSites = [
-						currentSite,
-						...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
-					];
+					filteredSites = filteredSites.filter( ( site ) => site.ID !== currentSiteId );
+
+					// Exclude the current site from the "Switch site" command;
+					if ( selectedCommand.name !== 'switchSite' ) {
+						// Move current site to the top of the list
+						filteredSites = [ currentSite, ...filteredSites ];
+					}
 				}
 			}
 
