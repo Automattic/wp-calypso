@@ -360,7 +360,7 @@ const CommandPalette = ( {
 			setFooterMessage={ setFooterMessage }
 			setPlaceholderOverride={ setPlaceholderOverride }
 			setSearch={ setSearch }
-			selectedCommand={ selectedCommand }
+			setSelectedCommandName={ setSelectedCommandName }
 		>
 			<Modal
 				className="commands-command-menu"
