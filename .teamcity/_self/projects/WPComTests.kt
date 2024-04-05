@@ -118,6 +118,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					npm run build:packages
 				""".trimIndent()
 				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
+				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
 			}
 
 			bashNodeScript {
@@ -137,6 +138,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					npm run test:e2e:playwright
 				""".trimIndent()
 				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
+				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
 			}
 		}
 	})
