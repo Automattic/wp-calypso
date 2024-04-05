@@ -216,6 +216,9 @@ export interface CommandPaletteProps {
 }
 
 const COMMAND_PALETTE_MODAL_OPEN_CLASSNAME = 'command-palette-modal-open';
+// We need to change the `overflow` of the html element because it's set to `scroll` on _reset.scss
+// Ideally, this would be handled by the `@wordpress/components` `Modal` component,
+// but it doesn't have a `htmlOpenClassName` prop
 const toggleModalOpenClassnameOnDocumentHtmlElement = ( isModalOpen: boolean ) => {
 	document.documentElement.classList.toggle( COMMAND_PALETTE_MODAL_OPEN_CLASSNAME, isModalOpen );
 };
