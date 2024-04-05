@@ -13,12 +13,13 @@ import { useSiteSlug } from './hooks/use-site-slug';
 interface Props {
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
+	onShowLogs: ( id: string ) => void;
 }
 export const ScheduleListCards = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const translate = useTranslate();
-	const { onEditClick, onRemoveClick } = props;
+	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
@@ -34,6 +35,10 @@ export const ScheduleListCards = ( props: Props ) => {
 							{
 								title: translate( 'Edit' ),
 								onClick: () => onEditClick( schedule.id ),
+							},
+							{
+								title: translate( 'Logs' ),
+								onClick: () => onShowLogs( schedule.id ),
 							},
 							{
 								title: translate( 'Remove' ),
