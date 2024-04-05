@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, UseQueryResult, type QueryObserverOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteSlug } from 'calypso/types';
 
@@ -22,8 +22,7 @@ export type ScheduleUpdates = {
 export const useUpdateScheduleQuery = (
 	siteSlug: SiteSlug,
 	isEligibleForFeature: boolean,
-	refetchInterval: number = 10 * 1000,
-	refetchOnWindowFocus: boolean = true
+	queryOptions: Partial< QueryObserverOptions< ScheduleUpdates[], Error > > = {}
 ): UseQueryResult< ScheduleUpdates[] > => {
 	const select = ( data: ScheduleUpdates[] ) => {
 		return data.sort( ( a, b ) => {
@@ -50,8 +49,8 @@ export const useUpdateScheduleQuery = (
 			),
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
-		refetchOnWindowFocus,
-		refetchInterval,
 		select,
+		refetchOnWindowFocus: false,
+		...queryOptions,
 	} );
 };
