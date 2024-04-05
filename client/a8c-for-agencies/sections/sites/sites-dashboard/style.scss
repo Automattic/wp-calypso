@@ -47,6 +47,7 @@
 			display: none;
 		}
 
+		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
 			padding-left: 64px;
 		}
@@ -110,6 +111,7 @@
 			}
 		}
 
+		.dataviews-view-table tr th:first-child,
 		.dataviews-view-table tr td:first-child {
 			padding-left: 16px;
 		}
