@@ -4,6 +4,8 @@ import { Gridicon, Tooltip } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { CART_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/marketplace/shopping-cart';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -46,9 +48,9 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 			: hasSelectedLicensesOfType( state, siteId, type )
 	);
 
+	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 	const partner = useSelector( getCurrentPartner );
-	const partnerCanIssueLicense =
-		isEnabled( 'a8c-for-agencies' ) || Boolean( partner?.can_issue_licenses ); // FIXME: get this from state when isEnabled( 'a8c-for-agencies' )
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
@@ -56,6 +58,13 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 			product_slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
 			source: 'dashboard',
 		} );
+	}, [ siteId, type ] );
+
+	const handleA4AAddAction = useCallback( () => {
+		const productSlug = DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ];
+		const productPurchaseLink = `${ A4A_MARKETPLACE_PRODUCTS_LINK }?product_slug=${ productSlug }&source=sitesdashboard&site_id=${ siteId }${ CART_URL_HASH_FRAGMENT }`;
+
+		return page( productPurchaseLink );
 	}, [ siteId, type ] );
 
 	const handleSelectLicenseAction = useCallback( () => {
@@ -114,6 +123,14 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 				return <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
 			}
 			case 'inactive': {
+				if ( isA4AEnabled ) {
+					return (
+						<button className="sites-overview__column-action-button" onClick={ handleA4AAddAction }>
+							<Gridicon icon="plus-small" size={ 16 } />
+							<span>{ translate( 'Add' ) }</span>
+						</button>
+					);
+				}
 				if ( ! partnerCanIssueLicense ) {
 					return null;
 				}
@@ -137,14 +154,16 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 			}
 		}
 	}, [
-		handleDeselectLicenseAction,
-		handleSelectLicenseAction,
-		partnerCanIssueLicense,
-		isLicenseSelected,
 		isSupported,
 		status,
-		translate,
 		value,
+		isA4AEnabled,
+		partnerCanIssueLicense,
+		isLicenseSelected,
+		handleSelectLicenseAction,
+		translate,
+		handleDeselectLicenseAction,
+		handleA4AAddAction,
 	] );
 
 	let wrappedContent = content;
