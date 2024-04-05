@@ -27,7 +27,6 @@ import {
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
-	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { Command, CommandCallBackParams } from '../use-command-palette';
 import { isCustomDomain } from '../utils';
@@ -123,6 +122,7 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 				_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
 				_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 				_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
+				_x( 'send feedback', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			].join( ' ' ),
 			callback: ( { close }: CommandCallBackParams ) => {
 				close();
@@ -1004,22 +1004,6 @@ const useSingleSiteCommands = ( { navigate, currentRoute }: useCommandsParams ):
 			callback: commandNavigation( '/settings/podcasting/:site' ),
 			capability: SiteCapabilities.MANAGE_OPTIONS,
 			icon: settingsIcon,
-		},
-		{
-			name: 'sendFeedback',
-			label: __( 'Send feedback', __i18n_text_domain__ ),
-			searchLabel: _x(
-				'suggest command',
-				'Keyword for the Send feedback command',
-				__i18n_text_domain__
-			),
-			callback: ( { close }: CommandCallBackParams ) => {
-				close();
-				waitForElementAndClick( '#wp-admin-bar-help-center' );
-				waitForElementAndClick( '.help-center-contact-page__button' );
-				waitForElementAndClick( '.help-center-contact-page__box.email' );
-			},
-			icon: feedbackIcon,
 		},
 	];
 

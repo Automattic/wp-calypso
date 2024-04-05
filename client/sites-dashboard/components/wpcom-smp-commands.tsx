@@ -28,7 +28,6 @@ import {
 	wordpress as wordpressIcon,
 	reusableBlock as cacheIcon,
 	help as helpIcon,
-	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
@@ -307,14 +306,7 @@ export const useCommandsArrayWpcom = ( {
 
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
-	// Create URLSearchParams for send feedback by email command
-	const { setInitialRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const emailUrl = `/contact-form?${ new URLSearchParams( {
-		mode: 'EMAIL',
-		'disable-gpt': 'true',
-		'source-command-palette': 'true',
-	} ).toString() }`;
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const commands: Command[] = [
 		{
@@ -335,6 +327,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'get help', 'Keyword for the Get help command' ),
 				_x( 'contact support', 'Keyword for the Get help command' ),
 				_x( 'help center', 'Keyword for the Get help command' ),
+				_x( 'send feedback', 'Keyword for the Get help command' ),
 			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
@@ -1430,17 +1423,6 @@ export const useCommandsArrayWpcom = ( {
 					commandNavigation( `/settings/podcasting/${ param.site.slug }` )( param ),
 			},
 			icon: settingsIcon,
-		},
-		{
-			name: 'sendFeedback',
-			label: __( 'Send feedback' ),
-			searchLabel: _x( 'suggest command', 'Keyword for the Send feedback command' ),
-			callback: ( { close }: { close: () => void } ) => {
-				close();
-				setInitialRoute( emailUrl );
-				setShowHelpCenter( true );
-			},
-			icon: feedbackIcon,
 		},
 	];
 
