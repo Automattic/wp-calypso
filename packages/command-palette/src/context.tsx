@@ -25,6 +25,7 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 	useCommands,
 	userCapabilities,
 	useSites,
+	isOpenGlobal,
 } ) => {
 	return (
 		<CommandPaletteContext.Provider
@@ -36,6 +37,7 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 				useCommands,
 				userCapabilities,
 				useSites,
+				isOpenGlobal,
 			} }
 		>
 			{ children }
