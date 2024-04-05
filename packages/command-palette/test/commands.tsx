@@ -103,7 +103,6 @@ const expectedCommandsResults = {
 	manageSettingsDiscussion: [ '/wp-admin/options-discussion.php', siteFilters.admin ],
 	manageSettingsNewsletter: [ '/wp-admin/admin.php?page=jetpack#/newsletter', siteFilters.admin ],
 	manageSettingsPodcast: [ '/settings/podcasting/:site', siteFilters.admin ],
-	sendFeedback: [ '/help' ],
 };
 
 describe( 'COMMANDS', () => {

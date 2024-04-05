@@ -27,7 +27,6 @@ import {
 	settings as settingsIcon,
 	tool as toolIcon,
 	wordpress as wordpressIcon,
-	comment as feedbackIcon,
 } from '@wordpress/icons';
 import { commandNavigation, siteUsesWpAdminInterface } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -111,6 +110,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 			_x( 'get help', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			_x( 'contact support', 'Keyword for the Get help command', __i18n_text_domain__ ),
 			_x( 'help center', 'Keyword for the Get help command', __i18n_text_domain__ ),
+			_x( 'send feedback', 'Keyword for the Get help command', __i18n_text_domain__ ),
 		].join( ' ' ),
 		icon: helpIcon,
 	},
@@ -1129,16 +1129,5 @@ export const COMMANDS: { [ key: string ]: Command } = {
 		siteSelectorLabel: __( 'Select site to manage podcast settings', __i18n_text_domain__ ),
 		capability: SiteCapabilities.MANAGE_OPTIONS,
 		icon: settingsIcon,
-	},
-	sendFeedback: {
-		name: 'sendFeedback',
-		label: __( 'Send feedback', __i18n_text_domain__ ),
-		callback: commandNavigation( '/help' ),
-		searchLabel: _x(
-			'suggest command',
-			'Keyword for the Send feedback command',
-			__i18n_text_domain__
-		),
-		icon: feedbackIcon,
 	},
 };

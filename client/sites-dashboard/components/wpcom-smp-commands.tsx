@@ -171,13 +171,7 @@ export const useCommandsCalypso = (): Command[] => {
 	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
 
 	// Create URLSearchParams for send feedback by email command
-	const { setInitialRoute, setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const emailUrl = `/contact-form?${ new URLSearchParams( {
-		mode: 'EMAIL',
-		'disable-gpt': 'true',
-		'source-command-palette': 'true',
-	} ).toString() }`;
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Only override commands that need a specific behavior for Calypso.
 	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
@@ -235,13 +229,6 @@ export const useCommandsCalypso = (): Command[] => {
 					if ( site ) {
 						await resetSshSftpPassword( site.ID, site.slug );
 					}
-				},
-			},
-			sendFeedback: {
-				callback: ( { close }: CommandCallBackParams ) => {
-					close();
-					setInitialRoute( emailUrl );
-					setShowHelpCenter( true );
 				},
 			},
 		} )

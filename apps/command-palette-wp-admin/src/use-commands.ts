@@ -18,12 +18,6 @@ export const useCommandsWpAdmin = (): Command[] => {
 		close();
 		waitForElementAndClick( '#wp-admin-bar-help-center' );
 	};
-	COMMANDS.sendFeedback.callback = ( { close }: CommandCallBackParams ) => {
-		close();
-		waitForElementAndClick( '#wp-admin-bar-help-center' );
-		waitForElementAndClick( '.help-center-contact-page__button' );
-		waitForElementAndClick( '.help-center-contact-page__box.email' );
-	};
 
 	return Object.values( COMMANDS ) as Command[];
 };
