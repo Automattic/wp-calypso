@@ -101,13 +101,6 @@ const generateWebsiteContentSections = (
 
 		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
 
-		switch ( page.id ) {
-			case CONTACT_PAGE:
-				break;
-
-			default:
-				break;
-		}
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {

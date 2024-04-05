@@ -843,7 +843,15 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isPartnerPurchase( purchase ) ) {
-		return i18n.translate( 'Host Managed Plan' );
+		switch ( purchase.partnerType ) {
+			case 'agency':
+			case 'agency_beta':
+			case 'a4a_agency':
+				return i18n.translate( 'Agency Managed Plan' );
+
+			default:
+				return i18n.translate( 'Host Managed Plan' );
+		}
 	}
 
 	if ( isPlan( purchase ) ) {
