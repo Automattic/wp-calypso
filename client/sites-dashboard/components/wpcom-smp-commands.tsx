@@ -327,7 +327,7 @@ export const useCommandsArrayWpcom = ( {
 				_x( 'get help', 'Keyword for the Get help command' ),
 				_x( 'contact support', 'Keyword for the Get help command' ),
 				_x( 'help center', 'Keyword for the Get help command' ),
-				_x( 'send feedback', 'Keyword for Get help command' ),
+				_x( 'send feedback', 'Keyword for the Get help command' ),
 			].join( ' ' ),
 			callback: ( { close }: { close: () => void } ) => {
 				close();
