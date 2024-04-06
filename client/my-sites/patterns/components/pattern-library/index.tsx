@@ -135,7 +135,6 @@ export const PatternLibrary = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 	const currentLocaleSlug = useSelector( getCurrentLocaleSlug );
-	const currentUserLocale = useSelector( getCurrentUserLocale );
 
 	const recordClickEvent = (
 		tracksEventName: string,
@@ -345,8 +344,7 @@ export const PatternLibrary = ( {
 										showToolTip={
 											hasTranslation(
 												'A collection of blocks that make up one section of a page'
-											) ||
-											( currentLocaleSlug === 'en' && currentLocaleSlug === currentUserLocale )
+											) || currentLocaleSlug === 'en'
 										}
 										toolTipText={ translate(
 											'A collection of blocks that make up one section of a page'
@@ -361,7 +359,7 @@ export const PatternLibrary = ( {
 										} ) }
 										showToolTip={
 											hasTranslation( 'A collection of patterns that form an entire page' ) ||
-											( currentLocaleSlug === 'en' && currentLocaleSlug === currentUserLocale )
+											currentLocaleSlug === 'en'
 										}
 										toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
 										value={ PatternTypeFilter.PAGES }
