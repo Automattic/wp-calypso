@@ -87,7 +87,7 @@ export default function SubscribersChartSection( {
 		queryDate
 	) as UseQueryResult< SubscribersDataResult >;
 
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId || 0 ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	const handleDateChange = useCallback(
