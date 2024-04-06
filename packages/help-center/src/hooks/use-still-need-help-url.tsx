@@ -8,7 +8,7 @@ import { useIsWapuuEnabled } from './use-is-wapuu-enabled';
  * It checks if the 'flags' URL parameter is set to 'wapuu' when useIsWapuuEnabled() fails to do so.
  * @returns boolean
  */
-function isWapuuFlagSetInURL(): boolean {
+export function isWapuuFlagSetInURL(): boolean {
 	const currentUrl = window.location.href;
 	const urlParams = new URLSearchParams( new URL( currentUrl ).search );
 	return urlParams.get( 'flags' ) === 'wapuu';
