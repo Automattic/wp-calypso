@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
 	JETPACK_BACKUP_ID,
@@ -132,7 +133,7 @@ export function JetpackPreviewPane( {
 					true,
 					selectedSiteFeature,
 					setSelectedSiteFeature,
-					null // @todo: Add the actual panel component here
+					<SiteDetails site={ site } />
 				)
 			);
 		}
