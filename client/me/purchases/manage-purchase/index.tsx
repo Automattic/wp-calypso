@@ -696,7 +696,7 @@ class ManagePurchase extends Component<
 				<InfoPopover iconSize={ 16 } position="top left">
 					<span>
 						{ translate(
-							'The refund period for this purchase is %(refundPeriodInDays)s days. Questions? Check our {{link}refund policy{{/link}}.',
+							'The refund period for this purchase is %(refundPeriodInDays)s days. Questions? Check our {{link}}refund policy{{/link}}.',
 							{
 								components: {
 									link: <InlineSupportLink supportContext="refund-periods" showIcon={ false } />,
