@@ -6,7 +6,9 @@ export default function SiteDetails( { site }: any ) {
 	/* eslint-disable-next-line */
 	const { a4a_agency_id: agencyId, a4a_site_id: siteId, a4a_site_tags: initialTags } = site;
 
-	const [ tags, setTags ] = useState( initialTags.map( ( tag: SiteTagType ) => tag.label ) );
+	const [ tags, setTags ] = useState(
+		initialTags ? initialTags.map( ( tag: SiteTagType ) => tag.label ) : []
+	);
 
 	const onAddTags = ( tagList: string[] ) => {
 		const newTags = tags.concat( tagList );
