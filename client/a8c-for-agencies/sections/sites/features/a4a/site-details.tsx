@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import AgencySiteTags from 'calypso/a8c-for-agencies/components/agency-site-tags';
+import useUpdateSiteTagsMutation from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/hooks/use-site-tags-mutation';
 import SiteTagType from 'calypso/a8c-for-agencies/types/site-tag';
 import './style.scss';
 
@@ -12,11 +13,15 @@ export default function SiteDetails( { site }: any ) {
 		initialTags ? initialTags.map( ( tag: SiteTagType ) => tag.label ) : []
 	);
 
-	const onAddTags = ( tagList: string[] ) => {
-		const newTags = tags.concat( tagList );
+	const { mutate, isLoading } = useUpdateSiteTagsMutation();
+
+	const onAddTags = ( siteTags: string[] ) => {
+		const newTags = tags.concat( siteTags );
 		setTags( newTags );
-		/* eslint-disable-next-line */
-		console.log( newTags );
+		mutate( {
+			siteId,
+			siteTags,
+		} );
 	};
 
 	const onRemoveTag = ( toRemove: string ) => {

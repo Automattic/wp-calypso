@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import SiteTag from 'calypso/client/a8c-for-agencies/types/site-tag';
+import SiteTag from 'calypso/a8c-for-agencies/types/site-tag';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -7,13 +7,13 @@ import { APIError } from 'calypso/state/partner-portal/types';
 
 interface UpdateSiteTagsMutationOptions {
 	siteId: number;
-	siteTagsList: SiteTag[];
+	siteTags: string[];
 }
 
 function mutationUpdateSiteTags( {
 	agencyId,
 	siteId,
-	siteTagsList,
+	siteTags,
 }: UpdateSiteTagsMutationOptions & { agencyId?: number } ): Promise< SiteTag[] > {
 	if ( ! siteId ) {
 		throw new Error( 'Site ID is required to update tags' );
@@ -22,7 +22,7 @@ function mutationUpdateSiteTags( {
 	return wpcom.req.put( {
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/sites/${ siteId }/tags`,
-		body: siteTagsList,
+		body: siteTags,
 	} );
 }
 
