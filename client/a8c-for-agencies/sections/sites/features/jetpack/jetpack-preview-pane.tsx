@@ -8,6 +8,7 @@ import {
 	JETPACK_PLUGINS_ID,
 	JETPACK_SCAN_ID,
 	JETPACK_STATS_ID,
+	SITE_DETAILS_ID,
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
@@ -21,8 +22,10 @@ import { JetpackMonitorPreview } from './jetpack-monitor';
 import { JetpackPluginsPreview } from './jetpack-plugins';
 import { JetpackStatsPreview } from './jetpack-stats';
 import { JetpackScanPreview } from './scan/jetpack-scan';
-
+import { SiteDetailsPane } from './site-details-pane';
 import './style.scss';
+
+
 
 export function JetpackPreviewPane( {
 	site,
@@ -119,6 +122,14 @@ export function JetpackPreviewPane( {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<JetpackActivityPreview siteId={ site.blog_id } />
+			),
+			createFeaturePreview(
+				SITE_DETAILS_ID,
+				translate( 'Details' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteDetailsPane site={ site } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]

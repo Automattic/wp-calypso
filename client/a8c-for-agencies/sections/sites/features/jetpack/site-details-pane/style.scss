@@ -1,0 +1,23 @@
+.site-details-pane {
+	padding: 16px 48px;
+}
+
+.site-details-pane__tag-section {
+	margin: 2rem 0;
+}
+
+.site-details-pane__section-heading {
+	margin: 0.5rem 0;
+}
+
+.site-details-pane__section-description {
+	font-size: 0.875rem;
+	font-weight: 400;
+	margin-bottom: 1rem;
+	color: var(--studio-gray);
+}
+
+.site-details-pane__add-tag-link {
+	font-size: 0.875rem;
+	cursor: pointer;
+}
