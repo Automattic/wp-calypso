@@ -651,36 +651,39 @@ class ManagePurchase extends Component<
 		}
 
 		const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
-		const lastRenewal = new Date( purchase?.mostRecentRenewDate );
-		const refundPeriod = new Date(
-			lastRenewal.getTime() + purchase?.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
+		const lastRenewalDate = new Date( purchase?.mostRecentRenewDate );
+		const refundPeriodEndDate = new Date(
+			lastRenewalDate.getTime() + purchase?.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
 		);
 
-		let refundText = translate(
-			'Eligible for a refund of %(refundAmount)s until {{refundDate/}}.',
-			{
-				components: {
-					refundDate: <FormattedDate date={ refundPeriod } format="LL" />,
-				},
-				args: {
-					refundAmount: purchase?.refundText,
-				},
-				context: 'refundAmount contains the currency and amount - eg. £20',
-			}
-		);
-
-		// Applies if the user wouldn't receive a financial refund,
-		// but would receive another free domain credit instead.
-		if ( isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
-			refundText = translate(
+		const refundText = (() => {
+			// User would receive another free domain credit upon cancelling.
+			if ( isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
+			  return translate(
 				"If you're unsure about this domain, cancel it before {{refundDate/}} to choose another free domain instead.",
 				{
 					components: {
-						refundDate: <FormattedDate date={ refundPeriod } format="LL" />,
+						refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
 					},
 				}
 			);
-		}
+			}
+		  
+			// User would receive a financial refund upon cancelling.
+			return translate(
+				'Eligible for a refund of %(refundAmount)s until {{refundDate/}}.',
+				{
+					components: {
+						refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
+					},
+					args: {
+						refundAmount: purchase?.refundText,
+					},
+					context: 'refundAmount contains the currency and amount - eg. £20',
+				}
+			);
+		  }) ();
+
 
 		// Neither a financial refund nor another domain credit would be available.
 		if ( ! isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
