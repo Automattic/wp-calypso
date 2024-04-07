@@ -1,39 +1,38 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import SiteTag from 'calypso/client/a8c-for-agencies/types/site-tag';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { APIError } from 'calypso/state/partner-portal/types';
 
-export interface SiteTags {
-	id: number;
-	slug: string;
-	value: string;
+interface UpdateSiteTagsMutationOptions {
+	siteId: number;
+	siteTagsList: SiteTag[];
 }
 
-export type SiteTagsList = SiteTags[];
-
-function mutationIssueLicense(
-	agencyID: number,
-	siteID: number,
-	siteTagsList: SiteTagsList & []
-): Promise< SiteTags[] > {
-	if ( ! siteID ) {
+function mutationUpdateSiteTags( {
+	agencyId,
+	siteId,
+	siteTagsList,
+}: UpdateSiteTagsMutationOptions & { agencyId?: number } ): Promise< SiteTag[] > {
+	if ( ! siteId ) {
 		throw new Error( 'Site ID is required to update tags' );
 	}
 
 	return wpcom.req.put( {
 		apiNamespace: 'wpcom/v2',
-		path: `/agency/${ agencyID }/sites/${ siteID }/tags`,
+		path: `/agency/${ agencyId }/sites/${ siteId }/tags`,
 		body: siteTagsList,
 	} );
 }
 
-export default function useIssueLicenseMutation< TContext = unknown >(
-	options?: UseMutationOptions< APILicense, APIError, MutationIssueLicenseVariables, TContext >
-): UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, TContext > {
+export default function useUpdateSiteTagsMutation< TContext = unknown >(
+	options?: UseMutationOptions< SiteTag[], APIError, UpdateSiteTagsMutationOptions, TContext >
+): UseMutationResult< SiteTag[], APIError, UpdateSiteTagsMutationOptions, TContext > {
 	const agencyId = useSelector( getActiveAgencyId );
 
-	return useMutation< APILicense, APIError, MutationIssueLicenseVariables, TContext >( {
+	return useMutation< SiteTag[], APIError, UpdateSiteTagsMutationOptions, TContext >( {
 		...options,
-		mutationFn: ( args ) => mutationIssueLicense( { ...args, agencyId } ),
+		mutationFn: ( args ) => mutationUpdateSiteTags( { ...args, agencyId } ),
 	} );
 }
