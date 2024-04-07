@@ -1,10 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import {
-	broadcastChatClearance,
-	clearOdieStorage,
-	useOdieBroadcastWithCallbacks,
-	useOdieStorage,
-} from '../data';
+import { broadcastChatClearance, clearOdieStorage, useOdieStorage } from '../data';
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
@@ -187,8 +182,6 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 		},
 		[ setChat ]
 	);
-
-	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieClientId );
 
 	const updateMessage = useCallback(
 		( message: Partial< Message > ) => {
