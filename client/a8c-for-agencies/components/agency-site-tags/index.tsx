@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AgencySiteTag from 'calypso/a8c-for-agencies/components/agency-site-tag';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import './style.scss';
 
 interface Props {
 	tags: string[];
