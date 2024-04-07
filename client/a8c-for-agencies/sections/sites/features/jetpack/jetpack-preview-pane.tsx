@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import {
@@ -8,6 +9,7 @@ import {
 	JETPACK_PLUGINS_ID,
 	JETPACK_SCAN_ID,
 	JETPACK_STATS_ID,
+	A4A_SITE_DETAILS_ID,
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
@@ -53,8 +55,8 @@ export function JetpackPreviewPane( {
 	}, [] );
 
 	// Jetpack features: Boost, Backup, Monitor, Stats
-	const features = useMemo(
-		() => [
+	const features = useMemo( () => {
+		const f = [
 			createFeaturePreview(
 				JETPACK_BOOST_ID,
 				'Boost',
@@ -120,9 +122,23 @@ export function JetpackPreviewPane( {
 				setSelectedSiteFeature,
 				<JetpackActivityPreview siteId={ site.blog_id } />
 			),
-		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
-	);
+		];
+
+		if ( isEnabled( 'a4a/site-details-pane' ) ) {
+			f.push(
+				createFeaturePreview(
+					A4A_SITE_DETAILS_ID,
+					translate( 'Details' ),
+					true,
+					selectedSiteFeature,
+					setSelectedSiteFeature,
+					null // @todo: Add the actual panel component here
+				)
+			);
+		}
+
+		return f;
+	}, [ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ] );
 
 	return (
 		<SitePreviewPane
