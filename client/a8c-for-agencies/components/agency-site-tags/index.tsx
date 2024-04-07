@@ -21,19 +21,20 @@ export default function AgencySiteTags( { tags, onAddTags, onRemoveTag }: Props 
 
 	return (
 		<div className="agency-site-tags">
-			<Card className="agency-site-tags__tag-controls">
+			<Card className="agency-site-tags__controls">
 				<FormTextInput
+					className="agency-site-tags__input"
 					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
 						setTagsInput( e.target.value )
 					}
 					value={ tagsInput }
 					placeholder={ translate( 'Add tags here (separate by commas)' ) }
 				/>
-				<Button primary compact onClick={ handleAddTags }>
+				<Button primary compact onClick={ handleAddTags } className="agency-site-tags__button">
 					{ translate( 'Add' ) }
 				</Button>
 			</Card>
-			<Card className="agency-site-tags__tag-list">
+			<Card className="agency-site-tags__list">
 				{ tags.map( ( tag ) => (
 					<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
 				) ) }
