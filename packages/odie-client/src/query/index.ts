@@ -6,7 +6,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
-import { broadcastOdieMessage, setOdieStorage } from '../data';
+import { setOdieStorage } from '../data';
 import type { Chat, Message, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
@@ -76,16 +76,8 @@ export const useOdieSendMessage = (): UseMutationResult<
 	{ message: Message },
 	{ internal_message_id: string }
 > => {
-	const {
-		chat,
-		botNameSlug,
-		setIsLoading,
-		addMessage,
-		updateMessage,
-		odieClientId,
-		selectedSiteId,
-		version,
-	} = useOdieAssistantContext();
+	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, selectedSiteId, version } =
+		useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 
@@ -96,7 +88,6 @@ export const useOdieSendMessage = (): UseMutationResult<
 		{ internal_message_id: string }
 	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
-			broadcastOdieMessage( message, odieClientId );
 			return buildSendChatMessage(
 				{ ...message },
 				botNameSlug,
@@ -136,7 +127,6 @@ export const useOdieSendMessage = (): UseMutationResult<
 				} as Message;
 
 				updateMessage( message );
-				broadcastOdieMessage( message, odieClientId );
 
 				return;
 			}
@@ -151,7 +141,6 @@ export const useOdieSendMessage = (): UseMutationResult<
 			} as Message;
 			updateMessage( message );
 
-			broadcastOdieMessage( message, odieClientId );
 			setOdieStorage( 'chat_id', data.chat_id );
 			const queryKey = [ 'chat', botNameSlug, data.chat_id, 1, 30, true ];
 
@@ -188,8 +177,6 @@ export const useOdieSendMessage = (): UseMutationResult<
 				type: 'error',
 			} as Message;
 			updateMessage( message );
-
-			broadcastOdieMessage( message, odieClientId );
 		},
 	} );
 };
