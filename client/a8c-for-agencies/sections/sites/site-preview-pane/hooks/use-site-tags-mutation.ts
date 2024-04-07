@@ -7,22 +7,25 @@ import { APIError } from 'calypso/state/partner-portal/types';
 
 interface UpdateSiteTagsMutationOptions {
 	siteId: number;
-	siteTags: string[];
+	tags: string[];
 }
 
 function mutationUpdateSiteTags( {
 	agencyId,
 	siteId,
-	siteTags,
+	tags,
 }: UpdateSiteTagsMutationOptions & { agencyId?: number } ): Promise< SiteTag[] > {
 	if ( ! siteId ) {
 		throw new Error( 'Site ID is required to update tags' );
 	}
 
 	return wpcom.req.put( {
+		method: 'PUT',
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/sites/${ siteId }/tags`,
-		body: siteTags,
+		body: {
+			tags,
+		},
 	} );
 }
 
