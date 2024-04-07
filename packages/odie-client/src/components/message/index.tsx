@@ -49,7 +49,7 @@ const ChatMessage = (
 	const { botName, extraContactOptions, addMessage, trackEvent } = useOdieAssistantContext();
 	const [ scrolledToBottom, setScrolledToBottom ] = useState( false );
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
-	const currentUser = useSelector( getCurrentUser );
+	const currentUser = useSelector( getCurrentUser ) ?? { display_name: 'Me' };
 	const translate = useTranslate();
 
 	const realTimeMessage = useTyper( message.content, ! isUser && message.type === 'message', {
