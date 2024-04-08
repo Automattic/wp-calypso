@@ -9,7 +9,7 @@ const logRocketDebug = debug( 'calypso:analytics:logrocket' );
 let logRocketScriptLoaded = false;
 
 export function mayWeLoadLogRocketScript() {
-	return config.isEnabled( 'logrocket_enabled' ) && mayWeTrackByTracker( 'logrocket' );
+	return config.isEnabled( 'logrocket' ) && mayWeTrackByTracker( 'logrocket' );
 }
 
 export function maybeAddLogRocketScript() {
