@@ -55,6 +55,7 @@ export type PatternGalleryProps = {
 	isGridView?: boolean;
 	patterns?: Pattern[];
 	patternTypeFilter: PatternTypeFilter;
+	searchTerm?: string;
 };
 
 export type PatternGalleryFC = React.FC< PatternGalleryProps >;

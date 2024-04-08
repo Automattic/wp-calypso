@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
@@ -23,6 +24,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { FunctionComponent } from 'react';
@@ -32,8 +34,10 @@ import './style.scss';
 const ActivityLogV2: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const siteId = useSelector( getSelectedSiteId );
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const { data: logs } = useActivityLogQuery( siteId, filter );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -45,11 +49,15 @@ const ActivityLogV2: FunctionComponent = () => {
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
 	let upsellURL;
-	if ( hasJetpackPartnerAccess ) {
+	if ( hasJetpackPartnerAccess && ! isA4AEnabled ) {
 		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
+	} else if ( isA4AEnabled ) {
+		upsellURL = `/marketplace/products?site_id=${ siteId }`;
 	} else {
 		upsellURL = `/pricing/${ selectedSiteSlug }`;
 	}
+
+	const isAtomicA4AEnabled = isA4AEnabled && isAtomic;
 
 	const jetpackCloudHeader = siteHasFullActivityLog ? (
 		<div className="activity-log-v2__header">
@@ -60,7 +68,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				</div>
 			</div>
 			<div className="activity-log-v2__header-right">
-				{ isJetpackCloud() && selectedSiteSlug && (
+				{ ( isJetpackCloud() || isA4AEnabled ) && selectedSiteSlug && (
 					<Tooltip
 						text={ translate(
 							'To test your site changes, migrate or keep your data safe in another site'
@@ -68,7 +76,11 @@ const ActivityLogV2: FunctionComponent = () => {
 					>
 						<Button
 							className="activity-log-v2__clone-button"
-							href={ backupClonePath( selectedSiteSlug ) }
+							href={
+								isAtomicA4AEnabled
+									? `https://wordpress.com/backup/${ selectedSiteSlug }/clone`
+									: backupClonePath( selectedSiteSlug )
+							}
 							onClick={ () =>
 								dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_copy_site' ) )
 							}
@@ -113,7 +125,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
-			{ isJetpackCloud() ? (
+			{ isJetpackCloud() || isA4AEnabled ? (
 				jetpackCloudHeader
 			) : (
 				<NavigationHeader

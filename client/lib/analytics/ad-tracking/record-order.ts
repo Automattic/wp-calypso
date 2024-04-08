@@ -42,6 +42,7 @@ declare global {
 		lintrk: ( key: string, val: Record< string, any > ) => void;
 		_qevents: any[];
 		uetq: any[];
+		rdt: any[] & { ( ...args: any[] ): void };
 	}
 }
 
@@ -84,6 +85,7 @@ export async function recordOrder(
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGTM( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInReddit( orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -789,6 +791,38 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 		.catch( ( error ) => {
 			debug( 'recordOrderInParsely: Error loading Parsely', error );
 		} );
+}
+/**
+ * Sends a purchase event to Reddit Ads for WPcom purchases.
+ */
+function recordOrderInReddit(
+	orderId: number | null | undefined,
+	wpcomJetpackCartInfo: WpcomJetpackCartInfo
+): void {
+	if ( ! mayWeTrackByTracker( 'reddit' ) ) {
+		return;
+	}
+
+	if ( ! wpcomJetpackCartInfo.containsWpcomProducts ) {
+		return;
+	}
+
+	const cartContents = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => ( {
+		id: product.product_id,
+		name: product.product_name_en,
+		category: product.product_type,
+	} ) );
+
+	const params = {
+		value: wpcomJetpackCartInfo.wpcomCostUSD,
+		currency: 'USD',
+		transactionId: orderId,
+		products: cartContents,
+		itemCount: cartContents.length,
+	};
+
+	debug( 'recordOrderInReddit:', 'track', params );
+	window.rdt( 'track', 'Purchase', params );
 }
 
 /**

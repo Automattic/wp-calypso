@@ -71,7 +71,7 @@ describe( 'BoostSitePerformance', () => {
 		expect( strongTag ).toHaveStyle( 'font-weight: bold' );
 	} );
 
-	test( "renders the 'Auto-optimize' and 'Settings' buttons when there is a score and has no boost", () => {
+	test( "renders the 'Upgrade to auto-optimize' and 'Settings' buttons when there is a score and has no boost", () => {
 		const props = {
 			site: {
 				...site,
@@ -86,7 +86,7 @@ describe( 'BoostSitePerformance', () => {
 			wrapper: Wrapper,
 		} );
 
-		const autoOptimizeButton = screen.getByText( /Auto-optimize/i );
+		const autoOptimizeButton = screen.getByText( /Upgrade to auto-optimize/i );
 		expect( autoOptimizeButton ).toBeInTheDocument();
 
 		const settingsButton = screen.getByRole( 'link', { name: /settings/i } );
