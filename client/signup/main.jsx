@@ -310,7 +310,7 @@ class Signup extends Component {
 				this.props.locale
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
-			this.handleDestination( this.props.signupDependencies, stepUrl );
+			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
 		}
 	}
 
@@ -409,7 +409,7 @@ class Signup extends Component {
 
 		await this.handlePostFlowCallbacks( dependencies );
 
-		this.handleDestination( dependencies, filteredDestination );
+		this.handleDestination( dependencies, filteredDestination, this.props.flowName );
 	};
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -559,7 +559,7 @@ class Signup extends Component {
 		}
 	};
 
-	handleDestination( dependencies, destination ) {
+	handleDestination( dependencies, destination, flowName ) {
 		if ( this.props.isLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
@@ -569,6 +569,11 @@ class Signup extends Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
+				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
+				if ( destination.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
+					page( destination );
+					return;
+				}
 				window.location.href = destination;
 			} );
 
