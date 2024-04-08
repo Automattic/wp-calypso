@@ -436,7 +436,6 @@ class Layout extends Component {
 						currentRoute={ this.props.currentRoutePattern }
 						useSites={ useSiteExcerptsSorted }
 						userCapabilities={ this.props.userCapabilities }
-						selectedCommand={ this.props.commandPaletteSelectedCommand }
 					/>
 				) }
 			</div>
