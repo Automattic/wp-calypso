@@ -40,6 +40,8 @@ export function PatternsGetStarted() {
 				<a
 					className="patterns-get-started__item"
 					href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/block-pattern/' ) }
+					rel="noreferrer"
+					target="_blank"
 				>
 					<img
 						className="patterns-get-started__item-image"
@@ -61,6 +63,8 @@ export function PatternsGetStarted() {
 				<a
 					className="patterns-get-started__item"
 					href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/page-layouts/' ) }
+					rel="noreferrer"
+					target="_blank"
 				>
 					<img
 						className="patterns-get-started__item-image"
@@ -81,7 +85,9 @@ export function PatternsGetStarted() {
 
 				<a
 					className="patterns-get-started__item"
-					href={ localizeUrl( 'https://wordpress.com/learn/webinars/compelling-homepages/' ) }
+					href="https://wordpress.com/learn/webinars/compelling-homepages/"
+					rel="noreferrer"
+					target="_blank"
 				>
 					<img
 						className="patterns-get-started__item-image"
