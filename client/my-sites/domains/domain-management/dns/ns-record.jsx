@@ -27,9 +27,6 @@ class NsRecord extends Component {
 		const isDataValid = isValid( 'data' );
 		const isTTLValid = isValid( 'ttl' );
 
-		console.log( 'QWUIOEUQWIOEUQWIOEUQIWOUEIOQW' );
-		console.log( selectedDomain );
-
 		const nameLabel = selectedDomain?.isSubdomain
 			? translate( 'Name (optional)', { context: 'Dns Record' } )
 			: translate( 'Name', { context: 'Dns Record' } );

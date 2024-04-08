@@ -14,7 +14,6 @@ function validateAllFields( fieldValues, domainName, domain ) {
 	} );
 }
 
-// LEOTABA 2024-04-05: This is where DNS records are validated
 function validateField( { name, value, type, domain, domainName } ) {
 	switch ( name ) {
 		case 'name':
