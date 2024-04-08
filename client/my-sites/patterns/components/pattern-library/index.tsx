@@ -1,6 +1,10 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import {
+	useLocale,
+	addLocaleToPathLocaleInFront,
+	useHasEnTranslation,
+} from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -8,7 +12,6 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { ToggleGroupControlOptionProps } from '@wordpress/components/build-types/toggle-group-control/types';
-import { hasTranslation } from '@wordpress/i18n';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -38,7 +41,6 @@ import {
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 import './style.scss';
@@ -128,9 +130,9 @@ export const PatternLibrary = ( {
 		},
 	} );
 
+	const hasEnTranslation = useHasEnTranslation();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
-	const currentLocaleSlug = useSelector( getCurrentLocaleSlug );
 
 	const recordClickEvent = (
 		tracksEventName: string,
@@ -337,11 +339,9 @@ export const PatternLibrary = ( {
 											comment: 'Refers to block patterns',
 											textOnly: true,
 										} ) }
-										showToolTip={
-											hasTranslation(
-												'A collection of blocks that make up one section of a page'
-											) || currentLocaleSlug === 'en'
-										}
+										showToolTip={ hasEnTranslation(
+											'A collection of blocks that make up one section of a page'
+										) }
 										toolTipText={ translate(
 											'A collection of blocks that make up one section of a page'
 										) }
@@ -353,10 +353,9 @@ export const PatternLibrary = ( {
 											comment: 'Refers to block patterns that contain entire page layouts',
 											textOnly: true,
 										} ) }
-										showToolTip={
-											hasTranslation( 'A collection of patterns that form an entire page' ) ||
-											currentLocaleSlug === 'en'
-										}
+										showToolTip={ hasEnTranslation(
+											'A collection of patterns that form an entire page'
+										) }
 										toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
 										value={ PatternTypeFilter.PAGES }
 									/>
