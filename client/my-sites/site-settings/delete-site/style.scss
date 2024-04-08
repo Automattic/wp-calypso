@@ -54,28 +54,14 @@
 		margin-bottom: 0;
 	}
 
-	.notice__text {
-		a,
-		a:visited {
-			float: right;
-			text-decoration: none;
-			color: #ccc;
-		}
+	&__deletion-block {
+		display: flex;
+	}
+
+	.card .delete-site__confirm-input {
+		width: auto;
+		flex-grow: 1;
+		margin-left: 2px;
+		margin-right: 10px;
 	}
 }
-
-h1.delete-site__confirm-header {
-	height: auto;
-	margin-bottom: 16px;
-	font-size: $font-title-small;
-	line-height: 24px;
-	color: var(--color-neutral-70);
-}
-
-.form-label.delete-site__confirm-label {
-	margin-bottom: 8px;
-	line-height: 24px;
-	color: var(--color-text-subtle);
-	font-weight: normal;
-}
-

@@ -1,20 +1,20 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Dialog, FormLabel, Gridicon } from '@automattic/components';
-import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
+import { Button } from '@automattic/components';
+import i18n, { getLocaleSlug, localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
@@ -44,13 +44,12 @@ class DeleteSite extends Component {
 
 	state = {
 		confirmDomain: '',
-		showConfirmDialog: false,
 		showWarningDialog: false,
 	};
 
 	renderNotice() {
 		const exportLink = '/export/' + this.props.siteSlug;
-		const { siteDomain, translate } = this.props;
+		const { siteDomain } = this.props;
 
 		if ( ! siteDomain ) {
 			return null;
@@ -78,12 +77,167 @@ class DeleteSite extends Component {
 		};
 
 		return (
-			<Notice status="is-warning" showDismiss={ false }>
-				{ warningText() }
-				<a onClick={ this._checkSiteLoaded } href={ exportLink }>
+			<Notice status="is-warning" showDismiss={ false } text={ warningText() }>
+				<NoticeAction onClick={ this._checkSiteLoaded } href={ exportLink }>
 					{ translate( 'Export content' ) }
-				</a>
+				</NoticeAction>
 			</Notice>
+		);
+	}
+
+	renderDeleteSiteCTA() {
+		const { isAtomic, isFreePlan, siteDomain } = this.props;
+		const deleteDisabled =
+			typeof this.state.confirmDomain !== 'string' ||
+			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
+		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
+
+		let deletionText = translate(
+			'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
+				'Your site will then be gone forever.',
+			{
+				components: {
+					warn: <span className="delete-site__target-domain" />,
+				},
+				args: {
+					siteAddress: this.props.siteId && this.props.siteDomain,
+				},
+			}
+		);
+
+		if (
+			getLocaleSlug() === 'en' ||
+			getLocaleSlug() === 'en-gb' ||
+			i18n.hasTranslation( 'Before deleting your site, consider exporting its content as a backup' )
+		) {
+			deletionText = translate(
+				'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
+				{
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						siteDomain: this.props.siteDomain,
+					},
+				}
+			);
+		}
+
+		return (
+			<>
+				<p>{ deletionText }</p>
+				<p className="delete-site__deletion-block">
+					<FormTextInput
+						autoCapitalize="off"
+						className="delete-site__confirm-input"
+						onChange={ this.onConfirmDomainChange }
+						value={ this.state.confirmDomain }
+						aria-required="true"
+						id="confirmDomainChangeInput"
+					/>
+					<Button
+						primary
+						scary
+						disabled={
+							deleteDisabled ||
+							! this.props.siteId ||
+							! this.props.hasLoadedSitePurchasesFromServer ||
+							isAtomicRemovalInProgress
+						}
+						onClick={ this.handleDeleteSiteClick }
+					>
+						{ translate( 'Delete site' ) }
+					</Button>
+				</p>
+			</>
+		);
+	}
+
+	renderBody() {
+		if (
+			getLocaleSlug() === 'en' ||
+			getLocaleSlug() === 'en-gb' ||
+			i18n.hasTranslation(
+				'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} - posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.'
+			)
+		) {
+			return (
+				<>
+					<div>
+						<p>
+							{ translate(
+								'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} - posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						</p>
+						<p>
+							{ translate(
+								'Once deleted, your domain {{strong}}%(siteDomain)s{{/strong}} will also become unavailable.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										siteDomain: this.props.siteDomain,
+									},
+								}
+							) }
+						</p>
+					</div>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<ActionPanelFigure>
+					<h3 className="delete-site__content-list-header">
+						{ translate( 'These items will be deleted' ) }
+					</h3>
+					<ul className="delete-site__content-list">
+						<li className="delete-site__content-list-item">{ translate( 'Posts' ) }</li>
+						<li className="delete-site__content-list-item">{ translate( 'Pages' ) }</li>
+						<li className="delete-site__content-list-item">{ translate( 'Media' ) }</li>
+						<li className="delete-site__content-list-item">{ translate( 'Users & Authors' ) }</li>
+						<li className="delete-site__content-list-item">{ translate( 'Domains' ) }</li>
+						<li className="delete-site__content-list-item">
+							{ translate( 'Purchased Upgrades' ) }
+						</li>
+						<li className="delete-site__content-list-item">{ translate( 'Premium Themes' ) }</li>
+					</ul>
+				</ActionPanelFigure>
+				<div>
+					<p>
+						{ translate(
+							'Deletion {{strong}}can not{{/strong}} be undone, ' +
+								'and will remove all content, contributors, domains, themes and upgrades from this site.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							"If you're unsure about what deletion means or have any other questions, " +
+								'please chat with someone from our support team before proceeding.'
+						) }
+					</p>
+					<p>
+						<a
+							className="delete-site__body-text-link action-panel__body-text-link"
+							href="/help/contact"
+						>
+							{ translate( 'Contact support' ) }
+						</a>
+					</p>
+				</div>
+			</>
 		);
 	}
 
@@ -97,12 +251,9 @@ class DeleteSite extends Component {
 		if ( this.props.hasCancelablePurchases ) {
 			this.setState( { showWarningDialog: true } );
 		} else {
-			this.setState( { showConfirmDialog: true } );
+			const { siteId } = this.props;
+			this.props.deleteSite( siteId );
 		}
-	};
-
-	closeConfirmDialog = () => {
-		this.setState( { showConfirmDialog: false, confirmDomain: '' } );
 	};
 
 	closeWarningDialog = () => {
@@ -128,14 +279,6 @@ class DeleteSite extends Component {
 		}
 	}
 
-	_deleteSite = () => {
-		const { siteId } = this.props;
-
-		this.setState( { showConfirmDialog: false } );
-
-		this.props.deleteSite( siteId );
-	};
-
 	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
@@ -150,22 +293,11 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isAtomic, isFreePlan, siteDomain, siteId, translate } = this.props;
-		const deleteDisabled =
-			typeof this.state.confirmDomain !== 'string' ||
-			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
+		const { isAtomic, isFreePlan, siteId } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
-
-		const deleteButtons = [
-			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary scary disabled={ deleteDisabled } onClick={ this._deleteSite }>
-				{ translate( 'Delete this site' ) }
-			</Button>,
-		];
 
 		const strings = {
 			confirmDeleteSite: translate( 'Confirm delete site' ),
-			contactSupport: translate( 'Contact support' ),
 			deleteSite: translate( 'Delete site' ),
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
@@ -196,53 +328,7 @@ class DeleteSite extends Component {
 				<ActionPanel>
 					<ActionPanelBody>
 						{ this.renderNotice() }
-						<ActionPanelFigure>
-							<h3 className="delete-site__content-list-header">
-								{ translate( 'These items will be deleted' ) }
-							</h3>
-							<ul className="delete-site__content-list">
-								<li className="delete-site__content-list-item">{ translate( 'Posts' ) }</li>
-								<li className="delete-site__content-list-item">{ translate( 'Pages' ) }</li>
-								<li className="delete-site__content-list-item">{ translate( 'Media' ) }</li>
-								<li className="delete-site__content-list-item">
-									{ translate( 'Users & Authors' ) }
-								</li>
-								<li className="delete-site__content-list-item">{ translate( 'Domains' ) }</li>
-								<li className="delete-site__content-list-item">
-									{ translate( 'Purchased Upgrades' ) }
-								</li>
-								<li className="delete-site__content-list-item">
-									{ translate( 'Premium Themes' ) }
-								</li>
-							</ul>
-						</ActionPanelFigure>
-						<div>
-							<p>
-								{ translate(
-									'Deletion {{strong}}can not{{/strong}} be undone, ' +
-										'and will remove all content, contributors, domains, themes and upgrades from this site.',
-									{
-										components: {
-											strong: <strong />,
-										},
-									}
-								) }
-							</p>
-							<p>
-								{ translate(
-									"If you're unsure about what deletion means or have any other questions, " +
-										'please chat with someone from our support team before proceeding.'
-								) }
-							</p>
-							<p>
-								<a
-									className="delete-site__body-text-link action-panel__body-text-link"
-									href="/help/contact"
-								>
-									{ strings.contactSupport }
-								</a>
-							</p>
-						</div>
+						{ this.renderBody() }
 					</ActionPanelBody>
 					{ isAtomicRemovalInProgress && (
 						<p className="delete-site__cannot-delete-message">
@@ -251,55 +337,12 @@ class DeleteSite extends Component {
 							) }
 						</p>
 					) }
-					<ActionPanelFooter>
-						<Button
-							scary
-							disabled={
-								! siteId ||
-								! this.props.hasLoadedSitePurchasesFromServer ||
-								isAtomicRemovalInProgress
-							}
-							onClick={ this.handleDeleteSiteClick }
-						>
-							<Gridicon icon="trash" />
-							{ strings.deleteSite }
-						</Button>
-					</ActionPanelFooter>
+					{ this.renderDeleteSiteCTA() }
 					<DeleteSiteWarningDialog
 						isVisible={ this.state.showWarningDialog }
 						onClose={ this.closeWarningDialog }
 						isTrialSite={ this.props.isTrialSite }
 					/>
-					<Dialog
-						isVisible={ this.state.showConfirmDialog }
-						buttons={ deleteButtons }
-						className="delete-site__confirm-dialog"
-					>
-						<h1 className="delete-site__confirm-header">{ strings.confirmDeleteSite }</h1>
-						<FormLabel htmlFor="confirmDomainChangeInput" className="delete-site__confirm-label">
-							{ translate(
-								'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
-									'Your site will then be gone forever.',
-								{
-									components: {
-										warn: <span className="delete-site__target-domain" />,
-									},
-									args: {
-										siteAddress: siteId && siteDomain,
-									},
-								}
-							) }
-						</FormLabel>
-
-						<FormTextInput
-							autoCapitalize="off"
-							className="delete-site__confirm-input"
-							onChange={ this.onConfirmDomainChange }
-							value={ this.state.confirmDomain }
-							aria-required="true"
-							id="confirmDomainChangeInput"
-						/>
-					</Dialog>
 				</ActionPanel>
 			</div>
 		);
