@@ -4,21 +4,6 @@
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
 
-	// FIXME: Remove this when we have a proper color scheme
-	--studio-automattic-0: #ebf4fa;
-	--studio-automattic-5: #c4e2f5;
-	--studio-automattic-10: #88ccf2;
-	--studio-automattic-20: #5ab7e8;
-	--studio-automattic-30: #24a3e0;
-	--studio-automattic-40: #1490c7;
-	--studio-automattic-50: #0277a8;
-	--studio-automattic-60: #036085;
-	--studio-automattic-70: #02506e;
-	--studio-automattic-80: #02384d;
-	--studio-automattic-90: #022836;
-	--studio-automattic-100: #021b24;
-	--studio-automattic: #24a3e0;
-
 	--color-surface-backdrop: #021a23;
 
 	--color-text-gray: "#333";
@@ -31,15 +16,41 @@
 	--color-scary-60: var(--studio-red-60);
 	--color-scary-70: var(--studio-red-70);
 
-	--color-primary: var(--studio-automattic-60);
-	--color-primary-40: var(--studio-automattic-40);
-	--color-accent: var(--studio-automattic-40);
-	--color-accent-60: var(--studio-automattic-60);
-	--color-accent-70: var(--studio-automattic-70);
+	--color-primary: var(--studio-automattic-blue-50);
+	--color-primary-rgb: var(--studio-automattic-blue-50-rgb);
+	--color-primary-dark: var(--studio-automattic-blue-70);
+	--color-primary-dark-rgb: var(--studio-automattic-blue-70-rgb);
+	--color-primary-light: var(--studio-automattic-blue-30);
+	--color-primary-light-rgb: var(--studio-automattic-blue-30-rgb);
+	--color-primary-0: var(--studio-automattic-blue-0);
+	--color-primary-0-rgb: var(--studio-automattic-blue-0-rgb);
+	--color-primary-5: var(--studio-automattic-blue-5);
+	--color-primary-5-rgb: var(--studio-automattic-blue-5-rgb);
+	--color-primary-10: var(--studio-automattic-blue-10);
+	--color-primary-10-rgb: var(--studio-automattic-blue-10-rgb);
+	--color-primary-20: var(--studio-automattic-blue-20);
+	--color-primary-20-rgb: var(--studio-automattic-blue-20-rgb);
+	--color-primary-30: var(--studio-automattic-blue-30);
+	--color-primary-30-rgb: var(--studio-automattic-blue-30-rgb);
+	--color-primary-40: var(--studio-automattic-blue-40);
+	--color-primary-40-rgb: var(--studio-automattic-blue-40-rgb);
+	--color-primary-50: var(--studio-automattic-blue-50);
+	--color-primary-50-rgb: var(--studio-automattic-blue-50-rgb);
+	--color-primary-60: var(--studio-automattic-blue-60);
+	--color-primary-60-rgb: var(--studio-automattic-blue-60-rgb);
+	--color-primary-70: var(--studio-automattic-blue-70);
+	--color-primary-70-rgb: var(--studio-automattic-blue-70-rgb);
+	--color-primary-80: var(--studio-automattic-blue-80);
+	--color-primary-80-rgb: var(--studio-automattic-blue-80-rgb);
+	--color-primary-90: var(--studio-automattic-blue-90);
+	--color-primary-90-rgb: var(--studio-automattic-blue-90-rgb);
+	--color-primary-100: var(--studio-automattic-blue-100);
+	--color-primary-100-rgb: var(--studio-automattic-blue-100-rgb);
 }
 
 .theme-a8c-for-agencies {
 	.button {
+		box-sizing: border-box;
 		border-radius: 4px;
 	}
 
@@ -52,8 +63,14 @@
 	}
 
 	.button.is-primary {
-		background-color: var(--studio-automattic-40);
-		border-color: var(--studio-automattic-40);
+		background-color: var(--studio-automattic-blue-40);
+		border-color: var(--studio-automattic-blue-40);
+
+		&:focus,
+		&:focus-visible {
+			box-shadow: none;
+			border: 1px solid;
+		}
 	}
 
 	.button.is-borderless:focus,
@@ -63,25 +80,25 @@
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--studio-automattic-60);
-		border-color: var(--studio-automattic-60);
+		background-color: var(--studio-automattic-blue-60);
+		border-color: var(--studio-automattic-blue-60);
 	}
 
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--studio-automattic-60);
-		border-color: var(--studio-automattic-60);
+		background: var(--studio-automattic-blue-60);
+		border-color: var(--studio-automattic-blue-60);
 	}
 
 	.components-button.is-tertiary {
-		color: var(--studio-automattic-60);
+		color: var(--studio-automattic-blue-60);
 	}
 
 	.button.is-borderless.is-primary.is-active,
 	.button.is-borderless.is-primary:active,
 	.button.is-borderless.is-primary:focus,
 	.button.is-borderless.is-primary:hover {
-		color: var(--studio-automattic-60);
+		color: var(--studio-automattic-blue-60);
 	}
 
 	// Masterbar
@@ -213,7 +230,7 @@ html {
 
 .button.is-primary:hover,
 .button.is-primary:focus {
-	background-color: var(--studio-automattic-70);
-	border-color: var(--studio-automattic-70);
+	background-color: var(--studio-automattic-blue-70);
+	border-color: var(--studio-automattic-blue-70);
 	color: var(--color-text-inverted);
 }
