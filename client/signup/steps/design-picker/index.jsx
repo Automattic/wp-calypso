@@ -245,7 +245,7 @@ export default function DesignPickerStep( props ) {
 
 		if ( useDIFMThemes ) {
 			return translate(
-				'Our designs are custom, based on the content you submit after checkout. Optionally, select a design to suggest inspiration.'
+				'We create a custom design based on the content you submit after checkout. Optionally, select a design to suggest inspiration.'
 			);
 		}
 
