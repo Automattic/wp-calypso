@@ -1,8 +1,10 @@
+import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
+import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -14,12 +16,13 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
+import SitesDataViews from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilter,
@@ -30,13 +33,12 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import OverviewHeaderActions from '../../overview/header-actions';
 import SitesDashboardContext from '../sites-dashboard-context';
+import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
 import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
-
 import './style.scss';
 
 export default function SitesDashboard() {
@@ -53,7 +55,6 @@ export default function SitesDashboard() {
 		selectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
-		sort,
 		showOnlyFavorites,
 		hideListing,
 		setHideListing,
@@ -61,7 +62,8 @@ export default function SitesDashboard() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const isNarrowView = useBreakpoint( '<660px' );
-	const { data: products } = useProductsQuery();
+	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
+	const { data: products } = useProductsQuery( true );
 
 	const {
 		data: verifiedContacts,
@@ -88,7 +90,7 @@ export default function SitesDashboard() {
 		searchQuery: sitesViewState.search,
 		currentPage: sitesViewState.page,
 		filter: agencyDashboardFilter,
-		sort,
+		sort: sitesViewState.sort,
 		perPage: sitesViewState.perPage,
 		agencyId,
 	} );
@@ -115,7 +117,9 @@ export default function SitesDashboard() {
 				type: 'list',
 			} ) );
 		}
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState ] );
+		// Omitting sitesViewState to prevent infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState, setHideListing ] );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -134,7 +138,7 @@ export default function SitesDashboard() {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
 
-		updateSitesDashboardUrl( {
+		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
 			filters: sitesViewState.filters,
@@ -143,8 +147,11 @@ export default function SitesDashboard() {
 			search: sitesViewState.search,
 			currentPage: sitesViewState.page,
 			sort: sitesViewState.sort,
-			showOnlyFavorites: showOnlyFavorites,
+			showOnlyFavorites,
 		} );
+		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+			page.replace( updatedUrl );
+		}
 	}, [
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
@@ -188,38 +195,47 @@ export default function SitesDashboard() {
 		selectedText: selectedItem.label,
 	};
 
+	const urlParams = new URLSearchParams( window.location.search );
+	let tourId = null;
+	if ( urlParams.get( 'tour' ) === 'sites-walkthrough' ) {
+		tourId = 'sitesWalkthrough';
+	} else if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
+		tourId = 'addSiteStep1';
+	}
+
 	if ( noActiveSite ) {
 		return <EmptyState />;
 	}
 
 	return (
 		<Layout
-			title="Sites"
 			className={ classNames(
 				'sites-dashboard',
 				'sites-dashboard__layout',
 				! sitesViewState.selectedSite && 'preview-hidden'
 			) }
 			wide
-			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
+			title={ sitesViewState.selectedSite ? null : translate( 'Sites' ) }
 		>
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
-					<LayoutTop withNavigation>
+					<LayoutTop withNavigation={ navItems.length > 1 }>
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
 							<Actions>
-								{ /* TODO: We were using a component from the overview header actions. We have to check if this is the best header available for the sites page. */ }
-								<OverviewHeaderActions />
+								<SitesHeaderActions />
 							</Actions>
 						</LayoutHeader>
-						<LayoutNavigation { ...selectedItemProps }>
-							<NavigationTabs { ...selectedItemProps } items={ navItems } />
-						</LayoutNavigation>
+						{ navItems.length > 1 && (
+							<LayoutNavigation { ...selectedItemProps }>
+								<NavigationTabs { ...selectedItemProps } items={ navItems } />
+							</LayoutNavigation>
+						) }
 					</LayoutTop>
 
 					<SiteNotifications />
+					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
 
 					<DashboardDataContext.Provider
 						value={ {
@@ -238,7 +254,9 @@ export default function SitesDashboard() {
 						} }
 					>
 						<SitesDataViews
-							className="sites-overview__content"
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }

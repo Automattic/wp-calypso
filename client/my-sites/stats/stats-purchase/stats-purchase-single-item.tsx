@@ -348,6 +348,7 @@ function StatsCommercialFlowOptOutForm( {
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
 		'contact-details': translate( 'Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
+		ecommerce: translate( 'Ecommerce' ),
 	};
 	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
@@ -422,7 +423,7 @@ function StatsCommercialFlowOptOutForm( {
 							commercialReasons
 								?.map(
 									( reason: string ) =>
-										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? 'Unknown'
+										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? reason
 								)
 								.join( ' and/or ' ) ?? 'Unknown',
 					},

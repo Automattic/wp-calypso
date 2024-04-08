@@ -26,6 +26,7 @@ interface Props {
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
+	onShowLogs: ( id: string ) => void;
 }
 export const ScheduleList = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
@@ -35,7 +36,7 @@ export const ScheduleList = ( props: Props ) => {
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
 
-	const { onNavBack, onCreateNewSchedule, onEditSchedule } = props;
+	const { onNavBack, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
 
@@ -44,7 +45,10 @@ export const ScheduleList = ( props: Props ) => {
 		isLoading: isLoadingSchedules,
 		isFetched,
 		refetch,
-	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
+	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature, {
+		refetchOnWindowFocus: true,
+		refetchInterval: 1000 * 10,
+	} );
 
 	const { deleteUpdateSchedule } = useDeleteUpdateScheduleMutation( siteSlug, {
 		onSuccess: () => refetch(),
@@ -62,8 +66,7 @@ export const ScheduleList = ( props: Props ) => {
 		siteHasEligiblePluginsLoading;
 
 	const showScheduleListEmpty =
-		schedules.length === 0 &&
-		( ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
+		( schedules.length === 0 && ! isEligibleForFeature && ! isEligibleForFeatureLoading ) ||
 		( ! siteHasEligiblePlugins && ! siteHasEligiblePluginsLoading ) ||
 		( isFetched &&
 			! isLoadingCanCreateSchedules &&
@@ -128,11 +131,13 @@ export const ScheduleList = ( props: Props ) => {
 									<ScheduleListCards
 										onRemoveClick={ openRemoveDialog }
 										onEditClick={ onEditSchedule }
+										onShowLogs={ onShowLogs }
 									/>
 								) : (
 									<ScheduleListTable
 										onRemoveClick={ openRemoveDialog }
 										onEditClick={ onEditSchedule }
+										onShowLogs={ onShowLogs }
 									/>
 								) }
 							</>

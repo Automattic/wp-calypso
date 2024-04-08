@@ -53,6 +53,17 @@
 			// Overrides some very specific selectors in /client/signup/style.scss
 			margin: 12px 0 48px !important;
 		}
+
+		@supports ( display: grid ) {
+			.design-picker__grid {
+				@include break-medium {
+					grid-template-columns: 1fr 1fr;
+				}
+				@include break-large {
+					grid-template-columns: 1fr 1fr 1fr;
+				}
+			}
+		}
 	}
 
 	.action-buttons {

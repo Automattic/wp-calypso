@@ -1,34 +1,29 @@
-import { useState } from 'react';
 import QuestionStep from './components/question-step';
-import { usePaginatedSurveyContext } from './context';
-import { Answers, Question } from './types';
+import { useSurveyContext } from './context';
+import { Answers } from './types';
 
-type PaginatedSurveyType = {
-	questions: Question[];
+type SurveyContainerType = {
+	answers: Answers;
+	onChange: ( questionKey: string, value: string[] ) => void;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 };
 
-const SurveyContainer = ( { questions, recordTracksEvent }: PaginatedSurveyType ) => {
-	const { currentPage, nextPage, previousPage } = usePaginatedSurveyContext();
-	const currentQuestion = questions[ currentPage - 1 ];
+const SurveyContainer = ( { answers, onChange, recordTracksEvent }: SurveyContainerType ) => {
+	const { currentQuestion, nextPage, previousPage, skip } = useSurveyContext();
 
-	const [ answers, setAnswers ] = useState< Answers >( {
-		[ currentQuestion.key ]: [],
-	} );
-
-	const onChangeAnswer = ( questionKey: string, value: string[] ) => {
-		setAnswers( { ...answers, [ questionKey ]: value } );
-	};
+	if ( ! currentQuestion ) {
+		return null;
+	}
 
 	return (
 		<QuestionStep
 			previousPage={ previousPage }
 			nextPage={ nextPage }
-			skip={ nextPage }
+			skip={ skip }
 			recordTracksEvent={ recordTracksEvent }
-			onChange={ onChangeAnswer }
+			onChange={ onChange }
 			question={ currentQuestion }
-			value={ answers[ currentQuestion.key ] }
+			value={ answers[ currentQuestion.key ] || [] }
 		/>
 	);
 };
