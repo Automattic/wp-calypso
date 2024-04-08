@@ -21,6 +21,7 @@ import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features
 import SitesDataViews from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
@@ -41,6 +42,18 @@ import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 import './style.scss';
 
 export default function SitesDashboard() {
+	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only
+	);
+
+	const { data: deletedSites = [] } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only,
+		'deleted'
+	);
+	const allSites = liveSites.concat( deletedSites );
+
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
 
@@ -84,7 +97,7 @@ export default function SitesDashboard() {
 		} );
 	}, [ sitesViewState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
+	const { data, isError, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: sitesViewState.search,
 		currentPage: sitesViewState.page,
@@ -253,7 +266,7 @@ export default function SitesDashboard() {
 							className={ classNames( 'sites-overview__content', {
 								'is-hiding-navigation': navItems.length <= 1,
 							} ) }
-							data={ data }
+							data={ allSites }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }
 							onSitesViewChange={ onSitesViewChange }

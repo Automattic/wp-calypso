@@ -34,7 +34,7 @@ const SitesDataViews = ( {
 	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
-	const sites = useFormattedSites( data?.sites ?? [] );
+	const sites = useFormattedSites( data || [] );
 	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const openSitePreviewPane = useCallback(
