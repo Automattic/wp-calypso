@@ -31,6 +31,7 @@ export function PatternsGetStarted() {
 				<Button
 					className="patterns-get-started__start-button"
 					href={ getOnboardingUrl( locale, isLoggedIn ) }
+					rel="external"
 				>
 					{ translate( 'Build a site' ) }
 				</Button>
