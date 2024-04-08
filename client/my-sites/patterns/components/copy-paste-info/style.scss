@@ -5,13 +5,11 @@
 	display: flex;
 	gap: 24px;
 	overflow: auto;
-	padding: 0 110px;
 	scroll-snap-type: x proximity;
 	scroll-padding-left: 24px;
-
-	@media ( max-width: $break-huge ) {
-		padding: 0 24px;
-	}
+	max-width: 1220px;
+	margin: 0 auto;
+	padding: 0 24px;
 }
 
 .section-patterns-info__item {
