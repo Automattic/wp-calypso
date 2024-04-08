@@ -12,8 +12,11 @@ interface BlockStore {
 	getBlockType: ( arg0: string ) => { title: string; name: string };
 }
 
-// When using a block in the editor, it will be used to search for help articles based on the block name.
+// Returns the search query and tailored articles based on the current route.
+// The search query will be determined based on the selected Gutenberg block, an exact match with URL mapping, or a fuzzy match (in this specific order).
+// The tailored Articles will be determined based on an exact URL match within the tailored article mapping.
 export function useContextBasedSearchMapping( currentRoute: string | undefined, locale: string ) {
+	// When using a block in the editor, it will be used to search for help articles based on the block name.
 	const blockSearchQuery = useSelect( ( select: ( store: string ) => CoreBlockEditor ) => {
 		const selectedBlock = select( 'core/block-editor' )?.getSelectedBlock();
 		if ( selectedBlock ) {
