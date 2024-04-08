@@ -1,6 +1,8 @@
+import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import AgencySiteTags from 'calypso/a8c-for-agencies/components/agency-site-tags';
 import SiteTagType from 'calypso/a8c-for-agencies/types/site-tag';
+import './style.scss';
 
 export default function SiteDetails( { site }: any ) {
 	/* eslint-disable-next-line */
@@ -26,6 +28,7 @@ export default function SiteDetails( { site }: any ) {
 
 	return (
 		<div className="site-details">
+			<h3 className="site-details__section-header">{ translate( 'Tags' ) }</h3>
 			<AgencySiteTags
 				{ ...{
 					tags,

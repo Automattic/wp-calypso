@@ -215,6 +215,16 @@ export interface CommandPaletteProps {
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 }
 
+const COMMAND_PALETTE_MODAL_OPEN_CLASSNAME = 'command-palette-modal-open';
+// We need to change the `overflow` of the html element because it's set to `scroll` on _reset.scss
+// Ideally, this would be handled by the `@wordpress/components` `Modal` component,
+// but it doesn't have a `htmlOpenClassName` prop to go alongside `bodyOpenClassName`.
+// So we need to toggle both classes manually here.
+const toggleModalOpenClassnameOnDocumentHtmlElement = ( isModalOpen: boolean ) => {
+	document.documentElement.classList.toggle( COMMAND_PALETTE_MODAL_OPEN_CLASSNAME, isModalOpen );
+	document.body.classList.toggle( COMMAND_PALETTE_MODAL_OPEN_CLASSNAME, isModalOpen );
+};
+
 const CommandPalette = ( {
 	currentRoute,
 	currentSiteId,
@@ -233,6 +243,8 @@ const CommandPalette = ( {
 	const [ footerMessage, setFooterMessage ] = useState( '' );
 	const [ emptyListNotice, setEmptyListNotice ] = useState( '' );
 	const open = useCallback( () => {
+		toggleModalOpenClassnameOnDocumentHtmlElement( true );
+
 		setIsOpenLocal( true );
 		recordTracksEvent( 'calypso_hosting_command_palette_open', {
 			current_route: currentRoute,
@@ -240,6 +252,8 @@ const CommandPalette = ( {
 	}, [ currentRoute ] );
 	const close = useCallback< CommandPaletteContext[ 'close' ] >(
 		( commandName = '', isExecuted = false ) => {
+			toggleModalOpenClassnameOnDocumentHtmlElement( false );
+
 			setIsOpenLocal( false );
 			onClose?.();
 			recordTracksEvent( 'calypso_hosting_command_palette_close', {

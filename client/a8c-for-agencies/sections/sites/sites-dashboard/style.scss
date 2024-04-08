@@ -47,8 +47,9 @@
 			display: none;
 		}
 
-		.dataviews-view-table {
-			padding-left: 48px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding-left: 64px;
 		}
 	}
 
@@ -110,7 +111,8 @@
 			}
 		}
 
-		.dataviews-view-table {
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
 			padding-left: 16px;
 		}
 
@@ -526,15 +528,6 @@
 			.sites-overview__page-heading {
 				display: none;
 			}
-		}
-	}
-
-	.backup__page {
-		.daily-backup-status__restore-button,
-		.status-card__no-backup-last-backup,
-		.activity-card__toolbar--reverse,
-		.backup-date-picker {
-			display: none;
 		}
 	}
 

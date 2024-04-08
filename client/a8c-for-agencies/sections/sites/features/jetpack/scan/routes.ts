@@ -75,8 +75,10 @@ export default function ( basePath: string ) {
 		clientRender
 	);
 
-	// Handle route redirections. ( Note: We have to keep these route order )
+	handleJetpackCloudRedirections();
+}
 
+function handleJetpackCloudRedirections() {
 	// Manage - Scan History page
 	page( '/scan/history/:site/:filter?', ( context, next ) => {
 		const { site, filter } = context.params;
