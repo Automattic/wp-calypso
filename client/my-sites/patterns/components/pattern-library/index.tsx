@@ -59,7 +59,7 @@ const ToggleGroupControlOptionWithNarrowTooltip = (
 	}
 ) => {
 	const { showToolTip, toolTipText, ...toggleControlProps } = props;
-	const toolTipProps = { style: { maxWidth: '200px' }, text: toolTipText };
+	const toolTipProps = { style: { maxWidth: '200px', top: '3px' }, text: toolTipText };
 
 	if ( ! showToolTip ) {
 		return <ToggleGroupControlOption { ...toggleControlProps } />;
