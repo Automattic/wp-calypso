@@ -67,7 +67,6 @@ class StatModuleFollowers extends Component {
 			translate,
 			emailQuery,
 			wpcomQuery,
-			isOdysseyStats,
 			isAtomic,
 			isJetpack,
 			className,
@@ -82,16 +81,10 @@ class StatModuleFollowers extends Component {
 		// email-followers is no longer available, so fallback to the new subscribers URL.
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
 		// If the site is Atomic or Jetpack self-hosted, it links to Jetpack cloud.
-		let summaryPageLink =
-			isAtomic || isJetpack
-				? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
-				: `/people/subscribers/${ summaryPageSlug }/${ isAtomic }/${ isJetpack }`;
-
-		// Limit scope for Odyssey stats, as the Followers page is not yet available.
-		summaryPageLink =
-			! isOdysseyStats || isAtomic || isJetpack
-				? summaryPageLink
-				: 'https://wordpress.com' + summaryPageLink;
+		// For all other cases, turn to the WP.com URL since Odyssey Stats doesn't have the Followers page.
+		const jetpackCloudLink = `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`;
+		const wpcomLink = `https://wordpress.com/people/subscribers/${ summaryPageSlug }`;
+		const summaryPageLink = isAtomic || isJetpack ? jetpackCloudLink : wpcomLink;
 
 		// Combine data sets, sort by recency, and limit to 10.
 		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
