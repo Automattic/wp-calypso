@@ -12,6 +12,7 @@
 
 	.button.split-button__main {
 		border-radius: 4px 0 0 4px;
+		border-right: none;
 
 		&:hover {
 			background: #fff;
@@ -21,7 +22,6 @@
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4 0;
-		border-left: none;
 
 		&:hover {
 			background: #fff;
