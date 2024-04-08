@@ -407,8 +407,14 @@ const Settings = ( {
 			! domain ||
 			domain.type === domainTypes.SITE_REDIRECT ||
 			domain.transferStatus === transferStatus.PENDING_ASYNC ||
-			! domain.canManageDnsRecords
+			! domain.canManageDnsRecords ||
+			! domains
 		) {
+			return null;
+		}
+
+		const selectedDomain = domains.find( ( domain ) => selectedDomainName === domain.name );
+		if ( ! selectedDomain ) {
 			return null;
 		}
 
@@ -424,6 +430,7 @@ const Settings = ( {
 							{ renderExternalNameserversNotice( 'DNS' ) }
 							<DnsRecords
 								dns={ dns }
+								selectedDomain={ selectedDomain }
 								selectedDomainName={ selectedDomainName }
 								selectedSite={ selectedSite }
 								currentRoute={ currentRoute }
