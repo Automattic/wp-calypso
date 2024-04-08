@@ -86,9 +86,7 @@ function checkCategorySlug( context: RouterContext, next: RouterNext ) {
 export default function ( router: typeof clientRouter ) {
 	setTimeout( () => {
 		document
-			.querySelector(
-				'.masterbar [href="https://wordpress.com/setup/assembler-first/?ref=pattern-library"]'
-			)
+			.querySelector( '.masterbar [href^="https://wordpress.com/setup/assembler-first/"]' )
 			?.setAttribute( 'rel', 'external' );
 	}, 3000 );
 
