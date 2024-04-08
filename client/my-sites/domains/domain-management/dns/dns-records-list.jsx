@@ -236,6 +236,8 @@ class DnsRecordsList extends Component {
 
 		let domainConnectRecordIsEnabled = false;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
+			const isRootRecord = dnsRecord.name === `${ selectedDomainName }.`;
+
 			// We want to hide root NS records for root domains, but not for subdomains
 			if ( 'NS' === dnsRecord.type && ! selectedDomain.isSubdomain && isRootRecord ) {
 				return;
