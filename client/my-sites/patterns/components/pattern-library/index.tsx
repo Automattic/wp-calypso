@@ -117,7 +117,8 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
-	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
+	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
+		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
@@ -131,6 +132,11 @@ export const PatternLibrary = ( {
 	} );
 
 	const hasEnTranslation = useHasEnTranslation();
+	let patternPermalinkName;
+	if ( patternPermalinkId && ! isFetchingPatterns ) {
+		patternPermalinkName = patterns.find( ( pattern ) => pattern.ID === patternPermalinkId )?.name;
+	}
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
@@ -232,6 +238,7 @@ export const PatternLibrary = ( {
 		<>
 			<PatternsPageViewTracker
 				category={ category }
+				patternPermalinkName={ patternPermalinkName }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
 				searchTerm={ searchTerm }

@@ -16,6 +16,7 @@ import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/intern
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
 import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -104,6 +105,7 @@ function PatternPreviewFragment( {
 	isGridView,
 	viewportWidth,
 }: PatternPreviewProps ) {
+	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const ref = useRef< HTMLDivElement >( null );
 	const hasScrolledToAnchorRef = useRef< boolean >( false );
 
@@ -269,6 +271,9 @@ function PatternPreviewFragment( {
 						borderless
 						className="pattern-preview__title"
 						onCopy={ () => {
+							recordPatternsEvent( 'calypso_pattern_library_permalink_copy', {
+								name: pattern.name,
+							} );
 							setIsPermalinkCopied( true );
 						} }
 						text={ getPatternPermalink( pattern ) }
