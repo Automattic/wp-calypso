@@ -7,11 +7,11 @@ import {
 	sanitizeQueryParameters,
 	sitesDashboard,
 } from './controller';
-import siteDashboardRoute from './sections/sites';
+import { sitesContext } from './sections/sites/controller';
 
 export default function () {
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		siteDashboardRoute();
+		page( '/sites', sitesContext, makeLayout, clientRender );
 	} else {
 		console.log( 'This is the OLD sites dashboard...' );
 		// Maintain old `/sites/:id` URLs by redirecting them to My Home
