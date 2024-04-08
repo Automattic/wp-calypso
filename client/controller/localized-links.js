@@ -4,9 +4,14 @@ import performanceMark from 'calypso/server/lib/performance-mark';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 
-export const getLocalizedCanonicalUrl = ( path, locale ) => {
-	const baseUrl = `https://wordpress.com${ path }`;
-	const baseUrlWithoutLang = baseUrl.replace(
+const getLocalizedCanonicalUrl = ( path, locale, excludeSearch = false ) => {
+	const baseUrl = new URL( path, 'https://wordpress.com' );
+
+	if ( excludeSearch ) {
+		baseUrl.search = '';
+	}
+
+	const baseUrlWithoutLang = baseUrl.href.replace(
 		new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
 		'$2'
 	);
@@ -22,19 +27,25 @@ export const getLocalizedCanonicalUrl = ( path, locale ) => {
 
 export const setLocalizedCanonicalUrl = ( context, next ) => {
 	performanceMark( context, 'setLocalizedCanonicalUrl' );
+
 	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
 		next();
 		return;
 	}
 
-	const langParamSlug = context.i18n.getLocaleSlug();
-	const href = getLocalizedCanonicalUrl( context.originalUrl, langParamSlug );
-	const link = {
-		rel: 'canonical',
-		href,
-	};
+	const canonicalUrl = getLocalizedCanonicalUrl(
+		context.originalUrl,
+		context.i18n.getLocaleSlug(),
+		context.excludeSearchFromCanonicalUrl
+	);
 
-	context.store.dispatch( setDocumentHeadLink( link ) );
+	context.store.dispatch(
+		setDocumentHeadLink( {
+			rel: 'canonical',
+			href: canonicalUrl,
+		} )
+	);
+
 	next();
 };
 
@@ -53,7 +64,12 @@ export const setHrefLangLinks = ( context, next ) => {
 			localeSlug = config( 'i18n_default_locale_slug' );
 		}
 
-		const href = getLocalizedCanonicalUrl( context.originalUrl, localeSlug );
+		const href = getLocalizedCanonicalUrl(
+			context.originalUrl,
+			localeSlug,
+			context.excludeSearchFromCanonicalUrl
+		);
+
 		return {
 			rel: 'alternate',
 			hrefLang,
