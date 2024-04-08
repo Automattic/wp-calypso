@@ -12,8 +12,7 @@ import {
 import { navigate } from 'calypso/lib/navigate';
 import wpcom from 'calypso/lib/wp';
 import { useOpenPhpMyAdmin } from 'calypso/my-sites/hosting/phpmyadmin-card';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getCommandPaletteCustomCommands } from 'calypso/state/command-palette/selectors';
+import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';
 import { NoticeStatus } from 'calypso/state/notices/types';
@@ -24,14 +23,6 @@ export const useCommandsCalypso = (): Command[] => {
 	const dispatch = useDispatch();
 
 	const { setEdgeCache } = useSetEdgeCacheMutation();
-	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
-	// Create URLSearchParams for send feedback by email command
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const customCommands = useSelector( getCommandPaletteCustomCommands );
-	if ( customCommands ) {
-		return customCommands;
-	}
 
 	const displayNotice = (
 		message: string,
@@ -176,6 +167,11 @@ export const useCommandsCalypso = (): Command[] => {
 
 		setEdgeCache( siteId, false );
 	};
+
+	const { openPhpMyAdmin } = useOpenPhpMyAdmin();
+
+	// Create URLSearchParams for send feedback by email command
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Only override commands that need a specific behavior for Calypso.
 	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.

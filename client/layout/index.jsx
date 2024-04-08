@@ -36,10 +36,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
-import {
-	isCommandPaletteOpen as getIsCommandPaletteOpen,
-	getCommandPaletteSelectedCommand,
-} from 'calypso/state/command-palette/selectors';
+import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
@@ -338,6 +335,10 @@ class Layout extends Component {
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
+		const shouldEnableCommandPalette =
+			// There is a custom command palette in the "Switch site" page, so we disable it.
+			config.isEnabled( 'yolo/command-palette' ) && this.props.currentRoute !== '/switch-site';
+
 		return (
 			<div className={ sectionClass }>
 				<WhatsNewLoader
@@ -423,7 +424,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'yolo/command-palette' ) && (
+				{ shouldEnableCommandPalette && (
 					<AsyncLoad
 						require="@automattic/command-palette"
 						placeholder={ null }
@@ -544,7 +545,6 @@ export default withCurrentRoute(
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
 				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
-				commandPaletteSelectedCommand: getCommandPaletteSelectedCommand( state ),
 			};
 		},
 		{
