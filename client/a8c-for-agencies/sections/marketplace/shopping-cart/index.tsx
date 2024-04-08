@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Badge } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Badge, Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -56,7 +55,7 @@ export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props
 
 	return (
 		<div className="shopping-cart">
-			<Button className="shopping-cart__button" onClick={ toggleShoppingCart }>
+			<Button className="shopping-cart__button" onClick={ toggleShoppingCart } borderless>
 				<Icon className="shopping-cart__button-icon" icon={ <ShoppingCartIcon /> } />
 
 				<Badge

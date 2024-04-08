@@ -1,6 +1,6 @@
+import { Button } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { Button } from '@wordpress/components';
 import { Icon, check, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback } from 'react';
@@ -110,7 +110,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					<Button
 						className="pressable-overview-plan-selection__details-card-cta-button"
 						onClick={ onSelectPlan }
-						variant="primary"
+						primary
 					>
 						{ translate( 'Select %(planName)s plan', {
 							args: {
@@ -127,7 +127,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 						onClick={ onChatWithUs }
 						href={ PRESSABLE_CONTACT_LINK }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Chat with us' ) } <Icon icon={ external } size={ 16 } />
 					</Button>
