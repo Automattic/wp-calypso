@@ -205,12 +205,13 @@
 		}
 
 		.timeline-event__icon {
-			width: 24px !important;
-			height: 24px !important;
+			width: 40px !important;
+			height: 20px !important;
+			border-radius: 4px !important;
 
 			svg {
-				width: 16px;
-				height: 16px;
+				width: 14px;
+				height: 14px;
 			}
 
 			&.success {
