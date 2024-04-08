@@ -31,7 +31,6 @@ import {
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { addQueryArgs } from 'calypso/lib/route';
-import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -202,9 +201,6 @@ const LayoutLoggedOut = ( {
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
-				{ ...( sectionName === 'patterns' && {
-					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
-				} ) }
 			/>
 		);
 	} else if ( isWooCoreProfilerFlow ) {
