@@ -191,13 +191,18 @@ export const useCommandPalette = (): {
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
 
 				if ( currentSite ) {
-					// Move current site to the top of the list
-					filteredSites = filteredSites.filter( ( site ) => site.ID !== currentSiteId );
-
-					// Exclude the current site from the "Switch site" command;
-					if ( selectedCommand.name !== 'switchSite' ) {
+					if ( selectedCommand.name === 'switchSite' ) {
+						// Exclude the current site from the "Switch site" command;
+						filteredSites = filteredSites.filter( ( site ) => site.ID !== currentSiteId );
+						if ( filteredSites.length === 0 ) {
+							emptyListNotice = selectedCommand.emptyListNotice;
+						}
+					} else {
 						// Move current site to the top of the list
-						filteredSites = [ currentSite, ...filteredSites ];
+						filteredSites = [
+							currentSite,
+							...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+						];
 					}
 				}
 			}
