@@ -18,12 +18,12 @@ import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
 import SitePreviewPane, { createFeaturePreview } from '../../site-preview-pane';
 import { PreviewPaneProps } from '../../site-preview-pane/types';
 import { JetpackActivityPreview } from './activity';
-import { JetpackBackupPreview } from './jetpack-backup';
+import { JetpackBackupPreview } from './backup';
 import { JetpackBoostPreview } from './jetpack-boost';
 import { JetpackMonitorPreview } from './jetpack-monitor';
 import { JetpackPluginsPreview } from './jetpack-plugins';
 import { JetpackStatsPreview } from './jetpack-stats';
-import { JetpackScanPreview } from './scan/jetpack-scan';
+import { JetpackScanPreview } from './scan';
 
 import './style.scss';
 
