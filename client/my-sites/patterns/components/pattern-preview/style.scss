@@ -118,6 +118,8 @@
 }
 
 .pattern-preview--list {
+	flex-direction: column-reverse;
+
 	.pattern-preview__header {
 		min-height: auto;
 	}

@@ -162,6 +162,7 @@ export function updatesManager( context, next ) {
 				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),
 				onEditSchedule: ( id ) =>
 					page.show( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
+				onShowLogs: ( id ) => page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
 			} );
 			break;
 	}

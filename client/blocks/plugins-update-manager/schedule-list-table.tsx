@@ -13,13 +13,14 @@ import { ellipsis } from './icons';
 interface Props {
 	onEditClick: ( id: string ) => void;
 	onRemoveClick: ( id: string ) => void;
+	onShowLogs: ( id: string ) => void;
 }
 export const ScheduleListTable = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 
-	const { onEditClick, onRemoveClick } = props;
+	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
@@ -55,9 +56,17 @@ export const ScheduleListTable = ( props: Props ) => {
 						</td>
 						<td>
 							{ schedule.last_run_status && (
-								<Badge type={ schedule.last_run_status === 'success' ? 'success' : 'failed' } />
+								<Badge type={ schedule.last_run_status } />
 							) }
-							{ schedule.last_run_timestamp && prepareDateTime( schedule.last_run_timestamp ) }
+							{ schedule.last_run_timestamp && (
+								<Button
+									className="schedule-last-run"
+									variant="link"
+									onClick={ () => onShowLogs( schedule.id ) }
+								>
+									{ prepareDateTime( schedule.last_run_timestamp ) }
+								</Button>
+							) }
 							{ ! schedule.last_run_status && ! schedule.last_run_timestamp && '-' }
 						</td>
 						<td>{ prepareDateTime( schedule.timestamp ) }</td>
@@ -89,6 +98,10 @@ export const ScheduleListTable = ( props: Props ) => {
 									{
 										title: translate( 'Edit' ),
 										onClick: () => onEditClick( schedule.id ),
+									},
+									{
+										title: translate( 'Logs' ),
+										onClick: () => onShowLogs( schedule.id ),
 									},
 									{
 										title: translate( 'Remove' ),
