@@ -10,8 +10,8 @@ import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/c
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
+import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
-import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import {
 	PatternTypeFilter,
 	type RouterContext,

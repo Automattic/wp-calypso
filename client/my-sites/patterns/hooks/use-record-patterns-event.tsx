@@ -3,7 +3,7 @@ import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 
 export const useRecordPatternsEvent = () => {
-	const { category, patternTypeFilter } = usePatternsContext();
+	const { category, isGridView, patternTypeFilter } = usePatternsContext();
 
 	return {
 		recordPatternsEvent: (
@@ -13,6 +13,7 @@ export const useRecordPatternsEvent = () => {
 			recordTracksEvent( tracksEventName, {
 				category: category || undefined,
 				type: getTracksPatternType( patternTypeFilter ),
+				view: isGridView ? 'view' : 'list',
 				...params,
 			} );
 		},
