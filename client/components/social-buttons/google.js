@@ -196,20 +196,11 @@ class GoogleSocialButton extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
-			this.setState( {
-				showError: ! this.state.showError,
-				errorRef: event.currentTarget,
-				eventTimeStamp: event.timeStamp,
-			} );
-		}
-
 		if ( this.state.isDisabled ) {
 			return;
 		}
 
 		await this.fetchNonceAndInitializeGoogleSignIn();
-
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
