@@ -123,11 +123,11 @@ const useFormatMonitorData = () => {
 				status: '',
 				type: 'monitor',
 				error: false,
-				settings: site.monitor_settings,
+				settings: site.monitor_settings || {},
 			};
 
 			const { monitor_active: monitorActive, monitor_site_status: monitorStatus } =
-				site.monitor_settings;
+				site.monitor_settings || {};
 
 			if ( ! monitorActive ) {
 				monitor.status = 'disabled';
