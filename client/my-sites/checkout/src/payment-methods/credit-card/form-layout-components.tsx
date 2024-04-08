@@ -44,6 +44,7 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
 		border: 1px solid
 			${ ( props ) =>
 				props.hasError ? props.theme.colors.error : props.theme.colors.borderColor };
+		border-radius: 3px;
 		padding: 12px 10px;
 		line-height: 1.2;
 	}
@@ -71,10 +72,21 @@ export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
 	position: relative;
 	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };
 	position: relative;
+
+	& input[type='text'],
+	input[type='url'],
+	input[type='password'],
+	input[type='email'],
+	input[type='tel'],
+	input[type='number'],
+	input[type='search'] {
+		border-radius: 3px;
+	}
 `;
 
 export const CreditCardField = styled( Field )`
 	margin-top: 16px;
+	border-radius: 3px;
 
 	:first-of-type {
 		margin-top: 0;

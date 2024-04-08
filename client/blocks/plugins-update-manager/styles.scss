@@ -79,6 +79,12 @@
 		color: var(--studio-gray-100);
 	}
 
+	button.schedule-last-run {
+		font-size: 0.875rem;
+		text-decoration: none;
+		color: var(--studio-gray-60);
+	}
+
 	table {
 		th,
 		td {
@@ -95,6 +101,10 @@
 		td {
 			padding: 0.5rem 0;
 			vertical-align: middle;
+
+			&.last-update {
+				min-width: 200px;
+			}
 		}
 	}
 

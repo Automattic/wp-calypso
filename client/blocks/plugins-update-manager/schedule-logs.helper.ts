@@ -4,12 +4,13 @@ import type { ScheduleLog } from 'calypso/data/plugins/use-update-schedule-logs-
 
 export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
 	const pluginName =
-		plugins.find( ( p ) => p.plugin === log.context.plugin_name )?.name || log.context.plugin_name;
+		plugins.find( ( p ) => p.plugin === log.context?.plugin_name )?.name ||
+		log.context?.plugin_name;
 	const pluginTranslateArgs = {
 		args: {
 			plugin: pluginName,
-			from: log.context.old_version,
-			to: log.context.new_version,
+			from: log?.context?.old_version,
+			to: log.context?.new_version,
 		},
 	};
 

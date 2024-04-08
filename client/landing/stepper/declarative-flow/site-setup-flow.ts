@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -147,7 +146,6 @@ const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const locale = useLocale();
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
@@ -327,11 +325,7 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
-							// Temporarily enabled only for English locales while we wait for UI translations.
-							if (
-								config.isEnabled( 'onboarding/new-migration-flow' ) &&
-								englishLocales.includes( locale )
-							) {
+							if ( config.isEnabled( 'onboarding/new-migration-flow' ) ) {
 								return exitFlow(
 									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
 								);
@@ -392,7 +386,7 @@ const siteSetupFlow: Flow = {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, locale, origin ) ) {
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from },
