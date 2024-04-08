@@ -11,6 +11,7 @@ import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/patte
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import {
 	PatternTypeFilter,
 	type RouterContext,
@@ -32,17 +33,6 @@ function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 
 	next();
 }
-
-const extractPatternIdFromHash = () => {
-	const pattern = /^#pattern-(\d+)$/;
-	const match = window.location.hash.match( pattern );
-
-	if ( match ) {
-		return parseInt( match[ 1 ], 10 );
-	}
-
-	return undefined;
-};
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {

@@ -271,7 +271,7 @@ function PatternPreviewFragment( {
 						borderless
 						className="pattern-preview__title"
 						onCopy={ () => {
-							recordPatternsEvent( 'calypso_pattern_permalink_copy', {
+							recordPatternsEvent( 'calypso_pattern_library_permalink_copy', {
 								name: pattern.name,
 							} );
 							setIsPermalinkCopied( true );

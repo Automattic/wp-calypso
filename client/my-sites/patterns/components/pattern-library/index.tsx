@@ -105,13 +105,8 @@ export const PatternLibrary = ( {
 	} );
 
 	let patternPermalinkName;
-	if ( patternPermalinkId && patterns.length ) {
-		for ( const pattern of patterns ) {
-			if ( pattern.ID === patternPermalinkId ) {
-				patternPermalinkName = pattern.name;
-				break;
-			}
-		}
+	if ( patternPermalinkId && ! isFetchingPatterns ) {
+		patternPermalinkName = patterns.find( ( pattern ) => pattern.ID === patternPermalinkId )?.name;
 	}
 
 	const isLoggedIn = useSelector( isUserLoggedIn );

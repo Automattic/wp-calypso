@@ -11,7 +11,7 @@ export const useRecordPatternsEvent = () => {
 			params: Record< string, string | number | undefined > = {}
 		) => {
 			recordTracksEvent( tracksEventName, {
-				category,
+				category: category || undefined,
 				type: getTracksPatternType( patternTypeFilter ),
 				...params,
 			} );
