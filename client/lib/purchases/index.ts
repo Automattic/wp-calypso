@@ -249,7 +249,7 @@ export function getName( purchase: Purchase ): string {
 export function getDisplayName( purchase: Purchase ): TranslateResult {
 	const { productName, productSlug, purchaseRenewalQuantity } = purchase;
 
-	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
+	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames( 'full' );
 	if ( jetpackProductsDisplayNames[ productSlug ] ) {
 		return jetpackProductsDisplayNames[ productSlug ];
 	}
