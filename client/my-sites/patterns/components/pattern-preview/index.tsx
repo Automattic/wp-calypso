@@ -1,13 +1,15 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { Icon, lock } from '@wordpress/icons';
+import { Icon, check, copy, lock } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/utils';
@@ -29,6 +31,35 @@ import './style.scss';
 
 export const DESKTOP_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
+
+// This style is injected into pattern preview iframes to prevent users from navigating away from
+// the pattern preview page and from submitting forms.
+const noClickStyle = {
+	css: 'a, button, input { pointer-events: none; }',
+	isGlobalStyles: true,
+};
+
+// Firefox and Safari have trouble rendering elements in iframes with `writing-mode` styles. This
+// hacky script is injected into pattern preview iframes to force rerender those elements.
+function forceRedraw() {
+	const elements = document.querySelectorAll< HTMLElement >( '[style*="writing-mode"]' );
+
+	elements.forEach( ( element ) => {
+		element.style.display = 'none';
+	} );
+
+	setTimeout( () => {
+		elements.forEach( ( element ) => {
+			element.style.removeProperty( 'display' );
+		} );
+	}, 200 );
+}
+
+const redrawScript = `
+<script defer>
+(${ forceRedraw.toString() })();
+</script>
+`;
 
 // Abstraction for resetting `isPatternCopied` and `isPermalinkCopied` after a given delay
 function useTimeoutToResetBoolean(
@@ -90,6 +121,8 @@ function PatternPreviewFragment( {
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
 	const translate = useTranslate();
+	const isEnglish = useIsEnglishLocale();
+	const { hasTranslation } = useI18n();
 
 	const titleTooltipText = isPermalinkCopied
 		? translate( 'Copied link to pattern', {
@@ -112,11 +145,19 @@ function PatternPreviewFragment( {
 		  } );
 
 	if ( isPatternCopied ) {
+		const patternCopiedText =
+			isEnglish || hasTranslation( 'Pattern copied' )
+				? translate( 'Pattern copied', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } )
+				: translate( 'Pattern copied!', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } );
+
 		copyButtonText = isPreviewLarge
-			? translate( 'Pattern copied!', {
-					comment: 'Button label for when a pattern was just copied',
-					textOnly: true,
-			  } )
+			? patternCopiedText
 			: translate( 'Copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
@@ -216,6 +257,8 @@ function PatternPreviewFragment( {
 				<PatternRenderer
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
+					scripts={ redrawScript }
+					styles={ [ noClickStyle ] }
 					viewportWidth={ viewportWidth }
 				/>
 			</div>
@@ -245,6 +288,7 @@ function PatternPreviewFragment( {
 						text={ pattern?.html ?? '' }
 						primary
 					>
+						<Icon height={ 18 } icon={ isPatternCopied ? check : copy } width={ 18 } />{ ' ' }
 						{ copyButtonText }
 					</ClipboardButton>
 				) }
@@ -270,6 +314,7 @@ function PatternPreviewFragment( {
 			<PatternsGetAccessModal
 				isOpen={ isAuthModalOpen }
 				onClose={ () => setIsAuthModalOpen( false ) }
+				pattern={ pattern }
 				tracksEventHandler={ recordGetAccessEvent }
 			/>
 		</div>
@@ -281,6 +326,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 	const isMobile = useMobileBreakpoint();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
+	const isRtl = useRtl();
 
 	if ( ! pattern ) {
 		return null;
@@ -304,9 +350,9 @@ export function PatternPreview( props: PatternPreviewProps ) {
 		<ResizableBox
 			enable={ {
 				top: false,
-				right: true,
+				right: ! isRtl,
 				bottom: false,
-				left: false,
+				left: isRtl,
 				topRight: false,
 				bottomRight: false,
 				bottomLeft: false,

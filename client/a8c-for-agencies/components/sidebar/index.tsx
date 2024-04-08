@@ -12,7 +12,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
-import SiteSelector from './site-selector';
 
 import './style.scss';
 
@@ -38,7 +37,6 @@ type Props = {
 		label: string;
 		onClick: () => void;
 	};
-	withSiteSelector?: boolean;
 	withGetHelpLink?: boolean;
 	withUserProfileFooter?: boolean;
 };
@@ -50,7 +48,6 @@ const A4ASidebar = ( {
 	title,
 	description,
 	backButtonProps,
-	withSiteSelector,
 	withGetHelpLink,
 	withUserProfileFooter,
 }: Props ) => {
@@ -59,7 +56,7 @@ const A4ASidebar = ( {
 
 	return (
 		<Sidebar className={ classNames( 'a4a-sidebar', className ) }>
-			<SidebarHeader simple={ ! withSiteSelector } forceAllSitesView />
+			<SidebarHeader withProfileDropdown={ ! withUserProfileFooter } />
 
 			<SidebarMain>
 				<SidebarNavigator initialPath={ path }>
@@ -110,8 +107,6 @@ const A4ASidebar = ( {
 					{ withUserProfileFooter && <ProfileDropdown dropdownPosition="up" /> }
 				</ul>
 			</SidebarFooter>
-
-			{ withSiteSelector && <SiteSelector /> }
 		</Sidebar>
 	);
 };

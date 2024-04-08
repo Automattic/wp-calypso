@@ -33,7 +33,7 @@ import { navigate } from 'calypso/lib/navigate';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useCommandsArrayWpcom } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
+import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { isOffline } from 'calypso/state/application/selectors';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
@@ -428,7 +428,7 @@ class Layout extends Component {
 						onClose={ this.props.closeCommandPalette }
 						currentSiteId={ this.props.siteId }
 						navigate={ navigate }
-						useCommands={ useCommandsArrayWpcom }
+						useCommands={ useCommandsCalypso }
 						currentRoute={ this.props.currentRoutePattern }
 						useSites={ useSiteExcerptsSorted }
 						userCapabilities={ this.props.userCapabilities }
@@ -537,7 +537,7 @@ export default withCurrentRoute(
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
 				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
-				currentRoutePattern: getCurrentRoutePattern( state ),
+				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
 				isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
 			};

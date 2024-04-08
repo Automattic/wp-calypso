@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, UseQueryResult, type QueryObserverOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteSlug } from 'calypso/types';
 
@@ -9,13 +9,20 @@ export type ScheduleUpdates = {
 	timestamp: number;
 	schedule: 'weekly' | 'daily';
 	args: string[];
-	last_run_status: 'success' | 'failure-and-rollback' | 'failure-and-rollback-fail' | null;
+	last_run_status:
+		| 'in-progress'
+		| 'success'
+		| 'failure'
+		| 'failure-and-rollback'
+		| 'failure-and-rollback-fail'
+		| null;
 	last_run_timestamp: number | null;
 };
 
 export const useUpdateScheduleQuery = (
 	siteSlug: SiteSlug,
-	isEligibleForFeature: boolean
+	isEligibleForFeature: boolean,
+	queryOptions: Partial< QueryObserverOptions< ScheduleUpdates[], Error > > = {}
 ): UseQueryResult< ScheduleUpdates[] > => {
 	const select = ( data: ScheduleUpdates[] ) => {
 		return data.sort( ( a, b ) => {
@@ -42,7 +49,8 @@ export const useUpdateScheduleQuery = (
 			),
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
-		refetchOnWindowFocus: false,
 		select,
+		refetchOnWindowFocus: false,
+		...queryOptions,
 	} );
 };

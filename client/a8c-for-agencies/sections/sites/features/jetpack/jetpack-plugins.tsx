@@ -1,5 +1,7 @@
 import { Button } from '@automattic/components';
 import { external, Icon } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
 import SitePreviewPaneContent from '../../site-preview-pane/site-preview-pane-content';
 import SitePreviewPaneFooter from '../../site-preview-pane/site-preview-pane-footer';
 
@@ -11,8 +13,10 @@ type Props = {
 };
 
 export function JetpackPluginsPreview( { featureText, link, linkLabel, captionText }: Props ) {
+	const translate = useTranslate();
 	return (
 		<>
+			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SitePreviewPaneContent>
 				<div className="site-preview-pane__plugins-content">
 					<h3>{ featureText }</h3>

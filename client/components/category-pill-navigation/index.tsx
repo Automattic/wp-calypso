@@ -3,8 +3,9 @@ import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils'
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { Icon, chevronRight } from '@wordpress/icons';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useRtl } from 'i18n-calypso';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
 import './style.scss';
@@ -34,6 +35,7 @@ export const CategoryPillNavigation = ( {
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 	const listInnerRef = useRef< HTMLDivElement | null >( null );
+	const isRtl = useRtl();
 
 	const checkScrollArrows = () => {
 		if ( ! listInnerRef.current ) {
@@ -117,10 +119,28 @@ export const CategoryPillNavigation = ( {
 
 	return (
 		<div className="category-pill-navigation">
+			{ buttons && (
+				<>
+					{ buttons.map( ( button ) => (
+						<LocalizedLink
+							key={ button.label }
+							href={ button.link }
+							className={ classnames( 'category-pill-navigation__button', {
+								'is-active': button.isActive,
+							} ) }
+						>
+							{ button.icon }
+							{ button.label }
+						</LocalizedLink>
+					) ) }
+					<div className="category-pill-navigation__button-divider" />
+				</>
+			) }
+
 			<div className="category-pill-navigation__list">
 				{ showLeftArrow && (
 					<Button className="category-pill-navigation__arrow" onClick={ () => scrollTo( 'left' ) }>
-						<Icon icon={ chevronRight } size={ 28 } />
+						<Icon icon={ isRtl ? chevronLeft : chevronRight } size={ 28 } />
 					</Button>
 				) }
 
@@ -129,7 +149,7 @@ export const CategoryPillNavigation = ( {
 						className="category-pill-navigation__arrow right"
 						onClick={ () => scrollTo( 'right' ) }
 					>
-						<Icon icon={ chevronRight } size={ 28 } />
+						<Icon icon={ isRtl ? chevronLeft : chevronRight } size={ 28 } />
 					</Button>
 				) }
 
@@ -138,24 +158,6 @@ export const CategoryPillNavigation = ( {
 					ref={ listInnerRef }
 					onScroll={ checkScrollArrows }
 				>
-					{ buttons && (
-						<>
-							{ buttons.map( ( button ) => (
-								<LocalizedLink
-									key={ button.label }
-									href={ button.link }
-									className={ classnames( 'category-pill-navigation__button', {
-										'is-active': button.isActive,
-									} ) }
-								>
-									{ button.icon }
-									{ button.label }
-								</LocalizedLink>
-							) ) }
-							<div className="category-pill-navigation__button-divider" />
-						</>
-					) }
-
 					{ categories.map( ( category ) => (
 						<LocalizedLink
 							key={ category.id }

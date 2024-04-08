@@ -43,7 +43,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
@@ -56,7 +56,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		render( { navigation } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Pay monthly/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
@@ -69,7 +69,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		render( { navigation } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Pay annually/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
@@ -82,7 +82,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		render( { navigation } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			freeTrialSelected: true,

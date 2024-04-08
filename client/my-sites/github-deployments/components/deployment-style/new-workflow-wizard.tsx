@@ -57,10 +57,6 @@ export const NewWorkflowWizard = ( {
 
 	return (
 		<div className="github-deployments-new-workflow-wizard">
-			<p css={ { marginBottom: 0 } }>
-				{ __( 'Use our suggested workflow which you can install and then extend at GitHub.' ) }
-			</p>
-
 			<div className="github-deployments-new-workflow-wizard__workflow-file">
 				<div className="github-deployments-new-workflow-wizard__workflow-file-name">
 					<span>{ RECOMMENDED_WORKFLOW_PATH }</span>
