@@ -13,7 +13,15 @@ export function SiteSwitch( { redirectTo }: { redirectTo: string } ) {
 		label: __( 'Switch site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to switch to' ),
-		callback: ( params ) => params.navigate( params.site.URL + redirectTo ),
+		callback: ( params ) => {
+			if ( redirectTo.startsWith( '/wp-admin' ) ) {
+				params.navigate( params.site.URL + redirectTo );
+			} else if ( redirectTo.startsWith( '/' ) && redirectTo.includes( ':site' ) ) {
+				params.navigate( redirectTo.replaceAll( ':site', params.site.slug ) );
+			} else {
+				params.navigate( `/home/${ params.site.slug }` );
+			}
+		},
 	};
 
 	return (
