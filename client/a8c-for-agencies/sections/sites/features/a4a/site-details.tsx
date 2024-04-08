@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import AgencySiteTags from 'calypso/a8c-for-agencies/components/agency-site-tags';
 import SiteTagType from 'calypso/a8c-for-agencies/types/site-tag';
+import DocumentHead from 'calypso/components/data/document-head';
 
 export default function SiteDetails( { site }: any ) {
 	/* eslint-disable-next-line */
@@ -26,6 +27,7 @@ export default function SiteDetails( { site }: any ) {
 
 	return (
 		<div className="site-details">
+			<DocumentHead title="Site Details" />
 			<AgencySiteTags
 				{ ...{
 					tags,
