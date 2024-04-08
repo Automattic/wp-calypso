@@ -18,7 +18,6 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import './style.scss';
 
 const noop = () => {};
-const isNonceEnabled = config.isEnabled( 'login/google-login-update' );
 
 class GoogleSocialButton extends Component {
 	static propTypes = {
@@ -46,7 +45,7 @@ class GoogleSocialButton extends Component {
 		showError: false,
 		errorRef: null,
 		eventTimeStamp: null,
-		isDisabled: ! isNonceEnabled,
+		isDisabled: false,
 	};
 
 	constructor( props ) {
@@ -59,23 +58,12 @@ class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( isNonceEnabled ) {
-			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
-				this.handleAuthorizationCode( {
-					auth_code: this.props.authCodeFromRedirect,
-					redirect_uri: this.props.redirectUri,
-					state: this.props.state,
-				} );
-			}
-		} else {
-			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
-				this.handleAuthorizationCode( {
-					auth_code: this.props.authCodeFromRedirect,
-					redirect_uri: this.props.redirectUri,
-				} );
-			}
-
-			this.initializeGoogleSignIn();
+		if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+			this.handleAuthorizationCode( {
+				auth_code: this.props.authCodeFromRedirect,
+				redirect_uri: this.props.redirectUri,
+				state: this.props.state,
+			} );
 		}
 	}
 
@@ -95,7 +83,7 @@ class GoogleSocialButton extends Component {
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
-			state: isNonceEnabled ? state : undefined,
+			state: state,
 			callback: ( response ) => {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
@@ -107,11 +95,7 @@ class GoogleSocialButton extends Component {
 					return;
 				}
 
-				if ( isNonceEnabled ) {
-					this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
-				} else {
-					this.handleAuthorizationCode( { auth_code: response.code } );
-				}
+				this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
 			},
 		} );
 
@@ -192,7 +176,7 @@ class GoogleSocialButton extends Component {
 		}
 	}
 
-	async handleClickNew( event ) {
+	async handleClick( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -201,31 +185,6 @@ class GoogleSocialButton extends Component {
 		}
 
 		await this.fetchNonceAndInitializeGoogleSignIn();
-		this.props.onClick( event );
-
-		if ( this.state.error ) {
-			return;
-		}
-
-		this.client.requestCode();
-	}
-
-	handleClick( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
-			this.setState( {
-				showError: ! this.state.showError,
-				errorRef: event.currentTarget,
-				eventTimeStamp: event.timeStamp,
-			} );
-		}
-
-		if ( this.state.isDisabled ) {
-			return;
-		}
-
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
@@ -264,7 +223,7 @@ class GoogleSocialButton extends Component {
 		if ( children ) {
 			const childProps = {
 				className: classNames( { disabled: isDisabled } ),
-				onClick: isNonceEnabled ? this.handleClickNew : this.handleClick,
+				onClick: this.handleClick,
 				onMouseOver: this.showError,
 				onFocus: this.showError,
 				onMouseOut: this.hideError,
@@ -281,7 +240,7 @@ class GoogleSocialButton extends Component {
 				) : (
 					<button
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-						onClick={ isNonceEnabled ? this.handleClickNew : this.handleClick }
+						onClick={ this.handleClick }
 						onMouseEnter={ this.showError }
 						onMouseLeave={ this.hideError }
 						disabled={ isDisabled }
