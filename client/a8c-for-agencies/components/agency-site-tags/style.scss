@@ -7,6 +7,7 @@
 .agency-site-tags__input {
 	width: 100%;
 	border: 0 !important;
+	box-shadow: none !important;
 }
 
 .agency-site-tags__input:focus {
@@ -20,4 +21,9 @@
 	position: relative;
 	top: 3px;
 	right: 10px;
+}
+
+.agency-site-tags__list {
+	padding: 0.875rem 0 0 0.875rem;
+	margin-bottom: 0;
 }
