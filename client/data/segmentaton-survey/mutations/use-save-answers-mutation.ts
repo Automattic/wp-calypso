@@ -1,19 +1,21 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type SaveAnswersHookArgs = {
+type SaveAnswersMutationParams = {
 	surveyKey: string;
 	blogId?: number;
 };
 
-type SaveAnswersMutationArgs = {
+type SaveAnswersMutationFnParams = {
 	questionKey: string;
 	answerKeys: string[];
 };
 
-const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersHookArgs ) => {
+const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersMutationParams ) => {
+	const queryClient = useQueryClient();
+
 	return useMutation( {
-		mutationFn: async ( { answerKeys, questionKey }: SaveAnswersMutationArgs ) => {
+		mutationFn: async ( { answerKeys, questionKey }: SaveAnswersMutationFnParams ) => {
 			return wpcom.req.post( {
 				path: `/segmentation-survey/answers`,
 				apiNamespace: 'wpcom/v2',
@@ -24,6 +26,9 @@ const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersHookArgs ) =>
 					answers: answerKeys,
 				},
 			} );
+		},
+		onSettled: () => {
+			void queryClient.invalidateQueries( { queryKey: [ 'survey-answers', surveyKey ] } );
 		},
 	} );
 };
