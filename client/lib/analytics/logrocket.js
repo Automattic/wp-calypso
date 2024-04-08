@@ -37,6 +37,7 @@ export function maybeAddLogRocketScript() {
 				},
 			} );
 
+			maybeIdentifyUser();
 			logRocketScriptLoaded = true;
 		}
 	};
