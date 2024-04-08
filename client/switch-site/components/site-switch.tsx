@@ -4,6 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { navigate } from 'calypso/lib/navigate';
 import './style.scss';
+import type { CommandCallBackParams } from '@automattic/command-palette';
 
 export function SiteSwitch( { redirectTo }: { redirectTo: string } ) {
 	const { __ } = useI18n();
@@ -13,7 +14,10 @@ export function SiteSwitch( { redirectTo }: { redirectTo: string } ) {
 		label: __( 'Switch site' ),
 		siteSelector: true,
 		siteSelectorLabel: __( 'Select site to switch to' ),
-		callback: ( params ) => {
+		callback: ( params: CommandCallBackParams ) => {
+			if ( ! params.site ) {
+				return;
+			}
 			if ( redirectTo.startsWith( '/wp-admin' ) ) {
 				params.navigate( params.site.URL + redirectTo );
 			} else if ( redirectTo.startsWith( '/' ) && redirectTo.includes( ':site' ) ) {
