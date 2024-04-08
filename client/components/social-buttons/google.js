@@ -52,7 +52,6 @@ class GoogleSocialButton extends Component {
 		super( props );
 
 		this.handleClick = this.handleClick.bind( this );
-		this.handleClickNew = this.handleClickNew.bind( this );
 		this.showError = this.showError.bind( this );
 		this.hideError = this.hideError.bind( this );
 	}
