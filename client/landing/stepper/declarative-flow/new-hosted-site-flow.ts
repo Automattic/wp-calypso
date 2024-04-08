@@ -3,6 +3,7 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useLayoutEffect } from 'react';
+import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -14,7 +15,7 @@ import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { Flow, ProvidedDependencies } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
@@ -40,6 +41,10 @@ const hosting: Flow = {
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const planCartItem = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			[]
+		);
 		const flowName = this.name;
 
 		const goBack = () => {
@@ -86,6 +91,11 @@ const hosting: Flow = {
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( flowName );
+
+					// If the product is a free trial, record the trial start event for ad tracking.
+					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
+						recordFreeHostingTrialStarted( flowName );
+					}
 
 					if ( providedDependencies.goToCheckout ) {
 						return window.location.assign(
