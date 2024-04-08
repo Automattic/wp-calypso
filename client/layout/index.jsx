@@ -287,6 +287,7 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden || globalSidebarDesktop,
+			'is-automattic-for-agencies-flow': true || this.props.isAutomatticForAgenciesFlow,
 			'is-logged-in': this.props.isLoggedIn,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -439,6 +440,7 @@ export default withCurrentRoute(
 			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
 			const sectionJitmPath = getMessagePathForJITM( currentRoute );
+			const isAutomatticForAgenciesFlow = 'automattic-for-agencies-client' === currentQuery?.from;
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isDomainAndPlanPackageFlow = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
 			const isJetpack =
@@ -504,6 +506,7 @@ export default withCurrentRoute(
 			return {
 				masterbarIsHidden,
 				sidebarIsHidden,
+				isAutomatticForAgenciesFlow,
 				isCommandPaletteOpen,
 				isJetpack,
 				isJetpackLogin,

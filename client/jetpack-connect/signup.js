@@ -122,6 +122,10 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
+	isAutomatticForAgencies() {
+		return 'automattic-for-agencies-client' === this.props.authQuery.from;
+	}
+
 	isWooOnboarding() {
 		const { authQuery } = this.props;
 		return 'woocommerce-onboarding' === authQuery.from;
@@ -280,7 +284,7 @@ export class JetpackSignup extends Component {
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 
-				{ authQuery.allowSiteConnection && (
+				{ authQuery.allowSiteConnection && ! this.isAutomatticForAgencies() && (
 					<JetpackConnectSiteOnly
 						homeUrl={ authQuery.homeUrl }
 						redirectAfterAuth={ authQuery.redirectAfterAuth }
@@ -481,6 +485,7 @@ export class JetpackSignup extends Component {
 
 		return (
 			<MainWrapper
+				isAutomatticForAgencies={ this.isAutomatticForAgencies() }
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 			>
@@ -488,6 +493,7 @@ export class JetpackSignup extends Component {
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader
 						authQuery={ this.props.authQuery }
+						isAutomatticForAgencies={ this.isAutomatticForAgencies() }
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
 					/>

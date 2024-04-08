@@ -30,6 +30,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 	render() {
 		const {
+			isAutomatticForAgencies,
 			isWide,
 			isWooOnboarding,
 			isWooCoreProfiler,
@@ -50,6 +51,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
+			'is-automattic-for-agencies-flow': isAutomatticForAgencies,
 		} );
 
 		const width = isWooOnboarding || isWooDna ? 200 : undefined;
@@ -65,6 +67,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					{ ! isWpcomMigration && (
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
+							isAutomatticForAgencies={ isAutomatticForAgencies }
 							isWooOnboarding={ isWooOnboarding }
 							isWooCoreProfiler={ isWooCoreProfiler }
 							isWooDna={ isWooDna }

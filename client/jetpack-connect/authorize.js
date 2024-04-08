@@ -309,7 +309,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
-			( this.isFromJetpackBackupPlugin() && siteHasBackups )
+			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
+			this.isFromAutomatticForAgenciesClientPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -478,6 +479,11 @@ export class JetpackAuthorize extends Component {
 	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'connect-after-checkout' );
+	}
+
+	isFromAutomatticForAgenciesClientPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'automattic-for-agencies-client' );
 	}
 
 	handleSignIn = async ( e, loginURL ) => {
@@ -775,6 +781,10 @@ export class JetpackAuthorize extends Component {
 
 		if ( this.isWooCoreProfiler() ) {
 			return translate( 'Connect your account' );
+		}
+
+		if ( this.isFromAutomatticForAgenciesClientPlugin() && ! this.retryingAuth ) {
+			return translate( 'Approve Connection' );
 		}
 
 		if ( ! this.retryingAuth ) {
@@ -1195,9 +1205,12 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const { blogname } = this.props.authQuery;
+		const companyName = this.isFromAutomatticForAgenciesClientPlugin()
+			? 'Automattic, Inc.'
+			: 'WordPress.com';
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				<Disclaimer siteName={ decodeEntities( blogname ) } />
+				<Disclaimer siteName={ decodeEntities( blogname ) } companyName={ companyName } />
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
@@ -1234,6 +1247,7 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<MainWrapper
+				isAutomatticForAgencies={ this.isFromAutomatticForAgenciesClientPlugin() }
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
@@ -1252,6 +1266,7 @@ export class JetpackAuthorize extends Component {
 						/>
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
+							isAutomatticForAgencies={ this.isFromAutomatticForAgenciesClientPlugin() }
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
