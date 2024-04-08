@@ -76,7 +76,9 @@ const BackupPage = ( { queryDate } ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( loadTrackingTool( 'LogRocket' ) );
+		if ( isJetpackCloud() ) {
+			dispatch( loadTrackingTool( 'LogRocket' ) );
+		}
 	}, [ dispatch ] );
 
 	return (
