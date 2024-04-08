@@ -1,11 +1,13 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { Icon, lock } from '@wordpress/icons';
+import { Icon, check, copy, lock } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
@@ -119,6 +121,8 @@ function PatternPreviewFragment( {
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
 	const translate = useTranslate();
+	const isEnglish = useIsEnglishLocale();
+	const { hasTranslation } = useI18n();
 
 	const titleTooltipText = isPermalinkCopied
 		? translate( 'Copied link to pattern', {
@@ -141,11 +145,19 @@ function PatternPreviewFragment( {
 		  } );
 
 	if ( isPatternCopied ) {
+		const patternCopiedText =
+			isEnglish || hasTranslation( 'Pattern copied' )
+				? translate( 'Pattern copied', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } )
+				: translate( 'Pattern copied!', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } );
+
 		copyButtonText = isPreviewLarge
-			? translate( 'Pattern copied!', {
-					comment: 'Button label for when a pattern was just copied',
-					textOnly: true,
-			  } )
+			? patternCopiedText
 			: translate( 'Copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
@@ -276,6 +288,7 @@ function PatternPreviewFragment( {
 						text={ pattern?.html ?? '' }
 						primary
 					>
+						<Icon height={ 18 } icon={ isPatternCopied ? check : copy } width={ 18 } />{ ' ' }
 						{ copyButtonText }
 					</ClipboardButton>
 				) }
