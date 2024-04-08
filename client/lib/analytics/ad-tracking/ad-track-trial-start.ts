@@ -6,10 +6,7 @@ import { mayWeTrackByTracker } from '../tracker-buckets';
  */
 declare global {
 	interface Window {
-		rdt: {
-			callQueue: object[];
-			sendEvent: ( ...args: [ string, string?, object? ] ) => void;
-		} & ( ( ...args: [ string, string?, object? ] ) => void );
+		rdt: any[] & { ( ...args: any[] ): void };
 	}
 }
 
