@@ -47,8 +47,14 @@
 			display: none;
 		}
 
-		.dataviews-view-table {
-			padding-left: 48px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding-left: 64px;
+		}
+		.dataviews-view-table tr th:last-child,
+		.dataviews-view-table tr td:last-child {
+			padding-right: 64px;
+			width: 20px;
 		}
 	}
 
@@ -110,8 +116,13 @@
 			}
 		}
 
-		.dataviews-view-table {
-			padding-left: 16px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding: 8px 24px 8px 8px;
+		}
+		.dataviews-view-table tr td:last-child {
+			padding: 0;
+			padding-inline-end: 8px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -526,15 +537,6 @@
 			.sites-overview__page-heading {
 				display: none;
 			}
-		}
-	}
-
-	.backup__page {
-		.daily-backup-status__restore-button,
-		.status-card__no-backup-last-backup,
-		.activity-card__toolbar--reverse,
-		.backup-date-picker {
-			display: none;
 		}
 	}
 

@@ -84,7 +84,7 @@
 			transform: rotate(0);
 		}
 
-		@media ( max-width: $break-wide ) {
+		@media ( max-width: $break-large ) {
 			width: 0;
 			padding: 0;
 		}

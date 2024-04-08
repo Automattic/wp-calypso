@@ -88,7 +88,14 @@ export function buildDIFMWebsiteContentRequestDTO(
 		siteInformationSection: { siteLogoUrl: site_logo_url, searchTerms: search_terms },
 		feedbackSection: { genericFeedback: generic_feedback },
 	} = websiteContent;
-	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
+	const pagesDTO = pages
+		.map( ( page ) => {
+			return {
+				...page,
+				media: page.media.filter( ( mediaItem ) => !! mediaItem.url ),
+			};
+		} )
+		.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
 	return {
 		pages: pagesDTO,
 		site_logo_url: site_logo_url ?? '',

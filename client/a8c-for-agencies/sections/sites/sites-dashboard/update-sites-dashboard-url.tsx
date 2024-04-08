@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
@@ -114,8 +113,5 @@ export const updateSitesDashboardUrl = ( {
 	if ( shouldAddQueryArgs ) {
 		url += queryString;
 	}
-
-	if ( page.current !== url ) {
-		page.replace( url );
-	}
+	return url;
 };
