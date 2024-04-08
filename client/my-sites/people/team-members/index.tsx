@@ -28,7 +28,9 @@ function TeamMembers( props: Props ) {
 	const siteId = site?.ID as number;
 
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
-	const pendingInvitesEmails = pendingInvites?.map( ( invite ) => invite.user?.email );
+	const pendingInvitesEmails = pendingInvites
+		?.filter( ( invite ) => invite.user?.email )
+		.map( ( invite ) => invite.user?.email );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
 	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;

@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from 'calypso/blocks/plugins-update-manager/hooks/use-site-has-eligible-plugins';
+import { ScheduleLogs } from 'calypso/blocks/plugins-update-manager/schedule-logs';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
@@ -23,16 +24,25 @@ import './styles.scss';
 
 interface Props {
 	siteSlug: string;
-	context: 'list' | 'create' | 'edit';
+	context: 'list' | 'create' | 'edit' | 'logs';
 	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
+	onShowLogs: ( id: string ) => void;
 }
 
 export const PluginsUpdateManager = ( props: Props ) => {
 	const translate = useTranslate();
-	const { siteSlug, context, scheduleId, onNavBack, onCreateNewSchedule, onEditSchedule } = props;
+	const {
+		siteSlug,
+		context,
+		scheduleId,
+		onNavBack,
+		onCreateNewSchedule,
+		onEditSchedule,
+		onShowLogs,
+	} = props;
 	const siteId = useSelector( getSelectedSiteId );
 
 	const { isEligibleForFeature, isSitePlansLoaded } = useIsEligibleForFeature();
@@ -42,7 +52,6 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins( siteSlug );
-
 	const { canCreateSchedules } = useCanCreateSchedules( siteSlug, isEligibleForFeature );
 	useEffect( () => {
 		recordTracksEvent( 'calypso_scheduled_updates_page_view', {
@@ -52,12 +61,17 @@ export const PluginsUpdateManager = ( props: Props ) => {
 	}, [ context, siteSlug ] );
 
 	const { component, title } = {
+		logs: {
+			component: <ScheduleLogs scheduleId={ scheduleId as string } onNavBack={ onNavBack } />,
+			title: translate( 'Scheduled Updates Logs' ),
+		},
 		list: {
 			component: (
 				<ScheduleList
 					onNavBack={ onNavBack }
 					onCreateNewSchedule={ onCreateNewSchedule }
 					onEditSchedule={ onEditSchedule }
+					onShowLogs={ onShowLogs }
 				/>
 			),
 			title: translate( 'Scheduled Updates' ),

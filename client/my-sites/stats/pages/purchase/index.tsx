@@ -83,6 +83,8 @@ const StatsPurchasePage = ( {
 	}, [ siteSlug, isSiteJetpackNotAtomic ] );
 
 	useEffect( () => {
+		// Scroll to top on page load
+		window.scrollTo( 0, 0 );
 		// track different upgrade sources
 		let triggeredEvent;
 

@@ -15,10 +15,11 @@ html,
 	height: calc(100vh - 32px);
 
 	header.current-section {
-		margin-block-end: 16px;
+		margin: 0;
+		padding: 0;
 
 		button {
-			padding: 20px 8px;
+			padding: 20px 0;
 		}
 	}
 }
@@ -71,10 +72,18 @@ html,
 
 .a4a-layout__top-wrapper {
 	padding-block-start: 48px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 0;
+		border-block-end: 1px solid var(--color-neutral-5);
+	}
 }
 
 .main.a4a-layout.is-compact .a4a-layout__top-wrapper {
 	padding-block-start: 28px;
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 0;
+	}
 }
 
 .main.a4a-layout.is-with-border {
@@ -141,6 +150,21 @@ html,
 			flex-grow: 0;
 		}
 	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		align-items: center;
+		justify-content: space-between;
+		> * {
+			flex-grow: 0;
+		}
+		.current-section button {
+			border: none;
+		}
+
+		.current-section .gridicons-menu {
+			margin: 0;
+		}
+	}
 }
 
 .a4a-layout__sticky-header {
@@ -201,6 +225,10 @@ html,
 	font-size: 2.25rem;
 	font-weight: 600;
 	line-height: 1.2;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: none;
+	}
 }
 
 .a4a-layout__header-subtitle {
@@ -209,6 +237,10 @@ html,
 	margin: 8px 0 0 0;
 	font-weight: 400;
 	line-height: 1.2;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: none;
+	}
 }
 
 .section-nav.a4a-layout__navigation {

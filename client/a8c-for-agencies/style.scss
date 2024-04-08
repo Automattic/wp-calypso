@@ -39,6 +39,18 @@
 }
 
 .theme-a8c-for-agencies {
+	.button {
+		border-radius: 4px;
+	}
+
+	.button.split-button__toggle {
+		border-radius: 0 4px 4px 0;
+	}
+
+	.button.split-button__main {
+		border-radius: 4px 0 0 4px;
+	}
+
 	.button.is-primary {
 		background-color: var(--studio-automattic-40);
 		border-color: var(--studio-automattic-40);

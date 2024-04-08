@@ -24,7 +24,7 @@ import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path } ) => {
+export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
@@ -42,9 +42,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	return (
 		<Fragment>
 			<Sidebar>
-				<SidebarRegion>
-					<CurrentSite forceAllSitesView={ isAllDomainsView } />
-				</SidebarRegion>
+				{ ! isUnifiedSiteSidebarVisible && (
+					<SidebarRegion>
+						<CurrentSite forceAllSitesView={ isAllDomainsView } />
+					</SidebarRegion>
+				) }
 				<MySitesSidebarUnifiedBody path={ path } />
 				<CollapseSidebar
 					key="collapse"

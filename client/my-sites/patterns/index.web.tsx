@@ -9,7 +9,9 @@ import { CategoryGalleryClient } from 'calypso/my-sites/patterns/components/cate
 import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/category-not-found';
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
-import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/hooks/use-pattern-search-term';
+import { PatternsContext } from 'calypso/my-sites/patterns/context';
+import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import {
 	PatternTypeFilter,
 	type RouterContext,
@@ -35,19 +37,24 @@ function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
 		context.primary = (
-			<PatternsWrapper>
-				<PatternLibrary
-					category={ context.params.category }
-					categoryGallery={ CategoryGalleryClient }
-					isGridView={ !! context.query.grid }
-					patternGallery={ PatternGalleryClient }
-					patternTypeFilter={
-						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR
-					}
-					referrer={ context.query.ref }
-					searchTerm={ context.query[ QUERY_PARAM_SEARCH ] }
-				/>
-			</PatternsWrapper>
+			<PatternsContext.Provider
+				value={ {
+					searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
+					category: context.params.category ?? '',
+					isGridView: !! context.query.grid,
+					patternTypeFilter:
+						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+					patternPermalinkId: extractPatternIdFromHash(),
+					referrer: context.query.ref,
+				} }
+			>
+				<PatternsWrapper>
+					<PatternLibrary
+						categoryGallery={ CategoryGalleryClient }
+						patternGallery={ PatternGalleryClient }
+					/>
+				</PatternsWrapper>
+			</PatternsContext.Provider>
 		);
 	}
 

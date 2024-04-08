@@ -9,8 +9,6 @@ $button-padding: 8px 32px;
 	--jp-white: #fff;
 	--jp-green-50: #008710;
 	--gray-gray-50: #646970;
-	--stats-purchase-left-min-width: 500px;
-	--stats-purchase-left-max-width: 700px;
 	--stats-purchase-right-width: 456px;
 
 	// Apply Jetpack dedicated styling upon the Calypso theme base.
@@ -170,6 +168,7 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__card {
 		display: flex;
+
 		h1,
 		.components-panel__header h2 {
 			color: var(--studio-black);
@@ -182,27 +181,37 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__card-inner--left {
 		padding: 64px;
-		min-width: var(--stats-purchase-left-min-width);
-		max-width: var(--stats-purchase-left-max-width);
-		width: 60%;
 		box-sizing: border-box;
+		flex: 2 1 auto;
+
+		@media (max-width: $break-medium) {
+			padding: 32px 24px;
+		}
 	}
 
 	.stats-purchase-wizard__card-inner--right {
-		display: flex;
+		display: none;
 		align-items: center;
-		width: var(--stats-purchase-right-width);
 		background: #f9f9f6;
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 4px;
+		flex: 1 1 var(--stats-purchase-right-width);
+
+		@media (min-width: $break-small) {
+			display: flex;
+		}
+
+		@media (min-width: $break-medium) {
+			display: none;
+		}
+
+		// Hide the right side on a smaller content area due to the sidebar menu.
+		@media (min-width: $break-large) {
+			display: flex;
+		}
 
 		> * {
 			z-index: 2;
-		}
-
-		img,
-		svg {
-			min-width: 400px;
 		}
 	}
 
@@ -230,6 +239,7 @@ $button-padding: 8px 32px;
 			margin-bottom: 8px;
 			padding-left: 28px;
 			background: no-repeat 0 50%;
+			background-position-y: top;
 
 			display: flex;
 			align-items: center;
@@ -546,6 +556,13 @@ $button-padding: 8px 32px;
 
 	.components-button + button.components-button {
 		margin: 0;
+	}
+
+	button {
+		@media (max-width: $break-small) {
+			width: 100%;
+			justify-content: center;
+		}
 	}
 }
 

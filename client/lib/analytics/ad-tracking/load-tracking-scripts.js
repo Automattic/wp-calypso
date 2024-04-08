@@ -19,6 +19,8 @@ import {
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
+	REDDIT_TRACKING_SCRIPT_URL,
+	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
 import { setup } from './setup';
 
@@ -115,6 +117,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( WPCOM_CLARITY_URI );
 	}
 
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
+	}
+
 	return scripts;
 }
 
@@ -156,6 +162,15 @@ function initLoadedTrackingScripts() {
 		const currentUser = getCurrentUser();
 		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
+	}
+
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		const params = {
+			optOut: false,
+			useDecimalCurrencyValues: true,
+		};
+
+		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 	}
 
 	debug( 'loadTrackingScripts: init done' );

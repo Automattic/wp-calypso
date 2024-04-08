@@ -50,6 +50,7 @@ export class EditorTemplateModalComponent {
 		const editorParent = await this.editor.parent();
 		await editorParent
 			.getByRole( 'option', { name: label, exact: true } )
+			.first()
 			.click( { timeout: timeout } );
 	}
 

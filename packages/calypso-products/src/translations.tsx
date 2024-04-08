@@ -1000,11 +1000,11 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( '{{div}}{{strong}}Priority support{{/strong}} {{badge}}PREMIUM{{/badge}}{{/div}}', {
 			components: boostPremiumFeatureComponents,
 		} ),
+		translate( 'Faster server response with Page Cache' ),
 		translate( 'Site performance scores' ),
 		translate( 'One-click optimization' ),
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
-		translate( 'Lazy image loading' ),
 	];
 
 	// Intl.ListFormat is not available in Mac OS Safari before Big Sur, so we

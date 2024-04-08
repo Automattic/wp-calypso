@@ -12,6 +12,7 @@ import {
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_SITE_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import { getApiNamespace, getApiPath } from '../lib/get-api';
 
 async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 	if ( ! siteId ) {
@@ -19,7 +20,10 @@ async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 	}
 
 	return wpcom.req
-		.get( { path: '/site/purchases', apiNamespace: 'jetpack/v4' } )
+		.get( {
+			path: getApiPath( '/site/purchases', { siteId } ),
+			apiNamespace: getApiNamespace(),
+		} )
 		.then( ( res: { data: string } ) => JSON.parse( res.data ) )
 		.catch( ( error: Error ) => error );
 }

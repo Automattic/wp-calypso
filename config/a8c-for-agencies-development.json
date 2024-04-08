@@ -7,6 +7,7 @@
 	"hostname": "agencies.localhost",
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
+	"logout_url": "https://automattic.com/for/agencies",
 	"site_name": "Automattic For Agencies",
 	"oauth_client_id": 95928,
 	"features": {
@@ -15,12 +16,14 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"oauth": true,
-		"a4a/mock-api-data": true
+		"a4a/mock-api-data": true,
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {
 		"a8c-for-agencies": true,
 		"a8c-for-agencies-auth": true,
+		"a8c-for-agencies-landing": true,
 		"a8c-for-agencies-overview": true,
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,

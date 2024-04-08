@@ -65,13 +65,7 @@ export default function LicensesOverview( {
 	const showEmptyStateContent = isFetched && data?.[ LicenseFilter.NotRevoked ] === 0;
 
 	return (
-		<Layout
-			className="licenses-overview"
-			title={ title }
-			wide
-			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="licenses-overview" title={ title } wide withBorder>
 			<PageViewTracker
 				title="Purchases > Licenses"
 				path="/purchases/licenses/:filter"
@@ -81,13 +75,13 @@ export default function LicensesOverview( {
 				<LayoutTop withNavigation>
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						<Actions>
+						<Actions className="a4a-licenses__header-actions">
+							<MobileSidebarNavigation />
 							<Button
 								disabled={ ! partnerCanIssueLicense }
 								href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }
 								onClick={ onIssueNewLicenseClick }
 								primary
-								style={ { marginLeft: 'auto' } }
 							>
 								{ translate( 'Issue New License' ) }
 							</Button>

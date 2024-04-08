@@ -88,6 +88,18 @@ button.product-card__select-button {
 	width: 100%;
 	justify-content: space-between;
 	gap: 0.5rem;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+
+		.product-card__select-button {
+			margin-block-start: 0.5rem;
+			width: 100%;
+			justify-content: center;
+			text-align: center;
+			font-size: 1rem;
+		}
+	}
 }
 
 .product-card__heading {

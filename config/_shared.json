@@ -158,6 +158,7 @@
 	"sections": {
 		"a8c-for-agencies": false,
 		"a8c-for-agencies-auth": false,
+		"a8c-for-agencies-landing": false,
 		"a8c-for-agencies-overview": false,
 		"a8c-for-agencies-plugins": false,
 		"a8c-for-agencies-sites": false,
@@ -178,7 +179,8 @@
 		"jetpack-cloud-settings": false,
 		"jetpack-cloud-golden-token": false,
 		"jetpack-social": false,
-		"jetpack-subscribers": false
+		"jetpack-subscribers": false,
+		"jetpack-monetize": false
 	},
 	"site_filter": [],
 	"theme": "default",

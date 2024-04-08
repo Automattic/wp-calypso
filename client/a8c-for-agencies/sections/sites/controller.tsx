@@ -4,9 +4,12 @@ import SitesSidebar from '../../components/sidebar-menu/sites';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+	DEFAULT_SORT_DIRECTION,
+	DEFAULT_SORT_FIELD,
 } from './constants';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
+import type { DashboardSortInterface } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 function configureSitesContext( context: Context ) {
 	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
@@ -23,9 +26,9 @@ function configureSitesContext( context: Context ) {
 		is_favorite,
 	} = context.query;
 
-	const sort = {
-		field: sort_field,
-		direction: sort_direction,
+	const sort: DashboardSortInterface = {
+		field: sort_field || DEFAULT_SORT_FIELD,
+		direction: sort_direction || DEFAULT_SORT_DIRECTION,
 	};
 	const currentPage = parseInt( contextPage ) || 1;
 
@@ -43,7 +46,7 @@ function configureSitesContext( context: Context ) {
 			currentPage={ currentPage }
 			issueTypes={ issue_types }
 			sort={ sort }
-			showSitesDashboardV2={ true }
+			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
 		>
 			<SitesDashboard />
 		</SitesDashboardProvider>
@@ -55,7 +58,7 @@ function configureSitesContext( context: Context ) {
 	context.store.dispatch( setAllSitesSelected() );
 }
 
-export const sitesContext: Callback = ( context, next ) => {
+export const sitesContext: Callback = ( context: Context, next ) => {
 	configureSitesContext( context );
 	next();
 };

@@ -1,32 +1,21 @@
-import Search from 'calypso/components/search';
+import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 
 import './style.scss';
 
 type PatternsHeaderProps = {
 	description: string;
-	initialSearchTerm?: string;
-	onSearch?( searchTerm: string ): void;
 	title: string;
 };
 
-export const PatternsHeader = ( {
-	description,
-	initialSearchTerm = '',
-	onSearch = () => {},
-	title,
-}: PatternsHeaderProps ) => {
+export const PatternsHeader = ( { description, title }: PatternsHeaderProps ) => {
 	return (
 		<header className="patterns-header">
 			<div className="patterns-header__inner">
 				<h1>{ title }</h1>
 				<div className="patterns-header__description">{ description }</div>
-				<Search
-					additionalClasses="patterns-header__search-input"
-					delaySearch
-					initialValue={ initialSearchTerm }
-					onSearch={ onSearch }
-					placeholder="Search patterns..."
-				/>
+				<div className="patterns-header__search-input">
+					<PatternsSearchField />
+				</div>
 			</div>
 		</header>
 	);

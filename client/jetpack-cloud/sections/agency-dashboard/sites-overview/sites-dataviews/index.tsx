@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import A4ASiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
+import A4ASiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
@@ -98,11 +99,19 @@ const SitesDataViews = ( {
 				id: 'site',
 				header: (
 					<>
-						<SiteSort isSortable={ true } columnKey="site">
-							<span className="sites-dataview__site-header">
-								{ translate( 'Site' ).toUpperCase() }
-							</span>
-						</SiteSort>
+						{ isA4AEnabled ? (
+							<A4ASiteSort isSortable={ true } columnKey="site">
+								<span className="sites-dataview__site-header">
+									{ translate( 'Site' ).toUpperCase() }
+								</span>
+							</A4ASiteSort>
+						) : (
+							<SiteSort isSortable={ true } columnKey="site">
+								<span className="sites-dataview__site-header">
+									{ translate( 'Site' ).toUpperCase() }
+								</span>
+							</SiteSort>
+						) }
 					</>
 				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.url,

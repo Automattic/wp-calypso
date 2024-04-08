@@ -34,6 +34,7 @@ export * from './editor-block-toolbar-component';
 export * from './template-part-list-component';
 export * from './template-part-modal-component';
 export * from './full-side-editor-nav-sidebar-component';
+export * from './full-side-editor-data-views-component';
 export * from './editor-dimensions-component';
 export * from './jetpack-instant-search-modal-component';
 

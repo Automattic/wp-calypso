@@ -1,6 +1,11 @@
 // Rules in this file inspired by:
 // client/components/jetpack/profile-dropdown/style.scss
 
+.a4a-sidebar__header {
+	display: flex;
+	justify-content: space-between;
+}
+
 .a4a-sidebar__profile-dropdown {
 	position: relative;
 }
@@ -122,6 +127,6 @@ a.a4a-sidebar__external-link {
 	}
 }
 
-.a4a-sidebar svg.all-sites__title-chevron-icon {
+.a4a-sidebar__profile-dropdown-button-label svg {
 	fill: var(--color-sidebar-text);
 }

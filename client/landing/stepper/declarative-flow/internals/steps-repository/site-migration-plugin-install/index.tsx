@@ -74,6 +74,7 @@ const SiteMigrationPluginInstall: Step = ( { navigation } ) => {
 			} );
 
 			setProgress( 1 );
+			return true;
 		} );
 
 		submit?.();

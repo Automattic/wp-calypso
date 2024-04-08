@@ -8,6 +8,8 @@ import { GlobalSidebarHeader } from 'calypso/layout/global-sidebar/header';
 import useSiteMenuItems from 'calypso/my-sites/sidebar/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSection } from 'calypso/state/ui/selectors';
 import Sidebar from '../sidebar';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
 import { GlobalSidebarFooter } from './footer';
@@ -27,6 +29,9 @@ const GlobalSidebar = ( {
 	const translate = useTranslate();
 	const currentUser = useSelector( getCurrentUser );
 	const isDesktop = useBreakpoint( '>=782px' );
+	const previousRoute = useSelector( getPreviousRoute );
+	const section = useSelector( getSection );
+	const previousLink = useRef( previousRoute );
 
 	const handleWheel = useCallback( ( event ) => {
 		const bodyEl = bodyRef.current;
@@ -47,6 +52,13 @@ const GlobalSidebar = ( {
 		};
 	}, [ handleWheel ] );
 
+	useEffect( () => {
+		// Update the previous link only when the group is changed.
+		if ( previousRoute && ! previousRoute.startsWith( `/${ section.group }` ) ) {
+			previousLink.current = previousRoute;
+		}
+	}, [ previousRoute, section.group ] );
+
 	/**
 	 * If there are no menu items and we are currently requesting some,
 	 * then show a spinner. The check for menuItems is necessary because
@@ -57,8 +69,9 @@ const GlobalSidebar = ( {
 		return <Spinner className="sidebar__menu-loading" />;
 	}
 
-	const { requireBackLink, backLinkText, ...sidebarProps } = props;
+	const { requireBackLink, backLinkText, backLinkHref, ...sidebarProps } = props;
 	const sidebarBackLinkText = backLinkText ?? translate( 'Back' );
+	const sidebarBackLinkHref = backLinkHref || previousLink.current || '/sites';
 
 	return (
 		<div className="global-sidebar" ref={ wrapperRef }>
@@ -67,7 +80,7 @@ const GlobalSidebar = ( {
 				<Sidebar className={ className } { ...sidebarProps } onClick={ onClick }>
 					{ requireBackLink && (
 						<div className="sidebar__back-link">
-							<a href="/sites" onClick={ handleBackLinkClick }>
+							<a href={ sidebarBackLinkHref } onClick={ handleBackLinkClick }>
 								<Gridicon icon="chevron-left" size={ 24 } />
 								<span className="sidebar__back-link-text">{ sidebarBackLinkText }</span>
 							</a>

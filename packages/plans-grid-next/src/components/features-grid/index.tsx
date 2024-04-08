@@ -275,7 +275,7 @@ const FeaturesGrid = ( {
 	};
 
 	return (
-		<>
+		<div className="plans-grid-next-features-grid">
 			{ 'small' !== gridSize && <SpotlightPlan { ...spotlightPlanProps } /> }
 			<div className="plan-features">
 				<div className="plan-features-2023-grid__content">
@@ -298,7 +298,7 @@ const FeaturesGrid = ( {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -1,9 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.a4a-layout__top-wrapper:not(.preview-hidden) {
-	padding-block-start: 24px;
-}
 
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
@@ -14,6 +11,12 @@
 
 	.site-preview-pane .a4a-layout-column__container {
 		display: flex;
+	}
+
+	.a4a-layout-column {
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
 	}
 
 	.site-actions__actions-large-screen {
@@ -28,6 +31,10 @@
 		margin-right: 10px;
 	}
 
+	.a4a-layout__top-wrapper:not(.preview-hidden) {
+		padding-block-start: 24px;
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -40,8 +47,14 @@
 			display: none;
 		}
 
-		.dataviews-view-table {
-			padding-left: 48px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding-left: 64px;
+		}
+		.dataviews-view-table tr th:last-child,
+		.dataviews-view-table tr td:last-child {
+			padding-right: 64px;
+			width: 20px;
 		}
 	}
 
@@ -103,8 +116,13 @@
 			}
 		}
 
-		.dataviews-view-table {
-			padding-left: 16px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding: 8px 24px 8px 8px;
+		}
+		.dataviews-view-table tr td:last-child {
+			padding: 0;
+			padding-inline-end: 8px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -214,6 +232,11 @@
 			.dataviews-view-table-wrapper {
 				overflow-y: auto;
 				max-height: calc(100vh - 255px); /* 255px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
+			}
+
+			.is-hiding-navigation .dataviews-view-table-wrapper {
+				overflow-y: auto;
+				max-height: calc(100vh - 182px); /* 182px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
 			}
 		}
 
@@ -335,6 +358,14 @@
 		vertical-align: top;
 	}
 
+	tr.dataviews-view-table__row {
+		&:hover {
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
+		}
+	}
+
 	.sites-overview__content-wrapper {
 		max-width: none;
 	}
@@ -440,6 +471,10 @@
 
 			.sites-overview__content {
 				margin-top: 24px;
+
+				&.is-hiding-navigation {
+					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
+				}
 			}
 		}
 
@@ -483,6 +518,7 @@
 				.sites-overview {
 					padding: 0;
 					overflow-x: auto;
+					overflow-y: auto;
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
@@ -501,15 +537,6 @@
 			.sites-overview__page-heading {
 				display: none;
 			}
-		}
-	}
-
-	.backup__page {
-		.daily-backup-status__restore-button,
-		.status-card__no-backup-last-backup,
-		.activity-card__toolbar--reverse,
-		.backup-date-picker {
-			display: none;
 		}
 	}
 
@@ -983,3 +1010,50 @@
 		}
 	}
 }
+
+/* Once LicenseLightboxJetpackManageLicense is ported to A4A, this can be removed */
+.is-section-a8c-for-agencies-sites {
+	.license-lightbox__jetpack-manage-license-title {
+		display: none;
+	}
+}
+
+.sites-dashboard__empty {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	align-items: center;
+
+	margin: 24px auto;
+	padding: 64px 0;
+	max-width: 700px;
+	text-align: center;
+}
+
+.sites-dashboard__empty-message {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
+.sites-dashboard__empty-actions {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+
+	margin: 0 auto;
+
+	> .button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+/* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
+.layout__primary .preview-hidden {
+	@include breakpoint-deprecated( ">960px" ) {
+		padding-bottom: 0 !important;
+	}
+}
+
