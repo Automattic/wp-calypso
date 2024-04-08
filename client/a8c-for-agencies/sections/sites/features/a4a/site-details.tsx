@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import AgencySiteTags from 'calypso/a8c-for-agencies/components/agency-site-tags';
-import useUpdateSiteTagsMutation from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/hooks/use-site-tags-mutation';
+import useUpdateSiteTagsMutation from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import SiteTagType from 'calypso/a8c-for-agencies/types/site-tag';
 import './style.scss';
 
