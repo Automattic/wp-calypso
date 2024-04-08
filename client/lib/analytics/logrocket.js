@@ -13,7 +13,12 @@ export function mayWeLoadLogRocketScript() {
 }
 
 export function maybeAddLogRocketScript() {
-	if ( logRocketScriptLoaded || ! mayWeLoadLogRocketScript() ) {
+	if ( logRocketScriptLoaded ) {
+		logRocketDebug( 'LogRocket script already loaded' );
+		return;
+	}
+
+	if ( ! mayWeLoadLogRocketScript() ) {
 		logRocketDebug( 'Not loading LogRocket script' );
 		return;
 	}
