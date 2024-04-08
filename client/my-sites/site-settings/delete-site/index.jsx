@@ -1,7 +1,7 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Dialog, FormLabel, Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,10 +9,11 @@ import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
@@ -48,22 +49,40 @@ class DeleteSite extends Component {
 	};
 
 	renderNotice() {
+		const exportLink = '/export/' + this.props.siteSlug;
 		const { siteDomain, translate } = this.props;
 
 		if ( ! siteDomain ) {
 			return null;
 		}
 
+		const warningText = () => {
+			if (
+				getLocaleSlug() === 'en' ||
+				getLocaleSlug() === 'en-gb' ||
+				i18n.hasTranslation(
+					'Before deleting your site, consider exporting its content as a backup'
+				)
+			) {
+				return translate( 'Before deleting your site, consider exporting its content as a backup' );
+			}
+
+			return translate( '{{strong}}%(siteDomain)s{{/strong}} will be unavailable in the future.', {
+				components: {
+					strong: <strong />,
+				},
+				args: {
+					siteDomain,
+				},
+			} );
+		};
+
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
-				{ translate( '{{strong}}%(siteDomain)s{{/strong}} will be unavailable in the future.', {
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						siteDomain,
-					},
-				} ) }
+				{ warningText() }
+				<a onClick={ this._checkSiteLoaded } href={ exportLink }>
+					{ translate( 'Export content' ) }
+				</a>
 			</Notice>
 		);
 	}
@@ -131,8 +150,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isAtomic, isFreePlan, siteDomain, siteId, siteSlug, translate } = this.props;
-		const exportLink = '/export/' + siteSlug;
+		const { isAtomic, isFreePlan, siteDomain, siteId, translate } = this.props;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
@@ -155,97 +173,27 @@ class DeleteSite extends Component {
 
 		return (
 			<div className="delete-site main main-column" role="main">
+				<NavigationHeader
+					compactBreadcrumb={ false }
+					navigationItems={ [] }
+					mobileItem={ null }
+					title={ translate( 'Delete Site' ) }
+					subtitle={ translate(
+						'Permanently delete your site and all of its content. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="delete_site" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				></NavigationHeader>
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<HeaderCake onClick={ this._goBack }>
+				<HeaderCake onClick={ this._goBack } className="delete-site__header-cake">
 					<h1>{ strings.deleteSite }</h1>
 				</HeaderCake>
 				<ActionPanel>
-					<ActionPanelBody>
-						<ActionPanelFigure>
-							<svg
-								width="158"
-								height="174"
-								viewBox="0 0 158 174"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<title>{ strings.exportContent }</title>
-								<g transform="translate(0 -5)" fill="none" fillRule="evenodd">
-									<rect fill="#D5E5EB" x="57" y="157" width="45" height="22" rx="4" />
-									<text fontFamily="Open Sans" fontSize="11" fontWeight="526" fill="#FFF">
-										<tspan x="69.736" y="172">
-											.ZIP
-										</tspan>
-									</text>
-									<path
-										d="M89.5 131.5h-6v-9h-9v9h-6L79 142l10.5-10.5zm-21 13.5v3h21v-3h-21z"
-										fill="#D5E5EB"
-									/>
-									<path d="M61 118h36v36H61v-36z" />
-									<path
-										d="M.03 40.992l54.486-29.92 25.18 13.238-54.62 29.734L.032 40.992z"
-										fill="#D5E5EB"
-									/>
-									<path
-										d="M157.9 40.992l-54.484-29.92-25.18 13.238 54.62 29.734L157.9 40.992z"
-										fill="#D5E5EB"
-									/>
-									<path
-										d="M118.9 43.846c0 21.098-17.186 38.266-38.304 38.266-21.118 0-38.303-17.168-38.303-38.266S59.478 5.58 80.596 5.58 118.9 22.748 118.9 43.846zM65.55 74.81L49.132 29.837a34.013 34.013 0 0 0-2.992 14.008c0 13.624 7.952 25.367 19.41 30.963zM101.2 53.24c1.495-4.783 2.65-8.2 2.65-11.147 0-4.23-1.54-7.175-2.864-9.48-1.71-2.82-3.378-5.21-3.378-8.072 0-3.16 2.394-6.108 5.772-6.108l.47.042c-6.114-5.594-14.278-9.052-23.256-9.052-12.012 0-22.614 6.19-28.77 15.502l2.223.042c3.59 0 9.148-.427 9.148-.427 1.88-.086 2.094 2.605.256 2.86 0 0-1.88.214-3.976.3l12.568 37.284 7.525-22.593-5.344-14.692c-1.88-.085-3.633-.298-3.633-.298-1.84-.128-1.625-2.947.214-2.86 0 0 5.685.425 9.063.425 3.633 0 9.19-.427 9.19-.427 1.838-.086 2.094 2.605.215 2.86 0 0-1.84.214-3.934.3l12.44 36.985 3.422-11.446zM92.01 76.304c-.085-.172-.17-.3-.213-.47l-10.603-29L70.85 76.86c3.12.895 6.37 1.365 9.746 1.365 4.02 0 7.865-.683 11.414-1.92zm19.024-45.44c0 3.5-.643 7.43-2.608 12.342L97.91 73.57c10.216-5.936 17.098-17.04 17.098-29.724 0-5.98-1.495-11.616-4.188-16.528a31.01 31.01 0 0 1 .214 3.546z"
-										fill="#A8BECE"
-									/>
-									<path
-										d="M133.263 53.938v37.715L79 113.728V76.014l54.263-22.076zM24.737 53.938v37.715L79 113.728V76.014L24.737 53.938z"
-										fill="#D5E5EB"
-									/>
-									<path
-										d="M155.74 70.355L102.527 92.48 78.125 75.12l55.24-21.407 22.374 16.642z"
-										stroke="#FFF"
-										strokeWidth="2.4"
-										fill="#D5E5EB"
-									/>
-									<path
-										d="M2.08 70.355L55.294 92.48l24.402-17.36-54.582-21.297L2.08 70.355z"
-										stroke="#FFF"
-										strokeWidth="2.4"
-										fill="#D5E5EB"
-									/>
-								</g>
-							</svg>
-						</ActionPanelFigure>
-						<ActionPanelTitle>{ strings.exportContentFirst }</ActionPanelTitle>
-						<p>
-							{ translate(
-								'Before deleting your site, take a moment to export your content. ' +
-									'This will package the content of all your posts and pages, ' +
-									"along with your site's settings, into a .zip file. " +
-									"If you ever want to re-create your site, you'll be able to import the .zip file to a new site."
-							) }
-						</p>
-						<p>
-							{ translate(
-								'This content {{strong}}can not{{/strong}} be recovered once you delete this site.',
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
-						</p>
-					</ActionPanelBody>
-					<ActionPanelFooter>
-						<Button
-							className="delete-site__export-button action-panel__export-button"
-							disabled={ ! siteId }
-							onClick={ this._checkSiteLoaded }
-							href={ exportLink }
-						>
-							{ strings.exportContent }
-							<Gridicon icon="external" />
-						</Button>
-					</ActionPanelFooter>
-				</ActionPanel>
-				<ActionPanel>
-					<ActionPanelTitle>{ strings.deleteSite }</ActionPanelTitle>
 					<ActionPanelBody>
 						{ this.renderNotice() }
 						<ActionPanelFigure>
