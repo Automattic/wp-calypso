@@ -9,13 +9,15 @@ interface Props {
 
 export default function AgencySiteTag( { tag, onRemoveTag }: Props ) {
 	return (
-		<Badge className="agency-site-tag" type="info">
-			<span className="agency-site-tag__text">{ tag }</span>
-			<Icon
-				className="agency-site-tag__close"
-				onClick={ () => onRemoveTag( tag ) }
-				icon={ closeSmall }
-			/>
-		</Badge>
+		<li className="agency-site-tag">
+			<Badge type="info">
+				<span className="agency-site-tag__text">{ tag }</span>
+				<Icon
+					className="agency-site-tag__close"
+					onClick={ () => onRemoveTag( tag ) }
+					icon={ closeSmall }
+				/>
+			</Badge>
+		</li>
 	);
 }

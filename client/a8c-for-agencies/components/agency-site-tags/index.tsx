@@ -35,7 +35,7 @@ export default function AgencySiteTags( { tags, onAddTags, onRemoveTag }: Props 
 					{ translate( 'Add' ) }
 				</Button>
 			</Card>
-			<Card className="agency-site-tags__list">
+			<Card tagName="ul" className="agency-site-tags__list">
 				{ tags.map( ( tag ) => (
 					<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
 				) ) }
