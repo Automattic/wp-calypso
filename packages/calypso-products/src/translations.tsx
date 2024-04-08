@@ -1055,6 +1055,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Access to upcoming advanced features' ),
 		translate( 'Priority support' ),
 		translate( 'Commercial use' ),
+		translate( 'UTM tracking' ),
 	];
 	const aiAssistantIncludesInfo = [
 		translate( '100 monthly requests (upgradeable)' ),
@@ -1303,6 +1304,10 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 			'Find who is creating the most popular content on your team with our author metrics'
 		),
 		translate( 'View weekly and yearly trends with 7-day Highlights and Year in Review' ),
+		translate( 'UTM tracking' ),
+		translate( 'Traffic spike forgiveness' ),
+		translate( 'Overage forgiveness' ),
+		translate( 'Commercial use' ),
 	];
 
 	const aiAssistantBenefits = [
