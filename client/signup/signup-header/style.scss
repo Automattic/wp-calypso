@@ -50,3 +50,61 @@
 		inset-inline-end: 16px;
 	}
 }
+
+.signup-header__banner-refund {
+	top: 0;
+	margin-top: 0;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #00f;
+	color: var(--color-text-inverted);
+
+	&.is-header-banner {
+		position: absolute;
+		height: 80px;
+		z-index: -2;
+	}
+
+	&.is-sticky-banner {
+		position: fixed;
+		padding: 10px 0;
+		z-index: 31; // above action-buttons (they are 30) so it hides them
+
+		.layout__content & {
+			overflow: unset;
+			overflow-x: unset;
+		}
+	}
+}
+
+// .signup-header__banner-refund {
+// 	display: none;
+// 	justify-content: center;
+// 	align-items: center;
+// 	width: 100vw;
+// 	background-color: #00f;
+// 	color: var(--color-text-inverted);
+
+// 	&.is-signup-header-banner {
+// 		display: flex;
+// 		position: fixed;
+// 		top: 0;
+// 		margin-top: -8px;
+// 		height: 80px;
+// 	}
+
+// 	&.is-sticky-banner {
+// 		display: flex;
+// 		position: fixed;
+// 		top: 0;
+// 		z-index: 3;
+// 		margin-top: 0;
+// 		height: 40px;
+// 		.layout__content & {
+// 			overflow: unset;
+// 			overflow-x: unset;
+// 		}
+// 	}
+// }

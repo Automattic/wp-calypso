@@ -57,6 +57,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
+import { SignupHeaderBanner } from 'calypso/signup/signup-header';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -690,6 +691,9 @@ const PlansFeaturesMain = ( {
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
 				<QueryProductsList />
+				<SignupHeaderBanner height={ 80 } stickyBannerOffset={ 40 }>
+					{ translate( 'Refund Policy' ) }
+				</SignupHeaderBanner>
 				<PlanUpsellModal
 					isModalOpen={ isModalOpen }
 					paidDomainName={ paidDomainName }
