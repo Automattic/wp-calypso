@@ -55,7 +55,7 @@ const GoogleAnalyticsJetpackForm = ( {
 } ) => {
 	const upsellHref = `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`;
 	const analyticsSupportUrl = isAtomic
-		? 'https://wordpress.com/support/google-analytics/'
+		? localizeUrl( 'https://wordpress.com/support/google-analytics/' )
 		: 'https://jetpack.com/support/google-analytics/';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	// TODO: it would be better to get wooCommercePlugin directly in form-google-analytics using getAllPluginsIndexedByPluginSlug
@@ -194,11 +194,7 @@ const GoogleAnalyticsJetpackForm = ( {
 									{
 										components: {
 											a: (
-												<a
-													href={ localizeUrl( analyticsSupportUrl ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
+												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
 											),
 										},
 									}

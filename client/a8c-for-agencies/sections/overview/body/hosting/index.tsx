@@ -56,7 +56,7 @@ const OverviewBodyHosting = () => {
 
 	const wpcom: OfferingItemProps = {
 		//translators: Title for the action card
-		title: translate( 'Wordpress.com' ),
+		title: translate( 'WordPress.com' ),
 		titleIcon: <WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />,
 		description: translate(
 			'From one site to a thousand, build on a platform with perfect uptime, unlimited bandwidth, and the fastest WP Bench score.'
@@ -75,7 +75,7 @@ const OverviewBodyHosting = () => {
 			translate( 'Round-the-clock support from WordPress experts.' ),
 		],
 		// translators: Button navigating to A4A Marketplace
-		buttonTitle: translate( 'Explore Wordpress.com' ),
+		buttonTitle: translate( 'Explore WordPress.com' ),
 		expanded: false,
 		actionHandler: () => {
 			actionHandlerCallback( 'hosting', 'wordpress.com' );

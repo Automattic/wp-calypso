@@ -98,6 +98,12 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 		showGoogleAnalyticsPromo,
 	] );
 
+	// In case of Odyssey Stats, ensure that we return the absolute URL for redirect.
+	const getCalypsoUrl = ( href ) => {
+		const baseUrl = window?.location?.hostname === slug ? 'https://wordpress.com' : '';
+		return baseUrl + href;
+	};
+
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
 		if ( viewEvents.length === 0 ) {
@@ -125,7 +131,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
 				ctaText={ translate( 'Launch your site' ) }
-				href={ `/settings/general/${ slug }` }
+				href={ getCalypsoUrl( `/settings/general/${ slug }` ) }
 				key="launch-your-site"
 			/>
 		);
@@ -142,7 +148,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Sites with content get more visitors. We’ve found that adding some personality and introducing yourself is a great start to click with your audience.'
 				) }
 				ctaText={ translate( 'Write a post' ) }
-				href={ `/post/${ slug }` }
+				href={ getCalypsoUrl( `/post/${ slug }` ) }
 				key="write-a-post"
 			/>
 		);
@@ -159,7 +165,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Grow your audience by promoting your content. Reach millions of users across Tumblr and WordPress.com'
 				) }
 				ctaText={ translate( 'Create campaign' ) }
-				href={ `/advertising/${ slug || '' }` }
+				href={ getCalypsoUrl( `/advertising/${ slug || '' }` ) }
 				key="blaze"
 			/>
 		);
@@ -176,7 +182,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
 				) }
 				ctaText={ translate( 'Get Yoast' ) }
-				href={ `/plugins/wordpress-seo-premium/${ slug || '' }` }
+				href={ getCalypsoUrl( `/plugins/wordpress-seo-premium/${ slug || '' }` ) }
 				key="yoast"
 			/>
 		);
@@ -200,7 +206,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					// Translators: %(plan) is the name of a plan, e.g. "Explorer" or "Premium"
 					translate( 'Get %(plan)s', { args: { plan: premiumPlanName } } )
 				}
-				href={ `/checkout/premium/${ slug || '' }` }
+				href={ getCalypsoUrl( `/checkout/premium/${ slug || '' }` ) }
 				key="google-analytics"
 			/>
 		);

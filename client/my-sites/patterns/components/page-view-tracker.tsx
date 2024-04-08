@@ -12,6 +12,7 @@ import type { AppState } from 'calypso/types';
 type PatternsPageViewTrackerProps = {
 	category: string;
 	searchTerm?: string;
+	patternPermalinkName?: string;
 	patternTypeFilter?: PatternTypeFilter;
 	view?: PatternView;
 	referrer?: string;
@@ -22,6 +23,7 @@ type PatternsPageViewTrackerProps = {
 export function PatternsPageViewTracker( {
 	category,
 	searchTerm,
+	patternPermalinkName,
 	patternTypeFilter,
 	view,
 	referrer,
@@ -57,6 +59,7 @@ export function PatternsPageViewTracker( {
 	useEffect( () => {
 		if ( isDevAccount !== undefined && patternsCount !== undefined ) {
 			recordTracksEvent( 'calypso_pattern_library_view', {
+				name: patternPermalinkName,
 				category,
 				is_logged_in: isLoggedIn,
 				user_is_dev_account: isDevAccount ? '1' : '0',
@@ -74,6 +77,7 @@ export function PatternsPageViewTracker( {
 		isDevAccount,
 		isLoggedIn,
 		patternsCount,
+		patternPermalinkName,
 		patternTypeFilter,
 		referrer,
 		searchTerm,

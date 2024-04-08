@@ -2,8 +2,10 @@ import {
 	__experimentalText as Text,
 	Button,
 	Card,
+	CardBody,
 	CardHeader,
 	Tooltip,
+	Spinner,
 } from '@wordpress/components';
 import { arrowLeft, Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -57,7 +59,10 @@ export const ScheduleLogs = ( props: Props ) => {
 		isPending,
 	} = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 	const schedule = schedules.find( ( s ) => s.id === scheduleId );
-	const { data: scheduleLogs = [] } = useUpdateScheduleLogsQuery( siteSlug, scheduleId );
+	const { data: scheduleLogs = [], isPending: isPendingLogs } = useUpdateScheduleLogsQuery(
+		siteSlug,
+		scheduleId
+	);
 
 	const goToPluginsPage = useCallback( () => {
 		window.location.href = `${ siteAdminUrl }plugins.php`;
@@ -105,6 +110,14 @@ export const ScheduleLogs = ( props: Props ) => {
 					</Text>
 				</div>
 			</CardHeader>
+			<CardBody>
+				{ isPendingLogs && <Spinner /> }
+				{ ! isPendingLogs && ! scheduleLogs.length && (
+					<div className="empty-state">
+						<Text align="center">{ translate( 'No logs available at the moment.' ) }</Text>
+					</div>
+				) }
+			</CardBody>
 			{ scheduleLogs.map( ( logs, i ) => (
 				<Timeline key={ i }>
 					{ logs.reverse().map( ( log ) => (

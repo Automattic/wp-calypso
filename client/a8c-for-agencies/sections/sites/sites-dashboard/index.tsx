@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
@@ -137,7 +138,7 @@ export default function SitesDashboard() {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
 
-		updateSitesDashboardUrl( {
+		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
 			filters: sitesViewState.filters,
@@ -148,6 +149,9 @@ export default function SitesDashboard() {
 			sort: sitesViewState.sort,
 			showOnlyFavorites,
 		} );
+		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+			page.replace( updatedUrl );
+		}
 	}, [
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
