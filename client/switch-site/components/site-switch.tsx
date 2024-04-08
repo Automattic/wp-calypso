@@ -23,8 +23,10 @@ export function SiteSwitch( { redirectTo }: { redirectTo: string } ) {
 				currentRoute="/switch-site"
 				currentSiteId={ null }
 				isOpenGlobal={ true }
+				onBack={ () => window.history.back() }
 				navigate={ navigate }
 				selectedCommand={ siteSwitchCommand }
+				shouldCloseOnClickOutside={ false }
 				useCommands={ () => [ siteSwitchCommand ] }
 				useSites={ useSiteExcerptsSorted }
 				userCapabilities={ {} }

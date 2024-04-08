@@ -214,6 +214,8 @@ export interface CommandPaletteProps {
 	useSites: () => SiteExcerptData[];
 	userCapabilities: { [ key: number ]: { [ key: string ]: boolean } };
 	selectedCommand?: PaletteCommand;
+	onBack?: () => void;
+	shouldCloseOnClickOutside?: boolean;
 }
 
 const CommandPalette = ( {
@@ -226,6 +228,8 @@ const CommandPalette = ( {
 	useSites,
 	userCapabilities,
 	selectedCommand,
+	onBack,
+	shouldCloseOnClickOutside,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -308,8 +312,8 @@ const CommandPalette = ( {
 			search_text: search,
 			from_keyboard: fromKeyboard,
 		} );
-		if ( selectedCommand ) {
-			history.back();
+		if ( onBack ) {
+			onBack();
 		} else {
 			reset();
 		}
@@ -367,6 +371,7 @@ const CommandPalette = ( {
 				overlayClassName="commands-command-menu__overlay"
 				onRequestClose={ closeAndReset }
 				__experimentalHideHeader
+				shouldCloseOnClickOutside={ shouldCloseOnClickOutside }
 			>
 				<StyledCommandsMenuContainer className="commands-command-menu__container">
 					<Command
