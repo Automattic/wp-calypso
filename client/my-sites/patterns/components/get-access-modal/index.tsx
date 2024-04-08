@@ -101,6 +101,7 @@ export const PatternsGetAccessModal = ( {
 							transparent
 							href={ loginUrl }
 							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_login' ) }
+							rel="external"
 						>
 							{ translate( 'Log in' ) }
 						</Button>
