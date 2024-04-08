@@ -37,11 +37,7 @@ import {
 	type PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
-import {
-	getCurrentUser,
-	getCurrentUserLocale,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
@@ -60,16 +56,16 @@ const ToggleGroupControlOptionWithNarrowTooltip = (
 		toolTipText: string;
 	}
 ) => {
-	const { showToolTip, toolTipText } = props;
+	const { showToolTip, toolTipText, ...toggleControlProps } = props;
 	const toolTipProps = { style: { maxWidth: '200px' }, text: toolTipText };
 
 	if ( ! showToolTip ) {
-		return <ToggleGroupControlOption { ...props } />;
+		return <ToggleGroupControlOption { ...toggleControlProps } />;
 	}
 
 	return (
 		<Tooltip { ...toolTipProps }>
-			<ToggleGroupControlOption { ...props } />
+			<ToggleGroupControlOption { ...toggleControlProps } />
 		</Tooltip>
 	);
 };
