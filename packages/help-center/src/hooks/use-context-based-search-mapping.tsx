@@ -34,10 +34,13 @@ export function useContextBasedSearchMapping( currentRoute: string | undefined, 
 	const tailoredArticlesMatchKey = Object.keys( tailoredArticlesMapping ).find(
 		( key ) => currentRoute?.startsWith( key )
 	);
+
 	const tailoredArticles = tailoredArticlesMatchKey
-		? tailoredArticlesMapping[
-				tailoredArticlesMatchKey as keyof typeof tailoredArticlesMapping
-		  ]?.find( ( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale )
+		? (
+				tailoredArticlesMapping[
+					tailoredArticlesMatchKey as keyof typeof tailoredArticlesMapping
+				] as TailoredArticles[] | undefined
+		   )?.find( ( tailoredArticle: TailoredArticles ) => tailoredArticle.locale === locale )
 		: undefined;
 
 	// Find exact URL matches
