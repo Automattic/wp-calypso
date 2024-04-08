@@ -162,18 +162,20 @@
 .pattern-preview__resizer {
 	.components-resizable-box__handle-left,
 	.components-resizable-box__handle-right {
-		bottom: 3rem;
+		bottom: 0;
 		height: auto;
 		left: 100%;
 		right: initial;
+		top: 3.4rem;
 
 		&::after {
 			background-color: #a7aaad;
 			border-radius: 3px;
 			box-shadow: none;
 			height: 50px;
-			right: calc(50% - 3px);
-			top: calc(50% - 8px);
+			right: 50%;
+			top: 50%;
+			transform: translate(50%, -50%);
 			width: 6px;
 		}
 
