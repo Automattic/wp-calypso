@@ -1,6 +1,8 @@
 import { Context, type Callback } from '@automattic/calypso-router';
+import MySitesNavigation from 'calypso/my-sites/navigation';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import SitesSidebar from '../../components/sidebar-menu/sites';
+// TODO? Remove associate directory for the commented out import
+// import SitesSidebar from '../../components/sidebar-menu/sites';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
@@ -52,7 +54,7 @@ function configureSitesContext( context: Context ) {
 		</SitesDashboardProvider>
 	);
 
-	context.secondary = <SitesSidebar path={ context.path } />;
+	context.secondary = <MySitesNavigation path={ context.path } />;
 
 	// By definition, Sites Management does not select any one specific site
 	context.store.dispatch( setAllSitesSelected() );
