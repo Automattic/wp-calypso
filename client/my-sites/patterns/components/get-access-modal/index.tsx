@@ -1,5 +1,5 @@
 import { Button, Dialog } from '@automattic/components';
-import { useLocalizeUrl, useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { Icon, close as iconClose } from '@wordpress/icons';
 import { buildQueryString } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -27,27 +27,17 @@ export const PatternsGetAccessModal = ( {
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
 	const translate = useTranslate();
-	const localizeUrl = useLocalizeUrl();
 	const { category, patternTypeFilter } = usePatternsContext();
 	const { data: categories = [] } = usePatternCategories( locale );
 
-	const isLoggedIn = false;
 	const redirectUrl = getPatternPermalink( pattern, category, patternTypeFilter, categories );
 
-	const signupUrl = localizeUrl(
-		`//wordpress.com/start/account/user?${ buildQueryString( {
-			redirect_to: redirectUrl,
-			ref: URL_REFERRER_PARAM,
-		} ) }`,
-		locale,
-		isLoggedIn
-	);
+	const signupUrl = `/start/account/user?${ buildQueryString( {
+		redirect_to: redirectUrl,
+		ref: URL_REFERRER_PARAM,
+	} ) }`;
 
-	const loginUrl = localizeUrl(
-		`//wordpress.com/log-in?${ buildQueryString( { redirect_to: redirectUrl } ) }`,
-		locale,
-		isLoggedIn
-	);
+	const loginUrl = `/log-in?${ buildQueryString( { redirect_to: redirectUrl } ) }`;
 
 	return (
 		<Dialog
