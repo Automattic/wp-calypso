@@ -43,8 +43,12 @@ export const CategoryPillNavigation = ( {
 		}
 
 		const { scrollLeft, scrollWidth, clientWidth } = listInnerRef.current;
-		setShowLeftArrow( scrollLeft > 0 );
-		setShowRightArrow( Math.ceil( scrollLeft ) < scrollWidth - clientWidth );
+
+		const roundedScrollLeft = Math.floor( scrollLeft );
+		const scrollLeftAbs = Math.abs( roundedScrollLeft ); // adjust RTL negative values
+
+		setShowLeftArrow( scrollLeftAbs > 0 );
+		setShowRightArrow( scrollLeftAbs + 1 < scrollWidth - clientWidth ); // +1 to account for rounding errors
 	};
 
 	const scrollTo = ( direction: 'right' | 'left' ) => {
@@ -139,7 +143,10 @@ export const CategoryPillNavigation = ( {
 
 			<div className="category-pill-navigation__list">
 				{ showLeftArrow && (
-					<Button className="category-pill-navigation__arrow" onClick={ () => scrollTo( 'left' ) }>
+					<Button
+						className="category-pill-navigation__arrow"
+						onClick={ () => scrollTo( ! isRtl ? 'left' : 'right' ) }
+					>
 						<Icon icon={ isRtl ? chevronLeft : chevronRight } size={ 28 } />
 					</Button>
 				) }
@@ -147,7 +154,7 @@ export const CategoryPillNavigation = ( {
 				{ showRightArrow && (
 					<Button
 						className="category-pill-navigation__arrow right"
-						onClick={ () => scrollTo( 'right' ) }
+						onClick={ () => scrollTo( ! isRtl ? 'right' : 'left' ) }
 					>
 						<Icon icon={ isRtl ? chevronLeft : chevronRight } size={ 28 } />
 					</Button>
