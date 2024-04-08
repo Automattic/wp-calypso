@@ -19,7 +19,7 @@ const getTrendIcon = ( viewsTrend: 'up' | 'down' | 'same' ) => {
 };
 
 export default function SiteStatsColumn( { stats }: Props ) {
-	const { total: totalViews, trend: viewsTrend } = stats.views;
+	const { total: totalViews, trend: viewsTrend } = stats?.views || {};
 	const trendIcon = getTrendIcon( viewsTrend );
 	return (
 		<span
