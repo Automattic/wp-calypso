@@ -12,31 +12,49 @@ export default function SiteDetails( { site }: any ) {
 	const [ tags, setTags ] = useState(
 		initialTags ? initialTags.map( ( tag: SiteTagType ) => tag.label ) : []
 	);
+	const [ isLoading, setIsLoading ] = useState( false );
 
 	const { mutate } = useUpdateSiteTagsMutation();
 
 	const onAddTags = ( siteTags: string[] ) => {
-		const newTags = tags.concat( siteTags );
-		setTags( newTags );
+		setIsLoading( true );
 		mutate(
 			{
 				siteId,
-				tags: newTags,
+				tags: tags.concat( siteTags ),
 			},
 			{
 				/* eslint-disable-next-line */
-				onSuccess: console.log,
+				onSuccess: ( data ) => {
+					setTags( data.map( ( tag: SiteTagType ) => tag.label ) );
+					setIsLoading( false );
+				},
 				/* eslint-disable-next-line */
-				onError: console.error,
+				onError: () => {
+					setIsLoading( false );
+				},
 			}
 		);
 	};
 
 	const onRemoveTag = ( toRemove: string ) => {
-		const newTags = tags.filter( ( tag: string ) => tag !== toRemove );
-		setTags( newTags );
-		/* eslint-disable-next-line */
-		console.log( newTags );
+		setIsLoading( true );
+		mutate(
+			{
+				siteId,
+				tags: tags.filter( ( tag: string ) => tag !== toRemove ),
+			},
+			{
+				onSuccess: ( data ) => {
+					setTags( data.map( ( tag: SiteTagType ) => tag.label ) );
+					setIsLoading( false );
+				},
+				/* eslint-disable-next-line */
+				onError: () => {
+					setIsLoading( false );
+				},
+			}
+		);
 	};
 
 	return (
@@ -47,6 +65,7 @@ export default function SiteDetails( { site }: any ) {
 					tags,
 					onAddTags,
 					onRemoveTag,
+					isLoading,
 				} }
 			/>
 		</div>
