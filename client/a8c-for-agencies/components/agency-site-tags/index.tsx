@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 import AgencySiteTag from 'calypso/a8c-for-agencies/components/agency-site-tag';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import './style.scss';
@@ -17,8 +17,16 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 	const [ tagsInput, setTagsInput ] = useState( '' );
 
 	const handleAddTags = () => {
-		setTagsInput( '' );
 		onAddTags( tagsInput.split( ',' ).map( ( s ) => s.trim() ) );
+		setTagsInput( '' );
+	};
+
+	const handleEnterKeyPress = ( event: KeyboardEvent ) => {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+			onAddTags( tagsInput.split( ',' ).map( ( s ) => s.trim() ) );
+			setTagsInput( '' );
+		}
 	};
 
 	return (
@@ -30,6 +38,7 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
 						setTagsInput( e.target.value )
 					}
+					onKeyDown={ handleEnterKeyPress }
 					value={ tagsInput }
 					placeholder={ translate( 'Add tags here (separate by commas)' ) }
 				/>
