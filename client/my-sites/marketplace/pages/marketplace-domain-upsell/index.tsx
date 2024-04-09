@@ -1,10 +1,11 @@
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@automattic/components';
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isDesktop } from '@automattic/viewport';
 import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
-import { HorizontalRule, ExternalLink } from '@wordpress/components';
+import { HorizontalRule } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';

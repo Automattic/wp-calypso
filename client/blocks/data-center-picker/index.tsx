@@ -1,6 +1,7 @@
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
 import amsImg from 'calypso/assets/images/data-center-picker/ams-240x180.png';

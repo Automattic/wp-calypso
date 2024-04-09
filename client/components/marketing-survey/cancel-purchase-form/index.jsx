@@ -4,7 +4,8 @@ import {
 	isWpComMonthlyPlan,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
-import { Button as GutenbergButton, CheckboxControl, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@automattic/components';
+import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';

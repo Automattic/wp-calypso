@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
 import { withLocalizeUrl } from '@automattic/i18n-utils';
-import { ToggleControl, ExternalLink } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';

@@ -1,4 +1,4 @@
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo, useState } from 'react';
 import Notice from 'calypso/components/notice';
