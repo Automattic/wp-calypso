@@ -1028,9 +1028,9 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar__unified {
-	.masterbar__item-wordpress {
-		padding-left: 7px;
-		padding-right: 1px;
+	.masterbar__item-wordpress,
+	.masterbar__item-current-site {
+		padding: 0 7px;
 	}
 
 	.masterbar__item-all-sites {
