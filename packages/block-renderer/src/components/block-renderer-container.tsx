@@ -64,7 +64,15 @@ const ScaledBlockRendererContainer = ( {
 			// Ignore svgs since the current version of EditorStyles doesn't support it
 			.filter( ( style: RenderedStyle ) => style.__unstableType !== 'svgs' );
 
-		return mergedStyles;
+		return [
+			...mergedStyles,
+			{
+				// Override the white background set by Gutenberg.
+				// See: https://github.com/WordPress/gutenberg/pull/59377/files
+				css: 'body{background:unset!important;}',
+				isGlobalStyles: true,
+			},
+		];
 	}, [ styles, customStyles ] );
 
 	const scripts = useMemo( () => {
