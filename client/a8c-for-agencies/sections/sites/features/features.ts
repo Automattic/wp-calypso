@@ -1,4 +1,5 @@
 // Jetpack features IDs
+export const JETPACK_OVERVIEW_ID = 'jetpack-overview';
 export const JETPACK_BOOST_ID = 'jetpack-boost';
 export const JETPACK_BACKUP_ID = 'jetpack-backup';
 export const JETPACK_SCAN_ID = 'jetpack-scan';
