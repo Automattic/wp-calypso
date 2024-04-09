@@ -250,7 +250,7 @@ const withAIAssemblerFlow: Flow = {
 
 					if ( providedDependencies?.freeDomain && providedDependencies?.domainName ) {
 						// We have to use the site id since the domain is changed.
-						return navigate( `launchpad?siteId=${ site?.ID }` );
+						return navigate( `launchpad?siteId=${ selectedSiteId }` );
 					}
 
 					return navigate( 'launchpad' );
@@ -282,7 +282,10 @@ const withAIAssemblerFlow: Flow = {
 			}
 		};
 
-		const goNext = () => {
+		const goNext = ( providedDependencies: ProvidedDependencies = {} ) => {
+			const selectedSiteSlug = providedDependencies?.siteSlug as string;
+			const selectedSiteId = providedDependencies?.siteId as string;
+
 			switch ( _currentStep ) {
 				case 'site-prompt': {
 					return navigate( 'pattern-assembler' );
@@ -291,8 +294,8 @@ const withAIAssemblerFlow: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: AI_ASSEMBLER_FLOW,
-						siteId,
-						siteSlug,
+						siteId: selectedSiteId,
+						siteSlug: selectedSiteSlug,
 					} );
 					return;
 			}
