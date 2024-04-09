@@ -76,8 +76,8 @@ function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialS
 }
 
 DeleteSiteWarnings.propTypes = {
-	isVisible: PropTypes.bool.isRequired,
 	p2HubP2Count: PropTypes.number,
+	isAtomicRemovalInProgress: PropTypes.bool,
 	isTrialSite: PropTypes.bool,
 };
 

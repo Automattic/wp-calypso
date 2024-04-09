@@ -135,7 +135,7 @@ class DeleteSite extends Component {
 						onChange={ this.onConfirmDomainChange }
 						value={ this.state.confirmDomain }
 						aria-required="true"
-						id="confirmDomainChangeInput"
+						data-testid="confirmDomainChangeInput"
 					/>
 					<Button
 						primary
@@ -147,6 +147,7 @@ class DeleteSite extends Component {
 							! this.props.hasLoadedSitePurchasesFromServer ||
 							isAtomicRemovalInProgress
 						}
+						data-testid="deleteSite"
 						onClick={ this.handleDeleteSiteClick }
 					>
 						{ translate( 'Delete site' ) }
