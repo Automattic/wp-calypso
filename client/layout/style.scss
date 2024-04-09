@@ -7,6 +7,13 @@ body.is-focus-sites {
 	overflow: hidden;
 }
 
+html.command-palette-modal-open {
+	overflow: visible;
+}
+body.command-palette-modal-open {
+	overflow: hidden;
+}
+
 /**
  * /*
  * 	Layout Elements

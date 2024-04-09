@@ -79,6 +79,12 @@
 		color: var(--studio-gray-100);
 	}
 
+	button.schedule-last-run {
+		font-size: 0.875rem;
+		text-decoration: none;
+		color: var(--studio-gray-60);
+	}
+
 	table {
 		th,
 		td {
@@ -95,6 +101,10 @@
 		td {
 			padding: 0.5rem 0;
 			vertical-align: middle;
+
+			&.last-update {
+				min-width: 200px;
+			}
 		}
 	}
 
@@ -195,12 +205,13 @@
 		}
 
 		.timeline-event__icon {
-			width: 24px !important;
-			height: 24px !important;
+			width: 40px !important;
+			height: 20px !important;
+			border-radius: 4px !important;
 
 			svg {
-				width: 16px;
-				height: 16px;
+				width: 14px;
+				height: 14px;
 			}
 
 			&.success {

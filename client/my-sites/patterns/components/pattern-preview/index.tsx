@@ -1,11 +1,13 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { usePatternsRendererContext } from '@automattic/block-renderer/src/components/patterns-renderer-context';
 import { Button } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ResizableBox, Tooltip } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { Icon, lock } from '@wordpress/icons';
+import { Icon, check, copy, lock } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +16,7 @@ import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/intern
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternsGetAccessModal } from 'calypso/my-sites/patterns/components/get-access-modal';
 import { patternFiltersClassName } from 'calypso/my-sites/patterns/components/pattern-library';
+import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -102,6 +105,7 @@ function PatternPreviewFragment( {
 	isGridView,
 	viewportWidth,
 }: PatternPreviewProps ) {
+	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const ref = useRef< HTMLDivElement >( null );
 	const hasScrolledToAnchorRef = useRef< boolean >( false );
 
@@ -119,6 +123,8 @@ function PatternPreviewFragment( {
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
 	const translate = useTranslate();
+	const isEnglish = useIsEnglishLocale();
+	const { hasTranslation } = useI18n();
 
 	const titleTooltipText = isPermalinkCopied
 		? translate( 'Copied link to pattern', {
@@ -141,11 +147,19 @@ function PatternPreviewFragment( {
 		  } );
 
 	if ( isPatternCopied ) {
+		const patternCopiedText =
+			isEnglish || hasTranslation( 'Pattern copied' )
+				? translate( 'Pattern copied', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } )
+				: translate( 'Pattern copied!', {
+						comment: 'Button label for when a pattern was just copied',
+						textOnly: true,
+				  } );
+
 		copyButtonText = isPreviewLarge
-			? translate( 'Pattern copied!', {
-					comment: 'Button label for when a pattern was just copied',
-					textOnly: true,
-			  } )
+			? patternCopiedText
 			: translate( 'Copied', {
 					comment: 'Button label for when a pattern was just copied',
 					textOnly: true,
@@ -257,6 +271,9 @@ function PatternPreviewFragment( {
 						borderless
 						className="pattern-preview__title"
 						onCopy={ () => {
+							recordPatternsEvent( 'calypso_pattern_library_permalink_copy', {
+								name: pattern.name,
+							} );
 							setIsPermalinkCopied( true );
 						} }
 						text={ getPatternPermalink( pattern ) }
@@ -276,6 +293,7 @@ function PatternPreviewFragment( {
 						text={ pattern?.html ?? '' }
 						primary
 					>
+						<Icon height={ 18 } icon={ isPatternCopied ? check : copy } width={ 18 } />{ ' ' }
 						{ copyButtonText }
 					</ClipboardButton>
 				) }

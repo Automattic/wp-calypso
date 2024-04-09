@@ -1,11 +1,17 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import {
+	useLocale,
+	addLocaleToPathLocaleInFront,
+	useHasEnTranslation,
+} from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	Tooltip,
 } from '@wordpress/components';
+import { ToggleGroupControlOptionProps } from '@wordpress/components/build-types/toggle-group-control/types';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -44,6 +50,27 @@ import './style.scss';
 const PatternLibraryBody = styled.div``;
 
 export const patternFiltersClassName = 'pattern-library__filters';
+
+const ToggleGroupControlOptionWithNarrowTooltip = (
+	props: ToggleGroupControlOptionProps & {
+		className: string;
+		showToolTip?: boolean;
+		toolTipText: string;
+	}
+) => {
+	const { showToolTip, toolTipText, ...toggleControlProps } = props;
+	const toolTipProps = { style: { maxWidth: '200px', top: '3px' }, text: toolTipText };
+
+	if ( ! showToolTip ) {
+		return <ToggleGroupControlOption { ...toggleControlProps } />;
+	}
+
+	return (
+		<Tooltip { ...toolTipProps }>
+			<ToggleGroupControlOption { ...toggleControlProps } />
+		</Tooltip>
+	);
+};
 
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
@@ -90,7 +117,8 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
-	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
+	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
+		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
@@ -102,6 +130,12 @@ export const PatternLibrary = ( {
 			return filterPatternsByType( patterns, patternTypeFilter );
 		},
 	} );
+
+	const hasEnTranslation = useHasEnTranslation();
+	let patternPermalinkName;
+	if ( patternPermalinkId && ! isFetchingPatterns ) {
+		patternPermalinkName = patterns.find( ( pattern ) => pattern.ID === patternPermalinkId )?.name;
+	}
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
@@ -204,6 +238,7 @@ export const PatternLibrary = ( {
 		<>
 			<PatternsPageViewTracker
 				category={ category }
+				patternPermalinkName={ patternPermalinkName }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
 				searchTerm={ searchTerm }
@@ -305,20 +340,30 @@ export const PatternLibrary = ( {
 									} }
 									value={ patternTypeFilter }
 								>
-									<ToggleGroupControlOption
+									<ToggleGroupControlOptionWithNarrowTooltip
 										className="pattern-library__toggle-option"
 										label={ translate( 'Patterns', {
 											comment: 'Refers to block patterns',
 											textOnly: true,
 										} ) }
+										showToolTip={ hasEnTranslation(
+											'A collection of blocks that make up one section of a page'
+										) }
+										toolTipText={ translate(
+											'A collection of blocks that make up one section of a page'
+										) }
 										value={ PatternTypeFilter.REGULAR }
 									/>
-									<ToggleGroupControlOption
+									<ToggleGroupControlOptionWithNarrowTooltip
 										className="pattern-library__toggle-option"
 										label={ translate( 'Page Layouts', {
 											comment: 'Refers to block patterns that contain entire page layouts',
 											textOnly: true,
 										} ) }
+										showToolTip={ hasEnTranslation(
+											'A collection of patterns that form an entire page'
+										) }
+										toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
 										value={ PatternTypeFilter.PAGES }
 									/>
 								</ToggleGroupControl>
@@ -354,6 +399,7 @@ export const PatternLibrary = ( {
 							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
 							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
+							searchTerm={ searchTerm }
 						/>
 
 						{ searchTerm && ! patterns.length && category && (

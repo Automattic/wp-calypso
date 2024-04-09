@@ -19,6 +19,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 			kind,
 		} );
 	}, [] );
+
 	if ( kind === 'interval' ) {
 		return (
 			<StickyContainer

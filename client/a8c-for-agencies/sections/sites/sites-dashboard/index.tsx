@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
@@ -61,7 +62,8 @@ export default function SitesDashboard() {
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
 	const isNarrowView = useBreakpoint( '<660px' );
-	const { data: products } = useProductsQuery();
+	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
+	const { data: products } = useProductsQuery( true );
 
 	const {
 		data: verifiedContacts,
@@ -115,7 +117,9 @@ export default function SitesDashboard() {
 				type: 'list',
 			} ) );
 		}
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState ] );
+		// Omitting sitesViewState to prevent infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState, setHideListing ] );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -134,7 +138,7 @@ export default function SitesDashboard() {
 			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
 		}
 
-		updateSitesDashboardUrl( {
+		const updatedUrl = updateSitesDashboardUrl( {
 			category: category,
 			setCategory: setCategory,
 			filters: sitesViewState.filters,
@@ -145,6 +149,9 @@ export default function SitesDashboard() {
 			sort: sitesViewState.sort,
 			showOnlyFavorites,
 		} );
+		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+			page.replace( updatedUrl );
+		}
 	}, [
 		sitesViewState.selectedSite,
 		selectedSiteFeature,
@@ -202,28 +209,29 @@ export default function SitesDashboard() {
 
 	return (
 		<Layout
-			title="Sites"
 			className={ classNames(
 				'sites-dashboard',
 				'sites-dashboard__layout',
 				! sitesViewState.selectedSite && 'preview-hidden'
 			) }
 			wide
-			withBorder={ ! sitesViewState.selectedSite }
 			sidebarNavigation={ <MobileSidebarNavigation /> }
+			title={ sitesViewState.selectedSite ? null : translate( 'Sites' ) }
 		>
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
-					<LayoutTop withNavigation>
+					<LayoutTop withNavigation={ navItems.length > 1 }>
 						<LayoutHeader>
 							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
 							<Actions>
 								<SitesHeaderActions />
 							</Actions>
 						</LayoutHeader>
-						<LayoutNavigation { ...selectedItemProps }>
-							<NavigationTabs { ...selectedItemProps } items={ navItems } />
-						</LayoutNavigation>
+						{ navItems.length > 1 && (
+							<LayoutNavigation { ...selectedItemProps }>
+								<NavigationTabs { ...selectedItemProps } items={ navItems } />
+							</LayoutNavigation>
+						) }
 					</LayoutTop>
 
 					<SiteNotifications />
@@ -246,7 +254,9 @@ export default function SitesDashboard() {
 						} }
 					>
 						<SitesDataViews
-							className="sites-overview__content"
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
 							data={ data }
 							isLoading={ isLoading }
 							isLargeScreen={ isLargeScreen || false }

@@ -31,6 +31,7 @@ export function PatternsGetStarted() {
 				<Button
 					className="patterns-get-started__start-button"
 					href={ getOnboardingUrl( locale, isLoggedIn ) }
+					rel="external"
 				>
 					{ translate( 'Build a site' ) }
 				</Button>
@@ -40,6 +41,8 @@ export function PatternsGetStarted() {
 				<a
 					className="patterns-get-started__item"
 					href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/block-pattern/' ) }
+					rel="noreferrer"
+					target="_blank"
 				>
 					<img
 						className="patterns-get-started__item-image"
@@ -61,6 +64,8 @@ export function PatternsGetStarted() {
 				<a
 					className="patterns-get-started__item"
 					href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/page-layouts/' ) }
+					rel="noreferrer"
+					target="_blank"
 				>
 					<img
 						className="patterns-get-started__item-image"
@@ -81,7 +86,9 @@ export function PatternsGetStarted() {
 
 				<a
 					className="patterns-get-started__item"
-					href={ localizeUrl( 'https://wordpress.com/learn/webinars/compelling-homepages/' ) }
+					href="https://wordpress.com/learn/webinars/compelling-homepages/"
+					rel="noreferrer"
+					target="_blank"
 				>
 					<img
 						className="patterns-get-started__item-image"

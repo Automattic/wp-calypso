@@ -70,8 +70,9 @@ export const Dropdown = styled.div< { shouldUseCheckoutV2: boolean } >`
 export const OptionList = styled.ul`
 	position: absolute;
 	width: 100%;
-	z-index: 1;
+	z-index: 4;
 	margin: 0;
+	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
 	${ Option } {
 		margin-top: -1px;

@@ -37,7 +37,7 @@ export default function Landing() {
 				return;
 			}
 
-			page.redirect( A4A_OVERVIEW_LINK );
+			return page.redirect( A4A_OVERVIEW_LINK );
 		}
 
 		page.redirect( A4A_SIGNUP_LINK );

@@ -2061,10 +2061,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
-		getTitle: () =>
-			i18n.hasTranslation( 'DDoS protection and mitigation' )
-				? i18n.translate( 'DDoS protection and mitigation' )
-				: i18n.translate( 'DDOS protection and mitigation' ),
+		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
 	},
@@ -2292,7 +2289,9 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SPAM_JP,
 		getTitle: () => i18n.translate( 'Spam protection with Akismet' ),
 		getDescription: () =>
-			i18n.translate( 'Kill spam comments with fire, without lifting a finger.' ),
+			i18n.translate(
+				'Never worry about spam with Akismet, which is included at no additional cost.'
+			),
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,

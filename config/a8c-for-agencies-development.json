@@ -9,6 +9,20 @@
 	"port": 3000,
 	"logout_url": "https://automattic.com/for/agencies",
 	"site_name": "Automattic For Agencies",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:image",
+			"content": "https://agencies.automattic.com/calypso/images/a8c-for-agencies/a8c-logo.jpeg"
+		}
+	],
 	"oauth_client_id": 95928,
 	"features": {
 		"a8c-for-agencies": true,
@@ -16,7 +30,8 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"oauth": true,
-		"a4a/mock-api-data": true
+		"a4a/mock-api-data": true,
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {

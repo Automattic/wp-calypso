@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,6 +15,7 @@ import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
 import { useSelector } from 'calypso/state';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
@@ -44,6 +46,8 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
+	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
@@ -256,7 +260,15 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
-									learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+									learnMoreLink: isJetpackNotAtomic ? (
+										<a
+											href={ localizeUrl( 'https://jetpack.com/support/monetize-your-site/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									) : (
+										<InlineSupportLink supportContext="earn" showIcon={ false } />
+									),
 								},
 							}
 						) }

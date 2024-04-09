@@ -148,7 +148,8 @@ const useAddOns = ( {
 	enableStorageAddOns,
 }: Props = {} ): ( AddOnMeta | null )[] => {
 	const activeAddOns = useActiveAddOnsDefs( selectedSiteId );
-	const productsList = ProductsList.useProducts();
+	const productSlugs = activeAddOns.map( ( item ) => item.productSlug );
+	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
 	const siteFeatures = Site.useSiteFeatures( { siteIdOrSlug: selectedSiteId } );
 	const sitePurchases = Purchases.useSitePurchases( { siteId: selectedSiteId } );
