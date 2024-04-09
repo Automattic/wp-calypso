@@ -11,7 +11,7 @@ export const UpgradePlanHostingTestimonials = [
 		customerTestimonial: translate(
 			`"We aimed to provide clients with a reliable hosting service we could endorse without hesitation, ultimately resulting in satisfied clients. We found that service with WordPress.com."`
 		),
-		customerInfo: translate( 'WordPress.com News' ),
+		customerInfo: 'WordPress.com News',
 	},
 	{
 		customerImage: customerImageChrisCoyier,
