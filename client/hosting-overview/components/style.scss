@@ -25,4 +25,8 @@
 .action-text {
 	display: flex;
 	align-items: center;
+
+	.action-icon__dashicon {
+		margin-right: 2px;
+	}
 }

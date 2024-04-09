@@ -5,6 +5,7 @@ import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
+import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -31,12 +32,27 @@ const QuickActionsCard: FC = () => {
 	const site = useSelector( getSelectedSite );
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, site?.ID ) );
 	const translate = useTranslate();
-	console.debug( 'editorUrl', editorUrl );
+
 	return (
 		<Card className="top-card">
 			<CardHeading isBold>{ translate( 'Quick actions' ) }</CardHeading>
 			<ul className="actions-list">
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
+				<Action
+					icon={ <SidebarCustomIcon icon="dashicons-admin-appearance action-icon__dashicon" /> }
+					href={ editorUrl }
+					text={ translate( 'Change theme' ) }
+				/>
+				<Action
+					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins action-icon__dashicon" /> }
+					href={ editorUrl }
+					text={ translate( 'Install plugins' ) }
+				/>
+				<Action
+					icon={ <SidebarCustomIcon icon="dashicons-chart-bar action-icon__dashicon" /> }
+					href={ editorUrl }
+					text={ translate( 'See JetPack Stats' ) }
+				/>
 			</ul>
 		</Card>
 	);
