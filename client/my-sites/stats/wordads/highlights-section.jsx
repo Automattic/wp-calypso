@@ -24,6 +24,7 @@ function useHighlights( earnings ) {
 			{
 				heading: translate( 'Earnings', { comment: 'Total WordAds earnings to date' } ),
 				icon: <Icon icon={ payment } />,
+				svg: payment,
 				value: getAmountAsFormattedString( total ),
 			},
 			{
@@ -31,6 +32,7 @@ function useHighlights( earnings ) {
 					comment: 'Total WordAds earnings that have been paid out',
 				} ),
 				icon: <Icon icon={ receipt } />,
+				svg: receipt,
 				value: getAmountAsFormattedString( paid ),
 			},
 			{
@@ -38,6 +40,7 @@ function useHighlights( earnings ) {
 					comment: 'Total WordAds earnings currently unpaid',
 				} ),
 				icon: <Icon icon={ tip } />,
+				svg: tip,
 				value: getAmountAsFormattedString( owed ),
 			},
 		];
@@ -142,27 +145,16 @@ function HighlightsListing( { highlights } ) {
 function HighlightsListingMobile( { highlights } ) {
 	// Convert the highlights data for the MobileHighlightCardListing component.
 	// Use preformattedValue property as an override to the count.
-	// Send the raw SVG icon (not the provided Icon comp) and zero out the count.
-	const mobileHighlights = [
-		{
-			...highlights[ 0 ],
-			preformattedValue: highlights[ 0 ].value,
-			icon: payment,
+	// Send the SVG data (and not the Icon comp) and zero out the count.
+	const mobileHighlights = highlights.map( ( highlight ) => {
+		return {
 			count: 0,
-		},
-		{
-			...highlights[ 1 ],
-			preformattedValue: highlights[ 1 ].value,
-			icon: receipt,
-			count: 0,
-		},
-		{
-			...highlights[ 2 ],
-			preformattedValue: highlights[ 2 ].value,
-			icon: tip,
-			count: 0,
-		},
-	];
+			heading: highlight.heading,
+			icon: highlight.svg,
+			preformattedValue: highlight.value,
+		};
+	} );
+
 	return <MobileHighlightCardListing highlights={ mobileHighlights } />;
 }
 
