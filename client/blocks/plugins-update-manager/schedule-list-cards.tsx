@@ -74,7 +74,9 @@ export const ScheduleListCards = ( props: Props ) => {
 									{ prepareDateTime( schedule.last_run_timestamp ) }
 								</Button>
 							) }
-							{ schedule.last_run_status && <Badge type={ schedule.last_run_status } /> }
+							{ schedule.last_run_status && (
+								<Badge type={ schedule.last_run_status } />
+							) }
 						</span>
 					</div>
 

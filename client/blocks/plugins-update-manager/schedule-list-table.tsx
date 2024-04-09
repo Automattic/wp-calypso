@@ -55,7 +55,9 @@ export const ScheduleListTable = ( props: Props ) => {
 							</Button>
 						</td>
 						<td>
-							{ schedule.last_run_status && <Badge type={ schedule.last_run_status } /> }
+							{ schedule.last_run_status && (
+								<Badge type={ schedule.last_run_status } />
+							) }
 							{ schedule.last_run_timestamp && (
 								<Button
 									className="schedule-last-run"
