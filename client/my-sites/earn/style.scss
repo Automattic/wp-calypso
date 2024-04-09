@@ -25,15 +25,14 @@
 		font-family: "SF Pro Display", $sans;
 	}
 
+	.earn__launchpad-title {
+		font-size: $font-size-header-small;
+	}
+
 	.promo-section {
-		.promo-card {
-			.gridicon {
-				background: none;
-			}
-		}
 		.action-panel__body {
 			p {
-				font-size: 1rem;
+				font-size: $font-body-small;
 			}
 		}
 	}
@@ -47,8 +46,17 @@
 	gap: 30px;
 	background: #fff;
 
+	@media (max-width: $break-xlarge) {
+		flex-direction: column;
+		gap: 10px;
+	}
+
 	.earn__launchpad-header {
 		padding: 20px 0;
+
+		@media (max-width: $break-xlarge) {
+			padding-bottom: 0;
+		}
 		.earn__launchpad-progress-bar-container {
 			margin: 0 0 10px 6px;
 		}
