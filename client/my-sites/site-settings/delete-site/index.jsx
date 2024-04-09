@@ -45,6 +45,7 @@ class DeleteSite extends Component {
 	state = {
 		confirmDomain: '',
 		showWarningDialog: false,
+		isDeletingSite: false,
 	};
 
 	renderNotice() {
@@ -138,6 +139,7 @@ class DeleteSite extends Component {
 					<Button
 						primary
 						scary
+						busy={ this.state.isDeletingSite }
 						disabled={
 							deleteDisabled ||
 							! this.props.siteId ||
@@ -241,7 +243,7 @@ class DeleteSite extends Component {
 		);
 	}
 
-	handleDeleteSiteClick = ( event ) => {
+	handleDeleteSiteClick = async ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -252,7 +254,13 @@ class DeleteSite extends Component {
 			this.setState( { showWarningDialog: true } );
 		} else {
 			const { siteId } = this.props;
-			this.props.deleteSite( siteId );
+
+			try {
+				this.setState( { isDeletingSite: true } );
+				await this.props.deleteSite( siteId );
+			} finally {
+				this.setState( { isDeletingSite: false } );
+			}
 		}
 	};
 
