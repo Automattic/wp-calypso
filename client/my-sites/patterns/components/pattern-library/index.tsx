@@ -31,7 +31,7 @@ import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
+import { getCategoryUrlPath, getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
@@ -211,6 +211,28 @@ export const PatternLibrary = ( {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
 	}, [] );
+
+	// `calypso-router` has trouble with the onboarding URL we use. This code prevents click
+	// events on onboarding links from propagating to the `calypso-router` event listener,
+	// which fixes the problem.
+	useEffect( () => {
+		const onboardingUrl = getOnboardingUrl( locale, isLoggedIn );
+
+		function stopPropagationOnClick( event: MouseEvent ) {
+			if (
+				event.target instanceof HTMLAnchorElement &&
+				event.target.getAttribute( 'href' ) === onboardingUrl
+			) {
+				event.stopPropagation();
+			}
+		}
+
+		document.addEventListener( 'click', stopPropagationOnClick, { capture: true } );
+
+		return () => {
+			document.removeEventListener( 'click', stopPropagationOnClick );
+		};
+	}, [ locale, isLoggedIn ] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
 	const shouldDisplayPatternTypeToggle =

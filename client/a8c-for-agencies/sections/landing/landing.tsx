@@ -11,9 +11,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
-	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useOnboardingTours from 'calypso/a8c-for-agencies/hooks/use-onboarding-tours';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -25,8 +23,6 @@ export default function Landing() {
 
 	const hasFetched = useSelector( hasFetchedAgency );
 	const agency = useSelector( getActiveAgency );
-
-	const tasks = useOnboardingTours();
 
 	useEffect( () => {
 		if ( ! hasFetched ) {
@@ -41,16 +37,11 @@ export default function Landing() {
 				return;
 			}
 
-			// If we have completed all onboarding list. We redirect user to the Sites page as the default page.
-			if ( tasks.every( ( task ) => task.completed ) ) {
-				return page.redirect( A4A_SITES_LINK );
-			}
-
 			return page.redirect( A4A_OVERVIEW_LINK );
 		}
 
 		page.redirect( A4A_SIGNUP_LINK );
-	}, [ agency, hasFetched, tasks ] );
+	}, [ agency, hasFetched ] );
 
 	return (
 		<Layout className="a4a-landing" title={ title } wide>
