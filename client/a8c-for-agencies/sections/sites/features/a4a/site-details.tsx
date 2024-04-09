@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AgencySiteTags from 'calypso/a8c-for-agencies/components/agency-site-tags';
@@ -17,8 +18,8 @@ export default function SiteDetails( { site }: any ) {
 		initialTags ? initialTags.map( ( tag: SiteTagType ) => tag.label ) : []
 	);
 	const [ isLoading, setIsLoading ] = useState( false );
-
 	const { mutate } = useUpdateSiteTagsMutation();
+	const queryClient = useQueryClient();
 
 	const onAddTags = ( siteTags: string[] ) => {
 		setIsLoading( true );
@@ -31,6 +32,9 @@ export default function SiteDetails( { site }: any ) {
 				onSuccess: ( data ) => {
 					setTags( data.map( ( tag: SiteTagType ) => tag.label ) );
 					setIsLoading( false );
+					queryClient.invalidateQueries( {
+						queryKey: [ 'jetpack-agency-dashboard-sites' ],
+					} );
 				},
 				onError: ( error ) => {
 					setIsLoading( false );
