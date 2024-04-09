@@ -165,6 +165,8 @@ const withAIAssemblerFlow: Flow = {
 			...results: string[]
 		) => {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
+			const selectedSiteSlug = providedDependencies?.siteSlug as string;
+			const selectedSiteId = providedDependencies?.siteId as string;
 
 			switch ( _currentStep ) {
 				case 'check-sites': {
@@ -222,12 +224,7 @@ const withAIAssemblerFlow: Flow = {
 						return;
 					}
 
-					const params = new URLSearchParams( {
-						canvas: 'edit',
-						assembler: '1',
-					} );
-
-					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+					return exitFlow( selectedSiteId, selectedSiteSlug );
 				}
 
 				case 'pattern-assembler': {
@@ -239,7 +236,7 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'plans': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( selectedSiteId, {
 						checklist_statuses: { plan_completed: true },
 					} );
 
@@ -247,7 +244,7 @@ const withAIAssemblerFlow: Flow = {
 				}
 
 				case 'domains': {
-					await updateLaunchpadSettings( siteId, {
+					await updateLaunchpadSettings( selectedSiteId, {
 						checklist_statuses: { domain_upsell_deferred: true },
 					} );
 
