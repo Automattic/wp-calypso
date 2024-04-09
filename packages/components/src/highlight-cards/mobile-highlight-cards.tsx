@@ -20,15 +20,11 @@ function MobileHighlightCard( {
 }: MobileHighlightCardProps ) {
 	// We'll accept a count or a preformatted string as our value.
 	// If both are provided, we'll use the preformatted string for display.
-	const hasValidDisplayValue =
-		( count !== null && count !== undefined ) ||
-		( preformattedValue !== undefined && preformattedValue.length > 0 );
-	if ( ! hasValidDisplayValue ) {
+	if ( ! preformattedValue && count === null ) {
 		return null;
 	}
 	// We require a heading to go with our value.
-	const hasValidHeading = heading.length > 0;
-	if ( ! hasValidHeading ) {
+	if ( ! heading ) {
 		return null;
 	}
 	// The icon and trendline are optional.
