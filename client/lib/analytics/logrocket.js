@@ -71,5 +71,4 @@ export function recordLogRocketEvent( name, props ) {
 
 	logRocketDebug( 'recordLogRocketEvent:', { name, props } );
 	window.LogRocket.track( name, props );
-	maybeIdentifyUser();
 }
