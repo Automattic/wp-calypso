@@ -15,6 +15,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
@@ -245,22 +247,30 @@ class DeleteSite extends Component {
 
 	handleDeleteSiteClick = async ( event ) => {
 		event.preventDefault();
+		recordTracksEvent( 'calypso_settings_delete_site_options', {
+			option: 'delete-site',
+		} );
+
+		const { isAtomic, hasCancelablePurchases, p2HubP2Count, siteId } = this.props;
+		// console.log( 'isAtomic: ', isAtomic );
+		// console.log( 'hasCancelablePurchases: ', hasCancelablePurchases );
+		// console.log( 'p2HubP2Count: ', p2HubP2Count );
+
+		if ( isAtomic || hasCancelablePurchases || p2HubP2Count ) {
+			this.setState( { showWarningDialog: true } );
+			return true;
+		}
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return;
 		}
 
-		if ( this.props.hasCancelablePurchases ) {
-			this.setState( { showWarningDialog: true } );
-		} else {
-			const { siteId } = this.props;
-
-			try {
-				this.setState( { isDeletingSite: true } );
-				await this.props.deleteSite( siteId );
-			} finally {
-				this.setState( { isDeletingSite: false } );
-			}
+		try {
+			this.setState( { isDeletingSite: true } );
+			alert( 'will delete for real' );
+			// await this.props.deleteSite( siteId );
+		} finally {
+			this.setState( { isDeletingSite: false } );
 		}
 	};
 
@@ -271,7 +281,12 @@ class DeleteSite extends Component {
 	_goBack = () => {
 		const { siteSlug } = this.props;
 		const source = getSettingsSource();
-		page( `${ source }/${ siteSlug }` );
+
+		if ( this.state.showWarningDialog ) {
+			this.closeWarningDialog();
+		} else {
+			page( `${ source }/${ siteSlug }` );
+		}
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -301,7 +316,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isAtomic, isFreePlan, siteId } = this.props;
+		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 
 		const strings = {
@@ -333,25 +348,23 @@ class DeleteSite extends Component {
 				<HeaderCake onClick={ this._goBack } className="delete-site__header-cake">
 					<h1>{ strings.deleteSite }</h1>
 				</HeaderCake>
-				<ActionPanel>
-					<ActionPanelBody>
-						{ this.renderNotice() }
-						{ this.renderBody() }
-					</ActionPanelBody>
-					{ isAtomicRemovalInProgress && (
-						<p className="delete-site__cannot-delete-message">
-							{ translate(
-								"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
-							) }
-						</p>
-					) }
-					{ this.renderDeleteSiteCTA() }
+				{ this.state.showWarningDialog || isAtomicRemovalInProgress || hasCancelablePurchases ? (
 					<DeleteSiteWarningDialog
+						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }
+						p2HubP2Count={ this.props.p2HubP2Count }
 						isVisible={ this.state.showWarningDialog }
 						onClose={ this.closeWarningDialog }
 						isTrialSite={ this.props.isTrialSite }
 					/>
-				</ActionPanel>
+				) : (
+					<ActionPanel>
+						<ActionPanelBody>
+							{ this.renderNotice() }
+							{ this.renderBody() }
+						</ActionPanelBody>
+						{ this.renderDeleteSiteCTA() }
+					</ActionPanel>
+				) }
 			</div>
 		);
 	}
@@ -380,4 +393,4 @@ export default connect(
 		deleteSite,
 		setSelectedSiteId,
 	}
-)( localize( DeleteSite ) );
+)( localize( withP2HubP2Count( DeleteSite ) ) );
