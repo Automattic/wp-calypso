@@ -31,6 +31,7 @@
 	"dependencies": {
 		"@automattic/components": "^2.0.1",
 		"@tanstack/react-query": "^5.15.5",
+		"@types/react": "^18.2.6",
 		"@wordpress/api-fetch": "5.0.0",
 		"@wordpress/data": "^9.24.0",
 		"@wordpress/i18n": "^4.54.0",
