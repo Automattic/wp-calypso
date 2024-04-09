@@ -6,7 +6,7 @@ import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/dom
 import { useSelector, useDispatch } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const ActiveDomains: FC = () => {
+const ActiveDomainsCard: FC = () => {
 	const site = useSelector( getSelectedSite );
 	const { data, isLoading, refetch } = useSiteDomainsQuery( site?.ID, {
 		queryFn: () => fetchSiteDomains( site?.ID ),
@@ -36,4 +36,4 @@ const ActiveDomains: FC = () => {
 	);
 };
 
-export default ActiveDomains;
+export default ActiveDomainsCard;

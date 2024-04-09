@@ -3,11 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
-const QuickActionsCard: FC< QuickActionsProps > = () => {
+const QuickActionsCard: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<Card>
+		<Card className="top-card">
 			<CardHeading isBold>{ translate( 'Quick actions' ) }</CardHeading>
 		</Card>
 	);
