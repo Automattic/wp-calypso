@@ -1,23 +1,30 @@
 import page from '@automattic/calypso-router';
 import { addQueryArgs } from '@wordpress/url';
-import { PaginatedSurveyContext } from 'calypso/components/survey-container/context';
+import { SurveyContext } from 'calypso/components/survey-container/context';
+import { Question } from 'calypso/components/survey-container/types';
 import type { NavigationControls } from '../../types';
 
 const PAGE_QUERY_PARAM = 'page';
 
+const updatePath = ( newPage: number ) =>
+	addQueryArgs( page.current, { [ PAGE_QUERY_PARAM ]: newPage } );
+
 type EcommerceSegmentationSurveyProviderType = {
 	children: React.ReactNode;
 	navigation: NavigationControls;
-	totalPages: number;
+	onSubmitQuestion: ( currentQuestion: Question ) => void;
+	questions: Question[];
 };
 
 const EcommerceSegmentationSurveyProvider = ( {
 	children,
 	navigation,
-	totalPages,
+	onSubmitQuestion,
+	questions,
 }: EcommerceSegmentationSurveyProviderType ) => {
 	const searchParams = new URLSearchParams( page.current.split( '?' )[ 1 ] );
 	const currentPage = parseInt( searchParams.get( PAGE_QUERY_PARAM ) || '1', 10 );
+	const currentQuestion = questions[ currentPage - 1 ];
 
 	const previousPage = () => {
 		if ( currentPage === 1 ) {
@@ -25,24 +32,34 @@ const EcommerceSegmentationSurveyProvider = ( {
 			return;
 		}
 
-		const updatedPath = addQueryArgs( page.current, { [ PAGE_QUERY_PARAM ]: currentPage - 1 } );
-		page.show( updatedPath );
+		page.show( updatePath( currentPage - 1 ) );
 	};
 
-	const nextPage = () => {
-		if ( currentPage === totalPages ) {
+	const nextPage = ( skip: boolean ) => {
+		if ( ! skip ) {
+			onSubmitQuestion( currentQuestion );
+		}
+
+		if ( currentPage === questions.length ) {
 			navigation.submit?.();
 			return;
 		}
 
-		const updatedPath = addQueryArgs( page.current, { [ PAGE_QUERY_PARAM ]: currentPage + 1 } );
-		page.show( updatedPath );
+		page.show( updatePath( currentPage + 1 ) );
 	};
 
 	return (
-		<PaginatedSurveyContext.Provider value={ { currentPage, previousPage, nextPage } }>
+		<SurveyContext.Provider
+			value={ {
+				currentQuestion,
+				currentPage,
+				previousPage,
+				nextPage: () => nextPage( false ),
+				skip: () => nextPage( true ),
+			} }
+		>
 			{ children }
-		</PaginatedSurveyContext.Provider>
+		</SurveyContext.Provider>
 	);
 };
 

@@ -117,11 +117,19 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 		isGridView = false,
 		patterns = [],
 		patternTypeFilter,
+		searchTerm,
 	} = props;
 
 	const translate = useTranslate();
-	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const [ currentPage, setCurrentPage ] = useState( () => {
+		if ( /#pattern-/.test( window.location.hash ) ) {
+			return Infinity;
+		}
+
+		return 1;
+	} );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const patternIdsByCategory = {
 		first: patterns.map( ( { ID } ) => `${ ID }` ) ?? [],
 	};
@@ -179,11 +187,12 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 									setCurrentPage( currentPage + 1 );
 
 									recordTracksEvent( 'calypso_pattern_library_load_more', {
-										category,
+										category: category || undefined,
 										is_logged_in: isLoggedIn,
 										type: getTracksPatternType( patternTypeFilter ),
 										view: isGridView ? 'grid' : 'list',
 										load_more_page: currentPage,
+										search_term: searchTerm || undefined,
 									} );
 								} }
 								transparent

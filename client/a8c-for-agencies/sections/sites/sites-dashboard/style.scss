@@ -35,6 +35,12 @@
 		padding-block-start: 24px;
 	}
 
+	.dataviews-view-table thead {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -47,8 +53,14 @@
 			display: none;
 		}
 
-		.dataviews-view-table {
-			padding-left: 48px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding-left: 64px;
+		}
+		.dataviews-view-table tr th:last-child,
+		.dataviews-view-table tr td:last-child {
+			padding-right: 64px;
+			width: 20px;
 		}
 	}
 
@@ -110,8 +122,13 @@
 			}
 		}
 
-		.dataviews-view-table {
-			padding-left: 16px;
+		.dataviews-view-table tr th:first-child,
+		.dataviews-view-table tr td:first-child {
+			padding: 8px 24px 8px 8px;
+		}
+		.dataviews-view-table tr td:last-child {
+			padding: 0;
+			padding-inline-end: 8px;
 		}
 
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
@@ -347,6 +364,14 @@
 		vertical-align: top;
 	}
 
+	tr.dataviews-view-table__row {
+		&:hover {
+			.site-set-favorite__favorite-icon {
+				visibility: visible;
+			}
+		}
+	}
+
 	.sites-overview__content-wrapper {
 		max-width: none;
 	}
@@ -498,7 +523,6 @@
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
-					overflow-x: auto;
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
@@ -517,15 +541,6 @@
 			.sites-overview__page-heading {
 				display: none;
 			}
-		}
-	}
-
-	.backup__page {
-		.daily-backup-status__restore-button,
-		.status-card__no-backup-last-backup,
-		.activity-card__toolbar--reverse,
-		.backup-date-picker {
-			display: none;
 		}
 	}
 
@@ -1038,3 +1053,11 @@
 		justify-content: center;
 	}
 }
+
+/* See wp-calypso/client/layout/style.scss for the original style - this is removed on sites dashboard to enable pagination to display properly. */
+.layout__primary .preview-hidden {
+	@include breakpoint-deprecated( ">960px" ) {
+		padding-bottom: 0 !important;
+	}
+}
+

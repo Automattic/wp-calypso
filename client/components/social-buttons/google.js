@@ -18,7 +18,6 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import './style.scss';
 
 const noop = () => {};
-const isNonceEnabled = config.isEnabled( 'login/google-login-update' );
 
 class GoogleSocialButton extends Component {
 	static propTypes = {
@@ -46,7 +45,7 @@ class GoogleSocialButton extends Component {
 		showError: false,
 		errorRef: null,
 		eventTimeStamp: null,
-		isDisabled: true,
+		isDisabled: false,
 	};
 
 	constructor( props ) {
@@ -58,50 +57,16 @@ class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( isNonceEnabled ) {
-			const initialize = async () => {
-				try {
-					const response = await wpcomRequest( {
-						path: '/generate-authorization-nonce',
-						apiNamespace: 'wpcom/v2',
-						apiVersion: '2',
-						method: 'GET',
-					} );
-					const nonce = response.nonce;
-					this.setState( { nonce } );
-
-					if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
-						this.handleAuthorizationCode( {
-							auth_code: this.props.authCodeFromRedirect,
-							redirect_uri: this.props.redirectUri,
-							state: nonce,
-						} );
-					}
-
-					await this.initializeGoogleSignIn();
-				} catch ( error ) {
-					this.props.showErrorNotice(
-						this.props.translate(
-							'Error fetching nonce or initializing Google sign-in. Please try again.'
-						)
-					);
-				}
-			};
-
-			initialize();
-		} else {
-			if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
-				this.handleAuthorizationCode( {
-					auth_code: this.props.authCodeFromRedirect,
-					redirect_uri: this.props.redirectUri,
-				} );
-			}
-
-			this.initializeGoogleSignIn();
+		if ( this.props.authCodeFromRedirect && this.props.serviceFromRedirect !== 'github' ) {
+			this.handleAuthorizationCode( {
+				auth_code: this.props.authCodeFromRedirect,
+				redirect_uri: this.props.redirectUri,
+				state: this.props.state,
+			} );
 		}
 	}
 
-	async initializeGoogleSignIn() {
+	async initializeGoogleSignIn( state ) {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
 		if ( ! googleSignIn ) {
@@ -117,7 +82,7 @@ class GoogleSocialButton extends Component {
 			scope: this.props.scope,
 			ux_mode: this.props.uxMode,
 			redirect_uri: this.props.redirectUri,
-			state: isNonceEnabled ? this.state.nonce : undefined,
+			state: state,
 			callback: ( response ) => {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
@@ -129,11 +94,7 @@ class GoogleSocialButton extends Component {
 					return;
 				}
 
-				if ( isNonceEnabled ) {
-					this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
-				} else {
-					this.handleAuthorizationCode( { auth_code: response.code } );
-				}
+				this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
 			},
 		} );
 
@@ -194,22 +155,35 @@ class GoogleSocialButton extends Component {
 		this.props.responseHandler( { access_token, id_token } );
 	}
 
-	handleClick( event ) {
+	async fetchNonceAndInitializeGoogleSignIn() {
+		try {
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				method: 'GET',
+			} );
+			const state = response.nonce;
+
+			await this.initializeGoogleSignIn( state );
+		} catch ( error ) {
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Error fetching nonce or initializing Google sign-in. Please try again.'
+				)
+			);
+		}
+	}
+
+	async handleClick( event ) {
 		event.preventDefault();
 		event.stopPropagation();
-
-		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
-			this.setState( {
-				showError: ! this.state.showError,
-				errorRef: event.currentTarget,
-				eventTimeStamp: event.timeStamp,
-			} );
-		}
 
 		if ( this.state.isDisabled ) {
 			return;
 		}
 
+		await this.fetchNonceAndInitializeGoogleSignIn();
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
@@ -305,6 +279,7 @@ export default connect(
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
 		serviceFromRedirect: getInitialQueryArguments( state ).service,
+		state: getInitialQueryArguments( state ).state,
 	} ),
 	{
 		recordTracksEvent,

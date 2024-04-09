@@ -1,3 +1,4 @@
+import { ReactNode, SetStateAction, Dispatch } from 'react';
 import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
@@ -22,7 +23,6 @@ export interface SitesDashboardContextInterface {
 	initialSelectedSiteUrl?: string;
 	path: string;
 	currentPage: number;
-	showSitesDashboardV2: boolean;
 
 	isBulkManagementActive: boolean;
 	setIsBulkManagementActive: ( value: boolean ) => void;
@@ -38,5 +38,7 @@ export interface SitesDashboardContextInterface {
 	setMostRecentConnectedSite: ( mostRecentConnectedSite: string ) => void;
 
 	isPopoverOpen: boolean;
-	setIsPopoverOpen: React.Dispatch< React.SetStateAction< boolean > >;
+	setIsPopoverOpen: Dispatch< SetStateAction< boolean > >;
+
+	featurePreview: ReactNode | null;
 }

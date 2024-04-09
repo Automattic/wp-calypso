@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
@@ -26,11 +27,13 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
+		const { siteSlug, siteId } = useSiteData();
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -113,6 +116,14 @@ const siteMigration: Flow = {
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-migration requires a logged in user',
+			};
+		}
+
+		if ( ! siteSlug && ! siteId ) {
+			window.location.assign( '/start' );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup did not provide the site slug or site id it is configured to.',
 			};
 		}
 
@@ -207,7 +218,15 @@ const siteMigration: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
+				case STEPS.VERIFY_EMAIL.slug: {
+					return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug );
+				}
+
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.verifyEmail ) {
+						return navigate( STEPS.VERIFY_EMAIL.slug );
+					}
+
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = addQueryArgs(
 							{
@@ -230,10 +249,6 @@ const siteMigration: Flow = {
 							siteId,
 							siteSlug,
 						} );
-					}
-					if ( providedDependencies?.verifyEmail ) {
-						// not yet implemented
-						return;
 					}
 				}
 

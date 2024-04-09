@@ -5,7 +5,7 @@ export const mockQuestions: Question[] = [
 		headerText: 'What is your favorite color?',
 		key: 'favorite-color',
 		subHeaderText: 'This will help us personalize your experience.',
-		type: QuestionType.SINGLE_CHOICE,
+		type: QuestionType.MULTIPLE_CHOICE,
 		options: [
 			{
 				label: 'Red',
@@ -45,7 +45,7 @@ export const mockQuestions: Question[] = [
 		headerText: 'What is your favorite animal?',
 		key: 'favorite-animal',
 		subHeaderText: 'This will help us personalize your experience.',
-		type: QuestionType.SINGLE_CHOICE,
+		type: QuestionType.MULTIPLE_CHOICE,
 		options: [
 			{
 				label: 'Dog',
