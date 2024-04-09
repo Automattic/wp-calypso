@@ -182,7 +182,8 @@ $button-padding: 8px 32px;
 	.stats-purchase-wizard__card-inner--left {
 		padding: 64px;
 		box-sizing: border-box;
-		flex: 2 1 auto;
+		flex: 2 2 auto;
+		max-width: 668px;
 
 		@media (max-width: $break-medium) {
 			padding: 32px 24px;
