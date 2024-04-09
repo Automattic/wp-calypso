@@ -9,7 +9,10 @@ $button-padding: 8px 32px;
 	--jp-white: #fff;
 	--jp-green-50: #008710;
 	--gray-gray-50: #646970;
+	--stats-purchase-width: 1124px;
+	// The following variables are layout distribution related to the `--stats-purchase-width`.
 	--stats-purchase-right-width: 456px;
+	--stats-purchase-left-max-width: calc(var(--stats-purchase-width) - var(--stats-purchase-right-width));
 
 	// Apply Jetpack dedicated styling upon the Calypso theme base.
 	&:not(.stats-purchase-page--is-wpcom) {
@@ -162,7 +165,7 @@ $button-padding: 8px 32px;
 
 	.stats-purchase-wizard__card-parent {
 		border-radius: 4px;
-		width: 1124px;
+		width: var(--stats-purchase-width);
 		max-width: 100%;
 	}
 
@@ -183,7 +186,7 @@ $button-padding: 8px 32px;
 		padding: 64px;
 		box-sizing: border-box;
 		flex: 2 2 auto;
-		max-width: 668px;
+		max-width: var(--stats-purchase-left-max-width);
 
 		@media (max-width: $break-medium) {
 			padding: 32px 24px;
