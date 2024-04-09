@@ -415,7 +415,7 @@ function StatsCommercialFlowOptOutForm( {
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'{{p}}Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{/p}}{{p}}If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).{{/p}}',
+				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
 				{
 					args: {
 						reasons:
@@ -434,7 +434,7 @@ function StatsCommercialFlowOptOutForm( {
 								rel="noreferrer noopener"
 							/>
 						),
-						p: <p />,
+						br: <br />,
 					},
 				}
 		  )
