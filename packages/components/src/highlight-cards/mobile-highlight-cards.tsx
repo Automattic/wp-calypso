@@ -28,7 +28,7 @@ function MobileHighlightCard( {
 		return null;
 	}
 	// The icon and trendline are optional.
-	// We require two counts to display a trendline.
+	// Trendline depends on having a previous count value.
 	const displayTrendline = Number.isFinite( previousCount );
 	const displayIcon = icon !== undefined;
 	return (
