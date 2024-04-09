@@ -496,7 +496,7 @@ function StatsCommercialFlowOptOutForm( {
 					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
 					<Button
 						variant="secondary"
-						disabled={ ! supportsOnDemandCommercialClassification && isFormSubmissionDisabled() }
+						disabled={ ! supportsOnDemandCommercialClassification || isFormSubmissionDisabled() }
 						onClick={ formHandler }
 					>
 						{ formButton }
