@@ -158,7 +158,7 @@ class DeleteSite extends Component {
 			getLocaleSlug() === 'en' ||
 			getLocaleSlug() === 'en-gb' ||
 			i18n.hasTranslation(
-				'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} - posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.'
+				'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.'
 			)
 		) {
 			return (
@@ -166,7 +166,7 @@ class DeleteSite extends Component {
 					<div>
 						<p>
 							{ translate(
-								'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} - posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.',
+								'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.',
 								{
 									components: {
 										strong: <strong />,
