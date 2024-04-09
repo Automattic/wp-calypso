@@ -409,9 +409,8 @@ function StatsCommercialFlowOptOutForm( {
 		commercialClassificationLastRunAt > 0 &&
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
 
-	const isFormSubmissionDisabled = () => {
-		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
-	};
+	const isFormSubmissionDisabled =
+		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
@@ -485,7 +484,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ supportsOnDemandCommercialClassification && isCommercial && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled() }
+						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
 						onClick={ handleCommercialClassification }
 					>
 						{ translate( 'Reverify' ) }
@@ -494,11 +493,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ ( ! supportsOnDemandCommercialClassification ||
 					! isCommercial ||
 					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button
-						variant="secondary"
-						disabled={ isFormSubmissionDisabled() }
-						onClick={ formHandler }
-					>
+					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
 						{ formButton }
 					</Button>
 				) }
