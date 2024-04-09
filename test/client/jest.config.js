@@ -11,7 +11,7 @@ module.exports = {
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!react-markdown|.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
 	],
 	testEnvironmentOptions: {
 		url: 'https://example.com',
