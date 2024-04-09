@@ -1,50 +1,46 @@
-import { Dialog, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 
-import './style.scss';
-
-function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose, isTrialSite = false } ) {
+function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
 
 	const getButtons = () => {
-		const buttons = [ { action: 'dismiss', label: translate( 'Dismiss' ) } ];
+		if ( isAtomicRemovalInProgress ) {
+			return null;
+		}
+
 		if ( p2HubP2Count ) {
-			buttons.push(
+			return (
 				<Button primary href="/settings/general">
 					{ translate( 'Go to your site listing' ) }
 				</Button>
 			);
 		} else if ( isTrialSite ) {
-			buttons.push(
+			return (
 				<Button primary href={ purchasesRoot }>
 					{ translate( 'Cancel trial', { context: 'button label' } ) }
 				</Button>
 			);
-		} else {
-			buttons.push(
-				<Button primary href={ purchasesRoot }>
-					{ translate( 'Manage purchases', { context: 'button label' } ) }
-				</Button>
-			);
-		}
-		return buttons;
-	};
-
-	const renderWarningHeader = () => {
-		if ( p2HubP2Count ) {
-			return translate( 'P2 workspace' );
 		}
 
-		if ( isTrialSite ) {
-			return translate( 'Free Trial Active' );
-		}
-
-		return translate( 'Paid Upgrades' );
+		return (
+			<Button primary href={ purchasesRoot }>
+				{ translate( 'Manage purchases', { context: 'button label' } ) }
+			</Button>
+		);
 	};
 
 	const renderWarningContent = () => {
+		if ( isAtomicRemovalInProgress ) {
+			return translate(
+				"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
+			);
+		}
+
 		if ( p2HubP2Count ) {
 			return translate(
 				'There is %(numP2s)d P2 in your workspace. Please delete it prior to deleting your workspace.',
@@ -70,23 +66,19 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose, isTrialSit
 	};
 
 	return (
-		<Dialog
-			isVisible={ isVisible }
-			buttons={ getButtons() }
-			onClose={ onClose }
-			className="delete-site-warning-dialog"
-		>
-			<h1>{ renderWarningHeader() }</h1>
-			<p>{ renderWarningContent() }</p>
-		</Dialog>
+		<ActionPanel>
+			<ActionPanelBody>
+				<p>{ renderWarningContent() }</p>
+				{ getButtons() }
+			</ActionPanelBody>
+		</ActionPanel>
 	);
 }
 
-DeleteSiteWarningDialog.propTypes = {
-	isVisible: PropTypes.bool.isRequired,
+DeleteSiteWarnings.propTypes = {
 	p2HubP2Count: PropTypes.number,
-	onClose: PropTypes.func.isRequired,
+	isAtomicRemovalInProgress: PropTypes.bool,
 	isTrialSite: PropTypes.bool,
 };
 
-export default DeleteSiteWarningDialog;
+export default DeleteSiteWarnings;
