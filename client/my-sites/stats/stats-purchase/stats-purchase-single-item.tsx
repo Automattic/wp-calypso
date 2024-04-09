@@ -415,7 +415,7 @@ function StatsCommercialFlowOptOutForm( {
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error or you’ve removed the commercial identifier, please confirm the information below and reverify (maximum once every 24 hours).',
+				'{{p}}Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{/p}}{{p}}If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).{{/p}}',
 				{
 					args: {
 						reasons:
@@ -425,6 +425,16 @@ function StatsCommercialFlowOptOutForm( {
 										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? reason
 								)
 								.join( ' and/or ' ) ?? 'Unknown',
+					},
+					components: {
+						link: (
+							<a
+								target="_blank"
+								href="https://jetpack.com/support/jetpack-stats/free-or-paid/#how-is-a-commercial-site-defined"
+								rel="noreferrer noopener"
+							/>
+						),
+						p: <p />,
 					},
 				}
 		  )
