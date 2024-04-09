@@ -6,8 +6,8 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import Markdown from 'react-markdown';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import MaximizeIcon from '../../assets/maximize-icon.svg';
@@ -24,17 +24,6 @@ import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message, Source } from '../../types';
 
 import './style.scss';
-
-// This is due to the AsyncLoad component. The initial scroll is not working properly, due to
-// the fact that the AsyncLoad component is not rendering the children immediately. In order to solve that
-// we know that the placeholder component will be unmounted when the AsyncLoad component has finished loading.
-const ComponentLoadedReporter = ( { callback }: { callback: () => void } ) => {
-	useEffect( () => {
-		return callback;
-	}, [ callback ] );
-
-	return null;
-};
 
 export type ChatMessageProps = {
 	message: Message;
@@ -238,31 +227,27 @@ const ChatMessage = (
 				{ messageHeader }
 				{ message.type === 'error' && (
 					<>
-						<AsyncLoad
-							require="react-markdown"
-							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
-							transformLinkUri={ uriTransformer }
+						<Markdown
+							urlTransform={ uriTransformer }
 							components={ {
 								a: CustomALink,
 							} }
 						>
 							{ message.content }
-						</AsyncLoad>
+						</Markdown>
 						{ extraContactOptions }
 					</>
 				) }
 				{ ( message.type === 'message' || ! message.type ) && (
 					<>
-						<AsyncLoad
-							require="react-markdown"
-							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
-							transformLinkUri={ uriTransformer }
+						<Markdown
+							urlTransform={ uriTransformer }
 							components={ {
 								a: CustomALink,
 							} }
 						>
 							{ isUser || ! message.simulateTyping ? message.content : realTimeMessage }
-						</AsyncLoad>
+						</Markdown>
 						{ ! hasFeedback && ! isUser && messageFullyTyped && (
 							<WasThisHelpfulButtons message={ message } onDislike={ onDislike } />
 						) }
@@ -287,10 +272,8 @@ const ChatMessage = (
 				) }
 				{ message.type === 'dislike-feedback' && (
 					<>
-						<AsyncLoad
-							require="react-markdown"
-							placeholder={ <ComponentLoadedReporter callback={ scrollToBottom } /> }
-							transformLinkUri={ uriTransformer }
+						<Markdown
+							urlTransform={ uriTransformer }
 							components={ {
 								a: CustomALink,
 							} }
@@ -302,7 +285,7 @@ const ChatMessage = (
 									textOnly: true,
 								}
 							) }
-						</AsyncLoad>
+						</Markdown>
 						{ extraContactOptions }
 					</>
 				) }
