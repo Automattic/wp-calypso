@@ -142,7 +142,7 @@ function HighlightsListing( { highlights } ) {
 function HighlightsListingMobile( { highlights } ) {
 	// Convert the highlights data for the MobileHighlightCardListing component.
 	// Use preformattedValue property as an override to the count.
-	// Send the raw SVG icon and zero out the count.
+	// Send the raw SVG icon (not the provided Icon comp) and zero out the count.
 	const mobileHighlights = [
 		{
 			...highlights[ 0 ],
