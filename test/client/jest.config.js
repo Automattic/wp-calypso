@@ -9,9 +9,10 @@ module.exports = {
 
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
+		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!react-markdown|.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
 	],
 	testEnvironmentOptions: {
 		url: 'https://example.com',
