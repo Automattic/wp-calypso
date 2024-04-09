@@ -449,7 +449,13 @@ class Login extends Component {
 						</p>
 					);
 				} else if ( this.showContinueAsUser() && this.props.isWooPasswordless ) {
-					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
+					headerText = (
+						<h3>
+							{ wccomFrom === 'nux'
+								? translate( 'Get started in minutes' )
+								: translate( 'Log in to your account' ) }
+						</h3>
+					);
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ translate( 'First, select the account you’d like to use.' ) }
