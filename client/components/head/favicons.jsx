@@ -1,5 +1,5 @@
-import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const wordPressFavicons = () => {
@@ -115,11 +115,9 @@ const a4aFavicons = () => (
 );
 
 const Favicons = ( { environmentFaviconURL } ) => {
-	const isA8CForAgenciesEnabled = config.isEnabled( 'a8c-for-agencies' );
-
 	let favicons = wordPressFavicons;
 
-	if ( isA8CForAgenciesEnabled ) {
+	if ( isA8CForAgencies() ) {
 		favicons = a4aFavicons;
 	} else if ( isJetpackCloud() ) {
 		favicons = jetpackFavicons;
