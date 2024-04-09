@@ -2,15 +2,15 @@ import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Layout from '../../../components/a4a-components/layout';
+import LayoutBody from '../../../components/a4a-components/layout/body';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+} from '../../../components/a4a-components/layout/header';
+import LayoutTop from '../../../components/a4a-components/layout/top';
+import MobileSidebarNavigation from '../../../components/a4a-components/sidebar/mobile-sidebar-navigation';
 
 export default function EmptyState() {
 	const translate = useTranslate();

@@ -9,7 +9,7 @@ import {
 } from './constants';
 import SitesDashboard from './sites-dashboard';
 import { SitesDashboardProvider } from './sites-dashboard-provider';
-import type { DashboardSortInterface } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type { DashboardSortInterface } from '../sites-overview/types';
 
 function configureSitesContext( context: Context ) {
 	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;

@@ -4,17 +4,6 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutNavigation, {
-	LayoutNavigationTabs as NavigationTabs,
-} from 'calypso/a8c-for-agencies/components/layout/nav';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
@@ -31,6 +20,17 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import Layout from '../../../components/a4a-components/layout';
+import LayoutColumn from '../../../components/a4a-components/layout/column';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
+} from '../../../components/a4a-components/layout/header';
+import LayoutNavigation, {
+	LayoutNavigationTabs as NavigationTabs,
+} from '../../../components/a4a-components/layout/nav';
+import LayoutTop from '../../../components/a4a-components/layout/top';
+import MobileSidebarNavigation from '../../../components/a4a-components/sidebar/mobile-sidebar-navigation';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesDataViews from '../sites-dataviews';
 import { SitesViewState } from '../sites-dataviews/interfaces';
