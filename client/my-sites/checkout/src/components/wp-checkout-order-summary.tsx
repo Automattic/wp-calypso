@@ -50,7 +50,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -90,7 +89,7 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	return (
 		<CheckoutSummaryCard
@@ -128,7 +127,7 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
@@ -182,7 +181,7 @@ function CheckoutSummaryPriceList() {
 	const costOverridesList = filterAndGroupCostOverridesForDisplay( responseCart, translate );
 
 	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	return (
 		<>
@@ -794,7 +793,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 } ) {
 	const translate = useTranslate();
 	const productSlug = props.plan?.product_slug;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 	if ( ! productSlug || ! isWpComPlan( productSlug ) ) {
 		return null;
 	}

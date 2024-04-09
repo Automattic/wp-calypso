@@ -20,7 +20,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { WPCOMProductVariant } from '../item-variation-picker/types';
 import {
 	getItemVariantCompareToPrice,
@@ -144,7 +143,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 
 	const variants = useGetProductVariants( plan );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy

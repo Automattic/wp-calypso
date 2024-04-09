@@ -18,7 +18,6 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -139,7 +138,7 @@ export default function WPCheckoutOrderReview( {
 	const { responseCart, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const reduxDispatch = useDispatch();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -264,7 +263,7 @@ export function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {

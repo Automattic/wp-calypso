@@ -3,7 +3,6 @@ import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';
 
@@ -37,7 +36,7 @@ export default function Coupon( {
 
 	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
 
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	return (
 		<CouponWrapper

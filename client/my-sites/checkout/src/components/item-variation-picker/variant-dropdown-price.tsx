@@ -3,7 +3,6 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import {
 	Discount,
 	DoNotPayThis,
@@ -61,7 +60,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	const translatedIntroOfferDetails = () => {
 		const args = {

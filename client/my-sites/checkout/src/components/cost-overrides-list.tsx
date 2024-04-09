@@ -20,7 +20,6 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from '../../use-cart-key';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
 	CostOverrideForDisplay,
@@ -89,7 +88,7 @@ export function CostOverridesList( {
 	couponCode: ResponseCart[ 'coupon' ];
 	showOnlyCoupons?: boolean;
 } ) {
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.

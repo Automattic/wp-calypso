@@ -22,7 +22,6 @@ import { useMemo } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { convertErrorToString } from '../lib/analytics';
-import { useCheckoutV2 } from './use-checkout-v2';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
@@ -90,7 +89,7 @@ export function useGetProductVariants(
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 	const variants = product?.product_variants ?? fallbackVariants;
 	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );

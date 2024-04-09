@@ -11,7 +11,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import type { AkismetProQuantityDropDownProps } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -148,7 +147,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = false;
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
 			preventWidows( translate( '1 Site' ) ),
