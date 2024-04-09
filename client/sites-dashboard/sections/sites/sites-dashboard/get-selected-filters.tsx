@@ -1,5 +1,5 @@
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import { filtersMap } from '../constants';
+import { Filter } from '../sites-dataviews/interfaces';
 
 export function getSelectedFilters( filters: Filter[] ) {
 	return (

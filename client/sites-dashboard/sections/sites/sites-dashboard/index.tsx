@@ -18,12 +18,10 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
-import SitesDataViews from '../sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	AgencyDashboardFilter,
 	Site,
@@ -34,6 +32,8 @@ import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import SitesDashboardContext from '../sites-dashboard-context';
+import SitesDataViews from '../sites-dataviews';
+import { SitesViewState } from '../sites-dataviews/interfaces';
 import SitesHeaderActions from '../sites-header-actions';
 import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';

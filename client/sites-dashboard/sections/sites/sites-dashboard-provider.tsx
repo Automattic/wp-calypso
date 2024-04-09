@@ -1,11 +1,11 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { filtersMap, initialSitesViewState } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
+import { SitesViewState } from './sites-dataviews/interfaces';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;

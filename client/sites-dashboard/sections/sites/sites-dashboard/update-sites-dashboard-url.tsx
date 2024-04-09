@@ -1,10 +1,10 @@
-import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
 	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
 	DEFAULT_SORT_DIRECTION,
 	DEFAULT_SORT_FIELD,
 } from '../constants';
+import { Filter } from '../sites-dataviews/interfaces';
 import { DashboardSortInterface, Site } from '../types';
 import { getSelectedFilters } from './get-selected-filters';
 

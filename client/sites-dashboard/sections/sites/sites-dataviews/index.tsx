@@ -13,7 +13,6 @@ import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import SiteDataField from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/site-data-field';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import A4ASiteSetFavorite from '../site-set-favorite';
 import SiteSetFavorite from '../site-set-favorite';
 import SitesDashboardContext from '../sites-dashboard-context';
 import { AllowedTypes, Site } from '../types';
@@ -288,19 +287,11 @@ const SitesDataViews = ( {
 					}
 					return (
 						<span className="sites-dataviews__favorite-btn-wrapper">
-							{ isA4AEnabled ? (
-								<A4ASiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) : (
-								<SiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) }
+							<SiteSetFavorite
+								isFavorite={ item.isFavorite || false }
+								siteId={ item.site.value.blog_id }
+								siteUrl={ item.site.value.url }
+							/>
 						</span>
 					);
 				},

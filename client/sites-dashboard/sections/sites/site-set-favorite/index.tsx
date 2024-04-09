@@ -5,13 +5,13 @@ import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect, useState } from 'react';
-import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
-import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getSelectedFilters } from '../sites-dashboard/get-selected-filters';
+import SitesDashboardContext from '../sites-dashboard-context';
 import type {
 	APIError,
 	Site,

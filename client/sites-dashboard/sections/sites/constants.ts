@@ -1,4 +1,4 @@
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { SitesViewState } from './sites-dataviews/interfaces';
 import { AgencyDashboardFilterMap } from './types';
 
 export const A4A_SITES_DASHBOARD_DEFAULT_CATEGORY = 'overview';

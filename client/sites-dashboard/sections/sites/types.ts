@@ -1,6 +1,6 @@
 import { ReactNode, SetStateAction, Dispatch } from 'react';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { SitesViewState } from './sites-dataviews/interfaces';
 
 export * from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
