@@ -1,3 +1,4 @@
+export const A4A_LANDING_LINK = '/landing';
 export const A4A_OVERVIEW_LINK = '/overview';
 export const A4A_SITES_LINK = '/sites';
 export const A4A_SITES_LINK_NEEDS_ATTENTION = '/sites?issue_types=all_issues';
