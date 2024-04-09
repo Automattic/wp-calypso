@@ -47,8 +47,8 @@
 	}
 
 	.pattern-preview__header {
-		align-items: start;
 		display: flex;
+		align-items: flex-start;
 		font-family: $font-sf-pro-display;
 		gap: 16px;
 		justify-content: space-between;
@@ -61,8 +61,7 @@
 	.pattern-preview__title {
 		font-size: inherit;
 		line-height: inherit;
-		padding-bottom: 0;
-		padding-top: 4px;
+		padding: 0;
 		text-align: left;
 
 		&:hover {
@@ -121,12 +120,11 @@
 	flex-direction: column-reverse;
 
 	.pattern-preview__header {
+		align-items: center;
 		min-height: auto;
 	}
 
 	.pattern-preview__title {
-		padding-top: 8px;
-
 		@include break-huge {
 			font-size: rem(20px);
 		}
