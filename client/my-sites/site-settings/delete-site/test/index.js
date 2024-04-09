@@ -87,11 +87,11 @@ describe( 'index', () => {
 			</Provider>
 		);
 
-		fireEvent.change( screen.getByTestId( 'confirmDomainChangeInput' ), {
+		fireEvent.change( screen.getByRole( 'textbox' ), {
 			target: { value: 'test.com' },
 		} );
 
-		const deleteButton = await screen.getByTestId( 'deleteSite' );
+		const deleteButton = await screen.getByRole( 'button', { name: /Delete site/ } );
 		expect( deleteButton ).not.toBeDisabled();
 		expect( mockDeleteSite ).not.toHaveBeenCalled();
 	} );
