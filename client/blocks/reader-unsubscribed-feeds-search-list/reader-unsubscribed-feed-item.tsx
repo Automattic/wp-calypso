@@ -1,8 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	ExternalLink,
 } from '@wordpress/components';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
