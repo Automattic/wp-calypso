@@ -570,7 +570,7 @@ class Signup extends Component {
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
 				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
-				if ( destination.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
+				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
 					page( destination );
 					return;
 				}
