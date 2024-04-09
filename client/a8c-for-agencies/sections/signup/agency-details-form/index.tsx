@@ -181,9 +181,12 @@ export default function AgencyDetailsForm( {
 						value={ managedSites }
 						onChange={ handleSetManagedSites }
 					>
-						<option value="1-20">{ translate( '1-20' ) }</option>
-						<option value="21-100">{ translate( '21–100' ) }</option>
-						<option value="101+">{ translate( '101+' ) }</option>
+						<option value="1-5">{ translate( '1-5' ) }</option>
+						<option value="6-25">{ translate( '6-25' ) }</option>
+						<option value="26-50">{ translate( '26-50' ) }</option>
+						<option value="51-100">{ translate( '51-100' ) }</option>
+						<option value="101-500">{ translate( '101-500' ) }</option>
+						<option value="501+">{ translate( '501+' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
