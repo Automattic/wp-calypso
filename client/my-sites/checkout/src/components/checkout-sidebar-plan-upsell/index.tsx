@@ -7,6 +7,7 @@ import {
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
@@ -143,7 +144,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 
 	const variants = useGetProductVariants( plan );
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy

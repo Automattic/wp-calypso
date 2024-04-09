@@ -16,6 +16,7 @@ import {
 import {
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -88,7 +89,7 @@ export function CostOverridesList( {
 	couponCode: ResponseCart[ 'coupon' ];
 	showOnlyCoupons?: boolean;
 } ) {
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	const translate = useTranslate();
 	// Let's put the coupon code last because it will have its own "Remove" button.

@@ -18,6 +18,7 @@ import {
 	getPartnerCoupon,
 	filterAndGroupCostOverridesForDisplay,
 	filterCostOverridesForLineItem,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -100,7 +101,7 @@ export function WPOrderReviewLineItems( {
 	const hasPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
@@ -289,7 +290,7 @@ function LineItemWrapper( {
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	const signupFlowName = getSignupCompleteFlowName();
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {

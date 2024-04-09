@@ -15,7 +15,7 @@ import {
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
 } from '@automattic/calypso-products';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { hasCheckoutVersion, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -89,7 +89,7 @@ export function useGetProductVariants(
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const variants = product?.product_variants ?? fallbackVariants;
 	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );

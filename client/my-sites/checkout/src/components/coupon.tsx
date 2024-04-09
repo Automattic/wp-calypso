@@ -1,5 +1,5 @@
 import { Button } from '@automattic/composite-checkout';
-import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
+import { Field, styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -36,7 +36,7 @@ export default function Coupon( {
 
 	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
 
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	return (
 		<CouponWrapper

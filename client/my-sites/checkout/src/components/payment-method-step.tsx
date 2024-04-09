@@ -9,6 +9,7 @@ import {
 	getSubtotalWithoutDiscounts,
 	getTotalDiscountsWithoutCredits,
 	filterAndGroupCostOverridesForDisplay,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -103,7 +104,7 @@ export default function BeforeSubmitCheckoutHeader() {
 		} ),
 	};
 
-	const shouldUseCheckoutV2 = false;
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	return (
 		<>
