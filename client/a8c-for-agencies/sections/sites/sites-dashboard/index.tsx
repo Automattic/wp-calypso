@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -254,18 +253,16 @@ export default function SitesDashboard() {
 							isLargeScreen: isLargeScreen || false,
 						} }
 					>
-						<LayoutBody>
-							<SitesDataViews
-								className={ classNames( 'sites-overview__content', {
-									'is-hiding-navigation': navItems.length <= 1,
-								} ) }
-								data={ data }
-								isLoading={ isLoading }
-								isLargeScreen={ isLargeScreen || false }
-								onSitesViewChange={ onSitesViewChange }
-								sitesViewState={ sitesViewState }
-							/>
-						</LayoutBody>
+						<SitesDataViews
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
+							data={ data }
+							isLoading={ isLoading }
+							isLargeScreen={ isLargeScreen || false }
+							onSitesViewChange={ onSitesViewChange }
+							sitesViewState={ sitesViewState }
+						/>
 					</DashboardDataContext.Provider>
 				</LayoutColumn>
 			) }
