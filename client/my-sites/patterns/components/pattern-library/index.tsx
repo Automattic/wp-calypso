@@ -324,7 +324,7 @@ export const PatternLibrary = ( {
 
 							{ shouldDisplayPatternTypeToggle && (
 								<ToggleGroupControl
-									className="pattern-library__toggle--pattern-type"
+									className="pattern-library__toggle pattern-library__toggle--pattern-type"
 									isBlock
 									label=""
 									onChange={ ( value ) => {
@@ -341,7 +341,7 @@ export const PatternLibrary = ( {
 									value={ patternTypeFilter }
 								>
 									<ToggleGroupControlOptionWithNarrowTooltip
-										className="pattern-library__toggle-option"
+										className="pattern-library__toggle-option pattern-library__toggle-option--type"
 										label={ translate( 'Patterns', {
 											comment: 'Refers to block patterns',
 											textOnly: true,
@@ -354,8 +354,9 @@ export const PatternLibrary = ( {
 										) }
 										value={ PatternTypeFilter.REGULAR }
 									/>
+
 									<ToggleGroupControlOptionWithNarrowTooltip
-										className="pattern-library__toggle-option"
+										className="pattern-library__toggle-option pattern-library__toggle-option--type"
 										label={ translate( 'Page Layouts', {
 											comment: 'Refers to block patterns that contain entire page layouts',
 											textOnly: true,
@@ -370,19 +371,20 @@ export const PatternLibrary = ( {
 							) }
 
 							<ToggleGroupControl
-								className="pattern-library__toggle--view"
+								className="pattern-library__toggle pattern-library__toggle--view"
 								label=""
 								isBlock
 								value={ isGridView ? 'grid' : 'list' }
 							>
 								<ToggleGroupControlOption
-									className="pattern-library__toggle-option--list-view"
+									className="pattern-library__toggle-option pattern-library__toggle-option--view"
 									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 									value="list"
 									onClick={ () => handleViewChange( 'list' ) }
 								/>
+
 								<ToggleGroupControlOption
-									className="pattern-library__toggle-option--grid-view"
+									className="pattern-library__toggle-option pattern-library__toggle-option--view"
 									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 									value="grid"
 									onClick={ () => handleViewChange( 'grid' ) }
