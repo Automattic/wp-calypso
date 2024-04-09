@@ -1,5 +1,5 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import ExternalLink from 'calypso/components/external-link';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
 const BackupSupportLinks = ( { siteUrl } ) => {

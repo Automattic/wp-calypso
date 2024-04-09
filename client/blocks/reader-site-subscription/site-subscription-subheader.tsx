@@ -1,8 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack, ExternalLink } from '@wordpress/components';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import { FeedIcon } from 'calypso/landing/subscriptions/components/settings/icons';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';

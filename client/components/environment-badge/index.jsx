@@ -1,6 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { node, string } from 'prop-types';
-import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
 

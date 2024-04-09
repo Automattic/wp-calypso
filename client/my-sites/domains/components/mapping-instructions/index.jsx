@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
@@ -6,7 +7,6 @@ import {
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';
 import { isSubdomain } from 'calypso/lib/domains';

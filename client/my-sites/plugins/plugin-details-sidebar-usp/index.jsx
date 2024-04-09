@@ -1,8 +1,7 @@
-import { FoldableCard } from '@automattic/components';
+import { FoldableCard, ExternalLink } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 
 const Container = styled( FoldableCard )`
 	display: flex;

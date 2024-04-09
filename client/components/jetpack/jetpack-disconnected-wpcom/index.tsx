@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_SUPPORT_CONNECTION_ISSUES } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
-import ExternalLink from 'calypso/components/external-link';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';

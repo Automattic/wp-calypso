@@ -1,4 +1,4 @@
-import { Button, Card, Spinner } from '@automattic/components';
+import { Button, Card, Spinner, ExternalLink } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warning/upsell';
 import useUpsellInfo from 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
-import ExternalLink from 'calypso/components/external-link';
 import { addQueryArgs } from 'calypso/lib/route';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';

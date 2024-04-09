@@ -1,11 +1,11 @@
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
-import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';

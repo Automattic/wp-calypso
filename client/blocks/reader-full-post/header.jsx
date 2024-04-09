@@ -1,8 +1,8 @@
+import { ExternalLink } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
-import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';

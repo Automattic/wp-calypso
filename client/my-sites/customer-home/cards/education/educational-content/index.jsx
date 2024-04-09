@@ -1,8 +1,7 @@
-import { Gridicon, MaterialIcon } from '@automattic/components';
+import { Gridicon, MaterialIcon, ExternalLink } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 

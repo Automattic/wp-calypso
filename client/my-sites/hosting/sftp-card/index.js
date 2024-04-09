@@ -1,5 +1,12 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Card, Button, FormLabel, Spinner, MaterialIcon } from '@automattic/components';
+import {
+	Card,
+	Button,
+	FormLabel,
+	Spinner,
+	MaterialIcon,
+	ExternalLink,
+} from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -8,7 +15,6 @@ import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
