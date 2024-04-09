@@ -6,3 +6,23 @@
 .top-card {
 	flex: 1;
 }
+
+.actions-list {
+	list-style: none;
+	margin: 0;
+}
+
+.action {
+	list-style: none;
+}
+
+.action-button {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.action-text {
+	display: flex;
+	align-items: center;
+}
