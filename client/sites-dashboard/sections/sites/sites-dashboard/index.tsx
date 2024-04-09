@@ -3,23 +3,15 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
-import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
-import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
-import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import {
-	AgencyDashboardFilter,
-	Site,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import GuidedTour from '../../../components/a4a-components/guided-tour';
 import Layout from '../../../components/a4a-components/layout';
 import LayoutColumn from '../../../components/a4a-components/layout/column';
 import LayoutHeader, {
@@ -31,6 +23,11 @@ import LayoutNavigation, {
 } from '../../../components/a4a-components/layout/nav';
 import LayoutTop from '../../../components/a4a-components/layout/top';
 import MobileSidebarNavigation from '../../../components/a4a-components/sidebar/mobile-sidebar-navigation';
+import { type TourId } from '../../../data/guided-tours/use-guided-tours';
+import useNoActiveSite from '../../../hooks/use-no-active-site';
+import { OverviewFamily } from '../../sites/features/overview';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
+import { AgencyDashboardFilter, Site } from '../../sites-overview/types';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesDataViews from '../sites-dataviews';
 import { SitesViewState } from '../sites-dataviews/interfaces';
