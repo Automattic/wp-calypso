@@ -4,10 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import SitePreviewPaneContent from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/site-preview-pane-content';
 import DocumentHead from 'calypso/components/data/document-head';
 import BoostSitePerformance from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/boost-site-performance';
-import ExpandedCard from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/expanded-card';
 import InsightsStats from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/insights-stats';
 import MonitorActivity from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/monitor-activity';
 import { Site } from '../../types';
+import HostingSummary from '../hosting/summary';
 
 type Props = {
 	site: Site;
@@ -39,15 +39,7 @@ export function JetpackOverviewTab( { site, trackEvent, hasError = false }: Prop
 				<div className="site-preview-pane__boost-content">
 					<BoostSitePerformance site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 				</div>
-				<ExpandedCard header={ translate( 'Hosting' ) }>
-					<hr />
-					<ul>
-						<li>Status</li>
-						<li>Host</li>
-						<li>PHP version</li>
-						<li>WP version</li>
-					</ul>
-				</ExpandedCard>
+				<HostingSummary />
 				<div className="site-preview-pane__plugins-content">
 					<h3>{ translate( 'Plugins' ) }</h3>
 					<p className="site-preview-pane__plugins-caption">
