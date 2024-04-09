@@ -45,7 +45,9 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 			</Card>
 			<Card tagName="ul" className="agency-site-tags__list">
 				{ tags.map( ( tag ) => (
-					<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
+					<li>
+						<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
+					</li>
 				) ) }
 			</Card>
 		</div>
