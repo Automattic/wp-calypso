@@ -148,9 +148,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 		}
 	}
 
-	.suggested-email {
-		text-decoration: underline;
+	.login__form-suggested-email {
+		color: var(--color-link);
 		cursor: pointer;
+		text-decoration: none;
 	}
 }
 

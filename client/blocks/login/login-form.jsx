@@ -901,7 +901,7 @@ export class LoginForm extends Component {
 											),
 											suggestedEmail: (
 												<span
-													className="suggested-email"
+													className="login__form-suggested-email"
 													onKeyDown={ ( e ) => {
 														if ( e.key === 'Enter' ) {
 															this.handleAcceptEmailSuggestion();

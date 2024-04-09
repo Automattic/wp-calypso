@@ -198,8 +198,9 @@ body.is-section-accept-invite {
 				}
 
 				button.signup-form__domain-suggestion-confirmation {
-					text-decoration: underline;
+					color: var(--color-link);
 					cursor: pointer;
+					text-decoration: none;
 				}
 
 				button.is-borderless {
