@@ -20,6 +20,7 @@ import './styles.scss';
 
 interface Props {
 	routerDomain?: string;
+	hash?: string;
 }
 
 export default function SiteProfiler( props: Props ) {
