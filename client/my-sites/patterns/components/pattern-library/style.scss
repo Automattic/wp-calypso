@@ -181,6 +181,10 @@
 		.components-base-control:has(.pattern-library__toggle--view) {
 			display: none;
 		}
+
+		.pattern-library__toggle-option {
+			height: 36px;
+		}
 	}
 }
 
