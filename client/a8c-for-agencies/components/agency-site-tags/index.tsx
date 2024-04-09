@@ -7,11 +7,12 @@ import './style.scss';
 
 interface Props {
 	tags: string[];
+	isLoading: boolean;
 	onAddTags: ( newTags: string[] ) => void;
 	onRemoveTag: ( removeTag: string ) => void;
 }
 
-export default function AgencySiteTags( { tags, onAddTags, onRemoveTag }: Props ) {
+export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTag }: Props ) {
 	const translate = useTranslate();
 	const [ tagsInput, setTagsInput ] = useState( '' );
 
@@ -24,6 +25,7 @@ export default function AgencySiteTags( { tags, onAddTags, onRemoveTag }: Props 
 		<div className="agency-site-tags">
 			<Card className="agency-site-tags__controls">
 				<FormTextInput
+					disabled={ isLoading }
 					className="agency-site-tags__input"
 					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
 						setTagsInput( e.target.value )
@@ -31,13 +33,21 @@ export default function AgencySiteTags( { tags, onAddTags, onRemoveTag }: Props 
 					value={ tagsInput }
 					placeholder={ translate( 'Add tags here (separate by commas)' ) }
 				/>
-				<Button primary compact onClick={ handleAddTags } className="agency-site-tags__button">
+				<Button
+					primary
+					compact
+					busy={ isLoading }
+					onClick={ handleAddTags }
+					className="agency-site-tags__button"
+				>
 					{ translate( 'Add' ) }
 				</Button>
 			</Card>
 			<Card tagName="ul" className="agency-site-tags__list">
 				{ tags.map( ( tag ) => (
-					<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
+					<li>
+						<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
+					</li>
 				) ) }
 			</Card>
 		</div>

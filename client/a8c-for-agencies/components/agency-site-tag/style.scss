@@ -1,10 +1,4 @@
-.agency-site-tag {
-	margin-right: 0.875rem;
-	margin-bottom: 0.875rem;
-	list-style-type: none;
-}
-
-.agency-site-tag > .badge {
+.agency-site-tag.badge {
 	background: var(--studio-gray-5);
 	border-radius: 4px;
 	padding: 5px 14px 11px 11px;
