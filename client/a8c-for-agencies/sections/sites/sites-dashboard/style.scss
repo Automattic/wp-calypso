@@ -19,6 +19,10 @@
 		}
 	}
 
+	.a4a-layout__body-wrapper {
+		padding: 0;
+	}
+
 	.site-actions__actions-large-screen {
 		display: block;
 		margin-left: 10px;
@@ -33,6 +37,12 @@
 
 	.a4a-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
+	}
+
+	.dataviews-view-table thead {
+		position: sticky;
+		top: 0;
+		z-index: 2;
 	}
 
 	@media (min-width: $break-large) {
@@ -517,8 +527,6 @@
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
-					overflow-x: auto;
-					overflow-y: auto;
 
 					.dataviews-filters__view-actions {
 						& > :first-child {
