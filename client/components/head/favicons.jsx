@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
