@@ -1,6 +1,10 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
-import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import {
+	excludeSearchFromCanonicalUrlAndHrefLangLinks,
+	setHrefLangLinks,
+	setLocalizedCanonicalUrl,
+} from 'calypso/controller/localized-links';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
@@ -91,11 +95,6 @@ function fetchCategoriesAndPatterns( context: RouterContext, next: RouterNext ) 
 		} );
 }
 
-function excludeSearchFromCanonicalUrl( context: RouterContext, next: RouterNext ) {
-	context.excludeSearchFromCanonicalUrl = true;
-	next();
-}
-
 export default function ( router: ReturnType< typeof serverRouter > ) {
 	const langParam = getLanguageRouteParam();
 
@@ -107,7 +106,7 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 			`/patterns/:type(layouts)/:category?`,
 		],
 		ssrSetupLocale,
-		excludeSearchFromCanonicalUrl,
+		excludeSearchFromCanonicalUrlAndHrefLangLinks,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
 		fetchCategoriesAndPatterns,

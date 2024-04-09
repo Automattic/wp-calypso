@@ -25,6 +25,11 @@ const getLocalizedCanonicalUrl = ( path, locale, excludeSearch = false ) => {
 	return localizedUrl;
 };
 
+export const excludeSearchFromCanonicalUrlAndHrefLangLinks = ( context, next ) => {
+	context.excludeSearchFromCanonicalUrl = true;
+	next();
+};
+
 export const setLocalizedCanonicalUrl = ( context, next ) => {
 	performanceMark( context, 'setLocalizedCanonicalUrl' );
 
