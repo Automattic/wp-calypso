@@ -1,11 +1,15 @@
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AgencySiteTags from 'calypso/a8c-for-agencies/components/agency-site-tags';
 import useUpdateSiteTagsMutation from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import SiteTagType from 'calypso/a8c-for-agencies/types/site-tag';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
 export default function SiteDetails( { site }: any ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	/* eslint-disable-next-line */
 	const { a4a_site_id: siteId, a4a_site_tags: initialTags } = site;
 
@@ -24,14 +28,13 @@ export default function SiteDetails( { site }: any ) {
 				tags: tags.concat( siteTags ),
 			},
 			{
-				/* eslint-disable-next-line */
 				onSuccess: ( data ) => {
 					setTags( data.map( ( tag: SiteTagType ) => tag.label ) );
 					setIsLoading( false );
 				},
-				/* eslint-disable-next-line */
-				onError: () => {
+				onError: ( error ) => {
 					setIsLoading( false );
+					dispatch( errorNotice( error.message ) );
 				},
 			}
 		);
@@ -49,9 +52,9 @@ export default function SiteDetails( { site }: any ) {
 					setTags( data.map( ( tag: SiteTagType ) => tag.label ) );
 					setIsLoading( false );
 				},
-				/* eslint-disable-next-line */
-				onError: () => {
+				onError: ( error ) => {
 					setIsLoading( false );
+					dispatch( errorNotice( error.message ) );
 				},
 			}
 		);
