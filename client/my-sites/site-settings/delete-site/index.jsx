@@ -17,7 +17,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
+import DeleteSiteWarnings from 'calypso/my-sites/site-settings/delete-site-warnings';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -46,7 +46,6 @@ class DeleteSite extends Component {
 
 	state = {
 		confirmDomain: '',
-		showWarningDialog: false,
 		isDeletingSite: false,
 	};
 
@@ -162,7 +161,7 @@ class DeleteSite extends Component {
 			getLocaleSlug() === 'en' ||
 			getLocaleSlug() === 'en-gb' ||
 			i18n.hasTranslation(
-				'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.'
+				'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
 			)
 		) {
 			return (
@@ -170,7 +169,7 @@ class DeleteSite extends Component {
 					<div>
 						<p>
 							{ translate(
-								'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and previum themes.',
+								'Deletion is {{strong}}irreversible and will permanently remove all site content{{/strong}} — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.',
 								{
 									components: {
 										strong: <strong />,
@@ -245,48 +244,28 @@ class DeleteSite extends Component {
 		);
 	}
 
-	handleDeleteSiteClick = async ( event ) => {
-		event.preventDefault();
-		recordTracksEvent( 'calypso_settings_delete_site_options', {
-			option: 'delete-site',
-		} );
-
-		const { isAtomic, hasCancelablePurchases, p2HubP2Count, siteId } = this.props;
-		// console.log( 'isAtomic: ', isAtomic );
-		// console.log( 'hasCancelablePurchases: ', hasCancelablePurchases );
-		// console.log( 'p2HubP2Count: ', p2HubP2Count );
-
-		if ( isAtomic || hasCancelablePurchases || p2HubP2Count ) {
-			this.setState( { showWarningDialog: true } );
-			return true;
-		}
-
+	handleDeleteSiteClick = async () => {
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return;
 		}
 
+		recordTracksEvent( 'calypso_settings_delete_site_options', {
+			option: 'delete-site',
+		} );
+
 		try {
 			this.setState( { isDeletingSite: true } );
-			alert( 'will delete for real' );
-			// await this.props.deleteSite( siteId );
+			await this.props.deleteSite( this.props.siteId );
 		} finally {
 			this.setState( { isDeletingSite: false } );
 		}
-	};
-
-	closeWarningDialog = () => {
-		this.setState( { showWarningDialog: false } );
 	};
 
 	_goBack = () => {
 		const { siteSlug } = this.props;
 		const source = getSettingsSource();
 
-		if ( this.state.showWarningDialog ) {
-			this.closeWarningDialog();
-		} else {
-			page( `${ source }/${ siteSlug }` );
-		}
+		page( `${ source }/${ siteSlug }` );
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -316,9 +295,10 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases } = this.props;
+		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
-
+		const canDeleteSite =
+			! isAtomicRemovalInProgress && ! hasCancelablePurchases && p2HubP2Count === 0;
 		const strings = {
 			confirmDeleteSite: translate( 'Confirm delete site' ),
 			deleteSite: translate( 'Delete site' ),
@@ -348,15 +328,7 @@ class DeleteSite extends Component {
 				<HeaderCake onClick={ this._goBack } className="delete-site__header-cake">
 					<h1>{ strings.deleteSite }</h1>
 				</HeaderCake>
-				{ this.state.showWarningDialog || isAtomicRemovalInProgress || hasCancelablePurchases ? (
-					<DeleteSiteWarningDialog
-						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }
-						p2HubP2Count={ this.props.p2HubP2Count }
-						isVisible={ this.state.showWarningDialog }
-						onClose={ this.closeWarningDialog }
-						isTrialSite={ this.props.isTrialSite }
-					/>
-				) : (
+				{ canDeleteSite ? (
 					<ActionPanel>
 						<ActionPanelBody>
 							{ this.renderNotice() }
@@ -364,6 +336,12 @@ class DeleteSite extends Component {
 						</ActionPanelBody>
 						{ this.renderDeleteSiteCTA() }
 					</ActionPanel>
+				) : (
+					<DeleteSiteWarnings
+						isAtomicRemovalInProgress={ isAtomicRemovalInProgress }
+						p2HubP2Count={ this.props.p2HubP2Count }
+						isTrialSite={ this.props.isTrialSite }
+					/>
 				) }
 			</div>
 		);

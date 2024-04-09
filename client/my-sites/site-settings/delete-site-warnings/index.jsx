@@ -5,13 +5,7 @@ import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 
-function DeleteSiteWarningDialog( {
-	isVisible,
-	p2HubP2Count,
-	onClose,
-	isAtomicRemovalInProgress,
-	isTrialSite = false,
-} ) {
+function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
 
 	const getButtons = () => {
@@ -73,11 +67,7 @@ function DeleteSiteWarningDialog( {
 
 	return (
 		<ActionPanel>
-			<ActionPanelBody
-				isVisible={ isVisible }
-				onClose={ onClose }
-				className="delete-site-warning-dialog"
-			>
+			<ActionPanelBody>
 				<p>{ renderWarningContent() }</p>
 				{ getButtons() }
 			</ActionPanelBody>
@@ -85,11 +75,10 @@ function DeleteSiteWarningDialog( {
 	);
 }
 
-DeleteSiteWarningDialog.propTypes = {
+DeleteSiteWarnings.propTypes = {
 	isVisible: PropTypes.bool.isRequired,
 	p2HubP2Count: PropTypes.number,
-	onClose: PropTypes.func.isRequired,
 	isTrialSite: PropTypes.bool,
 };
 
-export default DeleteSiteWarningDialog;
+export default DeleteSiteWarnings;
