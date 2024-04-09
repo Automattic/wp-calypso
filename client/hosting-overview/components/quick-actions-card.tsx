@@ -40,17 +40,17 @@ const QuickActionsCard: FC = () => {
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-appearance action-icon__dashicon" /> }
-					href={ editorUrl }
+					href={ `/themes/${ site?.slug }` }
 					text={ translate( 'Change theme' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins action-icon__dashicon" /> }
-					href={ editorUrl }
+					href={ `/plugins/${ site?.slug }` }
 					text={ translate( 'Install plugins' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar action-icon__dashicon" /> }
-					href={ editorUrl }
+					href={ `/stats/${ site?.slug }` }
 					text={ translate( 'See JetPack Stats' ) }
 				/>
 			</ul>
