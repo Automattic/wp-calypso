@@ -8,6 +8,7 @@ import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warni
 import useUpsellInfo from 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import ExternalLink from 'calypso/components/external-link';
+import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { addQueryArgs } from 'calypso/lib/route';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -129,6 +130,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 			} )
 		);
 
+		recordLogRocketEvent( 'calypso_jetpack_backup_storage_retention_purchase_click', {
+			retention_option: retentionSelected,
+		} );
+
 		// Clean storage_purchased query param from the URL
 		const currentUrl = removeQueryArgs( window.location.href, 'storage_purchased' );
 
@@ -167,6 +172,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 							retention_option: value,
 						} )
 					);
+
+					recordLogRocketEvent( 'calypso_jetpack_backup_storage_retention_option_click', {
+						retention_option: value,
+					} );
 				}
 			}
 		},
@@ -191,6 +200,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 				retention_option: retentionSelected,
 			} )
 		);
+
+		recordLogRocketEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
+			retention_option: retentionSelected,
+		} );
 	}, [ dispatch, retentionSelected, siteId ] );
 
 	const handleUpdateRetention = useCallback( () => {
@@ -292,6 +305,11 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 			{ translate( 'Purchase and update' ) }
 		</Button>
 	);
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_storage_retention_view' ) );
+		recordLogRocketEvent( 'calypso_jetpack_backup_storage_retention_view' );
+	}, [ dispatch ] );
 
 	return (
 		( isFetching && <LoadingPlaceholder /> ) || (
