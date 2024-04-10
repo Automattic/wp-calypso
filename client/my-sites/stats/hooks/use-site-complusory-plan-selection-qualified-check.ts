@@ -17,8 +17,7 @@ export default function useSiteComplusoryPlanSelectionQualifiedCheck( siteId: nu
 	);
 	const isNewSite =
 		siteCreatedTimeStamp && new Date( siteCreatedTimeStamp ) > new Date( '2024-01-31' ); // Targeting new sites
-	const isExistingSampleSite =
-		siteId && siteId % 100 < 50 && recentMonthlyViews > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting 50% of existing sites with views higher than 1000/mth.
+	const isExistingSampleSite = recentMonthlyViews > MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL; // Targeting all existing sites with views higher than 1000/mth.
 
 	return {
 		isNewSite,
