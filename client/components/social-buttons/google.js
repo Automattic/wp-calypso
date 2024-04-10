@@ -63,6 +63,12 @@ class GoogleSocialButton extends Component {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
 		if ( ! googleSignIn ) {
+			this.props.recordTracksEvent( 'calypso_social_button_failure', {
+				social_account_type: 'google',
+				starting_point: this.props.startingPoint,
+				error_code: 'google_identity_services_api_not_loaded',
+			} );
+
 			this.props.showErrorNotice(
 				this.props.translate( 'Something went wrong while trying to load Google sign-in.' )
 			);
