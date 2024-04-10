@@ -10,9 +10,10 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useContext } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackSitesDashboard from 'calypso/components/jetpack-sites-dashboard';
+import JetpackSitesDashboardContext from 'calypso/components/jetpack-sites-dashboard/jetpack-sites-dashboard-context';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -211,6 +212,8 @@ export function SitesDashboard( {
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
+	const { openSitePreviewPane } = useContext( JetpackSitesDashboardContext );
+
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		const fields = [
 			{
@@ -219,7 +222,7 @@ export function SitesDashboard( {
 				getValue: ( { item } ) => item.URL,
 				render: ( { item } ) => {
 					return (
-						<Button>
+						<Button onClick={ () => openSitePreviewPane() }>
 							<>{ item.title }</>
 						</Button>
 					);

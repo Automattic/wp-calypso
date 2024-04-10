@@ -20,16 +20,12 @@ export const JetpackSitesDashboardProvider = ( props ) => {
 		...initialSitesViewState,
 	} );
 
-	const openSitePreviewPane = useCallback(
-		( site ) => {
-			setSitesViewState( {
-				...sitesViewState,
-				selectedSite: site,
-				type: 'list',
-			} );
-		},
-		[ setSitesViewState, sitesViewState ]
-	);
+	const openSitePreviewPane = useCallback( () => {
+		setSitesViewState( {
+			...sitesViewState,
+			type: 'list',
+		} );
+	}, [ setSitesViewState, sitesViewState ] );
 
 	const jetpackSitesDashboardContextValue = {
 		sitesViewState,

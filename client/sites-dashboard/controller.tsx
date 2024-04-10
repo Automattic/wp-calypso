@@ -6,6 +6,7 @@ import {
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
+import { JetpackSitesDashboardProvider } from 'calypso/components/jetpack-sites-dashboard/jetpack-sites-dashboard-provider';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';
@@ -86,17 +87,19 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboard
-				queryParams={ {
-					page: context.query.page ? parseInt( context.query.page ) : undefined,
-					perPage: context.query[ 'per-page' ]
-						? parseInt( context.query[ 'per-page' ] )
-						: undefined,
-					search: context.query.search,
-					status: context.query.status,
-					newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
-				} }
-			/>
+			<JetpackSitesDashboardProvider>
+				<SitesDashboard
+					queryParams={ {
+						page: context.query.page ? parseInt( context.query.page ) : undefined,
+						perPage: context.query[ 'per-page' ]
+							? parseInt( context.query[ 'per-page' ] )
+							: undefined,
+						search: context.query.search,
+						status: context.query.status,
+						newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
+					} }
+				/>
+			</JetpackSitesDashboardProvider>
 		</>
 	);
 
