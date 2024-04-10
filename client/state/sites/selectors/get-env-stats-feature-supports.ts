@@ -51,6 +51,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			// UTM stats are only available for Jetpack sites for now.
 			isSiteJetpackNotAtomic &&
 			version_greater_than_or_equal( statsAdminVersion, '0.17.0-alpha', isOdysseyStats ),
+		supportsDevicesStats:
+			config.isEnabled( 'stats/devices' ) && isSiteJetpackNotAtomic && isOdysseyStats,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.18.0-alpha',

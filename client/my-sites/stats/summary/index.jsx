@@ -329,6 +329,15 @@ class StatsSummary extends Component {
 				summaryView = <></>; // done inline to use context values
 				break;
 			}
+			case 'devices': {
+				// TODO: finish after the Traffic page.
+				title = translate( 'Devices' );
+				path = 'devices';
+				statType = 'statsDevices';
+
+				summaryView = <></>;
+				break;
+			}
 		}
 
 		summaryViews.push( summaryView );
