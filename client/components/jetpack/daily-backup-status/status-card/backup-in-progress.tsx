@@ -9,8 +9,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import { useDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
 import BackupTips from './backup-tips';
@@ -29,12 +28,9 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 		? getDisplayDate( lastBackupDate, false )
 		: undefined;
 
-	const dispatch = useDispatch();
-
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_backup_in_progress' ) );
 		recordLogRocketEvent( 'calypso_jetpack_backup_in_progress' );
-	}, [ dispatch ] );
+	} );
 
 	return (
 		<>
