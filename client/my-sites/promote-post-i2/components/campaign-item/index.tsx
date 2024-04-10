@@ -26,18 +26,20 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
+
 const getCampaignEndText = ( end_date: Moment, status: string, is_evergreen = 0 ) => {
 	if (
 		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
 	) {
 		return '-';
-	} else if ( [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
-		return is_evergreen ? __( 'Until stopped' ) : __( 'Ongoing' );
-	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
-		// return moment in format similar to 27 June
-		return end_date.format( 'D MMMM' );
+	} else if (
+		is_evergreen &&
+		[ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status )
+	) {
+		return __( 'Until stopped' );
 	}
-	return '-';
+	// return moment in format similar to 27 June
+	return end_date.format( 'D MMMM' );
 };
 
 export default function CampaignItem( props: Props ) {
@@ -201,13 +203,11 @@ export default function CampaignItem( props: Props ) {
 			</td>
 			<td className="campaign-item__ends">
 				<div>
-					{ campaign.end_date
-						? getCampaignEndText(
-								moment( campaign.end_date ),
-								campaign.status,
-								campaign?.is_evergreen
-						  )
-						: '-' }
+					{ getCampaignEndText(
+						moment( campaign.end_date ),
+						campaign.status,
+						campaign?.is_evergreen
+					) }
 				</div>
 			</td>
 			<td className="campaign-item__budget">

@@ -788,9 +788,13 @@ export default function CampaignItemDetails( props: Props ) {
 														const originalDate = moment( createdAt );
 
 														// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
-														const weekBefore = originalDate.clone().subtract( 7, 'days' );
+														let periodStart = originalDate.clone().subtract( 7, 'days' );
 
-														return `${ weekBefore.format( 'MMM, D' ) } - ${ originalDate.format(
+														if ( periodStart.isBefore( moment( start_date ) ) ) {
+															periodStart = moment( start_date );
+														}
+
+														return `${ periodStart.format( 'MMM, D' ) } - ${ originalDate.format(
 															'MMM, D'
 														) }`;
 													};
