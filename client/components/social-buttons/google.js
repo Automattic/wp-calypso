@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
 import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +7,6 @@ import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import GoogleIcon from 'calypso/components/social-icons/google';
-import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
@@ -41,9 +39,6 @@ class GoogleSocialButton extends Component {
 	};
 
 	state = {
-		error: '',
-		showError: false,
-		errorRef: null,
 		eventTimeStamp: null,
 		isDisabled: false,
 	};
@@ -52,8 +47,6 @@ class GoogleSocialButton extends Component {
 		super( props );
 
 		this.handleClick = this.handleClick.bind( this );
-		this.showError = this.showError.bind( this );
-		this.hideError = this.hideError.bind( this );
 	}
 
 	componentDidMount() {
@@ -97,8 +90,6 @@ class GoogleSocialButton extends Component {
 				this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
 			},
 		} );
-
-		this.setState( { isDisabled: false } );
 	}
 
 	async loadGoogleIdentityServicesAPI() {
@@ -186,35 +177,11 @@ class GoogleSocialButton extends Component {
 		await this.fetchNonceAndInitializeGoogleSignIn();
 		this.props.onClick( event );
 
-		if ( this.state.error ) {
-			return;
-		}
-
 		this.client?.requestCode();
 	}
 
-	showError( event ) {
-		if ( ! this.state.error ) {
-			return;
-		}
-
-		event.stopPropagation();
-
-		this.setState( {
-			showError: true,
-			errorRef: event.currentTarget,
-			eventTimeStamp: event.timeStamp,
-		} );
-	}
-
-	hideError() {
-		this.setState( { showError: false } );
-	}
-
 	render() {
-		const isDisabled = Boolean(
-			this.state.isDisabled || this.props.isFormDisabled || this.state.error
-		);
+		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled );
 
 		const { children } = this.props;
 		let customButton = null;
@@ -223,10 +190,6 @@ class GoogleSocialButton extends Component {
 			const childProps = {
 				className: classNames( { disabled: isDisabled } ),
 				onClick: this.handleClick,
-				onMouseOver: this.showError,
-				onFocus: this.showError,
-				onMouseOut: this.hideError,
-				onBlur: this.hideError,
 			};
 
 			customButton = cloneElement( children, childProps );
@@ -240,8 +203,6 @@ class GoogleSocialButton extends Component {
 					<button
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
-						onMouseEnter={ this.showError }
-						onMouseLeave={ this.hideError }
 						disabled={ isDisabled }
 					>
 						<GoogleIcon
@@ -259,16 +220,6 @@ class GoogleSocialButton extends Component {
 						</span>
 					</button>
 				) }
-				<Popover
-					id="social-buttons__error"
-					className="social-buttons__error"
-					isVisible={ this.state.showError }
-					onClose={ this.hideError }
-					position="top"
-					context={ this.state.errorRef }
-				>
-					{ preventWidows( this.state.error ) }
-				</Popover>
 			</Fragment>
 		);
 	}
