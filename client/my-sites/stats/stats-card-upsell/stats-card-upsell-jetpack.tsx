@@ -57,10 +57,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 		recordTracksEvent( `${ event_from }_${ tracksEvent }` );
 
 		// redirect to the Purchase page
-		setTimeout(
-			() => page.redirect( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` ),
-			250
-		);
+		setTimeout( () => page( `/stats/purchase/${ siteSlug }?${ queryParams.toString() }` ), 250 );
 	};
 
 	return (
