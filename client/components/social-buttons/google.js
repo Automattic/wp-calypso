@@ -57,7 +57,7 @@ class GoogleSocialButton extends Component {
 	async initializeGoogleSignIn( state ) {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
-		if ( googleSignIn ) {
+		if ( ! googleSignIn ) {
 			this.props.recordTracksEvent( 'calypso_social_button_failure', {
 				social_account_type: 'google',
 				starting_point: this.props.startingPoint,
