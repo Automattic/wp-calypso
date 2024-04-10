@@ -8,6 +8,36 @@ const noop = () => {};
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
 
+const getP2Flows = () => {
+	return isEnabled( 'p2-enabled' )
+		? [
+				{
+					name: 'p2v1',
+					steps: [ 'p2-site', 'p2-details', 'user' ],
+					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+					description: 'P2 signup flow',
+					lastModified: '2020-09-01',
+					showRecaptcha: true,
+				},
+				{
+					// When adding steps, make sure that signup campaign ref's continue to work.
+					name: 'p2',
+					steps: [
+						'user',
+						'p2-confirm-email',
+						'p2-complete-profile',
+						'p2-join-workspace',
+						'p2-site',
+					],
+					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+					description: 'New P2 signup flow',
+					lastModified: '2021-12-27',
+					showRecaptcha: true,
+				},
+		  ]
+		: [];
+};
+
 export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
@@ -24,6 +54,7 @@ export function generateFlows( {
 	getHostingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
+	const p2Flows = getP2Flows();
 
 	const flows = [
 		{
@@ -341,14 +372,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'p2v1',
-			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'P2 signup flow',
-			lastModified: '2020-09-01',
-			showRecaptcha: true,
-		},
-		{
 			name: 'videopress-account',
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
@@ -359,15 +382,7 @@ export function generateFlows( {
 			},
 			showRecaptcha: true,
 		},
-		{
-			// When adding steps, make sure that signup campaign ref's continue to work.
-			name: 'p2',
-			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-join-workspace', 'p2-site' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'New P2 signup flow',
-			lastModified: '2021-12-27',
-			showRecaptcha: true,
-		},
+		...p2Flows,
 		{
 			name: 'domain',
 			steps: [

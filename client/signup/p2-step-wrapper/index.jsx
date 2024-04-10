@@ -3,10 +3,13 @@ import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import './style.scss';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+
 function P2StepWrapper( {
 	flowName,
 	stepName,
@@ -21,6 +24,12 @@ function P2StepWrapper( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const teams = useSelector( getReaderTeams );
+	const isAutomattician = isAutomatticTeamMember( teams );
+
+	if ( ! isAutomattician ) {
+		return null;
+	}
 
 	return (
 		<div className={ classnames( 'p2-step-wrapper', className ) }>
