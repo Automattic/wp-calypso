@@ -45,7 +45,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
-	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
+	const subscriberId = query?.subscriber;
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
 	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 
@@ -158,7 +158,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				return <MembershipsSection query={ query } />;
 
 			case 'supporters':
-				return <CustomersSection />;
+				return <CustomersSection query={ query } />;
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;
