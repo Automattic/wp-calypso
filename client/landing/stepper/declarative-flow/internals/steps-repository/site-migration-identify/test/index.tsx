@@ -80,7 +80,7 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 	} );
 
-	it( 'skips the flow when the user clicks on "choose a content platform"', async () => {
+	it( 'calls submit with the "skip" action when the user clicks on "choose a content platform"', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
