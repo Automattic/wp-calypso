@@ -44,7 +44,10 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { isRequesting as isRequestingSitePlugins } from 'calypso/state/plugins/installed/selectors';
+import {
+	isRequesting as isRequestingSitePlugins,
+	getPlugins as getInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -642,10 +645,15 @@ export class CheckoutThankYou extends Component<
 	};
 }
 
+function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
+	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
+}
+
 export default connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
+		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
 		const receipt = getReceiptById( state, props.receiptId );
 
 		if ( props.domainOnlySiteFlow && receipt.hasLoadedFromServer ) {
@@ -664,6 +672,7 @@ export default connect(
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			isFetchingSitePlugins: isRequestingSitePlugins( state, siteId ),
+			isWooCommerceInstalled: isWooCommercePluginInstalled( sitePlugins ),
 			upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
 			isSimplified:
 				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
