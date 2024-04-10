@@ -26,7 +26,6 @@
 	"zendesk_presales_chat_key": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"zendesk_presales_chat_key_jp_agency_dashboard": "dc0b7d60-f893-4ab4-8aa8-7d7ca45270d8",
 	"features": {
-		"ad-tracking": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
 		"checkout/ebanx-pix": true,
@@ -63,7 +62,6 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"layout/dotcom-nav-redesign-v2": false,
-		"logrocket": true,
 		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
 		"oauth": false,
