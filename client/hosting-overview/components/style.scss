@@ -10,14 +10,34 @@
 	padding: 22px;
 }
 
+.hosting-overview__card-title {
+	color: var(--Gray-Gray-100, #101517);
+	font-feature-settings: "clig" off, "liga" off;
+	font-family: "SF Pro Display", $sans;
+	font-size: $font-title-small;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 26px;
+	letter-spacing: 0.38px;
+	margin-bottom: 16px;
+}
+
 .hosting-overview__actions-list {
 	list-style: none;
 	margin: 0;
 }
 
 .hosting-overview__action {
-	list-style: none;
-	border-bottom: 1px solid #f0f0f0;
+	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+	padding: var(--grid-unit-15, 12px) 0;
+
+	svg {
+		color: var(--studio-gray-30);
+		margin-right: 8px;
+		width: 20px;
+		height: 20px;
+	}
+
 
 	&:last-child {
 		border-bottom: none;
@@ -27,7 +47,20 @@
 .hosting-overview__action-button {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	color: var(--Gray-Gray-100, #101517);
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-small;
+	font-style: normal;
+	line-height: 20px;
+	letter-spacing: -0.15px;
+
+	&:hover,
+	&:visited,
+	&:active,
+	&:focus {
+		color: var(--Gray-Gray-100, #101517);
+		text-decoration: none;
+	}
 }
 
 .hosting-overview__action-text {
@@ -35,6 +68,7 @@
 	align-items: center;
 
 	.hosting-overview__dashicon {
-		margin-right: 2px;
+		color: var(--studio-gray-30);
+		margin-right: 8px;
 	}
 }

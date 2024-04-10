@@ -34,7 +34,7 @@ const QuickActionsCard: FC = () => {
 
 	return (
 		<Card className="hosting-overview__card">
-			<h3>{ translate( 'Quick actions' ) }</h3>
+			<h3 className="hosting-overview__card-title">{ translate( 'Quick actions' ) }</h3>
 
 			<ul className="hosting-overview__actions-list">
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
