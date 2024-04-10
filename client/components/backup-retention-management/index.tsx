@@ -191,10 +191,6 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 				retention_option: retentionSelected,
 			} )
 		);
-
-		recordLogRocketEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
-			retention_option: retentionSelected,
-		} );
 	}, [ dispatch, retentionSelected, siteId ] );
 
 	const handleUpdateRetention = useCallback( () => {
