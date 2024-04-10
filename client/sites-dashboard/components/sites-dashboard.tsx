@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -11,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackSitesDashboard from 'calypso/components/jetpack-sites-dashboard';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -209,6 +211,9 @@ export function SitesDashboard( {
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		return <JetpackSitesDashboard data={ allSites } />;
+	}
 	return (
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
