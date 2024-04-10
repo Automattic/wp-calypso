@@ -57,7 +57,6 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 				<StatsModuleDevices
 					path="devices"
 					className={ classNames( className, DEVICES_CLASS_NAME ) }
-					// moduleStrings={ moduleStrings.utm }
 					period={ period }
 					query={ query }
 					isLoading={ isFetching }

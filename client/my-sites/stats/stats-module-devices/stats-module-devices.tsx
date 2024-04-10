@@ -38,7 +38,7 @@ interface StatsModuleDevicesProps {
 const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	path,
 	className,
-	// period, we will need period once the API endpoint is done
+	// period, // we will need period once the API endpoint is done
 	isLoading,
 	query,
 	postId,
