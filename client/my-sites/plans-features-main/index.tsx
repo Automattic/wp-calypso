@@ -431,7 +431,7 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
+	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
@@ -450,7 +450,7 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 	} );
 
-	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
+	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
