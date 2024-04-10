@@ -30,10 +30,9 @@ import {
 	PLAN_MONTHLY_FREQUENCY,
 	PLAN_ONE_TIME_FREQUENCY,
 } from '../memberships/constants';
-import { Subscriber } from '../types';
+import { Query, Subscriber } from '../types';
 import CancelDialog from './cancel-dialog';
 import Customer from './customer/index';
-import { Query } from './types';
 
 type CustomerSectionProps = {
 	query?: Query;
