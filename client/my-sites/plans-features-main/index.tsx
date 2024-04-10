@@ -18,7 +18,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, Plans, AddOns } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -63,7 +63,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
@@ -228,13 +228,12 @@ const PlansFeaturesMain = ( {
 	const translate = useTranslate();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
+
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
 	const siteSlug = useSelector( ( state: IAppState ) => getSiteSlug( state, siteId ) );
-	const sitePlanSlug = useSelector( ( state: IAppState ) =>
-		siteId ? getSitePlanSlug( state, siteId ) : null
-	);
+	const sitePlanSlug = currentPlan?.productSlug;
 	const userCanUpgradeToPersonalPlan = useSelector(
 		( state: IAppState ) => siteId && canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
 	);
@@ -454,7 +453,7 @@ const PlansFeaturesMain = ( {
 	let _customerType = chooseDefaultCustomerType( {
 		currentCustomerType: customerType,
 		selectedPlan,
-		currentPlan: { productSlug: currentPlan?.productSlug },
+		currentPlan: { productSlug: currentPlan?.productSlug || PLAN_FREE },
 	} );
 	// Make sure the plans for the default customer type can be purchased.
 	if ( _customerType === 'personal' && userCanUpgradeToPersonalPlan ) {
