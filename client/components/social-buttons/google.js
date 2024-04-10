@@ -40,7 +40,6 @@ class GoogleSocialButton extends Component {
 
 	state = {
 		eventTimeStamp: null,
-		isDisabled: false,
 	};
 
 	constructor( props ) {
@@ -62,7 +61,7 @@ class GoogleSocialButton extends Component {
 	async initializeGoogleSignIn( state ) {
 		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
 
-		if ( ! googleSignIn ) {
+		if ( googleSignIn ) {
 			this.props.recordTracksEvent( 'calypso_social_button_failure', {
 				social_account_type: 'google',
 				starting_point: this.props.startingPoint,
@@ -176,10 +175,6 @@ class GoogleSocialButton extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 
-		if ( this.state.isDisabled ) {
-			return;
-		}
-
 		await this.fetchNonceAndInitializeGoogleSignIn();
 		this.props.onClick( event );
 
@@ -187,7 +182,7 @@ class GoogleSocialButton extends Component {
 	}
 
 	render() {
-		const isDisabled = Boolean( this.state.isDisabled || this.props.isFormDisabled );
+		const isDisabled = Boolean( this.props.isFormDisabled );
 
 		const { children } = this.props;
 		let customButton = null;
