@@ -210,6 +210,7 @@ class StatsPeriodNavigation extends PureComponent {
 							shortcutList={ shortcutList }
 							onGatedHandler={ this.onGatedHandler }
 							overlay={
+								// TODO: getDateControl is only used by WPCOM at the moment, and we should refactor to reuse it rather than having a separate supportCommercialUse here.
 								( gateDateControl || ! supportCommercialUse ) && (
 									<StatsCardUpsell
 										className="stats-module__upsell"
