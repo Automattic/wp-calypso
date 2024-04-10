@@ -31,6 +31,7 @@ const siteMigration: Flow = {
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.VERIFY_EMAIL,
+			STEPS.ASSIGN_MIGRATION_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -239,7 +240,14 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.VERIFY_EMAIL.slug: {
-					return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug );
+					return navigate( STEPS.ASSIGN_MIGRATION_TRIAL_PLAN.slug );
+				}
+
+				case STEPS.ASSIGN_MIGRATION_TRIAL_PLAN.slug: {
+					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
+						siteId,
+						siteSlug,
+					} );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {

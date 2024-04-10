@@ -211,6 +211,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
 	},
 
+	ASSIGN_MIGRATION_TRIAL_PLAN: {
+		slug: 'assignMigrationTrialPlan',
+		asyncComponent: () => import( './steps-repository/assign-migration-trial-plan' ),
+	},
+
 	SITE_MIGRATION_INSTRUCTIONS: {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
