@@ -1,20 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon, Spinner } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { SiteExcerptData } from '@automattic/sites';
 import { DataViews } from '@wordpress/dataviews';
-import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import A4ASiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
-import SiteActions from 'calypso/sites-dashboard/sections/sites/sites-overview/site-actions';
 import useFormattedSites from 'calypso/sites-dashboard/sections/sites/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/sites-dashboard/sections/sites/sites-overview/site-status-content';
 import SiteDataField from '../sites-dataviews/site-data-field';
-import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SiteSetFavorite from '../site-set-favorite';
 import SiteSort from '../site-sort';
 import { AllowedTypes } from '../types';
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
@@ -27,7 +21,6 @@ const SitesDataViews = ( {
 	isLargeScreen,
 	onSitesViewChange,
 	sitesViewState,
-	forceTourExampleSite = false,
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
@@ -82,7 +75,7 @@ const SitesDataViews = ( {
 						</SiteSort>
 					</>
 				),
-				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.URL,
+				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.slug,
 				render: ( { item }: { item: SiteInfo } ) => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
@@ -100,34 +93,34 @@ const SitesDataViews = ( {
 				enableSorting: false,
 			},
 			{
-				id: 'stats',
-				header: <span className="sites-dataview__stats-header">STATS</span>,
-				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'stats', item ),
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
 				id: 'plan',
-				header: <span className="sites-dataview__boost-header">PLAN</span>,
-				getValue: ( { item }: { item: SiteInfo } ) => item.site?.value?.plan?.product_name,
+				header: <span className="sites-dataview__plan-header">PLAN</span>,
+				getValue: () => '-',
 				render: ( { item }: { item: SiteInfo } ) => renderField( 'plan', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
+				id: 'status',
+				header: <span className="sites-dataview__status-header">STATUS</span>,
+				getValue: () => '-',
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'status', item ),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
 				id: 'last_publish',
-				header: <span className="sites-dataview__backup-header">LAST PUBLISH</span>,
+				header: <span className="sites-dataview__last-publish-header">LAST PUBLISH</span>,
 				getValue: () => '-',
 				render: ( { item }: { item: SiteInfo } ) => renderField( 'last_publish', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
 			{
-				id: 'status',
-				header: <span className="sites-dataview__backup-header">STATUS</span>,
+				id: 'stats',
+				header: <span className="sites-dataview__stats-header">STATS</span>,
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'status', item ),
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'stats', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -156,18 +149,14 @@ const SitesDataViews = ( {
 		spinnerWrapper.classList.add( 'spinner-wrapper' );
 		// Render the SpinnerWrapper component inside the spinner wrapper
 		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
-		//}
 	}
 
-	const urlParams = new URLSearchParams( window.location.search );
-	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
-	const useExampleDataForTour =
-		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
+	console.log( 'fields', fields );
 
 	return (
 		<div className={ className }>
 			<DataViews
-				data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
+				data={ sites }
 				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
 				view={ sitesViewState }

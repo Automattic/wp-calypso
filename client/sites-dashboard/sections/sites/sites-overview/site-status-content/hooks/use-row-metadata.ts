@@ -26,12 +26,12 @@ const useRowMetadata = (
 
 		const { link, isExternalLink } = getLinks(
 			type,
-			row.status,
+			rows?.status,
 			siteUrl,
 			siteUrlWithScheme,
 			!! rows.site?.value?.is_wpcom_atomic
 		);
-		const eventName = getRowEventName( type, row.status, isLargeScreen );
+		const eventName = getRowEventName( type, rows?.status, isLargeScreen );
 
 		return {
 			row,

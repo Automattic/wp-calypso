@@ -1,6 +1,6 @@
+import { SiteDetailsPlan } from '@automattic/data-stores';
 import { SiteExcerptData } from '@automattic/sites';
 import { TranslateResult } from 'i18n-calypso';
-import {SiteDetailsPlan} from '@automattic/data-stores';
 
 // All types based on which the data is populated on the agency dashboard table rows
 export type AllowedTypes = 'site' | 'stats' | 'plan' | 'status' | 'last_publish';
