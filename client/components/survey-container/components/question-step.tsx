@@ -16,6 +16,7 @@ export type QuestionSelectionType = {
 	question: Question;
 	value: string[];
 	onChange: ( questionKey: string, value: string[] ) => void;
+	disabled?: boolean;
 };
 
 type QuestionStepType = {

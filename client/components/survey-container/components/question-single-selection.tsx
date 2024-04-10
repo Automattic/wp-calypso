@@ -1,17 +1,33 @@
-import { RadioControl } from '@wordpress/components';
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { QuestionSelectionType } from './question-step';
 
 const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelectionType ) => {
-	// Placeholder component
 	return (
-		<div className="question__single-selection">
-			<RadioControl
-				options={ question.options }
-				selected={ value[ 0 ] }
-				onChange={ ( value ) => {
-					onChange( question.key, [ value ] );
-				} }
-			/>
+		<div className="question-options__container">
+			{ question.options.map( ( option, index ) => (
+				<div
+					key={ index }
+					className="question-options__option-control components-radio-control__option"
+					onClick={ () => onChange( question.key, [ option.value ] ) }
+				>
+					<input
+						type="radio"
+						id={ `option-${ option.value }` }
+						name={ question.key }
+						value={ option.value }
+						onChange={ () => onChange( question.key, [ option.value ] ) }
+						checked={ value.includes( option.value ) }
+						className="components-radio-control__input"
+					/>
+					<div className="question-options__option-label">
+						<label htmlFor={ `option-${ option.value }` }>{ option.label }</label>
+						{ option.helpText && (
+							<span className="question-options__option-help-text">{ option.helpText }</span>
+						) }
+					</div>
+				</div>
+			) ) }
 		</div>
 	);
 };

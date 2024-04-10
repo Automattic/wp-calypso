@@ -1,3 +1,28 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+$blueberry-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+$blueberry-hover-color: #2145E6;
+
+@mixin question-options-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 28px;
+	width: 100%;
+}
+
+@mixin question-option-control {
+	flex-basis: calc(50% - 48px);
+	border-radius: 2px;
+	border: solid 1px $studio-gray-5;
+	padding: 16px;
+	cursor: pointer;
+
+	&:hover {
+		border-color: $blueberry-color;
+	}
+}
+
 .question-step {
 	&__content {
 		display: flex;
@@ -5,4 +30,39 @@
 		align-items: start;
 		gap: 44px;
 	}
+
+	&__continue-button.components-button.is-primary {
+		background-color: $blueberry-color;
+		border-color: $blueberry-color;
+		padding: 8px 14px 8px 14px;
+		height: 40px;
+
+		&:not(:disabled) {
+			&:hover, &:focus, &:active {
+				background-color: $blueberry-hover-color;
+				border-color: $blueberry-hover-color;
+			}
+		}
+	}
+
+	.question-options__container {
+		@include question-options-container;
+
+		.question-options__option-control {
+			@include question-option-control;
+		}
+	}
+
+	.question__multiple-selection {
+		@include question-options-container;
+
+		.question__multiple-selection-option {
+			@include question-option-control;
+		}
+
+		.components-base-control__field {
+			margin: 0;
+		}
+	}
 }
+
