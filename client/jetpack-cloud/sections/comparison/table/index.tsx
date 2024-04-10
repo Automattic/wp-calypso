@@ -91,7 +91,6 @@ export const Table: React.FC = () => {
 					product={ currentProduct }
 					isVisible={ !! currentProduct }
 					onClose={ () => setCurrentProduct( null ) }
-					onChangeProduct={ setCurrentProduct }
 				/>
 			) }
 			<table className="pricing-comparison bundles">

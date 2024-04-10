@@ -17,7 +17,6 @@ export const ItemsList: React.FC< ItemsListProps > = ( { duration, siteId } ) =>
 					product={ currentProduct }
 					isVisible={ !! currentProduct }
 					onClose={ () => setCurrentProduct( null ) }
-					onChangeProduct={ setCurrentProduct }
 				/>
 			) }
 

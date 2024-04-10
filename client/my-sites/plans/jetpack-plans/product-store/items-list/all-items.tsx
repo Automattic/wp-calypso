@@ -1,4 +1,4 @@
-import { isJetpackPlanSlug, isJetpackSocialSlug } from '@automattic/calypso-products';
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -96,32 +96,18 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						isSuperseded
 					);
 
-					const isSocialProduct = isJetpackSocialSlug( item.productSlug );
-
-					// Go to the checkout page for all products when they click on the 'GET' CTA,
-					// except for Jetpack Social when it isn't owned or included in an active plan,
-					// in which case we open a modal.
-					let ctaHref = getCheckoutURL( item );
-					if ( isSocialProduct && ! isIncludedInPlanOrSuperseded ) {
-						ctaHref = `#${ item.productSlug }`;
-					}
-
-					const onClickCta = isSocialProduct
-						? onClickMoreInfoFactory( item )
-						: getOnClickPurchase( item );
-
 					return (
 						<li key={ item.productSlug }>
 							<SimpleItemCard
 								ctaAsPrimary={ ctaAsPrimary }
-								ctaHref={ ctaHref }
+								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
-								onClickCta={ onClickCta }
+								onClickCta={ getOnClickPurchase( item ) }
 								isProductInCart={ isProductInCart }
 								price={ price }
 								title={ item.displayName }

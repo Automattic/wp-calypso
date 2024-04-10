@@ -787,7 +787,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Easily share your website content on your social media channels from one place.'
 	);
 	const socialAdvancedLightboxDescription = translate(
-		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
+		'Easily share your website content on your social media channels from one place.'
 	);
 	const statsLightboxDescription = translate( 'The most advanced stats Jetpack has to offer.' );
 	const monitorLightboxDescription = translate(
