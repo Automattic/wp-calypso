@@ -1,6 +1,7 @@
 import { DataViews } from '@wordpress/dataviews';
 import * as React from 'react';
-import { useState } from 'react';
+import { useContext } from 'react';
+import JetpackSitesDashboardContext from 'calypso/components/jetpack-sites-dashboard/jetpack-sites-dashboard-context';
 
 interface JetpackSitesTableProps {
 	data;
@@ -8,24 +9,7 @@ interface JetpackSitesTableProps {
 }
 
 const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
-	const initialSitesViewState = {
-		type: 'table',
-		perPage: 50,
-		page: 1,
-		sort: {
-			field: 'site',
-			direction: 'asc',
-		},
-		search: '',
-		filters: [],
-		layout: {},
-		hiddenFields: [],
-	};
-
-	const [ sitesViewState, setSitesViewState ] = useState( {
-		...initialSitesViewState,
-	} );
-
+	const { sitesViewState, setSitesViewState } = useContext( JetpackSitesDashboardContext );
 	const totalSites = props.data?.total || 0;
 	const totalPages = Math.ceil( totalSites / 50 );
 
