@@ -21,6 +21,11 @@ const sections = [
 		group: 'sites-dashboard',
 	},
 	{
+		name: 'switch-site',
+		paths: [ '/switch-site' ],
+		module: 'calypso/switch-site',
+	},
+	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
@@ -660,6 +665,12 @@ const sections = [
 		name: 'jetpack-subscribers',
 		paths: [ '/subscribers' ],
 		module: 'calypso/my-sites/subscribers',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-monetize',
+		paths: [ '/monetize' ],
+		module: 'calypso/my-sites/earn',
 		group: 'jetpack-cloud',
 	},
 	{

@@ -313,7 +313,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/color-studio": "npm:2.5.0"
+    "@automattic/color-studio": "npm:2.6.0"
     postcss: "npm:^8.4.5"
     postcss-custom-properties: "npm:^11.0.0"
     sass: "npm:^1.37.5"
@@ -536,10 +536,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/color-studio@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@automattic/color-studio@npm:2.5.0"
-  checksum: 94516458713382306299da06dc0661d8abf9a9f7d1c9cd36cf679c4c5f86e259bddd15f5ed6f137c6d9f8d4c2a3f8cb4eff0773d62f8013dea3923f6a836264d
+"@automattic/color-studio@npm:2.6.0":
+  version: 2.6.0
+  resolution: "@automattic/color-studio@npm:2.6.0"
+  checksum: 1171df1d9b92b2734950239eb82250fe53f45d09485fd18b2aa62a40aaabbaa1c127898da97319f871e137254aae9ed7141e2aae30ec09f0151f515af8516510
   languageName: node
   linkType: hard
 
@@ -552,6 +552,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/command-palette": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/sites": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^9.24.0"
@@ -661,7 +662,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/color-studio": "npm:2.5.0"
+    "@automattic/color-studio": "npm:2.6.0"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@storybook/cli": "npm:^7.6.17"
@@ -12249,7 +12250,7 @@ __metadata:
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/color-studio": "npm:2.5.0"
+    "@automattic/color-studio": "npm:2.6.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -12364,6 +12365,7 @@ __metadata:
     d3-shape: "npm:^1.3.7"
     debug: "npm:^4.3.3"
     deep-freeze: "npm:^0.0.1"
+    deepmerge: "npm:^4.3.0"
     diff: "npm:^4.0.2"
     dom-helpers: "npm:^5.1.3"
     dompurify: "npm:^2.2.9"
@@ -18525,7 +18527,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
-    "@automattic/color-studio": "npm:2.5.0"
+    "@automattic/color-studio": "npm:2.6.0"
     "@automattic/components": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -32554,7 +32556,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/color-studio": "npm:2.5.0"
+    "@automattic/color-studio": "npm:2.6.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"

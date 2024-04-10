@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -15,13 +15,14 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
+	A4A_MARKETPLACE_PRODUCTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getHostingLogo } from '../lib/hosting';
-import ShoppingCart from '../shopping-cart';
+import ShoppingCart, { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import PressableOverviewFeatures from './footer';
 import PressableOverviewPlanSelection from './plan-selection';
 import './style.scss';
@@ -34,8 +35,14 @@ export default function PressableOverview() {
 
 	const onAddToCart = useCallback(
 		( item: APIProductFamilyProduct ) => {
-			setSelectedCartItems( [ ...selectedCartItems, { ...item, quantity: 1 } ] );
-			page( A4A_MARKETPLACE_LINK );
+			// We will need to remove first any existing Pressable plan in the cart as we do not allow multiple Pressable plans to be purchase.
+			const items = selectedCartItems?.filter(
+				( cartItem ) => cartItem.family_slug !== 'pressable-hosting'
+			);
+
+			setSelectedCartItems( [ ...items, { ...item, quantity: 1 } ] );
+
+			page( A4A_MARKETPLACE_PRODUCTS_LINK + CART_URL_HASH_FRAGMENT );
 		},
 		[ selectedCartItems, setSelectedCartItems ]
 	);
@@ -120,7 +127,7 @@ export default function PressableOverview() {
 						href={ PRESSABLE_LINK }
 						onClick={ onclickMoreInfo }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Learn more about Pressable' ) } <Icon icon={ external } size={ 18 } />
 					</Button>

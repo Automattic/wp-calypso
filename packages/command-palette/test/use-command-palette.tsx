@@ -4,11 +4,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
-import {
-	CommandMenuGroupContextProvider,
-	CommandPaletteContext,
-	CommandPaletteContextProvider,
-} from '../src/context';
+import { CommandPaletteContext, CommandPaletteContextProvider } from '../src/context';
 import { useCommandPalette } from '../src/use-command-palette';
 
 const callback = () => {};
@@ -136,21 +132,18 @@ describe( 'useCommandPalette', () => {
 						useCommands={ () => commands }
 						userCapabilities={ {} }
 						useSites={ () => [] }
+						emptyListNotice=""
+						placeHolderOverride=""
+						search=""
+						selectedCommandName=""
+						setEmptyListNotice={ () => {} }
+						setFooterMessage={ () => {} }
+						setSelectedCommandName={ () => {} }
+						close={ () => {} }
+						setSearch={ () => {} }
+						setPlaceholderOverride={ () => {} }
 					>
-						<CommandMenuGroupContextProvider
-							emptyListNotice=""
-							placeHolderOverride=""
-							search=""
-							selectedCommandName=""
-							setEmptyListNotice={ () => {} }
-							setFooterMessage={ () => {} }
-							setSelectedCommandName={ () => {} }
-							close={ () => {} }
-							setSearch={ () => {} }
-							setPlaceholderOverride={ () => {} }
-						>
-							{ children }
-						</CommandMenuGroupContextProvider>
+						{ children }
 					</CommandPaletteContextProvider>
 				</QueryClientProvider>
 			),

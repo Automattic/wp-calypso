@@ -197,6 +197,17 @@
 			font-weight: normal;
 		}
 	}
+
+	&__workflow-recipes {
+		font-style: italic;
+		color: var(--color-text-subtle);
+		margin-top: 5px;
+
+		a {
+			color: var(--color-text-subtle);
+			text-decoration: underline;
+		}
+	}
 }
 
 .github-deployments-new-workflow-wizard {

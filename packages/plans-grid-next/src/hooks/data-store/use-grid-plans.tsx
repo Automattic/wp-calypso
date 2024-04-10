@@ -132,7 +132,14 @@ const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-p2':
-			planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
+			planTypes = [ TYPE_FREE ];
+
+			// 2024-04-02 Disable upgrade to P2+
+			// only include P2+ if it is the current plan
+			if ( TYPE_P2_PLUS === currentSitePlanType ) {
+				planTypes.push( TYPE_P2_PLUS );
+			}
+
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [

@@ -24,7 +24,7 @@ export default function WpcomOverview() {
 	return (
 		<Layout
 			className="wpcom-overview"
-			title={ translate( 'Wordpress.com hosting' ) }
+			title={ translate( 'WordPress.com hosting' ) }
 			wide
 			withBorder
 			compact
@@ -43,7 +43,7 @@ export default function WpcomOverview() {
 								href: A4A_MARKETPLACE_HOSTING_LINK,
 							},
 							{
-								label: translate( 'Wordpress.com hosting' ),
+								label: translate( 'WordPress.com hosting' ),
 							},
 						] }
 					/>
@@ -60,7 +60,7 @@ export default function WpcomOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Wordpress.com hosting here</LayoutBody>
+			<LayoutBody>WordPress.com hosting here</LayoutBody>
 		</Layout>
 	);
 }

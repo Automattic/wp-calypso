@@ -1,10 +1,17 @@
 import page from '@automattic/calypso-router';
-import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
+import { Button } from '@automattic/components';
+import {
+	useLocale,
+	addLocaleToPathLocaleInFront,
+	useHasEnTranslation,
+} from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	Tooltip,
 } from '@wordpress/components';
+import { ToggleGroupControlOptionProps } from '@wordpress/components/build-types/toggle-group-control/types';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -22,12 +29,12 @@ import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
-import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
+import { getCategoryUrlPath, getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
-	type Category,
 	type CategoryGalleryFC,
 	type Pattern,
 	type PatternGalleryFC,
@@ -44,6 +51,27 @@ const PatternLibraryBody = styled.div``;
 
 export const patternFiltersClassName = 'pattern-library__filters';
 
+const ToggleGroupControlOptionWithNarrowTooltip = (
+	props: ToggleGroupControlOptionProps & {
+		className: string;
+		showToolTip?: boolean;
+		toolTipText: string;
+	}
+) => {
+	const { showToolTip, toolTipText, ...toggleControlProps } = props;
+	const toolTipProps = { style: { maxWidth: '200px', top: '3px' }, text: toolTipText };
+
+	if ( ! showToolTip ) {
+		return <ToggleGroupControlOption { ...toggleControlProps } />;
+	}
+
+	return (
+		<Tooltip { ...toolTipProps }>
+			<ToggleGroupControlOption { ...toggleControlProps } />
+		</Tooltip>
+	);
+};
+
 function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 	return patterns.filter( ( pattern ) => {
 		const categorySlugs = Object.keys( pattern.categories );
@@ -51,25 +79,6 @@ function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
 
 		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
 	} );
-}
-
-// We intentionally disregard grid view when copying the pattern permalink. Our assumption is that
-// it will be more confusing for users to land in grid view when they have a single-pattern permalink
-function getPatternPermalink(
-	pattern: Pattern,
-	activeCategory: string,
-	patternTypeFilter: PatternTypeFilter,
-	categories: Category[]
-) {
-	// Get the first pattern category that is also included in the `usePatternCategories` data
-	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
-		categories.find( ( { name } ) => name === categorySlug )
-	);
-	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternTypeFilter );
-
-	const url = new URL( pathname, location.origin );
-	url.hash = `#pattern-${ pattern.ID }`;
-	return url.toString();
 }
 
 // Scroll to anchoring position of category pill navigation element
@@ -108,27 +117,37 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
-	const { category, searchTerm, isGridView, patternTypeFilter, referrer } = usePatternsContext();
+	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
+		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [] } = usePatterns( locale, category, {
+	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
 		select( patterns ) {
-			const patternsByType = filterPatternsByType( patterns, patternTypeFilter );
+			if ( searchTerm ) {
+				return filterPatternsByTerm( patterns, searchTerm );
+			}
 
-			return filterPatternsByTerm( patternsByType, searchTerm );
+			return filterPatternsByType( patterns, patternTypeFilter );
 		},
 	} );
+
+	const hasEnTranslation = useHasEnTranslation();
+	let patternPermalinkName;
+	if ( patternPermalinkId && ! isFetchingPatterns ) {
+		patternPermalinkName = patterns.find( ( pattern ) => pattern.ID === patternPermalinkId )?.name;
+	}
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isDevAccount = useSelector( ( state ) => getUserSetting( state, 'is_dev_account' ) );
 
 	const recordClickEvent = (
 		tracksEventName: string,
-		view: PatternView,
-		typeFilter: PatternTypeFilter
+		view?: PatternView,
+		typeFilter?: PatternTypeFilter
 	) => {
 		recordTracksEvent( tracksEventName, {
 			category,
+			search_term: searchTerm || undefined,
 			is_logged_in: isLoggedIn,
 			type: getTracksPatternType( typeFilter ),
 			user_is_dev_account: isDevAccount ? '1' : '0',
@@ -193,7 +212,31 @@ export const PatternLibrary = ( {
 		};
 	}, [] );
 
+	// `calypso-router` has trouble with the onboarding URL we use. This code prevents click
+	// events on onboarding links from propagating to the `calypso-router` event listener,
+	// which fixes the problem.
+	useEffect( () => {
+		const onboardingUrl = getOnboardingUrl( locale, isLoggedIn );
+
+		function stopPropagationOnClick( event: MouseEvent ) {
+			if (
+				event.target instanceof HTMLAnchorElement &&
+				event.target.getAttribute( 'href' ) === onboardingUrl
+			) {
+				event.stopPropagation();
+			}
+		}
+
+		document.addEventListener( 'click', stopPropagationOnClick, { capture: true } );
+
+		return () => {
+			document.removeEventListener( 'click', stopPropagationOnClick );
+		};
+	}, [ locale, isLoggedIn ] );
+
 	const categoryObject = categories?.find( ( { name } ) => name === category );
+	const shouldDisplayPatternTypeToggle =
+		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
 		const patternTypeFilterFallback =
@@ -217,11 +260,12 @@ export const PatternLibrary = ( {
 		<>
 			<PatternsPageViewTracker
 				category={ category }
+				patternPermalinkName={ patternPermalinkName }
 				patternTypeFilter={ patternTypeFilter }
 				view={ currentView }
-				key={ `${ category }-tracker` }
 				searchTerm={ searchTerm }
 				referrer={ referrer }
+				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
 			/>
 
 			<PatternsDocumentHead category={ category } />
@@ -248,7 +292,7 @@ export const PatternLibrary = ( {
 									icon: <Icon icon={ iconCategory } size={ 26 } />,
 									label: translate( 'All Categories' ),
 									link: addLocaleToPathLocaleInFront( '/patterns' ),
-									isActive: isHomePage,
+									isActive: ! category,
 								},
 							] }
 							categories={ categoryNavList }
@@ -278,7 +322,11 @@ export const PatternLibrary = ( {
 				{ ! isHomePage && (
 					<PatternLibraryBody className="pattern-library">
 						<div className="pattern-library__header">
-							<h1 className="pattern-library__title">
+							<h1
+								className={ classNames( 'pattern-library__title', {
+									'pattern-library__title--search': searchTerm,
+								} ) }
+							>
 								{ searchTerm &&
 									translate( '%(count)d pattern', '%(count)d patterns', {
 										count: patterns.length,
@@ -296,9 +344,9 @@ export const PatternLibrary = ( {
 									} ) }
 							</h1>
 
-							{ category && !! categoryObject?.pagePatternCount && (
+							{ shouldDisplayPatternTypeToggle && (
 								<ToggleGroupControl
-									className="pattern-library__toggle--pattern-type"
+									className="pattern-library__toggle pattern-library__toggle--pattern-type"
 									isBlock
 									label=""
 									onChange={ ( value ) => {
@@ -314,39 +362,51 @@ export const PatternLibrary = ( {
 									} }
 									value={ patternTypeFilter }
 								>
-									<ToggleGroupControlOption
-										className="pattern-library__toggle-option"
+									<ToggleGroupControlOptionWithNarrowTooltip
+										className="pattern-library__toggle-option pattern-library__toggle-option--type"
 										label={ translate( 'Patterns', {
 											comment: 'Refers to block patterns',
 											textOnly: true,
 										} ) }
+										showToolTip={ hasEnTranslation(
+											'A collection of blocks that make up one section of a page'
+										) }
+										toolTipText={ translate(
+											'A collection of blocks that make up one section of a page'
+										) }
 										value={ PatternTypeFilter.REGULAR }
 									/>
-									<ToggleGroupControlOption
-										className="pattern-library__toggle-option"
+
+									<ToggleGroupControlOptionWithNarrowTooltip
+										className="pattern-library__toggle-option pattern-library__toggle-option--type"
 										label={ translate( 'Page Layouts', {
 											comment: 'Refers to block patterns that contain entire page layouts',
 											textOnly: true,
 										} ) }
+										showToolTip={ hasEnTranslation(
+											'A collection of patterns that form an entire page'
+										) }
+										toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
 										value={ PatternTypeFilter.PAGES }
 									/>
 								</ToggleGroupControl>
 							) }
 
 							<ToggleGroupControl
-								className="pattern-library__toggle--view"
+								className="pattern-library__toggle pattern-library__toggle--view"
 								label=""
 								isBlock
 								value={ isGridView ? 'grid' : 'list' }
 							>
 								<ToggleGroupControlOption
-									className="pattern-library__toggle-option--list-view"
+									className="pattern-library__toggle-option pattern-library__toggle-option--view"
 									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 									value="list"
 									onClick={ () => handleViewChange( 'list' ) }
 								/>
+
 								<ToggleGroupControlOption
-									className="pattern-library__toggle-option--grid-view"
+									className="pattern-library__toggle-option pattern-library__toggle-option--view"
 									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 									value="grid"
 									onClick={ () => handleViewChange( 'grid' ) }
@@ -362,8 +422,25 @@ export const PatternLibrary = ( {
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }
 							patterns={ patterns }
-							patternTypeFilter={ patternTypeFilter }
+							patternTypeFilter={ searchTerm ? PatternTypeFilter.REGULAR : patternTypeFilter }
+							searchTerm={ searchTerm }
 						/>
+
+						{ searchTerm && ! patterns.length && category && (
+							<div className="pattern-gallery__body-no-search-results">
+								<Button
+									className="pattern-gallery__search-all-categories"
+									onClick={ () => {
+										recordClickEvent( 'calypso_pattern_library_search_in_all' );
+										page( `/patterns${ window.location.search }` );
+									} }
+								>
+									{ translate( 'Search in all categories', {
+										comment: 'Button to make search of patterns in all categories',
+									} ) }
+								</Button>
+							</div>
+						) }
 					</PatternLibraryBody>
 				) }
 

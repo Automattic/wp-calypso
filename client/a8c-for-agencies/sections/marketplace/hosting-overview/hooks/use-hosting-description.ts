@@ -24,7 +24,7 @@ export default function useHostingDescription( slug: string ): {
 				);
 				break;
 			case 'wpcom-hosting':
-				name = translate( 'Wordpress.com' );
+				name = translate( 'WordPress.com' );
 				description = translate(
 					'Unbeatable uptime, unmetered bandwidth, and everything you need to streamline your development process, baked in. Perfect uptime. Fastest WP Bench score. A+ SSL grade.'
 				);

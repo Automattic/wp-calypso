@@ -1,6 +1,6 @@
+import { Button } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
-import { Button } from '@wordpress/components';
 import { Icon, check, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback } from 'react';
@@ -82,13 +82,20 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 
 				<IncludedList
 					items={ [
-						translate( '{{b}}%(count)s{{/b}} WordPress installs', {
-							args: {
-								count: info?.install ?? customString,
-							},
-							components: { b: <b /> },
-							comment: '%(count)s is the number of WordPress installs.',
-						} ),
+						info?.install
+							? translate(
+									'{{b}}%(count)d{{/b}} WordPress install',
+									'{{b}}%(count)d{{/b}} WordPress installs',
+									{
+										args: {
+											count: info.install,
+										},
+										count: info.install,
+										components: { b: <b /> },
+										comment: '%(count)s is the number of WordPress installs.',
+									}
+							  )
+							: translate( 'Custom WordPress installs' ),
 						translate( '{{b}}%(count)s{{/b}} visits per month', {
 							args: {
 								count: info ? formatNumber( info.visits ) : customString,
@@ -110,7 +117,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 					<Button
 						className="pressable-overview-plan-selection__details-card-cta-button"
 						onClick={ onSelectPlan }
-						variant="primary"
+						primary
 					>
 						{ translate( 'Select %(planName)s plan', {
 							args: {
@@ -127,7 +134,7 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 						onClick={ onChatWithUs }
 						href={ PRESSABLE_CONTACT_LINK }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Chat with us' ) } <Icon icon={ external } size={ 16 } />
 					</Button>

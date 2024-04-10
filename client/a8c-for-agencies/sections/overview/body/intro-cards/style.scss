@@ -23,7 +23,14 @@
 
 .a4a-intro-cards__wrapper {
 	border-radius: 4px;
+
 	.button {
+		border-radius: 4px;
+	}
+
+	.dot-pager__control-prev:focus-visible,
+	.dot-pager__control-next:focus-visible,
+	.dot-pager__control-choose-page:focus-visible {
 		border-radius: 4px;
 	}
 }

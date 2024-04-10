@@ -10,6 +10,7 @@ import { PatternsCategoryNotFound } from 'calypso/my-sites/patterns/components/c
 import { PatternGalleryClient } from 'calypso/my-sites/patterns/components/pattern-gallery/client';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
 import { PatternsContext } from 'calypso/my-sites/patterns/context';
+import { extractPatternIdFromHash } from 'calypso/my-sites/patterns/lib/extract-pattern-id-from-hash';
 import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import {
 	PatternTypeFilter,
@@ -38,11 +39,12 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 		context.primary = (
 			<PatternsContext.Provider
 				value={ {
-					searchTerm: context.query[ QUERY_PARAM_SEARCH ] || '',
-					category: context.params.category,
+					searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
+					category: context.params.category ?? '',
 					isGridView: !! context.query.grid,
 					patternTypeFilter:
 						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+					patternPermalinkId: extractPatternIdFromHash(),
 					referrer: context.query.ref,
 				} }
 			>

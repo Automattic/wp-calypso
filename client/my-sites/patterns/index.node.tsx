@@ -1,6 +1,10 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
-import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/localized-links';
+import {
+	excludeSearchFromCanonicalUrlAndHrefLangLinks,
+	setHrefLangLinks,
+	setLocalizedCanonicalUrl,
+} from 'calypso/controller/localized-links';
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import { PatternLibrary } from 'calypso/my-sites/patterns/components/pattern-library';
@@ -25,8 +29,8 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsContext.Provider
 			value={ {
-				searchTerm: context.query[ QUERY_PARAM_SEARCH ] || '',
-				category: context.params.category,
+				searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
+				category: context.params.category ?? '',
 				isGridView: !! context.query.grid,
 				patternTypeFilter:
 					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
@@ -102,6 +106,7 @@ export default function ( router: ReturnType< typeof serverRouter > ) {
 			`/patterns/:type(layouts)/:category?`,
 		],
 		ssrSetupLocale,
+		excludeSearchFromCanonicalUrlAndHrefLangLinks,
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
 		fetchCategoriesAndPatterns,

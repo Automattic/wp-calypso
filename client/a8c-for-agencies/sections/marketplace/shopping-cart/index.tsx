@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Badge } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Badge, Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -21,13 +20,29 @@ type Props = {
 	items: ShoppingCartItem[];
 };
 
+export const CART_URL_HASH_FRAGMENT = '#cart';
+
 export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props ) {
-	const [ showShoppingCart, setShowShoppingCart ] = useState( false );
+	const [ showShoppingCart, setShowShoppingCart ] = useState(
+		window.location.hash === CART_URL_HASH_FRAGMENT
+	);
 
 	const { paymentMethodRequired } = usePaymentMethod();
 
 	const toggleShoppingCart = () => {
-		setShowShoppingCart( ( prevState ) => ! prevState );
+		setShowShoppingCart( ( prevState ) => {
+			const nextState = ! prevState;
+
+			const hashFragment = nextState ? CART_URL_HASH_FRAGMENT : '';
+
+			window.history.replaceState(
+				null,
+				'',
+				window.location.pathname + window.location.search + hashFragment
+			);
+
+			return nextState;
+		} );
 	};
 
 	const handleOnCheckout = () => {
@@ -40,7 +55,7 @@ export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props
 
 	return (
 		<div className="shopping-cart">
-			<Button className="shopping-cart__button" onClick={ toggleShoppingCart }>
+			<Button className="shopping-cart__button" onClick={ toggleShoppingCart } borderless>
 				<Icon className="shopping-cart__button-icon" icon={ <ShoppingCartIcon /> } />
 
 				<Badge
@@ -55,7 +70,14 @@ export default function ShoppingCart( { onCheckout, onRemoveItem, items }: Props
 
 			{ showShoppingCart && (
 				<ShoppingCartMenu
-					onClose={ () => setShowShoppingCart( false ) }
+					onClose={ () => {
+						setShowShoppingCart( false );
+						window.history.replaceState(
+							null,
+							'',
+							window.location.pathname + window.location.search
+						);
+					} }
 					items={ items }
 					onCheckout={ handleOnCheckout }
 					onRemoveItem={ onRemoveItem }

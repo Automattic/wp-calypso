@@ -1,28 +1,53 @@
 import { Button, Dialog } from '@automattic/components';
-import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
+import { useLocalizeUrl, useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { Icon, close as iconClose } from '@wordpress/icons';
+import { buildQueryString } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { usePatternsContext } from 'calypso/my-sites/patterns/context';
+import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
+import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
+import { URL_REFERRER_PARAM } from 'calypso/my-sites/patterns/paths';
+import { Pattern } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
 type PatternsGetAccessModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
+	pattern: Pattern;
 	tracksEventHandler: ( eventName: string ) => void;
 };
 
 export const PatternsGetAccessModal = ( {
 	isOpen,
 	onClose,
+	pattern,
 	tracksEventHandler,
 }: PatternsGetAccessModalProps ) => {
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
+	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
+	const { category, patternTypeFilter } = usePatternsContext();
+	const { data: categories = [] } = usePatternCategories( locale );
 
 	const isLoggedIn = false;
-	const startUrl = localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn );
-	const loginUrl = localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn );
-	const translate = useTranslate();
+	const redirectUrl = getPatternPermalink( pattern, category, patternTypeFilter, categories );
+
+	const signupUrl = localizeUrl(
+		`//wordpress.com/start/account/user?${ buildQueryString( {
+			redirect_to: redirectUrl,
+			ref: URL_REFERRER_PARAM,
+		} ) }`,
+		locale,
+		isLoggedIn
+	);
+
+	const loginUrl = localizeUrl(
+		`//wordpress.com/log-in?${ buildQueryString( { redirect_to: redirectUrl } ) }`,
+		locale,
+		isLoggedIn
+	);
 
 	return (
 		<Dialog
@@ -44,6 +69,7 @@ export const PatternsGetAccessModal = ( {
 				>
 					<Icon icon={ iconClose } size={ 24 } />
 				</button>
+
 				<div className="patterns-get-access-modal__inner">
 					<div className="patterns-get-access-modal__title">
 						{ translate( 'Unlock the full pattern library', {
@@ -51,15 +77,22 @@ export const PatternsGetAccessModal = ( {
 								'This string is used as a title for the modal that prompts users to sign up or log in to access the full pattern library.',
 						} ) }
 					</div>
+
 					<div className="patterns-get-access-modal__description">
-						{ translate(
-							"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
-						) }
+						{ hasEnTranslation(
+							'Build sites faster using hundreds of professionally designed layouts. All you need is a WordPress.com account to get started.'
+						)
+							? translate(
+									'Build sites faster using hundreds of professionally designed layouts. All you need is a WordPress.com account to get started.'
+							  )
+							: translate(
+									"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
+							  ) }
 					</div>
 					<div className="patterns-get-access-modal__upgrade-buttons">
 						<Button
 							primary
-							href={ startUrl }
+							href={ signupUrl }
 							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_signup' ) }
 						>
 							{ translate( 'Create a free account' ) }
@@ -68,6 +101,7 @@ export const PatternsGetAccessModal = ( {
 							transparent
 							href={ loginUrl }
 							onClick={ () => tracksEventHandler( 'calypso_pattern_library_get_access_login' ) }
+							rel="external"
 						>
 							{ translate( 'Log in' ) }
 						</Button>

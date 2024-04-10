@@ -285,14 +285,14 @@ export default function AgencyDetailsForm( {
 										break: <br />,
 										link: (
 											<a
-												href="https://jetpack.com/platform-agreement/"
+												href="https://automattic.com/for/agencies/partnership-agreement"
 												target="_blank"
 												rel="noopener noreferrer"
 											></a>
 										),
 										icon: <Gridicon icon="external" size={ 18 } />,
 									},
-									args: { link_text: 'Terms of the Jetpack Agency Platform Agreement' },
+									args: { link_text: 'Terms of the Automattic for Agencies Partnership Agreement' },
 								}
 							) }
 						</p>

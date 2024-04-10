@@ -101,7 +101,7 @@
 			}
 		}
 
-		&.is-open.is-filled {
+		&:has(.search__input[value]:not([value=""])) {
 			.search__open-icon {
 				display: none;
 			}
@@ -123,12 +123,14 @@
 }
 
 .pattern-library__header {
-	display: flex;
-	padding: 56px 0 48px;
 	align-items: center;
+	display: flex;
+	gap: 24px;
+	padding: 56px 0 48px;
 
 	@media ( max-width: $break-medium ) {
-		display: block;
+		align-items: initial;
+		flex-direction: column;
 		padding: 0 0 24px;
 	}
 
@@ -143,7 +145,6 @@
 
 	.components-base-control {
 		flex: none;
-		margin-left: 24px;
 		white-space: nowrap;
 	}
 
@@ -152,44 +153,54 @@
 		margin-bottom: 0;
 	}
 
-	.pattern-library__toggle-option {
-		min-width: 118px;
+	.pattern-library__toggle {
+		background: none;
+	}
 
-		&:disabled {
-			cursor: default;
-			opacity: 0.5;
+	.pattern-library__toggle-option {
+		height: 34px;
+
+		&[aria-checked="false"] {
+			color: inherit;
 		}
 	}
 
-	.pattern-library__toggle-option--list-view,
-	.pattern-library__toggle-option--grid-view {
-		padding: 0 8px;
-		color: var(--studio-black);
+	.pattern-library__toggle-option--type {
+		min-width: 118px;
+	}
 
-		&[aria-checked="true"] {
-			color: var(--studio-white);
-		}
+	.pattern-library__toggle-option--view {
+		padding: 0 10px;
 	}
 
 	@media ( max-width: $break-medium ) {
-		.pattern-library__title {
+		.pattern-library__title:not(.pattern-library__title--search) {
 			display: none;
 		}
 
-		.components-base-control {
-			margin-left: 0;
-		}
-
-		.pattern-library__toggle--pattern-type {
-			width: 100%;
-		}
-
-		.pattern-library__toggle--view {
+		.components-base-control:has(.pattern-library__toggle--view) {
 			display: none;
 		}
 
 		.pattern-library__toggle-option {
-			height: 40px;
+			height: 36px;
+		}
+	}
+}
+
+.pattern-gallery__body-no-search-results {
+	text-align: center;
+	padding: 48px 0 24px;
+
+	.pattern-gallery__search-all-categories {
+		border-color: currentColor;
+		color: #3858e9;
+		background: none;
+
+		&:hover,
+		&:focus {
+			border-color: currentColor;
+			color: #1d35b4;
 		}
 	}
 }

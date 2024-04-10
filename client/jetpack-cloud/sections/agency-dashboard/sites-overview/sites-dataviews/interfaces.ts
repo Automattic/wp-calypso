@@ -1,4 +1,4 @@
-import { Site, SiteData } from '../types';
+import { type DashboardSortInterface, Site, SiteData } from '../types';
 
 export interface SitesDataResponse {
 	sites: Array< Site >;
@@ -17,11 +17,6 @@ export interface SitesDataViewsProps {
 	sitesViewState: SitesViewState;
 }
 
-export interface Sort {
-	field: string;
-	direction: 'asc' | 'desc';
-}
-
 export interface Filter {
 	field: string;
 	operator: string;
@@ -32,7 +27,7 @@ export interface SitesViewState {
 	type: 'table' | 'list' | 'grid';
 	perPage: number;
 	page: number;
-	sort: Sort;
+	sort: DashboardSortInterface;
 	search: string;
 	filters: Filter[];
 	hiddenFields: string[];

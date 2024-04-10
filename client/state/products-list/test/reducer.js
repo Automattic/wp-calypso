@@ -24,20 +24,18 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should store the product list received', () => {
-			const productsList = [
-				{
-					'business-bundle': {
-						available: true,
-						product_id: 1008,
-						product_name: 'WordPress.com Business',
-						product_slug: 'business-bundle',
-						is_domain_registration: false,
-						description: '',
-						cost: 300,
-						cost_display: '$300',
-					},
+			const productsList = {
+				'business-bundle': {
+					available: true,
+					product_id: 1008,
+					product_name: 'WordPress.com Business',
+					product_slug: 'business-bundle',
+					is_domain_registration: false,
+					description: '',
+					cost: 300,
+					cost_display: '$300',
 				},
-			];
+			};
 
 			const state = items(
 				{},

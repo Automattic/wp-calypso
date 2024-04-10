@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { A4A_UNASSIGNED_LICENSES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { productHasFeatureType } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import Notice from 'calypso/components/notice';
@@ -106,7 +108,11 @@ const UnusedLicenseNotice = ( { featureType }: UnusedLicenseNoticeProps ) => {
 					onDismissClick={ onDismissClick }
 				>
 					<NoticeAction
-						href={ JETPACK_MANAGE_LICENCES_LINK + '/unassigned' }
+						href={
+							isEnabled( 'a8c-for-agencies' )
+								? `${ A4A_UNASSIGNED_LICENSES_LINK }`
+								: `${ JETPACK_MANAGE_LICENCES_LINK }/unassigned`
+						}
 						onClick={ onActionClick }
 					>
 						{ translate( 'View licenses' ) }

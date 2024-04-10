@@ -23,7 +23,7 @@ export const UpgradePlanHostingTestimonials = [
 		customerTestimonial: translate(
 			`"Deepak’s website, currently garnering over 2.9 million monthly pageviews, is efficiently handled by WordPress.com. Deepak is especially pleased with the platform’s capability to manage high-traffic volumes seamlessly."`
 		),
-		customerInfo: translate( `Business plan customer case study` ),
+		customerInfo: translate( `Creator plan customer case study` ),
 	},
 	{
 		customerImage: null,
