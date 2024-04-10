@@ -11,6 +11,31 @@
 	padding: 22px;
 }
 
+.hosting-overview__plan-card-header {
+	display: flex;
+	margin-bottom: 8px;
+
+}
+
+.hosting-overview__plan-card-title {
+	color: var(--Gray-Gray-100, #101517);
+	flex: 1;
+	font-feature-settings: "clig" off, "liga" off;
+	font-family: "SF Pro", $sans;
+	font-size: rem(28px); //typography-exception
+	font-style: normal;
+	line-height: 32px;
+}
+
+a.hosting-overview__link-button {
+	color: var(--Primary-Blue, #007cba);
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	line-height: 16px;
+	text-decoration-line: underline;
+}
+
 .hosting-overview__card-header {
 	display: flex;
 	gap: var(--grid-unit-15, 12px);
@@ -80,11 +105,3 @@
 	}
 }
 
-a.hosting-overview__domain-management-link {
-	color: var(--Primary-Blue, #007cba);
-	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-extra-small;
-	font-style: normal;
-	line-height: 16px;
-	text-decoration-line: underline;
-}
