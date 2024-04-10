@@ -45,7 +45,7 @@ export default function SitePreviewPane( {
 	useEffect( () => {
 		setTimeout( () => {
 			setCanDisplayNavTabs( true );
-		}, 150 );
+		}, 200 );
 	}, [] );
 
 	// Ensure we have features
