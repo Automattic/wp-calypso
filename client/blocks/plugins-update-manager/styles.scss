@@ -83,7 +83,6 @@
 		font-size: 0.875rem;
 		text-decoration: none;
 		color: var(--studio-gray-60);
-		line-height: 1.5;
 	}
 
 	table {
@@ -106,9 +105,11 @@
 			&.last-update {
 				min-width: 200px;
 
-				> div {
-					margin-top: -5px;
-				}
+			}
+
+			.badge-component {
+				line-height: 2;
+
 			}
 		}
 	}

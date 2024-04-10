@@ -56,7 +56,7 @@ export const ScheduleListTable = ( props: Props ) => {
 						</td>
 						<td className="last-update">
 							{ schedule.last_run_status && (
-								<div>
+								<>
 									<Badge type={ schedule.last_run_status } />
 									{ ( schedule.last_run_timestamp ||
 										schedule.last_run_status === 'in-progress' ) && (
@@ -71,7 +71,7 @@ export const ScheduleListTable = ( props: Props ) => {
 												  prepareDateTime( schedule.last_run_timestamp ) }
 										</Button>
 									) }
-								</div>
+								</>
 							) }
 
 							{ ! schedule.last_run_status && ! schedule.last_run_timestamp && '-' }
