@@ -28,6 +28,7 @@ import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/anal
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import useStatsPurchases from '../hooks/use-stats-purchases';
 import NavigationArrows from '../navigation-arrows';
 import StatsCardUpsell from '../stats-card-upsell';
 
@@ -188,6 +189,7 @@ class StatsPeriodNavigation extends PureComponent {
 			gateDateControl,
 			intervals,
 			siteId,
+			supportCommercialUse,
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
@@ -208,7 +210,7 @@ class StatsPeriodNavigation extends PureComponent {
 							shortcutList={ shortcutList }
 							onGatedHandler={ this.onGatedHandler }
 							overlay={
-								gateDateControl && (
+								( gateDateControl || ! supportCommercialUse ) && (
 									<StatsCardUpsell
 										className="stats-module__upsell"
 										statType={ STATS_FEATURE_DATE_CONTROL }
@@ -340,9 +342,14 @@ const connectComponent = connect(
 	{ recordGoogleEvent: recordGoogleEventAction, toggleUpsellModal }
 );
 
-export default flowRight(
+const StatsPeriodNavigationLinked = flowRight(
 	connectComponent,
 	localize,
 	withRtl,
 	withLocalizedMoment
 )( StatsPeriodNavigation );
+
+export default function ( props ) {
+	const statsPurchases = useStatsPurchases( props.siteId );
+	return <StatsPeriodNavigationLinked { ...props } { ...statsPurchases } />;
+}
