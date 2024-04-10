@@ -29,7 +29,7 @@ import { JetpackScanPreview } from '../jetpack/scan';
 
 import '../jetpack/style.scss';
 
-export function OverviewFamily( {
+export function OverviewPreviewPane( {
 	site,
 	closeSitePreviewPane,
 	className,
@@ -125,26 +125,26 @@ export function OverviewFamily( {
 				setSelectedSiteFeature,
 				<JetpackActivityPreview site={ site } />
 			),
-			createFeaturePreview(
-				HOSTING_OVERVIEW_ID,
-				translate( 'Hosting' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<HostingOverviewPreview site={ site } />
-			),
-			...( isEnabled( 'a4a/site-details-pane' )
+			...( isEnabled( 'a4a/hosting-preview-pane' )
 				? [
 						createFeaturePreview(
-							A4A_SITE_DETAILS_ID,
-							translate( 'Details' ),
+							HOSTING_OVERVIEW_ID,
+							translate( 'Hosting' ),
 							true,
 							selectedSiteFeature,
 							setSelectedSiteFeature,
-							<SiteDetails site={ site } />
+							<HostingOverviewPreview site={ site } />
 						),
 				  ]
 				: [] ),
+			createFeaturePreview(
+				A4A_SITE_DETAILS_ID,
+				translate( 'Details' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteDetails site={ site } />
+			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
 	);
