@@ -1,11 +1,11 @@
 import { Purchase } from 'calypso/lib/purchases/types';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors/get-by-purchase-id';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 import getSelectedSiteId from './get-selected-site-id';
 import type { AppState } from 'calypso/types';
 
 /**
- * Returns the site object for the currently selected site.
+ * Returns the purchase object for the currently selected site.
  */
 export default function getSelectedPurchase( state: AppState ): Purchase | null | undefined {
 	const selectedSiteId = getSelectedSiteId( state );
