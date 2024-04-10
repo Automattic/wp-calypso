@@ -38,10 +38,6 @@ class GoogleSocialButton extends Component {
 		onClick: noop,
 	};
 
-	state = {
-		eventTimeStamp: null,
-	};
-
 	constructor( props ) {
 		super( props );
 
