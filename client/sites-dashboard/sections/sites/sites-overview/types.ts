@@ -3,7 +3,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { TranslateResult } from 'i18n-calypso';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'stats' | 'plan' | 'status' | 'last_publish';
+export type AllowedTypes = 'site' | 'stats' | 'plan' | 'type' | 'last_publish';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
@@ -35,7 +35,7 @@ export interface SiteData {
 	site: SiteNode;
 	stats: StatsNode;
 	plan: SiteDetailsPlan;
-	status: string;
+	type: string;
 	last_publish: string;
 }
 

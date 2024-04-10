@@ -48,14 +48,7 @@ const SitesDataViews = ( {
 			}
 
 			if ( column ) {
-				return (
-					<SiteStatusContent
-						rows={ item }
-						type={ column }
-						isLargeScreen={ isLargeScreen }
-						siteError={ item.site.error }
-					/>
-				);
+				return <SiteStatusContent rows={ item } type={ column } isLargeScreen={ isLargeScreen } />;
 			}
 		},
 		[ isLoading, isLargeScreen ]
@@ -101,10 +94,10 @@ const SitesDataViews = ( {
 				enableSorting: false,
 			},
 			{
-				id: 'status',
-				header: <span className="sites-dataview__status-header">STATUS</span>,
+				id: 'type',
+				header: <span className="sites-dataview__type-header">TYPE</span>,
 				getValue: () => '-',
-				render: ( { item }: { item: SiteInfo } ) => renderField( 'status', item ),
+				render: ( { item }: { item: SiteInfo } ) => renderField( 'type', item ),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -151,7 +144,7 @@ const SitesDataViews = ( {
 		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
 	}
 
-	console.log( 'fields', fields );
+	console.log( 'fields', fields, sites );
 
 	return (
 		<div className={ className }>
