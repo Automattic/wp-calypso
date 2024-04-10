@@ -188,6 +188,12 @@ export interface PlansFeaturesMainProps {
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
+
+	/*
+	 * Shows the free plan as a plain text anchor instead of a plan card.
+	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
+	 */
+	deemphasizeFreePlan?: boolean;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -245,6 +251,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	deemphasizeFreePlan = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -448,7 +455,10 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
-		hiddenPlans,
+		hiddenPlans: {
+			...hiddenPlans,
+			hideFreePlan: hideFreePlan || deemphasizeFreePlan,
+		},
 		intent,
 		isDisplayingPlansNeededForFeature,
 		isInSignup,
@@ -785,7 +795,7 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ intent === 'plans-paid-media' && (
+				{ deemphasizeFreePlan && (
 					<FreePlanSubHeader>
 						{ translate(
 							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
