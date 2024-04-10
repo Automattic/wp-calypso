@@ -14,7 +14,7 @@ const PlanCard: FC = () => {
 	console.debug( 'site', site );
 	console.debug( 'planName', planName );
 	return (
-		<Card className="top-card">
+		<Card className="hosting-overview__card">
 			<CardHeading isBold>{ planName }</CardHeading>
 		</Card>
 	);

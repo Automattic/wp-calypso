@@ -3,7 +3,6 @@ import { chevronRightSmall, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -16,9 +15,9 @@ interface ActionProps {
 }
 const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 	return (
-		<li className="action">
-			<Button className="action-button" plain href={ href }>
-				<span className="action-text">
+		<li className="hosting-overview__action">
+			<Button className="hosting-overview__action-button" plain href={ href }>
+				<span className="hosting-overview__action-text">
 					{ icon }
 					{ text }
 				</span>
@@ -34,22 +33,25 @@ const QuickActionsCard: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<Card className="top-card">
-			<CardHeading isBold>{ translate( 'Quick actions' ) }</CardHeading>
-			<ul className="actions-list">
+		<Card className="hosting-overview__card">
+			<h3>{ translate( 'Quick actions' ) }</h3>
+
+			<ul className="hosting-overview__actions-list">
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />
 				<Action
-					icon={ <SidebarCustomIcon icon="dashicons-admin-appearance action-icon__dashicon" /> }
+					icon={
+						<SidebarCustomIcon icon="dashicons-admin-appearance hosting-overview__dashicon" />
+					}
 					href={ `/themes/${ site?.slug }` }
 					text={ translate( 'Change theme' ) }
 				/>
 				<Action
-					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins action-icon__dashicon" /> }
+					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
 					href={ `/plugins/${ site?.slug }` }
 					text={ translate( 'Install plugins' ) }
 				/>
 				<Action
-					icon={ <SidebarCustomIcon icon="dashicons-chart-bar action-icon__dashicon" /> }
+					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
 					href={ `/stats/${ site?.slug }` }
 					text={ translate( 'See JetPack Stats' ) }
 				/>
