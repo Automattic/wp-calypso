@@ -1,7 +1,6 @@
 import { DataViews } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 interface JetpackSitesTableProps {
 	data;
@@ -29,17 +28,6 @@ const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
 
 	const totalSites = props.data?.total || 0;
 	const totalPages = Math.ceil( totalSites / 50 );
-
-	const openSitePreviewPane = useCallback(
-		( site ) => {
-			setSitesViewState( {
-				...sitesViewState,
-				selectedSite: site,
-				type: 'list',
-			} );
-		},
-		[ setSitesViewState, sitesViewState ]
-	);
 
 	return (
 		<div>

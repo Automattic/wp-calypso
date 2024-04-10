@@ -218,9 +218,6 @@ export function SitesDashboard( {
 				header: __( 'Site' ),
 				getValue: ( { item } ) => item.URL,
 				render: ( { item } ) => {
-					if ( isLoading ) {
-						return <TextPlaceholder />;
-					}
 					return (
 						<Button>
 							<>{ item.title }</>
