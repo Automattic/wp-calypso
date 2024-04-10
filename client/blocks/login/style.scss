@@ -152,6 +152,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 		color: var(--color-link);
 		cursor: pointer;
 		text-decoration: none;
+
+		&:hover {
+			color: var(--color-link-dark);
+		}
 	}
 }
 
