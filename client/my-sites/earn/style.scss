@@ -36,6 +36,21 @@
 			}
 		}
 	}
+	.highlight-card-tooltip-content {
+		p {
+			font-size: $font-body-small;
+			font-weight: normal;
+		}
+	}
+	.earn__cancel-dialog {
+		h1 {
+			font-size: $font-title-small;
+		}
+		p {
+			font-size: $font-body;
+		}
+	}
+
 }
 
 .earn__launchpad {
