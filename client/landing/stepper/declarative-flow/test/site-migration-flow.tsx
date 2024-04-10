@@ -174,7 +174,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from verifyEmail back to upgrade-plan', () => {
+		it( 'redirects from verifyEmail to assignMigrationTrialPlan', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -185,14 +185,27 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }`,
+				path: `/${ STEPS.ASSIGN_MIGRATION_TRIAL_PLAN.slug }`,
 				state: null,
+			} );
+		} );
+
+		it( 'redirects from assignMigrationTrialPlan to bundleTransfer step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.ASSIGN_MIGRATION_TRIAL_PLAN.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: '/bundleTransfer',
+				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 	} );
 
 	describe( 'goBack', () => {
-		it( 'backs to the indentify step', async () => {
+		it( 'backs to the identify step', async () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {
