@@ -89,6 +89,7 @@
 
 		box-sizing: border-box;
 		border-radius: 4px;
+		font-weight: 500;
 	}
 
 	.button.split-button__toggle {
@@ -119,6 +120,12 @@
 	.button.is-borderless:hover,
 	.button.is-borderless {
 		background: none;
+		color: var(--studio-gray-80);
+	}
+
+	.split-button .button {
+		font-size: 1rem;
+		height: 40px;
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {
