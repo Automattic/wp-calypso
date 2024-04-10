@@ -8,22 +8,20 @@ type SurveyAnswersQueryParams = {
 
 type SurveyAnswersResponse = {
 	question_key: string;
-	answer_key: string;
+	answer_keys: string[];
 }[];
 
-const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers => {
-	return response.reduce( ( acc: Record< string, string[] >, { question_key, answer_key } ) => {
-		acc[ question_key ] = [ ...( acc[ question_key ] || [] ), answer_key ];
-		return acc;
+const mapSurveyAnswers = ( response: SurveyAnswersResponse ): Answers =>
+	response.reduce( ( acc, { question_key, answer_keys } ) => {
+		return { ...acc, [ question_key ]: answer_keys };
 	}, {} );
-};
 
 const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
 	return useQuery( {
 		queryKey: [ 'survey-answers', surveyKey ],
 		queryFn: () => {
 			return wpcom.req.get( {
-				path: `/segmentation-survey/answers?survey_key=${ surveyKey }`,
+				path: `/segmentation-survey/answer?survey_key=${ surveyKey }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
