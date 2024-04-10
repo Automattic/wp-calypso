@@ -33,12 +33,17 @@ import {
 import { Subscriber } from '../types';
 import CancelDialog from './cancel-dialog';
 import Customer from './customer/index';
+import { Query } from './types';
 
-function CustomerSection() {
+type CustomerSectionProps = {
+	query?: Query;
+};
+
+const CustomerSection = ( { query }: CustomerSectionProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
-	const subscriberId = new URLSearchParams( window.location.search ).get( 'subscriber' );
+	const subscriberId = query?.subscriber;
 	const [ subscriberToCancel, setSubscriberToCancel ] = useState< Subscriber | null >( null );
 	const site = useSelector( getSelectedSite );
 
@@ -245,6 +250,6 @@ function CustomerSection() {
 			<div>{ renderSubscriberList() }</div>
 		</div>
 	);
-}
+};
 
 export default CustomerSection;
