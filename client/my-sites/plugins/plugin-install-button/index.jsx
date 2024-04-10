@@ -24,7 +24,6 @@ import {
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -71,38 +70,23 @@ export class PluginInstallButton extends Component {
 			isEmbed,
 			siteId,
 			selectedSite,
-			billingPeriod,
 			isInstalling,
 			plugin,
 			canInstallPlugins,
 			siteIsWpcomAtomic,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
-			productToBeInstalled: setProductToBeInstalled,
 		} = this.props;
 
 		if ( isInstalling ) {
 			return;
 		}
 
-		// Installation URL if needed
-		const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
-
 		if ( canInstallPlugins && siteIsWpcomAtomic ) {
 			this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 			this.props.installPlugin( siteId, plugin );
-		} else if ( canInstallPlugins && ! siteIsWpcomAtomic ) {
-			setProductToBeInstalled( plugin.slug, selectedSite.slug );
-			return page( installPluginURL );
 		} else {
-			setProductToBeInstalled( plugin.slug, selectedSite.slug );
-			// We also need to add a business plan to the cart.
-			return page(
-				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
-					selectedSite?.plan,
-					billingPeriod
-				) }?redirect_to=${ installPluginURL }#step2`
-			);
+			return page( `/plugins/${ plugin.slug }/${ selectedSite.slug }` );
 		}
 
 		if ( isEmbed ) {
@@ -244,8 +228,15 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud, canInstallPlugins } =
-			this.props;
+		const {
+			translate,
+			isInstalling,
+			isEmbed,
+			disabled,
+			isJetpackCloud,
+			canInstallPlugins,
+			siteIsWpcomAtomic,
+		} = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -261,7 +252,9 @@ export class PluginInstallButton extends Component {
 									<Gridicon icon="plugins" size={ 18 } />
 								</>
 							) }
-							{ canInstallPlugins ? translate( 'Install' ) : translate( 'Upgrade and activate' ) }
+							{ canInstallPlugins && siteIsWpcomAtomic
+								? translate( 'Install' )
+								: translate( 'Go to plugin page' ) }
 						</Button>
 					) }
 				</span>
@@ -405,6 +398,5 @@ export default connect(
 		removePluginStatuses,
 		recordGoogleEvent,
 		recordTracksEvent,
-		productToBeInstalled,
 	}
 )( localize( PluginInstallButton ) );

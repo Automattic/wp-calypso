@@ -43,9 +43,9 @@ const initialReduxState = {
 	},
 };
 
-const render = ( el ) =>
+const render = ( el, partialState ) =>
 	renderWithProvider( el, {
-		initialState: initialReduxState,
+		initialState: { ...initialReduxState, ...partialState },
 		reducers: { ui, plugins, documentHead, productsList, siteConnection, marketplace },
 		store: undefined,
 	} );
@@ -160,7 +160,12 @@ describe( '<PluginRowFormatter>', () => {
 
 	test( 'should render correctly and show install button', () => {
 		props.columnKey = 'install';
-		const { getAllByText } = render( <PluginRowFormatter { ...props } /> );
+		const { getAllByText } = render( <PluginRowFormatter { ...props } />, {
+			sites: {
+				items: { [ site.ID ]: { ...site, options: { ...site.options, is_wpcom_atomic: true } } },
+				features: initialReduxState.sites.features,
+			},
+		} );
 
 		const [ autoManagedSite ] = getAllByText( `Install` );
 		expect( autoManagedSite ).toBeInTheDocument();
