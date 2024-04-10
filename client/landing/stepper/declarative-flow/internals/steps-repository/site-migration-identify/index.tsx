@@ -74,7 +74,10 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 						onComplete={ ( { platform, url } ) =>
 							navigation?.submit?.( { action: 'continue', platform: platform, from: url } )
 						}
-						onSkip={ () => navigation?.submit?.( { action: 'skip' } ) }
+						onSkip={ () => {
+							recordTracksEvent( 'calypso_site_migration_identify_skip' );
+							navigation?.submit?.( { action: 'skip' } );
+						} }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }
