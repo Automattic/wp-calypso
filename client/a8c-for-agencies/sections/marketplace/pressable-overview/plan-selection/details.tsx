@@ -82,13 +82,20 @@ export default function PlanSelectionDetails( { selectedPlan, onSelectPlan }: Pr
 
 				<IncludedList
 					items={ [
-						translate( '{{b}}%(count)s{{/b}} WordPress installs', {
-							args: {
-								count: info?.install ?? customString,
-							},
-							components: { b: <b /> },
-							comment: '%(count)s is the number of WordPress installs.',
-						} ),
+						info?.install
+							? translate(
+									'{{b}}%(count)d{{/b}} WordPress install',
+									'{{b}}%(count)d{{/b}} WordPress installs',
+									{
+										args: {
+											count: info.install,
+										},
+										count: info.install,
+										components: { b: <b /> },
+										comment: '%(count)s is the number of WordPress installs.',
+									}
+							  )
+							: translate( 'Custom WordPress installs' ),
 						translate( '{{b}}%(count)s{{/b}} visits per month', {
 							args: {
 								count: info ? formatNumber( info.visits ) : customString,

@@ -177,6 +177,11 @@ export const useCommandsCalypso = (): Command[] => {
 	// Commands need to be defined in `packages/command-palette/src/commands.tsx`.
 	const commands = Object.values(
 		deepmerge( COMMANDS, {
+			switchSite: {
+				// This command is explicitly about switching sites, it should therefore always display the site selector
+				// where possible.
+				alwaysUseSiteSelector: true,
+			},
 			getHelp: {
 				callback: ( { close }: CommandCallBackParams ) => {
 					close();

@@ -76,6 +76,10 @@
 		font-size: rem(13px);
 		line-height: 1.6;
 		padding: 4px 8px;
+
+		&:lang(en) {
+			text-transform: capitalize;
+		}
 	}
 
 	.pattern-preview__copy {

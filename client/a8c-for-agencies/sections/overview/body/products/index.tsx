@@ -45,7 +45,7 @@ const OverviewBodyProducts = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'View all Jetpack products' ),
-		expanded: true,
+		expanded: false,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'jetpack' );
 			page( A4A_PRODUCTS_MARKETPLACE_LINK );
@@ -73,7 +73,7 @@ const OverviewBodyProducts = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'View all WooCommerce products' ),
-		expanded: false,
+		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'woocommerce' );
 			page( A4A_PRODUCTS_MARKETPLACE_LINK );
@@ -86,7 +86,7 @@ const OverviewBodyProducts = () => {
 			description={ translate(
 				'Add services to create sites, increase security and performance, and provide excellent shopping experiences for your clients’ sites.'
 			) }
-			items={ [ jetpack, woo ] }
+			items={ [ woo, jetpack ] }
 		/>
 	);
 };
