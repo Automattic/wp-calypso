@@ -28,7 +28,7 @@ import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/anal
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
-import useStatsPurchases from '../hooks/use-stats-purchases';
+import { withStatsPurchases } from '../hooks/use-stats-purchases';
 import NavigationArrows from '../navigation-arrows';
 import StatsCardUpsell from '../stats-card-upsell';
 
@@ -342,14 +342,10 @@ const connectComponent = connect(
 	{ recordGoogleEvent: recordGoogleEventAction, toggleUpsellModal }
 );
 
-const StatsPeriodNavigationLinked = flowRight(
+export default flowRight(
 	connectComponent,
 	localize,
 	withRtl,
-	withLocalizedMoment
+	withLocalizedMoment,
+	withStatsPurchases
 )( StatsPeriodNavigation );
-
-export default function ( props ) {
-	const statsPurchases = useStatsPurchases( props.siteId );
-	return <StatsPeriodNavigationLinked { ...props } { ...statsPurchases } />;
-}
