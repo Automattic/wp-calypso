@@ -14,11 +14,11 @@ import './style.scss';
 interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
+	onSkip: () => void;
 }
 
-export const Analyzer: FC< Props > = ( props ) => {
+export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 	const translate = useTranslate();
-	const { onComplete } = props;
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
 	const {
@@ -49,6 +49,7 @@ export const Analyzer: FC< Props > = ( props ) => {
 					onInputChange={ () => setSiteURL( '' ) }
 					hasError={ hasError }
 					skipInitialChecking
+					onDontHaveSiteAddressClick={ onSkip }
 				/>
 			</div>
 		</div>
@@ -71,8 +72,9 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepContent={
 					<Analyzer
 						onComplete={ ( { platform, url } ) =>
-							navigation?.submit?.( { platform: platform, from: url } )
+							navigation?.submit?.( { action: 'continue', platform: platform, from: url } )
 						}
+						onSkip={ () => navigation?.submit?.( { action: 'skip' } ) }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

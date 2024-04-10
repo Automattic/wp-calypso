@@ -153,21 +153,25 @@ const siteMigration: Flow = {
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					const { from, platform } = providedDependencies as { from: string; platform: string };
+					const { from, platform, action } = providedDependencies as {
+						from: string;
+						platform: string;
+						action: string;
+					};
 
-					if ( platform === 'wordpress' ) {
-						return navigate(
+					if ( action === 'skip' || platform !== 'wordpress' ) {
+						return exitFlow(
 							addQueryArgs(
-								{ from: from, siteSlug, siteId },
-								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+								{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
+								'/setup/site-setup/importList'
 							)
 						);
 					}
 
-					return exitFlow(
+					return navigate(
 						addQueryArgs(
-							{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
-							'/setup/site-setup/importList'
+							{ from: from, siteSlug, siteId },
+							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 						)
 					);
 				}
