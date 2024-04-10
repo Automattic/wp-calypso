@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 
 interface JetpackSitesTableProps {
 	data;
+	fields;
 }
 
 const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
@@ -19,7 +20,7 @@ const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
 		search: '',
 		filters: [],
 		layout: {},
-		selectedSite: undefined,
+		hiddenFields: [],
 	};
 
 	const [ sitesViewState, setSitesViewState ] = useState( {
@@ -40,50 +41,11 @@ const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
 		[ setSitesViewState, sitesViewState ]
 	);
 
-	const fields = [
-		{
-			id: 'site',
-			header: __( 'Site' ),
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'plan',
-			header: __( 'Plan' ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'status',
-			header: __( 'Status' ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'last-publish',
-			header: __( 'Last Publish' ),
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'stats',
-			header: __( 'Stats' ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'actions',
-			header: __( 'Actions' ),
-			enableHiding: false,
-			enableSorting: false,
-		},
-	];
-
 	return (
 		<div>
 			<DataViews
 				data={ props.data }
-				fields={ fields }
+				fields={ props.fields }
 				view={ sitesViewState }
 				onChangeView={ setSitesViewState }
 				actions={ [] }

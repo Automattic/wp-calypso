@@ -212,7 +212,61 @@ export function SitesDashboard( {
 	useShowSiteTransferredNotice();
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		return <JetpackSitesDashboard data={ allSites } />;
+		const fields = [
+			{
+				id: 'site',
+				header: __( 'Site' ),
+				getValue: ( { item } ) => item.URL,
+				render: ( { item } ) => {
+					if ( isLoading ) {
+						return <TextPlaceholder />;
+					}
+					return (
+						<Button>
+							<>{ item.title }</>
+						</Button>
+					);
+				},
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'plan',
+				header: __( 'Plan' ),
+				getValue: () => '-',
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'status',
+				header: __( 'Status' ),
+				getValue: () => '-',
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'last-publish',
+				header: __( 'Last Publish' ),
+				getValue: () => '-',
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'stats',
+				header: __( 'Stats' ),
+				getValue: () => '-',
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'actions',
+				header: __( 'Actions' ),
+				getValue: () => '-',
+				enableHiding: false,
+				enableSorting: false,
+			},
+		];
+		return <JetpackSitesDashboard data={ allSites } fields={ fields } />;
 	}
 	return (
 		<main>
