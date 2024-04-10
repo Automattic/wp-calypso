@@ -10,7 +10,7 @@ export default function useSiteComplusoryPlanSelectionQualifiedCheck( siteId: nu
 	) as string;
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	// `recent_usages` is an array of the most recent 3 months usage data, and `current_usage` is the current month usage data.
-	// Note: two of the highest days in the last 3 months are excluded before calculating the monthly views.
+	// Note: two of the highest days every month in the last 3 months are excluded before calculating the monthly views.
 	const recentMonthlyViews = Math.max(
 		usageInfo?.recent_usages[ 0 ]?.views_count ?? 0,
 		usageInfo?.recent_usages[ 1 ]?.views_count ?? 0,
