@@ -28,4 +28,10 @@
 	margin-bottom: 0;
 	display: flex;
 	flex-direction: row;
+	list-style-type: none;
+	& > li {
+		margin-right: 0.875rem;
+		margin-bottom: 0.875rem;
+		text-wrap: nowrap;
+	}
 }

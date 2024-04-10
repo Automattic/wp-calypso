@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
@@ -56,8 +55,8 @@ export function JetpackPreviewPane( {
 	}, [] );
 
 	// Jetpack features: Boost, Backup, Monitor, Stats
-	const features = useMemo( () => {
-		const f = [
+	const features = useMemo(
+		() => [
 			createFeaturePreview(
 				JETPACK_BOOST_ID,
 				'Boost',
@@ -123,23 +122,17 @@ export function JetpackPreviewPane( {
 				setSelectedSiteFeature,
 				<JetpackActivityPreview siteId={ site.blog_id } />
 			),
-		];
-
-		if ( isEnabled( 'a4a/site-details-pane' ) ) {
-			f.push(
-				createFeaturePreview(
-					A4A_SITE_DETAILS_ID,
-					translate( 'Details' ),
-					true,
-					selectedSiteFeature,
-					setSelectedSiteFeature,
-					<SiteDetails site={ site } />
-				)
-			);
-		}
-
-		return f;
-	}, [ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ] );
+			createFeaturePreview(
+				A4A_SITE_DETAILS_ID,
+				translate( 'Details' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteDetails site={ site } />
+			),
+		],
+		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
+	);
 
 	return (
 		<SitePreviewPane

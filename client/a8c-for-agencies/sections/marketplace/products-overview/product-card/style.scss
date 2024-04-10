@@ -48,6 +48,8 @@ button.product-card__select-button {
 	font-weight: 600;
 	line-height: 1.1;
 	max-height: 36px;
+	min-width: 82px;
+	max-width: 82px;
 }
 
 @mixin product-card-block__details {
