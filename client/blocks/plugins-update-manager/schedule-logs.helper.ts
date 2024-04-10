@@ -18,6 +18,11 @@ export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
 		case 'PLUGIN_UPDATES_START':
 			return translate( 'Plugins update started' );
 		case 'PLUGIN_UPDATES_SUCCESS':
+			if ( log.message === 'no_plugins_to_update' ) {
+				return (
+					translate( 'Plugins update completed' ) + ' — ' + translate( 'no plugins to update' )
+				);
+			}
 			return translate( 'Plugins update completed' );
 		case 'PLUGIN_UPDATES_FAILURE':
 			return translate( 'Plugins update failed' );
