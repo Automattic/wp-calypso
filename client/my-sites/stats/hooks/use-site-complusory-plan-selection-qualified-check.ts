@@ -9,6 +9,7 @@ export default function useSiteComplusoryPlanSelectionQualifiedCheck( siteId: nu
 		getSiteOption( state, siteId, 'created_at' )
 	) as string;
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
+	// `recent_usages` is an array of the most recent 3 months usage data, and `current_usage` is the current month usage data.
 	const recentMonthlyViews = Math.max(
 		usageInfo?.recent_usages[ 0 ]?.views_count ?? 0,
 		usageInfo?.recent_usages[ 1 ]?.views_count ?? 0,
