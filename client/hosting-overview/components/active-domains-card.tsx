@@ -1,3 +1,4 @@
+import { Button, Card } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain, useDomainsTable } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
@@ -14,7 +15,22 @@ const ActiveDomainsCard: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<div>
+		<Card className="hosting-overview__card">
+			<div className="hosting-overview__card-header">
+				<h3 className="hosting-overview__card-title">{ translate( 'Active domains' ) }</h3>
+
+				<Button className="hosting-overview__domain-management-link" plain href="/start/domain">
+					{ translate( 'Add new domain' ) }
+				</Button>
+				<Button
+					className="hosting-overview__domain-management-link"
+					plain
+					href={ `/domains/manage/${ site?.slug }` }
+				>
+					{ translate( 'Manage domains' ) }
+				</Button>
+			</div>
+
 			<DomainsTable
 				isLoadingDomains={ isLoading }
 				domains={ data?.domains }
@@ -32,7 +48,7 @@ const ActiveDomainsCard: FC = () => {
 				// fetchBulkActionStatus={ fetchBulkActionStatus }
 				// deleteBulkActionStatus={ deleteBulkActionStatus }
 			/>
-		</div>
+		</Card>
 	);
 };
 

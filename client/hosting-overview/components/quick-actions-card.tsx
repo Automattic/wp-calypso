@@ -1,4 +1,4 @@
-import { Card, Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { chevronRightSmall, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
@@ -34,7 +34,9 @@ const QuickActionsCard: FC = () => {
 
 	return (
 		<Card className="hosting-overview__card">
-			<h3 className="hosting-overview__card-title">{ translate( 'Quick actions' ) }</h3>
+			<div className="hosting-overview__card-header">
+				<h3 className="hosting-overview__card-title">{ translate( 'Quick actions' ) }</h3>
+			</div>
 
 			<ul className="hosting-overview__actions-list">
 				<Action icon={ <WriteIcon /> } href={ editorUrl } text={ translate( 'Write post' ) } />

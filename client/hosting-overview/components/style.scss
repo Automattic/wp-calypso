@@ -1,6 +1,7 @@
 .hosting-overview__top-cards-wrapper {
 	display: flex;
 	gap: 33px;
+	margin-bottom: 38px;
 }
 
 .hosting-overview__card {
@@ -10,8 +11,15 @@
 	padding: 22px;
 }
 
+.hosting-overview__card-header {
+	display: flex;
+	gap: var(--grid-unit-15, 12px);
+	margin-bottom: 16px;
+}
+
 .hosting-overview__card-title {
 	color: var(--Gray-Gray-100, #101517);
+	flex: 1;
 	font-feature-settings: "clig" off, "liga" off;
 	font-family: "SF Pro Display", $sans;
 	font-size: $font-title-small;
@@ -19,7 +27,6 @@
 	font-weight: 500;
 	line-height: 26px;
 	letter-spacing: 0.38px;
-	margin-bottom: 16px;
 }
 
 .hosting-overview__actions-list {
@@ -71,4 +78,13 @@
 		color: var(--studio-gray-30);
 		margin-right: 8px;
 	}
+}
+
+a.hosting-overview__domain-management-link {
+	color: var(--Primary-Blue, #007cba);
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	line-height: 16px;
+	text-decoration-line: underline;
 }
