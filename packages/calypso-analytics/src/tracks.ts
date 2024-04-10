@@ -295,16 +295,21 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 		eventProperties = Object.assign( eventProperties, params );
 	}
 
-	// Record all `utm` marketing parameters as event properties on the page view event
+	// Record some query parameters as event properties on the page view event
 	// so we can analyze their performance with our analytics tools
 	if ( typeof window !== 'undefined' && window.location ) {
 		const urlParams = new URL( window.location.href ).searchParams;
+
+		// Record all `utm` marketing params.
 		const utmParamEntries =
 			urlParams &&
 			Array.from( urlParams.entries() ).filter( ( [ key ] ) => key.startsWith( 'utm_' ) );
 		const utmParams = utmParamEntries ? Object.fromEntries( utmParamEntries ) : {};
 
-		eventProperties = Object.assign( eventProperties, utmParams );
+		// Record the 'ref' param.
+		const refParam = urlParams && urlParams.get( 'ref' ) ? { ref: urlParams.get( 'ref' ) } : {};
+
+		eventProperties = Object.assign( eventProperties, { ...utmParams, ...refParam } );
 	}
 
 	recordTracksEvent( 'calypso_page_view', eventProperties );
