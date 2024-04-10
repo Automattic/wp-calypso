@@ -11,12 +11,14 @@ import './style.scss';
 interface ECommerceTrialPlansPageProps {
 	interval?: 'monthly' | 'yearly';
 	site: Site;
+	isWooExpressTrial: boolean;
 }
 
 const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	const interval = props.interval ?? 'monthly';
 	const siteSlug = props.site?.slug;
 	const siteId = props.site?.ID;
+	const { isWooExpressTrial } = props;
 
 	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
 		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
@@ -32,7 +34,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<div className="e-commerce-trial-plans__banner-wrapper">
-				<TrialBanner isEcommerceTrial={ true } />
+				<TrialBanner isWooExpressTrial={ isWooExpressTrial } />
 			</div>
 
 			<WooExpressPlans
