@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -16,10 +15,9 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId, butt
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	let UpsellComponent = StatsCardUpsellWPCOM;
-	if ( isSiteJetpackNotAtomic || isOdysseyStats ) {
+	if ( isSiteJetpackNotAtomic ) {
 		UpsellComponent = StatsCardUpsellJetpack;
 	}
 
