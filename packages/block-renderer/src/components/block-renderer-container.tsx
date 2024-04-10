@@ -56,7 +56,7 @@ const ScaledBlockRendererContainer = ( {
 	const { settings } = useContext( BlockRendererContext );
 	const { styles, assets, duotone } = useMemo(
 		() => ( {
-			styles: settings.styles.map( ( styles ) => {
+			styles: settings.styles.map( ( styles: RenderedStyle ) => {
 				if ( ! isSafari || ! styles.css || ! styles.css.includes( 'body' ) ) {
 					return styles;
 				}
