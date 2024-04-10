@@ -34,7 +34,13 @@ export const usePlanUpsellInfo = ( { planSlug }: { planSlug: PlanSlug } ): PlanU
 
 	return {
 		title,
-		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, { stripZeros: true } ),
-		formattedPriceFull: formatCurrency( priceFull, currencyCode, { stripZeros: true } ),
+		formattedPriceMonthly: formatCurrency( priceMonthly, currencyCode, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} ),
+		formattedPriceFull: formatCurrency( priceFull, currencyCode, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} ),
 	};
 };
