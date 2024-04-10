@@ -58,7 +58,7 @@ describe( 'Site Migration Flow', () => {
 			);
 		} );
 
-		it( 'redirects the user to the import content flow when the user skip the site identification', () => {
+		it( 'redirects the user to the import content flow when the user skip the plaform identification', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
