@@ -14,6 +14,11 @@
 
 .action {
 	list-style: none;
+	border-bottom: 1px solid #f0f0f0;
+
+	&:last-child {
+		border-bottom: none;
+	}
 }
 
 .action-button {
