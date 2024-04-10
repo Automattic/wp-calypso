@@ -326,35 +326,37 @@ $business-plan-color: #7f54b3;
 				text-align: center;
 				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 				margin-bottom: 0.5rem;
+				line-height: 22px;
 			}
 
 			.import__upgrade-plan-hosting-details-testimonials {
+				height: 37px;
 				text-align: center;
 
 				.import__upgrade-plan-hosting-details-tooltip-hover-area-container {
-					height: 38px;
-					width: 38px;
+					height: 36px;
+					width: 36px;
 					display: inline-block;
 					border-radius: 50%;
 
 					&:nth-child(2) {
 						z-index: 2;
-						transform: translateX(-8px);
+						transform: translateX(-6px);
 					}
 
 					&:nth-child(3) {
 						z-index: 3;
-						transform: translateX(-16px);
+						transform: translateX(-12px);
 					}
 
 					&:nth-child(4) {
 						z-index: 4;
-						transform: translateX(-24px);
+						transform: translateX(-18px);
 					}
 
 					&:nth-child(5) {
 						z-index: 4;
-						transform: translateX(-32px);
+						transform: translateX(-24px);
 					}
 
 					.import__upgrade-plan-hosting-details-testimonials-image {
