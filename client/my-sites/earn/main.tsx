@@ -242,6 +242,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
+	const atomicLearnMoreLink = localizeUrl( 'https://wordpress.com/support/monetize-your-site/' );
+	const jetpackLearnMoreLink = localizeUrl( 'https://jetpack.com/support/monetize-your-site/' );
+
 	return (
 		<Main wideLayout={ true } className="earn">
 			<PageViewTracker
@@ -260,9 +263,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
-									learnMoreLink: isJetpackNotAtomic ? (
+									learnMoreLink: isJetpackCloud() ? (
 										<a
-											href={ localizeUrl( 'https://jetpack.com/support/monetize-your-site/' ) }
+											href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
