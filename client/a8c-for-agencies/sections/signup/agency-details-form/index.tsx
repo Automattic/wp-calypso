@@ -67,7 +67,7 @@ export default function AgencyDetailsForm( {
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
 	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
-	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-20' );
+	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
 	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
 
 	const country = getCountry( countryValue, countryOptions );
