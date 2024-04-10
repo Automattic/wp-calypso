@@ -409,14 +409,13 @@ function StatsCommercialFlowOptOutForm( {
 		commercialClassificationLastRunAt > 0 &&
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
 
-	const isFormSubmissionDisabled = () => {
-		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
-	};
+	const isFormSubmissionDisabled =
+		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error or you’ve removed the commercial identifier, please confirm the information below and reverify (maximum once every 24 hours).',
+				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
 				{
 					args: {
 						reasons:
@@ -426,6 +425,16 @@ function StatsCommercialFlowOptOutForm( {
 										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? reason
 								)
 								.join( ' and/or ' ) ?? 'Unknown',
+					},
+					components: {
+						link: (
+							<a
+								target="_blank"
+								href="https://jetpack.com/support/jetpack-stats/free-or-paid/#how-is-a-commercial-site-defined"
+								rel="noreferrer noopener"
+							/>
+						),
+						br: <br />,
 					},
 				}
 		  )
@@ -485,7 +494,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ supportsOnDemandCommercialClassification && isCommercial && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled() }
+						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
 						onClick={ handleCommercialClassification }
 					>
 						{ translate( 'Reverify' ) }
@@ -494,11 +503,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ ( ! supportsOnDemandCommercialClassification ||
 					! isCommercial ||
 					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button
-						variant="secondary"
-						disabled={ ! supportsOnDemandCommercialClassification && isFormSubmissionDisabled() }
-						onClick={ formHandler }
-					>
+					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
 						{ formButton }
 					</Button>
 				) }

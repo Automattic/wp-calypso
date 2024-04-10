@@ -156,7 +156,7 @@ const useFormatPluginData = () => {
 	return useCallback(
 		( site: Site ): PluginNode => {
 			const pluginUpdates = site.is_atomic
-				? site.awaiting_plugin_updates.filter(
+				? site.awaiting_plugin_updates?.filter(
 						( plugin ) =>
 							! PREINSTALLED_PLUGINS.includes( plugin ) &&
 							! AUTOMOMANAGED_PLUGINS.includes( plugin ) &&
@@ -165,6 +165,14 @@ const useFormatPluginData = () => {
 				  )
 				: site.awaiting_plugin_updates;
 
+			if ( ! pluginUpdates ) {
+				return {
+					value: '',
+					status: 'disabled',
+					type: 'plugin',
+					updates: 0,
+				};
+			}
 			return {
 				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
 				status: pluginUpdates?.length > 0 ? 'warning' : 'success',

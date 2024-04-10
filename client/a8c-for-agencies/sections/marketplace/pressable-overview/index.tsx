@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -127,7 +127,7 @@ export default function PressableOverview() {
 						href={ PRESSABLE_LINK }
 						onClick={ onclickMoreInfo }
 						target="_blank"
-						variant="primary"
+						primary
 					>
 						{ translate( 'Learn more about Pressable' ) } <Icon icon={ external } size={ 18 } />
 					</Button>

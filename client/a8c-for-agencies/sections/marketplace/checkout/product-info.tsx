@@ -25,6 +25,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 		productIcon = pressableIcon;
 		productTitle = product.name;
 		productDescription = translate(
+			'Plan with %(install)d WordPress install, %(visits)s visits per month, and %(storage)dGB of storage per month.',
 			'Plan with %(install)d WordPress installs, %(visits)s visits per month, and %(storage)dGB of storage per month.',
 			{
 				args: {
@@ -32,6 +33,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					visits: formatNumber( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
+				count: presablePlan.install,
 				comment:
 					'The `install`, `visits` & `storage` are the count of WordPress installs, visits per month, and storage per month in the plan description.',
 			}
