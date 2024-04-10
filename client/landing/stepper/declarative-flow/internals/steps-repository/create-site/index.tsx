@@ -20,6 +20,7 @@ import {
 	isBlogOnboardingFlow,
 	isSiteAssemblerFlow,
 	setThemeOnSite,
+	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -95,6 +96,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
+	} else if ( flow === AI_ASSEMBLER_FLOW ) {
+		theme = 'pub/assembler';
 	}
 
 	let preselectedThemeSlug = '';

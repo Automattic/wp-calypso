@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -196,7 +196,7 @@ export default function MultiProductCard( props: Props ) {
 
 							<Button
 								className="product-card__select-button"
-								variant={ isSelected ? 'secondary' : 'primary' }
+								primary={ ! isSelected }
 								tabIndex={ -1 }
 							>
 								{ isSelected && <Icon icon={ check } /> }
