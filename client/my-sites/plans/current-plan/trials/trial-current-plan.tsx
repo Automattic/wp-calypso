@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	PLAN_BUSINESS,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -13,7 +14,7 @@ import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import useOneDollarOfferTrack from '../../hooks/use-onedollar-offer-track';
 import TrialBanner from '../../trials/trial-banner';
 import BusinessTrialIncluded from './business-trial-included';
@@ -22,8 +23,19 @@ import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
 
 import './trial-current-plan.scss';
 
+const getTargetPlanAndTrackEvent = ( isEcommerceTrial: boolean, isWooExpressTrial: boolean ) => {
+	if ( isEcommerceTrial ) {
+		return isWooExpressTrial
+			? [ PLAN_WOOEXPRESS_MEDIUM_MONTHLY, 'calypso_wooexpress_my_plan_cta' ]
+			: [ PLAN_ECOMMERCE_MONTHLY, 'calypso_entrepreneur_my_plan_cta' ];
+	}
+
+	return [ PLAN_BUSINESS, 'calypso_migration_my_plan_cta' ];
+};
+
 const TrialCurrentPlan = () => {
 	const selectedSite = useSelector( getSelectedSite );
+	const purchase = useSelector( getSelectedPurchase );
 
 	const translate = useTranslate();
 
@@ -36,16 +48,17 @@ const TrialCurrentPlan = () => {
 
 	const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const isWooExpressTrial = purchase?.isWooExpressTrial;
 	// const isMigrationTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 	const bodyClass = isEcommerceTrial ? [ 'is-ecommerce-trial-plan' ] : [ 'is-business-trial-plan' ];
 
-	const targetPlan = isEcommerceTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_BUSINESS;
-	const trackEvent = isEcommerceTrial
-		? 'calypso_wooexpress_my_plan_cta'
-		: 'calypso_migration_my_plan_cta';
+	const [ targetPlan, trackEvent ] = getTargetPlanAndTrackEvent(
+		isEcommerceTrial,
+		!! isWooExpressTrial
+	);
 
 	useOneDollarOfferTrack( selectedSite?.ID, 'plans' );
 
@@ -89,7 +102,7 @@ const TrialCurrentPlan = () => {
 			<BodySectionCssClass bodyClass={ bodyClass } />
 
 			<div className="trial-current-plan__banner-wrapper">
-				<TrialBanner callToAction={ bannerCallToAction } isEcommerceTrial={ isEcommerceTrial } />
+				<TrialBanner callToAction={ bannerCallToAction } isWooExpressTrial={ isWooExpressTrial } />
 			</div>
 
 			<h2 className="trial-current-plan__section-title">
@@ -110,7 +123,7 @@ const TrialCurrentPlan = () => {
 				) }
 			</div>
 
-			{ isEcommerceTrial && (
+			{ isWooExpressTrial && (
 				<>
 					<h2 className="trial-current-plan__section-title">
 						{ translate( 'Ready to start selling?' ) }
