@@ -85,7 +85,7 @@ export function PatternsGetStarted() {
 
 				<a
 					className="patterns-get-started__item"
-					href="https://wordpress.com/learn/webinars/compelling-homepages/"
+					href="https://wordpress.com/learn/courses/quick-launch/design-your-homepage/"
 					rel="noreferrer"
 					target="_blank"
 				>
