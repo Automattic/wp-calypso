@@ -3,11 +3,13 @@ import page from '@automattic/calypso-router';
 import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Spinner } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
+import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { capitalize, defer, includes, get } from 'lodash';
+import { capitalize, defer, includes, get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
@@ -106,6 +108,8 @@ export class LoginForm extends Component {
 	state = {
 		isFormDisabledWhileLoading: true,
 		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
+		emailSuggestion: '',
+		emailSuggestionError: false,
 		password: '',
 	};
 
@@ -170,7 +174,40 @@ export class LoginForm extends Component {
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
 			! disableAutoFocus && defer( () => this.password && this.password.focus() );
 		}
+
+		if ( nextProps.requestError ) {
+			this.setState( {
+				emailSuggestionError: false,
+				emailSuggestion: '',
+			} );
+		}
 	}
+
+	debouncedEmailSuggestion = debounce( ( email ) => {
+		if ( emailValidator.validate( email ) ) {
+			const { newEmail, wasCorrected } = suggestEmailCorrection( email );
+			if ( wasCorrected ) {
+				this.props.recordTracksEvent( 'calypso_login_email_suggestion_generated', {
+					original_email: JSON.stringify( email ),
+					suggested_email: JSON.stringify( newEmail ),
+				} );
+				this.setState( {
+					emailSuggestionError: true,
+					emailSuggestion: newEmail,
+				} );
+				return;
+			}
+		}
+	}, 500 );
+
+	onChangeUsernameOrEmailField = ( event ) => {
+		this.setState( {
+			emailSuggestionError: false,
+			emailSuggestion: '',
+		} );
+		this.onChangeField( event );
+		this.debouncedEmailSuggestion( event.target.value );
+	};
 
 	onChangeField = ( event ) => {
 		this.props.formUpdate();
@@ -224,7 +261,6 @@ export class LoginForm extends Component {
 		const { onSuccess, redirectTo, domain } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
-
 		this.props
 			.loginUser( usernameOrEmail, password, redirectTo, domain )
 			.then( () => {
@@ -668,6 +704,18 @@ export class LoginForm extends Component {
 		return this.props.requestError.message;
 	}
 
+	handleAcceptEmailSuggestion() {
+		this.props.recordTracksEvent( 'calypso_login_email_suggestion_confirmation', {
+			original_email: JSON.stringify( this.state.usernameOrEmail ),
+			suggested_email: JSON.stringify( this.state.emailSuggestion ),
+		} );
+		this.setState( {
+			usernameOrEmail: this.state.emailSuggestion,
+			emailSuggestion: '',
+			emailSuggestionError: false,
+		} );
+	}
+
 	render() {
 		const {
 			accountType,
@@ -803,7 +851,7 @@ export class LoginForm extends Component {
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
-							onChange={ this.onChangeField }
+							onChange={ this.onChangeUsernameOrEmailField }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
 							ref={ this.saveUsernameOrEmailRef }
@@ -832,6 +880,46 @@ export class LoginForm extends Component {
 										}
 									) }
 							</FormInputValidation>
+						) }
+
+						{ ! requestError && this.state.emailSuggestionError && (
+							<FormInputValidation
+								isError
+								text={ this.props.translate(
+									'User does not exist. Did you mean {{suggestedEmail/}}, or would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+									{
+										components: {
+											newAccountLink: (
+												<a
+													href={ addQueryArgs(
+														{
+															user_email: this.state.usernameOrEmail,
+														},
+														signupUrl
+													) }
+												/>
+											),
+											suggestedEmail: (
+												<span
+													className="login__form-suggested-email"
+													onKeyDown={ ( e ) => {
+														if ( e.key === 'Enter' ) {
+															this.handleAcceptEmailSuggestion();
+														}
+													} }
+													onClick={ () => {
+														this.handleAcceptEmailSuggestion();
+													} }
+													role="button"
+													tabIndex="0"
+												>
+													{ this.state.emailSuggestion }
+												</span>
+											),
+										},
+									}
+								) }
+							/>
 						) }
 
 						{ isP2Login && this.isPasswordView() && this.renderChangeUsername() }
