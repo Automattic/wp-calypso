@@ -1,5 +1,6 @@
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.png';
 import imagePageLayouts from 'calypso/my-sites/patterns/components/get-started/images/understand-page-layouts.png';
@@ -16,6 +17,9 @@ export function PatternsGetStarted() {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
+	const { hasTranslation } = useI18n();
+
+	const isTitleTranslated = hasTranslation( 'Launch your site faster' ) || locale === 'en';
 
 	return (
 		<PatternsSection
@@ -85,7 +89,7 @@ export function PatternsGetStarted() {
 
 				<a
 					className="patterns-get-started__item"
-					href="https://wordpress.com/learn/courses/quick-launch/design-your-homepage/"
+					href="https://wordpress.com/learn/courses/quick-launch/"
 					rel="noreferrer"
 					target="_blank"
 				>
@@ -99,10 +103,16 @@ export function PatternsGetStarted() {
 					/>
 					<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
 					<div className="patterns-get-started__item-description">
-						{ translate( 'Design Your Homepage', {
-							comment:
-								'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
-						} ) }
+						{ isTitleTranslated &&
+							translate( 'Launch Your Site Faster', {
+								comment:
+									'This string is taken from the first line of the page content from https://wordpress.com/learn/courses/quick-launch/',
+							} ) }
+						{ ! isTitleTranslated &&
+							translate( 'Design Your Homepage', {
+								comment:
+									'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
+							} ) }
 					</div>
 				</a>
 			</div>
