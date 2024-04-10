@@ -63,7 +63,7 @@ describe( 'Site Migration Flow', () => {
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
-					action: 'skip',
+					action: 'skip_platform_identification',
 				},
 			} );
 

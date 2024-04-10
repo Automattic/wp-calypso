@@ -1,6 +1,6 @@
 import { StepContainer, Title } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -56,7 +56,16 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 	);
 };
 
+export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
+
 const SiteMigrationIdentify: Step = function ( { navigation } ) {
+	const handleSubmit = useCallback(
+		( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+			navigation?.submit?.( { action: action, ...data } );
+		},
+		[ navigation ]
+	);
+
 	return (
 		<>
 			<DocumentHead title="Site migration instructions" />
@@ -72,11 +81,10 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepContent={
 					<Analyzer
 						onComplete={ ( { platform, url } ) =>
-							navigation?.submit?.( { action: 'continue', platform: platform, from: url } )
+							handleSubmit( 'continue', { platform, from: url } )
 						}
 						onSkip={ () => {
-							recordTracksEvent( 'calypso_site_migration_identify_skip' );
-							navigation?.submit?.( { action: 'skip' } );
+							handleSubmit( 'skip_platform_identification' );
 						} }
 					/>
 				}

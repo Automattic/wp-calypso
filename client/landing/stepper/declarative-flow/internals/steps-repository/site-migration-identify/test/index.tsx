@@ -87,7 +87,9 @@ describe( 'SiteMigrationIdentify', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /choose a content platform/ } ) );
 
 		await waitFor( () =>
-			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { action: 'skip' } ) )
+			expect( submit ).toHaveBeenCalledWith(
+				expect.objectContaining( { action: 'skip_platform_identification' } )
+			)
 		);
 	} );
 

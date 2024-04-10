@@ -11,6 +11,7 @@ import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
+import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -156,10 +157,10 @@ const siteMigration: Flow = {
 					const { from, platform, action } = providedDependencies as {
 						from: string;
 						platform: string;
-						action: string;
+						action: SiteMigrationIdentifyAction;
 					};
 
-					if ( action === 'skip' || platform !== 'wordpress' ) {
+					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
 						return exitFlow(
 							addQueryArgs(
 								{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
