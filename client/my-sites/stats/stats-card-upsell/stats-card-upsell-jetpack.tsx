@@ -65,7 +65,7 @@ const StatsCardUpsellJetpack: React.FC< Props > = ( { className, siteId, statTyp
 
 	return (
 		<StatsCardUpsellOverlay
-			className={ classNames( className, 'stats-card-upsell-jetpack' ) }
+			className={ className }
 			onClick={ onClick }
 			copyText={ copyText }
 			buttonComponent={
