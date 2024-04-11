@@ -5,7 +5,6 @@ import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 're
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import StepProgress from 'calypso/components/step-progress';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useSelector, useDispatch } from 'calypso/state';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
@@ -414,9 +413,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	};
 
 	useEffect( () => {
-		if ( isJetpackCloud() ) {
-			dispatch( loadTrackingTool( 'LogRocket' ) );
-		}
+		dispatch( loadTrackingTool( 'LogRocket' ) );
 	}, [ dispatch ] );
 
 	return (

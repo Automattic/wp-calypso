@@ -113,9 +113,7 @@ const ActivityLogV2: FunctionComponent = () => {
 	);
 
 	useEffect( () => {
-		if ( isJetpackCloud() ) {
-			dispatch( loadTrackingTool( 'LogRocket' ) );
-		}
+		dispatch( loadTrackingTool( 'LogRocket' ) );
 	}, [ dispatch ] );
 
 	return (
