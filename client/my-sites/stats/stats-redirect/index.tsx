@@ -12,7 +12,7 @@ import {
 	requestStatNoticeSettings,
 } from 'calypso/state/stats/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useSiteComplusoryPlanSelectionQualifiedCheck from '../hooks/use-site-complusory-plan-selection-qualified-check';
+import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsLoader from './stats-loader';
 
@@ -53,7 +53,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
-	const { isNewSite, isQualified } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
+	const { isNewSite, isQualified } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
 		config.isEnabled( 'stats/checkout-flows-v2' ) &&
