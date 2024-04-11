@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
-import { createSitesListComponent } from '@automattic/sites';
+import { createSitesListComponent, useSitesListSorting } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -27,7 +27,7 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
-import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
+import { mapFieldIdToSortKey, MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { HostingCommandPaletteBanner } from './hosting-command-palette-banner';
 import { NoSitesMessage } from './no-sites-message';
 import {
@@ -216,6 +216,12 @@ export function SitesDashboard( {
 	useShowSiteTransferredNotice();
 
 	const { openSitePreviewPane, sitesViewState } = useContext( JetpackSitesDashboardContext );
+	const { page: sitesViewPage, perPage: sitesViewPerPage, sort: sitesViewSort } = sitesViewState;
+
+	const sortedSites = useSitesListSorting( allSites, {
+		sortKey: mapFieldIdToSortKey( sitesViewSort.field ),
+		sortOrder: sitesViewSort.direction,
+	} );
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		const fields = [
@@ -270,11 +276,10 @@ export function SitesDashboard( {
 			},
 		];
 
-		const { page, perPage } = sitesViewState;
 		const { paginatedSites, totalItems, totalPages } = getSitesPagination(
-			allSites,
-			page,
-			perPage
+			sortedSites,
+			sitesViewPage,
+			sitesViewPerPage
 		);
 
 		return (

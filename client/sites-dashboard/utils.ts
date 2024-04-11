@@ -121,3 +121,12 @@ export const PLAN_RENEW_NAG_EVENT_NAMES = {
 	IN_VIEW: 'calypso_sites_dashboard_plan_renew_nag_inview',
 	ON_CLICK: 'calypso_sites_dashboard_plan_renew_nag_click',
 };
+
+export const SORT_KEY_MAP = {
+	site: 'alphabetically',
+	'last-publish': 'lastInteractedWith',
+};
+
+export function mapFieldIdToSortKey( fieldId: string ) {
+	return SORT_KEY_MAP[ fieldId ] ?? fieldId;
+}
