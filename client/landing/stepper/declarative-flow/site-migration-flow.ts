@@ -11,6 +11,7 @@ import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
+import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -153,21 +154,25 @@ const siteMigration: Flow = {
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					const { from, platform } = providedDependencies as { from: string; platform: string };
+					const { from, platform, action } = providedDependencies as {
+						from: string;
+						platform: string;
+						action: SiteMigrationIdentifyAction;
+					};
 
-					if ( platform === 'wordpress' ) {
-						return navigate(
+					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
+						return exitFlow(
 							addQueryArgs(
-								{ from: from, siteSlug, siteId },
-								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+								{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
+								'/setup/site-setup/importList'
 							)
 						);
 					}
 
-					return exitFlow(
+					return navigate(
 						addQueryArgs(
-							{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
-							'/setup/site-setup/importList'
+							{ from: from, siteSlug, siteId },
+							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 						)
 					);
 				}

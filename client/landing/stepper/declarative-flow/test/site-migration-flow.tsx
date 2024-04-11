@@ -20,12 +20,17 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
+	beforeEach( () => {
+		jest.resetAllMocks();
+	} );
+
 	describe( 'navigation', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
+					action: 'continue',
 					platform: 'wordpress',
 					from: 'https://site-to-be-migrated.com',
 				},
@@ -42,6 +47,7 @@ describe( 'Site Migration Flow', () => {
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
+					action: 'continue',
 					platform: 'unknown',
 					from: 'https://example-to-be-migrated.com',
 				},
@@ -49,6 +55,20 @@ describe( 'Site Migration Flow', () => {
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify'
+			);
+		} );
+
+		it( 'redirects the user to the import content flow when the user skip the plaform identification', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				dependencies: {
+					action: 'skip_platform_identification',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'/setup/site-setup/importList?siteSlug=example.wordpress.com&origin=site-migration-identify'
 			);
 		} );
 
