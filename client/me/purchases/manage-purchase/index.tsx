@@ -651,9 +651,9 @@ class ManagePurchase extends Component<
 		}
 
 		const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
-		const lastRenewalDate = new Date( purchase?.mostRecentRenewDate );
+		const lastRenewalDate = new Date( purchase.mostRecentRenewDate );
 		const refundPeriodEndDate = new Date(
-			lastRenewalDate.getTime() + purchase?.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
+			lastRenewalDate.getTime() + purchase.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
 		);
 
 		const refundText = (() => {
@@ -677,7 +677,7 @@ class ManagePurchase extends Component<
 						refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
 					},
 					args: {
-						refundAmount: purchase?.refundText,
+						refundAmount: purchase.refundText,
 					},
 					context: 'refundAmount contains the currency and amount - eg. £20',
 				}
@@ -702,7 +702,7 @@ class ManagePurchase extends Component<
 									link: <InlineSupportLink supportContext="refund-periods" showIcon={ false } />,
 								},
 								args: {
-									refundPeriodInDays: purchase?.refundPeriodInDays,
+									refundPeriodInDays: purchase.refundPeriodInDays,
 								},
 							}
 						) }
