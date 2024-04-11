@@ -8,15 +8,12 @@ import type { AppState, Theme } from 'calypso/types';
  * @param {string} themeId theme id
  * @returns {string} the corresponding billing product slug
  */
-export function getProductBillingSlugByThemeId(
-	state: AppState,
-	themeId: string | null
-): string | null {
+export function getProductBillingSlugByThemeId( state: AppState, themeId: string ): string {
 	const theme: Theme | undefined = getTheme( state, 'wpcom', themeId );
 
 	if ( theme?.product_details === undefined ) {
 		return `wp-mp-theme-${ themeId }`;
 	}
 
-	return theme?.product_details[ 0 ][ 'billing_product_slug' ];
+	return theme.product_details[ 0 ][ 'billing_product_slug' ];
 }
