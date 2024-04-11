@@ -13,6 +13,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef, useContext } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
+	getSitesPagination,
 	JetpackSitesDashboard,
 	JetpackSitesDashboardContext,
 } from 'calypso/components/jetpack-sites-dashboard';
@@ -270,16 +271,17 @@ export function SitesDashboard( {
 		];
 
 		const { page, perPage } = sitesViewState;
-		const paginatedSites = allSites.slice( ( page - 1 ) * perPage, page * perPage );
+		const { paginatedSites, totalItems, totalPages } = getSitesPagination(
+			allSites,
+			page,
+			perPage
+		);
 
 		return (
 			<JetpackSitesDashboard
 				data={ paginatedSites }
 				fields={ fields }
-				paginationInfo={ {
-					totalItems: allSites.length,
-					totalPages: Math.ceil( allSites.length / perPage ),
-				} }
+				paginationInfo={ { totalItems, totalPages } }
 			/>
 		);
 	}

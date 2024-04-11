@@ -1,19 +1,8 @@
 import { createContext } from 'react';
+import { initialSitesViewState } from './constants';
 
 const JetpackSitesDashboardContext = createContext( {
-	sitesViewState: {
-		type: 'table',
-		perPage: 50,
-		page: 1,
-		sort: {
-			field: 'site',
-			direction: 'asc',
-		},
-		search: '',
-		filters: [],
-		layout: {},
-		hiddenFields: [],
-	},
+	sitesViewState: initialSitesViewState,
 	setSitesViewState: () => {},
 	openSitePreviewPane: () => {},
 } );
