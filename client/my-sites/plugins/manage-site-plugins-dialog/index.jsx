@@ -21,6 +21,7 @@ export const ManageSitePluginsDialog = ( { isVisible, onClose, plugin } ) => {
 	);
 
 	const sites = useSelector( getSelectedOrAllSites );
+	sites.sort( orderByAtomic );
 	const sitesWithoutPlugin = sites.filter(
 		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin.ID === site.ID )
 	);
@@ -53,3 +54,18 @@ export const ManageSitePluginsDialog = ( { isVisible, onClose, plugin } ) => {
 		</Dialog>
 	);
 };
+
+function orderByAtomic( siteA, siteB ) {
+	const { is_wpcom_atomic: siteAAtomic } = siteA?.options ?? {};
+	const { is_wpcom_atomic: siteBAtomic } = siteB?.options ?? {};
+
+	if ( siteAAtomic === siteBAtomic ) {
+		return 0;
+	}
+
+	if ( siteAAtomic && ! siteBAtomic ) {
+		return -1;
+	}
+
+	return 1;
+}
