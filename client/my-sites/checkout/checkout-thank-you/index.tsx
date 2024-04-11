@@ -7,21 +7,26 @@ import {
 	isDomainTransfer,
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isJetpackPlan,
 	isPlan,
 	isSiteRedirect,
+	isStarter,
 	isThemePurchase,
 	isTitanMail,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { Card } from '@automattic/components';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -62,6 +67,9 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FailedPurchaseDetails from './failed-purchase-details';
+import CheckoutThankYouFeaturesHeader from './features-header';
+import CheckoutThankYouHeader from './header';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
@@ -90,6 +98,12 @@ declare global {
 		fbq: ( ...args: any[] ) => void;
 	}
 }
+
+type ComponentAndPrimaryPurchaseAndDomain =
+	| []
+	| [ string | false ]
+	| [ string | false, ReceiptPurchase | undefined ]
+	| [ string | false, ReceiptPurchase | undefined, string | undefined ];
 
 export interface CheckoutThankYouProps {
 	domainOnlySiteFlow: boolean;
@@ -485,7 +499,9 @@ export class CheckoutThankYou extends Component<
 		const { translate, email, receiptId, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
 		let failedPurchases = [];
+		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
+		let showHappinessSupport = ! this.props.isSimplified;
 		let delayedTransferPurchase: ReceiptPurchase | undefined;
 		let wasTitanEmailOnlyProduct = false;
 		let wasBulkDomainTransfer = false;
@@ -493,7 +509,9 @@ export class CheckoutThankYou extends Component<
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 			failedPurchases = getFailedPurchases( this.props );
+			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
+			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
@@ -625,6 +643,22 @@ export class CheckoutThankYou extends Component<
 				</Main>
 			);
 		}
+
+		// standard thanks page
+		return (
+			<Main className="checkout-thank-you">
+				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
+				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
+				{ showHappinessSupport && (
+					<Card className="checkout-thank-you__footer">
+						<HappinessSupport
+							isJetpack={ wasJetpackPlanPurchased }
+							contactButtonEventName="calypso_plans_autoconfig_chat_initiated"
+						/>
+					</Card>
+				) }
+			</Main>
+		);
 	}
 
 	startTransfer = ( event: { preventDefault: () => void } ) => {
@@ -641,6 +675,105 @@ export class CheckoutThankYou extends Component<
 				selectedSite?.slug ?? '',
 				delayedTransferPurchase?.meta ?? ''
 			)
+		);
+	};
+
+	/**
+	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
+	 * just performed by the user.
+	 *
+	 * returns an array of varying size with the component instance,
+	 * then an optional purchase object possibly followed by a domain name
+	 */
+	getComponentAndPrimaryPurchaseAndDomain = (): ComponentAndPrimaryPurchaseAndDomain => {
+		if ( ! this.isDataLoaded() || this.isGenericReceipt() ) {
+			return [];
+		}
+		const failedPurchases = getFailedPurchases( this.props );
+		const hasFailedPurchases = failedPurchases.length > 0;
+		if ( hasFailedPurchases ) {
+			return [ 'failed-purchase-details' ];
+		}
+
+		return [];
+	};
+
+	productRelatedMessages = () => {
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			displayMode,
+			receipt,
+		} = this.props;
+		const purchases = getPurchases( this.props );
+		const failedPurchases = getFailedPurchases( this.props );
+		const hasFailedPurchases = failedPurchases.length > 0;
+		const componentAndPrimaryPurchaseAndDomain = this.getComponentAndPrimaryPurchaseAndDomain();
+		const [ component, primaryPurchase ] = componentAndPrimaryPurchaseAndDomain;
+
+		if ( ! this.isDataLoaded() ) {
+			return (
+				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ false }
+						isSimplified={ isSimplified }
+						selectedSite={ selectedSite }
+						upgradeIntent={ upgradeIntent }
+						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+						displayMode={ displayMode }
+					/>
+
+					{ ! isSimplified && (
+						<>
+							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+
+							<div className="checkout-thank-you__purchase-details-list">
+								<PurchaseDetail isPlaceholder />
+								<PurchaseDetail isPlaceholder />
+								<PurchaseDetail isPlaceholder />
+							</div>
+						</>
+					) }
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				<CheckoutThankYouHeader
+					isDataLoaded={ this.isDataLoaded() }
+					isSimplified={ isSimplified }
+					primaryPurchase={ primaryPurchase }
+					selectedSite={ selectedSite }
+					hasFailedPurchases={ hasFailedPurchases }
+					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
+					upgradeIntent={ upgradeIntent }
+					primaryCta={ this.primaryCta }
+					displayMode={ displayMode }
+					purchases={ purchases }
+					currency={ receipt.data?.currency }
+				>
+					{ ! isSimplified && primaryPurchase && (
+						<CheckoutThankYouFeaturesHeader
+							isDataLoaded={ this.isDataLoaded() }
+							isGenericReceipt={ this.isGenericReceipt() }
+							purchases={ purchases }
+							hasFailedPurchases={ hasFailedPurchases }
+						/>
+					) }
+
+					{ ! isSimplified && component && (
+						<div className="checkout-thank-you__purchase-details-list">
+							<PurchaseDetailsWrapper
+								{ ...this.props }
+								componentAndPrimaryPurchaseAndDomain={ componentAndPrimaryPurchaseAndDomain }
+							/>
+						</div>
+					) }
+				</CheckoutThankYouHeader>
+			</div>
 		);
 	};
 }
@@ -701,3 +834,23 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
+
+/**
+ * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
+ * just performed by the user.
+ */
+function PurchaseDetailsWrapper(
+	props: CheckoutThankYouCombinedProps & {
+		componentAndPrimaryPurchaseAndDomain: ComponentAndPrimaryPurchaseAndDomain;
+	}
+): JSX.Element | null {
+	const purchases = getPurchases( props );
+	const failedPurchases = getFailedPurchases( props );
+	const hasFailedPurchases = failedPurchases.length > 0;
+
+	if ( hasFailedPurchases ) {
+		return <FailedPurchaseDetails purchases={ purchases } failedPurchases={ failedPurchases } />;
+	}
+
+	return null;
+}
