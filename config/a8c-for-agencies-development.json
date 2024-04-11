@@ -29,7 +29,8 @@
 		"always_use_logout_url": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
-		"oauth": true
+		"oauth": true,
+		"a4a/hosting-preview-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {
