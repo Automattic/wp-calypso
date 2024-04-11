@@ -19,6 +19,27 @@ $business-plan-color: #7f54b3;
 		@include break-medium {
 			flex-direction: row;
 		}
+
+		&.feature-list-expanded {
+			.import__upgrade-plan-features-container,
+			.import__upgrade-plan-hosting-details {
+				@include break-medium {
+					height: initial;
+				}
+			}
+
+			.import__upgrade-plan-features-container {
+				@include break-medium {
+					margin-bottom: 8.5rem;
+				}
+			}
+
+			.import__upgrade-plan-hosting-details {
+				@include break-medium {
+					margin-bottom: 9.25rem;
+				}
+			}
+		}
 	}
 
 	.import__upgrade-plan-features-container {
@@ -28,7 +49,7 @@ $business-plan-color: #7f54b3;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 1rem;
 		margin-bottom: -3px;
 		max-width: 100%;
 		padding: 1.5em;
@@ -37,22 +58,26 @@ $business-plan-color: #7f54b3;
 
 		@include break-medium {
 			flex-direction: column;
-			margin-bottom: 2em;
+			margin-bottom: 1rem;
 			margin-right: 0;
 			margin-left: 0;
 			width: 324px;
+			height: 400px;
 		}
 	}
 
 	.import__upgrade-plan-header {
 		.plan-title {
-			font-size: 2.25rem;
+			font-size: 2rem;
 			line-height: 1;
-			margin: 0;
+			margin: 0.5rem 0;
 		}
 
-		small {
-			line-height: 1.4;
+		p {
+			line-height: 16px;
+			font-size: 0.75rem;
+			margin-bottom: 0;
+			color: #2c3338;
 		}
 	}
 
@@ -138,6 +163,7 @@ $business-plan-color: #7f54b3;
 				background-color: $business-plan-color !important;
 				border: $business-plan-color;
 				color: var(--studio-purple-0);
+				height: 40px;
 			}
 
 			&.is-busy {
@@ -194,6 +220,7 @@ $business-plan-color: #7f54b3;
 			color: var(--studio-gray-80);
 			flex-basis: 100%;
 			padding: 0;
+			font-size: 0.75rem;
 
 			button {
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -217,11 +244,17 @@ $business-plan-color: #7f54b3;
 			}
 		}
 
-		.import__upgrade-plan-feature-more button {
-			width: 100%;
-			font-weight: 600;
-			color: $business-plan-color;
-			text-align: start;
+		.import__upgrade-plan-feature-more {
+			margin-top: 0.5rem;
+			margin-bottom: 0;
+
+			button {
+				width: 100%;
+				font-weight: 600;
+				color: $business-plan-color;
+				text-align: start;
+				font-size: 0.75rem;
+			}
 		}
 
 		.import__upgrade-plan-feature-more svg {
@@ -244,11 +277,11 @@ $business-plan-color: #7f54b3;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
-		margin-bottom: 2.75rem;
+		gap: 1.5rem;
 		margin-top: 0;
 		max-width: 100%;
 		padding: 1.5rem;
+		margin-bottom: 60px;
 
 		@include break-medium {
 			margin-right: 0;
@@ -258,9 +291,15 @@ $business-plan-color: #7f54b3;
 			border-top-right-radius: 4px;
 			border-bottom-right-radius: 4px;
 			border-bottom-left-radius: 0;
+			border-bottom: 1px solid #e0e0e0;
 			border-left: 0;
 			width: 324px;
-			padding: 2.75rem 1.5rem;
+			height: 376px;
+			margin-bottom: 60px;
+		}
+
+		@include break-small {
+			margin-bottom: 0;
 		}
 
 		.import__upgrade-plan-hosting-details-header {
@@ -313,7 +352,15 @@ $business-plan-color: #7f54b3;
 				line-height: 1.4;
 				justify-content: space-around;
 
-				span {
+				.import__upgrade-plan-hosting-details-list-stats-title {
+					font-size: 0.875rem;
+					font-weight: 500;
+					color: var(--studio-gray-100, #101517);
+					line-height: 20px;
+					margin-bottom: 0;
+				}
+
+				.import__upgrade-plan-hosting-details-list-stats-description {
 					font-size: 0.75rem;
 					color: var(--studio-gray-50, #646970);
 				}
@@ -399,6 +446,10 @@ $business-plan-color: #7f54b3;
 		overflow-wrap: break-word;
 		top: -8px;
 
+		@media (max-width: 355px) {
+			width: auto;
+		}
+
 		.import__upgrade-plan-hosting-details-tooltip-user-text {
 			color: #2c3338;
 			margin-bottom: 1rem;
@@ -411,5 +462,20 @@ $business-plan-color: #7f54b3;
 		.import__upgrade-plan-hosting-details-tooltip-user-info {
 			color: var(--studio-gray-50, #646970);
 		}
+	}
+}
+
+.importer-step {
+	.import__upgrade-plan-container {
+		@media ( min-width: 782px ) and (max-width: 830px) {
+			.import__upgrade-plan-features-container {
+				height: 431px;
+			}
+
+			.import__upgrade-plan-hosting-details {
+				height: 407px;
+			}
+		}
+
 	}
 }
