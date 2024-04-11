@@ -1,33 +1,19 @@
-@import "@automattic/typography/styles/variables";
 @import "@automattic/onboarding/styles/mixins";
 
+.site-migration-assign-trial-plan.step-container {
+	@include onboarding-block-margin;
 
-.site-migration-assign-trial-plan {
-	padding: 0;
-	max-width: 540px;
-	text-align: center;
-	margin: 0 auto;
-
-	.site-migration-assign-trial-plan {
-		padding: 1em;
-		max-width: 540px;
-		text-align: center;
-		margin: 16vh auto 0;
+	.step-container__content {
+		max-width: 960px;
+		margin: auto;
 	}
 
-	> .site-migration-assign-trial-plan {
+	.site-migration-assign-trial-plan__loading {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		margin-top: 25vh;
 	}
 
-	.step-container {
-		display: flex;
-	}
-
-	.site-migration-assign-trial-step__progress-header {
-		line-height: 40px;
-		letter-spacing: -0.4px;
+	@include break-large {
+		margin: auto;
 	}
 }
