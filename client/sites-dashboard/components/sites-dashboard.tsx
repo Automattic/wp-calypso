@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
-import { createSitesListComponent, useSitesListSorting } from '@automattic/sites';
+import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -10,13 +10,8 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useCallback, useEffect, useRef, useContext } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import {
-	getSitesPagination,
-	JetpackSitesDashboard,
-	JetpackSitesDashboardContext,
-} from 'calypso/components/jetpack-sites-dashboard';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -27,7 +22,7 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
-import { mapFieldIdToSortKey, MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
+import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from '../utils';
 import { HostingCommandPaletteBanner } from './hosting-command-palette-banner';
 import { NoSitesMessage } from './no-sites-message';
 import {
@@ -35,6 +30,7 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
+import SitesDataViews from './sites-dataviews';
 import { SitesTable } from './sites-table';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -215,79 +211,13 @@ export function SitesDashboard( {
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
-	const { openSitePreviewPane, sitesViewState } = useContext( JetpackSitesDashboardContext );
-	const { page: sitesViewPage, perPage: sitesViewPerPage, sort: sitesViewSort } = sitesViewState;
-
-	const sortedSites = useSitesListSorting( allSites, {
-		sortKey: mapFieldIdToSortKey( sitesViewSort.field ),
-		sortOrder: sitesViewSort.direction,
-	} );
-
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		const fields = [
-			{
-				id: 'site',
-				header: __( 'Site' ),
-				getValue: ( { item } ) => item.URL,
-				render: ( { item } ) => {
-					return (
-						<Button onClick={ () => openSitePreviewPane() }>
-							<>{ item.title }</>
-						</Button>
-					);
-				},
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: 'plan',
-				header: __( 'Plan' ),
-				getValue: () => '-',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'status',
-				header: __( 'Status' ),
-				getValue: () => '-',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'last-publish',
-				header: __( 'Last Publish' ),
-				getValue: () => '-',
-				enableHiding: false,
-				enableSorting: true,
-			},
-			{
-				id: 'stats',
-				header: __( 'Stats' ),
-				getValue: () => '-',
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'actions',
-				header: __( 'Actions' ),
-				getValue: () => '-',
-				enableHiding: false,
-				enableSorting: false,
-			},
-		];
-
-		const { paginatedSites, totalItems, totalPages } = getSitesPagination(
-			sortedSites,
-			sitesViewPage,
-			sitesViewPerPage
-		);
-
 		return (
-			<JetpackSitesDashboard
-				data={ paginatedSites }
-				fields={ fields }
-				paginationInfo={ { totalItems, totalPages } }
-			/>
+			<main>
+				<PageBodyWrapper>
+					<SitesDataViews sites={ allSites } />
+				</PageBodyWrapper>
+			</main>
 		);
 	}
 	return (
