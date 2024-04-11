@@ -83,8 +83,11 @@ function extendTiersBeyondHighestTier(
 	currencyCode: string,
 	usageData: PlanUsage
 ): StatsPlanTierUI[] {
-	if ( availableTiers.length === 1 && !! availableTiers[ 0 ].transform_quantity_divide_by ) {
-		const highestTier = availableTiers[ 0 ];
+	if (
+		availableTiers.length < EXTENDED_TIERS_AMOUNT &&
+		!! availableTiers[ availableTiers.length - 1 ].transform_quantity_divide_by
+	) {
+		const highestTier = availableTiers[ availableTiers.length - 1 ];
 
 		const purchasedExtendedTierCount =
 			usageData?.views_limit / ( highestTier.transform_quantity_divide_by || 1 ) -
