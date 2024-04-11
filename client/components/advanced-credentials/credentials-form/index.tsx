@@ -217,7 +217,6 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					isError={
 						formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction )
 					}
-					data-private
 				/>
 				{ formModeSwitcher === 'segmented' && (
 					<FormSettingExplanation>
