@@ -4,7 +4,8 @@ import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState, useContext, useMemo } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -60,8 +61,7 @@ export default function LicensePreview( {
 	const dispatch = useDispatch();
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
-	// FIXME: ideally we want endpoint also sending us some slug so we could check with precission
-	const isPressableLicense = useMemo( () => product.indexOf( 'Pressable' ) !== -1, [ product ] );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
 
 	const { filter } = useContext( LicensesOverviewContext );
 

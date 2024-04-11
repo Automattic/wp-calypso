@@ -1,7 +1,7 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
@@ -42,8 +42,7 @@ export default function LicenseDetails( {
 }: Props ) {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
-	// FIXME: ideally we want endpoint also sending us some slug so we could check with precission
-	const isPressableLicense = useMemo( () => product.indexOf( 'Pressable' ) !== -1, [ product ] );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
 
 	return (
 		<Card

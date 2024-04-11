@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import {
 	LicenseRole,
 	LicenseState,
@@ -36,8 +37,7 @@ export default function LicenseDetailsActions( {
 	const translate = useTranslate();
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
-	// FIXME: ideally we want endpoint also sending us some slug so we could check with precission
-	const isPressableLicense = useMemo( () => product.indexOf( 'Pressable' ) !== -1, [ product ] );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
