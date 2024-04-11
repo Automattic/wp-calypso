@@ -29,8 +29,7 @@
 		"always_use_logout_url": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
-		"oauth": true,
-		"a4a/mock-api-data": true
+		"oauth": true
 	},
 	"enable_all_sections": false,
 	"sections": {
