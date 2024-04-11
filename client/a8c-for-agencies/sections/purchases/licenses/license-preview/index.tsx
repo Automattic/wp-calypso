@@ -62,6 +62,7 @@ export default function LicensePreview( {
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const { filter } = useContext( LicensesOverviewContext );
 
@@ -163,6 +164,16 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ product }</div>
 							{ domain }
+							{ isPressableLicense && (
+								<a
+									className="license-preview__product-pressable-link"
+									target="_blank"
+									rel="norefferer noopener noreferrer"
+									href={ pressableManageUrl }
+								>
+									{ translate( 'Manage in Pressable' ) }
+								</a>
+							) }
 							{ ! domain && licenseState === LicenseState.Detached && (
 								<span>
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
