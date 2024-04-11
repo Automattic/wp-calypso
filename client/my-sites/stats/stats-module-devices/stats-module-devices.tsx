@@ -50,23 +50,18 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		[ OPTION_KEYS.SIZE ]: {
 			selectLabel: translate( 'Size' ),
 			headerLabel: translate( 'Visitors share per screen size' ),
-			buttonId: 'screen-size',
 		},
 		[ OPTION_KEYS.BROWSER ]: {
 			selectLabel: translate( 'Browser' ),
 			headerLabel: translate( 'Browser' ),
-			buttonId: 'browser',
 		},
 		[ OPTION_KEYS.OS ]: {
 			selectLabel: translate( 'OS' ),
 			headerLabel: translate( 'Operating System' ),
-			buttonId: 'os',
 		},
 	};
 
-	const [ selectedOption, setSelectedOption ] = useState(
-		optionLabels[ OPTION_KEYS.BROWSER ].buttonId
-	);
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.BROWSER );
 
 	const { isFetching: isFetchingUTM, metrics: data } = useModuleDevicesQuery(
 		siteId,
@@ -109,11 +104,11 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 			mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 			toggleControl={
 				<SimplifiedSegmentedControl
-					options={ Object.values( optionLabels ).map( ( labelObject ) => ( {
-						value: labelObject.buttonId,
-						label: labelObject.selectLabel,
+					options={ Object.entries( optionLabels ).map( ( entry ) => ( {
+						value: entry[ 0 ], // optionLabels key
+						label: entry[ 1 ].selectLabel, // optionLabels object value
 					} ) ) }
-					initialSelected={ optionLabels[ OPTION_KEYS.BROWSER ].buttonId } // until pie chart is added
+					initialSelected={ OPTION_KEYS.BROWSER } // until pie chart is added
 					// @ts-expect-error TODO: missing TS type
 					onSelect={ changeViewButton }
 				/>
