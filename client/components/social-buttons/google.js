@@ -190,7 +190,7 @@ class GoogleSocialButton extends Component {
 			return;
 		}
 
-		this.client.requestCode();
+		this.client?.requestCode();
 	}
 
 	showError( event ) {

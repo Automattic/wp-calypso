@@ -1,3 +1,4 @@
+import { preventWidows } from 'calypso/lib/formatting';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 
 import './style.scss';
@@ -12,7 +13,7 @@ export const PatternsHeader = ( { description, title }: PatternsHeaderProps ) =>
 		<header className="patterns-header">
 			<div className="patterns-header__inner">
 				<h1>{ title }</h1>
-				<div className="patterns-header__description">{ description }</div>
+				<div className="patterns-header__description">{ preventWidows( description ) }</div>
 				<div className="patterns-header__search-input">
 					<PatternsSearchField />
 				</div>
