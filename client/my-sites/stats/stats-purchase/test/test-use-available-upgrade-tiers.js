@@ -1,16 +1,45 @@
-import { extendTiersBeyondHighestTier } from '../use-available-upgrade-tiers';
-import originalTiers from './original-tiers-fixture.json';
+import { getAvailableUpgradeTiers, MAX_TIERS_NUMBER } from '../use-available-upgrade-tiers';
+import stateFixture from './original-tiers-fixture.json';
 
-const tiers = originalTiers;
-const CURRENCY_CODE = 'USD';
+const tiers = stateFixture.productsList.items.jetpack_stats_yearly.price_tier_list;
 
-describe( 'extendTiersBeyondHighestTier', () => {
+describe( 'getAvailableUpgradeTiers', () => {
 	it( 'should return original tiers if not purchased or with little monthly views', () => {
 		const usageData = { views_limit: null, billableMonthlyViews: 0 };
-		const extendedTiers = extendTiersBeyondHighestTier( tiers, CURRENCY_CODE, usageData );
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
 
-		expect( extendedTiers.length ).toBe( 6 );
-		expect( extendedTiers[ 0 ] ).toEqual( tiers[ 0 ] );
-		expect( extendedTiers[ 1 ] ).toEqual( tiers[ 1 ] );
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 0 ].maximum_units );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 0 ].minimum_price );
+		expect( extendedTiers[ 4 ].views ).toEqual( tiers[ 4 ].maximum_units );
+		expect( extendedTiers[ 4 ].minimum_price ).toEqual( tiers[ 4 ].minimum_price );
+		expect( extendedTiers[ 5 ].views ).toEqual( 2_000_000 );
+	} );
+	it( 'should return original tiers if purchased and with little monthly views', () => {
+		const usageData = { views_limit: 100_000, billableMonthlyViews: 0 };
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 2 ].maximum_units );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 2 ].minimum_price );
+		expect( extendedTiers[ 5 ].views ).toEqual( 4_000_000 );
+	} );
+	it( 'should return original tiers if not purchased and higer monthly views', () => {
+		const usageData = { views_limit: null, billableMonthlyViews: 10_000 };
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 1 ].maximum_units );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 1 ].minimum_price );
+		expect( extendedTiers[ 5 ].views ).toEqual( 3_000_000 );
+	} );
+	it( 'should return original tiers if purchased and higer monthly views', () => {
+		const usageData = { views_limit: 100_001, billableMonthlyViews: 10_000 };
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 2 ].maximum_units );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 2 ].minimum_price );
+		expect( extendedTiers[ 5 ].views ).toEqual( 4_000_000 );
 	} );
 } );

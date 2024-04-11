@@ -11,7 +11,7 @@ import { StatsPlanTierUI } from './types';
 
 // Special case for per-unit fees over the max tier.
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
-const MAX_TIERS_NUMBER = 6;
+export const MAX_TIERS_NUMBER = 6;
 
 // TODO: Remove the mock data after release.
 // No need to translate mock data.
@@ -59,7 +59,7 @@ const MOCK_PLAN_DATA = [
 /**
  * Filter the tiers that are lower than the current usage / limit
  */
-export function filterLowerTiers(
+function filterLowerTiers(
 	availableTiers: StatsPlanTierUI[],
 	usageData: PlanUsage | undefined
 ): StatsPlanTierUI[] {
@@ -83,7 +83,7 @@ export function filterLowerTiers(
 	return tiers;
 }
 
-export function extendTiersBeyondHighestTier(
+function extendTiersBeyondHighestTier(
 	availableTiers: StatsPlanTierUI[],
 	currencyCode: string,
 	usageData: PlanUsage
@@ -128,7 +128,7 @@ export function extendTiersBeyondHighestTier(
 	return availableTiers;
 }
 
-export function transformTiers( price_tier_list: PriceTierEntry[] | null, currentTierPrice = 0 ) {
+function transformTiers( price_tier_list: PriceTierEntry[] | null, currentTierPrice = 0 ) {
 	return (
 		price_tier_list?.map( ( tier: PriceTierEntry ): StatsPlanTierUI => {
 			// TODO: Some description of transform logic here.
@@ -164,10 +164,10 @@ export function transformTiers( price_tier_list: PriceTierEntry[] | null, curren
 	);
 }
 
-function getAvailableUpgradeTiers(
+export function getAvailableUpgradeTiers(
 	state: IAppState,
 	usageData: PlanUsage | undefined,
-	shouldFilterPurchasedTiers = true
+	shouldFilterPurchasedTiers: boolean
 ): StatsPlanTierUI[] {
 	// 1. Get the tiers. Default to yearly pricing.
 	const commercialProduct = getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY );
