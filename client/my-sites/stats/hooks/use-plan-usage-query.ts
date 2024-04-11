@@ -17,10 +17,19 @@ export interface PlanUsage {
 	over_limit_months: number;
 	current_tier: PriceTierListItemProps;
 	is_internal: boolean;
+	billableMonthlyViews: number;
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
-	return payload;
+	return {
+		...payload,
+		billableMonthlyViews: Math.max(
+			payload?.recent_usages[ 0 ]?.views_count ?? 0,
+			payload?.recent_usages[ 1 ]?.views_count ?? 0,
+			payload?.recent_usages[ 2 ]?.views_count ?? 0,
+			payload?.current_usage?.views_count ?? 0
+		),
+	};
 }
 
 function queryPlanUsage( siteId: number | null ): Promise< PlanUsage > {
