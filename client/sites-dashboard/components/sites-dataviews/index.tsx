@@ -3,15 +3,14 @@ import { useSitesListSorting } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import { useContext } from 'react';
 import {
-	getSitesPagination,
 	JetpackSitesDashboard,
 	JetpackSitesDashboardContext,
 } from 'calypso/components/jetpack-sites-dashboard';
 import TimeSince from 'calypso/components/time-since';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { mapFieldIdToSortKey } from '../../utils';
 import { SitePlan } from '../sites-site-plan';
+import { getSitesPagination, mapFieldIdToSortKey } from './utils';
 
 const SitesDataViews = ( props ) => {
 	const { __ } = useI18n();
