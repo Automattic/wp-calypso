@@ -6,7 +6,7 @@ const tiers = stateFixture.productsList.items.jetpack_stats_yearly.price_tier_li
 describe( 'getAvailableUpgradeTiers', () => {
 	it( 'should return original tiers if not purchased or with little monthly views', () => {
 		const usageData = { views_limit: null, billableMonthlyViews: 0 };
-		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 0 ].maximum_units );
@@ -17,7 +17,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 	} );
 	it( 'should return original tiers if purchased and with little monthly views', () => {
 		const usageData = { views_limit: 100_000, billableMonthlyViews: 0 };
-		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 2 ].maximum_units );
@@ -26,7 +26,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 	} );
 	it( 'should return original tiers if not purchased and higer monthly views', () => {
 		const usageData = { views_limit: null, billableMonthlyViews: 10_000 };
-		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 1 ].maximum_units );
@@ -35,7 +35,7 @@ describe( 'getAvailableUpgradeTiers', () => {
 	} );
 	it( 'should return original tiers if purchased and higer monthly views', () => {
 		const usageData = { views_limit: 100_00, billableMonthlyViews: 100_001 };
-		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 2 ].maximum_units );
@@ -44,11 +44,11 @@ describe( 'getAvailableUpgradeTiers', () => {
 	} );
 	it( 'should return original tiers if not purchased and 1m+ monthly views', () => {
 		const usageData = { views_limit: null, billableMonthlyViews: 1_000_001 };
-		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( 2_000_000 );
-		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 0 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 95000 );
 		expect( extendedTiers[ 5 ].views ).toEqual( 7_000_000 );
 	} );
 } );
