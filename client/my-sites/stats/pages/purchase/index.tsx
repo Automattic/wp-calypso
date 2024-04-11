@@ -20,7 +20,6 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -51,9 +50,6 @@ const StatsPurchasePage = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	// `is_vip` option is not set in Odyssey, so we need to check `options.is_vip` as well.
 	const isVip = useSelector(
@@ -80,14 +76,10 @@ const StatsPurchasePage = ( {
 		if ( ! siteSlug ) {
 			return;
 		}
-		const trafficPageUrl = `/stats/day/${ siteSlug }`;
-		// Redirect to Calypso Stats if:
-		// - the site is not Jetpack.
-		// TODO: remove this check once we have Stats in Calypso for all sites.
-		if ( ! isSiteJetpackNotAtomic || isVip ) {
-			page.redirect( trafficPageUrl );
+		if ( isVip ) {
+			page.redirect( `/stats/day/${ siteSlug }` ); // Redirect to the stats page for VIP sites
 		}
-	}, [ siteSlug, isSiteJetpackNotAtomic, isVip ] );
+	}, [ siteSlug, isVip ] );
 
 	useEffect( () => {
 		// Scroll to top on page load
