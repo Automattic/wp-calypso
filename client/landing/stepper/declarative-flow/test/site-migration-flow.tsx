@@ -174,7 +174,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from verifyEmail to assignMigrationTrialPlan', () => {
+		it( 'redirects from verifyEmail to site-migration-assign-trial-plan step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -185,16 +185,16 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.ASSIGN_MIGRATION_TRIAL_PLAN.slug }`,
+				path: `/${ STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug }`,
 				state: null,
 			} );
 		} );
 
-		it( 'redirects from assignMigrationTrialPlan to bundleTransfer step', () => {
+		it( 'redirects from site-migration-assign-trial-plan step to bundleTransfer step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentStep: STEPS.ASSIGN_MIGRATION_TRIAL_PLAN.slug,
+				currentStep: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug,
 			} );
 
 			expect( getFlowLocation() ).toEqual( {

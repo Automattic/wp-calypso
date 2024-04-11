@@ -19,7 +19,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-const AssignMigrationTrialPlanStep: Step = ( { navigation } ) => {
+const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const progress = useSelect(
@@ -57,13 +57,13 @@ const AssignMigrationTrialPlanStep: Step = ( { navigation } ) => {
 			<StepContainer
 				shouldHideNavButtons={ true }
 				hideFormattedHeader={ true }
-				stepName="assign-migration-trial-step"
+				stepName="site-migration-assign-trial-plan-step"
 				isHorizontalLayout={ true }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
-						<div className="assign-migration-trial-step">
-							<h1 className="assign-migration-trial-step__progress-step">
+						<div className="site-migration-assign-trial-plan-step">
+							<h1 className="site-migration-assign-trial-plan-step__progress-step">
 								{ __( 'Adding your free trial' ) }
 							</h1>
 							{ progress >= 0 ? <LoadingBar progress={ progress } /> : <LoadingEllipsis /> }
@@ -79,4 +79,4 @@ const AssignMigrationTrialPlanStep: Step = ( { navigation } ) => {
 	);
 };
 
-export default AssignMigrationTrialPlanStep;
+export default SiteMigrationAssignTrialPlanStep;
