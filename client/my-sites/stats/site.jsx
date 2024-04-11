@@ -219,7 +219,7 @@ class StatsSite extends Component {
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 		const supportsUTMStats = supportsUTMStatsFeature || isInternal;
-		const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
+		const supportsDevicesStats = supportsDevicesStatsFeature;
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
