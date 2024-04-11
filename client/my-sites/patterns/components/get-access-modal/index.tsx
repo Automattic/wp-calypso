@@ -1,7 +1,6 @@
 import { Button, Dialog } from '@automattic/components';
 import { useLocalizeUrl, useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { Icon, close as iconClose } from '@wordpress/icons';
-import { buildQueryString } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
@@ -35,7 +34,7 @@ export const PatternsGetAccessModal = ( {
 	const redirectUrl = getPatternPermalink( pattern, category, patternTypeFilter, categories );
 
 	const signupUrl = localizeUrl(
-		`//wordpress.com/start/account/user?${ buildQueryString( {
+		`//wordpress.com/start/account/user?${ new URLSearchParams( {
 			redirect_to: redirectUrl,
 			ref: URL_REFERRER_PARAM,
 		} ) }`,
@@ -44,7 +43,7 @@ export const PatternsGetAccessModal = ( {
 	);
 
 	const loginUrl = localizeUrl(
-		`//wordpress.com/log-in?${ buildQueryString( { redirect_to: redirectUrl } ) }`,
+		`//wordpress.com/log-in?${ new URLSearchParams( { redirect_to: redirectUrl } ) }`,
 		locale,
 		isLoggedIn
 	);
