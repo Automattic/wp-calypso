@@ -39,7 +39,7 @@ const SitesDataViews = ( props ) => {
 				const site = item.ID;
 				return (
 					<Button onClick={ () => openSitePreviewPane( site ) }>
-						<>{ item.title }</>
+						<div className="sites-dataviews__site-name">{ item.title }</div>
 					</Button>
 				);
 			},

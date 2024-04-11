@@ -214,9 +214,7 @@ export function SitesDashboard( {
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		return (
 			<main>
-				<PageBodyWrapper>
-					<SitesDataViews sites={ allSites } />
-				</PageBodyWrapper>
+				<SitesDataViews sites={ allSites } />
 			</main>
 		);
 	}
