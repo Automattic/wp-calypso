@@ -1,0 +1,30 @@
+
+.hosting-card {
+	padding: 1.5rem;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	user-select: none;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 24px;
+}
+
+.hosting-card__price-value {
+	font-size: 1.5rem;
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.hosting-card__price-interval {
+	font-size: 0.75rem;
+	line-height: 1.1;
+	font-weight: 400;
+}
+
+.hosting-card__description {
+	font-size: 0.875rem;
+	line-height: 1.1;
+	font-weight: 400;
+	margin: 0;
+}

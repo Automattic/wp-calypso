@@ -7,6 +7,13 @@ body.is-focus-sites {
 	overflow: hidden;
 }
 
+html.command-palette-modal-open {
+	overflow: visible;
+}
+body.command-palette-modal-open {
+	overflow: hidden;
+}
+
 /**
  * /*
  * 	Layout Elements
@@ -68,7 +75,10 @@ body.is-focus-sites {
 
 	// Themes sets it own padding/margin
 	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
+	.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-theme &,
+	.theme-default .layout.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
 		padding: 0;
 		margin: 0;
 	}

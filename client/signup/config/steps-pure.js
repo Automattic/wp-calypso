@@ -266,7 +266,10 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
-
+		'hosting-decider': {
+			stepName: 'hosting-decider',
+			providesDependencies: [ 'stepperHostingFlow' ],
+		},
 		'plans-hosting': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,

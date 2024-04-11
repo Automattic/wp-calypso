@@ -19,6 +19,8 @@ import {
 	PINTEREST_SCRIPT_URL,
 	GOOGLE_GTM_SCRIPT_URL,
 	WPCOM_CLARITY_URI,
+	REDDIT_TRACKING_SCRIPT_URL,
+	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
 import { setup } from './setup';
 
@@ -115,6 +117,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( WPCOM_CLARITY_URI );
 	}
 
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		scripts.push( REDDIT_TRACKING_SCRIPT_URL );
+	}
+
 	return scripts;
 }
 
@@ -156,6 +162,15 @@ function initLoadedTrackingScripts() {
 		const currentUser = getCurrentUser();
 		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
+	}
+
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		const params = {
+			optOut: false,
+			useDecimalCurrencyValues: true,
+		};
+
+		window.rdt( 'init', WPCOM_REDDIT_PIXEL_ID, params );
 	}
 
 	debug( 'loadTrackingScripts: init done' );
@@ -230,10 +245,18 @@ function initFacebook() {
 	// WP Facebook pixel
 	window.fbq( 'init', TRACKING_IDS.facebookInit, advancedMatching );
 
-	// Jetpack Facebook pixel
-	// Also initialize the FB pixel for Jetpack.
+	// Jetpack & Akismet Facebook pixel
+	// Also initialize the FB pixel for Jetpack & Akismet.
 	// However, disable auto-config for this secondary pixel ID.
 	// See: <https://developers.facebook.com/docs/facebook-pixel/api-reference#automatic-configuration>
-	window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
-	window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+	if ( isJetpackCheckout() ) {
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookJetpackInit );
+		window.fbq( 'init', TRACKING_IDS.facebookJetpackInit, advancedMatching );
+		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
+	}
+	if ( isAkismetCheckout() ) {
+		window.fbq( 'set', 'autoConfig', false, TRACKING_IDS.facebookAkismetInit );
+		window.fbq( 'init', TRACKING_IDS.facebookAkismetInit, advancedMatching );
+		window.fbq( 'track', 'PageView' ); // When autoConfig=false, page view tracking must be manually triggered
+	}
 }

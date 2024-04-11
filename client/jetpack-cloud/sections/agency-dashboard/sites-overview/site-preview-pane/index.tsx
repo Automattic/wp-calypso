@@ -1,7 +1,9 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import SitePreviewPaneHeader from './site-preview-pane-header';
-import SitePreviewPaneTabs from './site-preview-pane-tabs';
 import { FeaturePreviewInterface, SitePreviewPaneProps } from './types';
 
 import './style.scss';
@@ -10,7 +12,7 @@ export const createFeaturePreview = (
 	id: string,
 	label: string,
 	enabled: boolean,
-	selectedFeatureId: string,
+	selectedFeatureId: string | undefined,
 	setSelectedFeatureId: ( id: string ) => void,
 	preview: React.ReactNode
 ): FeaturePreviewInterface => {
@@ -33,6 +35,17 @@ export default function SitePreviewPane( {
 	closeSitePreviewPane,
 	className,
 }: SitePreviewPaneProps ) {
+	const [ canDisplayNavTabs, setCanDisplayNavTabs ] = useState( false );
+
+	// For future iterations lets consider something other than SectionNav due to the
+	// manipulation we need to make so that the navigation shows correctly on some smaller
+	// screens within the PreviewPane (hence the timeout).
+	useEffect( () => {
+		setTimeout( () => {
+			setCanDisplayNavTabs( true );
+		}, 150 );
+	}, [] );
+
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
 		return null;
@@ -47,12 +60,37 @@ export default function SitePreviewPane( {
 	}
 
 	// Extract the tabs from the features
-	const featureTabs = features.map( ( feature ) => feature.tab );
+	const featureTabs = features.map( ( feature ) => ( {
+		key: feature.id,
+		label: feature.tab.label,
+		selected: feature.tab.selected,
+		onClick: feature.tab.onTabClick,
+		visible: feature.tab.visible,
+	} ) );
+
+	const navItems = featureTabs.map( ( featureTab ) => {
+		if ( ! featureTab.visible ) {
+			return null;
+		}
+		return (
+			<NavItem
+				key={ featureTab.key }
+				selected={ featureTab.selected }
+				onClick={ featureTab.onClick }
+			>
+				{ featureTab.label }
+			</NavItem>
+		);
+	} );
 
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
-			<SitePreviewPaneTabs featureTabs={ featureTabs } />
+			<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
+				{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
+					<NavTabs>{ navItems }</NavTabs>
+				) : null }
+			</SectionNav>
 			{ selectedFeature.preview }
 		</div>
 	);

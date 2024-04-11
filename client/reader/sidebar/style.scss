@@ -100,7 +100,7 @@
 		display: block;
 		font-style: italic;
 		font-size: $font-body-extra-small;
-		color: rgba(var(--color-sidebar-text-rgb), 0.6);
+		color: var(--color-sidebar-text-alternative);
 	}
 
 	.sidebar__separator {
@@ -141,7 +141,8 @@
 	.sidebar__heading,
 	.sidebar__menu-link {
 		/* Hover styles */
-		&:hover {
+		&:hover,
+		&:focus {
 			.sidebar__menu-icon.sidebar_svg-add {
 				g {
 					fill: var(--color-sidebar-menu-hover-text);
@@ -181,6 +182,10 @@
 				g {
 					stroke: var(--color-sidebar-menu-hover-text);
 				}
+			}
+			.sidebar__menu-icon.sidebar_svg-a8c g {
+				stroke: var(--color-sidebar-menu-hover-text);
+				fill: var(--color-sidebar-menu-hover-background);
 			}
 		}
 		/* Default styles */
@@ -228,7 +233,6 @@
 	/* Selected styles */
 	.selected,
 	.sidebar__menu--selected {
-		.sidebar__heading,
 		.sidebar__menu-link {
 			.sidebar__menu-icon.sidebar_svg-add {
 				g {

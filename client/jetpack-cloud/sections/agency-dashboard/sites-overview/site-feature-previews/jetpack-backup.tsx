@@ -1,21 +1,12 @@
-import BackupStorage from '../site-expanded-content/backup-storage';
+import BackupsPage from 'calypso/my-sites/backup/main';
 import SitePreviewPaneContent from '../site-preview-pane/site-preview-pane-content';
-import SitePreviewPaneFooter from '../site-preview-pane/site-preview-pane-footer';
-import { Site } from '../types';
 
-type Props = {
-	site: Site;
-	trackEvent: ( eventName: string ) => void;
-	hasError?: boolean;
-};
-
-export function JetpackBackupPreview( { site, trackEvent, hasError = false }: Props ) {
+export function JetpackBackupPreview() {
 	return (
 		<>
 			<SitePreviewPaneContent>
-				<BackupStorage site={ site } trackEvent={ trackEvent } hasError={ hasError } />
+				<BackupsPage queryDate={ undefined } />
 			</SitePreviewPaneContent>
-			<SitePreviewPaneFooter />
 		</>
 	);
 }

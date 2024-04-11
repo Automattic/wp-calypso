@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.overview__contact-support-button {
+	width: 100%;
+	border: 1px solid var(--color-accent);
+	font-weight: 500;
+	color: var(--color-accent);
+}
+
+// Zendesk Chat Button
+iframe#launcher {
+	right: 24px !important;
+
+	@include break-wide() {
+		bottom: 24px !important;
+	}
+}
+
+// Zendesk Chat Window
+iframe[title="Messaging window"] {
+	margin-right: 12px;
+
+	@include break-wide() {
+		margin-bottom: 8px;
+	}
+}

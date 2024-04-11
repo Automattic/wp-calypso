@@ -27,14 +27,10 @@ function usePerMonthDescription( { planSlug }: { planSlug: PlanSlug } ) {
 		storageAddOnsForPlan,
 	} = gridPlansIndex[ planSlug ];
 
-	// We want the yearly-variant plan's price to be the raw price the user
-	// would pay if they choose an annual plan instead of the monthly one. So pro-rated
-	// (or other) credits should not apply.
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlug ? [ yearlyVariantPlanSlug ] : [],
-		withoutPlanUpgradeCredits: true,
 		storageAddOns: storageAddOnsForPlan,
 		coupon,
 		selectedSiteId,

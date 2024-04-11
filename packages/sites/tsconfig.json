@@ -9,5 +9,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/tests/*" ],
-	"references": [ { "path": "../search" } ]
+	"references": [ { "path": "../search" }, { "path": "../data-stores" } ]
 }

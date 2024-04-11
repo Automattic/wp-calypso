@@ -1717,9 +1717,8 @@ export function createTestReduxStore() {
 	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
-export function mockGetSupportedCountriesEndpoint( response ) {
+export function mockGetSupportedCountriesEndpoint( response: CountryListItem[] ) {
 	nock( 'https://public-api.wordpress.com' )
-		.persist()
 		.get( '/rest/v1.1/me/transactions/supported-countries' )
 		.reply( 200, response );
 }

@@ -14,7 +14,7 @@ import { IssueLicenseRequest } from '../../../hooks/use-issue-licenses';
 import { serializeQueryStringProducts } from '../../../lib/querystring-products';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const containEquivalentItems = (
+export const containEquivalentItems = (
 	selectedLicenses: IssueLicenseRequest[],
 	suggestedProductSlugs: string[]
 ) => {

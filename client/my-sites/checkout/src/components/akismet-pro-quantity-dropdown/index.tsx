@@ -6,12 +6,12 @@ import {
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import type { AkismetProQuantityDropDownProps } from './types';
 import type { FunctionComponent } from 'react';
 
@@ -95,8 +95,9 @@ const Dropdown = styled.div`
 const OptionList = styled.ul`
 	position: absolute;
 	width: 100%;
-	z-index: 1;
+	z-index: 4;
 	margin: 0;
+	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
 	${ Option } {
 		margin-top: -1px;
@@ -114,6 +115,7 @@ const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 	font-size: ${ ( props ) => props.theme.fontSize.small };
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	justify-content: space-between;
+	flex-wrap: wrap;
 	line-height: 20px;
 	width: 100%;
 	column-gap: 20px;
@@ -124,14 +126,17 @@ const CurrentOptionContainer = styled.div< { shouldUseCheckoutV2: boolean } >`
 `;
 
 const Price = styled.span< { shouldUseCheckoutV2: boolean } >`
-	flex: 1 0 auto;
-	text-align: right;
+	flex: 1 0 fit-content;
 	color: #646970;
+	text-align: start;
+
 	> span {
 		font-size: calc( ${ ( props ) => props.theme.fontSize.small } - 1px );
 	}
 
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: right;` ) }
+	@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+		${ ( props ) => ( props.shouldUseCheckoutV2 ? `text-align: initial;` : `text-align: end;` ) }
+	}
 `;
 
 export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDropDownProps > = ( {
@@ -143,7 +148,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const { dropdownOptions, AkBusinessDropdownPosition } = useMemo( () => {
 		const dropdownOptions = [
 			preventWidows( translate( '1 Site' ) ),
@@ -347,7 +352,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 		if ( selectedQuantity !== AkBusinessDropdownPosition ) {
 			return isMobile()
 				? translate(
-						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. ={{/span}} %(actualAmountDisplay)s',
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s/ea. = %(actualAmountDisplay)s{{/span}}',
 						{
 							args: {
 								quantity: selectedQuantity,
@@ -365,7 +370,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 						}
 				  )
 				: translate(
-						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license ={{/span}} %(actualAmountDisplay)s',
+						'{{span}}%(quantity)d licenses @ %(actualAmountQuantityOneDisplay)s per license = %(actualAmountDisplay)s{{/span}}',
 						{
 							args: {
 								quantity: selectedQuantity,

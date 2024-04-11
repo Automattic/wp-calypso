@@ -126,8 +126,10 @@ export interface SiteDetails {
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;
+	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_simple?: boolean;
 	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
@@ -657,4 +659,20 @@ export interface AssembleSiteOptions {
 	globalStyles?: GlobalStyles;
 	canReplaceContent?: boolean;
 	siteSetupOption?: string;
+}
+
+/**
+ * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
+ */
+export interface RawSiteMediaStorage {
+	max_storage_bytes: number;
+	storage_used_bytes: number;
+}
+
+/**
+ * Site media storage transformed for frontend use
+ */
+export interface SiteMediaStorage {
+	maxStorageBytes: number;
+	storageUsedBytes: number;
 }

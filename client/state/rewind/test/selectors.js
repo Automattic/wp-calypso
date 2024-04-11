@@ -122,19 +122,14 @@ describe( 'getBackupRetentionDays()', () => {
 describe( 'getBackupRetentionUpdateRequestStatus()', () => {
 	const TEST_SITE_ID = 123;
 
-	test( 'should default to UNSUBMITTED when the site under test does not exist in the state at all.', () => {
-		const state = {
-			rewind: {},
-		};
-		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
-			BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED
-		);
-	} );
-
 	test( 'should default to UNSUBMITTED when no backup retention update request is being made yet.', () => {
 		const state = {
 			rewind: {
-				[ TEST_SITE_ID ]: {},
+				[ TEST_SITE_ID ]: {
+					retention: {
+						requestStatus: BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED,
+					},
+				},
 			},
 		};
 		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
@@ -146,7 +141,9 @@ describe( 'getBackupRetentionUpdateRequestStatus()', () => {
 		const state = {
 			rewind: {
 				[ TEST_SITE_ID ]: {
-					updateBackupRetentionRequestStatus: BACKUP_RETENTION_UPDATE_REQUEST.PENDING,
+					retention: {
+						requestStatus: BACKUP_RETENTION_UPDATE_REQUEST.PENDING,
+					},
 				},
 			},
 		};

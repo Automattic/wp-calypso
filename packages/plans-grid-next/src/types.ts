@@ -1,4 +1,4 @@
-import { Plans, type AddOnMeta } from '@automattic/data-stores';
+import { Plans, AddOns } from '@automattic/data-stores';
 import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
 import type {
 	UrlFriendlyTermType,
@@ -38,7 +38,7 @@ export interface GridPlan {
 	planTitle: TranslateResult;
 	availableForPurchase: boolean;
 	pricing: Plans.PricingMetaForGridPlan;
-	storageAddOnsForPlan: ( AddOnMeta | null )[] | null;
+	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	productNameShort?: string | null;
 	billingTimeframe?: TranslateResult | null;
 	current?: boolean;
@@ -151,6 +151,7 @@ export type GridContextProps = {
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
 	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
+		className?: string;
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
@@ -162,6 +163,7 @@ export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 		FeaturesGridProps,
 		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
 	> & {
+		className?: string;
 		onUpgradeClick?: (
 			cartItems?: MinimalRequestCartProduct[] | null,
 			clickedPlanSlug?: PlanSlug
@@ -205,6 +207,7 @@ export type PlanTypeSelectorProps = {
 	 */
 	coupon?: string;
 	displayedIntervals: UrlFriendlyTermType[];
+	intent?: PlansIntent | null;
 };
 
 export type IntervalTypeProps = Pick<
@@ -225,6 +228,7 @@ export type IntervalTypeProps = Pick<
 	| 'title'
 	| 'coupon'
 	| 'onPlanIntervalUpdate'
+	| 'intent'
 >;
 
 export type SupportedUrlFriendlyTermType = Extract<

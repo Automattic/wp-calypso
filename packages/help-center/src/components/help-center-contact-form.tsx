@@ -360,11 +360,6 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 						);
 					}
 
-					if ( params.get( 'source-command-palette' ) === 'true' ) {
-						ticketMeta.push(
-							`From Hosting Command Palette: Please post this user feedback to #dotcom-yolo on Slack.`
-						);
-					}
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {

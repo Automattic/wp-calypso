@@ -20,9 +20,6 @@ export const useUpdateScheduleCapabilitiesQuery = (
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 			} ),
-		meta: {
-			persist: false,
-		},
 		enabled: !! siteSlug && isEligibleForFeature,
 		retry: false,
 		refetchOnWindowFocus: false,

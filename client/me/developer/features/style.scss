@@ -26,16 +26,29 @@
 			letter-spacing: -0.32px;
 			line-height: 24px;
 		}
+
 		.developer-features-list__item-description {
 			font-size: rem(14px);
 			color: var(--color-text-subtle);
 			line-height: 20px;
 			letter-spacing: -0.15px;
 		}
+
 		.developer-features-list__item-learn-more {
 			padding-top: 8px;
 			margin-top: auto;
 		}
+
+		&--full {
+			grid-column: 1/4;
+		}
+	}
+
+	.developer-features-list__item-tag {
+		color: var(--color-text-subtle);
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+		text-transform: uppercase;
 	}
 
 	@media ( max-width: $break-large ) {

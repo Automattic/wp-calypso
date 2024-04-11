@@ -1,5 +1,4 @@
-import { Product } from '@automattic/calypso-products';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
+import { Product, getFeatureByKey } from '@automattic/calypso-products';
 import objectIsPlan from './object-is-plan';
 import type { SelectorProductFeaturesItem } from './types';
 import type { Plan, Feature } from '@automattic/calypso-products';

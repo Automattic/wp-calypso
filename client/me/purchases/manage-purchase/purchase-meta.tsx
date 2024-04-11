@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -22,7 +23,6 @@ import {
 	isRenewing,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -82,6 +82,9 @@ export default function PurchaseMeta( {
 			? translate( 'Renewal Price' )
 			: translate( 'Price' );
 
+	const hideRenewalPriceSection = isOneTimePurchase( purchase );
+	const hideTaxString = isIncludedWithPlan( purchase );
+
 	// To-do: There isn't currently a way to get the taxName based on the country.
 	// The country is not included in the purchase information envelope
 	// We should add this information so we can utilize useTaxName to retrieve the correct taxName
@@ -107,17 +110,21 @@ export default function PurchaseMeta( {
 		<>
 			<ul className="manage-purchase__meta">
 				<PurchaseMetaOwner owner={ owner } />
-				<li>
-					<em className="manage-purchase__detail-label">{ renewalPriceHeader }</em>
-					<span className="manage-purchase__detail">
-						<PurchaseMetaPrice purchase={ purchase } />
-						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
-					</span>
-					<span>
-						<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
-					</span>
-					<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
-				</li>
+				{ ! hideRenewalPriceSection && (
+					<li>
+						<em className="manage-purchase__detail-label">{ renewalPriceHeader }</em>
+						<span className="manage-purchase__detail">
+							<PurchaseMetaPrice purchase={ purchase } />
+							<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
+						</span>
+						{ ! hideTaxString && (
+							<span>
+								<abbr title={ excludeTaxStringTitle }>{ excludeTaxStringAbbreviation }</abbr>
+							</span>
+						) }
+						<PurchaseMetaAutoRenewCouponDetail purchase={ purchase } />
+					</li>
+				) }
 				<PurchaseMetaExpiration
 					purchase={ purchase }
 					site={ site ?? undefined }

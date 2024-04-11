@@ -40,6 +40,7 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	qr_code?: string;
 	razorpay_order_id?: string;
 	razorpay_customer_id?: string;
+	razorpay_option_recurring?: boolean;
 };
 
 export type WPCOMTransactionEndpointResponse =

@@ -11,6 +11,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { arrowLeft, info } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { Banner } from 'calypso/components/banner';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
@@ -21,15 +22,18 @@ import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleForm } from './schedule-form';
+import type { SyncSuccessParams } from './types';
 
 interface Props {
 	onNavBack?: () => void;
 }
 export const ScheduleCreate = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 	const { createMonitor } = useCreateMonitor( siteSlug );
-	const isEligibleForFeature = useIsEligibleForFeature();
-	const siteHasEligiblePlugins = useSiteHasEligiblePlugins();
+	const { isEligibleForFeature } = useIsEligibleForFeature();
+	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
+		useSiteHasEligiblePlugins();
 	const { onNavBack } = props;
 	const { data: schedules = [], isFetched } = useUpdateScheduleQuery(
 		siteSlug,
@@ -51,9 +55,20 @@ export const ScheduleCreate = ( props: Props ) => {
 		}
 	}, [ isFetched ] );
 
-	const onSyncSuccess = () => {
+	// Redirect back to list when no eligible plugins are installed
+	useEffect( () => {
+		if ( ! siteHasEligiblePlugins && ! siteHasEligiblePluginsLoading ) {
+			onNavBack && onNavBack();
+		}
+	}, [ siteHasEligiblePlugins, siteHasEligiblePluginsLoading ] );
+
+	const onSyncSuccess = ( params: SyncSuccessParams ) => {
 		recordTracksEvent( 'calypso_scheduled_updates_create_schedule', {
 			site_slug: siteSlug,
+			frequency: params.frequency,
+			plugins_number: params.plugins.length,
+			hours: params.hours,
+			weekday: params.weekday,
 		} );
 
 		createMonitor();
@@ -66,10 +81,17 @@ export const ScheduleCreate = ( props: Props ) => {
 		<>
 			{ ! siteHasEligiblePlugins && (
 				<Banner
-					title="No updatable plugins found"
-					description={ `You don't have any plugins that can be updated. Please head over to <a href="https://wordpress.com/plugins/${ siteSlug }">Plugins</a> to install some plugins.` }
+					title={ translate( 'No plugins to update' ) }
+					description={ translate(
+						'You don’t have any plugins that can be updated. Visit the {{a}}Plugins{{/a}} section to explore and install new plugins.',
+						{
+							components: {
+								a: <a href={ `/plugins/${ siteSlug }` } />,
+							},
+						}
+					) }
 					onClick={ () => {
-						page.redirect( `/plugins/${ siteSlug }` );
+						page.show( `/plugins/${ siteSlug }` );
 					} }
 				/>
 			) }
@@ -78,11 +100,11 @@ export const ScheduleCreate = ( props: Props ) => {
 					<div className="ch-placeholder">
 						{ onNavBack && (
 							<Button icon={ arrowLeft } onClick={ onNavBack }>
-								Back
+								{ translate( 'Back' ) }
 							</Button>
 						) }
 					</div>
-					<Text>New Schedule</Text>
+					<Text>{ translate( 'New Schedule' ) }</Text>
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
@@ -96,7 +118,7 @@ export const ScheduleCreate = ( props: Props ) => {
 						disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
 						isBusy={ isBusy }
 					>
-						Create
+						{ translate( 'Create' ) }
 					</Button>
 					{ ( ( ! canCreateSchedules && eligibilityCheckErrors?.length ) || syncError ) && (
 						<Text as="p" className="validation-msg">

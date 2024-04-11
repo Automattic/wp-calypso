@@ -1,0 +1,27 @@
+.jetpack-ai-logo-generator-modal-visit-site-banner {
+	border-radius: 4px;
+	background: var(--studio-gray-0, #f6f7f7);
+	padding: 16px 20px;
+	display: flex;
+	gap: 16px;
+
+	@media (max-width: 700px) {
+		flex-direction: column;
+	}
+}
+
+.jetpack-ai-logo-generator-modal-visit-site-banner__jetpack-logo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.jetpack-ai-logo-generator-modal-visit-site-banner__content {
+	font-size: var($font-body-small, 14px);
+	display: flex;
+	flex-direction: column;
+
+	@media (max-width: 700px) {
+		gap: 8px;
+	}
+}

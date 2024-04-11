@@ -1,0 +1,110 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../mixins.scss";
+
+.download-products-form {
+	p {
+		font-size: 1rem;
+	}
+
+	.select-dropdown__container {
+		width: 100%;
+	}
+}
+
+.download-products-form__placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	height: 43px;
+}
+
+.download-products-form__actions {
+	display: flex;
+	justify-content: flex-end;
+	margin: 42px -10px 0;
+
+	> * {
+		margin: 0 10px;
+	}
+}
+
+
+.download-products-form__pagination {
+	margin: 64px 0;
+}
+
+.download-products-form__action-items h4 {
+	font-size: 1.25rem;
+}
+
+.download-products-form__action-items h5 {
+	font-size: 1rem;
+}
+
+.download-products-form__action-items pre {
+	font-size: 0.875rem;
+	padding: 0;
+	margin-block-end: 0.6rem;
+}
+
+.download-products-form__action-items ul {
+	list-style-type: none;
+	margin: 1rem 0;
+}
+
+.download-products-form__top {
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		flex-wrap: wrap;
+	}
+}
+
+.download-products-form__controls {
+	@include licensing-portal-bottom-action-bar;
+
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: stretch;
+	align-items: center;
+	flex-wrap: wrap;
+	flex-grow: 1;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		flex-direction: row;
+		flex-grow: 1;
+		justify-content: flex-end;
+		margin-block-end: 1rem;
+
+		.button {
+			flex-grow: 1;
+		}
+	}
+
+	@include break-medium {
+		.button {
+			flex-grow: 0;
+		}
+	}
+
+	@include break-xlarge {
+		flex-direction: row;
+		flex-grow: 0;
+	}
+}
+
+p.download-products-form__description {
+	flex: 1 0 100%;
+	align-self: flex-end;
+	margin: 0 0 1rem;
+	font-size: 0.875rem;
+	color: var(--color-text-gray);
+
+	@include break-medium {
+		flex: 1 1 auto;
+		margin-inline-end: 1rem;
+	}
+}

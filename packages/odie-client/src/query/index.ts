@@ -7,14 +7,15 @@ import wpcom from 'calypso/lib/wp';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, setOdieStorage } from '../data';
-import type { Chat, Message, OdieAllowedBots } from '../types';
+import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = async (
 	message: Message,
 	botNameSlug: OdieAllowedBots,
 	chat_id?: number | null,
-	version?: string | null
+	version?: string | null,
+	selectedSiteId?: number | null
 ) => {
 	const baseApiPath = '/help-center/odie/chat/';
 	const wpcomBaseApiPath = '/odie/chat/';
@@ -30,19 +31,24 @@ const buildSendChatMessage = async (
 			: `${ wpcomBaseApiPath }${ botNameSlug }`;
 
 	return canAccessWpcomApis()
-		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version )
+		? odieWpcomSendSupportMessage( message, wpcomApiPathWithIds, version, selectedSiteId )
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message, version },
+				data: { message: message.content, version, context: { selectedSiteId } },
 		  } );
 };
 
-function odieWpcomSendSupportMessage( message: Message, path: string, version?: string | null ) {
+function odieWpcomSendSupportMessage(
+	message: Message,
+	path: string,
+	version?: string | null,
+	selectedSiteId?: number | null
+) {
 	return wpcom.req.post( {
 		path,
 		apiNamespace: 'wpcom/v2',
-		body: { message: message.content, version },
+		body: { message: message.content, version, context: { selectedSiteId } },
 	} );
 }
 
@@ -70,8 +76,16 @@ export const useOdieSendMessage = (): UseMutationResult<
 	{ message: Message },
 	{ internal_message_id: string }
 > => {
-	const { chat, botNameSlug, setIsLoading, addMessage, updateMessage, odieClientId, version } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		botNameSlug,
+		setIsLoading,
+		setChat,
+		updateMessage,
+		odieClientId,
+		selectedSiteId,
+		version,
+	} = useOdieAssistantContext();
 	const queryClient = useQueryClient();
 	const userMessage = useRef< Message | null >( null );
 
@@ -83,19 +97,41 @@ export const useOdieSendMessage = (): UseMutationResult<
 	>( {
 		mutationFn: ( { message }: { message: Message } ) => {
 			broadcastOdieMessage( message, odieClientId );
-			return buildSendChatMessage( { ...message }, botNameSlug, chat.chat_id, version );
+			return buildSendChatMessage(
+				{ ...message },
+				botNameSlug,
+				chat.chat_id,
+				version,
+				selectedSiteId
+			);
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
-			addMessage( [
+			const messages = [
 				message,
 				{
 					internal_message_id,
 					content: '...',
-					role: 'bot',
-					type: 'placeholder',
+					role: 'bot' as MessageRole,
+					type: 'placeholder' as MessageType,
 				},
-			] );
+			];
+
+			setChat( ( prevChat: Chat ) => {
+				// Normalize message to always be an array
+				const newMessages = messages;
+
+				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
+				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
+					? prevChat.messages
+					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
+
+				// Append new messages at the end
+				return {
+					chat_id: prevChat.chat_id,
+					messages: [ ...filteredMessages, ...newMessages ],
+				};
+			} );
 			setIsLoading( true );
 			userMessage.current = message;
 

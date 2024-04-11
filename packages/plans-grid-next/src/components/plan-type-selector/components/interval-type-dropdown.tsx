@@ -1,10 +1,11 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CustomSelectControl } from '@wordpress/components';
 import DropdownOption from '../../dropdown-option';
 import useIntervalOptions from '../hooks/use-interval-options';
 import type { IntervalTypeProps, SupportedUrlFriendlyTermType } from '../../../types';
 
 export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
-	const { hideDiscount, intervalType, displayedIntervals, onPlanIntervalUpdate } = props;
+	const { hideDiscount, intent, intervalType, displayedIntervals, onPlanIntervalUpdate } = props;
 	const supportedIntervalType = (
 		displayedIntervals.includes( intervalType ) ? intervalType : 'yearly'
 	) as SupportedUrlFriendlyTermType;
@@ -35,7 +36,13 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 					selectedItem: { key: intervalType },
 				}: {
 					selectedItem: { key: SupportedUrlFriendlyTermType };
-				} ) => onPlanIntervalUpdate && onPlanIntervalUpdate( intervalType ) }
+				} ) => {
+					recordTracksEvent( 'calypso_plans_plan_type_selector_option_change', {
+						interval_type: intervalType,
+						plans_intent: intent,
+					} );
+					onPlanIntervalUpdate && onPlanIntervalUpdate( intervalType );
+				} }
 			/>
 		</div>
 	);

@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate, useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/types';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import './style.scss';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
 import CampaignsTable from '../campaigns-table';

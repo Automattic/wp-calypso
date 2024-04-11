@@ -2,9 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createTestReduxStore } from 'calypso/my-sites/checkout/src/test/util';
+import {
+	countryList,
+	createTestReduxStore,
+	mockGetSupportedCountriesEndpoint,
+} from 'calypso/my-sites/checkout/src/test/util';
 import {
 	BillingTransaction,
 	BillingTransactionItem,
@@ -143,7 +148,7 @@ describe( 'transactionIncludesTax', () => {
 	} );
 } );
 
-test( 'tax shown if available', () => {
+test( 'tax shown if available', async () => {
 	const transaction = {
 		...mockTransaction,
 		subtotal: '$36.00',
@@ -161,44 +166,20 @@ test( 'tax shown if available', () => {
 		],
 	};
 	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
 
 	render(
 		<ReduxProvider store={ store }>
-			<TransactionAmount transaction={ transaction } />
+			<QueryClientProvider client={ queryClient }>
+				<TransactionAmount transaction={ transaction } />
+			</QueryClientProvider>
 		</ReduxProvider>
 	);
-	expect( screen.getByText( /tax/ ) ).toBeInTheDocument();
+	expect( await screen.findByText( /tax/ ) ).toBeInTheDocument();
 } );
 
-test( 'tax includes', () => {
-	const transaction = {
-		...mockTransaction,
-		subtotal: '$36.00',
-		tax: '$2.48',
-		amount: '$38.48',
-		subtotal_integer: 3600,
-		tax_integer: 248,
-		amount_integer: 3848,
-		items: [
-			{
-				...mockItem,
-				raw_tax: 2.48,
-				tax_integer: 248,
-			},
-		],
-	};
-
-	const store = createTestReduxStore();
-
-	render(
-		<ReduxProvider store={ store }>
-			<TransactionAmount transaction={ transaction } />
-		</ReduxProvider>
-	);
-	expect( screen.getByText( `(includes ${ transaction.tax } tax)` ) ).toBeInTheDocument();
-} );
-
-test( 'tax adding', () => {
+test( 'tax includes', async () => {
 	const transaction = {
 		...mockTransaction,
 		subtotal: '$36.00',
@@ -217,22 +198,25 @@ test( 'tax adding', () => {
 	};
 
 	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
 
 	render(
 		<ReduxProvider store={ store }>
-			<TransactionAmount transaction={ transaction } addingTax />
+			<QueryClientProvider client={ queryClient }>
+				<TransactionAmount transaction={ transaction } />
+			</QueryClientProvider>
 		</ReduxProvider>
 	);
-	expect( screen.getByText( `(+${ transaction.tax } tax)` ) ).toBeInTheDocument();
+	expect( await screen.findByText( `(includes ${ transaction.tax } tax)` ) ).toBeInTheDocument();
 } );
 
-test( 'tax includes with localized tax name', () => {
+test( 'tax adding', async () => {
 	const transaction = {
 		...mockTransaction,
 		subtotal: '$36.00',
 		tax: '$2.48',
 		amount: '$38.48',
-		tax_country_code: 'GB',
 		subtotal_integer: 3600,
 		tax_integer: 248,
 		amount_integer: 3848,
@@ -246,16 +230,20 @@ test( 'tax includes with localized tax name', () => {
 	};
 
 	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
 
 	render(
 		<ReduxProvider store={ store }>
-			<TransactionAmount transaction={ transaction } />
+			<QueryClientProvider client={ queryClient }>
+				<TransactionAmount transaction={ transaction } addingTax />
+			</QueryClientProvider>
 		</ReduxProvider>
 	);
-	expect( screen.getByText( `(includes ${ transaction.tax } VAT)` ) ).toBeInTheDocument();
+	expect( await screen.findByText( `(+${ transaction.tax } tax)` ) ).toBeInTheDocument();
 } );
 
-test( 'tax adding with localized tax name', () => {
+test( 'tax includes with localized tax name', async () => {
 	const transaction = {
 		...mockTransaction,
 		subtotal: '$36.00',
@@ -275,16 +263,53 @@ test( 'tax adding with localized tax name', () => {
 	};
 
 	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
 
 	render(
 		<ReduxProvider store={ store }>
-			<TransactionAmount transaction={ transaction } addingTax />
+			<QueryClientProvider client={ queryClient }>
+				<TransactionAmount transaction={ transaction } />
+			</QueryClientProvider>
 		</ReduxProvider>
 	);
-	expect( screen.getByText( `(+${ transaction.tax } VAT)` ) ).toBeInTheDocument();
+	expect( await screen.findByText( `(includes ${ transaction.tax } VAT)` ) ).toBeInTheDocument();
 } );
 
-test( 'tax hidden if not available', () => {
+test( 'tax adding with localized tax name', async () => {
+	const transaction = {
+		...mockTransaction,
+		subtotal: '$36.00',
+		tax: '$2.48',
+		amount: '$38.48',
+		tax_country_code: 'GB',
+		subtotal_integer: 3600,
+		tax_integer: 248,
+		amount_integer: 3848,
+		items: [
+			{
+				...mockItem,
+				raw_tax: 2.48,
+				tax_integer: 248,
+			},
+		],
+	};
+
+	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
+
+	render(
+		<ReduxProvider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<TransactionAmount transaction={ transaction } addingTax />
+			</QueryClientProvider>
+		</ReduxProvider>
+	);
+	expect( await screen.findByText( `(+${ transaction.tax } VAT)` ) ).toBeInTheDocument();
+} );
+
+test( 'tax hidden if not available', async () => {
 	const transaction = {
 		...mockTransaction,
 		subtotal: '$36.00',
@@ -296,12 +321,16 @@ test( 'tax hidden if not available', () => {
 	};
 
 	const store = createTestReduxStore();
+	const queryClient = new QueryClient();
+	mockGetSupportedCountriesEndpoint( countryList );
 
 	render(
 		<ReduxProvider store={ store }>
-			<TransactionAmount transaction={ transaction } />
+			<QueryClientProvider client={ queryClient }>
+				<TransactionAmount transaction={ transaction } />
+			</QueryClientProvider>
 		</ReduxProvider>
 	);
+	expect( await screen.findByText( `$36` ) ).toBeInTheDocument();
 	expect( screen.queryByText( `(includes ${ transaction.tax } VAT)` ) ).not.toBeInTheDocument();
-	expect( screen.getByText( `$36` ) ).toBeInTheDocument();
 } );

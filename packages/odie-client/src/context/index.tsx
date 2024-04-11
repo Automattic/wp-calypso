@@ -8,7 +8,7 @@ import {
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
-import type { ReactNode, FC, PropsWithChildren } from 'react';
+import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
@@ -34,7 +34,8 @@ type OdieAssistantContextInterface = {
 	lastNudge: Nudge | null;
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
-	setChat: ( chat: Chat ) => void;
+	selectedSiteId?: number | null;
+	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setContext: ( context: Context ) => void;
@@ -92,6 +93,7 @@ type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	logger?: ( message: string, properties: Record< string, unknown > ) => void;
 	loggerEventNamePrefix?: string;
+	selectedSiteId?: number | null;
 	version?: string | null;
 	children?: ReactNode;
 } & PropsWithChildren;
@@ -105,6 +107,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 	enabled = true,
 	logger,
 	loggerEventNamePrefix,
+	selectedSiteId,
 	version = null,
 	children,
 } ) => {
@@ -227,6 +230,7 @@ const OdieAssistantProvider: FC< OdieAssistantProviderProps > = ( {
 				isVisible,
 				lastNudge,
 				odieClientId,
+				selectedSiteId,
 				sendNudge: setLastNudge,
 				setChat,
 				setIsLoadingChat: noop,

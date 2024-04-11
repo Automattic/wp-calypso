@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -20,6 +19,7 @@ interface LoginButtonsProps {
 	};
 	twoFactorAuthType: string;
 	usernameOrEmail: string;
+	isWooPasswordless: boolean;
 }
 
 const LoginButtons = ( {
@@ -27,6 +27,7 @@ const LoginButtons = ( {
 	oauth2Client,
 	twoFactorAuthType,
 	usernameOrEmail,
+	isWooPasswordless,
 }: LoginButtonsProps ) => {
 	const translate = useTranslate();
 	const query = useSelector( getCurrentQueryArguments );
@@ -40,16 +41,16 @@ const LoginButtons = ( {
 			return null;
 		}
 
-		const loginLink = getLoginLinkPageUrl(
+		const loginLink = getLoginLinkPageUrl( {
 			locale,
 			currentRoute,
-			query?.signup_url,
-			oauth2Client?.id
-		);
+			signupUrl: query?.signup_url,
+			oauth2ClientId: oauth2Client?.id,
+			emailAddress: usernameOrEmail || query?.email_address,
+			redirectTo: query?.redirect_to,
+		} );
 
-		const emailAddress = usernameOrEmail || query?.email_address;
-
-		return addQueryArgs( loginLink, { email_address: emailAddress } );
+		return loginLink;
 	};
 
 	const handleMagicLoginClick = () => {
@@ -87,7 +88,8 @@ const LoginButtons = ( {
 			return null;
 		}
 		// Is not supported for any oauth 2 client.
-		if ( oauth2Client ) {
+		// n.b this seems to work for woo.com so it's not clear why the above comment is here
+		if ( oauth2Client && ! isWooPasswordless ) {
 			return null;
 		}
 

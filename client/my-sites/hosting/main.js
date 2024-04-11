@@ -41,9 +41,9 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { useIsGitHubDeploymentsAvailableQuery } from '../github-deployments/use-is-feature-available';
 import { TrialAcknowledgeModal } from '../plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from '../plans/trials/trial-acknowledge/with-onclick-trial-request';
+import SiteAdminInterface from '../site-settings/site-admin-interface';
 import CacheCard from './cache-card';
 import { GitHubDeploymentsCard } from './github-deployments-card';
 import HostingActivateStatus from './hosting-activate-status';
@@ -51,7 +51,6 @@ import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
-import SiteAdminInterfaceCard from './site-admin-interface-card';
 import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
@@ -91,17 +90,14 @@ const MainCards = ( {
 	isBasicHostingDisabled,
 	isWpcomStagingSite,
 	isBusinessTrial,
-	isGitHubDeploymentsAvailable,
 	siteId,
 } ) => {
 	const mainCards = [
-		isGitHubDeploymentsAvailable
-			? {
-					feature: 'github-deployments',
-					content: <GitHubDeploymentsCard />,
-					type: 'advanced',
-			  }
-			: null,
+		{
+			feature: 'github-deployments',
+			content: <GitHubDeploymentsCard />,
+			type: 'advanced',
+		},
 		{
 			feature: 'sftp',
 			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
@@ -145,7 +141,7 @@ const MainCards = ( {
 		},
 		siteId && {
 			feature: 'wp-admin',
-			content: <SiteAdminInterfaceCard siteId={ siteId } />,
+			content: <SiteAdminInterface siteId={ siteId } isHosting />,
 			type: 'basic',
 		},
 	].filter( ( card ) => card !== null );
@@ -202,11 +198,6 @@ const Hosting = ( props ) => {
 		transferState,
 	} = props;
 
-	const { data: gitHubDeploymentsAvailable } = useIsGitHubDeploymentsAvailableQuery( {
-		siteId,
-		options: { enabled: hasSftpFeature },
-	} );
-
 	const [ isTrialAcknowledgeModalOpen, setIsTrialAcknowledgeModalOpen ] = useState( false );
 	const [ hasTransfer, setHasTransferring ] = useState(
 		transferState &&
@@ -222,13 +213,6 @@ const Hosting = ( props ) => {
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
 	const showHostingActivationBanner = canSiteGoAtomic && ! hasTransfer;
-
-	const onSecondaryCTAClick = () => {
-		if ( ! isEligibleForHostingTrial ) {
-			return;
-		}
-		setIsTrialAcknowledgeModalOpen( true );
-	};
 
 	const setOpenModal = ( isOpen ) => {
 		setIsTrialAcknowledgeModalOpen( isOpen );
@@ -248,7 +232,7 @@ const Hosting = ( props ) => {
 				fetchUpdatedData();
 			}
 		},
-		[]
+		[ hasTransfer ]
 	);
 
 	const getUpgradeBanner = () => {
@@ -264,15 +248,7 @@ const Hosting = ( props ) => {
 					href: `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }`,
 					title: translate( 'Upgrade your plan to access all hosting features' ),
 			  };
-		const secondaryCallToAction = isEligibleForHostingTrial ? translate( 'Try for free' ) : null;
-		return (
-			<HostingUpsellNudge
-				siteId={ siteId }
-				targetPlan={ targetPlan }
-				secondaryCallToAction={ secondaryCallToAction }
-				secondaryOnClick={ onSecondaryCTAClick }
-			/>
-		);
+		return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 	};
 
 	const getAtomicActivationNotice = () => {
@@ -310,7 +286,6 @@ const Hosting = ( props ) => {
 								isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
 								isWpcomStagingSite={ isWpcomStagingSite }
 								isBusinessTrial={ isBusinessTrial && ! hasTransfer }
-								isGitHubDeploymentsAvailable={ gitHubDeploymentsAvailable?.available ?? false }
 								siteId={ siteId }
 							/>
 						</Column>

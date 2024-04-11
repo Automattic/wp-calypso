@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	FEATURE_SFTP,
@@ -31,7 +30,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { useIsGitHubDeploymentsAvailableQuery } from '../../my-sites/github-deployments/use-is-feature-available';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -287,9 +285,6 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
-	const { data: githubDeploymentsFeature } = useIsGitHubDeploymentsAvailableQuery( {
-		siteId: site.ID,
-	} );
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
@@ -310,7 +305,6 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
-				condition: githubDeploymentsFeature?.available,
 				label: __( 'Deploy from GitHub' ),
 				href: `/github-deployments/${ siteSlug }`,
 				sectionName: 'connect_github',
@@ -331,7 +325,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'admin-interface-style',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, hasStagingSitesFeature, githubDeploymentsFeature ] );
+	}, [ __, siteSlug, hasStagingSitesFeature ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
@@ -441,8 +435,7 @@ export const SitesEllipsisMenu = ( {
 		getSiteOption( state, site.ID, 'wpcom_admin_interface' )
 	);
 
-	const isWpAdminInterface =
-		isEnabled( 'layout/dotcom-nav-redesign' ) && adminInterface === 'wp-admin';
+	const isWpAdminInterface = adminInterface === 'wp-admin';
 
 	const props: SitesMenuItemProps = {
 		site,

@@ -12,10 +12,12 @@ import {
 	isWpcomEnterpriseGridPlan,
 	type PlanSlug,
 	UrlFriendlyTermType,
+	isValidFeatureKey,
+	getFeaturesList,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -26,7 +28,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 } from '@automattic/plans-grid-next';
-import { isMobile } from '@automattic/viewport';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import {
@@ -54,10 +56,8 @@ import {
 	planItem as getCartItemForPlan,
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
-import { isValidFeatureKey, FEATURES_LIST } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
-import useStorageAddOns from 'calypso/my-sites/add-ons/hooks/use-storage-add-ons';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
@@ -258,7 +258,7 @@ const PlansFeaturesMain = ( {
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
-	const storageAddOns = useStorageAddOns( { siteId } );
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
@@ -331,7 +331,11 @@ const PlansFeaturesMain = ( {
 		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
 			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
+				window.open(
+					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
+					'_blank'
+				);
 				return;
 			}
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -422,7 +426,7 @@ const PlansFeaturesMain = ( {
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	const gridPlans = useGridPlans( {
-		allFeaturesList: FEATURES_LIST,
+		allFeaturesList: getFeaturesList(),
 		useFreeTrialPlanSlugs,
 		selectedFeature,
 		term,
@@ -453,7 +457,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
-		allFeaturesList: FEATURES_LIST,
+		allFeaturesList: getFeaturesList(),
 		gridPlans: filteredPlansForPlanFeatures,
 		intent,
 		selectedFeature,
@@ -462,7 +466,7 @@ const PlansFeaturesMain = ( {
 
 	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
-		allFeaturesList: FEATURES_LIST,
+		allFeaturesList: getFeaturesList(),
 		availableGridPlans: gridPlans || [],
 		gridPlans: filteredPlansForPlanFeatures,
 		intent,
@@ -516,6 +520,7 @@ const PlansFeaturesMain = ( {
 			coupon,
 			selectedSiteId: siteId,
 			withDiscount,
+			intent,
 		};
 
 		const handlePlanIntervalUpdate = ( interval: SupportedUrlFriendlyTermType ) => {
@@ -574,6 +579,7 @@ const PlansFeaturesMain = ( {
 		withDiscount,
 		getPlanTypeDestination,
 		onPlanIntervalUpdate,
+		intent,
 	] );
 
 	const isEligibleForTrial = useSelector( isUserEligibleForFreeHostingTrial );
@@ -725,9 +731,9 @@ const PlansFeaturesMain = ( {
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
-
-	const enablePlanTypeSelectorStickyBehavior = isMobile() && showPlanTypeSelectorDropdown;
-	const stickyPlanTypeSelectorHeight = isMobile() ? 62 : 48;
+	const isMobile = useMobileBreakpoint();
+	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
+	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;
@@ -850,12 +856,13 @@ const PlansFeaturesMain = ( {
 									showUpgradeableStorage={ showUpgradeableStorage }
 									stickyRowOffset={ masterbarHeight }
 									useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-									allFeaturesList={ FEATURES_LIST }
+									allFeaturesList={ getFeaturesList() }
 									onStorageAddOnClick={ handleStorageAddOnClick }
 									showRefundPeriod={ isAnyHostingFlow( flowName ) }
 									recordTracksEvent={ recordTracksEvent }
 									coupon={ coupon }
 									planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+									className="plans-features-main__features-grid"
 								/>
 								{ showEscapeHatch && hidePlansFeatureComparison && (
 									<div className="plans-features-main__escape-hatch">
@@ -912,7 +919,7 @@ const PlansFeaturesMain = ( {
 												showUpgradeableStorage={ showUpgradeableStorage }
 												stickyRowOffset={ comparisonGridStickyRowOffset }
 												useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
-												allFeaturesList={ FEATURES_LIST }
+												allFeaturesList={ getFeaturesList() }
 												onStorageAddOnClick={ handleStorageAddOnClick }
 												showRefundPeriod={ isAnyHostingFlow( flowName ) }
 												planTypeSelectorProps={
@@ -921,6 +928,7 @@ const PlansFeaturesMain = ( {
 												coupon={ coupon }
 												recordTracksEvent={ recordTracksEvent }
 												planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
+												className="plans-features-main__comparison-grid"
 											/>
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }

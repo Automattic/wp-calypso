@@ -61,12 +61,13 @@
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
-		"layout/dotcom-nav-redesign": false,
+		"layout/dotcom-nav-redesign-v2": false,
 		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
+		"subscriber-csv-upload": true,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false
@@ -91,6 +92,7 @@
 		"jetpack-search": true,
 		"jetpack-social": true,
 		"jetpack-subscribers": true,
+		"jetpack-monetize": true,
 		"scan": true,
 		"site-purchases": true
 	},

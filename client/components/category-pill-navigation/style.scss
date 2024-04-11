@@ -3,7 +3,15 @@
 @import "@automattic/typography/styles/variables";
 
 .category-pill-navigation {
+	--color-accent: #3858e9;
+
 	background: var(--studio-white);
+	display: flex;
+	align-items: center;
+
+	@media ( max-width: $break-mobile ) {
+		display: block;
+	}
 }
 
 .category-pill-navigation__button-divider {
@@ -13,6 +21,7 @@
 	display: block;
 	border-radius: 2px;
 	background: #2c3338;
+	margin-left: 16px;
 }
 
 .category-pill-navigation__list {
@@ -24,20 +33,27 @@
 		display: flex;
 		gap: 16px;
 		align-items: center;
+		// Chrome, Edge, Firefox
+		scrollbar-width: none;
 
+		// Safari
 		&::-webkit-scrollbar {
-			display: none; /* for browsers that support this */
+			display: none;
+		}
+
+		.category-pill-navigation__button:first-child {
+			margin-left: 16px;
 		}
 	}
 
 	.category-pill-navigation__arrow {
+		display: block;
 		width: 44px;
 		height: 44px;
 		position: absolute;
 		left: 0;
 		top: 0;
 		z-index: 2;
-		background: var(--studio-white) url(./images/arrow.svg) no-repeat center center;
 		transform: rotate(180deg);
 		cursor: pointer;
 
@@ -49,12 +65,17 @@
 			content: "";
 			position: absolute;
 			top: 0;
-			right: 100%;
-			width: 58px;
+			right: 0;
+			width: 68px;
 			height: 44px;
-			background: linear-gradient(270deg, var(--studio-white) 40.38%, transparent 100%);
+			background: linear-gradient(270deg, var(--studio-white) 45.38%, transparent 100%);
 			cursor: none;
 			pointer-events: none;
+		}
+
+		svg {
+			z-index: 2;
+			position: relative;
 		}
 
 		&.right {
@@ -63,8 +84,9 @@
 			transform: rotate(0);
 		}
 
-		@media ( max-width: $break-wide ) {
-			display: none;
+		@media ( max-width: $break-large ) {
+			width: 0;
+			padding: 0;
 		}
 	}
 }
@@ -89,8 +111,12 @@
 	}
 
 	&.is-active {
-		background: var(--Blueberry, #3858e9);
+		background: var(--color-accent);
 		color: var(--studio-white);
+
+		svg {
+			fill: var(--studio-white);
+		}
 	}
 }
 
@@ -98,4 +124,8 @@
 	padding-left: 32px;
 	flex: none;
 	margin-left: auto;
+}
+
+.category-pill-navigation__mobile-select .select-dropdown__container {
+	width: 100%;
 }

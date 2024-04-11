@@ -13,6 +13,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -77,6 +78,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			migrationStatus === MigrationStatus.BACKING_UP ||
 			migrationStatus === MigrationStatus.BACKING_UP_QUEUED ||
 			migrationStatus === MigrationStatus.RESTORING;
+		const currentPath = window.location.pathname + window.location.search;
+
+		useSaveHostingFlowPathStep( flow, currentPath );
 
 		/**
 	 	↓ Effects

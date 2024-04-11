@@ -171,7 +171,7 @@
 			border-width: 1px;
 		}
 
-		&:hover {
+		&:not(:disabled):hover {
 			color: var(--color-neutral-70);
 			border-color: var(--color-neutral-20);
 			background: #fff;

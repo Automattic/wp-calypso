@@ -11,12 +11,12 @@ import {
 	isProPlan,
 } from '@automattic/calypso-products';
 import { Tooltip } from '@automattic/components';
+import { Site } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
@@ -39,7 +39,7 @@ export function PlanStorage( { children, className, siteId } ) {
 	);
 	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 	const translate = useTranslate();
-	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
@@ -63,17 +63,17 @@ export function PlanStorage( { children, className, siteId } ) {
 		if (
 			( sitePlanSlug === PLAN_FREE || sitePlanSlug === PLAN_WPCOM_FLEXIBLE ) &&
 			! legacySiteWithHigherLimits &&
-			mediaStorage.max_storage_bytes === 3072 * 1024 * 1024
+			mediaStorage.maxStorageBytes === 3072 * 1024 * 1024
 		) {
-			mediaStorage.max_storage_bytes = 1024 * 1024 * 1024;
+			mediaStorage.maxStorageBytes = 1024 * 1024 * 1024;
 		}
 
 		if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
-			mediaStorage.max_storage_bytes = 50 * 1024 * 1024 * 1024;
+			mediaStorage.maxStorageBytes = 50 * 1024 * 1024 * 1024;
 		}
 
 		if ( sitePlanSlug === PLAN_WPCOM_STARTER ) {
-			mediaStorage.max_storage_bytes = 6 * 1024 * 1024 * 1024;
+			mediaStorage.maxStorageBytes = 6 * 1024 * 1024 * 1024;
 		}
 	}
 

@@ -83,6 +83,8 @@ const StatsPurchasePage = ( {
 	}, [ siteSlug, isSiteJetpackNotAtomic ] );
 
 	useEffect( () => {
+		// Scroll to top on page load
+		window.scrollTo( 0, 0 );
 		// track different upgrade sources
 		let triggeredEvent;
 
@@ -123,7 +125,7 @@ const StatsPurchasePage = ( {
 		! commercialMonthlyProduct ||
 		! pwywProduct ||
 		isRequestingSitePurchases ||
-		! hasLoadedSitePurchases;
+		( siteId && ! hasLoadedSitePurchases ); // only check `hasLoadedSitePurchases` if siteId is available
 
 	const [ initialStep, initialSiteType ] = useMemo( () => {
 		// if the site is detected as commercial

@@ -1,0 +1,61 @@
+.searchable-dropdown {
+	// TODO: We will have to figure out and adopt standard Calypso styling for the combobox control.
+	// So we do not have to override so many styles here or in the future.
+	.components-base-control__field.components-base-control__field {
+		margin: 0;
+	}
+
+	input.components-combobox-control__input[type="text"] {
+		font-size: 1rem;
+		line-height: 1.5;
+		padding: 7px 14px;
+	}
+
+	.components-combobox-control__suggestions-container .components-flex {
+		border: 1px solid var(--color-neutral-10);
+		border-radius: 2px;
+		background-color: var(--color-surface);
+		transition: all 0.15s ease-in-out;
+		height: 40px;
+	}
+
+	.components-combobox-control__suggestions-container:focus-within {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		outline: none;
+	}
+
+	.components-combobox-control__suggestions-container {
+		border: none;
+	}
+
+	.components-form-token-field__suggestion.is-selected {
+		background-color: var(--color-primary);
+	}
+
+	.components-form-token-field__suggestions-list li {
+		padding: 10px;
+		font-size: 1rem;
+	}
+}
+
+.searchable-dropdown.is-disabled {
+	.components-base-control__field.components-base-control__field {
+		background: var(--color-neutral-0);
+	}
+
+	input.components-combobox-control__input[type="text"] {
+		border-color: var(--color-neutral-0);
+		color: var(--color-neutral-20);
+		opacity: 1;
+		-webkit-text-fill-color: var(--color-neutral-20);
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var(--color-neutral-20);
+		}
+	}
+}

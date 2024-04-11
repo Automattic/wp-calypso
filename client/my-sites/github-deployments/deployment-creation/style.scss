@@ -1,0 +1,22 @@
+.repository-selection-dialog {
+	width: 622px;
+	height: 490px;
+	display: flex;
+	flex-direction: column;
+	padding: 32px;
+
+	h1 {
+		margin-bottom: 8px !important;
+	}
+
+	.formatted-header {
+		margin-bottom: 24px !important;
+	}
+
+}
+
+.github-deployments-dialog .dialog__action-buttons-close {
+	padding: 0;
+	margin-top: 32px;
+	margin-right: 32px;
+}

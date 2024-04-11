@@ -1,3 +1,5 @@
+import { translate } from 'i18n-calypso';
+
 /**
  * Prepare unix timestamp in seconds
  * based on selected frequency, day, hour and period
@@ -38,20 +40,24 @@ export const prepareTimestamp = (
 	return event.getTime() / 1000;
 };
 
-/**
- * Validate name
- * - required
- * - max length 120
- */
-export const validateName = ( name: string ) => {
-	let error = '';
-	if ( ! name ) {
-		error = 'Please provide a name to this plugin update schedule.';
-	} else if ( name.length > 120 ) {
-		error = 'Please provide a shorter name.';
+export const convertHourTo24 = ( hour: string, period: string ): string => {
+	if ( period === 'am' ) {
+		return hour === '12' ? '0' : hour;
+	} else if ( period === 'pm' ) {
+		return hour === '12' ? '12' : ( parseInt( hour, 10 ) + 12 ).toString();
 	}
 
-	return error;
+	return hour;
+};
+
+export const convertHourTo12 = ( hour: string ): string => {
+	const _hour = parseInt( hour, 10 );
+
+	if ( _hour === 0 ) {
+		return '12';
+	}
+
+	return _hour > 12 ? ( _hour - 12 ).toString() : _hour.toString();
 };
 
 type TimeSlot = {
@@ -82,14 +88,14 @@ export const validateTimeSlot = ( newSchedule: TimeSlot, existingSchedules: Time
 			( newSchedule.frequency === 'daily' || schedule.frequency === 'daily' ) &&
 			existingDate.getHours() === newDate.getHours()
 		) {
-			error = 'Please choose another time, as this slot is already scheduled.';
+			error = translate( 'Please choose another time, as this slot is already scheduled.' );
 		} else if (
 			newSchedule.frequency === 'weekly' &&
 			schedule.frequency === 'weekly' &&
 			newDate.getDay() === existingDate.getDay() &&
 			newDate.getHours() === existingDate.getHours()
 		) {
-			error = 'Please pick another time for optimal performance, as this slot is already taken.';
+			error = translate( 'Please choose another time, as this slot is already scheduled.' );
 		}
 	} );
 
@@ -104,13 +110,15 @@ export const validatePlugins = ( plugins: string[], existingPlugins: Array< stri
 	let error = '';
 
 	if ( plugins.length === 0 ) {
-		error = 'Please select at least one plugin to update.';
+		error = translate( 'Please select at least one plugin to update.' );
 	} else if ( existingPlugins.length ) {
 		const _plugins = [ ...plugins ].sort();
 
 		existingPlugins.forEach( ( existing ) => {
 			if ( JSON.stringify( _plugins ) === JSON.stringify( [ ...existing ].sort() ) ) {
-				error = 'Please select a different set of plugins, as this one has already been chosen.';
+				error = translate(
+					'Please select a different set of plugins, as this one has already been chosen.'
+				);
 			}
 		} );
 	}

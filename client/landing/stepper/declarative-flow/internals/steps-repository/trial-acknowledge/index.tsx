@@ -1,11 +1,15 @@
 import { StepContainer, isNewHostedSiteCreationFlow } from '@automattic/onboarding';
+import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingTrialAcknowledge } from './hosting-trial-acknowledge';
 import { MigrationTrialAcknowledge } from './migration-trial-acknowledge';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
+
 const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, stepName } ) {
 	const { goBack } = navigation;
+
+	useSaveHostingFlowPathStep( flow, `/setup/${ flow }/${ stepName }` );
 
 	const getStepContent = () => {
 		if ( isNewHostedSiteCreationFlow( flow ) ) {

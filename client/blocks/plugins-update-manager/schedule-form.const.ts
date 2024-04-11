@@ -1,104 +1,65 @@
+import { translate } from 'i18n-calypso';
+
 export const DEFAULT_HOUR = 9;
 
 export const DAILY_OPTION = {
-	label: 'Daily',
+	label: translate( 'Daily' ),
 	value: 'daily',
 };
 
 export const WEEKLY_OPTION = {
-	label: 'Weekly',
+	label: translate( 'Weekly' ),
 	value: 'weekly',
 };
 
 export const DAY_OPTIONS = [
 	{
-		label: 'Monday',
+		label: translate( 'Monday' ),
 		value: '1',
 	},
 	{
-		label: 'Tuesday',
+		label: translate( 'Tuesday' ),
 		value: '2',
 	},
 	{
-		label: 'Wednesday',
+		label: translate( 'Wednesday' ),
 		value: '3',
 	},
 	{
-		label: 'Thursday',
+		label: translate( 'Thursday' ),
 		value: '4',
 	},
 	{
-		label: 'Friday',
+		label: translate( 'Friday' ),
 		value: '5',
 	},
 	{
-		label: 'Saturday',
+		label: translate( 'Saturday' ),
 		value: '6',
 	},
 	{
-		label: 'Sunday',
+		label: translate( 'Sunday' ),
 		value: '0',
 	},
 ];
 
-export const HOUR_OPTIONS = [
-	{
-		label: '01',
-		value: '1',
-	},
-	{
-		label: '02',
-		value: '2',
-	},
-	{
-		label: '03',
-		value: '3',
-	},
-	{
-		label: '04',
-		value: '4',
-	},
-	{
-		label: '05',
-		value: '5',
-	},
-	{
-		label: '06',
-		value: '6',
-	},
-	{
-		label: '07',
-		value: '7',
-	},
-	{
-		label: '08',
-		value: '8',
-	},
-	{
-		label: '09',
-		value: '9',
-	},
-	{
-		label: '10',
-		value: '10',
-	},
-	{
-		label: '11',
-		value: '11',
-	},
-	{
-		label: '12',
-		value: '12',
-	},
-];
+export const HOUR_OPTIONS = [ ...Array( 12 ).keys() ].map( ( i ) => ( {
+	label: ( i + 1 ).toString().padStart( 2, '0' ),
+	value: ( i + 1 ).toString(),
+} ) );
+
+export const HOUR_OPTIONS_24 = [ ...Array( 24 ).keys() ].map( ( i ) => ( {
+	label: i.toString().padStart( 2, '0' ) + ':00',
+	value: i.toString(),
+} ) );
 
 export const PERIOD_OPTIONS = [
 	{
-		label: 'AM',
+		label: translate( 'AM' ),
 		value: 'am',
 	},
 	{
-		label: 'PM',
+		label: translate( 'PM' ),
 		value: 'pm',
 	},
 ];

@@ -1,7 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
-import { useDispatch } from 'calypso/state';
+import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/get-selected-filters';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
 import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -20,7 +24,32 @@ export default function useToggleActivateMonitor(
 
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
+
+	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
+
+	const agencyId = useSelector( getActiveAgencyId );
+
+	const queryKey = isEnabled( 'a8c-for-agencies' )
+		? [
+				'jetpack-agency-dashboard-sites',
+				sitesViewState.search,
+				sitesViewState.page,
+				{
+					issueTypes: getSelectedFilters( sitesViewState.filters ),
+					showOnlyFavorites: showOnlyFavorites || false,
+				},
+				sitesViewState.sort,
+				sitesViewState.perPage,
+				...( agencyId ? [ agencyId ] : [] ),
+		  ]
+		: [
+				'jetpack-agency-dashboard-sites',
+				search,
+				currentPage,
+				filter,
+				sort,
+				...( agencyId ? [ agencyId ] : [] ),
+		  ];
 
 	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {

@@ -45,6 +45,7 @@ import {
 	GROUP_P2,
 } from './constants';
 import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
+import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
 import {
 	isJetpackBusiness,
@@ -65,6 +66,7 @@ import type {
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
 	FeatureGroupMap,
+	FeatureList,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -908,4 +910,23 @@ export function planHasJetpackClassicSearch(
 			isPro( plan ) ||
 			isVipPlan( plan ) )
 	);
+}
+
+export function getFeaturesList(): FeatureList {
+	return FEATURES_LIST;
+}
+
+export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
+	if ( ! planFeaturesList ) {
+		return [];
+	}
+	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
+};
+
+export function isValidFeatureKey( feature: string ) {
+	return !! FEATURES_LIST[ feature ];
+}
+
+export function getFeatureByKey( feature: string ) {
+	return FEATURES_LIST[ feature ];
 }

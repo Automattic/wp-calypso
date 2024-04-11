@@ -1,0 +1,116 @@
+.modal-survey-notice {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 1000;
+
+	.modal-survey-notice__backdrop {
+		background: var(--studio-black);
+		opacity: 0.2;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		cursor: default;
+	}
+
+
+	.modal-survey-notice__popup {
+		position: absolute;
+		right: 25px;
+		bottom: 25px;
+		width: 416px;
+		max-width: calc(100% - 50px);
+		z-index: 2;
+		border-radius: 4px 4px 0 0;
+		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+		overflow: hidden;
+
+		.modal-survey-notice__popup-head {
+			background: #0675c4;
+			border-bottom: 1px solid #f6f7f7;
+			height: 56px;
+			padding: 0 14px 0 16px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.modal-survey-notice__popup-head-title {
+				color: var(--studio-white);
+				font-size: rem(14px);
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.15px;
+			}
+
+		}
+
+		.modal-survey-notice__popup-head-close svg {
+			fill: var(--studio-white);
+		}
+
+		> .modal-survey-notice__popup-head-close {
+			position: absolute;
+			right: 8px;
+			top: 8px;
+		}
+
+		.modal-survey-notice__popup-img {
+			background: #0675c4;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				width: 100%;
+				display: block;
+			}
+		}
+
+		.modal-survey-notice__popup-content {
+			padding: 1rem;
+			background: var(--studio-white);
+
+			.modal-survey-notice__popup-content-title {
+				font-size: rem(16px);
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: -0.32px;
+				padding-bottom: 8px;
+			}
+
+			.modal-survey-notice__popup-content-description {
+				font-size: rem(14px);
+				line-height: 20px;
+				letter-spacing: -0.15px;
+				padding-bottom: 18px;
+			}
+
+			.modal-survey-notice__popup-content-buttons {
+				display: flex;
+				justify-content: flex-end;
+
+				.modal-survey-notice__popup-content-buttons-ok {
+					padding: 8px 14px;
+					background: var(--studio-blue-50);
+					color: var(--studio-white);
+					font-size: rem(14px);
+					line-height: 20px;
+					letter-spacing: -0.15px;
+				}
+
+				.modal-survey-notice__popup-content-buttons-cancel {
+					padding: 8px 14px;
+					color: var(--studio-blue-50);
+					text-align: center;
+					font-size: rem(14px);
+					line-height: 20px;
+					letter-spacing: -0.15px;
+				}
+			}
+		}
+	}
+}

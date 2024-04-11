@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -51,6 +52,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 
 	const onDismiss = () => {
 		setIsVisible( false );
+		recordTracksEvent( `calypso_inlinehelp_close` );
 	};
 
 	const toggleVisible = () => {

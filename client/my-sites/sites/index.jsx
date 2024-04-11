@@ -155,6 +155,7 @@ class Sites extends Component {
 				break;
 			case 'github-deployments':
 				path = translate( 'GitHub Deployments' );
+				break;
 			case 'earn':
 				path = translate( 'Monetize' );
 				break;

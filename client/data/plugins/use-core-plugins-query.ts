@@ -57,9 +57,6 @@ export const useCorePluginsQuery = (
 				apiNamespace: 'wp/v2',
 			} );
 		},
-		meta: {
-			persist: false,
-		},
 		enabled: !! siteIdOrSlug,
 		retry: false,
 		refetchOnWindowFocus: false,

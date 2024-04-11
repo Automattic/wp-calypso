@@ -11,4 +11,4 @@ without further notice.
 Second, we want to think very carefully about what functions to add and which not. A lot of Lodash
 functionality these days can be replaced by native JavaScript code and that should be the premise.
 In case you still want to add a function here please open a Pull Request which describes your use-case
-and ping @Automattic/team-calypso-frameworks for a review.
+and ping @Automattic/team-calypso for a review.

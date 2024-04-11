@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -20,14 +19,14 @@ import GeneralSettings from './section-general';
 import './style.scss';
 
 const getTitle = ( isClassicView ) => {
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
+	if ( isClassicView ) {
 		return translate( 'Settings' );
 	}
 	return translate( 'General Settings' );
 };
 
 const getSubtitle = ( isClassicView ) => {
-	if ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) {
+	if ( isClassicView ) {
 		return translate( 'Manage your site settings, including site visibility, and more.' );
 	}
 	return translate(
@@ -52,9 +51,7 @@ const SiteSettingsComponent = ( {
 			<JetpackDevModeNotice />
 			<JetpackBackupCredsBanner event="settings-backup-credentials" />
 			<NavigationHeader
-				screenOptionsTab={
-					isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ? false : 'options-general.php'
-				}
+				screenOptionsTab={ isClassicView ? false : 'options-general.php' }
 				navigationItems={ [] }
 				title={ getTitle( isClassicView ) }
 				subtitle={ getSubtitle( isClassicView ) }

@@ -1,7 +1,10 @@
 import classNames from 'classnames';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
+import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import LayoutColumn from './column';
 
 import './style.scss';
 
@@ -12,28 +15,40 @@ type Props = {
 	title: ReactNode;
 	wide?: boolean;
 	withBorder?: boolean;
+	compact?: boolean;
 };
 
 export default function Layout( {
 	children,
 	className,
 	title,
-	wide = false,
-	withBorder = false,
+	wide,
+	withBorder,
+	compact,
 	sidebarNavigation,
 }: Props ) {
-	return (
-		<Main
-			className={ classNames( 'a4a-layout', className, {
-				'is-with-border': withBorder,
-			} ) }
-			fullWidthLayout={ wide }
-			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
-		>
-			<DocumentHead title={ title } />
-			{ sidebarNavigation }
+	const hasLayoutColumns = React.Children.toArray( children ).some(
+		( child ) => React.isValidElement( child ) && child.type === LayoutColumn
+	);
+	const layoutContainerClassname = hasLayoutColumns
+		? 'a4a-layout-with-columns__container'
+		: 'a4a-layout__container';
 
-			<div className="a4a-layout__container">{ children }</div>
-		</Main>
+	return (
+		<GuidedTourContextProvider>
+			<Main
+				className={ classNames( 'a4a-layout', className, {
+					'is-with-border': withBorder,
+					'is-compact': compact,
+				} ) }
+				fullWidthLayout={ wide }
+				wideLayout={ ! wide } // When we set to full width, we want to set this to false.
+			>
+				<DocumentHead title={ title } />
+				{ sidebarNavigation }
+
+				<div className={ layoutContainerClassname }>{ children }</div>
+			</Main>
+		</GuidedTourContextProvider>
 	);
 }

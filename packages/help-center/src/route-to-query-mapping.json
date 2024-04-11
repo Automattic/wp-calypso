@@ -4,6 +4,7 @@
 	"/add-ons/": "add-ons",
 	"/mailboxes": "mail",
 	"/comments/": "comments",
+	"/checkout/": "checkout",
 	"/backup/": "backup",
 	"/themes/": "themes",
 	"/plugins/manage": "manage plugins",

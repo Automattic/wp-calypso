@@ -9,7 +9,7 @@ import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -24,7 +24,7 @@ class MySitesNavigation extends Component {
 
 	handleGlobalSidebarMenuItemClick = ( path ) => {
 		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
-			section: this.props.isGlobalSiteSidebarVisible ? 'site' : 'sites',
+			section: 'sites',
 			path: path.replace( this.props.siteDomain, ':site' ),
 		} );
 	};
@@ -34,6 +34,7 @@ class MySitesNavigation extends Component {
 			placeholder: null,
 			path: this.props.path,
 			siteBasePath: this.props.siteBasePath,
+			isUnifiedSiteSidebarVisible: this.props.isUnifiedSiteSidebarVisible,
 		};
 
 		let asyncSidebar = null;
@@ -55,6 +56,8 @@ class MySitesNavigation extends Component {
 				showManageSitesButton: false,
 				showHiddenSites: false,
 			};
+		} else if ( this.props.isGlobalSidebarVisible ) {
+			return this.renderGlobalSidebar();
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 
@@ -95,24 +98,7 @@ class MySitesNavigation extends Component {
 		);
 	}
 
-	renderGlobalSiteSidebar() {
-		return (
-			<GlobalSidebar path={ this.props.path }>
-				<MySitesSidebarUnifiedBody
-					path={ this.props.path }
-					onMenuItemClick={ this.handleGlobalSidebarMenuItemClick }
-				/>
-			</GlobalSidebar>
-		);
-	}
-
 	render() {
-		if ( this.props.isGlobalSidebarVisible ) {
-			return this.renderGlobalSidebar();
-		}
-		if ( this.props.isGlobalSiteSidebarVisible ) {
-			return this.renderGlobalSiteSidebar();
-		}
 		return this.renderSidebar();
 	}
 }
@@ -121,18 +107,20 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
 			const siteDomain = getSiteDomain( state, siteId );
 			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			return {
 				siteDomain,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,
-				isGlobalSiteSidebarVisible: shouldShowGlobalSiteSidebar,
+				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar,
 			};
 		},
 		{

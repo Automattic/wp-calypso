@@ -30,8 +30,8 @@ export const OdieAssistant: React.FC = () => {
 					if ( lastMessageElement?.target ) {
 						lastMessageElement.target.scrollIntoView( {
 							behavior: 'auto',
-							block: 'end',
-							inline: 'end',
+							block: 'start',
+							inline: 'nearest',
 						} );
 					}
 				} );

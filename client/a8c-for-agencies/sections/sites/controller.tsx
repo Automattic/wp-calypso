@@ -1,45 +1,60 @@
-import { type Callback } from '@automattic/calypso-router';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { Context, type Callback } from '@automattic/calypso-router';
 import SitesSidebar from '../../components/sidebar-menu/sites';
+import {
+	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
+	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+	DEFAULT_SORT_DIRECTION,
+	DEFAULT_SORT_FIELD,
+} from './constants';
+import SitesDashboard from './sites-dashboard';
+import { SitesDashboardProvider } from './sites-dashboard-provider';
+import type { DashboardSortInterface } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
-export const sitesContext: Callback = ( context, next ) => {
-	context.secondary = <SitesSidebar path={ context.path } />;
+function configureSitesContext( context: Context ) {
+	const category = context.params.category || A4A_SITES_DASHBOARD_DEFAULT_CATEGORY;
+	const siteUrl = context.params.siteUrl;
+	const siteFeature = context.params.feature || A4A_SITES_DASHBOARD_DEFAULT_FEATURE;
+	const hideListingInitialState = !! siteUrl;
+
+	const {
+		s: search,
+		page: contextPage,
+		issue_types,
+		sort_field,
+		sort_direction,
+		is_favorite,
+	} = context.query;
+
+	const sort: DashboardSortInterface = {
+		field: sort_field || DEFAULT_SORT_FIELD,
+		direction: sort_direction || DEFAULT_SORT_DIRECTION,
+	};
+	const currentPage = parseInt( contextPage ) || 1;
+
 	context.primary = (
-		<Layout title="Sites" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
-			<LayoutTop>
-				<LayoutHeader>
-					<Title>Sites</Title>
-				</LayoutHeader>
-			</LayoutTop>
-			<LayoutBody>
-				<div>test</div>
-			</LayoutBody>
-		</Layout>
+		<SitesDashboardProvider
+			categoryInitialState={ category }
+			siteUrlInitialState={ siteUrl }
+			siteFeatureInitialState={ siteFeature }
+			hideListingInitialState={ hideListingInitialState }
+			showOnlyFavoritesInitialState={
+				is_favorite === '' || is_favorite === '1' || is_favorite === 'true'
+			}
+			path={ context.path }
+			searchQuery={ search }
+			currentPage={ currentPage }
+			issueTypes={ issue_types }
+			sort={ sort }
+			{ ...( context.featurePreview ? { featurePreview: context.featurePreview } : {} ) }
+		>
+			<SitesDashboard />
+		</SitesDashboardProvider>
 	);
 
-	next();
-};
-
-export const sitesFavoriteContext: Callback = ( context, next ) => {
 	context.secondary = <SitesSidebar path={ context.path } />;
-	context.primary = (
-		<Layout title="Sites favorites" wide sidebarNavigation={ <MobileSidebarNavigation /> }>
-			<LayoutTop>
-				<LayoutHeader>
-					<Title>Sites favorites</Title>
-				</LayoutHeader>
-			</LayoutTop>
-			<LayoutBody>
-				<div>test</div>
-			</LayoutBody>
-		</Layout>
-	);
+}
 
+export const sitesContext: Callback = ( context: Context, next ) => {
+	configureSitesContext( context );
 	next();
 };

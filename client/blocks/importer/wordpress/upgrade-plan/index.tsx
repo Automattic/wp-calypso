@@ -2,10 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useAddHostingTrialMutation, {
+	HOSTING_INTENT_MIGRATE,
+} from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,6 +23,7 @@ interface Props {
 	ctaText: string;
 	subTitleText?: string;
 	hideTitleAndSubTitle?: boolean;
+	sendIntentWhenCreatingTrial?: boolean;
 	onFreeTrialSelectionSuccess?: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
@@ -30,6 +34,7 @@ interface Props {
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
 		site,
@@ -38,6 +43,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		ctaText,
 		subTitleText,
 		hideTitleAndSubTitle = false,
+		sendIntentWhenCreatingTrial = false,
 		onFreeTrialSelectionSuccess = () => {},
 		onCtaClick,
 		isBusy,
@@ -60,6 +66,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	const onFreeTrialClick = () => {
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
+		} else if ( sendIntentWhenCreatingTrial ) {
+			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 		} else {
 			addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY );
 		}
@@ -71,21 +79,75 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		);
 	}, [] );
 
+	const renderCTAs = () => {
+		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
+		const trialText = translate( 'Try 7 days for free' );
+
+		if ( ! isEnabled( 'plans/migration-trial' ) ) {
+			return (
+				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+					{ cta }
+				</NextButton>
+			);
+		}
+
+		if ( isEligibleForTrialPlan ) {
+			return (
+				<>
+					<NextButton isBusy={ isAddingTrial } onClick={ onFreeTrialClick }>
+						{ trialText }
+					</NextButton>
+					<Button
+						busy={ isBusy }
+						disabled={ isAddingTrial }
+						transparent={ ! isAddingTrial }
+						onClick={ onCtaClick }
+					>
+						{ cta }
+					</Button>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
+					{ cta }
+				</NextButton>
+				<Button disabled={ true } transparent={ true }>
+					{ trialText }
+				</Button>
+				<small>
+					{ translate(
+						'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
+					) }
+				</small>
+			</>
+		);
+	};
+
 	return (
 		<div className="import__upgrade-plan">
 			{ ! hideTitleAndSubTitle && (
 				<div className="import__heading import__heading-center">
-					<Title>{ translate( 'Upgrade your plan' ) }</Title>
-					<SubTitle>
-						{ subTitleText ||
-							translate(
-								'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
-								{
-									args: {
-										plan: plan?.getTitle() ?? '',
-									},
-								}
-							) }
+					<Title>
+						{ isEnglishLocale
+							? translate( 'Take your site to the next level' )
+							: translate( 'Upgrade your plan' ) }
+					</Title>
+					<SubTitle className="onboarding-subtitle--full-width">
+						{ subTitleText || isEnglishLocale
+							? translate(
+									'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
+							  )
+							: translate(
+									'Migrating themes, plugins, users, and settings requires a %(plan)s plan.',
+									{
+										args: {
+											plan: plan?.getTitle() ?? '',
+										},
+									}
+							  ) }
 						<br />
 						{ ! isEligibleForTrialPlan &&
 							onContentOnlyClick &&
@@ -101,30 +163,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			<UpgradePlanDetails>
-				<NextButton isBusy={ isBusy } disabled={ isAddingTrial } onClick={ onCtaClick }>
-					{ ctaText }
-				</NextButton>
-				{ isEnabled( 'plans/migration-trial' ) && (
-					<>
-						<Button
-							busy={ isAddingTrial }
-							disabled={ ! isEligibleForTrialPlan }
-							transparent={ ! isAddingTrial }
-							onClick={ onFreeTrialClick }
-						>
-							{ translate( 'Try 7 days for free' ) }
-						</Button>
-						{ ! isEligibleForTrialPlan && (
-							<small>
-								{ translate(
-									'Free trials are a one-time offer and you’ve already enrolled in one in the past.'
-								) }
-							</small>
-						) }
-					</>
-				) }
-			</UpgradePlanDetails>
+			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
 		</div>
 	);
 };

@@ -17,7 +17,6 @@ export interface SmsCountry {
 
 export interface CountriesState {
 	domains?: CountryListItem[];
-	payments?: CountryListItem[];
 	sms?: SmsCountry[];
 	woocommerce?: WooCountryList;
 }

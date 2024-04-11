@@ -1,12 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
+jest.mock( '../../utils/checkout' );
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -18,19 +20,24 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
+	beforeEach( () => {
+		jest.resetAllMocks();
+	} );
+
 	describe( 'navigation', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
+					action: 'continue',
 					platform: 'wordpress',
 					from: 'https://site-to-be-migrated.com',
 				},
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-import-or-migrate?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com',
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
@@ -40,13 +47,28 @@ describe( 'Site Migration Flow', () => {
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
+					action: 'continue',
 					platform: 'unknown',
 					from: 'https://example-to-be-migrated.com',
 				},
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify'
+				`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify`
+			);
+		} );
+
+		it( 'redirects the user to the import content flow when the user skip the plaform identification', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				dependencies: {
+					action: 'skip_platform_identification',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=example.wordpress.com&origin=site-migration-identify`
 			);
 		} );
 
@@ -61,10 +83,29 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/processing',
+				path: `/${ STEPS.PROCESSING.slug }`,
 				state: {
 					bundleProcessing: true,
 				},
+			} );
+		} );
+
+		it( 'redirects the user to the checkout page with the correct destination params', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					goToCheckout: true,
+				},
+			} );
+
+			expect( goToCheckout ).toHaveBeenCalledWith( {
+				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				flowName: 'site-migration',
+				siteSlug: 'example.wordpress.com',
+				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 			} );
 		} );
 
@@ -97,6 +138,38 @@ describe( 'Site Migration Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: '/bundleTransfer',
 				state: { siteSlug: 'example.wordpress.com' },
+			} );
+		} );
+
+		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				dependencies: {
+					verifyEmail: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.VERIFY_EMAIL.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects from verifyEmail back to upgrade-plan', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.VERIFY_EMAIL.slug,
+				dependencies: {
+					verifyEmail: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }`,
+				state: null,
 			} );
 		} );
 	} );

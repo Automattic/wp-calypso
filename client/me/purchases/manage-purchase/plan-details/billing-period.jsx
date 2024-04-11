@@ -2,6 +2,7 @@ import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products'
 import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_SUPPORT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
@@ -16,7 +17,6 @@ import {
 	isRenewing,
 	showCreditCardExpiringWarning,
 } from 'calypso/lib/purchases';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTemporarySitePurchase } from '../../utils';
 

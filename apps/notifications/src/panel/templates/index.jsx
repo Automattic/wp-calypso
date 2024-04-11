@@ -80,11 +80,11 @@ class Layout extends Component {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
-			this.props.enableKeyboardShortcuts();
 			this.props.global.input = {
 				lastInputWasKeyboard: false,
 			};
 		}
+		this.props.enableKeyboardShortcuts();
 
 		window.addEventListener( 'keydown', this.handleKeyDown, false );
 	}
@@ -164,6 +164,7 @@ class Layout extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.redraw );
+		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	navigateByDirection = ( direction ) => {

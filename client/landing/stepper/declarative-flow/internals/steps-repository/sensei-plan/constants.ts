@@ -7,8 +7,8 @@ import {
 	FEATURE_SENSEI_STORAGE,
 	FEATURE_SENSEI_HOSTING,
 	FEATURE_SENSEI_JETPACK,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 
 export enum Status {

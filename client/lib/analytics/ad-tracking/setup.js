@@ -85,6 +85,11 @@ export function setup() {
 		if ( mayWeInitTracker( 'clarity' ) ) {
 			setupClarityGlobal();
 		}
+
+		// Reddit
+		if ( mayWeInitTracker( 'reddit' ) ) {
+			setupRedditGlobal();
+		}
 	}
 }
 
@@ -211,6 +216,19 @@ function setupAdRollGlobal() {
 	}
 }
 
+/**
+ * Sets up the base Reddit advertising pixel.
+ */
+function setupRedditGlobal() {
+	window.rdt =
+		window.rdt ||
+		function ( ...args ) {
+			window.rdt.sendEvent ? window.rdt.sendEvent( ...args ) : window.rdt.callQueue.push( args );
+		};
+
+	window.rdt.callQueue = [];
+}
+
 function setupGtag() {
 	if ( window.dataLayer && window.gtag ) {
 		return;
@@ -220,6 +238,12 @@ function setupGtag() {
 		window.dataLayer.push( arguments );
 	};
 	window.gtag( 'js', new Date() );
+	window.gtag( 'consent', 'default', {
+		ad_storage: 'granted',
+		analytics_storage: 'granted',
+		ad_user_data: 'granted',
+		ad_personalization: 'granted',
+	} );
 }
 
 function setupWpcomGoogleAdsGtag() {

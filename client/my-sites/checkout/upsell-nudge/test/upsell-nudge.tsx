@@ -8,17 +8,18 @@ import {
 	getEmptyResponseCart,
 	ShoppingCartProvider,
 } from '@automattic/shopping-cart';
+import { CountryListItem } from '@automattic/wpcom-checkout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
-import { mockCartEndpoint } from 'calypso/my-sites/checkout/src/test/util';
-import { createReduxStore } from 'calypso/state';
 import {
-	PURCHASES_SITE_FETCH_COMPLETED,
-	COUNTRIES_PAYMENTS_UPDATED,
-} from 'calypso/state/action-types';
+	mockCartEndpoint,
+	mockGetSupportedCountriesEndpoint,
+} from 'calypso/my-sites/checkout/src/test/util';
+import { createReduxStore } from 'calypso/state';
+import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
@@ -28,7 +29,9 @@ import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-m
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
-const mockCountries = [ { code: 'US', has_postal_codes: true, name: 'United States' } ];
+const mockCountries: CountryListItem[] = [
+	{ code: 'US', has_postal_codes: true, name: 'United States', vat_supported: false },
+];
 
 const mockProducts = {
 	'business-bundle': {
@@ -178,10 +181,6 @@ function createTestReduxStore() {
 		siteId,
 		purchases: [],
 	} );
-	reduxStore.dispatch( {
-		type: COUNTRIES_PAYMENTS_UPDATED,
-		countries: mockCountries,
-	} );
 
 	return reduxStore;
 }
@@ -216,6 +215,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>
@@ -250,6 +250,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>
@@ -281,6 +282,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>
@@ -320,6 +322,7 @@ describe( 'UpsellNudge', () => {
 		const initialCart = getEmptyResponseCart();
 		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
 		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+		mockGetSupportedCountriesEndpoint( mockCountries );
 
 		render(
 			<ReduxProvider store={ createTestReduxStore() }>

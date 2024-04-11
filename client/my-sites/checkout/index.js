@@ -29,6 +29,7 @@ import {
 	hundredYearCheckoutThankYou,
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
+	refreshUserSession,
 } from './controller';
 
 export default function () {
@@ -171,6 +172,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
+		refreshUserSession, // Load user session into state in userless checkout
 		redirectLoggedOut,
 		checkoutPending,
 		makeLayout,
@@ -181,6 +183,7 @@ export default function () {
 	// not include the `siteSelection` middleware.
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
+		refreshUserSession, // Load user session into state in userless checkout
 		redirectLoggedOut,
 		noSite,
 		checkoutThankYou,

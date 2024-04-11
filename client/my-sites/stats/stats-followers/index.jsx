@@ -1,12 +1,14 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -17,6 +19,7 @@ import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+
 import './style.scss';
 
 const MAX_FOLLOWERS_TO_SHOW = 10;
@@ -64,7 +67,9 @@ class StatModuleFollowers extends Component {
 			translate,
 			emailQuery,
 			wpcomQuery,
-			isOdysseyStats,
+			isAtomic,
+			isJetpack,
+			className,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -75,12 +80,11 @@ class StatModuleFollowers extends Component {
 		const summaryPageSlug = siteSlug || '';
 		// email-followers is no longer available, so fallback to the new subscribers URL.
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
-		let summaryPageLink = '/people/subscribers/' + summaryPageSlug;
-
-		// Limit scope for Odyssey stats, as the Followers page is not yet available.
-		summaryPageLink = ! isOdysseyStats
-			? summaryPageLink
-			: 'https://wordpress.com' + summaryPageLink;
+		// If the site is Atomic or Jetpack self-hosted, it links to Jetpack cloud.
+		// For all other cases, turn to the WP.com URL since Odyssey Stats doesn't have the Followers page.
+		const jetpackCloudLink = `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`;
+		const wpcomLink = `https://wordpress.com/people/subscribers/${ summaryPageSlug }`;
+		const summaryPageLink = isAtomic || isJetpack ? jetpackCloudLink : wpcomLink;
 
 		// Combine data sets, sort by recency, and limit to 10.
 		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
@@ -145,7 +149,7 @@ class StatModuleFollowers extends Component {
 						)
 					}
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					className="stats__modernised-followers"
+					className={ classNames( 'stats__modernised-followers', className ) }
 					showLeftIcon
 				/>
 			</>
@@ -182,6 +186,8 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
+			isAtomic: isAtomicSite( state, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

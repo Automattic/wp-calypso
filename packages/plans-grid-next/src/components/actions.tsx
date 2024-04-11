@@ -229,9 +229,10 @@ const LoggedInPlansFeatureActionButton = ( {
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex, selectedSiteId } = usePlansGridContext();
 	const selectedStorageOptionForPlan = useSelect(
-		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug ),
+		( select ) =>
+			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ),
 		[ planSlug ]
 	);
 	const {

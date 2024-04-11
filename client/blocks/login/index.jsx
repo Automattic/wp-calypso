@@ -24,9 +24,11 @@ import {
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -43,12 +45,14 @@ import {
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
@@ -118,7 +122,6 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
-		continueAsAnotherUser: false,
 	};
 
 	static defaultProps = {
@@ -210,8 +213,7 @@ class Login extends Component {
 			! fromSite &&
 			! twoFactorEnabled &&
 			! loginEmailAddress &&
-			currentUser &&
-			! this.state.continueAsAnotherUser
+			currentUser
 		);
 	};
 
@@ -281,13 +283,29 @@ class Login extends Component {
 	};
 
 	handleContinueAsAnotherUser = () => {
-		this.setState( { continueAsAnotherUser: true } );
+		this.props.redirectToLogout( window.location.href );
 	};
 
 	rebootAfterLogin = () => {
 		this.props.rebootAfterLogin( {
 			social_service_connected: this.props.socialConnect,
 		} );
+	};
+
+	getSignupLinkComponent = () => {
+		const signupUrl = this.getSignupUrl();
+		return (
+			<a
+				href={ signupUrl }
+				onClick={ ( event ) => {
+					// If the user is already logged in, log them out before sending them to the signup page. Otherwise, they will see the weird logged-in state on the signup page.
+					if ( this.props.isLoggedIn ) {
+						event.preventDefault();
+						this.props.redirectToLogout( signupUrl );
+					}
+				} }
+			/>
+		);
 	};
 
 	getSignupUrl = () => {
@@ -301,6 +319,7 @@ class Login extends Component {
 			signupUrl,
 			isWoo,
 			isWooCoreProfilerFlow,
+			isWooPasswordless,
 		} = this.props;
 
 		if ( signupUrl ) {
@@ -314,6 +333,13 @@ class Login extends Component {
 
 		if ( isWooCoreProfilerFlow && isEmpty( currentQuery ) ) {
 			return getSignupUrl( initialQuery, currentRoute, oauth2Client, locale, pathname );
+		}
+
+		if ( isWooPasswordless ) {
+			return addQueryArgs(
+				{ 'woo-passwordless': 'yes' },
+				getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname )
+			);
 		}
 
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
@@ -350,6 +376,7 @@ class Login extends Component {
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
+		const signupLink = this.getSignupLinkComponent();
 
 		if ( isSocialFirst ) {
 			headerText = translate( 'Log in to WordPress.com' );
@@ -379,7 +406,7 @@ class Login extends Component {
 							<br />
 							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 								components: {
-									signupLink: <a href={ this.getSignupUrl() } />,
+									signupLink,
 								},
 							} ) }
 						</span>
@@ -421,6 +448,39 @@ class Login extends Component {
 							) }
 						</p>
 					);
+				} else if ( this.showContinueAsUser() && this.props.isWooPasswordless ) {
+					headerText = (
+						<h3>
+							{ wccomFrom === 'nux'
+								? translate( 'Get started in minutes' )
+								: translate( 'Log in to your account' ) }
+						</h3>
+					);
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate( 'First, select the account you’d like to use.' ) }
+						</p>
+					);
+				} else if ( this.props.isWooPasswordless ) {
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
+					const poweredByWpCom = (
+						<>
+							{ translate( 'Log in with your WordPress.com account.' ) }
+							<br />
+						</>
+					);
+
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ poweredByWpCom }
+							{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
+								components: {
+									signupLink,
+									br: <br />,
+								},
+							} ) }
+						</p>
+					);
 				} else {
 					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					const poweredByWpCom =
@@ -436,7 +496,7 @@ class Login extends Component {
 								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 								{
 									components: {
-										signupLink: <a href={ this.getSignupUrl() } />,
+										signupLink,
 										br: <br />,
 									},
 								}
@@ -526,7 +586,7 @@ class Login extends Component {
 						"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 						{
 							components: {
-								signupLink: <a href={ this.getSignupUrl() } />,
+								signupLink,
 							},
 						}
 					);
@@ -698,6 +758,8 @@ class Login extends Component {
 			loginButtons,
 		} = this.props;
 
+		const signupLink = this.getSignupLinkComponent();
+
 		if ( socialConnect ) {
 			return (
 				<AsyncLoad
@@ -723,7 +785,7 @@ class Login extends Component {
 							<p className="login__lost-password-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 									components: {
-										signupLink: <a href={ this.getSignupUrl() } />,
+										signupLink,
 									},
 								} ) }
 							</p>
@@ -753,7 +815,7 @@ class Login extends Component {
 							<p className="login__two-factor-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
 									components: {
-										signupLink: <a href={ this.getSignupUrl() } />,
+										signupLink,
 									},
 								} ) }
 							</p>
@@ -782,7 +844,7 @@ class Login extends Component {
 		if ( this.showContinueAsUser() ) {
 			if ( isWoo ) {
 				return (
-					<Fragment>
+					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							isWooOAuth2Client={ isWoo }
@@ -802,7 +864,7 @@ class Login extends Component {
 							showSocialLoginFormOnly={ true }
 							sendMagicLoginLink={ this.sendMagicLoginLink }
 						/>
-					</Fragment>
+					</div>
 				);
 			}
 
@@ -885,6 +947,7 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 		wccomFrom: getWccomFrom( state ),
+		isWooPasswordless: !! getWooPasswordless( state ),
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
@@ -905,11 +968,14 @@ export default connect(
 		requestError: getRequestError( state ),
 		isSendingEmail: isFetchingMagicLoginEmail( state ),
 		emailRequested: isMagicLoginEmailRequested( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		rebootAfterLogin,
 		hideMagicLoginRequestForm,
 		sendEmailLogin,
+		logoutUser,
+		redirectToLogout,
 	},
 	( stateProps, dispatchProps, ownProps ) => ( {
 		...ownProps,

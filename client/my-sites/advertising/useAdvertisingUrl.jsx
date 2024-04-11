@@ -1,6 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
-import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const useAdvertisingUrl = () => {
@@ -9,13 +8,11 @@ const useAdvertisingUrl = () => {
 	const siteAdminUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'tools.php?page=advertising' )
 	);
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
+	const globalSiteViewEnabled = useSelector( ( state ) =>
+		isGlobalSiteViewEnabled( state, siteId )
 	);
 
-	return adminInterface === 'wp-admin' && isEnabled( 'layout/dotcom-nav-redesign' )
-		? siteAdminUrl
-		: `/advertising/${ selectedSiteSlug }`;
+	return globalSiteViewEnabled ? siteAdminUrl : `/advertising/${ selectedSiteSlug }`;
 };
 
 export default useAdvertisingUrl;

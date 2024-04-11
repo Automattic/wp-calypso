@@ -5,6 +5,7 @@ import { addBreadcrumb, initSentry } from '@automattic/calypso-sentry';
 import { getUrlParts } from '@automattic/calypso-url';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
@@ -27,7 +28,6 @@ import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
-import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
@@ -409,7 +409,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 
-	const queryClient = await createQueryClient( currentUser?.ID );
+	const { queryClient, unsubscribePersister } = await createQueryClient( currentUser?.ID );
 	const initialQueryState = getInitialQueryState();
 	hydrateServerState( queryClient, initialQueryState );
 
@@ -417,6 +417,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
 	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );

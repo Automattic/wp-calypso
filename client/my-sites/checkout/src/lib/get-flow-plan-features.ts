@@ -3,6 +3,7 @@ import {
 	getPlan,
 	FEATURE_CUSTOM_DOMAIN,
 	IncompleteWPcomPlan,
+	getPlanFeaturesObject,
 } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
@@ -13,7 +14,6 @@ import {
 	isSenseiFlow,
 } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 
 const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;

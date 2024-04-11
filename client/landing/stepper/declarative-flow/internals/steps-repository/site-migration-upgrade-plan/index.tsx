@@ -1,8 +1,10 @@
-import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, getPlan, getPlanByPathSlug } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -11,7 +13,14 @@ import type { Step } from '../../types';
 const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
-	const plan = getPlan( PLAN_BUSINESS );
+	const translate = useTranslate();
+
+	const selectedPlanData = useSelectedPlanUpgradeQuery();
+	const selectedPlanPathSlug = selectedPlanData.data;
+
+	const plan = selectedPlanPathSlug
+		? getPlanByPathSlug( selectedPlanPathSlug )
+		: getPlan( PLAN_BUSINESS );
 
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
@@ -20,10 +29,11 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	const stepContent = (
 		<UpgradePlan
 			site={ siteItem }
-			ctaText=""
+			ctaText={ translate( 'Upgrade and migrate' ) }
 			subTitleText=""
 			isBusy={ false }
 			hideTitleAndSubTitle
+			sendIntentWhenCreatingTrial
 			onCtaClick={ () => {
 				navigation.submit?.( {
 					goToCheckout: true,
@@ -51,8 +61,12 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 				formattedHeader={
 					<FormattedHeader
 						id="site-migration-instructions-header"
-						headerText="Upgrade your plan"
+						headerText={ translate( 'Take your site to the next level' ) }
+						subHeaderText={ translate(
+							'Migrations are exclusive to the Creator plan. Check out all its benefits, and upgrade to get started.'
+						) }
 						align="center"
+						subHeaderAlign="center"
 					/>
 				}
 				stepContent={ stepContent }

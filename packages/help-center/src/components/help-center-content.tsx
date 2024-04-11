@@ -10,7 +10,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -39,6 +39,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -105,6 +106,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							initialUserMessage={ searchTerm }
 							logger={ trackEvent }
 							loggerEventNamePrefix="calypso_odie"
+							selectedSiteId={ selectedSiteId }
 							extraContactOptions={
 								<HelpCenterContactPage
 									hideHeaders

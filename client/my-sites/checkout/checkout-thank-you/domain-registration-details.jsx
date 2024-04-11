@@ -5,12 +5,12 @@ import {
 	isFreePlan,
 	isDomainRegistration,
 } from '@automattic/calypso-products';
+import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';

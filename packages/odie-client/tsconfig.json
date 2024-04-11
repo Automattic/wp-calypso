@@ -7,5 +7,6 @@
 		"types": []
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
+	"references": [ { "path": "../components" } ]
 }

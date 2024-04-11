@@ -1,7 +1,7 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

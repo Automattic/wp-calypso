@@ -82,6 +82,10 @@ export const siteDefaultInterface = ( site: SiteExcerptNetworkData ) => {
 	return site?.options?.wpcom_admin_interface;
 };
 
+export const siteUsesWpAdminInterface = ( site: SiteExcerptNetworkData ) => {
+	return ( site.jetpack && ! site.is_wpcom_atomic ) || siteDefaultInterface( site ) === 'wp-admin';
+};
+
 export interface InterfaceURLFragment {
 	calypso: `/${ string }`;
 	wpAdmin: `/${ string }`;
@@ -91,10 +95,7 @@ export const generateSiteInterfaceLink = (
 	site: SiteExcerptData,
 	urlFragment: InterfaceURLFragment
 ) => {
-	const isWpAdminDefault =
-		( site.jetpack && ! site.is_wpcom_atomic ) || siteDefaultInterface( site ) === 'wp-admin';
-
-	const targetLink = isWpAdminDefault
+	const targetLink = siteUsesWpAdminInterface( site )
 		? `${ site.URL }/wp-admin${ urlFragment.wpAdmin }`
 		: `${ urlFragment.calypso }/${ site.slug }`;
 
@@ -102,7 +103,7 @@ export const generateSiteInterfaceLink = (
 };
 
 export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
-	return site?.options?.admin_url;
+	return site?.options?.admin_url ?? '';
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

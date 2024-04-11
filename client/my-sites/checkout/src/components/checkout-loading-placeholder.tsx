@@ -1,7 +1,7 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 export function CheckoutLoadingPlaceholder( {
 	checkoutLoadingConditions,

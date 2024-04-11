@@ -25,7 +25,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -58,11 +58,9 @@ import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-su
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -82,7 +80,7 @@ import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
-import WPCheckoutOrderReview from './wp-checkout-order-review';
+import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import { CheckoutSummaryFeaturedList, WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
@@ -246,12 +244,16 @@ function CheckoutSidebarNudge( {
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
+
+	const productsWithVariants = responseCart?.products?.filter(
+		( product ) => product.product_variants?.length > 1 && product.is_domain_registration === false
+	);
 
 	if ( isWcMobile ) {
 		return null;
@@ -275,35 +277,36 @@ function CheckoutSidebarNudge( {
 	}
 
 	/**
-	 * TODO !hasMonthlyProduct can likely be removed after checkout v2 is merged
-	 * V2 checkout handles monthly products in the CheckoutSidebarPlanUpsell so this condition is not needed
+	 * TODO !hasMonthlyProduct can likely be removed after Jetpack refactors their sidebar nudge
+	 * to account for monthly products like CheckoutSidebarPlanUpsell does
 	 */
-	if ( ! hasMonthlyProduct || shouldUseCheckoutV2 ) {
-		return (
-			<CheckoutSidebarNudgeWrapper>
-				<CheckoutSidebarPlanUpsell />
-				<JetpackAkismetCheckoutSidebarPlanUpsell />
-				{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
-					<SecondaryCartPromotions
-						responseCart={ responseCart }
-						addItemToCart={ addItemToCart }
-						isCartPendingUpdate={ isCartPendingUpdate }
-						isPurchaseRenewal={ isPurchaseRenewal }
-					/>
-				) }
-				{ shouldUseCheckoutV2 && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						siteId={ siteId }
-						isCartUpdating={ FormStatus.VALIDATING === formStatus }
-						onChangeSelection={ changeSelection }
-					/>
-				) }
-			</CheckoutSidebarNudgeWrapper>
-		);
-	}
 
-	return null;
+	return (
+		<CheckoutSidebarNudgeWrapper>
+			{ ! ( productsWithVariants.length > 1 ) && (
+				<>
+					<CheckoutSidebarPlanUpsell />
+					{ ! hasMonthlyProduct && <JetpackAkismetCheckoutSidebarPlanUpsell /> }
+				</>
+			) }
+			{ ( isPurchaseRenewal || domainWithoutPlanInCartOrSite ) && (
+				<SecondaryCartPromotions
+					responseCart={ responseCart }
+					addItemToCart={ addItemToCart }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isPurchaseRenewal={ isPurchaseRenewal }
+				/>
+			) }
+			{ shouldUseCheckoutV2 && (
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					isCartUpdating={ FormStatus.VALIDATING === formStatus }
+					onChangeSelection={ changeSelection }
+				/>
+			) }
+		</CheckoutSidebarNudgeWrapper>
+	);
 }
 
 export default function CheckoutMainContent( {
@@ -351,6 +354,8 @@ export default function CheckoutMainContent( {
 		updateLocation,
 		replaceProductInCart,
 		isPendingUpdate: isCartPendingUpdate,
+		removeCoupon,
+		couponStatus,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
@@ -376,7 +381,7 @@ export default function CheckoutMainContent( {
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
 
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -427,6 +432,15 @@ export default function CheckoutMainContent( {
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
 	const [ is100YearPlanTermsAccepted, setIs100YearPlanTermsAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
+	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
+
+	const isPurchaseFree = responseCart.total_cost_integer === 0;
+
+	const removeCouponAndClearField = () => {
+		couponFieldStateProps.setCouponFieldValue( '' );
+		setCouponFieldVisible( false );
+		return removeCoupon();
+	};
 
 	const updateCachedContactDetails = useUpdateCachedContactDetails();
 
@@ -541,7 +555,11 @@ export default function CheckoutMainContent( {
 								{ shouldUseCheckoutV2 && (
 									<WPCheckoutOrderReview
 										removeProductFromCart={ removeProductFromCart }
+										replaceProductInCart={ replaceProductInCart }
 										couponFieldStateProps={ couponFieldStateProps }
+										removeCouponAndClearField={ removeCouponAndClearField }
+										isCouponFieldVisible={ isCouponFieldVisible }
+										setCouponFieldVisible={ setCouponFieldVisible }
 										onChangeSelection={ changeSelection }
 										siteUrl={ siteUrl }
 										createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -583,6 +601,9 @@ export default function CheckoutMainContent( {
 									removeProductFromCart={ removeProductFromCart }
 									replaceProductInCart={ replaceProductInCart }
 									couponFieldStateProps={ couponFieldStateProps }
+									removeCouponAndClearField={ removeCouponAndClearField }
+									isCouponFieldVisible={ isCouponFieldVisible }
+									setCouponFieldVisible={ setCouponFieldVisible }
 									onChangeSelection={ changeSelection }
 									siteUrl={ siteUrl }
 									createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -714,6 +735,15 @@ export default function CheckoutMainContent( {
 							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 						} }
 					/>
+					{ ! isAkismetCheckout() && ! shouldUseCheckoutV2 && (
+						<CouponFieldArea
+							isCouponFieldVisible={ isCouponFieldVisible }
+							setCouponFieldVisible={ setCouponFieldVisible }
+							isPurchaseFree={ isPurchaseFree }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
 						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
@@ -934,7 +964,7 @@ const CheckoutTermsAndCheckboxesWrapper = styled.div`
 	padding: 32px 20px 0 24px;
 	width: 100%;
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 32px 20px 0 40px;
+		padding: 12px 20px 0 40px;
 	}
 `;
 
@@ -1004,16 +1034,14 @@ function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 	responseCart: ResponseCart
 ): boolean {
 	const excluded3PDAccountProductSlugs = [ 'sensei_pro_monthly', 'sensei_pro_yearly' ];
-	return useSelector( ( state ) => {
-		return responseCart.products
-			.filter(
-				( product ) =>
-					! (
-						product.product_slug && excluded3PDAccountProductSlugs.includes( product.product_slug )
-					)
-			)
-			.some( ( product ) => isMarketplaceProduct( state, product.product_slug ) );
-	} );
+	return responseCart.products
+		.filter(
+			( product ) =>
+				! (
+					product.product_slug && excluded3PDAccountProductSlugs.includes( product.product_slug )
+				)
+		)
+		.some( ( product ) => product.extra.is_marketplace_product );
 }
 
 const JetpackCheckoutSeals = () => {
@@ -1068,8 +1096,11 @@ const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivEle
 	flex-direction: column;
 	align-items: center;
 	gap: 0.5rem;
+	padding: 1.5rem 4rem 0 1.5rem;
 
-	padding: 1.5rem 1.5rem 0;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 1.5rem 1.5rem 0;
+	}
 
 	img {
 		margin-right: 0.75rem;
@@ -1143,6 +1174,10 @@ const WPCheckoutWrapper = styled.div`
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			min-height: 100vh;
 		}
+	}
+
+	& *:focus {
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 `;
 

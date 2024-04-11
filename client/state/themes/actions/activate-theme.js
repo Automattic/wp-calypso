@@ -1,5 +1,5 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import {
 	productsReinstall,

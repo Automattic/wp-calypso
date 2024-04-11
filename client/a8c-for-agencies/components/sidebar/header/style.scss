@@ -1,6 +1,11 @@
 // Rules in this file inspired by:
 // client/components/jetpack/profile-dropdown/style.scss
 
+.a4a-sidebar__header {
+	display: flex;
+	justify-content: space-between;
+}
+
 .a4a-sidebar__profile-dropdown {
 	position: relative;
 }
@@ -26,7 +31,14 @@
 	align-items: flex-start;
 	gap: 4px;
 	color: var(--color-sidebar-text);
+}
 
+.a4a-sidebar__profile-dropdown-button-label-text {
+	max-width: 160px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
 }
 
 html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
@@ -122,6 +134,6 @@ a.a4a-sidebar__external-link {
 	}
 }
 
-.a4a-sidebar svg.all-sites__title-chevron-icon {
+.a4a-sidebar__profile-dropdown-button-label svg {
 	fill: var(--color-sidebar-text);
 }

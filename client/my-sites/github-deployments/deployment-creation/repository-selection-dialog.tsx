@@ -1,7 +1,11 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, ExternalLink } from '@automattic/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps } from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { GitHubBrowseRepositories } from '../components/repositories/browse-repositories';
+
+import './style.scss';
 
 interface DeleteDeploymentDialogProps {
 	isVisible: boolean;
@@ -23,9 +27,32 @@ export const RepositorySelectionDialog = ( {
 			shouldCloseOnOverlayClick
 			shouldCloseOnEsc
 			onClose={ onClose }
+			additionalClassNames="github-deployments-dialog"
+			className="repository-selection-dialog"
 		>
-			<div css={ { width: '622px', height: '470px', display: 'flex', flexDirection: 'column' } }>
-				<h1 css={ { marginBottom: '24px !important' } }>{ __( 'Select repository' ) }</h1>
+			<div
+				css={ {
+					display: 'flex',
+					flexDirection: 'column',
+					flexGrow: 1,
+				} }
+			>
+				<FormattedHeader
+					align="left"
+					headerText={ __( 'Select repository' ) }
+					subHeaderText={ createInterpolateElement(
+						__( 'Pick an existing repository or <docsLink>create a new one</docsLink>.' ),
+						{
+							docsLink: (
+								<ExternalLink
+									href="https://developer.wordpress.com/docs/developer-tools/github-deployments/create-github-deployment-source-files/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						}
+					) }
+				/>
 				<GitHubBrowseRepositories onSelectRepository={ onChange } />
 			</div>
 		</Dialog>

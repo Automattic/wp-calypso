@@ -48,6 +48,7 @@ export type Campaign = {
 	creative_html: string;
 	campaign_stats_loading: boolean;
 	campaign_stats?: CampaignStats;
+	is_evergreen: number;
 };
 
 export type CampaignStats = {

@@ -42,7 +42,11 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
+import {
+	getStepUrl,
+	isPlanSelectionAvailableLaterInFlow,
+	getPreviousStepName,
+} from 'calypso/signup/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -1300,6 +1304,7 @@ export class RenderDomainsStep extends Component {
 			translate,
 			isReskinned,
 			userSiteCount,
+			previousStepName,
 		} = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
@@ -1307,6 +1312,10 @@ export class RenderDomainsStep extends Component {
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
+
+		// Hide "Back" button in domains step if the user has no sites.
+		const shouldHideBack = ! userSiteCount && previousStepName?.startsWith( 'user' );
+		const hideBack = flowName === 'domain' || shouldHideBack;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
 		const [ sitesBackLabelText, defaultBackUrl ] =
@@ -1360,7 +1369,7 @@ export class RenderDomainsStep extends Component {
 
 		return (
 			<StepWrapper
-				hideBack={ flowName === 'domain' }
+				hideBack={ hideBack }
 				flowName={ flowName }
 				stepName={ stepName }
 				backUrl={ backUrl }
@@ -1421,12 +1430,13 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 const RenderDomainsStepConnect = connect(
-	( state, { steps, flowName } ) => {
+	( state, { steps, flowName, stepName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
 		const multiDomainDefaultPlan = planItem( PLAN_PERSONAL );
+		const userLoggedIn = isUserLoggedIn( state );
 
 		return {
 			designType: getDesignType( state ),
@@ -1439,8 +1449,9 @@ const RenderDomainsStepConnect = connect(
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
 				[ 'pro', 'starter' ].includes( flowName ),
-			userLoggedIn: isUserLoggedIn( state ),
+			userLoggedIn,
 			multiDomainDefaultPlan,
+			previousStepName: getPreviousStepName( flowName, stepName, userLoggedIn ),
 		};
 	},
 	{

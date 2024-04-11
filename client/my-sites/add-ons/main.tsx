@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
-import { useAddOnCheckoutLink } from '@automattic/data-stores';
+import { AddOns } from '@automattic/data-stores';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -14,8 +13,6 @@ import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
-import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
-import useAddOns from './hooks/use-add-ons';
 import type { ReactElement } from 'react';
 
 const globalOverrides = css`
@@ -93,10 +90,10 @@ const NoAccess = () => {
 const AddOnsMain = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
-	const addOns = useAddOns( { selectedSiteId: selectedSite?.ID } );
+	const addOns = AddOns.useAddOns( { selectedSiteId: selectedSite?.ID } );
 	const filteredAddOns = addOns.filter( ( addOn ) => ! addOn?.exceedsSiteStorageLimits );
 
-	const checkoutLink = useAddOnCheckoutLink();
+	const checkoutLink = AddOns.useAddOnCheckoutLink();
 
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
@@ -121,14 +118,13 @@ const AddOnsMain = () => {
 	return (
 		<div>
 			<Global styles={ globalOverrides } />
-			<QueryProductsList />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<PageViewTracker path="/add-ons/:site" title="Add-Ons" />
 			<ContentWithHeader>
 				<AddOnsGrid
 					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
 					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
-					useAddOnAvailabilityStatus={ useAddOnPurchaseStatus }
+					useAddOnAvailabilityStatus={ AddOns.useAddOnPurchaseStatus }
 					addOns={ filteredAddOns }
 					highlightFeatured={ true }
 				/>

@@ -189,7 +189,13 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 	return true;
 };
 
-export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, signupUrl, oauth2ClientId ) => {
+export const getLoginLinkPageUrl = ( {
+	locale = 'en',
+	currentRoute,
+	signupUrl,
+	oauth2ClientId,
+	...additionalParams
+} ) => {
 	// The email address from the URL (if present) is added to the login
 	// parameters in this.handleMagicLoginLinkClick(). But it's left out
 	// here deliberately, to ensure that if someone copies this link to
@@ -199,6 +205,7 @@ export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, signupUrl, oau
 		twoFactorAuthType: 'link',
 		signupUrl: signupUrl,
 		oauth2ClientId,
+		...additionalParams,
 	};
 
 	if ( currentRoute === '/log-in/jetpack' ) {

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { LICENSES_PER_PAGE } from 'calypso/a8c-for-agencies/sections/purchases/lib/constants';
 import {
@@ -6,6 +5,21 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import wpcom from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import formatLicenses from './lib/format-licenses';
+
+export const getFetchLicensesQueryKey = (
+	filter: LicenseFilter,
+	search: string,
+	sortField: LicenseSortField,
+	sortDirection: LicenseSortDirection,
+	page: number,
+	agencyId?: number
+) => {
+	return [ 'a4a-licenses', filter, search, sortField, sortDirection, page, agencyId ];
+};
 
 export default function useFetchLicenses(
 	filter: LicenseFilter,
@@ -14,72 +28,33 @@ export default function useFetchLicenses(
 	sortDirection: LicenseSortDirection,
 	page: number
 ) {
-	const showDummyData = config.isEnabled( 'a4a/mock-api-data' );
-
-	const getLicenses = () => {
-		if ( showDummyData ) {
-			const items = [
-				{
-					licenseId: 1,
-					licenseKey: 'license-key',
-					product: 'dummy-product',
-					blogId: 1,
-					siteUrl: 'dummy-url',
-					hasDownloads: true,
-					issuedAt: '2021-01-01',
-					attachedAt: '2021-01-01',
-					quantity: 5,
-					revokedAt: null,
-					ownerType: 'jetpack_partner_key',
-					parentLicenseId: undefined,
-				},
-				{
-					licenseId: 2,
-					licenseKey: 'license-key-2',
-					product: 'dummy-product-2',
-					blogId: 1,
-					siteUrl: null,
-					hasDownloads: true,
-					issuedAt: '2021-01-01',
-					attachedAt: null,
-					quantity: undefined,
-					revokedAt: null,
-					ownerType: 'jetpack_partner_key',
-					parentLicenseId: undefined,
-				},
-			];
-
-			const result = search
-				? items.filter( ( item ) => {
-						return item.licenseKey.includes( search ) || item.product.includes( search );
-				  } )
-				: items;
-
-			return {
-				items: result,
-				total_pages: Math.ceil( result.length / LICENSES_PER_PAGE ),
-				total_items: result.length,
-				items_per_page: LICENSES_PER_PAGE,
-			};
-		}
-		return {
-			items: [],
-			total_pages: 0,
-			total_items: 0,
-			items_per_page: LICENSES_PER_PAGE,
-		}; // FIXME: This is a placeholder for the actual API call.
-	};
+	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		queryKey: [ 'a4a-licenses', filter, search, sortField, sortDirection, page ],
-		queryFn: () => getLicenses(),
+		queryKey: getFetchLicensesQueryKey( filter, search, sortField, sortDirection, page, agencyId ),
+		queryFn: () =>
+			wpcom.req.get(
+				{
+					apiNamespace: 'wpcom/v2',
+					path: '/jetpack-licensing/licenses',
+				},
+				{
+					...( agencyId && { agency_id: agencyId } ),
+					...( search ? { search: search } : { filter: filter, page: page } ),
+					sort_field: sortField,
+					sort_direction: sortDirection,
+					per_page: LICENSES_PER_PAGE,
+				}
+			),
 		select: ( data ) => {
 			return {
-				items: data.items,
+				items: formatLicenses( data.items ),
 				total: data.total_items,
 				perPage: data.items_per_page,
 				totalPages: data.total_pages,
 			};
 		},
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
 	} );
 }

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -24,7 +25,6 @@ import {
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
 import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';
@@ -60,12 +60,20 @@ function getRedirectToAfterLoginUrl( {
 	signupDependencies,
 	stepName,
 	userLoggedIn,
+	isWooPasswordless,
 } ) {
 	if (
 		oauth2Signup &&
 		initialContext?.query?.oauth2_redirect &&
 		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
+		if (
+			isWooPasswordless &&
+			! initialContext.query.oauth2_redirect.includes( 'woo-passwordless' )
+		) {
+			return initialContext.query.oauth2_redirect + '&woo-passwordless=yes';
+		}
+
 		return initialContext.query.oauth2_redirect;
 	}
 	if (
@@ -104,6 +112,10 @@ function isOauth2RedirectValid( oauth2Redirect ) {
 	// Allow Google sign-up to work.
 	// See: https://github.com/Automattic/wp-calypso/issues/49572
 	if ( oauth2Redirect === undefined ) {
+		return true;
+	}
+
+	if ( oauth2Redirect.startsWith( '/setup/wooexpress' ) ) {
 		return true;
 	}
 
@@ -558,13 +570,12 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const isWooPasswordLess = this.props.wooPasswordless;
 		const { oauth2Client, isReskinned } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
-			isWooPasswordLess;
+			this.props.isWooPasswordless;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -605,7 +616,7 @@ export class UserStep extends Component {
 					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
-					labelText={ this.props.wooPasswordless ? this.props.translate( 'Your email' ) : null }
+					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -737,7 +748,7 @@ const ConnectedUser = connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
-			wooPasswordless: getWooPasswordless( state ),
+			isWooPasswordless: !! getWooPasswordless( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};

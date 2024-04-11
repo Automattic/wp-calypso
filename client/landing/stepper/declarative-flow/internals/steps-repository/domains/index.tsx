@@ -33,7 +33,7 @@ import {
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 } from 'calypso/state/domains/actions';
-import useChangeSiteDomain from '../../../../hooks/use-change-site-domain';
+import useChangeSiteDomainIfNeeded from '../../../../hooks/use-change-site-domain-if-needed';
 import { ONBOARD_STORE } from '../../../../stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { DomainFormControl } from './domain-form-control';
@@ -53,7 +53,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const dispatch = useReduxDispatch();
 
-	const changeSiteDomain = useChangeSiteDomain();
+	const changeSiteDomainIfNeeded = useChangeSiteDomainIfNeeded();
 
 	const { submit, exitFlow, goBack } = navigation;
 
@@ -126,7 +126,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		}
 
 		if ( suggestion?.is_free && suggestion?.domain_name ) {
-			changeSiteDomain( suggestion?.domain_name );
+			changeSiteDomainIfNeeded( suggestion?.domain_name );
 		}
 
 		submit?.( { freeDomain: suggestion?.is_free, domainName: suggestion?.domain_name } );

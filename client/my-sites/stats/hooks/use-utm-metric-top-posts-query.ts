@@ -13,6 +13,9 @@ export default function useUTMMetricTopPostsQuery(
 	const dispatch = useDispatch();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
+	// TODO: Remove this hook.
+	// Logic here no longer works as the metrics object
+	// contains all the necessary children.
 	const metricsKey = JSON.stringify( metrics );
 	useEffect( () => {
 		if ( JSON.parse( metricsKey ).length > 0 ) {

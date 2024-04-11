@@ -30,6 +30,7 @@ describe( 'MonitorActivity component', () => {
 				},
 			},
 		},
+		a8cForAgencies: { agencies: {} },
 	};
 
 	const mockStore = configureStore();

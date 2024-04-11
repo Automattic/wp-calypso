@@ -147,6 +147,16 @@ $breakpoint-mobile: 782px; //Mobile size.
 			margin-bottom: 0;
 		}
 	}
+
+	.login__form-suggested-email {
+		color: var(--color-link);
+		cursor: pointer;
+		text-decoration: none;
+
+		&:hover {
+			color: var(--color-link-dark);
+		}
+	}
 }
 
 .login__form-change-username {

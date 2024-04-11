@@ -13,6 +13,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingDetails from './billing-details';
 import BillingSummary from './billing-summary';
 
+import './style.scss';
+
 export default function BillingDashboard() {
 	const translate = useTranslate();
 
@@ -25,18 +27,14 @@ export default function BillingDashboard() {
 	};
 
 	return (
-		<Layout
-			className="billing-dashboard"
-			title={ title }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="billing-dashboard" title={ title } wide>
 			<PageViewTracker title="Purchases > Billing" path="/purchases/billing" />
 
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title } </Title>
-					<Actions>
+					<Actions className="a4a-billing__header-actions">
+						<MobileSidebarNavigation />
 						<Button
 							disabled={ ! partnerCanIssueLicense }
 							href={ partnerCanIssueLicense ? A4A_MARKETPLACE_LINK : undefined }

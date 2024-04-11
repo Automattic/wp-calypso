@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { getBackupErrorCode } from 'calypso/lib/jetpack/backup-utils';
@@ -40,6 +40,10 @@ const BackupFailed = ( { backup } ) => {
 			} )
 		);
 	}, [ dispatch, mayBeBlockedByHost ] );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_failed_view' ) );
+	}, [ dispatch ] );
 
 	return (
 		<>

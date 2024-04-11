@@ -68,6 +68,7 @@ import {
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
+	JPC_A4A_PATH,
 	JPC_JETPACK_MANAGE_PATH,
 	JPC_PATH_PLANS,
 	JPC_PATH_PLANS_COMPLETE,
@@ -274,6 +275,11 @@ export class JetpackAuthorize extends Component {
 				JPC_JETPACK_MANAGE_PATH
 			);
 			navigate( urlRedirect );
+			return;
+		} else if ( source === 'a8c-for-agencies' ) {
+			const urlRedirect = addQueryArgs( { site_connected: urlToSlug( homeUrl ) }, JPC_A4A_PATH );
+			navigate( urlRedirect );
+			return;
 		}
 
 		if ( this.isJetpackPartnerCoupon() ) {

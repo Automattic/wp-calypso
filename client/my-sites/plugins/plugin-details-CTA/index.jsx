@@ -409,10 +409,6 @@ function PrimaryButton( {
 	);
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 
-	//only show free trial button for free plugins to logged out users
-	const { monthly, yearly } = plugin?.variations ?? {};
-	const shouldStartFreeTrial = ! monthly?.product_id && ! yearly?.product_id;
-
 	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -433,7 +429,6 @@ function PrimaryButton( {
 		return (
 			<GetStartedButton
 				onClick={ onClick }
-				startFreeTrial={ shouldStartFreeTrial }
 				plugin={ plugin }
 				isMarketplaceProduct={ isMarketplaceProduct }
 			/>

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { PageViewTracker } from 'calypso/lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -9,10 +9,6 @@ import { GitHubDeploymentManagement } from './deployment-management';
 import { DeploymentRunsLogs } from './deployment-run-logs';
 import { GitHubDeployments } from './deployments';
 import { indexPage } from './routes';
-import {
-	GitHubDeploymentsAvailableResponse,
-	gitHubDeploymentsAvailableQueryOptions,
-} from './use-is-feature-available';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {
@@ -110,16 +106,5 @@ export const redirectHomeIfIneligible: Callback = ( context, next ) => {
 		return;
 	}
 
-	context.queryClient
-		.fetchQuery( gitHubDeploymentsAvailableQueryOptions( { siteId } ) )
-		.then( ( result: GitHubDeploymentsAvailableResponse ) => {
-			if ( result.available ) {
-				next();
-			} else {
-				context.page.replace( `/home/${ siteSlug }` );
-			}
-		} )
-		.catch( () => {
-			context.page.replace( `/home/${ siteSlug }` );
-		} );
+	next();
 };

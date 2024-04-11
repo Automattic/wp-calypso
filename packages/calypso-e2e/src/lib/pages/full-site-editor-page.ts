@@ -15,6 +15,7 @@ import {
 	BlockToolbarButtonIdentifier,
 	TemplatePartListComponent,
 	FullSiteEditorNavSidebarComponent,
+	FullSiteEditorDataViewsComponent,
 	TemplatePartModalComponent,
 	OpenInlineInserter,
 	EditorInlineBlockInserterComponent,
@@ -56,6 +57,7 @@ export class FullSiteEditorPage {
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private fullSiteEditorSavePanelComponent: FullSiteEditorSavePanelComponent;
 	private fullSiteEditorNavSidebarComponent: FullSiteEditorNavSidebarComponent;
+	private fullSiteEditorDataViewsComponent: FullSiteEditorDataViewsComponent;
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
 	private cookieBannerComponent: CookieBannerComponent;
@@ -76,6 +78,10 @@ export class FullSiteEditorPage {
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.fullSiteEditorNavSidebarComponent = new FullSiteEditorNavSidebarComponent(
+			page,
+			this.editor
+		);
+		this.fullSiteEditorDataViewsComponent = new FullSiteEditorDataViewsComponent(
 			page,
 			this.editor
 		);
@@ -165,6 +171,13 @@ export class FullSiteEditorPage {
 	 */
 	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
 		await this.fullSiteEditorNavSidebarComponent.clickNavButtonByExactText( text );
+	}
+
+	/**
+	 * Clicks DataViews primary field to open editor.
+	 */
+	async openTemplateEditor( text: string ): Promise< void > {
+		await this.fullSiteEditorDataViewsComponent.clickPrimaryFieldByExactText( text );
 	}
 
 	/**

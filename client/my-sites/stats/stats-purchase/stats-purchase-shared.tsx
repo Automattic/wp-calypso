@@ -164,6 +164,7 @@ const StatsBenefitsPersonal = () => {
 				<li>{ translate( 'Email support' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+				<li>{ translate( 'No UTM tracking' ) }</li>
 				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
@@ -183,6 +184,7 @@ const StatsBenefitsFree = () => {
 				<li>{ translate( 'GDPR compliance' ) }</li>
 			</ul>
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
+				<li>{ translate( 'No UTM tracking' ) }</li>
 				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'No Email support (supported by forum)' ) }</li>
 				<li>{ translate( 'No commercial use' ) }</li>

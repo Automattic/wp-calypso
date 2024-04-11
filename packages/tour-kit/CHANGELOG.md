@@ -1,3 +1,8 @@
+## 1.1.2
+
+- Added 'onStepView' callback that's called each time a step is mounted
+- Fixed the value of index that is passed to 'onGoToStep', 'onPreviousStep' and 'onNextStep'
+
 ## 1.1.1
 
 - Added missing configuration passthrough on spotlight live resize component

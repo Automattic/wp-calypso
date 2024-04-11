@@ -60,9 +60,13 @@ export const GitHubBrowseRepositories = ( {
 						margin: 0,
 						textAlign: 'center',
 						gap: '16px',
+						padding: '0',
+						flexGrow: 1,
+						justifyContent: 'center',
+						paddingBottom: '32px',
 					} }
 				>
-					<span css={ { paddingInline: '24px' } }>
+					<span css={ { paddingInline: '32px' } }>
 						{ __(
 							'To access your repositories, install the WordPress.com app on your GitHub account and grant it the necessary permissions.'
 						) }

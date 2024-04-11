@@ -13,6 +13,7 @@ import {
 } from '@automattic/composite-checkout';
 import {
 	ManagedContactDetails,
+	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponseRedirect,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -95,9 +96,32 @@ export default async function razorpayProcessor(
 					transactionOptions.razorpayConfiguration,
 					transactionOptions.contactDetails,
 					response as WPCOMTransactionEndpointResponseRedirect,
-					( result ) => resolve( { bd_order_id: response.order_id.toString(), ...result } )
+					( result ) => {
+						transactionOptions.reduxDispatch(
+							recordTracksEvent(
+								'calypso_checkout_razorpay_modal_complete',
+								constructTracksProps( formattedTransactionData, {} )
+							)
+						);
+						return resolve( { bd_order_id: response.order_id.toString(), ...result } );
+					},
+					() => {
+						transactionOptions.reduxDispatch(
+							recordTracksEvent(
+								'calypso_checkout_razorpay_modal_dismissed',
+								constructTracksProps( formattedTransactionData, {} )
+							)
+						);
+						return resolve( {} );
+					}
 				);
 				debug( 'Opening Razorpay modal with options', razorpayOptions );
+				transactionOptions.reduxDispatch(
+					recordTracksEvent(
+						'calypso_checkout_razorpay_modal_open',
+						constructTracksProps( formattedTransactionData, {} )
+					)
+				);
 				const razorpay = new window.Razorpay( razorpayOptions );
 				razorpay.open();
 			} );
@@ -127,6 +151,12 @@ export default async function razorpayProcessor(
 			}
 
 			if ( confirmationResult.success === true ) {
+				transactionOptions.reduxDispatch(
+					recordTracksEvent(
+						'calypso_checkout_razorpay_confirmation_success',
+						constructTracksProps( formattedTransactionData, confirmationResult )
+					)
+				);
 				return makeSuccessResponse( confirmationResult );
 			}
 			// This should not happen because the API will have returned an
@@ -136,11 +166,11 @@ export default async function razorpayProcessor(
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
 			transactionOptions.reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_razorpay_transaction_failed', {
+				recordTracksEvent( 'calypso_checkout_razorpay_transaction_error', {
 					error: error.message,
 				} )
 			);
-			logStashEvent( 'calypso_checkout_razorpay_transaction_failed', {
+			logStashEvent( 'calypso_checkout_razorpay_transaction_error', {
 				error: error.message,
 			} );
 			return makeErrorResponse( error.message );
@@ -163,7 +193,8 @@ function combineRazorpayOptions(
 	razorpayConfiguration: RazorpayConfiguration,
 	contactDetails: ManagedContactDetails | undefined,
 	txnResponse: WPCOMTransactionEndpointResponseRedirect,
-	handler: ( response: RazorpayModalResponse ) => void
+	handler: ( response: RazorpayModalResponse ) => void,
+	ondismiss: () => void
 ): RazorpayOptions {
 	if ( ! txnResponse.razorpay_order_id ) {
 		throw new Error( 'Missing order_id for razorpay transaction' );
@@ -172,10 +203,13 @@ function combineRazorpayOptions(
 	const options = razorpayConfiguration.options;
 	options.order_id = txnResponse.razorpay_order_id;
 	options.customer_id = txnResponse.razorpay_customer_id;
-	options.handler = handler;
+	if ( txnResponse.razorpay_option_recurring ) {
+		options.recurring = '1';
+	}
 
+	options.handler = handler;
 	const modal = options.modal ?? {};
-	modal.ondismiss = handler;
+	modal.ondismiss = ondismiss;
 	options.modal = modal;
 
 	debug( 'Constructing Razorpay prefill object using contact details', contactDetails );
@@ -186,4 +220,18 @@ function combineRazorpayOptions(
 	options.prefill = prefill;
 
 	return options;
+}
+
+function constructTracksProps(
+	transactionData: WPCOMTransactionEndpointRequestPayload,
+	confirmationResult: object
+): object {
+	const tracksProps = {
+		blog_id: transactionData.cart.blog_id,
+		price_integer:
+			'price_integer' in confirmationResult ? confirmationResult.price_integer : 'unset',
+		receipt_id: 'receipt_id' in confirmationResult ? confirmationResult.receipt_id : 'unset',
+		success: 'success' in confirmationResult ? confirmationResult.success : 'unset',
+	};
+	return tracksProps;
 }

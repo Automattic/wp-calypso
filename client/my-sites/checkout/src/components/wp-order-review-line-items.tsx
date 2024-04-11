@@ -18,6 +18,7 @@ import {
 	getPartnerCoupon,
 	filterAndGroupCostOverridesForDisplay,
 	filterCostOverridesForLineItem,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -28,7 +29,6 @@ import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/produ
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -43,11 +43,9 @@ import type {
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren } from 'react';
 
-const WPOrderReviewList = styled.ul< {
-	shouldUseCheckoutV2?: boolean;
-} >`
+const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'margin: 24px 0 0 0;' : 'margin: 24px 0;' ) }
+	margin: 24px 0 0 0;
 	padding: 0;
 `;
 
@@ -84,7 +82,7 @@ export function WPOrderReviewLineItems( {
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	replaceProductInCart?: ReplaceProductInCart;
+	replaceProductInCart: ReplaceProductInCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -103,7 +101,7 @@ export function WPOrderReviewLineItems( {
 	const hasPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
@@ -160,23 +158,19 @@ export function WPOrderReviewLineItems( {
 					new_quantity: newQuantity,
 				} )
 			);
-			replaceProductInCart &&
-				replaceProductInCart( uuid, {
-					product_slug: productSlug,
-					product_id: productId,
-					quantity: newQuantity,
-				} ).catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-				} );
+			replaceProductInCart( uuid, {
+				product_slug: productSlug,
+				product_id: productId,
+				quantity: newQuantity,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		},
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
 	return (
-		<WPOrderReviewList
-			className={ joinClasses( [ className, 'order-review-line-items' ] ) }
-			shouldUseCheckoutV2={ shouldUseCheckoutV2 }
-		>
+		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.uuid }
@@ -296,7 +290,7 @@ function LineItemWrapper( {
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	const signupFlowName = getSignupCompleteFlowName();
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {

@@ -13,7 +13,7 @@ export const DeploymentStarterMessage = ( { deployment }: DeploymentStarterMessa
 
 	const getManualDeploymentMessage = () => {
 		if ( ! deployment.workflow_path ) {
-			return __( 'Trigger a deployment from the ellipsis menu.' );
+			return __( 'Trigger a deployment from the menu.' );
 		}
 
 		const workflowName = deployment.workflow_path.replace( '.github/workflows/', '' );
@@ -46,11 +46,16 @@ export const DeploymentStarterMessage = ( { deployment }: DeploymentStarterMessa
 		<td colSpan={ 4 }>
 			<i css={ { color: 'var(--Gray-Gray-40, #50575E)' } }>
 				{ deployment.is_automated
-					? // Translators: %(branch)s is the branch name of the repository, %(repo)s is the repository name
-					  sprintf( __( 'Push something to the ‘%(branch)s’ branch of ‘%(repo)s’.' ), {
-							branch: deployment.branch_name,
-							repo: deployment.repository_name,
-					  } )
+					? sprintf(
+							// Translators: %(branch)s is the branch name of the repository, %(repo)s is the repository name
+							__(
+								'Push something to the ‘%(branch)s’ branch of ‘%(repo)s’ or trigger a deployment from the menu.'
+							),
+							{
+								branch: deployment.branch_name,
+								repo: deployment.repository_name,
+							}
+					  )
 					: getManualDeploymentMessage() }
 			</i>
 		</td>

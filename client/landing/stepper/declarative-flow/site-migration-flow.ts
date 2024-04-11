@@ -4,12 +4,14 @@ import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { STEPS } from './internals/steps';
+import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -26,11 +28,13 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
+		const { siteSlug, siteId } = useSiteData();
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -116,6 +120,14 @@ const siteMigration: Flow = {
 			};
 		}
 
+		if ( ! siteSlug && ! siteId ) {
+			window.location.assign( '/start' );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup did not provide the site slug or site id it is configured to.',
+			};
+		}
+
 		return result;
 	},
 
@@ -127,6 +139,7 @@ const siteMigration: Flow = {
 		);
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
+		const fromQueryParam = urlQueryParams.get( 'from' );
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
@@ -141,21 +154,25 @@ const siteMigration: Flow = {
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					const { from, platform } = providedDependencies as { from: string; platform: string };
+					const { from, platform, action } = providedDependencies as {
+						from: string;
+						platform: string;
+						action: SiteMigrationIdentifyAction;
+					};
 
-					if ( platform === 'wordpress' ) {
-						return navigate(
+					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
+						return exitFlow(
 							addQueryArgs(
-								{ from: from, siteSlug, siteId },
-								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+								{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
+								`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }`
 							)
 						);
 					}
 
-					return exitFlow(
+					return navigate(
 						addQueryArgs(
-							{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
-							'/setup/site-setup/importList'
+							{ from: from, siteSlug, siteId },
+							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 						)
 					);
 				}
@@ -163,7 +180,7 @@ const siteMigration: Flow = {
 					// Switch to the normal Import flow.
 					if ( providedDependencies?.destination === 'import' ) {
 						return exitFlow(
-							`/setup/site-setup/importList?siteSlug=${ siteSlug }&siteId=${ siteId }`
+							`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=${ siteSlug }&siteId=${ siteId }`
 						);
 					}
 
@@ -206,18 +223,26 @@ const siteMigration: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
+				case STEPS.VERIFY_EMAIL.slug: {
+					return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug );
+				}
+
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
+					if ( providedDependencies?.verifyEmail ) {
+						return navigate( STEPS.VERIFY_EMAIL.slug );
+					}
+
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = addQueryArgs(
 							{
-								flags: 'onboarding/new-migration-flow',
 								siteSlug,
+								from: fromQueryParam,
 							},
 							`/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);
 						goToCheckout( {
 							flowName: 'site-migration',
-							stepName: 'site-migration-upgrade-plan',
+							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
@@ -229,10 +254,6 @@ const siteMigration: Flow = {
 							siteId,
 							siteSlug,
 						} );
-					}
-					if ( providedDependencies?.verifyEmail ) {
-						// not yet implemented
-						return;
 					}
 				}
 

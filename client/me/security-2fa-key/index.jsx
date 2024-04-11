@@ -17,7 +17,7 @@ class Security2faKey extends Component {
 		isEnabled: false,
 		addingKey: false,
 		isBrowserSupported: isWebAuthnSupported(),
-		errorMessage: false,
+		errorMessage: null,
 		security2faChallenge: {},
 		security2faKeys: [],
 	};
@@ -38,7 +38,7 @@ class Security2faKey extends Component {
 
 	addKeyStart = ( event ) => {
 		event.preventDefault();
-		this.setState( { addingKey: true } );
+		this.setState( { addingKey: true, errorMessage: null } );
 	};
 
 	addKeyRegister = () => {
@@ -46,11 +46,23 @@ class Security2faKey extends Component {
 	};
 
 	deleteKeyRegister = ( keyData ) => {
-		wpcom.req.get(
-			'/me/two-step/security-key/delete',
-			{ credential_id: keyData.id },
-			this.getKeysFromServer
-		);
+		const { translate } = this.props;
+		this.setState( { errorMessage: false } );
+		wpcom.req.get( '/me/two-step/security-key/delete', { credential_id: keyData.id }, ( err ) => {
+			if ( null === err ) {
+				this.getKeysFromServer();
+			} else {
+				const errorMessage =
+					'invalid_operation' === err.error
+						? translate(
+								`Unable to delete the last WordPress.com security key while enhanced account security is active. Deleting it may result in losing access to your account. If you still want to remove it, please disable enhanced account security.`
+						  )
+						: translate( 'The key could not be deleted. Please try again later.' );
+				this.setState( {
+					errorMessage,
+				} );
+			}
+		} );
 	};
 
 	addKeyCancel = () => {
@@ -81,7 +93,14 @@ class Security2faKey extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const { isEnabled, addingKey, isBrowserSupported, errorMessage, security2faKeys } = this.state;
+		const {
+			isEnabled,
+			addingKey,
+			isBrowserSupported,
+			errorMessage,
+			security2faKeys,
+			security2faChallenge,
+		} = this.state;
 
 		if ( ! isEnabled ) {
 			return null;
@@ -106,15 +125,22 @@ class Security2faKey extends Component {
 					<Security2faKeyAdd
 						onRegister={ this.addKeyRegister }
 						onCancel={ this.addKeyCancel }
-						registerRequests={ this.state.security2faChallenge }
+						registerRequests={ security2faChallenge }
 					/>
 				) }
-				{ errorMessage && <Notice status="is-error" icon="notice" text={ errorMessage } /> }
+				{ errorMessage && (
+					<Notice
+						status="is-error"
+						icon="notice"
+						text={ errorMessage }
+						onDismissClick={ () => this.setState( { errorMessage: null } ) }
+					/>
+				) }
 				{ ! addingKey && ! security2faKeys.length && (
 					<Card>
 						{ isBrowserSupported && (
 							<p>
-								{ this.props.translate(
+								{ translate(
 									'Security keys offer a more robust form of two-step authentication. Your security key may be a physical device, or you can use passkey support built into your browser.'
 								) }{ ' ' }
 								<InlineSupportLink
@@ -127,7 +153,7 @@ class Security2faKey extends Component {
 						) }
 						{ ! isBrowserSupported && (
 							<p>
-								{ this.props.translate(
+								{ translate(
 									"Your browser doesn't support the FIDO2 security key standard yet. To use a second factor security key to sign in please try a supported browser like Chrome, Safari, or Firefox."
 								) }
 							</p>
@@ -136,7 +162,7 @@ class Security2faKey extends Component {
 				) }
 				{ ! addingKey && !! security2faKeys.length && (
 					<Security2faKeyList
-						securityKeys={ this.state.security2faKeys }
+						securityKeys={ security2faKeys }
 						onDelete={ this.deleteKeyRegister }
 					/>
 				) }

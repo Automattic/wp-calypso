@@ -18,6 +18,7 @@ import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserVisibleSiteCount,
@@ -561,6 +562,11 @@ export function transferDomainToAnyUser( context, next ) {
 	// background via .is-section-checkout-thank-you
 	context.section.name = 'checkout-thank-you';
 	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
+	next( context );
+}
+
+export async function refreshUserSession( context, next ) {
+	await context.store.dispatch( fetchCurrentUser() );
 	next( context );
 }
 

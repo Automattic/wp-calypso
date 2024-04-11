@@ -1,11 +1,10 @@
 interface OpenPopupOptions {
 	url: string;
-	target?: string;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	onMessage( message: any, popup: Window ): void;
 }
 
-export const openPopup = ( { url, target, onMessage }: OpenPopupOptions ) => {
+export const openPopup = ( { url, onMessage }: OpenPopupOptions ) => {
 	let popup: Window | null;
 
 	try {
@@ -17,10 +16,8 @@ export const openPopup = ( { url, target, onMessage }: OpenPopupOptions ) => {
 
 		popup = window.open(
 			url,
-			target,
-			target === '_blank'
-				? undefined
-				: `width=${ width },height=${ height },top=${ top },left=${ left }`
+			undefined,
+			`popup=1,width=${ width },height=${ height },top=${ top },left=${ left }`
 		);
 	} catch {
 		return false;

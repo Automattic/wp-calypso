@@ -50,14 +50,12 @@ const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 		} );
 	}
 
-	const title = translate(
-		"Can't decide? No problem, we can create the perfect design for your site!"
-	);
+	const title = translate( 'Unsure? Let us choose, and we’ll create the perfect design!' );
 
 	return (
 		<LetUsChooseContainer>
 			<div>{ preventWidows( title ) }</div>
-			<LetUsChooseButton variant="secondary" onClick={ onClick }>
+			<LetUsChooseButton variant="primary" onClick={ onClick }>
 				{ translate( 'Let us choose' ) }
 			</LetUsChooseButton>
 		</LetUsChooseContainer>

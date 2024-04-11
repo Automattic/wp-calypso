@@ -30,6 +30,7 @@ import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -323,7 +324,9 @@ export function handleRenewNowClick(
 			}
 			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-			page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
+			page(
+				isJetpackCloud() || isA8CForAgencies() ? `https://wordpress.com${ renewalUrl }` : renewalUrl
+			);
 		} catch ( error ) {
 			dispatch( errorNotice( ( error as Error ).message ) );
 		}
@@ -843,7 +846,15 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( isPartnerPurchase( purchase ) ) {
-		return i18n.translate( 'Host Managed Plan' );
+		switch ( purchase.partnerType ) {
+			case 'agency':
+			case 'agency_beta':
+			case 'a4a_agency':
+				return i18n.translate( 'Agency Managed Plan' );
+
+			default:
+				return i18n.translate( 'Host Managed Plan' );
+		}
 	}
 
 	if ( isPlan( purchase ) ) {

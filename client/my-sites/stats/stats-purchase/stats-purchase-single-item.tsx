@@ -3,11 +3,14 @@ import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
+import useSiteComplusoryPlanSelectionQualifiedCheck from '../hooks/use-site-complusory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -293,7 +296,8 @@ const StatsSingleItemPagePurchase = ( {
 	isCommercial,
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const { isCommercialOwned } = useStatsPurchases( siteId );
+	const { supportCommercialUse } = useStatsPurchases( siteId );
+	const { isNewSite } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
 		<>
@@ -308,7 +312,7 @@ const StatsSingleItemPagePurchase = ( {
 					from={ from }
 				/>
 			</StatsSingleItemPagePurchaseFrame>
-			{ ! isCommercialOwned && (
+			{ ! supportCommercialUse && ! ( isNewSite && isCommercial ) && (
 				<StatsSingleItemCard>
 					<StatsCommercialFlowOptOutForm
 						isCommercial={ isCommercial }
@@ -342,14 +346,27 @@ function StatsCommercialFlowOptOutForm( {
 		exoclick: 'ExoClick',
 		'live-chat': translate( 'Live Chat' ),
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
+		'contact-details': translate( 'Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
+		ecommerce: translate( 'Ecommerce' ),
 	};
+	const { supportsOnDemandCommercialClassification } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 
 	// Checkbox state
 	const [ isAdsChecked, setAdsChecked ] = useState( false );
 	const [ isSellingChecked, setSellingChecked ] = useState( false );
 	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
 	const [ isDonationChecked, setDonationChecked ] = useState( false );
+	const [ comemercialClassificationRunAt, setComemercialClassificationRunAt ] = useState( 0 );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
+
+	useEffect( () => {
+		setComemercialClassificationRunAt(
+			parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' )
+		);
+	}, [] );
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -361,58 +378,68 @@ function StatsCommercialFlowOptOutForm( {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 		recordTracksEvent( `${ event_from }_stats_purchase_commercial_update_classification_clicked` );
 
-		// No need to translate this as we'd prefer customer communication to be in English.
-		const subject = 'Jetpack Stats Commercial Classification Dispute';
-		const message = `Hi Jetpack Team,\n
-I'm writing to dispute the classification of my site '${ siteSlug }' as commercial.\n
-I can confirm that,
-- I don't have ads on my site.
-- I don't sell products/services on my site.
-- I don't promote a business on my site.
-- I don't solicit donations or sponsorships on my site.\n
-Could you please take a look at my site and update the classification if necessary?\n
-Thanks\n\n`;
-
-		// For Jetpack sites, link to https://jetpack.com/contact-support/ with pre-filled form.
+		// For Jetpack sites, open the Jetpack support form. Do not prefill.
 		if ( isJetpackSupport ) {
-			window.open(
-				`https://jetpack.com/contact-support/?assistant=false&url=${ siteSlug }&subject=${ encodeURIComponent(
-					subject
-				) }&message=${ encodeURIComponent( message ) }`
-			);
+			window.open( `https://jetpack.com/contact-support/?url=${ siteSlug }` );
 			return;
 		}
 
-		// TODO: Assess whether this is appropriate escalation approach for Dotcom sites.
-		const mailTo = 'help@wordpress.com';
-		const emailHref = `mailto:${ mailTo }?subject=${ encodeURIComponent(
-			subject
-		) }&body=${ encodeURIComponent( message ) }`;
-		window.open( emailHref );
+		// For Dotcom sites, open the Dotcom help page.
+		window.open( 'https://wordpress.com/help' );
 	};
 
-	const isFormSubmissionDisabled = () => {
-		return ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
+	const { mutateAsync: runCommercialClassificationAsync } =
+		useOnDemandCommercialClassificationMutation( siteId );
+	const handleCommercialClassification = async () => {
+		const now = Date.now();
+		localStorage?.setItem( 'commercial_classification__button_clicked', `${ now }` );
+		setComemercialClassificationRunAt( now );
+		runCommercialClassificationAsync().catch( ( e ) => {
+			setErrorMessage( e.message );
+		} );
 	};
+	const commercialClassificationLastRunAt = useMemo(
+		() => parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ comemercialClassificationRunAt ]
+	);
+	const hasRunLessThan3DAgo =
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const isClassificationInProgress =
+		commercialClassificationLastRunAt > 0 &&
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+
+	const isFormSubmissionDisabled =
+		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
 
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as a commercial site, which is not eligible for a non-commercial license, reason(s) being ’%(reasons)s’. If you think this is an error, confirm the information below and let us know.',
+				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
 				{
 					args: {
 						reasons:
 							commercialReasons
 								?.map(
 									( reason: string ) =>
-										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? 'Unknown'
+										COMMERCIAL_REASONS[ reason as keyof typeof COMMERCIAL_REASONS ] ?? reason
 								)
 								.join( ' and/or ' ) ?? 'Unknown',
+					},
+					components: {
+						link: (
+							<a
+								target="_blank"
+								href="https://jetpack.com/support/jetpack-stats/free-or-paid/#how-is-a-commercial-site-defined"
+								rel="noreferrer noopener"
+							/>
+						),
+						br: <br />,
 					},
 				}
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
-	const formButton = isCommercial ? translate( 'Request update' ) : translate( 'Continue' );
+	const formButton = isCommercial ? translate( 'Contact support' ) : translate( 'Continue' );
 	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
 
 	return (
@@ -464,10 +491,44 @@ Thanks\n\n`;
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				<Button variant="secondary" disabled={ isFormSubmissionDisabled() } onClick={ formHandler }>
-					{ formButton }
-				</Button>
+				{ supportsOnDemandCommercialClassification && isCommercial && (
+					<Button
+						variant="secondary"
+						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
+						onClick={ handleCommercialClassification }
+					>
+						{ translate( 'Reverify' ) }
+					</Button>
+				) }
+				{ ( ! supportsOnDemandCommercialClassification ||
+					! isCommercial ||
+					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
+					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
+						{ formButton }
+					</Button>
+				) }
 			</div>
+			{ supportsOnDemandCommercialClassification && isCommercial && (
+				<>
+					{ errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>{ errorMessage }</p>
+					) }
+					{ isClassificationInProgress && ! errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+							{ translate( 'We are verifying your site. Please come back later…' ) }
+						</p>
+					) }
+					{ ! isClassificationInProgress &&
+						commercialClassificationLastRunAt > 0 &&
+						! errorMessage && (
+							<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+								{ translate(
+									'We have finished verify your site. If you still think this is an error, please contact our support.'
+								) }
+							</p>
+						) }
+				</>
+			) }
 		</>
 	);
 }

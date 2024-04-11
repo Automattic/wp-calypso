@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CHANGE_NAME_SERVERS } from '@automattic/urls';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';

@@ -20,7 +20,6 @@ export default function useMaxDiscount(
 		.filter( Boolean ) as PlanSlug[];
 	const monthlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: wpcomMonthlyPlans,
-		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
@@ -28,7 +27,6 @@ export default function useMaxDiscount(
 	} );
 	const yearlyPlansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlugs,
-		withoutPlanUpgradeCredits: true,
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,

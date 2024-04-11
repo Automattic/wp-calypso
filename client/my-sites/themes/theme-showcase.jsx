@@ -26,7 +26,7 @@ import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemeShowcaseSurvey, { SurveyType } from 'calypso/my-sites/themes/survey';
+import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
@@ -668,10 +668,7 @@ class ThemeShowcase extends Component {
 				/>
 				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
-					<ThemeShowcaseSurvey
-						survey={ SurveyType.MARCH_2024 }
-						condition={ () => lastNonEditorRoute.includes( 'theme/' ) }
-					/>
+					<ThemeShowcaseSurvey condition={ () => lastNonEditorRoute.includes( 'theme/' ) } />
 				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />

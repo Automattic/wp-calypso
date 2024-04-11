@@ -129,7 +129,7 @@ export default function MarketplaceTest() {
 		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
 	};
 
-	const { ID, URL, domain, options = {} } = selectedSite;
+	const { ID, URL, domain, options = {} } = selectedSite || {};
 	const { is_wpcom_atomic, is_automated_transfer } = options;
 
 	const allBlockingMessages = getBlockingMessages( translate );

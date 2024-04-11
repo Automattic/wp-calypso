@@ -4,10 +4,10 @@ import {
 	isMultiYearDomainProduct,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { JetpackItemVariantDropDownPrice } from './jetpack-variant-dropdown-price';
 import { CurrentOption, Dropdown, OptionList, Option } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
@@ -27,7 +27,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	isOpen,
 } ) => {
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
@@ -216,7 +216,7 @@ function ItemVariantOption( {
 	allVariants: WPCOMProductVariant[];
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	return (
 		<Option
 			id={ productId.toString() }

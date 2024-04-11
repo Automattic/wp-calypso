@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
-import { ChangeEvent } from 'react';
 import Main from 'calypso/components/main';
 import SiteProfiler from 'calypso/site-profiler/components/site-profiler';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -43,17 +42,32 @@ export const siteProfilerContext: Callback = ( context, next ) => {
 	const pathName = context.pathname || '';
 	const routerDomain = pathName.split( '/site-profiler/' )[ 1 ]?.trim() || '';
 
-	const onLanguageChange = ( e: ChangeEvent< HTMLSelectElement > ) => {
-		page( `/${ e.target.value + pathName }` );
-		window.location.reload();
-	};
-
 	context.primary = (
 		<>
 			<Main fullWidthLayout>
 				<SiteProfiler routerDomain={ routerDomain } />
 			</Main>
-			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } onLanguageChange={ onLanguageChange } />
+
+			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
+		</>
+	);
+
+	next();
+};
+
+export const siteProfilerReportContext: Callback = ( context, next ) => {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const pathName = context.pathname || '';
+	const routerParams = pathName.split( '/site-profiler/report/' )[ 1 ]?.trim() || '';
+	const routerDomain = routerParams.split( '/' ).slice( 1 ).join( '/' );
+
+	context.primary = (
+		<>
+			<Main fullWidthLayout>
+				<SiteProfiler routerDomain={ routerDomain } hash={ context.params.hash } />
+			</Main>
+
+			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
 		</>
 	);
 

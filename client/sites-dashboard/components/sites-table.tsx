@@ -62,10 +62,8 @@ const SiteTh = styled.th( {
 	},
 } );
 
-const PlanTh = styled.th( {
-	[ MEDIA_QUERIES.wide ]: {
-		width: '15%',
-	},
+const StatusTh = styled.th( {
+	width: '140px',
 } );
 
 const StatsTh = styled.th( {
@@ -148,8 +146,8 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 			>
 				<Row>
 					<SiteTh>{ __( 'Site' ) }</SiteTh>
-					<PlanTh>{ __( 'Plan' ) }</PlanTh>
-					<th>{ __( 'Status' ) }</th>
+					<th>{ __( 'Plan' ) }</th>
+					<StatusTh>{ __( 'Status' ) }</StatusTh>
 					<th>{ __( 'Last Publish' ) }</th>
 					<StatsTh>
 						<StatsThInner>

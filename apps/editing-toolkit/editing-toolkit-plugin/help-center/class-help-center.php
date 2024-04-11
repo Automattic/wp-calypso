@@ -103,7 +103,9 @@ class Help_Center {
 		wp_localize_script(
 			'help-center-script',
 			'helpCenterLocale',
-			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
+			array(
+				'locale' => \A8C\FSE\Common\get_iso_639_locale( determine_locale() ),
+			)
 		);
 
 		// Adds feature flags for development.
@@ -223,6 +225,10 @@ class Help_Center {
 
 		require_once __DIR__ . '/class-wp-rest-help-center-user-fields.php';
 		$controller = new WP_REST_Help_Center_User_Fields();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-odie.php';
+		$controller = new WP_REST_Help_Center_Odie();
 		$controller->register_rest_route();
 	}
 	/**

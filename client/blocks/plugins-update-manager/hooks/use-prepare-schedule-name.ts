@@ -1,14 +1,18 @@
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useSiteDateTimeFormat } from './use-site-date-time-format';
+import { useSiteSlug } from './use-site-slug';
 import type { ScheduleUpdates } from 'calypso/data/plugins/use-update-schedules-query';
 
 export function usePrepareScheduleName() {
 	const moment = useLocalizedMoment();
+	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const { prepareTime } = useSiteDateTimeFormat( siteSlug );
 
 	function prepareScheduleName( schedule: ScheduleUpdates ) {
 		const tm = moment( schedule.timestamp * 1000 );
-		const translateArgs = { time: tm.format( 'LT' ) };
+		const translateArgs = { time: prepareTime( schedule.timestamp ) };
 
 		if ( schedule.schedule === 'daily' ) {
 			/* translators: Daily at 10 am. */

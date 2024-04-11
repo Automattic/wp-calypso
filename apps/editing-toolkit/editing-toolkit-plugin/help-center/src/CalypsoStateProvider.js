@@ -41,7 +41,7 @@ const currentSite = window.helpCenterData.currentSite;
 currentSite && store.dispatch( setSelectedSiteId( currentSite.ID ) );
 store.dispatch( setSection( { name: section } ) );
 
-i18n.configure( { defaultLocaleSlug: window.helpCenterLocale } );
+i18n.configure( { defaultLocaleSlug: window.helpCenterLocale?.locale } );
 
 rawCurrentUserFetch()
 	.then( filterUserObject )

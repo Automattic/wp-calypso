@@ -67,6 +67,7 @@ function HelpCenterContent() {
 				label="Help"
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
+				size="compact"
 			/>
 		</>
 	);
@@ -90,7 +91,7 @@ registerPlugin( 'etk-help-center', {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
 				<CalypsoStateProvider>
-					<LocaleProvider localeSlug={ window.helpCenterLocale }>
+					<LocaleProvider localeSlug={ window.helpCenterLocale?.locale }>
 						<HelpCenterContent />
 					</LocaleProvider>
 				</CalypsoStateProvider>

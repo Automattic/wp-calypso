@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -10,10 +9,8 @@ import {
 	useCallback,
 	useEffect,
 	useRef,
-	useState,
 } from 'react';
 import GitHubIcon from 'calypso/components/social-icons/github';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isFormDisabled as isFormDisabledSelector } from 'calypso/state/login/selectors';
@@ -46,7 +43,7 @@ const GitHubLoginButton = ( {
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
 
-	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial );
+	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
 	const authError = useSelector( ( state: AppState ) => {
 		const path = state?.route?.path?.current;
 		const { initial, current } = state?.route?.query ?? {};
@@ -61,13 +58,8 @@ const GitHubLoginButton = ( {
 		return currentError;
 	} );
 
-	const isFormDisabled = useSelector( isFormDisabledSelector );
+	const isDisabled = useSelector( isFormDisabledSelector );
 	const dispatch = useDispatch();
-
-	const [ disabledState ] = useState< boolean >( false );
-	const [ errorState ] = useState< string | null >( null );
-	const [ showError, setShowError ] = useState< boolean >( false );
-
 	const errorRef = useRef< EventTarget | null >( null );
 
 	const handleGitHubError = useCallback( () => {
@@ -139,8 +131,6 @@ const GitHubLoginButton = ( {
 		}
 	}, [ authError, handleGitHubError ] );
 
-	const isDisabled = isFormDisabled || disabledState;
-
 	const handleClick = ( e: MouseEvent< HTMLButtonElement > ) => {
 		errorRef.current = e.currentTarget;
 		e.preventDefault();
@@ -150,7 +140,7 @@ const GitHubLoginButton = ( {
 		}
 
 		const scope = encodeURIComponent( 'read:user,user:email' );
-		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-redirect?redirect_uri=${ stripQueryString(
+		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
 			redirectUri
 		) }&scope=${ scope }&ux_mode=redirect`;
 	};
@@ -167,12 +157,6 @@ const GitHubLoginButton = ( {
 		};
 
 		customButton = cloneElement( children as ReactElement, childProps );
-	}
-
-	// This feature is already gated inside client/blocks/authentication/social/index.tsx
-	// Adding an extra check here to prevent accidental inclusions in other parts of the app
-	if ( ! config.isEnabled( 'login/github' ) ) {
-		return;
 	}
 
 	return (
@@ -195,16 +179,6 @@ const GitHubLoginButton = ( {
 					</span>
 				</button>
 			) }
-			<Popover
-				id="social-buttons__error"
-				className="social-buttons__error"
-				isVisible={ showError }
-				onClose={ () => setShowError( false ) }
-				position="top"
-				context={ errorRef.current }
-			>
-				{ preventWidows( errorState ) }
-			</Popover>
 		</>
 	);
 };

@@ -19,7 +19,6 @@ describe( 'Schedule form validation', () => {
 	test( 'timestamp / time slot', () => {
 		const timestamp = getTwoDaysFutureUTCTime();
 		const ts_3am = timestamp + 3 * 60 * 60;
-		const ts_6pm = timestamp + 18 * 60 * 60;
 		const ts_9pm = timestamp + 21 * 60 * 60;
 
 		const nextMondayMidnight = getNextMondayMidnightUTCTime();
@@ -36,7 +35,7 @@ describe( 'Schedule form validation', () => {
 			{ frequency: 'daily', timestamp: ts_3am }, // daily at 3:00 am
 		];
 		const existingSchedules2 = [
-			{ frequency: 'weekly', timestamp: ts_6pm }, // weekly on Monday at 6:00 pm
+			{ frequency: 'weekly', timestamp: ts_mon_6pm }, // weekly on Monday at 6:00 pm
 		];
 		const existingSchedules3 = [
 			{ frequency: 'weekly', timestamp: ts_mon_6pm }, // weekly on Monday at 6:00 pm
@@ -60,6 +59,9 @@ describe( 'Schedule form validation', () => {
 		expect(
 			validateTimeSlot( { frequency: 'daily', timestamp: ts_mon_6pm }, existingSchedules2 )
 		).toBeTruthy();
+		expect(
+			validateTimeSlot( { frequency: 'weekly', timestamp: ts_fri_6pm }, existingSchedules2 )
+		).toBeFalsy();
 		expect(
 			validateTimeSlot( { frequency: 'daily', timestamp: ts_fri_6pm }, existingSchedules2 )
 		).toBeTruthy();

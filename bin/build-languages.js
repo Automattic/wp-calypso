@@ -148,7 +148,9 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				modulePath = getModuleReference( modulePath );
 				const key = /\.\w+/.test( modulePath )
 					? modulePath
-					: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
+					: Object.keys( translationsByRef ).find(
+							( ref ) => ref.indexOf( modulePath + '.' ) === 0
+					  );
 
 				if ( ! key ) {
 					return;

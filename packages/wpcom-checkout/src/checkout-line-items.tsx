@@ -41,6 +41,7 @@ import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
 import {
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	doesIntroductoryOfferHavePriceIncrease,
 	getSubtotalWithoutDiscountsForProduct,
 } from './transformations';
 import type { LineItemType } from './types';
@@ -925,19 +926,19 @@ export function LineItemBillingInterval( { product }: { product: ResponseCartPro
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return <span>{ translate( 'Billed every month' ) }</span>;
+		return <span>{ translate( 'Renews every month' ) }</span>;
 	}
 
 	if ( isYearly( product ) ) {
-		return <span>{ translate( 'Billed every year' ) }</span>;
+		return <span>{ translate( 'Renews every year' ) }</span>;
 	}
 
 	if ( isBiennially( product ) ) {
-		return <>{ translate( 'Billed every two years' ) }</>;
+		return <>{ translate( 'Renews every two years' ) }</>;
 	}
 
 	if ( isTriennially( product ) ) {
-		return <>{ translate( 'Billed every three years' ) }</>;
+		return <>{ translate( 'Renews every three years' ) }</>;
 	}
 }
 
@@ -1386,6 +1387,28 @@ function CheckoutLineItem( {
 		  } )
 		: undefined;
 
+	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
+
+	const formattedAmountToDisplayV2 = ( () => {
+		if ( isIntroductoryOfferWithDifferentLength ) {
+			return formattedAmountWithIntroductoryOfferOnly;
+		}
+		if ( isPriceIncrease ) {
+			return actualAmountDisplay;
+		}
+		return formatCurrency( costBeforeDiscounts, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+	} )();
+
+	const crossedOutAmountToDisplayV2 = isIntroductoryOfferWithDifferentLength
+		? formatCurrency( costBeforeDiscounts, product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+		  } )
+		: undefined;
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -1411,22 +1434,8 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 			{ shouldUseCheckoutV2 ? (
 				<LineItemPrice
-					actualAmount={
-						isIntroductoryOfferWithDifferentLength
-							? formattedAmountWithIntroductoryOfferOnly
-							: formatCurrency( costBeforeDiscounts, product.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-							  } )
-					}
-					crossedOutAmount={
-						isIntroductoryOfferWithDifferentLength
-							? formatCurrency( costBeforeDiscounts, product.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-							  } )
-							: undefined
-					}
+					actualAmount={ formattedAmountToDisplayV2 }
+					crossedOutAmount={ crossedOutAmountToDisplayV2 }
 					shouldUseCheckoutV2={ shouldUseCheckoutV2 }
 				/>
 			) : (

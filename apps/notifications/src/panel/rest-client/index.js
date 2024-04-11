@@ -377,8 +377,8 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 
 	debug( 'updateLastSeenTime 1', {
 		proposedTime: proposedTime,
-		showing: this.showing,
-		visible: this.visible,
+		showing: this.isShowing,
+		visible: this.isVisible,
 		lastSeenTime: this.lastSeenTime,
 		mostRecentNoteTime: mostRecentNoteTime,
 	} );
@@ -474,6 +474,11 @@ function setVisibility( { isShowing, isVisible } ) {
 
 	this.isShowing = isShowing;
 	this.isVisible = isVisible;
+
+	debug( 'Visibility set', {
+		isShowing: this.isShowing,
+		isVisible: this.isVisible,
+	} );
 
 	if ( isVisible && isShowing ) {
 		this.updateLastSeenTime( 0 );

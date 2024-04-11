@@ -12,11 +12,12 @@
 
 .jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
 	height: auto;
-	gap: 12px;
+	gap: 0.75rem;
 
 	@include break-large {
-		gap: 32px;
-		max-height: 32px;
+		row-gap: 1rem;
+		column-gap: 2rem;
+		max-height: 2rem;
 	}
 }
 

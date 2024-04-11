@@ -1,5 +1,6 @@
 import { CompactCard, Button, Card, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -11,7 +12,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useCountryList, {
 	isVatSupported,
 	useTaxName,

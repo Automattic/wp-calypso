@@ -57,7 +57,7 @@ const selectors = {
 	cardCVVInput: 'input[data-elements-stable-field-name="cardCvc"]',
 
 	// Checkout elements
-	couponCodeInputButton: `button:text("Add a coupon code"):visible`,
+	couponCodeInputButton: `button:text("Have a coupon?"):visible`,
 	couponCodeInput: `input[id="order-review-coupon"]`,
 	couponCodeApplyButton: `button:text("Apply")`,
 	disabledButton: 'button[disabled]:has-text("Processing")',

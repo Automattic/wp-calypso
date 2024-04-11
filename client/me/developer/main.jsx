@@ -122,7 +122,7 @@ class Developer extends Component {
 						className="developer__header"
 					/>
 
-					<form onChange={ this.props.submitForm }>
+					<form className="developer__form" onChange={ this.props.submitForm }>
 						<FormFieldset
 							className={ classnames( 'developer__is_dev_account-fieldset', {
 								'is-loading': this.props.isFetchingUserSettings,
