@@ -47,12 +47,20 @@
 	background-color: var(--studio-gray-0);
 }
 
+.odie-chatbox-message.odie-chatbox-message-user p {
+	font-size: 1rem;
+}
+
 .odie-chatbox-message.odie-chatbox-message-user > :last-child {
 	margin-bottom: 0;
 }
 
 .odie-chatbox-message.odie-chatbox-message-wapuu {
 	background-color: var(--studio-white);
+}
+
+.odie-chatbox-message.odie-chatbox-message-wapuu p {
+	font-size: 1rem;
 }
 
 .odie-introduction-message-content {

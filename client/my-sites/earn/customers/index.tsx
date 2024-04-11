@@ -167,11 +167,14 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 			} );
 		}
 	}
+	const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
 	function renderSubscriberActions( subscriber: Subscriber ) {
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
-				<PopoverMenuItem href={ `/earn/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }>
+				<PopoverMenuItem
+					href={ `${ earnPath }/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }
+				>
 					<Gridicon size={ 18 } icon="visible" />
 					{ translate( 'View' ) }
 				</PopoverMenuItem>

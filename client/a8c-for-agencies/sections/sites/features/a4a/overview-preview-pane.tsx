@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
 	JETPACK_BACKUP_ID,
@@ -8,22 +10,26 @@ import {
 	JETPACK_PLUGINS_ID,
 	JETPACK_SCAN_ID,
 	JETPACK_STATS_ID,
+	A4A_SITE_DETAILS_ID,
+	HOSTING_OVERVIEW_ID,
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
+import { PreviewPaneProps } from 'calypso/a8c-for-agencies/sections/sites/site-preview-pane/types';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
+import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
 import SitePreviewPane, { createFeaturePreview } from '../../site-preview-pane';
-import { PreviewPaneProps } from '../../site-preview-pane/types';
-import { JetpackActivityPreview } from './activity';
-import { JetpackBackupPreview } from './backup';
-import { JetpackBoostPreview } from './jetpack-boost';
-import { JetpackMonitorPreview } from './jetpack-monitor';
-import { JetpackPluginsPreview } from './jetpack-plugins';
-import { JetpackStatsPreview } from './jetpack-stats';
-import { JetpackScanPreview } from './scan';
+import HostingOverviewPreview from '../hosting/overview';
+import { JetpackActivityPreview } from '../jetpack/activity';
+import { JetpackBackupPreview } from '../jetpack/backup';
+import { JetpackBoostPreview } from '../jetpack/jetpack-boost';
+import { JetpackMonitorPreview } from '../jetpack/jetpack-monitor';
+import { JetpackPluginsPreview } from '../jetpack/jetpack-plugins';
+import { JetpackStatsPreview } from '../jetpack/jetpack-stats';
+import { JetpackScanPreview } from '../jetpack/scan';
 
-import './style.scss';
+import '../jetpack/style.scss';
 
-export function JetpackPreviewPane( {
+export function OverviewPreviewPane( {
 	site,
 	closeSitePreviewPane,
 	className,
@@ -44,9 +50,8 @@ export function JetpackPreviewPane( {
 
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( JETPACK_BOOST_ID );
+			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
 		}
-
 		return () => {
 			setSelectedSiteFeature( undefined );
 		};
@@ -119,6 +124,26 @@ export function JetpackPreviewPane( {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<JetpackActivityPreview site={ site } />
+			),
+			...( isEnabled( 'a4a/hosting-preview-pane' )
+				? [
+						createFeaturePreview(
+							HOSTING_OVERVIEW_ID,
+							translate( 'Hosting' ),
+							true,
+							selectedSiteFeature,
+							setSelectedSiteFeature,
+							<HostingOverviewPreview site={ site } />
+						),
+				  ]
+				: [] ),
+			createFeaturePreview(
+				A4A_SITE_DETAILS_ID,
+				translate( 'Details' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteDetails site={ site } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
