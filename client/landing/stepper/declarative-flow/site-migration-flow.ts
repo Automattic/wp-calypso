@@ -244,6 +244,10 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
+					if ( providedDependencies?.error ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+
 					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
 						siteId,
 						siteSlug,

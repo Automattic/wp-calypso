@@ -29,27 +29,28 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	const site = useSite();
 
 	const dispatch = useDispatch();
-	const { addHostingTrial, isSuccess } = useAddHostingTrialMutation( {
+	const { addHostingTrial, error } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			// After the trial is added, we need to request the site again to get the updated plan
 			site && dispatch( requestSite( site.ID ) );
+			submit?.();
+		},
+		onError: () => {
+			// If the trial fails to be added, submit with error dependency.
+			submit?.( { error } );
 		},
 	} );
 
 	useEffect( () => {
-		if ( submit && site ) {
+		if ( site ) {
 			const assignMigrationTrialPlan = () => {
 				site.ID && addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 			};
 
 			assignMigrationTrialPlan();
-
-			if ( isSuccess ) {
-				submit();
-			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ submit ] );
+	}, [] );
 
 	return (
 		<>
@@ -63,7 +64,7 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 				stepContent={
 					<>
 						<div className="site-migration-assign-trial-plan">
-							<h1 className="site-migration-assign-trial-plan__progress-step">
+							<h1 className="site-migration-assign-trial-plan__progress-header">
 								{ __( 'Adding your free trial' ) }
 							</h1>
 							{ progress >= 0 ? <LoadingBar progress={ progress } /> : <LoadingEllipsis /> }
