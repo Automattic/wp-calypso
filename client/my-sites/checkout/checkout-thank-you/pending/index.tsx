@@ -21,7 +21,6 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
-import { isRefactoredForThankYouV2 } from '../redesign-v2/utils';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
@@ -353,15 +352,6 @@ function triggerPostRedirectNotices( {
 			reduxDispatch,
 		} );
 		return;
-	}
-
-	if ( ! isRefactoredForThankYouV2 ) {
-		reduxDispatch(
-			successNotice( translate( 'Your purchase has been completed!' ), {
-				id: 'checkout-thank-you-success',
-				displayOnNextPage: true,
-			} )
-		);
 	}
 }
 
