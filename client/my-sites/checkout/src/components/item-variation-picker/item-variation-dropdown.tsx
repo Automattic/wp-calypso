@@ -129,7 +129,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		isJetpack( props.variant ) ? (
 			<JetpackItemVariantDropDownPrice { ...props } allVariants={ variants } />
 		) : (
-			<ItemVariantDropDownPrice { ...props } />
+			<ItemVariantDropDownPrice { ...props } product={ selectedItem } />
 		);
 
 	return (
@@ -196,6 +196,7 @@ function ItemVariantOptionList( {
 					compareTo={ compareTo }
 					variant={ variant }
 					allVariants={ variants }
+					selectedItem={ selectedItem }
 				/>
 			) ) }
 		</OptionList>
@@ -208,12 +209,14 @@ function ItemVariantOption( {
 	compareTo,
 	variant,
 	allVariants,
+	selectedItem,
 }: {
 	isSelected: boolean;
 	onSelect: () => void;
 	compareTo?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
 	allVariants: WPCOMProductVariant[];
+	selectedItem: ResponseCartProduct;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
 	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
@@ -231,7 +234,11 @@ function ItemVariantOption( {
 			{ isJetpack( variant ) ? (
 				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />
 			) : (
-				<ItemVariantDropDownPrice variant={ variant } compareTo={ compareTo } />
+				<ItemVariantDropDownPrice
+					variant={ variant }
+					compareTo={ compareTo }
+					product={ selectedItem }
+				/>
 			) }
 		</Option>
 	);
