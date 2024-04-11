@@ -24,7 +24,8 @@
 	"features": {
 		"a8c-for-agencies": true,
 		"oauth": false,
-		"a4a/hosting-preview-pane": true
+		"a4a/hosting-preview-pane": true,
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {
