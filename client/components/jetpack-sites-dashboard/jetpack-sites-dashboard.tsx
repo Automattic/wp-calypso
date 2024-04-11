@@ -1,10 +1,11 @@
 import React from 'react';
 import JetpackSitesTable from '../jetpack-sites-table';
+import type { DataViewsPaginationInfo } from '../jetpack-sites-table/types';
 
 interface JetpackSitesDashboardProps {
 	data;
 	fields;
-	paginationInfo;
+	paginationInfo: DataViewsPaginationInfo;
 }
 
 const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) => {

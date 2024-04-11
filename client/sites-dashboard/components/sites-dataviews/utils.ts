@@ -7,7 +7,7 @@ export function mapFieldIdToSortKey( fieldId: string ) {
 	return SORT_KEY_MAP[ fieldId ] ?? fieldId;
 }
 
-export function getSitesPagination( allSites, page, perPage ) {
+export function getSitesPagination( allSites, page: number, perPage: number ) {
 	const paginatedSites = allSites.slice( ( page - 1 ) * perPage, page * perPage );
 	const totalItems = allSites.length;
 	const totalPages = Math.ceil( totalItems / perPage );

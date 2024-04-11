@@ -2,7 +2,13 @@ import { useCallback, useState } from 'react';
 import { initialSitesViewState } from './constants';
 import JetpackSitesDashboardContext from './jetpack-sites-dashboard-context';
 
-const JetpackSitesDashboardProvider = ( props ) => {
+interface JetpackSitesDashboardProviderProps {
+	children: React.ReactNode;
+}
+
+const JetpackSitesDashboardProvider: React.FC< JetpackSitesDashboardProviderProps > = ( {
+	children,
+} ) => {
 	const [ sitesViewState, setSitesViewState ] = useState( initialSitesViewState );
 
 	const openSitePreviewPane = useCallback( () => {
@@ -20,7 +26,7 @@ const JetpackSitesDashboardProvider = ( props ) => {
 
 	return (
 		<JetpackSitesDashboardContext.Provider value={ jetpackSitesDashboardContextValue }>
-			{ props.children }
+			{ children }
 		</JetpackSitesDashboardContext.Provider>
 	);
 };
