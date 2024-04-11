@@ -3,7 +3,7 @@ import { EditorComponent } from './editor-component';
 
 const selectors = {
 	primaryFieldByText: ( primaryFieldText: string ) =>
-		`.dataviews-view-table__primary-field:has-text("${ primaryFieldText }")`,
+		`.dataviews-view-table__primary-field:has-text("${ primaryFieldText }") a`,
 };
 
 /**

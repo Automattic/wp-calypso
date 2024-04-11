@@ -20,7 +20,7 @@
 		"clean": "npx rimraf dist",
 		"build": "NODE_ENV=production yarn dev && yarn translate",
 		"build:stats": "calypso-build",
-		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/calypso-stats",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/odyssey-stats/v1",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",
 		"test:js": "yarn run -T test-apps apps/odyssey-stats",
 		"test:js:watch": "yarn test:js --watch",

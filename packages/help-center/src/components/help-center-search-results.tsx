@@ -131,15 +131,18 @@ function HelpSearchResults( {
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 
-	const routeToQueryMapping = useContextBasedSearchMapping( currentRoute );
+	const { contextSearch, tailoredArticles } = useContextBasedSearchMapping( currentRoute, locale );
 
 	const [ debouncedQuery ] = useDebounce( searchQuery || '', 500 );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		debouncedQuery || routeToQueryMapping,
+		debouncedQuery || contextSearch, // If there's a query, we don't context search
 		locale,
 		{},
-		sectionName
+		sectionName,
+		debouncedQuery
+			? undefined // If there's a query, we don't need tailored articles
+			: tailoredArticles
 	);
 
 	const searchResults = searchData ?? [];
@@ -193,18 +196,21 @@ function HelpSearchResults( {
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_inlinehelp_article_select', {
-				link,
-				post_id,
-				blog_id,
-				source,
-				search_term: searchQuery,
-				location,
-				section: sectionName,
-			} )
-		);
+		const eventData = {
+			link,
+			post_id,
+			blog_id,
+			source,
+			search_term: searchQuery,
+			location,
+			section: sectionName,
+		};
 
+		const eventName = tailoredArticles?.post_ids.includes( post_id ?? 0 )
+			? 'calypso_inlinehelp_tailored_article_select'
+			: 'calypso_inlinehelp_article_select';
+
+		dispatch( recordTracksEvent( eventName, eventData ) );
 		onSelect( event, result );
 	};
 

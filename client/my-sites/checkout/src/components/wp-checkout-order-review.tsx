@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -18,7 +18,6 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -139,7 +138,7 @@ export default function WPCheckoutOrderReview( {
 	const { responseCart, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const reduxDispatch = useDispatch();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -264,7 +263,7 @@ export function CouponFieldArea( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
