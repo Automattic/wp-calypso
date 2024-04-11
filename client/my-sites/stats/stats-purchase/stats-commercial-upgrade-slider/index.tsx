@@ -3,14 +3,15 @@ import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	EXTENSION_THRESHOLD_IN_MILLION,
+	default as useAvailableUpgradeTiers,
+} from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsPlanTierUI } from '../types';
-import {
-	EXTENSION_THRESHOLD_IN_MILLION,
-	default as useAvailableUpgradeTiers,
-} from '../use-available-upgrade-tiers';
+
 import './styles.scss';
 
 function useTranslatedStrings() {

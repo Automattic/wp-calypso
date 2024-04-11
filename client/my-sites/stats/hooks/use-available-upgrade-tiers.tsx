@@ -7,7 +7,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { IAppState } from 'calypso/state/types';
-import { StatsPlanTierUI } from './types';
+import { StatsPlanTierUI } from '../stats-purchase/types';
 
 // Special case for per-unit fees over the max tier.
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
