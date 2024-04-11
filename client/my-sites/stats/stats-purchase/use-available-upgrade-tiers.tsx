@@ -59,7 +59,7 @@ const MOCK_PLAN_DATA = [
 /**
  * Filter the tiers that are lower than the current usage / limit
  */
-function filterLowerTiers(
+export function filterLowerTiers(
 	availableTiers: StatsPlanTierUI[],
 	usageData: PlanUsage | undefined
 ): StatsPlanTierUI[] {
@@ -83,7 +83,7 @@ function filterLowerTiers(
 	return tiers;
 }
 
-function extendTiersBeyondHighestTier(
+export function extendTiersBeyondHighestTier(
 	availableTiers: StatsPlanTierUI[],
 	currencyCode: string,
 	usageData: PlanUsage
@@ -128,24 +128,9 @@ function extendTiersBeyondHighestTier(
 	return availableTiers;
 }
 
-function useAvailableUpgradeTiers(
-	siteId: number | null,
-	shouldFilterPurchasedTiers = true
-): StatsPlanTierUI[] {
-	// 1. Get the tiers. Default to yearly pricing.
-	const commercialProduct = useSelector( ( state ) =>
-		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
-	) as ProductsList.RawAPIProduct | null;
-	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
-	const { data: usageData } = usePlanUsageQuery( siteId );
-
-	if ( ! commercialProduct?.price_tier_list ) {
-		return MOCK_PLAN_DATA;
-	}
-
-	const currentTierPrice = usageData?.current_tier?.minimum_price;
-	let tiersForUi = commercialProduct.price_tier_list.map(
-		( tier: PriceTierEntry ): StatsPlanTierUI => {
+export function transformTiers( price_tier_list: PriceTierEntry[] | null, currentTierPrice = 0 ) {
+	return (
+		price_tier_list?.map( ( tier: PriceTierEntry ): StatsPlanTierUI => {
 			// TODO: Some description of transform logic here.
 			// So as to clarify what we should expect from the API.
 			let tierUpgradePrice = 0;
@@ -175,8 +160,27 @@ function useAvailableUpgradeTiers(
 				price: tier.minimum_price_monthly_display ?? undefined,
 				views: tier.maximum_units ?? null,
 			};
-		}
+		} ) ?? []
 	);
+}
+
+function useAvailableUpgradeTiers(
+	siteId: number | null,
+	shouldFilterPurchasedTiers = true
+): StatsPlanTierUI[] {
+	// 1. Get the tiers. Default to yearly pricing.
+	const commercialProduct = useSelector( ( state ) =>
+		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
+	) as ProductsList.RawAPIProduct | null;
+	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
+	const { data: usageData } = usePlanUsageQuery( siteId );
+
+	if ( ! commercialProduct?.price_tier_list ) {
+		return MOCK_PLAN_DATA;
+	}
+
+	const currentTierPrice = usageData?.current_tier?.minimum_price;
+	let tiersForUi = transformTiers( commercialProduct?.price_tier_list, currentTierPrice );
 
 	// If usage is not available then we return early, as without usage we can't filter / extend tiers.
 	if ( ! usageData ) {
