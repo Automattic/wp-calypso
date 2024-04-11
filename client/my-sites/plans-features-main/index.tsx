@@ -456,6 +456,7 @@ const PlansFeaturesMain = ( {
 		selectedFeature,
 		selectedPlan,
 		showLegacyStorageFeature,
+		siteId,
 		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
