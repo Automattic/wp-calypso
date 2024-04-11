@@ -364,9 +364,11 @@ function StatsCommercialFlowOptOutForm( {
 
 	useEffect( () => {
 		setComemercialClassificationRunAt(
-			parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' )
+			parseInt(
+				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
+			)
 		);
-	}, [] );
+	}, [ siteId ] );
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -392,16 +394,19 @@ function StatsCommercialFlowOptOutForm( {
 		useOnDemandCommercialClassificationMutation( siteId );
 	const handleCommercialClassification = async () => {
 		const now = Date.now();
-		localStorage?.setItem( 'commercial_classification__button_clicked', `${ now }` );
+		localStorage?.setItem( `commercial_classification__button_clicked_${ siteId }`, `${ now }` );
 		setComemercialClassificationRunAt( now );
 		runCommercialClassificationAsync().catch( ( e ) => {
 			setErrorMessage( e.message );
 		} );
 	};
 	const commercialClassificationLastRunAt = useMemo(
-		() => parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' ),
+		() =>
+			parseInt(
+				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
+			),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ comemercialClassificationRunAt ]
+		[ comemercialClassificationRunAt, siteId ]
 	);
 	const hasRunLessThan3DAgo =
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
