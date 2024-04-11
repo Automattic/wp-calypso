@@ -9,7 +9,11 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { STATS_FEATURE_DATE_CONTROL, STATS_FEATURE_UTM_STATS } from '../constants';
+import {
+	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_UTM_STATS,
+	STATS_TYPE_DEVICE_STATS,
+} from '../constants';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from './';
 
@@ -21,6 +25,15 @@ const useUpsellCopy = ( statType: string ) => {
 		case STATS_FEATURE_UTM_STATS:
 			return translate(
 				'Track your campaign performance data with UTM codes. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+					},
+				}
+			);
+		case STATS_TYPE_DEVICE_STATS:
+			return translate(
+				'Look at what devices your users are on. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 				{
 					components: {
 						learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
