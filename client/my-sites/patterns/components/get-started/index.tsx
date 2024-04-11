@@ -47,7 +47,7 @@ export function PatternsGetStarted() {
 					<img
 						className="patterns-get-started__item-image"
 						src={ imageBlockPatterns }
-						alt={ translate( "A support page with the title 'Use block patterns'", {
+						alt={ translate( "Support page with the title 'Use block patterns'", {
 							comment:
 								'This string is the ALT text for an image depicting the Block Patterns support page',
 							textOnly: true,
@@ -74,7 +74,7 @@ export function PatternsGetStarted() {
 					<img
 						className="patterns-get-started__item-image"
 						src={ imagePageLayouts }
-						alt={ translate( "A support page with the title 'Understand Page Layouts'", {
+						alt={ translate( "Support page with the title 'Understand page layouts'", {
 							comment:
 								'This string is the ALT text for an image depicting the Page Layouts support page',
 							textOnly: true,
@@ -102,7 +102,7 @@ export function PatternsGetStarted() {
 						className="patterns-get-started__item-image"
 						src={ imagePreviewPublish }
 						alt={ translate(
-							"A row of buttons from the WordPress editor, with a cursor hovering over the 'Publish' button",
+							"Row of buttons from the WordPress editor, with a cursor hovering over the 'Publish' button",
 							{
 								comment:
 									'This string is the ALT text for an image depicting the a user clicking on a button labeled "Publish"',
