@@ -173,30 +173,32 @@ export default function AgencyDetailsForm( {
 	return (
 		<div className="agency-details-form">
 			<form onSubmit={ handleSubmit }>
-				<FormFieldset>
-					<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
-					<FormTextInput
-						id="firstName"
-						name="firstName"
-						value={ firstName }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setFirstName( event.target.value )
-						}
-						disabled={ isLoading }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="lastName">{ translate( 'Last name' ) }</FormLabel>
-					<FormTextInput
-						id="lastName"
-						name="lastName"
-						value={ lastName }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
-							setLastName( event.target.value )
-						}
-						disabled={ isLoading }
-					/>
-				</FormFieldset>
+				<div className="agency-details-form__fullname-container">
+					<FormFieldset>
+						<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
+						<FormTextInput
+							id="firstName"
+							name="firstName"
+							value={ firstName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setFirstName( event.target.value )
+							}
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastName">{ translate( 'Last name' ) }</FormLabel>
+						<FormTextInput
+							id="lastName"
+							name="lastName"
+							value={ lastName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setLastName( event.target.value )
+							}
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+				</div>
 				<FormFieldset>
 					<FormLabel htmlFor="agencyName">{ translate( 'Agency name' ) }</FormLabel>
 					<FormTextInput
