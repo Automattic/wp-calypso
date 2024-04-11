@@ -19,18 +19,18 @@ export function getCategoryUrlPath(
 }
 
 export function getOnboardingUrl( locale: Locale, isLoggedIn: boolean ) {
-	const refQueryString = new URLSearchParams( {
+	const refQuery = new URLSearchParams( {
 		ref: URL_REFERRER_PARAM,
 	} );
 
 	// The Assembler only works on larger viewports
 	if ( isAssemblerSupported() ) {
 		return localizeUrl(
-			`https://wordpress.com/setup/assembler-first?${ refQueryString }`,
+			`https://wordpress.com/setup/assembler-first?${ refQuery }`,
 			locale,
 			isLoggedIn
 		);
 	}
 
-	return localizeUrl( `https://wordpress.com/start?${ refQueryString }`, locale, isLoggedIn );
+	return localizeUrl( `https://wordpress.com/start?${ refQuery }`, locale, isLoggedIn );
 }
