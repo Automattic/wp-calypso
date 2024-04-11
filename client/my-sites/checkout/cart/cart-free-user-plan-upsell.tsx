@@ -63,7 +63,7 @@ const UpgradeText = ( { cart }: { cart: Pick< ResponseCart, 'products' > } ) => 
 				'features, plus the first year of your domain for free.',
 			{
 				args: {
-					extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
+					extraToPay: formatCurrency( extraToPay, firstDomain.currency, { isSmallestUnit: true } ),
 					planName,
 				},
 				components: {
@@ -79,7 +79,7 @@ const UpgradeText = ( { cart }: { cart: Pick< ResponseCart, 'products' > } ) => 
 			{
 				args: {
 					planName,
-					savings: formatCurrency( savings, firstDomain.currency ),
+					savings: formatCurrency( savings, firstDomain.currency, { isSmallestUnit: true } ),
 				},
 				components: {
 					strong: <strong />,
