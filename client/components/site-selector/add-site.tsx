@@ -14,7 +14,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 	const recordAddNewSite = useCallback( () => {
 		let event = 'calypso_add_new_jetpack_click';
 		if ( ! isJetpackCloud() ) {
-			event = isA8CForAgencies() ? 'calypso_add_new_A4A_click' : 'calypso_add_new_wordpress_click';
+			event = isA8CForAgencies() ? 'calypso_add_new_a4a_click' : 'calypso_add_new_wordpress_click';
 		}
 
 		dispatch( recordTracksEvent( event ) );
