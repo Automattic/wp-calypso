@@ -11,7 +11,7 @@ import { StatsPlanTierUI } from './types';
 
 // Special case for per-unit fees over the max tier.
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
-const EXTENDED_TIERS_AMOUNT = 6;
+const MAX_TIERS_NUMBER = 6;
 
 // TODO: Remove the mock data after release.
 // No need to translate mock data.
@@ -88,18 +88,17 @@ function extendTiersBeyondHighestTier(
 	currencyCode: string,
 	usageData: PlanUsage
 ): StatsPlanTierUI[] {
-	if (
-		availableTiers.length < EXTENDED_TIERS_AMOUNT &&
-		!! availableTiers[ availableTiers.length - 1 ].transform_quantity_divide_by
-	) {
-		const highestTier = availableTiers[ availableTiers.length - 1 ];
-
-		const purchasedExtendedTierCount =
+	const highestTier = availableTiers[ availableTiers.length - 1 ];
+	// Remove the first tier, which is used to extend higher tiers.
+	if ( availableTiers.length < MAX_TIERS_NUMBER && !! highestTier.transform_quantity_divide_by ) {
+		// Calculate the number of tiers to extend based on either current purchase or billable monthly views.
+		const startingTier =
 			Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
 				( highestTier.transform_quantity_divide_by || 1 ) -
-			EXTENSION_THRESHOLD_IN_MILLION;
-		const extendedTierCountStart = purchasedExtendedTierCount + 1;
-		const extendedTierCountEnd = extendedTierCountStart + EXTENDED_TIERS_AMOUNT;
+			EXTENSION_THRESHOLD_IN_MILLION +
+			1;
+		const extendedTierCountStart = Math.max( startingTier, 1 );
+		const extendedTierCountEnd = extendedTierCountStart + MAX_TIERS_NUMBER - availableTiers.length;
 
 		for (
 			let extendedTierCount = extendedTierCountStart;
@@ -116,20 +115,14 @@ function extendTiersBeyondHighestTier(
 				( highestTier?.views ?? 0 ) +
 				( highestTier.transform_quantity_divide_by ?? 0 ) * extendedTierCount;
 
-			const extendedTierAmount = extendedTierCount - purchasedExtendedTierCount;
-
 			availableTiers.push( {
 				minimum_price: totalPrice,
-				// Upgrade price for every 1M views.
-				upgrade_price: ( highestTier.per_unit_fee || 0 ) * extendedTierAmount,
+				upgrade_price: totalPrice - usageData?.current_tier?.minimum_price ?? 0,
 				price: monthlyPriceDisplay,
 				views: views,
 				extension: true,
 			} );
 		}
-
-		// Remove the first tier, which is used to extend higher tiers.
-		availableTiers = availableTiers.slice( 1 );
 	}
 
 	return availableTiers;
