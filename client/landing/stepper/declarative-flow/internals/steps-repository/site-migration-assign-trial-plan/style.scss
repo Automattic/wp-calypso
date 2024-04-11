@@ -2,20 +2,20 @@
 @import "@automattic/onboarding/styles/mixins";
 
 
-.assign-migration-trial-plan {
+.site-migration-assign-trial-plan {
 	padding: 0;
 	max-width: 540px;
 	text-align: center;
 	margin: 0 auto;
 
-	.assign-migration-trial-step {
+	.site-migration-assign-trial-plan {
 		padding: 1em;
 		max-width: 540px;
 		text-align: center;
 		margin: 16vh auto 0;
 	}
 
-	> .assign-migration-trial-step {
+	> .site-migration-assign-trial-plan {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -26,7 +26,7 @@
 		display: flex;
 	}
 
-	.assign-migration-trial-step__progress-step {
+	.site-migration-assign-trial-step__progress-header {
 		line-height: 40px;
 		letter-spacing: -0.4px;
 	}

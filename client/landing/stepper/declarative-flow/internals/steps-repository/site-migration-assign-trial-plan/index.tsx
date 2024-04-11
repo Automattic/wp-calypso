@@ -57,17 +57,17 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 			<StepContainer
 				shouldHideNavButtons={ true }
 				hideFormattedHeader={ true }
-				stepName="site-migration-assign-trial-plan-step"
+				stepName="site-migration-assign-trial-plan"
 				isHorizontalLayout={ true }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
-						<div className="site-migration-assign-trial-plan-step">
-							<h1 className="site-migration-assign-trial-plan-step__progress-step">
+						<div className="site-migration-assign-trial-plan">
+							<h1 className="site-migration-assign-trial-plan__progress-step">
 								{ __( 'Adding your free trial' ) }
 							</h1>
 							{ progress >= 0 ? <LoadingBar progress={ progress } /> : <LoadingEllipsis /> }
-							<p className="processing-step__subtitle">
+							<p className="site-migration-assign-trial-plan__subtitle">
 								{ __( 'Your free trial is currently being set up and may take a few minutes.' ) }
 							</p>
 						</div>
