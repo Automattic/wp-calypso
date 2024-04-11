@@ -266,6 +266,7 @@ export function SitesDashboard( {
 				enableSorting: false,
 			},
 		];
+
 		return <JetpackSitesDashboard data={ allSites } fields={ fields } />;
 	}
 	return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import JetpackSitesTable from '../jetpack-sites-table';
-import { JetpackSitesDashboardProvider } from './jetpack-sites-dashboard-provider';
 
 interface JetpackSitesDashboardProps {
 	data;
@@ -8,11 +7,7 @@ interface JetpackSitesDashboardProps {
 }
 
 const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) => {
-	return (
-		<JetpackSitesDashboardProvider>
-			<JetpackSitesTable data={ props.data } fields={ props.fields } />
-		</JetpackSitesDashboardProvider>
-	);
+	return <JetpackSitesTable data={ props.data } fields={ props.fields } />;
 };
 
 export default JetpackSitesDashboard;
