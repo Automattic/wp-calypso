@@ -17,11 +17,10 @@
 .pie-chart__tooltip {
 	display: flex;
 	align-items: center;
-
 	visibility: hidden;
+	box-sizing: border-box;
 	position: absolute;
 	width: 244px;
-	box-sizing: border-box;
 	background-color: var(--studio-gray-100);
 	color: var(--studio-white);
 	padding: 16px 24px;
@@ -31,13 +30,12 @@
 	&::after {
 		content: "";
 		position: absolute;
-		transition: all 0.2s ease-in;
-		top: -20px;
+		top: -12px;
 		right: 30px;
-		border-top: 10px solid transparent;
-		border-bottom: 10px solid var(--studio-gray-100);
-		border-left: 10px solid transparent;
-		border-right: 10px solid transparent;
+		border-top: 7px solid transparent;
+		border-bottom: 7px solid var(--studio-gray-100);
+		border-left: 7px solid transparent;
+		border-right: 7px solid transparent;
 	}
 
 	& > svg {

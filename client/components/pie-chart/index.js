@@ -10,8 +10,8 @@ import './style.scss';
 
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
-const TOOLTIP_OFFSET_X = -205;
-const TOOLTIP_OFFSET_Y = 14;
+const TOOLTIP_OFFSET_X = -207;
+const TOOLTIP_OFFSET_Y = 0;
 
 function transformData( data, { donut = false, startAngle = -Math.PI } ) {
 	const sortedData = sortBy( data, ( datum ) => datum.value )
@@ -71,7 +71,7 @@ class PieChart extends Component {
 					`${ current.icon }<div class="pie-chart__tooltip-content"><div>${ current.name }</div><div>${ percent }%</div></div>`
 				);
 			},
-			50,
+			30,
 			{
 				leading: true,
 				trailing: false,
