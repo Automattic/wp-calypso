@@ -28,6 +28,18 @@
 	border-radius: 4px;
 	pointer-events: none;
 
+	&::after {
+		content: "";
+		position: absolute;
+		transition: all 0.2s ease-in;
+		top: -20px;
+		right: 30px;
+		border-top: 10px solid transparent;
+		border-bottom: 10px solid var(--studio-gray-100);
+		border-left: 10px solid transparent;
+		border-right: 10px solid transparent;
+	}
+
 	& > svg {
 		margin-right: 8px;
 	}
