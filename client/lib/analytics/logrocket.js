@@ -32,8 +32,15 @@ export function maybeAddLogRocketScript() {
 		logRocketDebug( 'LogRocket script loaded' );
 		if ( window.LogRocket ) {
 			window.LogRocket.init( TRACKING_IDS.logRocket, {
+				dom: {
+					// None of the input elements will be recorded or sent to LogRocket
+					// @see https://docs.logrocket.com/reference/dom#sanitize-all-user-input-fields
+					inputSanitizer: true,
+				},
 				network: {
-					isEnabled: false, // We don't need to record network calls for now
+					// Disable recording of network data
+					// @see https://docs.logrocket.com/reference/network#disable-recording-of-network-data
+					isEnabled: false,
 				},
 			} );
 
