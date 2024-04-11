@@ -53,14 +53,14 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
-	const { isNewSite, isQualified } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
+	const { isNewSite, shouldShowPaywall } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
 		config.isEnabled( 'stats/checkout-flows-v2' ) &&
 		isSiteJetpackNotAtomic &&
 		! hasPlan &&
 		purchaseNotPostponed &&
-		isQualified;
+		shouldShowPaywall;
 
 	// TODO: If notices are not used by class components, we don't have any reasons to launch any of those actions anymore. If we do need them, we should consider refactoring them to another component.
 	const dispatch = useDispatch();
