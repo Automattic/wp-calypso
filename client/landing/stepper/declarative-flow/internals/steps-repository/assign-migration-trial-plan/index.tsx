@@ -17,7 +17,9 @@ import { requestSite } from 'calypso/state/sites/actions';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const AssignMigrationTrialPlanStep: Step = function AssignMigrationTrialPlanStep( { navigation } ) {
+import './style.scss';
+
+const AssignMigrationTrialPlanStep: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const progress = useSelect(
@@ -27,7 +29,7 @@ const AssignMigrationTrialPlanStep: Step = function AssignMigrationTrialPlanStep
 	const site = useSite();
 
 	const dispatch = useDispatch();
-	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
+	const { addHostingTrial, isSuccess } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			// After the trial is added, we need to request the site again to get the updated plan
 			site && dispatch( requestSite( site.ID ) );
@@ -35,19 +37,19 @@ const AssignMigrationTrialPlanStep: Step = function AssignMigrationTrialPlanStep
 	} );
 
 	useEffect( () => {
-		if ( submit ) {
+		if ( submit && site ) {
 			const assignMigrationTrialPlan = () => {
-				site && addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
+				site.ID && addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
 			};
 
 			assignMigrationTrialPlan();
 
-			if ( ! isAddingTrial ) {
+			if ( isSuccess ) {
 				submit();
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ submit ] );
 
 	return (
 		<>
