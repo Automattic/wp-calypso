@@ -34,12 +34,21 @@ describe( 'getAvailableUpgradeTiers', () => {
 		expect( extendedTiers[ 5 ].views ).toEqual( 3_000_000 );
 	} );
 	it( 'should return original tiers if purchased and higer monthly views', () => {
-		const usageData = { views_limit: 100_001, billableMonthlyViews: 10_000 };
+		const usageData = { views_limit: 100_00, billableMonthlyViews: 100_001 };
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( tiers[ 2 ].maximum_units );
 		expect( extendedTiers[ 0 ].minimum_price ).toEqual( tiers[ 2 ].minimum_price );
 		expect( extendedTiers[ 5 ].views ).toEqual( 4_000_000 );
+	} );
+	it( 'should return original tiers if not purchased and 1m+ monthly views', () => {
+		const usageData = { views_limit: null, billableMonthlyViews: 1_000_001 };
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( 2_000_000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 0 );
+		expect( extendedTiers[ 5 ].views ).toEqual( 7_000_000 );
 	} );
 } );
