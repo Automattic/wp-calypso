@@ -27,7 +27,8 @@ function selectPlanUsage( payload: PlanUsage ): PlanUsage {
 			payload?.recent_usages[ 0 ]?.views_count ?? 0,
 			payload?.recent_usages[ 1 ]?.views_count ?? 0,
 			payload?.recent_usages[ 2 ]?.views_count ?? 0,
-			payload?.current_usage?.views_count ?? 0
+			payload?.current_usage?.views_count ?? 0,
+			0
 		),
 	};
 }

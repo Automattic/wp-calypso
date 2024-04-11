@@ -56,21 +56,26 @@ const MOCK_PLAN_DATA = [
 	},
 ];
 
-function filterPurchasedTiers(
+/**
+ * Filter the tiers that are lower than the current usage / limit
+ */
+function filterLowerTiers(
 	availableTiers: StatsPlanTierUI[],
 	usageData: PlanUsage | undefined
 ): StatsPlanTierUI[] {
 	// Filter out already purchased tiers.
 	let tiers: StatsPlanTierUI[];
 
-	if ( ! usageData || usageData?.views_limit === null || usageData?.views_limit === 0 ) {
-		// No tier has been purchased.
+	if ( ! usageData || ( ! usageData?.views_limit && ! usageData?.billableMonthlyViews ) ) {
+		// No tier has been purchased or we don't have billable monthly views.
 		tiers = availableTiers;
 	} else {
+		// Filter out tiers that have been purchased or lower than the current usage.
 		tiers = availableTiers.filter( ( availableTier ) => {
 			return (
 				!! availableTier.transform_quantity_divide_by ||
-				( availableTier?.views as number ) > usageData?.views_limit
+				( availableTier?.views as number ) >
+					Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 )
 			);
 		} );
 	}
@@ -90,7 +95,8 @@ function extendTiersBeyondHighestTier(
 		const highestTier = availableTiers[ availableTiers.length - 1 ];
 
 		const purchasedExtendedTierCount =
-			usageData?.views_limit / ( highestTier.transform_quantity_divide_by || 1 ) -
+			Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
+				( highestTier.transform_quantity_divide_by || 1 ) -
 			EXTENSION_THRESHOLD_IN_MILLION;
 		const extendedTierCountStart = purchasedExtendedTierCount + 1;
 		const extendedTierCountEnd = extendedTierCountStart + EXTENDED_TIERS_AMOUNT;
@@ -186,7 +192,7 @@ function useAvailableUpgradeTiers(
 
 	// 2. Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {
-		tiersForUi = filterPurchasedTiers( tiersForUi, usageData );
+		tiersForUi = filterLowerTiers( tiersForUi, usageData );
 	}
 
 	const currencyCode = commercialProduct.currency_code;
