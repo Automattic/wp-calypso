@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import { useContext } from 'react';
 import JetpackSitesPreviewPane from '../jetpack-sites-preview-pane';
@@ -16,7 +17,12 @@ const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) 
 	const { sitesViewState } = useContext( JetpackSitesDashboardContext );
 
 	return (
-		<div className="jetpack-sites-dashboard__container">
+		<div
+			className={ classNames(
+				'jetpack-sites-dashboard__container',
+				! sitesViewState.selectedSite && 'preview-hidden'
+			) }
+		>
 			<div className="jetpack-sites-dashboard__column sites-overview">
 				<JetpackSitesTable
 					data={ props.data }

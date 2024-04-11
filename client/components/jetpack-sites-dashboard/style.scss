@@ -7,13 +7,19 @@
 	margin: 48px auto;
 	padding: 0;
 	gap: 16px;
+
+	&.preview-hidden {
+		.sites-overview {
+			flex-grow: 1;
+			transition: flex-grow 0.2s;
+		}
+	}
 }
 
 .jetpack-sites-dashboard__column {
 	flex: 1;
 
 	&.sites-overview {
-		width: 400px;
 		flex: unset;
 		transition: all 0.2s;
 		background: var(--studio-white);
