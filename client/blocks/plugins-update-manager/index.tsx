@@ -20,6 +20,7 @@ import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
+import { ScheduleNotifications } from './schedule-notifications';
 import './styles.scss';
 
 interface Props {
@@ -83,6 +84,10 @@ export const PluginsUpdateManager = ( props: Props ) => {
 		edit: {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
 			title: translate( 'Edit schedule' ),
+		},
+		notifications: {
+			component: <ScheduleNotifications onNavBack={ onNavBack } />,
+			title: translate( 'Scheduled Updates Notifications' ),
 		},
 	}[ context ];
 

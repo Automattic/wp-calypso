@@ -16,7 +16,7 @@ import { useSiteSlug } from './hooks/use-site-slug';
 import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
 import type { SyncSuccessParams } from './types';
 
-import './schedule-form.scss';
+import './forms.scss';
 
 interface Props {
 	scheduleForEdit?: ScheduleUpdates;

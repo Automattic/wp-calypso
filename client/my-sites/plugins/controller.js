@@ -126,7 +126,6 @@ export function updatesManager( context, next ) {
 		goToScheduledUpdatesList();
 		return;
 	}
-
 	switch ( context.params.action ) {
 		case 'logs':
 			context.primary = createElement( PluginsUpdateManager, {
@@ -153,7 +152,14 @@ export function updatesManager( context, next ) {
 				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
-
+		case 'notifications':
+			context.primary = createElement( PluginsUpdateManager, {
+				siteSlug,
+				scheduleId,
+				context: 'notifications',
+				onNavBack: goToScheduledUpdatesList,
+			} );
+			break;
 		case 'list':
 		default:
 			context.primary = createElement( PluginsUpdateManager, {
