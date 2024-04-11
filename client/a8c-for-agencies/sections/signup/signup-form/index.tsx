@@ -39,10 +39,13 @@ export default function SignupForm() {
 
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_create_agency_submit', {
+					first_name: payload.firstName,
+					last_name: payload.lastName,
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
 					managed_sites: payload.managedSites,
 					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
+					products_offered: ( payload.productsOffered || [] ).join( ',' ),
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
