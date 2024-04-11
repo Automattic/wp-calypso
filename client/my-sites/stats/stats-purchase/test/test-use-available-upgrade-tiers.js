@@ -51,7 +51,7 @@ describe( 'extendTiersBeyondHighestTier', () => {
 
 		expect( extendedTiers.length ).toBe( 6 );
 		expect( extendedTiers[ 0 ].views ).toEqual( newTiers[ 0 ].views );
-		expect( extendedTiers[ 5 ].views ).toEqual( 8e6 ); // should be 9m??!!
+		expect( extendedTiers[ 5 ].views ).toEqual( 8e6 );
 	} );
 	it( 'should return original tiers with monthly views, current tier whichever higher', () => {
 		const usageData = { views_limit: 100000, billableMonthlyViews: 10000 };
