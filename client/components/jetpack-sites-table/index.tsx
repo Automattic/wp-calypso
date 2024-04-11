@@ -10,8 +10,6 @@ interface JetpackSitesTableProps {
 
 const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
 	const { sitesViewState, setSitesViewState } = useContext( JetpackSitesDashboardContext );
-	const totalSites = props.data?.total || 0;
-	const totalPages = Math.ceil( totalSites / 50 );
 
 	return (
 		<div>
@@ -21,7 +19,7 @@ const JetpackSitesTable: React.FC< JetpackSitesTableProps > = ( props ) => {
 				view={ sitesViewState }
 				onChangeView={ setSitesViewState }
 				actions={ [] }
-				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
+				paginationInfo={ props.paginationInfo }
 			/>
 		</div>
 	);

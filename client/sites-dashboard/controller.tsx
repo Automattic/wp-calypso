@@ -6,7 +6,7 @@ import {
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
-import { JetpackSitesDashboardProvider } from 'calypso/components/jetpack-sites-dashboard/jetpack-sites-dashboard-provider';
+import { JetpackSitesDashboardProvider } from 'calypso/components/jetpack-sites-dashboard';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';

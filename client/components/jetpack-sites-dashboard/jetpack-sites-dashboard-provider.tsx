@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { initialSitesViewState } from './constants';
 import JetpackSitesDashboardContext from './jetpack-sites-dashboard-context';
 
-export const JetpackSitesDashboardProvider = ( props ) => {
+const JetpackSitesDashboardProvider = ( props ) => {
 	const [ sitesViewState, setSitesViewState ] = useState( initialSitesViewState );
 
 	const openSitePreviewPane = useCallback( () => {
@@ -24,3 +24,5 @@ export const JetpackSitesDashboardProvider = ( props ) => {
 		</JetpackSitesDashboardContext.Provider>
 	);
 };
+
+export default JetpackSitesDashboardProvider;

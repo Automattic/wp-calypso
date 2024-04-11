@@ -4,10 +4,17 @@ import JetpackSitesTable from '../jetpack-sites-table';
 interface JetpackSitesDashboardProps {
 	data;
 	fields;
+	paginationInfo;
 }
 
 const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) => {
-	return <JetpackSitesTable data={ props.data } fields={ props.fields } />;
+	return (
+		<JetpackSitesTable
+			data={ props.data }
+			fields={ props.fields }
+			paginationInfo={ props.paginationInfo }
+		/>
+	);
 };
 
 export default JetpackSitesDashboard;

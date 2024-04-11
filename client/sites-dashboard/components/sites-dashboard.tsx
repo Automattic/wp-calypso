@@ -12,8 +12,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useRef, useContext } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackSitesDashboard from 'calypso/components/jetpack-sites-dashboard';
-import JetpackSitesDashboardContext from 'calypso/components/jetpack-sites-dashboard/jetpack-sites-dashboard-context';
+import {
+	JetpackSitesDashboard,
+	JetpackSitesDashboardContext,
+} from 'calypso/components/jetpack-sites-dashboard';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -212,7 +214,7 @@ export function SitesDashboard( {
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
-	const { openSitePreviewPane } = useContext( JetpackSitesDashboardContext );
+	const { openSitePreviewPane, sitesViewState } = useContext( JetpackSitesDashboardContext );
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		const fields = [
@@ -267,7 +269,19 @@ export function SitesDashboard( {
 			},
 		];
 
-		return <JetpackSitesDashboard data={ allSites } fields={ fields } />;
+		const { page, perPage } = sitesViewState;
+		const paginatedSites = allSites.slice( ( page - 1 ) * perPage, page * perPage );
+
+		return (
+			<JetpackSitesDashboard
+				data={ paginatedSites }
+				fields={ fields }
+				paginationInfo={ {
+					totalItems: allSites.length,
+					totalPages: Math.ceil( allSites.length / perPage ),
+				} }
+			/>
+		);
 	}
 	return (
 		<main>
