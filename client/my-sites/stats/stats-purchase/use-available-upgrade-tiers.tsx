@@ -1,5 +1,4 @@
 import { PRODUCT_JETPACK_STATS_YEARLY, PriceTierEntry } from '@automattic/calypso-products';
-import { ProductsList } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import {
 	default as usePlanUsageQuery,
@@ -7,6 +6,7 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { IAppState } from 'calypso/state/types';
 import { StatsPlanTierUI } from './types';
 
 // Special case for per-unit fees over the max tier.
@@ -164,16 +164,13 @@ export function transformTiers( price_tier_list: PriceTierEntry[] | null, curren
 	);
 }
 
-function useAvailableUpgradeTiers(
-	siteId: number | null,
+function getAvailableUpgradeTiers(
+	state: IAppState,
+	usageData: PlanUsage | undefined,
 	shouldFilterPurchasedTiers = true
 ): StatsPlanTierUI[] {
 	// 1. Get the tiers. Default to yearly pricing.
-	const commercialProduct = useSelector( ( state ) =>
-		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
-	) as ProductsList.RawAPIProduct | null;
-	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
-	const { data: usageData } = usePlanUsageQuery( siteId );
+	const commercialProduct = getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY );
 
 	if ( ! commercialProduct?.price_tier_list ) {
 		return MOCK_PLAN_DATA;
@@ -195,6 +192,19 @@ function useAvailableUpgradeTiers(
 	const currencyCode = commercialProduct.currency_code;
 	tiersForUi = extendTiersBeyondHighestTier( tiersForUi, currencyCode, usageData );
 
+	// 3. Return the relevant upgrade options as a list.
+	return tiersForUi;
+}
+
+function useAvailableUpgradeTiers(
+	siteId: number | null,
+	shouldFilterPurchasedTiers = true
+): StatsPlanTierUI[] {
+	const { data: usageData } = usePlanUsageQuery( siteId );
+
+	const tiersForUi = useSelector( ( state ) =>
+		getAvailableUpgradeTiers( state, usageData, shouldFilterPurchasedTiers )
+	);
 	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;
 }
