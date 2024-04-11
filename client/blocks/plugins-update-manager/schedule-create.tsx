@@ -104,7 +104,7 @@ export const ScheduleCreate = ( props: Props ) => {
 							</Button>
 						) }
 					</div>
-					<Text>New Schedule</Text>
+					<Text>{ translate( 'New Schedule' ) }</Text>
 					<div className="ch-placeholder"></div>
 				</CardHeader>
 				<CardBody>
