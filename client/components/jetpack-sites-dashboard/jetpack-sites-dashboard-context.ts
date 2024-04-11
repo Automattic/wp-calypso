@@ -5,6 +5,7 @@ const JetpackSitesDashboardContext = createContext( {
 	sitesViewState: initialSitesViewState,
 	setSitesViewState: () => {},
 	openSitePreviewPane: () => {},
+	closeSitePreviewPane: () => {},
 } );
 
 export default JetpackSitesDashboardContext;

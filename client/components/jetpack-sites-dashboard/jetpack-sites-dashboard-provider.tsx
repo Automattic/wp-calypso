@@ -11,17 +11,28 @@ const JetpackSitesDashboardProvider: React.FC< JetpackSitesDashboardProviderProp
 } ) => {
 	const [ sitesViewState, setSitesViewState ] = useState( initialSitesViewState );
 
-	const openSitePreviewPane = useCallback( () => {
-		setSitesViewState( {
-			...sitesViewState,
-			type: 'list',
-		} );
-	}, [ setSitesViewState, sitesViewState ] );
+	const openSitePreviewPane = useCallback(
+		( site ) => {
+			setSitesViewState( {
+				...sitesViewState,
+				selectedSite: site,
+				type: 'list',
+			} );
+		},
+		[ setSitesViewState, sitesViewState ]
+	);
+
+	const closeSitePreviewPane = useCallback( () => {
+		if ( sitesViewState.selectedSite ) {
+			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+		}
+	}, [ sitesViewState, setSitesViewState ] );
 
 	const jetpackSitesDashboardContextValue = {
 		sitesViewState,
 		setSitesViewState,
 		openSitePreviewPane,
+		closeSitePreviewPane,
 	};
 
 	return (

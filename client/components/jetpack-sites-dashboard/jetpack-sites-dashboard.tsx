@@ -1,5 +1,8 @@
-import React from 'react';
+import * as React from 'react';
+import { useContext } from 'react';
+import JetpackSitesPreviewPane from '../jetpack-sites-preview-pane';
 import JetpackSitesTable from '../jetpack-sites-table';
+import JetpackSitesDashboardContext from './jetpack-sites-dashboard-context';
 import type { DataViewsPaginationInfo } from '../jetpack-sites-table/types';
 
 interface JetpackSitesDashboardProps {
@@ -9,12 +12,17 @@ interface JetpackSitesDashboardProps {
 }
 
 const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) => {
+	const { sitesViewState } = useContext( JetpackSitesDashboardContext );
+
 	return (
-		<JetpackSitesTable
-			data={ props.data }
-			fields={ props.fields }
-			paginationInfo={ props.paginationInfo }
-		/>
+		<div>
+			<JetpackSitesTable
+				data={ props.data }
+				fields={ props.fields }
+				paginationInfo={ props.paginationInfo }
+			/>
+			{ sitesViewState.selectedSite && <JetpackSitesPreviewPane /> }
+		</div>
 	);
 };
 

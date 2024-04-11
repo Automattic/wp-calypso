@@ -10,4 +10,5 @@ export const initialSitesViewState = {
 	filters: [],
 	layout: {},
 	hiddenFields: [],
+	selectedSite: undefined,
 };
