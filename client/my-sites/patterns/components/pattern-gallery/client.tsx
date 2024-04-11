@@ -7,7 +7,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
 	GRID_VIEW_VIEWPORT_WIDTH,
-	LIST_VIEW_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
@@ -176,7 +175,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							key={ pattern.ID }
 							pattern={ pattern }
 							patternTypeFilter={ patternTypeFilter }
-							viewportWidth={ isGridView ? GRID_VIEW_VIEWPORT_WIDTH : LIST_VIEW_VIEWPORT_WIDTH }
+							viewportWidth={ isGridView ? GRID_VIEW_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
 
