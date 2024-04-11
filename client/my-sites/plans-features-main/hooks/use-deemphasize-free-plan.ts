@@ -1,24 +1,20 @@
-import config from '@automattic/calypso-config';
+import { useExperiment } from 'calypso/lib/explat';
 import type { DataResponse } from '@automattic/plans-grid-next';
 
 function useDeemphasizeFreePlan(
 	flowName?: string | null,
 	paidDomainName?: string
 ): DataResponse< boolean > {
-	if (
-		config.isEnabled( 'onboarding/deemphasize-free-plan' ) &&
-		flowName === 'onboarding' &&
-		paidDomainName != null
-	) {
-		return {
-			isLoading: false,
-			result: true,
-		};
-	}
+	const [ isLoading, experimentAssignment ] = useExperiment(
+		'calypso_signup_onboarding_deemphasize_free_plan',
+		{
+			isEligible: flowName === 'onboarding',
+		}
+	);
 
 	return {
-		isLoading: false,
-		result: false,
+		isLoading,
+		result: experimentAssignment?.variationName === 'treatment' && paidDomainName != null,
 	};
 }
 
