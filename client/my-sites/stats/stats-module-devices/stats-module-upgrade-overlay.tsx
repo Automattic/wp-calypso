@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { STATS_TYPE_DEVICE_STATS } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
 import StatsListCard from '../stats-list/stats-list-card';
 
@@ -16,8 +15,6 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 	siteId,
 	className,
 } ) => {
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) || '' );
-
 	const fakeData = [
 		{
 			label: 'Windows',
@@ -66,8 +63,8 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 			overlay={
 				<StatsCardUpsellJetpack
 					className="stats-module__upsell"
-					siteSlug={ siteSlug }
-					tracksEvent="stats_devices_upgrade_clicked"
+					siteId={ siteId }
+					statType={ STATS_TYPE_DEVICE_STATS }
 				/>
 			}
 		></StatsListCard>
