@@ -1,7 +1,8 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
-$blueberry-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-$blueberry-hover-color: #2145e6;
+$blueberry-color: #2145e6;
+$blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 
 @mixin question-options-container {
 	display: flex;
@@ -12,14 +13,18 @@ $blueberry-hover-color: #2145e6;
 }
 
 @mixin question-option-control {
-	flex-basis: calc(50% - 48px);
+	flex-basis: calc(100% - 48px);
 	border-radius: 2px;
 	border: solid 1px $studio-gray-5;
 	padding: 16px;
 	cursor: pointer;
 
 	&:hover {
-		border-color: $blueberry-hover-color;
+		border-color: $blueberry-color;
+	}
+
+	@media (min-width: $break-medium) {
+		flex-basis: calc(50% - 48px);
 	}
 }
 
@@ -53,6 +58,10 @@ $blueberry-hover-color: #2145e6;
 		.question-options__option-control {
 			@include question-option-control;
 
+			&.checked {
+				border-color: $blueberry-color;
+			}
+
 			input[type="radio"] {
 				height: 20px;
 				width: 20px;
@@ -61,14 +70,14 @@ $blueberry-hover-color: #2145e6;
 				border-color: $studio-gray-20;
 
 				&:checked {
-					border-color: $blueberry-hover-color;
+					border-color: $blueberry-color;
 				}
 
 				&:checked::before {
 					margin: 2px;
 					width: 14px;
 					height: 14px;
-					background-color: $blueberry-hover-color;
+					background-color: $blueberry-color;
 				}
 			}
 

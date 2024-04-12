@@ -8,7 +8,9 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 			{ question.options.map( ( option, index ) => (
 				<div
 					key={ index }
-					className="question-options__option-control components-radio-control__option"
+					className={ `question-options__option-control components-radio-control__option ${
+						value.includes( option.value ) ? 'checked' : ''
+					}` }
 					onClick={ () => onChange( question.key, [ option.value ] ) }
 				>
 					<input
