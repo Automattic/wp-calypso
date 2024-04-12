@@ -96,6 +96,8 @@ export function usePatterns(
 
 				if ( ! queryData ) {
 					queryClient.setQueryData( queryKey, patterns );
+					// We immediately invalidate the pre-populated query data to make react-query
+					// refetch it when users navigate to that category
 					queryClient.invalidateQueries( { queryKey } );
 				}
 			}
