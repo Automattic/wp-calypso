@@ -147,8 +147,11 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 				name = "Copy Docker Logs"
 				scriptContent = """
 					#!/bin/bash
+					echo "Checkout Directory: %system.teamcity.build.checkoutDir%"
 					mkdir -p %system.teamcity.build.checkoutDir%/logs
 					docker logs $(docker ps -ql --no-trunc) > %system.teamcity.build.checkoutDir%/logs/docker-logs.log
+					# Append 'foobar' to the log file to test file writing
+					echo "foobar" >> %system.teamcity.build.checkoutDir%/logs/docker-logs.log
 				"""
 				executionMode = BuildStep.ExecutionMode.ALWAYS
 			})
