@@ -363,7 +363,8 @@ const PlansFeaturesMain = ( {
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
-	const planActionCallback = ( planSlug: PlanSlug ): boolean => {
+	// TODO: We should move the modal logic into a data store
+	const showModalAndExit = ( planSlug: PlanSlug ): boolean => {
 		if (
 			sitePlanSlug &&
 			isFreePlan( sitePlanSlug ) &&
@@ -391,7 +392,7 @@ const PlansFeaturesMain = ( {
 		cartHandler: onUpgradeClick,
 		flowName,
 		intent,
-		planActionCallback,
+		showModalAndExit,
 		sitePlanSlug,
 		siteSlug,
 		withDiscount,

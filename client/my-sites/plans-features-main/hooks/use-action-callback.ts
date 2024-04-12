@@ -115,7 +115,7 @@ function useGenerateActionCallback( {
 	cartHandler,
 	flowName,
 	intent,
-	planActionCallback,
+	showModalAndExit,
 	sitePlanSlug,
 	siteSlug,
 	withDiscount,
@@ -126,7 +126,7 @@ function useGenerateActionCallback( {
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
 	flowName?: string | null;
 	intent?: PlansIntent | null;
-	planActionCallback?: ( planSlug: PlanSlug ) => boolean;
+	showModalAndExit?: ( planSlug: PlanSlug ) => boolean;
 	sitePlanSlug?: PlanSlug | null;
 	siteSlug?: string | null;
 	withDiscount?: string;
@@ -150,7 +150,7 @@ function useGenerateActionCallback( {
 				upgradeCartItem = { product_slug: freeTrialPlanSlug as PlanSlug };
 			}
 
-			const earlyReturn = upgradePlanSlug && planActionCallback?.( upgradePlanSlug );
+			const earlyReturn = upgradePlanSlug && showModalAndExit?.( upgradePlanSlug );
 			if ( earlyReturn ) {
 				return;
 			}
