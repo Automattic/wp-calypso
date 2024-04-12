@@ -209,7 +209,7 @@ const businessBundle: GridPlan = {
 	},
 };
 
-const ecommerce = {
+const ecommerce: GridPlan = {
 	planSlug: 'ecommerce-bundle' as PlanSlug,
 	isVisible: true,
 	tagline: 'Create a powerful online store with built-in premium extensions.',
@@ -236,6 +236,7 @@ const ecommerce = {
 		currencyCode: 'AUD',
 		introOffer: null,
 	},
+	storageAddOnsForPlan: [],
 	features: {
 		wpcomFeatures,
 		jetpackFeatures,
@@ -286,7 +287,7 @@ const enterprise = {
 		storageOptions: [],
 	},
 };
-export const gridPlans = [
+export const gridPlans: GridPlan[] = [
 	freePlan,
 	personalBundle,
 	valueBundle,
