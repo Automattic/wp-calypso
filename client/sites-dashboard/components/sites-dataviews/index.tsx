@@ -51,7 +51,7 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 
 	const dispatch = useDispatch();
 	useEffect( () => {
-		dispatch( setSelectedSiteId( selectedSiteId ) );
+		dispatch( setSelectedSiteId( selectedSiteId || null ) );
 	}, [ dispatch, selectedSiteId ] );
 
 	const fields = useMemo(
