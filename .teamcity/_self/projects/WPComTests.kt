@@ -144,7 +144,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 			}
 
 			step(ScriptBuildStep {
-				name = "Copy Docker Logs"
+				name = "Copy Docker Container Logs and Capture Script Output"
 				scriptContent = """
 					#!/bin/bash
 					exec &> %system.teamcity.build.checkoutDir%/logs/script-run.log  # Redirect all output to script-run.log
@@ -160,18 +160,18 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 						echo "No Docker containers found. No logs to copy."
 					else
 						while read id; do
-							echo "Checking logs for container $id"
-							src_log_file="/var/lib/docker/containers/$id/$id-json.log"
-							dest_log_file="%system.teamcity.build.checkoutDir%/logs/$id-json.log"
+							echo "Checking logs for container ${'$'}id"
+							src_log_file="/var/lib/docker/containers/${'$'}id/${'$'}id-json.log"
+							dest_log_file="%system.teamcity.build.checkoutDir%/logs/${'$'}id-json.log"
 
-							if [ -f "$src_log_file" ]; then
-								cp "$src_log_file" "$dest_log_file"
-								echo "Logs copied from $src_log_file to $dest_log_file"
+							if [ -f "${'$'}src_log_file" ]; then
+								cp "${'$'}src_log_file" "${'$'}dest_log_file"
+								echo "Logs copied from ${'$'}src_log_file to ${'$'}dest_log_file"
 							else
-								echo "Log file $src_log_file does not exist"
+								echo "Log file ${'$'}src_log_file does not exist"
 							fi
 						done < container_ids.txt
-                    fi
+					fi
 
 					echo "Appending 'foobar' to a log file to ensure file system is writable."
 					echo "foobar" >> %system.teamcity.build.checkoutDir%/logs/test-foobar-log.txt
