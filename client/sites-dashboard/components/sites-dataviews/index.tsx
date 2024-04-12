@@ -9,6 +9,7 @@ import {
 import TimeSince from 'calypso/components/time-since';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { SiteActions } from '../sites-site-actions';
 import { SitePlan } from '../sites-site-plan';
 import { SiteStats } from '../sites-site-stats';
 import { SiteStatus } from '../sites-site-status';
@@ -89,7 +90,7 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 		{
 			id: 'actions',
 			header: __( 'Actions' ),
-			getValue: () => '-',
+			render: ( { item }: SitesDataViewsSite ) => <SiteActions site={ item } />,
 			enableHiding: false,
 			enableSorting: false,
 		},
