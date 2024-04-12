@@ -24,6 +24,7 @@ function useHighlights( earnings ) {
 			{
 				heading: translate( 'Earnings', { comment: 'Total WordAds earnings to date' } ),
 				icon: <Icon icon={ payment } />,
+				svg: payment,
 				value: getAmountAsFormattedString( total ),
 			},
 			{
@@ -31,6 +32,7 @@ function useHighlights( earnings ) {
 					comment: 'Total WordAds earnings that have been paid out',
 				} ),
 				icon: <Icon icon={ receipt } />,
+				svg: receipt,
 				value: getAmountAsFormattedString( paid ),
 			},
 			{
@@ -38,6 +40,7 @@ function useHighlights( earnings ) {
 					comment: 'Total WordAds earnings currently unpaid',
 				} ),
 				icon: <Icon icon={ tip } />,
+				svg: tip,
 				value: getAmountAsFormattedString( owed ),
 			},
 		];
