@@ -19,6 +19,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -79,6 +80,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 
 		artifactRules = """
 			gutenberg/artifacts => artifacts
+			logs/docker-logs.log => logs
 		""".trimIndent()
 
 		vcs {
@@ -140,6 +142,16 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
 				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
 			}
+
+			step(ScriptBuildStep {
+				name = "Copy Docker Logs"
+				scriptContent = """
+					#!/bin/bash
+					mkdir -p %system.teamcity.build.checkoutDir%/logs
+					docker logs $(docker ps -ql --no-trunc) > %system.teamcity.build.checkoutDir%/logs/docker-logs.log
+				"""
+				executionMode = BuildStep.ExecutionMode.ALWAYS
+			})
 		}
 	})
 }
