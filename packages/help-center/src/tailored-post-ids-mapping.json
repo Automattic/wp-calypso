@@ -5,7 +5,7 @@
 	"/stats/": [
 		{ "locale": "en", "post_ids": [ 276080, 3307, 276101, 4454, 98905 ], "blog_id": 9619154 }
 	],
-	"/mailboxes": [ { "locale": "en", "post_ids": [ 34087 ], "blog_id": 9619154 } ],
+	"/mailboxes/": [ { "locale": "en", "post_ids": [ 34087 ], "blog_id": 9619154 } ],
 	"/checkout/": [
 		{ "locale": "en", "post_ids": [ 100856, 199786, 267108, 1988, 267100 ], "blog_id": 9619154 }
 	],
@@ -15,11 +15,13 @@
 	"/themes/": [
 		{ "locale": "en", "post_ids": [ 2278, 184023, 188667, 259706, 294101 ], "blog_id": 9619154 }
 	],
-	"/domains/manage": {
-		"locale": "en",
-		"post_ids": [ 2784, 137759, 2789, 185130, 1988 ],
-		"blog_id": 9619154
-	},
+	"/domains/manage": [
+		{
+			"locale": "en",
+			"post_ids": [ 2784, 137759, 2789, 185130, 1988 ],
+			"blog_id": 9619154
+		}
+	],
 	"/media/": [
 		{ "locale": "en", "post_ids": [ 853, 3749, 152893, 4744, 1998 ], "blog_id": 9619154 }
 	],
@@ -113,6 +115,6 @@
 	"/earn/": [
 		{ "locale": "en", "post_ids": [ 120172, 154292, 169123, 255352, 3307 ], "blog_id": 9619154 }
 	],
-	"/import/": { "locale": "en", "post_ids": [ 41, 240055, 137759 ], "blog_id": 9619154 },
-	"/export/": { "locale": "en", "post_ids": [ 2087, 278472, 159843 ], "blog_id": 9619154 }
+	"/import": [ { "locale": "en", "post_ids": [ 41, 240055, 137759 ], "blog_id": 9619154 } ],
+	"/export/": [ { "locale": "en", "post_ids": [ 2087, 278472, 159843 ], "blog_id": 9619154 } ]
 }
