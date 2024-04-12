@@ -26,8 +26,6 @@ function useUpgradeHandler(
 	withDiscount?: string,
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
 ) {
-	// TODO:
-	// - clickedPlanSlug can likely be removed
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -165,21 +163,22 @@ function useGenerateActionCallback(
 			}
 
 			/* 3. Handle plan upgrade and plan upgrade tracks events */
-			if ( ! isFreePlan( upgradePlanSlug ) ) {
-				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
-					current_plan: sitePlanSlug,
-					upgrading_to: upgradePlanSlug,
-					saw_free_trial_offer: !! freeTrialPlanSlug,
-				} );
-			} else {
-				recordTracksEvent( 'calypso_signup_free_plan_click' );
+			switch ( ! isFreePlan( upgradePlanSlug ) ) {
+				case true:
+					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
+						current_plan: sitePlanSlug,
+						upgrading_to: upgradePlanSlug,
+						saw_free_trial_offer: !! freeTrialPlanSlug,
+					} );
+				case false:
+					recordTracksEvent( 'calypso_signup_free_plan_click' );
+				default:
+					handleUpgrade( {
+						cartItemForPlan: upgradeCartItem,
+						isFreeTrialCta,
+						selectedStorageAddOn,
+					} );
 			}
-
-			handleUpgrade( {
-				cartItemForPlan: upgradeCartItem,
-				isFreeTrialCta,
-				selectedStorageAddOn,
-			} );
 			return;
 		};
 	};
