@@ -59,7 +59,7 @@ import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
-import { CostOverridesList } from './cost-overrides-list';
+import { CostOverridesList, ProductsAndCostOverridesList } from './cost-overrides-list';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -201,11 +201,15 @@ function CheckoutSummaryPriceList() {
 				</CheckoutFirstSubtotalLineItem>
 			) }
 			{ ! shouldUseCheckoutV2 && costOverridesList.length > 0 && (
-				<CostOverridesList
-					costOverridesList={ costOverridesList }
-					currency={ responseCart.currency }
-					couponCode={ responseCart.coupon }
-				/>
+				<>
+					<ProductsAndCostOverridesList responseCart={ responseCart } />
+					<hr />
+					<CostOverridesList
+						costOverridesList={ costOverridesList }
+						currency={ responseCart.currency }
+						couponCode={ responseCart.coupon }
+					/>
+				</>
 			) }
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>

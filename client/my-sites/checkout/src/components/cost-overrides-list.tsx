@@ -14,8 +14,11 @@ import {
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import {
+	LineItemPrice,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
+	filterCostOverridesForLineItem,
+	getLabel,
 	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -356,5 +359,46 @@ export function LineItemCostOverrides( {
 				/>
 			) ) }
 		</CostOverridesListStyle>
+	);
+}
+
+const ProductTitleAreaForCostOverridesList = styled.div`
+	word-break: break-word;
+	font-size: 14px;
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5em;
+`;
+
+function ProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const costOverridesList = filterCostOverridesForLineItem( product, translate );
+	const label = getLabel( product );
+	const actualAmountDisplay = formatCurrency(
+		product.item_original_subtotal_integer,
+		product.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
+	return (
+		<div>
+			<ProductTitleAreaForCostOverridesList>
+				<span>{ label }</span>
+				<LineItemPrice actualAmount={ actualAmountDisplay } />
+			</ProductTitleAreaForCostOverridesList>
+			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
+		</div>
+	);
+}
+
+export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
+	return (
+		<div>
+			{ responseCart.products.map( ( product ) => (
+				<ProductAndCostOverridesList product={ product } key={ product.uuid } />
+			) ) }
+		</div>
 	);
 }
