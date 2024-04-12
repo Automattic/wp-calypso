@@ -45,11 +45,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		}: StatsNoticeProps ) => {
 			// Gate notices for WPCOM sites behind a flag.
 			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) &&
-				isWpcom &&
-				! isVip &&
-				! isP2 &&
-				! isOwnedByTeam51;
+				config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
@@ -63,7 +59,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				// Show the notice if the site has not purchased the paid stats product.
 				! hasPaidStats &&
 				// Show the notice only if the site is commercial.
-				isCommercial
+				isCommercial &&
+				! isVip
 			);
 		},
 		disabled: ! config.isEnabled( 'stats/type-detection' ),
@@ -83,11 +80,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		}: StatsNoticeProps ) => {
 			// Gate notices for WPCOM sites behind a flag.
 			const showUpgradeNoticeForWpcomSites =
-				config.isEnabled( 'stats/paid-wpcom-stats' ) &&
-				isWpcom &&
-				! isVip &&
-				! isP2 &&
-				! isOwnedByTeam51;
+				config.isEnabled( 'stats/paid-wpcom-stats' ) && isWpcom && ! isP2 && ! isOwnedByTeam51;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
@@ -101,7 +94,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				// Show the notice if the site has not purchased the paid stats product.
 				! hasPaidStats &&
 				// Show the notice if the site is not commercial.
-				( ! config.isEnabled( 'stats/type-detection' ) || ! isCommercial )
+				( ! config.isEnabled( 'stats/type-detection' ) || ! isCommercial ) &&
+				! isVip
 			);
 		},
 		disabled: false,

@@ -164,7 +164,7 @@ const siteMigration: Flow = {
 						return exitFlow(
 							addQueryArgs(
 								{ siteId, siteSlug, from, origin: STEPS.SITE_MIGRATION_IDENTIFY.slug },
-								'/setup/site-setup/importList'
+								`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }`
 							)
 						);
 					}
@@ -180,7 +180,7 @@ const siteMigration: Flow = {
 					// Switch to the normal Import flow.
 					if ( providedDependencies?.destination === 'import' ) {
 						return exitFlow(
-							`/setup/site-setup/importList?siteSlug=${ siteSlug }&siteId=${ siteId }`
+							`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=${ siteSlug }&siteId=${ siteId }`
 						);
 					}
 
@@ -242,7 +242,7 @@ const siteMigration: Flow = {
 						);
 						goToCheckout( {
 							flowName: 'site-migration',
-							stepName: 'site-migration-upgrade-plan',
+							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,

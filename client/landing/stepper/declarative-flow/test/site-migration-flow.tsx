@@ -37,7 +37,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-import-or-migrate?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com',
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
@@ -54,7 +54,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify'
+				`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify`
 			);
 		} );
 
@@ -68,7 +68,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importList?siteSlug=example.wordpress.com&origin=site-migration-identify'
+				`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=example.wordpress.com&origin=site-migration-identify`
 			);
 		} );
 
@@ -83,7 +83,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/processing',
+				path: `/${ STEPS.PROCESSING.slug }`,
 				state: {
 					bundleProcessing: true,
 				},
@@ -94,8 +94,7 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL:
-					'/setup/site-migration-upgrade-plan?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com',
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
@@ -103,11 +102,10 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination:
-					'/setup/site-migration/bundleTransfer?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com',
+				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',
-				stepName: 'site-migration-upgrade-plan',
+				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 			} );
 		} );
 

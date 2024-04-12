@@ -7,7 +7,7 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
-import { useMemo } from 'react';
+import { ComponentClass, useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import {
 	isFetchingSitePurchases,
@@ -93,3 +93,9 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isLoading: ! hasLoadedSitePurchases || isRequestingSitePurchases,
 	};
 }
+
+export const withStatsPurchases =
+	( WrappedComponent: ComponentClass ) => ( props: { siteId: number | null } ) => {
+		const statsPurchases = useStatsPurchases( props.siteId );
+		return <WrappedComponent { ...props } { ...statsPurchases } />;
+	};
