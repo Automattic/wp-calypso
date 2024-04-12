@@ -14,6 +14,7 @@ type CategoryPillNavigationProps = {
 	buttons?: {
 		icon: React.ReactElement< typeof Icon >;
 		label: string;
+		id: string;
 		link: string;
 		isActive?: boolean;
 	}[];
@@ -23,12 +24,14 @@ type CategoryPillNavigationProps = {
 		link: string;
 	}[];
 	selectedCategoryId: string;
+	onSelect?: ( selectedId: string ) => void;
 };
 
 export const CategoryPillNavigation = ( {
 	buttons,
 	categories,
 	selectedCategoryId,
+	onSelect = () => {},
 }: CategoryPillNavigationProps ) => {
 	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
@@ -101,6 +104,7 @@ export const CategoryPillNavigation = ( {
 					{ buttons?.map( ( button ) => (
 						<SelectDropdown.Item
 							key={ button.label }
+							onClick={ () => onSelect( button.id ) }
 							path={ addLocaleToPathLocaleInFront( button.link, locale ) }
 							selected={ button.isActive }
 						>
@@ -110,6 +114,7 @@ export const CategoryPillNavigation = ( {
 					{ categories?.map( ( category ) => (
 						<SelectDropdown.Item
 							key={ category.id }
+							onClick={ () => onSelect( category.id ) }
 							path={ addLocaleToPathLocaleInFront( category.link, locale ) }
 							selected={ category.id === selectedCategoryId }
 						>
@@ -129,6 +134,7 @@ export const CategoryPillNavigation = ( {
 						<LocalizedLink
 							key={ button.label }
 							href={ button.link }
+							onClick={ () => onSelect( button.id ) }
 							className={ classnames( 'category-pill-navigation__button', {
 								'is-active': button.isActive,
 							} ) }
@@ -169,6 +175,7 @@ export const CategoryPillNavigation = ( {
 						<LocalizedLink
 							key={ category.id }
 							href={ category.link }
+							onClick={ () => onSelect( category.id ) }
 							className={ classnames( 'category-pill-navigation__button', {
 								'is-active': category.id === selectedCategoryId,
 							} ) }

@@ -28,6 +28,7 @@ import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
+import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
@@ -117,6 +118,7 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
+	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
 		usePatternsContext();
 
@@ -290,12 +292,16 @@ export const PatternLibrary = ( {
 							buttons={ [
 								{
 									icon: <Icon icon={ iconCategory } size={ 26 } />,
+									id: 'all',
 									label: translate( 'All Categories' ),
 									link: addLocaleToPathLocaleInFront( '/patterns' ),
 									isActive: ! category,
 								},
 							] }
 							categories={ categoryNavList }
+							onSelect={ ( selectedId ) =>
+								recordPatternsEvent( 'calypso_pattern_library_filter', { category: selectedId } )
+							}
 						/>
 
 						<div className="pattern-library__body-search">
