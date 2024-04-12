@@ -362,6 +362,12 @@ export function LineItemCostOverrides( {
 	);
 }
 
+const ProductsAndCostOverridesListWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+`;
+
 const ProductTitleAreaForCostOverridesList = styled.div`
 	word-break: break-word;
 	font-size: 14px;
@@ -383,13 +389,13 @@ function ProductAndCostOverridesList( { product }: { product: ResponseCartProduc
 		}
 	);
 	return (
-		<div>
+		<ProductsAndCostOverridesListWrapper>
 			<ProductTitleAreaForCostOverridesList>
 				<span>{ label }</span>
 				<LineItemPrice actualAmount={ actualAmountDisplay } />
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
-		</div>
+		</ProductsAndCostOverridesListWrapper>
 	);
 }
 
