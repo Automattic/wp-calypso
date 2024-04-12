@@ -56,12 +56,6 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 					</div>
 					<div className="hosting__content">
 						<div className="hosting__content-row">
-							<div className="hosting__content-label">Status</div>
-							<div className="hosting__content-value">
-								<div className="hosting__content-live-text">{ translate( 'Live' ) }</div>
-							</div>
-						</div>
-						<div className="hosting__content-row">
 							<div className="hosting__content-label">Host</div>
 							<div className="hosting__content-value">
 								{ formatHostingProviderName( site.hosting_provider_guess ) }
