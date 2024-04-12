@@ -122,6 +122,13 @@ function WpcomBlockEditorNavSidebar() {
 	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
 		defaultCloseUrl = `${ siteOrigin }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
+	} else if ( window.calypsoifyGutenberg ) {
+		defaultCloseUrl = window.calypsoifyGutenberg.closeUrl;
+		defaultCloseLabel = get(
+			postType,
+			[ 'labels', 'all_items' ],
+			__( 'Back', 'full-site-editing' )
+		);
 	} else {
 		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 		defaultCloseLabel = get(
