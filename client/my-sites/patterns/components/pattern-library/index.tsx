@@ -290,6 +290,7 @@ export const PatternLibrary = ( {
 							buttons={ [
 								{
 									icon: <Icon icon={ iconCategory } size={ 26 } />,
+									id: 'all',
 									label: translate( 'All Categories' ),
 									link: addLocaleToPathLocaleInFront( '/patterns' ),
 									isActive: ! category,

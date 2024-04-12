@@ -2,7 +2,12 @@ import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils'
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
-export function LocalizedLink( { children, href = '', ...props }: JSX.IntrinsicElements[ 'a' ] ) {
+export function LocalizedLink( {
+	children,
+	href = '',
+	onClick = () => null,
+	...props
+}: JSX.IntrinsicElements[ 'a' ] ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	// `addLocaleToPathLocaleInFront` retrieves the active locale differently from `useLocale`.
@@ -11,7 +16,7 @@ export function LocalizedLink( { children, href = '', ...props }: JSX.IntrinsicE
 	const localizedHref = isLoggedIn ? href : addLocaleToPathLocaleInFront( href, locale );
 
 	return (
-		<a { ...props } href={ localizedHref }>
+		<a { ...props } href={ localizedHref } onClick={ onClick }>
 			{ children }
 		</a>
 	);
