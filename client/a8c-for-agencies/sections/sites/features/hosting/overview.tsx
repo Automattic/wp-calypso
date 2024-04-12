@@ -70,7 +70,7 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 						<div className="hosting__content-row">
 							<div className="hosting__content-label">PHP version</div>
 							<div className="hosting__content-value">
-								{ site.php_version_num > 0 ? site.php_version_num : translate( 'Unknown' ) }
+								{ site.php_version ? site.php_version : translate( 'Unknown' ) }
 							</div>
 						</div>
 						<div className="hosting__content-row">
