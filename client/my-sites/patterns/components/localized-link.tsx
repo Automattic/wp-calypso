@@ -5,7 +5,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 export function LocalizedLink( {
 	children,
 	href = '',
-	onClick = () => null,
+	onClick = () => {},
 	...props
 }: JSX.IntrinsicElements[ 'a' ] ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
