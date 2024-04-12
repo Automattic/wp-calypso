@@ -65,6 +65,32 @@ a.hosting-overview__link-button {
 	margin-bottom: 4px;
 }
 
+.hosting-overview__plan-storage {
+	border-radius: 4px;
+	border: 1px solid var(--studio-gray-0);
+	background: var(--studio-gray-0);
+	display: flex;
+	flex-direction: column;
+	gap: var(--grid-unit-30, 24px);
+	padding: var(--grid-unit-30, 24px);
+	color: var(--studio-gray-80, #2c3338);
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-extra-small;
+	font-style: normal;
+	line-height: 16px;
+	margin-top: 30px;
+}
+
+.hosting-overview__plan-storage-title-wrapper,
+.hosting-overview__plan-storage-title {
+	display: flex;
+	align-items: center;
+}
+
+.hosting-overview__plan-storage-title {
+	flex: 1;
+}
+
 .hosting-overview__actions-list {
 	list-style: none;
 	margin: 0;

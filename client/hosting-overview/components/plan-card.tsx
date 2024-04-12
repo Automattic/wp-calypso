@@ -1,7 +1,8 @@
-import { PLAN_PREMIUM, PlanSlug } from '@automattic/calypso-products';
-import { Button, Card, PlanPrice } from '@automattic/components';
+import { PlanSlug } from '@automattic/calypso-products';
+import { ProgressBar, Button, Card, PlanPrice } from '@automattic/components';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
+import { Icon, cloud } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
@@ -31,6 +32,8 @@ const PlanCard: FC = () => {
 	console.debug( 'plan', plan );
 	console.debug( 'pricingMeta', pricing );
 
+	const usedGigabytes = 47;
+	const availableUnitAmount = 50;
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -73,6 +76,37 @@ const PlanCard: FC = () => {
 					</div>
 					<div className="hosting-overview__plan-info">
 						{ translate( 'Expires on %s.', { args: moment( plan?.expiryDate ).format( 'LL' ) } ) }
+					</div>
+					<div className="hosting-overview__plan-storage">
+						<div className="hosting-overview__plan-storage-title-wrapper">
+							<div className="hosting-overview__plan-storage-title">
+								<Icon icon={ cloud } />
+								{ translate( 'STORAGE' ) }
+							</div>
+							<span>
+								{ translate(
+									'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount)dGB',
+									'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount)dGB',
+									{
+										count: usedGigabytes,
+										args: { usedGigabytes, availableUnitAmount },
+										comment:
+											'Must use unit abbreviation; describes used vs available storage amounts (e.g., Using 20.0GB of 30GB, Using 0.5GB of 20GB)',
+										components: { usedStorage: <span className="used-space__span" /> },
+									}
+								) }
+							</span>
+						</div>
+						<ProgressBar
+							color="var(--studio-red-30)"
+							value={ usedGigabytes / availableUnitAmount }
+							total={ 1 }
+						/>
+						<div>
+							<Button plain href={ `/plans/${ site?.slug }` }>
+								{ translate( 'Need more storage?' ) }
+							</Button>
+						</div>
 					</div>
 				</div>
 			</Card>
