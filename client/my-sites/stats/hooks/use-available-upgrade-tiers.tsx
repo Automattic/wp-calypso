@@ -89,7 +89,6 @@ function extendTiersBeyondHighestTier(
 	usageData: PlanUsage
 ): StatsPlanTierUI[] {
 	const highestTier = availableTiers[ availableTiers.length - 1 ];
-	// Remove the first tier, which is used to extend higher tiers.
 	if ( availableTiers.length < MAX_TIERS_NUMBER && !! highestTier.transform_quantity_divide_by ) {
 		// Calculate the number of tiers to extend based on either current purchase or billable monthly views.
 		const startingTier =
@@ -97,6 +96,11 @@ function extendTiersBeyondHighestTier(
 				( highestTier.transform_quantity_divide_by || 1 ) -
 			EXTENSION_THRESHOLD_IN_MILLION +
 			1;
+		// Remove the only tier that is used to extend higher tiers.
+		if ( availableTiers.length === 1 && startingTier > 0 ) {
+			availableTiers = availableTiers.slice( 1 );
+		}
+
 		const extendedTierCountStart = Math.max( startingTier, 1 );
 		const extendedTierCountEnd = extendedTierCountStart + MAX_TIERS_NUMBER - availableTiers.length;
 
