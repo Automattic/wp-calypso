@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
+import localStorageHelper from 'store';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -31,6 +32,22 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
+	},
+	useSideEffect( currentStepSlug ) {
+		const urlQueryParams = useQuery();
+		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
+
+		useLayoutEffect( () => {
+			if ( restoreFlowQueryParam === null ) {
+				localStorageHelper.set(
+					'site-migration-url',
+					window.location.pathname + window.location.search
+				);
+				return;
+			}
+			const storedUrl = localStorageHelper.get( 'site-migration-url' );
+			window.location.assign( storedUrl );
+		}, [ currentStepSlug, restoreFlowQueryParam ] );
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
