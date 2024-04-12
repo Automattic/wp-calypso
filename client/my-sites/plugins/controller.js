@@ -170,6 +170,20 @@ export function updatesManager( context, next ) {
 	next();
 }
 
+export function updatesManagerMultisite( context, next ) {
+	switch ( context.params.action ) {
+		case 'create':
+			context.primary = 'Create multisite scheduled updates';
+			break;
+
+		case 'edit':
+			context.primary = `Edit multisite scheduled updates ${ context.params.schedule_id }`;
+			break;
+	}
+
+	next();
+}
+
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
 	renderSinglePlugin( context, siteUrl );
