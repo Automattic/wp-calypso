@@ -2,6 +2,7 @@ import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
@@ -11,13 +12,19 @@ export const UpgradePlanHostingDetails = () => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
+	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
+	let importSiteHostName = '';
+
+	try {
+		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
+	} catch ( e ) {}
 
 	const headerMainText =
 		hasTranslation( 'Why should you host with us?' ) || isEnglishLocale
 			? translate( 'Why should you host with us?' )
 			: translate( 'Why you should host with us?' );
 
-	const { data: hostingProviderData } = useHostingProviderQuery( 'wenxinwendyju.com', true );
+	const { data: hostingProviderData } = useHostingProviderQuery( importSiteHostName, true );
 	const hostingProviderName = hostingProviderData?.hosting_provider?.name;
 
 	return (
