@@ -16,6 +16,7 @@ const FAKE_SITE: Site = {
 	is_favorite: false,
 	monitor_last_status_change: '',
 	php_version_num: 0,
+	php_version: '0',
 	wordpress_version: '0',
 	awaiting_plugin_updates: [ 'plugin-1' ],
 	is_connection_healthy: false,

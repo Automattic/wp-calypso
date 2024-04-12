@@ -56,6 +56,7 @@ const FAKE_SITE: Site = {
 		desktop: 10,
 	},
 	php_version_num: 7.4,
+	php_version: '0',
 	is_atomic: false,
 	sticker: [],
 	blogname: '',
