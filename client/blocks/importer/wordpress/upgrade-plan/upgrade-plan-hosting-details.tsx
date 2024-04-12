@@ -1,5 +1,6 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
@@ -10,12 +11,15 @@ export const UpgradePlanHostingDetails = () => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
+	const headerMainText =
+		hasTranslation( 'Why should you host with us?' ) || isEnglishLocale
+			? __( 'Why should you host with us?' )
+			: __( 'Why you should host with us?' );
+
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div className="import__upgrade-plan-hosting-details-header">
-				<p className="import__upgrade-plan-hosting-details-header-main">
-					{ __( 'Why you should host with us?' ) }
-				</p>
+				<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
 				<p className="import__upgrade-plan-hosting-details-header-subtext">
 					{ __( 'Check our performance, compared to the average WordPress host' ) }
 				</p>
@@ -30,8 +34,10 @@ export const UpgradePlanHostingDetails = () => {
 								size={ 24 }
 							/>
 							<div className="import__upgrade-plan-hosting-details-list-stats">
-								<strong>{ title }</strong>
-								<span>{ description }</span>
+								<p className="import__upgrade-plan-hosting-details-list-stats-title">{ title }</p>
+								<span className="import__upgrade-plan-hosting-details-list-stats-description">
+									{ description }
+								</span>
 							</div>
 						</li>
 					) ) }

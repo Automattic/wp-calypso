@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { STATS_FEATURE_UTM_STATS } from '../constants';
 import StatsCardUpsellJetpack from '../stats-card-upsell/stats-card-upsell-jetpack';
 import StatsListCard from '../stats-list/stats-list-card';
 
@@ -13,8 +12,6 @@ type StatsModuleUTMOverlayProps = {
 };
 
 const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId, className } ) => {
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) || '' );
-
 	const fakeData = [
 		{
 			label: 'google / cpc',
@@ -61,8 +58,8 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( { siteId
 			overlay={
 				<StatsCardUpsellJetpack
 					className="stats-module__upsell"
-					siteSlug={ siteSlug }
-					tracksEvent="stats_utm_upgrade_clicked"
+					siteId={ siteId }
+					statType={ STATS_FEATURE_UTM_STATS }
 				/>
 			}
 		></StatsListCard>

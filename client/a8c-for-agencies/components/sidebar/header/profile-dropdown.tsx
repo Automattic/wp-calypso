@@ -106,7 +106,10 @@ const ProfileDropdown = ( { compact, dropdownPosition = 'down' }: ProfileDropdow
 
 				{ ! compact && (
 					<div className="a4a-sidebar__profile-dropdown-button-label">
-						{ user?.display_name } <Icon icon={ chevronDown } />
+						<span className="a4a-sidebar__profile-dropdown-button-label-text">
+							{ user?.display_name }
+						</span>
+						<Icon icon={ chevronDown } />
 					</div>
 				) }
 			</Button>

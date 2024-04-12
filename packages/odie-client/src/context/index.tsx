@@ -8,7 +8,7 @@ import {
 import { getOdieInitialMessage } from './get-odie-initial-message';
 import { useLoadPreviousChat } from './use-load-previous-chat';
 import type { Chat, Context, Message, Nudge, OdieAllowedBots } from '../types';
-import type { ReactNode, FC, PropsWithChildren } from 'react';
+import type { ReactNode, FC, PropsWithChildren, SetStateAction } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
@@ -35,7 +35,7 @@ type OdieAssistantContextInterface = {
 	odieClientId: string;
 	sendNudge: ( nudge: Nudge ) => void;
 	selectedSiteId?: number | null;
-	setChat: ( chat: Chat ) => void;
+	setChat: ( chat: SetStateAction< Chat > ) => void;
 	setIsLoadingChat: ( isLoadingChat: boolean ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setContext: ( context: Context ) => void;

@@ -4,13 +4,13 @@ import SurveyContainer from 'calypso/components/survey-container';
 import { useSurveyContext } from 'calypso/components/survey-container/context';
 import { Question } from 'calypso/components/survey-container/types';
 import useCachedAnswers from './hooks/use-cached-answers';
-import { mockQuestions } from './mock';
 import useSaveAnswersMutation from './mutations/use-save-answers-mutation';
 import EcommerceSegmentationSurveyProvider from './provider';
+import useSurveyStructureQuery from './queries/use-survey-structure-query';
 import type { Step } from '../../types';
 import './style.scss';
 
-const surveyKey = 'ecommerce-segmentation-survey';
+const surveyKey = 'survey-1';
 
 const CustomDocumentHead = () => {
 	const { currentQuestion } = useSurveyContext();
@@ -23,6 +23,7 @@ const CustomDocumentHead = () => {
 };
 
 const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
+	const { data: questions } = useSurveyStructureQuery( { surveyKey } );
 	const { mutate } = useSaveAnswersMutation( { surveyKey } );
 	const { answers, setAnswers } = useCachedAnswers( surveyKey );
 
@@ -48,7 +49,7 @@ const EcommerceSegmentationSurvey: Step = ( { navigation } ) => {
 		<EcommerceSegmentationSurveyProvider
 			navigation={ navigation }
 			onSubmitQuestion={ onSubmitQuestion }
-			questions={ mockQuestions }
+			questions={ questions }
 		>
 			<CustomDocumentHead />
 

@@ -31,7 +31,14 @@
 	align-items: flex-start;
 	gap: 4px;
 	color: var(--color-sidebar-text);
+}
 
+.a4a-sidebar__profile-dropdown-button-label-text {
+	max-width: 160px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: relative;
 }
 
 html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
