@@ -1,12 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-
 import config from '@automattic/calypso-config';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { checkoutTheme } from '@automattic/composite-checkout';
+import { Plans, Purchases } from '@automattic/data-stores';
 import { ThemeProvider } from '@emotion/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -20,8 +23,70 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
+jest.mock( '@automattic/data-stores', () => {
+	return {
+		...jest.requireActual( '@automattic/data-stores' ),
+		Plans: {
+			...jest.requireActual( '@automattic/data-stores' ).Plans,
+			usePlans: jest.fn(),
+			useSitePlans: jest.fn(),
+		},
+		Purchases: {
+			...jest.requireActual( '@automattic/data-stores' ).Purchases,
+			useSitePurchaseById: jest.fn(),
+		},
+	};
+} );
+
 describe( 'SecondaryCartPromotions', () => {
 	const store = applyMiddleware( thunk )( createStore )( storeData );
+
+	const queryClient = new QueryClient();
+
+	const Wrapper = ( { children } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
+		Plans.usePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: {},
+		} ) );
+		Plans.useSitePlans.mockImplementation( () => ( {
+			isLoading: false,
+			data: {
+				[ PLAN_PERSONAL ]: {
+					expiry: null,
+					pricing: {
+						billPeriod: 365,
+						currencyCode: 'USD',
+						originalPrice: {
+							full: 500,
+							monthly: 500,
+						},
+						discountedPrice: {
+							full: 250,
+							monthly: 250,
+						},
+					},
+				},
+			},
+		} ) );
+		// Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+		// 	[ PLAN_PERSONAL ]: {
+		// 		discountedPrice: {
+		// 			full: 120,
+		// 			monthly: 10,
+		// 		},
+		// 		originalPrice: {
+		// 			full: 240,
+		// 			monthly: 20,
+		// 		},
+		// 	},
+		// } ) );
+	} );
 
 	afterEach( () => {
 		mockConfig.isEnabled.mockRestore();
@@ -44,7 +109,8 @@ describe( 'SecondaryCartPromotions', () => {
 								isPurchaseRenewal={ true }
 							/>
 						</ThemeProvider>
-					</ReduxProvider>
+					</ReduxProvider>,
+					{ wrapper: Wrapper }
 				);
 				expect( queryByText( 'Renew your products together' ) ).toBeTruthy();
 				expect( queryByText( 'Renew all' ) ).toBeTruthy();
@@ -56,7 +122,8 @@ describe( 'SecondaryCartPromotions', () => {
 						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions responseCart={ null } addItemToCart={ jest.fn() } />
 						</ThemeProvider>
-					</ReduxProvider>
+					</ReduxProvider>,
+					{ wrapper: Wrapper }
 				);
 				expect( container ).toHaveTextContent( '' );
 			} );
@@ -72,7 +139,8 @@ describe( 'SecondaryCartPromotions', () => {
 								isPurchaseRenewal={ true }
 							/>
 						</ThemeProvider>
-					</ReduxProvider>
+					</ReduxProvider>,
+					{ wrapper: Wrapper }
 				);
 				await userEvent.click( queryByText( 'Renew all' ) );
 				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 2 );
@@ -101,7 +169,8 @@ describe( 'SecondaryCartPromotions', () => {
 								addItemToCart={ jest.fn() }
 							/>
 						</ThemeProvider>
-					</ReduxProvider>
+					</ReduxProvider>,
+					{ wrapper: Wrapper }
 				);
 				expect( queryByText( 'Renew your products together' ) ).toBeNull();
 			} );
@@ -119,7 +188,8 @@ describe( 'SecondaryCartPromotions', () => {
 								addItemToCart={ jest.fn() }
 							/>
 						</ThemeProvider>
-					</ReduxProvider>
+					</ReduxProvider>,
+					{ wrapper: Wrapper }
 				);
 				expect( queryByText( 'Upgrade and save' ) ).toBeTruthy();
 				expect( queryByText( 'Add to Cart' ) ).toBeTruthy();
@@ -135,7 +205,8 @@ describe( 'SecondaryCartPromotions', () => {
 								addItemToCart={ mockAddItemToCart }
 							/>
 						</ThemeProvider>
-					</ReduxProvider>
+					</ReduxProvider>,
+					{ wrapper: Wrapper }
 				);
 				await userEvent.click( queryByText( 'Add to Cart' ) );
 				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 1 );
