@@ -24,7 +24,7 @@ type CategoryPillNavigationProps = {
 		link: string;
 	}[];
 	selectedCategoryId: string;
-	onSelect?: ( selectedId: string ) => null;
+	onSelect?: ( selectedId: string ) => void;
 };
 
 export const CategoryPillNavigation = ( {
