@@ -1,14 +1,15 @@
 import { Button } from '@automattic/components';
 import { useSitesListSorting } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import {
 	JetpackSitesDashboard,
 	JetpackSitesDashboardContext,
 } from 'calypso/components/jetpack-sites-dashboard';
 import TimeSince from 'calypso/components/time-since';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { SiteActions } from '../sites-site-actions';
 import { SitePlan } from '../sites-site-plan';
 import { SiteStats } from '../sites-site-stats';
@@ -30,7 +31,12 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 	const userId = useSelector( getCurrentUserId );
 
 	const { openSitePreviewPane, sitesViewState } = useContext( JetpackSitesDashboardContext );
-	const { page: sitesViewPage, perPage: sitesViewPerPage, sort: sitesViewSort } = sitesViewState;
+	const {
+		page: sitesViewPage,
+		perPage: sitesViewPerPage,
+		sort: sitesViewSort,
+		selectedSiteId,
+	} = sitesViewState;
 
 	const sortedSites = useSitesListSorting( sites, {
 		sortKey: mapFieldIdToSortKey( sitesViewSort.field ),
@@ -42,6 +48,11 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 		sitesViewPage,
 		sitesViewPerPage
 	);
+
+	const dispatch = useDispatch();
+	useEffect( () => {
+		dispatch( setSelectedSiteId( selectedSiteId ) );
+	}, [ dispatch, selectedSiteId ] );
 
 	const fields = useMemo(
 		() => [

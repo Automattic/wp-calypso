@@ -16,7 +16,7 @@ export interface DataViewsState {
 	page: number;
 	hiddenFields: string[];
 	layout: DataViewsStateLayout;
-	selectedSiteId?: number;
+	selectedSiteId?: number | undefined;
 }
 
 export interface DataViewsField {
