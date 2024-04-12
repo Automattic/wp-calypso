@@ -10,6 +10,7 @@ import TimeSince from 'calypso/components/time-since';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { SitePlan } from '../sites-site-plan';
+import { SiteStats } from '../sites-site-stats';
 import { SiteStatus } from '../sites-site-status';
 import { getSitesPagination, mapFieldIdToSortKey } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -81,7 +82,7 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 		{
 			id: 'stats',
 			header: __( 'Stats' ),
-			getValue: () => '-',
+			render: ( { item }: SitesDataViewsSite ) => <SiteStats site={ item } />,
 			enableHiding: false,
 			enableSorting: false,
 		},
