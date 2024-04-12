@@ -91,7 +91,7 @@ export function ScheduleFormPlugins( props: Props ) {
 					{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
 				</Text>
 			) }
-			<div className="checkbox-options">
+			<div className="form-control-container">
 				<SearchControl id="plugins" onChange={ setPluginSearchTerm } value={ pluginSearchTerm } />
 				<div className="checkbox-options-container">
 					{ isPluginsFetching && <Spinner /> }
