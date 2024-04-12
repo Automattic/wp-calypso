@@ -122,14 +122,12 @@ function PatternPreviewFragment( {
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
 
-	let viewportWidth: number | undefined;
+	let viewportWidth: number | undefined = undefined;
 
 	if ( fixedViewportWidth ) {
 		viewportWidth = fixedViewportWidth;
 	} else if ( nodeSize.width ) {
 		viewportWidth = nodeSize.width * 1.16;
-	} else {
-		viewportWidth = undefined;
 	}
 
 	const translate = useTranslate();
