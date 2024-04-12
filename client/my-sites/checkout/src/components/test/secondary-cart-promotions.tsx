@@ -36,9 +36,7 @@ jest.mock( '@automattic/data-stores', () => {
 
 describe( 'SecondaryCartPromotions', () => {
 	const store = applyMiddleware( thunk )( createStore )( storeData );
-
 	const queryClient = new QueryClient();
-
 	const Wrapper = ( { children } ) => (
 		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 	);
