@@ -2,7 +2,7 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 const SORT_KEY_MAP = {
 	site: 'alphabetically',
-	'last-publish': 'lastInteractedWith',
+	'last-publish': 'updatedAt',
 };
 
 export function mapFieldIdToSortKey( fieldId: string ) {

@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useSitesListSorting } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import {
 	JetpackSitesDashboard,
 	JetpackSitesDashboardContext,
@@ -43,58 +43,61 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 		sitesViewPerPage
 	);
 
-	const fields = [
-		{
-			id: 'site',
-			header: __( 'Site' ),
-			getValue: ( { item }: SitesDataViewsSite ) => item.URL,
-			render: ( { item }: SitesDataViewsSite ) => {
-				return (
-					<Button onClick={ () => openSitePreviewPane( item.ID ) }>
-						<div className="sites-dataviews__site-name">{ item.title }</div>
-					</Button>
-				);
+	const fields = useMemo(
+		() => [
+			{
+				id: 'site',
+				header: __( 'Site' ),
+				getValue: ( { item }: SitesDataViewsSite ) => item.URL,
+				render: ( { item }: SitesDataViewsSite ) => {
+					return (
+						<Button onClick={ () => openSitePreviewPane( item.ID ) }>
+							<div className="sites-dataviews__site-name">{ item.title }</div>
+						</Button>
+					);
+				},
+				enableHiding: false,
+				enableSorting: true,
 			},
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'plan',
-			header: __( 'Plan' ),
-			render: ( { item }: SitesDataViewsSite ) => <SitePlan site={ item } userId={ userId } />,
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'status',
-			header: __( 'Status' ),
-			render: ( { item }: SitesDataViewsSite ) => <SiteStatus site={ item } />,
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'last-publish',
-			header: __( 'Last Publish' ),
-			getValue: ( { item }: SitesDataViewsSite ) =>
-				item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'stats',
-			header: __( 'Stats' ),
-			render: ( { item }: SitesDataViewsSite ) => <SiteStats site={ item } />,
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'actions',
-			header: __( 'Actions' ),
-			render: ( { item }: SitesDataViewsSite ) => <SiteActions site={ item } />,
-			enableHiding: false,
-			enableSorting: false,
-		},
-	];
+			{
+				id: 'plan',
+				header: __( 'Plan' ),
+				render: ( { item }: SitesDataViewsSite ) => <SitePlan site={ item } userId={ userId } />,
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'status',
+				header: __( 'Status' ),
+				render: ( { item }: SitesDataViewsSite ) => <SiteStatus site={ item } />,
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'last-publish',
+				header: __( 'Last Publish' ),
+				getValue: ( { item }: SitesDataViewsSite ) =>
+					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'stats',
+				header: __( 'Stats' ),
+				render: ( { item }: SitesDataViewsSite ) => <SiteStats site={ item } />,
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'actions',
+				header: __( 'Actions' ),
+				render: ( { item }: SitesDataViewsSite ) => <SiteActions site={ item } />,
+				enableHiding: false,
+				enableSorting: false,
+			},
+		],
+		[ __, openSitePreviewPane, userId ]
+	);
 
 	return (
 		<JetpackSitesDashboard
