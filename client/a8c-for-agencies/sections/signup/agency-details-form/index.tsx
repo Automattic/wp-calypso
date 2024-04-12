@@ -238,7 +238,7 @@ export default function AgencyDetailsForm( {
 						<option value="21-50">{ translate( '21-50' ) }</option>
 						<option value="51-100">{ translate( '51-100' ) }</option>
 						<option value="101-500">{ translate( '101-500' ) }</option>
-						<option value="501+">{ translate( '501+' ) }</option>
+						<option value="500+">{ translate( '500+' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
