@@ -11,7 +11,6 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { ESCAPE } from '@wordpress/keycodes';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
@@ -63,8 +62,6 @@ function WpcomBlockEditorNavSidebar() {
 		};
 	}, [] );
 
-	const siteSlug = window?.location.host;
-
 	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
 	const statusLabels = usePostStatusLabels();
 	const prevIsOpen = useRef( isOpen );
@@ -111,19 +108,14 @@ function WpcomBlockEditorNavSidebar() {
 	// `closeLabel` can be overridden in the same way to correctly label where the user will
 	// be taken to after closing the editor.
 
-	let defaultCloseUrl;
 	let defaultCloseLabel;
 
 	const launchpadScreenOption = window?.wpcomBlockEditorNavSidebar?.currentSite?.launchpad_screen;
 	const siteIntent = window?.wpcomBlockEditorNavSidebar?.currentSite?.site_intent;
-	const siteOrigin =
-		getQueryArg( window.location.search, 'calypso_origin' ) || 'https://wordpress.com';
 
 	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
-		defaultCloseUrl = `${ siteOrigin }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
 	} else {
-		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 		defaultCloseLabel = get(
 			postType,
 			[ 'labels', 'all_items' ],
@@ -131,10 +123,7 @@ function WpcomBlockEditorNavSidebar() {
 		);
 	}
 
-	const closeUrl = applyFilters(
-		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
-		defaultCloseUrl
-	) as string;
+	const closeUrl = 'https://fieldguide.automattic.com/create-focus/editing-toolkit-development/';
 
 	const closeLabel = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
@@ -233,7 +222,7 @@ function WpcomBlockEditorNavSidebar() {
 				<Button
 					// Waiting for jsx-a11y version bump to support aria-description attribute
 					// eslint-disable-next-line jsx-a11y/aria-props
-					aria-description={ __( 'Returns to the dashboard', 'full-site-editing' ) }
+					aria-description={ __( 'THIS IS THE BUTTON', 'full-site-editing' ) }
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ isRTL() ? chevronRight : chevronLeft }
