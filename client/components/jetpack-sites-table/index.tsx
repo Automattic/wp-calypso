@@ -2,11 +2,15 @@ import { DataViews } from '@wordpress/dataviews';
 import * as React from 'react';
 import { useContext } from 'react';
 import JetpackSitesDashboardContext from 'calypso/components/jetpack-sites-dashboard/jetpack-sites-dashboard-context';
-import type { DataViewsPaginationInfo } from './types';
+import type { SiteExcerptData } from '@automattic/sites';
+import type {
+	DataViewsField,
+	DataViewsPaginationInfo,
+} from 'calypso/components/jetpack-sites-dashboard/types';
 
 interface JetpackSitesTableProps {
-	data;
-	fields;
+	data: SiteExcerptData[];
+	fields: DataViewsField[];
 	paginationInfo: DataViewsPaginationInfo;
 }
 

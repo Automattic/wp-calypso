@@ -4,12 +4,16 @@ import { useContext } from 'react';
 import JetpackSitesPreviewPane from '../jetpack-sites-preview-pane';
 import JetpackSitesTable from '../jetpack-sites-table';
 import JetpackSitesDashboardContext from './jetpack-sites-dashboard-context';
-import type { DataViewsPaginationInfo } from '../jetpack-sites-table/types';
+import type { SiteExcerptData } from '@automattic/sites';
+import type {
+	DataViewsField,
+	DataViewsPaginationInfo,
+} from 'calypso/components/jetpack-sites-dashboard/types';
 import './style.scss';
 
 interface JetpackSitesDashboardProps {
-	data;
-	fields;
+	data: SiteExcerptData[];
+	fields: DataViewsField[];
 	paginationInfo: DataViewsPaginationInfo;
 }
 

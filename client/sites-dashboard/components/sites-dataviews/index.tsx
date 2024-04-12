@@ -12,18 +12,28 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { SitePlan } from '../sites-site-plan';
 import { SiteStatus } from '../sites-site-status';
 import { getSitesPagination, mapFieldIdToSortKey } from './utils';
+import type { SiteExcerptData } from '@automattic/sites';
+import type { SitesSortOptions } from '@automattic/sites/src/use-sites-list-sorting';
 
-const SitesDataViews = ( props ) => {
+interface SitesDataViewsSite {
+	item: SiteExcerptData;
+}
+
+interface SitesDataViewsProps {
+	sites: SiteExcerptData[];
+}
+
+const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
 	const { openSitePreviewPane, sitesViewState } = useContext( JetpackSitesDashboardContext );
 	const { page: sitesViewPage, perPage: sitesViewPerPage, sort: sitesViewSort } = sitesViewState;
 
-	const sortedSites = useSitesListSorting( props.sites, {
+	const sortedSites = useSitesListSorting( sites, {
 		sortKey: mapFieldIdToSortKey( sitesViewSort.field ),
 		sortOrder: sitesViewSort.direction,
-	} );
+	} as SitesSortOptions ) as SiteExcerptData[];
 
 	const { paginatedSites, totalItems, totalPages } = getSitesPagination(
 		sortedSites,
@@ -35,8 +45,8 @@ const SitesDataViews = ( props ) => {
 		{
 			id: 'site',
 			header: __( 'Site' ),
-			getValue: ( { item } ) => item.URL,
-			render: ( { item } ) => {
+			getValue: ( { item }: SitesDataViewsSite ) => item.URL,
+			render: ( { item }: SitesDataViewsSite ) => {
 				const site = item.ID;
 				return (
 					<Button onClick={ () => openSitePreviewPane( site ) }>
@@ -50,21 +60,21 @@ const SitesDataViews = ( props ) => {
 		{
 			id: 'plan',
 			header: __( 'Plan' ),
-			render: ( { item } ) => <SitePlan site={ item } userId={ userId } />,
+			render: ( { item }: SitesDataViewsSite ) => <SitePlan site={ item } userId={ userId } />,
 			enableHiding: false,
 			enableSorting: false,
 		},
 		{
 			id: 'status',
 			header: __( 'Status' ),
-			render: ( { item } ) => <SiteStatus site={ item } />,
+			render: ( { item }: SitesDataViewsSite ) => <SiteStatus site={ item } />,
 			enableHiding: false,
 			enableSorting: false,
 		},
 		{
 			id: 'last-publish',
 			header: __( 'Last Publish' ),
-			getValue: ( { item } ) =>
+			getValue: ( { item }: SitesDataViewsSite ) =>
 				item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 			enableHiding: false,
 			enableSorting: true,

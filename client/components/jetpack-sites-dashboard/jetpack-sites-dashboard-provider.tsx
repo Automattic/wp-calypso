@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { initialSitesViewState } from './constants';
 import JetpackSitesDashboardContext from './jetpack-sites-dashboard-context';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface JetpackSitesDashboardProviderProps {
 	children: React.ReactNode;
@@ -12,7 +13,7 @@ const JetpackSitesDashboardProvider: React.FC< JetpackSitesDashboardProviderProp
 	const [ sitesViewState, setSitesViewState ] = useState( initialSitesViewState );
 
 	const openSitePreviewPane = useCallback(
-		( site ) => {
+		( site: SiteExcerptData ) => {
 			setSitesViewState( {
 				...sitesViewState,
 				selectedSite: site,

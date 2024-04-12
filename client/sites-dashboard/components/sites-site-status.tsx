@@ -18,6 +18,7 @@ import { MEDIA_QUERIES } from '../utils';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from './with-atomic-transfer';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const BadgeDIFM = styled.span`
 	color: var( --studio-gray-100 );
@@ -49,7 +50,11 @@ const RestoreButton = styled( Button )`
 	text-decoration: underline;
 `;
 
-export const SiteStatus = ( { site } ) => {
+interface SiteStatusProps {
+	site: SiteExcerptData;
+}
+
+export const SiteStatus = ( { site }: SiteStatusProps ) => {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const reduxDispatch = useReduxDispatch();
