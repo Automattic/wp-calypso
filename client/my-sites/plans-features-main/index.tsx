@@ -385,17 +385,17 @@ const PlansFeaturesMain = ( {
 		return false;
 	};
 
-	const useActionCallback = useGenerateActionCallback(
+	const useActionCallback = useGenerateActionCallback( {
 		currentPlan,
 		eligibleForFreeHostingTrial,
-		onUpgradeClick,
+		cartHandler: onUpgradeClick,
 		flowName,
 		intent,
 		planActionCallback,
 		sitePlanSlug,
 		siteSlug,
-		withDiscount
-	);
+		withDiscount,
+	} );
 	const hiddenPlans = {
 		hideFreePlan,
 		hidePersonalPlan,

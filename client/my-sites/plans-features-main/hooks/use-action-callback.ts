@@ -21,11 +21,15 @@ import type {
 } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-function useUpgradeHandler(
-	siteSlug?: string | null,
-	withDiscount?: string,
-	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void
-) {
+function useUpgradeHandler( {
+	siteSlug,
+	withDiscount,
+	cartHandler,
+}: {
+	siteSlug?: string | null;
+	withDiscount?: string;
+	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+} ) {
 	const processCartItems = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {
 			const cartItemForPlan = getPlanCartItem( cartItems );
@@ -105,24 +109,34 @@ function useUpgradeHandler(
 	);
 }
 
-function useGenerateActionCallback(
+function useGenerateActionCallback( {
+	currentPlan,
+	eligibleForFreeHostingTrial,
+	cartHandler,
+	flowName,
+	intent,
+	planActionCallback,
+	sitePlanSlug,
+	siteSlug,
+	withDiscount,
+}: {
 	// TODO: Reevaluate param types and whether or not they should be optional
-	currentPlan: Plans.SitePlan | undefined,
-	eligibleForFreeHostingTrial: boolean,
-	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void,
-	flowName?: string | null,
-	intent?: PlansIntent | null,
-	planActionCallback?: ( planSlug: PlanSlug ) => boolean,
-	sitePlanSlug?: PlanSlug | null,
-	siteSlug?: string | null,
-	withDiscount?: string
-): UseActionCallback {
+	currentPlan: Plans.SitePlan | undefined;
+	eligibleForFreeHostingTrial: boolean;
+	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	flowName?: string | null;
+	intent?: PlansIntent | null;
+	planActionCallback?: ( planSlug: PlanSlug ) => boolean;
+	sitePlanSlug?: PlanSlug | null;
+	siteSlug?: string | null;
+	withDiscount?: string;
+} ): UseActionCallback {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
 	} );
 	const currentPlanManageHref = useCurrentPlanManageHref();
-	const handleUpgrade = useUpgradeHandler( siteSlug, withDiscount, cartHandler );
+	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn }: UseActionCallbackParams ) => {
 		return ( isFreeTrialCta?: boolean ) => {
