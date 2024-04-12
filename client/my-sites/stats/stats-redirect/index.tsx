@@ -101,7 +101,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isLoading && canUserViewStats ) {
+	} else if ( ! isLoading && ( canUserViewStats || canUserManageOptions ) ) {
 		return <>{ children }</>;
 	} else if ( isLoading ) {
 		return <StatsLoader />;
