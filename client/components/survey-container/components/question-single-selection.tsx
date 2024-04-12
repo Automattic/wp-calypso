@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { QuestionSelectionType } from './question-step';
 
 const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelectionType ) => {
@@ -7,13 +5,22 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 		<div className="question-options__container">
 			{ question.options.map( ( option, index ) => {
 				const isSelected = value.includes( option.value );
+				const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+					if ( event.key === 'Enter' || event.key === ' ' ) {
+						onChange( question.key, [ option.value ] );
+					}
+				};
+
 				return (
 					<div
 						key={ index }
 						className={ `question-options__option-control components-radio-control__option ${
 							isSelected ? 'checked' : ''
 						}` }
+						role="button"
+						tabIndex={ 0 }
 						onClick={ () => onChange( question.key, [ option.value ] ) }
+						onKeyDown={ handleKeyDown }
 					>
 						<input
 							type="radio"

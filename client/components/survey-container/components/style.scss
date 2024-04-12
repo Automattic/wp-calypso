@@ -23,6 +23,10 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 		border-color: $blueberry-color;
 	}
 
+	&:focus {
+		outline: 1px solid $blueberry-color;
+	}
+
 	@media (min-width: $break-medium) {
 		flex-basis: calc(50% - 48px);
 	}
