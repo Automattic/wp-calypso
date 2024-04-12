@@ -21,7 +21,7 @@ import {
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useSelector } from 'calypso/state';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type {
 	ResponseCart,
 	MinimalRequestCartProduct,
@@ -42,23 +42,19 @@ const isDomainRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 	return isDomainRegistration( item ) || isDomainTransfer( item );
 };
 
-const UpgradeText = ( { cart }: { cart: Pick< ResponseCart, 'products' > } ) => {
+const UpgradeText = ( {
+	cart,
+	pricingMeta,
+}: {
+	cart: Pick< ResponseCart, 'products' >;
+	pricingMeta: Plans.PricingMetaForGridPlan;
+} ) => {
 	const translate = useTranslate();
 	const upsellPlanSlug = useUpsellPlanSlug();
 	const upsellPlan = getPlan( upsellPlanSlug );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const pricingMeta = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ upsellPlanSlug ],
-		selectedSiteId,
-		coupon: undefined,
-		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
-	} );
 	const firstDomain = cart?.products?.find( isDomainRegistrationOrTransfer );
 	const planName = upsellPlan?.getTitle() ?? '';
-	const planPrice =
-		pricingMeta?.[ upsellPlanSlug ]?.discountedPrice.full ||
-		pricingMeta?.[ upsellPlanSlug ]?.originalPrice.full;
+	const planPrice = pricingMeta.discountedPrice.full || pricingMeta.originalPrice.full;
 
 	if ( planPrice && firstDomain && planPrice > firstDomain.item_subtotal_integer ) {
 		const extraToPay = planPrice - firstDomain.item_subtotal_integer;
@@ -113,11 +109,15 @@ const CartFreeUserPlanUpsell = ( {
 	const upsellPlanSlug = useUpsellPlanSlug();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite ? selectedSite.ID : null;
-	const { isLoading: isLoadingPlans } = Plans.usePlans( { coupon: undefined } );
-	const isDataReady = ! ( isCartPendingUpdate || isLoadingPlans );
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ upsellPlanSlug ],
+		selectedSiteId,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+		storageAddOns: null,
+	} );
 	const isRegisteringOrTransferringDomain =
 		hasDomainRegistration( cart ) || hasTransferProduct( cart );
-
 	const handleAddPlanToCart = () => {
 		const planCartItem = planItem( upsellPlanSlug );
 
@@ -126,9 +126,10 @@ const CartFreeUserPlanUpsell = ( {
 			recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} );
 		}
 	};
+	const isDataLoading = ! pricingMeta || isCartPendingUpdate;
 
 	if (
-		isDataReady &&
+		isDataLoading ||
 		! (
 			isRegisteringOrTransferringDomain &&
 			!! selectedSiteId &&
@@ -148,7 +149,7 @@ const CartFreeUserPlanUpsell = ( {
 			/>
 			<div className="cart__upsell-body">
 				<p>
-					<UpgradeText cart={ cart } />
+					<UpgradeText cart={ cart } pricingMeta={ pricingMeta[ upsellPlanSlug ] } />
 				</p>
 				<Button onClick={ handleAddPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
 			</div>

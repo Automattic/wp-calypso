@@ -28,8 +28,7 @@ jest.mock( '@automattic/data-stores', () => {
 		...jest.requireActual( '@automattic/data-stores' ),
 		Plans: {
 			...jest.requireActual( '@automattic/data-stores' ).Plans,
-			usePlans: jest.fn(),
-			useSitePlans: jest.fn(),
+			usePricingMetaForGridPlans: jest.fn(),
 		},
 	};
 } );
@@ -43,28 +42,10 @@ describe( 'SecondaryCartPromotions', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		Plans.usePlans.mockImplementation( () => ( {
-			isLoading: false,
-			data: {},
-		} ) );
-		Plans.useSitePlans.mockImplementation( () => ( {
-			isLoading: false,
-			data: {
-				[ PLAN_PERSONAL ]: {
-					expiry: null,
-					pricing: {
-						billPeriod: 365,
-						currencyCode: 'USD',
-						originalPrice: {
-							full: 500,
-							monthly: 500,
-						},
-						discountedPrice: {
-							full: 250,
-							monthly: 250,
-						},
-					},
-				},
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ PLAN_PERSONAL ]: {
+				originalPrice: { full: 24000, monthly: 2000 },
+				discountedPrice: { full: 12000, monthly: 1000 },
 			},
 		} ) );
 	} );
