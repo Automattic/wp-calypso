@@ -4,7 +4,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { checkoutTheme } from '@automattic/composite-checkout';
-import { Plans, Purchases } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { ThemeProvider } from '@emotion/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
@@ -31,10 +31,6 @@ jest.mock( '@automattic/data-stores', () => {
 			usePlans: jest.fn(),
 			useSitePlans: jest.fn(),
 		},
-		Purchases: {
-			...jest.requireActual( '@automattic/data-stores' ).Purchases,
-			useSitePurchaseById: jest.fn(),
-		},
 	};
 } );
 
@@ -49,7 +45,6 @@ describe( 'SecondaryCartPromotions', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		Purchases.useSitePurchaseById.mockImplementation( () => undefined );
 		Plans.usePlans.mockImplementation( () => ( {
 			isLoading: false,
 			data: {},
@@ -74,18 +69,6 @@ describe( 'SecondaryCartPromotions', () => {
 				},
 			},
 		} ) );
-		// Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
-		// 	[ PLAN_PERSONAL ]: {
-		// 		discountedPrice: {
-		// 			full: 120,
-		// 			monthly: 10,
-		// 		},
-		// 		originalPrice: {
-		// 			full: 240,
-		// 			monthly: 20,
-		// 		},
-		// 	},
-		// } ) );
 	} );
 
 	afterEach( () => {
