@@ -96,6 +96,19 @@ function extendTiersBeyondHighestTier(
 				( highestTier.transform_quantity_divide_by || 1 ) -
 			EXTENSION_THRESHOLD_IN_MILLION +
 			1;
+
+		// Calculate the price of the current purchased tier, which may be an extended tier.
+		const currentPurchaseTier = Math.floor(
+			( usageData?.views_limit || 0 ) / ( highestTier.transform_quantity_divide_by || 1 )
+		);
+		const currentPurchaseExtendedTierCount =
+			currentPurchaseTier > EXTENSION_THRESHOLD_IN_MILLION
+				? currentPurchaseTier - EXTENSION_THRESHOLD_IN_MILLION
+				: 0;
+		const currentPurchaseTierPrice =
+			( usageData?.current_tier?.minimum_price ?? 0 ) +
+			( highestTier.per_unit_fee ?? 0 ) * currentPurchaseExtendedTierCount;
+
 		// Remove the only tier that is used to extend higher tiers.
 		if ( availableTiers.length === 1 && startingTier > 0 ) {
 			availableTiers = availableTiers.slice( 1 );
@@ -111,6 +124,8 @@ function extendTiersBeyondHighestTier(
 		) {
 			const totalPrice =
 				highestTier?.minimum_price + ( highestTier.per_unit_fee ?? 0 ) * extendedTierCount;
+			// Avoid showing the upgrade price for extended tiers based on no purchased tier.
+			const upgradePrice = currentPurchaseTierPrice > 0 ? totalPrice - currentPurchaseTierPrice : 0;
 			const monthlyPriceDisplay = formatCurrency( totalPrice / 12, currencyCode, {
 				isSmallestUnit: true,
 				stripZeros: true,
@@ -121,7 +136,7 @@ function extendTiersBeyondHighestTier(
 
 			availableTiers.push( {
 				minimum_price: totalPrice,
-				upgrade_price: totalPrice - usageData?.current_tier?.minimum_price ?? 0,
+				upgrade_price: upgradePrice,
 				price: monthlyPriceDisplay,
 				views: views,
 				extension: true,
