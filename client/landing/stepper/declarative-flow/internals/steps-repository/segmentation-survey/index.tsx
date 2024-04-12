@@ -19,7 +19,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 	};
 
 	const handleSubmit = () => {
-		navigation.submit();
+		navigation.submit?.();
 	};
 
 	return (
