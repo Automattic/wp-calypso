@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -16,7 +17,8 @@ import type { AppState } from 'calypso/types';
 export const isSiteEligibleForJetpackCloud = ( state: AppState, siteId: number ) =>
 	( isJetpackSite( state, siteId ) ||
 		isBackupPluginActive( state, siteId ) ||
-		isSearchPluginActive( state, siteId ) ) &&
+		isSearchPluginActive( state, siteId ) ||
+		isGlobalSiteViewEnabled( state, siteId ) ) &&
 	( isSiteAtomic( state, siteId ) ||
 		( ! isSiteAtomic( state, siteId ) && ! isJetpackSiteMultiSite( state, siteId ) ) );
 
