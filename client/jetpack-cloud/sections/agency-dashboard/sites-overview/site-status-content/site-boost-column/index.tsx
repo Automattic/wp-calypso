@@ -13,9 +13,10 @@ import type { Site } from '../../types';
 
 interface Props {
 	site: Site;
+	siteError?: boolean;
 }
 
-export default function SiteBoostColumn( { site }: Props ) {
+export default function SiteBoostColumn( { site, siteError }: Props ) {
 	const translate = useTranslate();
 
 	const { isLargeScreen } = useContext( DashboardDataContext );
@@ -40,16 +41,23 @@ export default function SiteBoostColumn( { site }: Props ) {
 		setShowBoostModal( true );
 		recordEvent( 'boost_column_get_score_click' );
 	};
+
+	const noBoostHrefOption = site.is_atomic ? jetpackHref : addBoostHref;
 	if ( overallScore && ! hasBoost ) {
 		return (
 			<Button
 				borderless
-				className={ classNames(
-					'sites-overview__boost-score',
-					getBoostRatingClass( overallScore )
-				) }
-				href={ site.is_atomic ? jetpackHref : addBoostHref }
+				className={
+					siteError
+						? classNames(
+								'sites-overview__boost-score sites-overview__disabled',
+								getBoostRatingClass( overallScore )
+						  )
+						: classNames( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
+				}
+				href={ siteError ? '' : noBoostHrefOption }
 				target="_blank"
+				disabled={ siteError }
 				onClick={ () =>
 					recordEvent( 'boost_column_score_click', {
 						score: overallScore,
@@ -65,12 +73,17 @@ export default function SiteBoostColumn( { site }: Props ) {
 		return (
 			<Button
 				borderless
-				className={ classNames(
-					'sites-overview__boost-score',
-					getBoostRatingClass( overallScore )
-				) }
-				href={ jetpackBoostHref }
+				className={
+					siteError
+						? classNames(
+								'sites-overview__boost-score sites-overview__disabled',
+								getBoostRatingClass( overallScore )
+						  )
+						: classNames( 'sites-overview__boost-score', getBoostRatingClass( overallScore ) )
+				}
+				href={ siteError ? '' : jetpackBoostHref }
 				target="_blank"
+				disabled={ siteError }
 				onClick={ () =>
 					recordEvent( 'boost_column_score_click', {
 						score: overallScore,
@@ -85,7 +98,11 @@ export default function SiteBoostColumn( { site }: Props ) {
 	if ( hasBoost ) {
 		return (
 			<a
-				className="sites-overview__column-action-button is-link"
+				className={
+					siteError
+						? 'sites-overview__column-action-button is-link site-error'
+						: 'sites-overview__column-action-button is-link'
+				}
 				href={ jetpackBoostHref }
 				target="_blank"
 				rel="noreferrer"
@@ -98,13 +115,22 @@ export default function SiteBoostColumn( { site }: Props ) {
 
 	return (
 		<>
-			<button
-				className="sites-overview__column-action-button"
-				onClick={ handleGetBoostScoreAction }
+			<span
+				className={
+					siteError
+						? 'sites-overview__disabled sites-overview__row-status'
+						: 'sites-overview__row-status'
+				}
 			>
-				<Gridicon icon="plus-small" size={ 16 } />
-				<span>{ translate( 'Add' ) }</span>
-			</button>
+				<button
+					className="sites-overview__column-action-button"
+					onClick={ handleGetBoostScoreAction }
+					disabled={ siteError }
+				>
+					<Gridicon icon="plus-small" size={ 16 } />
+					<span>{ translate( 'Add' ) }</span>
+				</button>
+			</span>
 			{ showBoostModal && (
 				<BoostLicenseInfoModal onClose={ () => setShowBoostModal( false ) } site={ site } />
 			) }
