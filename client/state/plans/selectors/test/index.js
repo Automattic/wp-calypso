@@ -1,5 +1,4 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
-import { getDiscountedRawPrice, getPlanRawPrice, getPlanBillPeriod, getPlanPrices } from '../';
+import { getDiscountedRawPrice, getPlanRawPrice, getPlanBillPeriod } from '../';
 
 describe( 'selectors', () => {
 	describe( '#getPlanBillPeriod()', () => {
@@ -120,76 +119,6 @@ describe( 'selectors', () => {
 		it( 'should return monthly raw_price if there is no discount', () => {
 			const rawPrice = getPlanRawPrice( state, 1003, true );
 			expect( rawPrice ).toEqual( 8 );
-		} );
-	} );
-
-	describe( '#getPlanPrices', () => {
-		const state = {
-			plans: {
-				items: [
-					{
-						product_id: 1008,
-						product_slug: 'business-bundle',
-						raw_price: 300,
-						orig_cost: 324,
-					},
-					{
-						product_id: 1028,
-						product_slug: 'business-bundle-2y',
-						raw_price: 480,
-						orig_cost: 540,
-					},
-					{
-						product_id: 1003,
-						product_slug: 'value_bundle',
-						raw_price: 96,
-					},
-				],
-			},
-		};
-
-		it( 'should return plan prices when siteId is null', () => {
-			expect(
-				getPlanPrices( state, {
-					planSlug: PLAN_BUSINESS,
-					siteId: null,
-					returnMonthly: true,
-				} )
-			).toEqual( {
-				rawPrice: 27,
-				discountedRawPrice: 25,
-				planDiscountedRawPrice: null,
-			} );
-		} );
-
-		it( 'should return plan prices when siteId is passed', () => {
-			const stateWithSiteId = {
-				...state,
-				sites: {
-					plans: {
-						1: {
-							data: [
-								{
-									productSlug: 'business-bundle',
-									rawPrice: 288,
-									rawDiscount: 1,
-								},
-							],
-						},
-					},
-				},
-			};
-			expect(
-				getPlanPrices( stateWithSiteId, {
-					planSlug: PLAN_BUSINESS,
-					siteId: 1,
-					returnMonthly: true,
-				} )
-			).toEqual( {
-				rawPrice: 27,
-				discountedRawPrice: 25,
-				planDiscountedRawPrice: 24,
-			} );
 		} );
 	} );
 } );
