@@ -15,6 +15,9 @@ function getAmountAsFormattedString( amount, stripZeros ) {
 }
 
 function useHighlights( earnings ) {
+	// TODO: Consider refactor of icon/svg for clarity.
+	// I think it makes sense to the provide the SVG data here and not the Icon component.
+	// As it currently stands, the dependency on the Icon component is not clear from the type.
 	return useMemo( () => {
 		const total = earnings?.total_earnings ? Number( earnings.total_earnings ) : 0;
 		const owed = earnings?.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
