@@ -92,8 +92,10 @@ function extendTiersBeyondHighestTier(
 	if ( availableTiers.length < MAX_TIERS_NUMBER && !! highestTier.transform_quantity_divide_by ) {
 		// Calculate the number of tiers to extend based on either current purchase or billable monthly views.
 		const startingTier =
-			Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
-				( highestTier.transform_quantity_divide_by || 1 ) -
+			Math.floor(
+				Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
+					( highestTier.transform_quantity_divide_by || 1 )
+			) -
 			EXTENSION_THRESHOLD_IN_MILLION +
 			1;
 
