@@ -12,7 +12,7 @@ const MockedComponent = () => {
 	return (
 		<div>
 			<button
-				onClick={ () => mutate( { blogId: 123, surveyKey: 'test_key' } ) }
+				onClick={ () => mutate( { blogId: 123, surveyKey: 'test-key' } ) }
 				data-testid="button-mutate"
 			>
 				Click me
@@ -62,7 +62,7 @@ describe( 'useLinkAnswersMutation', () => {
 				path: '/segmentation-survey/answers/link',
 				body: {
 					blog_id: 123,
-					survey_key: 'test_key',
+					survey_key: 'test-key',
 				},
 			} )
 		);
