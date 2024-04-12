@@ -19,11 +19,13 @@ function render() {
 			selectedCategory="category-2"
 			buttons={ [
 				{
+					id: 'discover',
 					icon: <Icon icon={ iconStar } size={ 30 } />,
 					label: 'Discover',
 					link: '/',
 				},
 				{
+					id: 'all',
 					icon: <Icon icon={ iconCategory } size={ 26 } />,
 					label: 'All categories',
 					link: '/',

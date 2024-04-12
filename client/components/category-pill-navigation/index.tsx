@@ -7,7 +7,6 @@ import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useRtl } from 'i18n-calypso';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
-import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 
 import './style.scss';
 
@@ -25,12 +24,14 @@ type CategoryPillNavigationProps = {
 		link: string;
 	}[];
 	selectedCategoryId: string;
+	onSelect?: ( selectedId: string ) => null;
 };
 
 export const CategoryPillNavigation = ( {
 	buttons,
 	categories,
 	selectedCategoryId,
+	onSelect,
 }: CategoryPillNavigationProps ) => {
 	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
@@ -38,7 +39,6 @@ export const CategoryPillNavigation = ( {
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 	const listInnerRef = useRef< HTMLDivElement | null >( null );
 	const isRtl = useRtl();
-	const { recordPatternsEvent } = useRecordPatternsEvent();
 
 	const checkScrollArrows = () => {
 		if ( ! listInnerRef.current ) {
@@ -104,9 +104,7 @@ export const CategoryPillNavigation = ( {
 					{ buttons?.map( ( button ) => (
 						<SelectDropdown.Item
 							key={ button.label }
-							onClick={ () =>
-								recordPatternsEvent( 'calypso_pattern_library_filter', { category: button.id } )
-							}
+							onClick={ () => onSelect( button.id ) }
 							path={ addLocaleToPathLocaleInFront( button.link, locale ) }
 							selected={ button.isActive }
 						>
@@ -116,9 +114,7 @@ export const CategoryPillNavigation = ( {
 					{ categories?.map( ( category ) => (
 						<SelectDropdown.Item
 							key={ category.id }
-							onClick={ () =>
-								recordPatternsEvent( 'calypso_pattern_library_filter', { category: category.id } )
-							}
+							onClick={ () => onSelect( category.id ) }
 							path={ addLocaleToPathLocaleInFront( category.link, locale ) }
 							selected={ category.id === selectedCategoryId }
 						>
@@ -138,9 +134,7 @@ export const CategoryPillNavigation = ( {
 						<LocalizedLink
 							key={ button.label }
 							href={ button.link }
-							onClick={ () =>
-								recordPatternsEvent( 'calypso_pattern_library_filter', { category: button.id } )
-							}
+							onClick={ () => onSelect( button.id ) }
 							className={ classnames( 'category-pill-navigation__button', {
 								'is-active': button.isActive,
 							} ) }
@@ -181,9 +175,7 @@ export const CategoryPillNavigation = ( {
 						<LocalizedLink
 							key={ category.id }
 							href={ category.link }
-							onClick={ () =>
-								recordPatternsEvent( 'calypso_pattern_library_filter', { category: category.id } )
-							}
+							onClick={ () => onSelect( category.id ) }
 							className={ classnames( 'category-pill-navigation__button', {
 								'is-active': category.id === selectedCategoryId,
 							} ) }
