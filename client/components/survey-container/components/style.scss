@@ -53,19 +53,34 @@ $blueberry-hover-color: #2145e6;
 		.question-options__option-control {
 			@include question-option-control;
 
-			label {
-				font-size: medium;
-				font-weight: 500;
-				line-height: 24px;
-				color: $studio-gray-100;
+			input[type="radio"] {
+				height: 20px;
+				width: 20px;
+
+				&:checked::before {
+					margin: 2px;
+					width: 14px;
+					height: 14px;
+				}
 			}
 
-			.question-options__option-help-text {
-				display: block;
-				font-size: small;
-				font-weight: 400;
-				line-height: 20px;
-				color: $studio-gray-80;
+			.question-options__option-label {
+				padding-left: 16px;
+
+				label {
+					font-size: medium;
+					font-weight: 500;
+					line-height: 24px;
+					color: $studio-gray-100;
+				}
+
+				.question-options__option-help-text {
+					display: block;
+					font-size: small;
+					font-weight: 400;
+					line-height: 20px;
+					color: $studio-gray-80;
+				}
 			}
 		}
 	}
