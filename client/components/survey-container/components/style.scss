@@ -23,7 +23,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 		border-color: $blueberry-color;
 	}
 
-	&:focus {
+	&:focus-visible {
 		outline: 1px solid $blueberry-color;
 	}
 

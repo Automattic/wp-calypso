@@ -2,7 +2,7 @@ import { QuestionSelectionType } from './question-step';
 
 const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelectionType ) => {
 	return (
-		<div className="question-options__container">
+		<div className="question-options__container" role="radiogroup">
 			{ question.options.map( ( option, index ) => {
 				const isSelected = value.includes( option.value );
 				const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -17,10 +17,12 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 						className={ `question-options__option-control components-radio-control__option ${
 							isSelected ? 'checked' : ''
 						}` }
-						role="button"
+						role="radio"
 						tabIndex={ 0 }
+						aria-checked={ isSelected.toString() }
 						onClick={ () => onChange( question.key, [ option.value ] ) }
 						onKeyDown={ handleKeyDown }
+						aria-labelledby={ `optionLabel-${ option.value } optionHelpText-${ option.value }` }
 					>
 						<input
 							type="radio"
@@ -30,11 +32,20 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 							onChange={ () => onChange( question.key, [ option.value ] ) }
 							checked={ isSelected }
 							className="form-radio"
+							tabIndex={ -1 }
+							aria-hidden="true"
 						/>
 						<div className="question-options__option-label">
-							<label htmlFor={ `option-${ option.value }` }>{ option.label }</label>
+							<label id={ `optionLabel-${ option.value }` } htmlFor={ `option-${ option.value }` }>
+								{ option.label }
+							</label>
 							{ option.helpText && (
-								<span className="question-options__option-help-text">{ option.helpText }</span>
+								<span
+									id={ `optionHelpText-${ option.value }` }
+									className="question-options__option-help-text"
+								>
+									{ option.helpText }
+								</span>
 							) }
 						</div>
 					</div>
