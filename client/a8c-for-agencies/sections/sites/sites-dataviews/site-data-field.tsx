@@ -2,6 +2,8 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import SiteFavicon from '../site-favicon';
 import { Site } from '../types';
 
@@ -15,7 +17,10 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 	const translate = useTranslate();
 	const blogId = site.blog_id;
 	const isConnectionHealthy = site.is_connection_healthy;
-	const { data } = useFetchTestConnection( true, isConnectionHealthy, blogId );
+	const agency = useSelector( getActiveAgency );
+	const agencyId = agency ? agency.id : undefined;
+
+	const { data } = useFetchTestConnection( true, isConnectionHealthy, blogId, agencyId );
 	const isSiteConnected = data?.connected ?? true;
 
 	if ( isLoading ) {

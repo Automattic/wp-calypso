@@ -13,7 +13,12 @@ const queryOptions = {
 };
 
 const createQueryFn =
-	( siteId: Site[ 'blog_id' ], isConnectionHealthy: Site[ 'is_connection_healthy' ] ) => () =>
+	(
+		siteId: Site[ 'blog_id' ],
+		isConnectionHealthy: Site[ 'is_connection_healthy' ],
+		agencyId?: number | undefined
+	) =>
+	() =>
 		wpcom.req.get(
 			{
 				path: `/jetpack-blogs/${ siteId }/test-connection`,
@@ -22,6 +27,7 @@ const createQueryFn =
 			{
 				// We call the current health state "stale", as it might be different than the actual state.
 				is_stale_connection_healthy: Boolean( isConnectionHealthy ),
+				...( agencyId && { agency_id: agencyId } ),
 			}
 		);
 
@@ -44,19 +50,23 @@ export const useFetchTestConnections = ( isPartnerOAuthTokenLoaded: boolean, sit
 export const useFetchTestConnection = (
 	isPartnerOAuthTokenLoaded: boolean,
 	isConnectionHealthy: boolean,
-	siteId: number
+	siteId: number,
+	agencyId?: number | undefined
 ) => {
-	return useQuery( {
-		queryKey: getQueryKey( siteId ),
-		queryFn: createQueryFn( siteId, isConnectionHealthy ),
-		...queryOptions,
-		select( data ) {
-			return {
-				ID: siteId,
-				connected: data?.connected ?? true,
-			};
+	return useQuery(
+		{
+			queryKey: getQueryKey( siteId ),
+			queryFn: createQueryFn( siteId, isConnectionHealthy, agencyId ),
+			...queryOptions,
+			select( data ) {
+				return {
+					ID: siteId,
+					connected: data?.connected ?? true,
+				};
+			},
 		},
-	} );
+		undefined
+	); // Add the missing comma and the third argument
 };
 
 export default useFetchTestConnection;
