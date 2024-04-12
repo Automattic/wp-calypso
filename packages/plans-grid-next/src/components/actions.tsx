@@ -14,6 +14,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	isBusinessPlan,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -67,6 +68,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isLargeCurrency,
 	hasFreeTrialPlan,
 	onCtaClick,
+	onFreeTrialCtaClick,
 	planActionOverrides,
 }: {
 	planSlug: PlanSlug;
@@ -75,7 +77,8 @@ const SignupFlowPlanFeatureActionButton = ( {
 	isStuck: boolean;
 	isLargeCurrency: boolean;
 	hasFreeTrialPlan: boolean;
-	onCtaClick: ( isFreeTrialCTA?: boolean ) => void;
+	onCtaClick: () => void;
+	onFreeTrialCtaClick: () => void;
 	planActionOverrides?: PlanActionOverrides;
 } ) => {
 	const translate = useTranslate();
@@ -120,7 +123,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 	if ( hasFreeTrialPlan ) {
 		return (
 			<div className="plan-features-2023-grid__multiple-actions-container">
-				<PlanButton planSlug={ planSlug } onClick={ () => onCtaClick( true ) } busy={ busy }>
+				<PlanButton planSlug={ planSlug } onClick={ () => onFreeTrialCtaClick() } busy={ busy }>
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
@@ -159,7 +162,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	priceString: string | null;
 	isStuck: boolean;
 	isLargeCurrency: boolean;
-	onCtaClick: ( isFreeTrialCTA?: boolean ) => void;
+	onCtaClick: () => void;
 } ) => {
 	const translate = useTranslate();
 
@@ -215,7 +218,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	isLargeCurrency: boolean;
 	isMonthlyPlan?: boolean;
 	planTitle: TranslateResult;
-	onCtaClick: ( isFreeTrialCTA?: boolean ) => void;
+	onCtaClick: () => void;
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
@@ -454,12 +457,16 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		storageAddOnsForPlan,
 	} );
 
-	// TODO: Do we need a param to make a distinction between isInSignup on L494 and the plans page?
-	// Can we derive the param in the useActionCallback hook?
 	const onCtaClick = useActionCallback( {
 		planSlug,
 		cartItemForPlan,
 		selectedStorageAddOn,
+	} );
+
+	// TODO: Unsure about using free plan as a fallback. We should revisit.
+	const onFreeTrialCtaClick = useActionCallback( {
+		planSlug: freeTrialPlanSlug ?? PLAN_FREE,
+		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
 	} );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -501,6 +508,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				isLargeCurrency={ !! isLargeCurrency }
 				hasFreeTrialPlan={ !! freeTrialPlanSlug }
 				onCtaClick={ onCtaClick }
+				onFreeTrialCtaClick={ onFreeTrialCtaClick }
 				planActionOverrides={ planActionOverrides }
 			/>
 		);

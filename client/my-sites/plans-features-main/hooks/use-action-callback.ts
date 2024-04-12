@@ -71,20 +71,12 @@ function useUpgradeHandler( {
 	return useCallback(
 		( {
 			cartItemForPlan,
-			isFreeTrialCta,
 			selectedStorageAddOn,
 		}: {
 			cartItemForPlan?: MinimalRequestCartProduct | null;
-			isFreeTrialCta: boolean | undefined;
 			selectedStorageAddOn?: AddOns.AddOnMeta | null;
 		} ) => {
-			/* 1. Process free trial plan for checkout. Exclude add-ons. */
-			if ( isFreeTrialCta && cartItemForPlan ) {
-				processCartItems?.( [ cartItemForPlan ] );
-				return;
-			}
-
-			/* 2. Process plan and add-ons for checkout. */
+			/* 1. Process plan and add-ons for checkout. */
 			const storageAddOnCartItem = selectedStorageAddOn &&
 				! selectedStorageAddOn.purchased && {
 					product_slug: selectedStorageAddOn.productSlug,
@@ -101,7 +93,7 @@ function useUpgradeHandler( {
 				return;
 			}
 
-			/* 3. Process free plan for checkout */
+			/* 2. Process free plan for checkout */
 			processCartItems?.( null );
 			return;
 		},
@@ -120,7 +112,6 @@ function useGenerateActionCallback( {
 	siteSlug,
 	withDiscount,
 }: {
-	// TODO: Reevaluate param types and whether or not they should be optional
 	currentPlan: Plans.SitePlan | undefined;
 	eligibleForFreeHostingTrial: boolean;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -139,18 +130,11 @@ function useGenerateActionCallback( {
 	const handleUpgrade = useUpgradeHandler( { siteSlug, withDiscount, cartHandler } );
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn }: UseActionCallbackParams ) => {
-		return ( isFreeTrialCta?: boolean ) => {
+		return () => {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
-			let upgradePlanSlug = planSlug;
-			let upgradeCartItem = cartItemForPlan;
 
-			if ( isFreeTrialCta ) {
-				upgradePlanSlug = freeTrialPlanSlug as PlanSlug;
-				upgradeCartItem = { product_slug: freeTrialPlanSlug as PlanSlug };
-			}
-
-			const earlyReturn = upgradePlanSlug && showModalAndExit?.( upgradePlanSlug );
+			const earlyReturn = showModalAndExit?.( planSlug );
 			if ( earlyReturn ) {
 				return;
 			}
@@ -177,19 +161,18 @@ function useGenerateActionCallback( {
 			}
 
 			/* 3. Handle plan upgrade and plan upgrade tracks events */
-			switch ( ! isFreePlan( upgradePlanSlug ) ) {
+			switch ( ! isFreePlan( planSlug ) ) {
 				case true:
 					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
 						current_plan: sitePlanSlug,
-						upgrading_to: upgradePlanSlug,
+						upgrading_to: planSlug,
 						saw_free_trial_offer: !! freeTrialPlanSlug,
 					} );
 				case false:
 					recordTracksEvent( 'calypso_signup_free_plan_click' );
 				default:
 					handleUpgrade( {
-						cartItemForPlan: upgradeCartItem,
-						isFreeTrialCta,
+						cartItemForPlan,
 						selectedStorageAddOn,
 					} );
 			}

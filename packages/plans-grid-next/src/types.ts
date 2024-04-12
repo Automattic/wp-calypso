@@ -144,7 +144,7 @@ export type UseActionCallback = ( {
 	planSlug,
 	cartItemForPlan,
 	selectedStorageAddOn,
-}: UseActionCallbackParams ) => ( isFreeTrialCTA?: boolean ) => void;
+}: UseActionCallbackParams ) => () => void;
 
 export type GridContextProps = {
 	gridPlans: GridPlan[];
