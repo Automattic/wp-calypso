@@ -372,7 +372,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 				topLeft: false,
 			} }
 			handleWrapperClass="pattern-preview__resizer"
-			minWidth={ 375 }
+			minWidth={ 335 }
 			maxWidth="100%"
 			onResizeStop={ () => {
 				recordResizeEvent( 'calypso_pattern_library_resize' );
