@@ -125,6 +125,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		}
 		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
 	},
+	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
@@ -153,9 +154,6 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 			return url;
 		}
 		return prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
-	},
-	'wordpress.com/pricing/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
-		return isLoggedIn ? url : prefixLocalizedUrlPath( localesForPricePlans )( url, localeSlug );
 	},
 	'wordpress.com/theme/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
