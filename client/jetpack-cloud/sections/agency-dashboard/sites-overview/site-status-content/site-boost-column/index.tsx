@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -97,19 +98,23 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 
 	if ( hasBoost ) {
 		return (
-			<a
+			<span
 				className={
 					siteError
-						? 'sites-overview__column-action-button is-link site-error'
-						: 'sites-overview__column-action-button is-link'
+						? 'sites-overview__disabled sites-overview__row-status'
+						: 'sites-overview__row-status'
 				}
-				href={ jetpackBoostHref }
-				target="_blank"
-				rel="noreferrer"
-				onClick={ () => recordEvent( 'boost_column_configure_click' ) }
 			>
-				{ translate( 'Configure Boost' ) }
-			</a>
+				<a
+					className="sites-overview__column-action-button is-link"
+					href={ siteError ? '' : jetpackBoostHref }
+					target="_blank"
+					rel="noreferrer"
+					onClick={ () => recordEvent( 'boost_column_configure_click' ) }
+				>
+					{ translate( 'Configure Boost' ) }
+				</a>
+			</span>
 		);
 	}
 
