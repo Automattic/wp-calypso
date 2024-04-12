@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { ExternalLink } from '@automattic/components';
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isDesktop } from '@automattic/viewport';
@@ -8,7 +9,6 @@ import { HorizontalRule } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';

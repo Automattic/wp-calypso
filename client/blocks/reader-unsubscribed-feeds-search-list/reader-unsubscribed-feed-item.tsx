@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -6,7 +6,6 @@ import {
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import ExternalLink from 'calypso/components/external-link';
 
 type ReaderUnsubscribedFeedItemProps = {
 	defaultIcon?: JSX.Element | null;

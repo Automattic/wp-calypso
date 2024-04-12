@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { Icon, download as downloadIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import * as React from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import Button from 'calypso/components/forms/form-button';
 import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
 import PopoverMenu from 'calypso/components/popover-menu';

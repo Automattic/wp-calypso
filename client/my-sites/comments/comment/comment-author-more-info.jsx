@@ -1,10 +1,9 @@
-import { Button, Popover, Gridicon } from '@automattic/components';
+import { Button, Popover, Gridicon, ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { urlToDomainAndPath } from 'calypso/lib/url';
 import {

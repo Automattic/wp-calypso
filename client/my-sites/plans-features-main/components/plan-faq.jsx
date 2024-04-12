@@ -5,11 +5,11 @@ import {
 	PLAN_ECOMMERCE,
 	getPlan,
 } from '@automattic/calypso-products';
+import { ExternalLinkWithTracking } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

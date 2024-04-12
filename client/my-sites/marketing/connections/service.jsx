@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { FEATURE_SOCIAL_MASTODON_CONNECTION } from '@automattic/calypso-products';
-import { Badge, FoldableCard } from '@automattic/components';
+import { Badge, FoldableCard, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
@@ -9,7 +9,6 @@ import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import SocialLogo from 'calypso/components/social-logo';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';

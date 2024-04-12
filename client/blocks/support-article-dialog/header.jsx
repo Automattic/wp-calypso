@@ -1,5 +1,5 @@
+import { ExternalLink } from '@automattic/components';
 import PropTypes from 'prop-types';
-import ExternalLink from 'calypso/components/external-link';
 
 const SupportArticleHeader = ( { post, isLoading } ) =>
 	isLoading || ! post ? (

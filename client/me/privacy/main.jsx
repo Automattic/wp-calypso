@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
 import { withLocalizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import ExternalLink from 'calypso/components/external-link';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';

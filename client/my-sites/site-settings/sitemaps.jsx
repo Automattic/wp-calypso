@@ -1,10 +1,10 @@
-import { Card } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
@@ -98,7 +98,7 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ this.renderInfoLink( 'https://wordpress.com/support/sitemaps/', false ) }
+				{ this.renderInfoLink( localizeUrl( 'https://wordpress.com/support/sitemaps/' ), false ) }
 
 				{ this.isSitePublic() ? (
 					<div>

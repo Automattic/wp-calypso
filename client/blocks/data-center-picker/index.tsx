@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -8,7 +9,6 @@ import burImg from 'calypso/assets/images/data-center-picker/bur-240x180.png';
 import dcaImg from 'calypso/assets/images/data-center-picker/dca-240x180.png';
 import dfwImg from 'calypso/assets/images/data-center-picker/dfw-240x180.png';
 import worldImg from 'calypso/assets/images/data-center-picker/world-1082x180.png';
-import ExternalLink from 'calypso/components/external-link';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormSelect from 'calypso/components/forms/form-select';
 

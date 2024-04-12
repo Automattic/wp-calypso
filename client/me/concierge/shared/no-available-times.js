@@ -1,8 +1,7 @@
-import { Card } from '@automattic/components';
+import { Card, ExternalLinkWithTracking } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PrimaryHeader from './primary-header';
 
