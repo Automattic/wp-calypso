@@ -5,11 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import useFormattedSites from 'calypso/sites-dashboard/sections/sites/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/sites-dashboard/sections/sites/sites-overview/site-status-content';
-import SiteDataField from '../sites-dataviews/site-data-field';
-import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteSort from '../site-sort';
+import SiteDataField from '../sites-dataviews/site-data-field';
 import { AllowedTypes } from '../types';
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
 
@@ -144,8 +144,6 @@ const SitesDataViews = ( {
 		// Render the SpinnerWrapper component inside the spinner wrapper
 		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
 	}
-
-	console.log( 'fields', fields, sites );
 
 	return (
 		<div className={ className }>

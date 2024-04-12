@@ -1,39 +1,31 @@
+import { SiteExcerptData } from '@automattic/sites';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useContext, useEffect, useCallback, useState } from 'react';
+import { useContext, useEffect, useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutNavigation, {
 	LayoutNavigationTabs as NavigationTabs,
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
-import DashboardDataContext from '../sites-overview/dashboard-data-context';
-import SitesDataViews from '../sites-overview/sites-dataviews';
-import { SitesViewState } from '../types';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import SitePreviewPane from '../sites-overview/site-preview-pane';
+import { SitesDataResponse } from 'calypso/sites-dashboard/sections/sites/sites-overview/sites-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import SitesDashboardContext from '../sites-dashboard-context';
+import DashboardDataContext from '../sites-overview/dashboard-data-context';
+import SitesDataViews from '../sites-overview/sites-dataviews';
+import { SitesViewState } from '../types';
 import EmptyState from './empty-state';
-import { getSelectedFilters } from './get-selected-filters';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
-import { DashboardFilter } from '../sites-overview/types';
 
 import './style.scss';
-import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { SiteExcerptData } from '@automattic/sites';
-import { SitesDataResponse } from 'calypso/sites-dashboard/sections/sites/sites-overview/sites-dataviews/interfaces';
-import SitePreviewPane from 'calypso/sites-dashboard/sections/sites/site-preview-pane';
 
 export default function SitesDashboard() {
-	console.log( 'SitesDashboard' );
 	const dispatch = useDispatch();
 
 	const {
@@ -42,25 +34,12 @@ export default function SitesDashboard() {
 		initialSelectedSiteUrl,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
-		sort,
+		//sort,
 		hideListing,
 		setHideListing,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
-	const isNarrowView = useBreakpoint( '<660px' );
-
-	const [ dashboardFilter, setDashboardFilter ] = useState< DashboardFilter >( {
-		siteStatus: [],
-	} );
-
-	useEffect( () => {
-		const selectedFilters = getSelectedFilters( sitesViewState.filters );
-
-		setDashboardFilter( {
-			siteStatus: selectedFilters,
-		} );
-	}, [ sitesViewState.filters, setDashboardFilter ] );
 
 	// const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 	// 	isPartnerOAuthTokenLoaded: false,
@@ -71,12 +50,11 @@ export default function SitesDashboard() {
 	// 	perPage: sitesViewState.perPage,
 	// } );
 
+	// TODO - need to figure out how to use sitesViewState.search in query filters
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
-
-	console.log( allSites );
 
 	const sitesDataResponse: SitesDataResponse = {
 		sites: allSites, // Directly using the array of SiteExcerptData objects from the hook
@@ -84,8 +62,6 @@ export default function SitesDashboard() {
 		perPage: 10, // Placeholder value, adjust based on your actual logic or source
 		totalFavorites: 0, // Placeholder value, you need to calculate or source this value based on your application's logic
 	};
-
-	console.log( 'sitesDataResponse:', sitesDataResponse, 'siteViewState:', sitesViewState );
 
 	const data = null;
 	const isError = false;
@@ -195,13 +171,6 @@ export default function SitesDashboard() {
 		>
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation>
-					<LayoutHeader>
-						{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
-						{ /*<Actions>*/ }
-						{ /* TODO: We were using a component from the overview header actions. We have to check if this is the best header available for the sites page. */ }
-						{ /*	<OverviewHeaderActions />*/ }
-						{ /*</Actions>*/ }
-					</LayoutHeader>
 					<LayoutNavigation { ...selectedItemProps }>
 						<NavigationTabs { ...selectedItemProps } items={ navItems } />
 					</LayoutNavigation>

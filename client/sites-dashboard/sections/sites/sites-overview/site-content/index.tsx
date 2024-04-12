@@ -50,8 +50,6 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 	const siteColumns = useDefaultSiteColumns( isLargeScreen );
 	const firstColumn = siteColumns[ 0 ];
 
-	console.log( 'siteColumns', siteColumns );
-
 	return (
 		<>
 			{ isLargeScreen ? (

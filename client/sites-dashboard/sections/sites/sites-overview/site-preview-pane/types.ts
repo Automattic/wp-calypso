@@ -1,5 +1,5 @@
+import { SiteExcerptData } from '@automattic/sites';
 import React from 'react';
-import { Site } from '../types';
 
 export interface FeaturePreviewInterface {
 	id: string;
@@ -17,8 +17,8 @@ export interface FeatureTabInterface {
 	onTabClick?: () => void;
 }
 
-export interface SitePreviewPaneProps {
-	site: Site;
+export interface PreviewPaneProps {
+	site: SiteExcerptData;
 	closeSitePreviewPane?: () => void;
 	selectedFeatureId?: string;
 	features?: FeaturePreviewInterface[];

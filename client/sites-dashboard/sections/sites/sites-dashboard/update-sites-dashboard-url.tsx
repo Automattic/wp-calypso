@@ -2,11 +2,9 @@ import page from '@automattic/calypso-router';
 import { Filter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import { DashboardSortInterface } from 'calypso/sites-dashboard/sections/sites/sites-overview/types';
 import { SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
-import { getSelectedFilters } from './get-selected-filters';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const buildQueryString = ( {
-	filters,
 	search,
 	currentPage,
 	sort,
@@ -34,11 +32,6 @@ const buildQueryString = ( {
 		if ( sort.direction && sort.direction !== 'asc' ) {
 			urlQuery.set( 'sort_direction', sort.direction );
 		}
-	}
-
-	if ( filters && filters.length > 0 ) {
-		const selectedFilters = getSelectedFilters( filters );
-		urlQuery.set( 'issue_types', selectedFilters.join( ',' ) );
 	}
 
 	let queryString = urlQuery.toString();

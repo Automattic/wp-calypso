@@ -13,7 +13,6 @@ export default function () {
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 		page( '/sites', sitesContext, makeLayout, clientRender );
 	} else {
-		console.log( 'This is the old sites dashboard' );
 		// Maintain old `/sites/:id` URLs by redirecting them to My Home
 		page( '/sites/:site', ( context ) => {
 			const state = context.store.getState();
