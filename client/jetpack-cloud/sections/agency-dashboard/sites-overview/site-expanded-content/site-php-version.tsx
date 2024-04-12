@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 export default function SitePhpVersion( {
 	phpVersion,
 }: {
-	phpVersion: string | null;
+	phpVersion: number | null;
 } ): JSX.Element | null {
 	const translate = useTranslate();
 

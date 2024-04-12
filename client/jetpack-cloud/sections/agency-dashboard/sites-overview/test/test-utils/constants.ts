@@ -50,7 +50,7 @@ const site: Site = {
 		mobile: 75,
 		desktop: 85,
 	},
-	php_version_num: '7.4',
+	php_version_num: 7.4,
 	wordpress_version: '6.5',
 	has_paid_agency_monitor: true,
 	has_pending_boost_one_time_score: false,
