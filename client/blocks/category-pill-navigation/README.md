@@ -62,6 +62,7 @@ This property should match the `id` of one of the items in the `categories` arra
 An optional array of additional link objects to prepend to the main list of links:
 ```
 {
+	id: string; // The identifier of the button, typically used for click tracking
 	icon: string; // The icon displayed before the label
 	label: string; // The text displayed on the link
 	link: string; // The URL that the link points to

@@ -31,7 +31,7 @@ export const CategoryPillNavigation = ( {
 	buttons,
 	categories,
 	selectedCategoryId,
-	onSelect,
+	onSelect = () => {},
 }: CategoryPillNavigationProps ) => {
 	const locale = useLocale();
 	const isMobile = useMobileBreakpoint();
