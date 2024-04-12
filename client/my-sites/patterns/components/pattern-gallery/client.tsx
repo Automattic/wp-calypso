@@ -9,6 +9,7 @@ import {
 	DESKTOP_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
+import { PatternPreviewPlaceholder } from 'calypso/my-sites/patterns/components/pattern-preview/placeholder';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { PatternTypeFilter, type PatternGalleryFC } from 'calypso/my-sites/patterns/types';
@@ -113,6 +114,7 @@ const PATTERNS_PER_PAGE_COUNT = 9;
 export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 	const {
 		category,
+		displayPlaceholder = false,
 		getPatternPermalink,
 		isGridView = false,
 		patterns = [],
@@ -161,6 +163,16 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 					enableMasonry={ isGridView && isPageLayouts }
 					itemSelector=".pattern-preview"
 				>
+					{ displayPlaceholder && (
+						<PatternPreviewPlaceholder
+							className={ classNames( {
+								'pattern-preview--grid': isGridView,
+								'pattern-preview--list': ! isGridView,
+							} ) }
+							title="…"
+						/>
+					) }
+
 					{ patternsToDisplay.map( ( pattern ) => (
 						<PatternPreview
 							canCopy={ isLoggedIn || pattern.can_be_copied_without_account }
