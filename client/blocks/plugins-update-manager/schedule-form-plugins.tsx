@@ -15,7 +15,7 @@ interface Props {
 	plugins: CorePlugin[];
 	isPluginsFetching: boolean;
 	isPluginsFetched: boolean;
-	initPlugins?: string[];
+	selectedPlugins?: string[];
 	touched?: boolean;
 	error?: string;
 	showError?: boolean;
@@ -25,9 +25,9 @@ interface Props {
 export function ScheduleFormPlugins( props: Props ) {
 	const {
 		plugins,
+		selectedPlugins: initPlugins = [],
 		isPluginsFetching,
 		isPluginsFetched,
-		initPlugins = [],
 		error,
 		showError,
 		onChange,

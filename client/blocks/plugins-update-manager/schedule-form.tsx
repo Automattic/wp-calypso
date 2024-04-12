@@ -146,9 +146,9 @@ export const ScheduleForm = ( props: Props ) => {
 				<FlexItem>
 					<ScheduleFormPlugins
 						plugins={ plugins }
+						selectedPlugins={ selectedPlugins }
 						isPluginsFetching={ isPluginsFetching }
 						isPluginsFetched={ isPluginsFetched }
-						initPlugins={ selectedPlugins }
 						error={ validationErrors?.plugins }
 						showError={ fieldTouched?.plugins }
 						onChange={ setSelectedPlugins }
