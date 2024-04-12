@@ -55,7 +55,7 @@ const QuickActionsCard: FC = () => {
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
 					href={ `/stats/${ site?.slug }` }
-					text={ translate( 'See JetPack Stats' ) }
+					text={ translate( 'See Jetpack Stats' ) }
 				/>
 			</ul>
 		</Card>
