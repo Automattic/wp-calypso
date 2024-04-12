@@ -147,11 +147,14 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 				name = "Copy Docker Container Logs and Capture Script Output"
 				scriptContent = """
 					#!/bin/bash
-					exec &> %system.teamcity.build.checkoutDir%/logs/script-run.log  # Redirect all output to script-run.log
-					set -x  # Enable debugging
+					# Ensure the logs directory exists
+					logs_dir="%system.teamcity.build.checkoutDir%/logs"
+					mkdir -p "${'$'}logs_dir"
+					echo "Logs directory prepared at ${'$'}logs_dir"
 
-					echo "Checkout Directory: %system.teamcity.build.checkoutDir%"
-					mkdir -p %system.teamcity.build.checkoutDir%/logs
+					# Redirect all output to script-run.log
+					exec &> "${'$'}logs_dir/script-run.log"
+					set -x  # Enable debugging
 
 					echo "Attempting to copy logs for all known containers, regardless of state:"
 					docker ps -a --no-trunc | awk '{print ${'$'}1}' | tail -n +2 > container_ids.txt
@@ -162,7 +165,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 						while read id; do
 							echo "Checking logs for container ${'$'}id"
 							src_log_file="/var/lib/docker/containers/${'$'}id/${'$'}id-json.log"
-							dest_log_file="%system.teamcity.build.checkoutDir%/logs/${'$'}id-json.log"
+							dest_log_file="${'$'}logs_dir/${'$'}id-json.log"
 
 							if [ -f "${'$'}src_log_file" ]; then
 								cp "${'$'}src_log_file" "${'$'}dest_log_file"
@@ -174,7 +177,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					fi
 
 					echo "Appending 'foobar' to a log file to ensure file system is writable."
-					echo "foobar" >> %system.teamcity.build.checkoutDir%/logs/test-foobar-log.txt
+					echo "foobar" >> "${'$'}logs_dir/test-foobar-log.log"
 					echo "End of Script"
 				"""
 				executionMode = BuildStep.ExecutionMode.ALWAYS
