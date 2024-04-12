@@ -14,7 +14,7 @@ export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( props ) =
 		<div className="mastodon-preview__post">
 			<MastodonPostHeader user={ user } />
 			<MastonPostBody { ...props }>
-				{ media ? (
+				{ media?.length ? (
 					<div
 						className={ classNames( 'mastodon-preview__media', { 'as-grid': media.length > 1 } ) }
 					>
@@ -36,7 +36,7 @@ export const MastodonPostPreview: React.FC< MastodonPreviewProps > = ( props ) =
 					</div>
 				) : null }
 			</MastonPostBody>
-			{ ! media ? <MastodonPostCard { ...props } /> : null }
+			{ ! media?.length ? <MastodonPostCard { ...props } /> : null }
 			<MastodonPostActions />
 		</div>
 	);
