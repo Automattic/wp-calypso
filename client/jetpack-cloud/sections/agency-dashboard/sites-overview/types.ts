@@ -97,6 +97,8 @@ export interface Site {
 	onSelect?: () => void;
 	jetpack_boost_scores: BoostData;
 	php_version_num: number;
+	wordpress_version: string;
+	hosting_provider_guess: string;
 	has_paid_agency_monitor: boolean;
 	is_atomic: boolean;
 	has_pending_boost_one_time_score: boolean;
