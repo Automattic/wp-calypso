@@ -47,9 +47,8 @@ const SitesDataViews = ( { sites }: SitesDataViewsProps ) => {
 			header: __( 'Site' ),
 			getValue: ( { item }: SitesDataViewsSite ) => item.URL,
 			render: ( { item }: SitesDataViewsSite ) => {
-				const site = item.ID;
 				return (
-					<Button onClick={ () => openSitePreviewPane( site ) }>
+					<Button onClick={ () => openSitePreviewPane( item.ID ) }>
 						<div className="sites-dataviews__site-name">{ item.title }</div>
 					</Button>
 				);

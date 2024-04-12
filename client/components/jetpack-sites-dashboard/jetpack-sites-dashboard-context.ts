@@ -1,11 +1,22 @@
-import { createContext } from 'react';
+import { createContext, Dispatch, SetStateAction } from 'react';
 import { initialSitesViewState } from './constants';
+import { DataViewsState } from './types';
 
-const JetpackSitesDashboardContext = createContext( {
+interface JetpackSitesDashboardContextInterface {
+	sitesViewState: DataViewsState;
+	setSitesViewState: Dispatch< SetStateAction< DataViewsState > >;
+	openSitePreviewPane: ( selectedSiteId: number ) => void;
+	closeSitePreviewPane: () => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop(): void {}
+
+const JetpackSitesDashboardContext = createContext< JetpackSitesDashboardContextInterface >( {
 	sitesViewState: initialSitesViewState,
-	setSitesViewState: () => {},
-	openSitePreviewPane: () => {},
-	closeSitePreviewPane: () => {},
+	setSitesViewState: noop,
+	openSitePreviewPane: noop,
+	closeSitePreviewPane: noop,
 } );
 
 export default JetpackSitesDashboardContext;

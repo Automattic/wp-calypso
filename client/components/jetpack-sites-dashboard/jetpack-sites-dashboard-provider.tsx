@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { initialSitesViewState } from './constants';
 import JetpackSitesDashboardContext from './jetpack-sites-dashboard-context';
-import type { SiteExcerptData } from '@automattic/sites';
 
 interface JetpackSitesDashboardProviderProps {
 	children: React.ReactNode;
@@ -13,10 +12,10 @@ const JetpackSitesDashboardProvider: React.FC< JetpackSitesDashboardProviderProp
 	const [ sitesViewState, setSitesViewState ] = useState( initialSitesViewState );
 
 	const openSitePreviewPane = useCallback(
-		( site: SiteExcerptData ) => {
+		( selectedSiteId: number ) => {
 			setSitesViewState( {
 				...sitesViewState,
-				selectedSite: site,
+				selectedSiteId,
 				type: 'list',
 			} );
 		},
@@ -24,8 +23,8 @@ const JetpackSitesDashboardProvider: React.FC< JetpackSitesDashboardProviderProp
 	);
 
 	const closeSitePreviewPane = useCallback( () => {
-		if ( sitesViewState.selectedSite ) {
-			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+		if ( sitesViewState.selectedSiteId ) {
+			setSitesViewState( { ...sitesViewState, type: 'table', selectedSiteId: undefined } );
 		}
 	}, [ sitesViewState, setSitesViewState ] );
 

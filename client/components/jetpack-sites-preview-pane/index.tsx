@@ -8,7 +8,7 @@ const JetpackSitesPreviewPane = () => {
 
 	return (
 		<div>
-			<p>{ sitesViewState.selectedSite } preview here.</p>
+			<p>{ sitesViewState.selectedSiteId } preview here.</p>
 			<Button
 				onClick={ closeSitePreviewPane }
 				className="site-preview__close-preview"

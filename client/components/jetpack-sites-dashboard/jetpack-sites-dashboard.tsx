@@ -24,7 +24,7 @@ const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) 
 		<div
 			className={ classNames(
 				'jetpack-sites-dashboard__container',
-				! sitesViewState.selectedSite && 'preview-hidden'
+				! sitesViewState.selectedSiteId && 'preview-hidden'
 			) }
 		>
 			<div className="jetpack-sites-dashboard__column sites-overview">
@@ -34,7 +34,7 @@ const JetpackSitesDashboard: React.FC< JetpackSitesDashboardProps > = ( props ) 
 					paginationInfo={ props.paginationInfo }
 				/>
 			</div>
-			{ sitesViewState.selectedSite && (
+			{ sitesViewState.selectedSiteId && (
 				<div className="jetpack-sites-dashboard__column">
 					<JetpackSitesPreviewPane />
 				</div>

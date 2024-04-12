@@ -1,4 +1,6 @@
-export const initialSitesViewState = {
+import { DataViewsState } from './types';
+
+export const initialSitesViewState: DataViewsState = {
 	type: 'table',
 	perPage: 50,
 	page: 1,
@@ -7,8 +9,7 @@ export const initialSitesViewState = {
 		direction: 'asc',
 	},
 	search: '',
-	filters: [],
-	layout: {},
 	hiddenFields: [],
-	selectedSite: undefined,
+	layout: {},
+	selectedSiteId: undefined,
 };
