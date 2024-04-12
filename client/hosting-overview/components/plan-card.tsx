@@ -102,8 +102,12 @@ const PlanCard: FC = () => {
 							value={ usedGigabytes / availableUnitAmount }
 							total={ 1 }
 						/>
-						<div>
-							<Button plain href={ `/plans/${ site?.slug }` }>
+						<div className="hosting-overview__plan-storage-footer">
+							<Button
+								className="hosting-overview__link-button"
+								plain
+								href={ `/plans/${ site?.slug }` }
+							>
 								{ translate( 'Need more storage?' ) }
 							</Button>
 						</div>
