@@ -1,7 +1,9 @@
 import { PlanSlug } from '@automattic/calypso-products';
+import { GridPlan } from '../types';
 import { jetpackFeatures, wpcomFeatures } from './features';
 
-const freePlan = {
+type BillingPeriod = 365 | -1 | 31 | 730 | 1095 | undefined;
+const freePlan: GridPlan = {
 	planSlug: 'free_plan' as PlanSlug,
 	isVisible: true,
 	tagline: 'Get a taste of the world’s most popular CMS & blogging software.',
@@ -22,7 +24,7 @@ const freePlan = {
 			monthly: null,
 			full: null,
 		},
-		billingPeriod: -1 as number,
+		billingPeriod: -1 as BillingPeriod,
 		currencyCode: 'AUD',
 		introOffer: null,
 	},
@@ -39,7 +41,7 @@ const freePlan = {
 	},
 };
 
-const personalBundle = {
+const personalBundle: GridPlan = {
 	planSlug: 'personal-bundle' as PlanSlug,
 	isVisible: true,
 	tagline: 'Create your home on the web with a custom domain name.',
@@ -62,7 +64,7 @@ const personalBundle = {
 			monthly: null,
 			full: null,
 		},
-		billingPeriod: 365 as number,
+		billingPeriod: 365 as BillingPeriod,
 		currencyCode: 'AUD',
 		introOffer: null,
 	},
@@ -78,7 +80,7 @@ const personalBundle = {
 		],
 	},
 };
-const valueBundle = {
+const valueBundle: GridPlan = {
 	planSlug: 'value_bundle' as PlanSlug,
 	isVisible: true,
 	tagline: 'Build a unique website with powerful design tools.',
@@ -101,7 +103,7 @@ const valueBundle = {
 			monthly: null,
 			full: null,
 		},
-		billingPeriod: 365 as number,
+		billingPeriod: 365 as BillingPeriod,
 		currencyCode: 'AUD',
 		introOffer: null,
 	},
@@ -118,7 +120,7 @@ const valueBundle = {
 	},
 };
 
-const businessBundle = {
+const businessBundle: GridPlan = {
 	planSlug: 'business-bundle' as PlanSlug,
 	isVisible: true,
 	tagline: 'Unlock the power of WordPress with plugins and cloud tools.',
@@ -141,7 +143,7 @@ const businessBundle = {
 			monthly: null,
 			full: null,
 		},
-		billingPeriod: 365 as number,
+		billingPeriod: 365,
 		currencyCode: 'AUD',
 		expiry: '2025-01-17T00:00:00+00:00',
 		introOffer: null,
@@ -150,7 +152,7 @@ const businessBundle = {
 		{
 			productSlug: 'wordpress_com_1gb_space_addon_yearly',
 			featureSlugs: [ '50gb-storage-add-on' ],
-			icon: null,
+			icon: <></>,
 			quantity: 50,
 			name: '50 GB Storage',
 			displayCost: 'A$74.58/month, billed yearly',
@@ -169,6 +171,7 @@ const businessBundle = {
 		{
 			productSlug: 'wordpress_com_1gb_space_addon_yearly',
 			featureSlugs: [ '100gb-storage-add-on' ],
+			icon: <></>,
 			quantity: 100,
 			name: '100 GB Storage',
 			displayCost: 'A$124.25/month, billed yearly',
@@ -229,7 +232,7 @@ const ecommerce = {
 			monthly: 3316.67,
 			full: 39800,
 		},
-		billingPeriod: 365 as number,
+		billingPeriod: 365 as BillingPeriod,
 		currencyCode: 'AUD',
 		introOffer: null,
 	},
