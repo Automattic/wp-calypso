@@ -30,8 +30,10 @@ import './style.scss';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { SiteExcerptData } from '@automattic/sites';
 import { SitesDataResponse } from 'calypso/sites-dashboard/sections/sites/sites-overview/sites-dataviews/interfaces';
+import SitePreviewPane from 'calypso/sites-dashboard/sections/sites/site-preview-pane';
 
 export default function SitesDashboard() {
+	console.log( 'SitesDashboard' );
 	const dispatch = useDispatch();
 
 	const {
@@ -41,6 +43,8 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		sort,
+		hideListing,
+		setHideListing,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -91,6 +95,7 @@ export default function SitesDashboard() {
 	useEffect( () => {
 		if ( sitesViewState.selectedSite && ! initialSelectedSiteUrl ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			setHideListing( false );
 			return;
 		}
 
@@ -120,7 +125,7 @@ export default function SitesDashboard() {
 
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( ! sitesViewState.selectedSite ) {
+		if ( hideListing && ! sitesViewState.selectedSite ) {
 			return;
 		}
 
@@ -146,13 +151,15 @@ export default function SitesDashboard() {
 		sitesViewState.search,
 		sitesViewState.page,
 		sitesViewState.sort,
+		hideListing,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
-			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined, hiddenFields: [] } );
+			setHideListing( false );
 		}
-	}, [ sitesViewState, setSitesViewState ] );
+	}, [ sitesViewState, setSitesViewState, setHideListing ] );
 
 	// This is a basic representation of the feature families for now, with just the Overview tab.
 	const navItems = [
@@ -218,13 +225,12 @@ export default function SitesDashboard() {
 
 			{ sitesViewState.selectedSite && (
 				<LayoutColumn className="site-preview-pane" wide>
-					{ /*<OverviewFamily*/ }
-					{ /*	site={ sitesViewState.selectedSite }*/ }
-					{ /*	closeSitePreviewPane={ closeSitePreviewPane }*/ }
-					{ /*	isSmallScreen={ ! isLargeScreen }*/ }
-					{ /*	hasError={ isError }*/ }
-					{ /*/>*/ }
-					<></>
+					<SitePreviewPane
+						site={ sitesViewState.selectedSite }
+						closeSitePreviewPane={ closeSitePreviewPane }
+						isSmallScreen={ ! isLargeScreen }
+						hasError={ isError }
+					/>
 				</LayoutColumn>
 			) }
 		</Layout>

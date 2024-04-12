@@ -1,7 +1,5 @@
-import {
-	DashboardFilterMap,
-	SitesViewState,
-} from './types';
+import { DashboardFilterMap } from './sites-overview/types';
+import { SitesViewState } from './types';
 
 export const SITES_DASHBOARD_DEFAULT_CATEGORY = 'overview';
 
@@ -24,7 +22,7 @@ export const initialSitesViewState: SitesViewState = {
 	},
 	search: '',
 	filters: [],
-	hiddenFields: [ 'status' ],
+	hiddenFields: [],
 	layout: {},
 	selectedSite: undefined,
 };

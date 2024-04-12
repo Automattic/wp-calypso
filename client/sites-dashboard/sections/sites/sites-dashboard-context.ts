@@ -6,6 +6,9 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedCategory: undefined,
 	setSelectedCategory: () => {},
 
+	hideListing: undefined,
+	setHideListing: () => {},
+
 	sitesViewState: initialSitesViewState,
 	setSitesViewState: () => {
 		return undefined;

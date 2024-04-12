@@ -1,14 +1,13 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { filtersMap, initialSitesViewState } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
-import {
-	DashboardSortInterface,
-	SitesViewState,
-} from './types';
+import { DashboardSortInterface } from './sites-overview/types';
+import { SitesViewState } from './types';
 
 interface Props {
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
+	hideListingInitialState?: boolean;
 	searchQuery: string;
 	children: ReactNode;
 	path: string;
@@ -21,6 +20,7 @@ interface Props {
 export const SitesDashboardProvider = ( {
 	categoryInitialState,
 	siteUrlInitialState,
+	hideListingInitialState = false,
 	children,
 	path,
 	searchQuery,
@@ -28,7 +28,7 @@ export const SitesDashboardProvider = ( {
 	currentPage,
 	sort,
 }: Props ) => {
-
+	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
 	const [ initialSelectedSiteUrl, setInitialSelectedSiteUrl ] = useState( siteUrlInitialState );
 
@@ -41,18 +41,9 @@ export const SitesDashboardProvider = ( {
 	useEffect( () => {
 		setInitialSelectedSiteUrl( siteUrlInitialState );
 
-		const issueTypesArray = issueTypes?.split( ',' );
-
 		setSitesViewState( ( previousState ) => ( {
 			...previousState,
-			filters:
-				issueTypesArray?.map( ( issueType ) => {
-					return {
-						field: 'status',
-						operator: 'in',
-						value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-					};
-				} ) || [],
+			filters: [],
 			search: searchQuery,
 			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
 			...( siteUrlInitialState ? {} : { type: 'table' } ),
@@ -68,6 +59,8 @@ export const SitesDashboardProvider = ( {
 	const sitesDashboardContextValue = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
+		hideListing: hideListing,
+		setHideListing: setHideListing,
 		path,
 		currentPage,
 		sort,

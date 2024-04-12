@@ -47,6 +47,7 @@ import './style-dashboard-v2.scss';
 const QUERY_PARAM_PROVISIONING = 'provisioning';
 
 export default function SitesDashboardV2() {
+	console.log( 'SitesDashboardV2' );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );

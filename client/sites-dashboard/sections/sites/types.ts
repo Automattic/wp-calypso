@@ -28,6 +28,9 @@ export interface SitesDashboardContextInterface {
 	selectedCategory?: string;
 	setSelectedCategory: ( category: string ) => void;
 
+	hideListing?: boolean;
+	setHideListing: ( hideListing: boolean ) => void;
+
 	sitesViewState: SitesViewState;
 	setSitesViewState: React.Dispatch< React.SetStateAction< SitesViewState > >;
 

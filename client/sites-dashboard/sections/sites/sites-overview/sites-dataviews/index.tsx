@@ -36,6 +36,7 @@ const SitesDataViews = ( {
 				...sitesViewState,
 				selectedSite: site,
 				type: 'list',
+				hiddenFields: [ 'stats', 'plan', 'type', 'last_publish' ],
 			} );
 		},
 		[ onSitesViewChange, sitesViewState ]

@@ -22,13 +22,13 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 				key: 'plan',
 				title: translate( 'Plan' ),
 				className: 'width-fit-content jetpack-cloud-site-column__stats',
-				isExpandable: true,
+				isExpandable: false,
 			},
 			{
-				key: 'status',
-				title: translate( 'Status' ),
+				key: 'type',
+				title: translate( 'Type' ),
 				className: 'fixed-site-column jetpack-cloud-site-column__backup',
-				isExpandable: true,
+				isExpandable: false,
 				showInfo: true,
 			},
 			{
@@ -36,12 +36,13 @@ const useDefaultSiteColumns = ( isLargeScreen = false ): SiteColumns => {
 				title: translate( 'Last Publish' ),
 				className: 'fixed-site-column jetpack-cloud-site-column__scan',
 				showInfo: true,
+				isExpandable: false,
 			},
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
 				className: 'min-width-100px jetpack-cloud-site-column__stats',
-				isExpandable: true,
+				isExpandable: false,
 				showInfo: true,
 			},
 		];
