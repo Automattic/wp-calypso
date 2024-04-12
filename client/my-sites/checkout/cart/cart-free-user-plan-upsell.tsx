@@ -4,6 +4,7 @@ import {
 	PLAN_PERSONAL,
 	isDomainRegistration,
 	isDomainTransfer,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
@@ -20,8 +21,6 @@ import {
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useSelector } from 'calypso/state';
-import { isRequestingPlans } from 'calypso/state/plans/selectors';
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type {
 	ResponseCart,
@@ -29,32 +28,37 @@ import type {
 	ResponseCartProduct,
 } from '@automattic/shopping-cart';
 
-export interface CartFreeUserPlanUpsellProps {
+interface CartFreeUserPlanUpsellProps {
 	cart: Pick< ResponseCart, 'products' >;
 	isCartPendingUpdate?: boolean;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 }
 
-const isRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
+const useUpsellPlanSlug = (): PlanSlug => {
+	return PLAN_PERSONAL;
+};
+
+const isDomainRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 	return isDomainRegistration( item ) || isDomainTransfer( item );
 };
 
 const UpgradeText = ( { cart }: { cart: Pick< ResponseCart, 'products' > } ) => {
-	const upsellPlan = getPlan( PLAN_PERSONAL );
 	const translate = useTranslate();
-	const firstDomain = cart.products.find( isRegistrationOrTransfer );
-	const planName = upsellPlan?.getTitle() ?? '';
+	const upsellPlanSlug = useUpsellPlanSlug();
+	const upsellPlan = getPlan( upsellPlanSlug );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ PLAN_PERSONAL ],
+		planSlugs: [ upsellPlanSlug ],
 		selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );
+	const firstDomain = cart?.products?.find( isDomainRegistrationOrTransfer );
+	const planName = upsellPlan?.getTitle() ?? '';
 	const planPrice =
-		pricingMeta?.[ PLAN_PERSONAL ]?.discountedPrice.full ||
-		pricingMeta?.[ PLAN_PERSONAL ]?.originalPrice.full;
+		pricingMeta?.[ upsellPlanSlug ]?.discountedPrice.full ||
+		pricingMeta?.[ upsellPlanSlug ]?.originalPrice.full;
 
 	if ( planPrice && firstDomain && planPrice > firstDomain.item_subtotal_integer ) {
 		const extraToPay = planPrice - firstDomain.item_subtotal_integer;
@@ -100,42 +104,22 @@ const UpgradeText = ( { cart }: { cart: Pick< ResponseCart, 'products' > } ) => 
 	);
 };
 
-const useShouldRender = ( {
-	cart,
-	isCartPendingUpdate,
-}: Omit< CartFreeUserPlanUpsellProps, 'addItemToCart' > ) => {
-	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteId = selectedSite ? selectedSite.ID : null;
-	const isRequestingPlansInState = useSelector( ( state ) => {
-		return isRequestingPlans( state ) || isRequestingSitePlans( state );
-	} );
-	const { isLoading: isRequestingPlansInStore } = Plans.usePlans( { coupon: undefined } );
-	const isRegisteringOrTransferringDomain =
-		hasDomainRegistration( cart ) || hasTransferProduct( cart );
-
-	if ( isCartPendingUpdate || isRequestingPlansInState || isRequestingPlansInStore ) {
-		return false;
-	}
-
-	return (
-		isRegisteringOrTransferringDomain &&
-		!! selectedSiteId &&
-		selectedSite &&
-		! siteHasPaidPlan( selectedSite ) &&
-		! hasPlan( cart )
-	);
-};
-
 const CartFreeUserPlanUpsell = ( {
 	cart,
 	isCartPendingUpdate,
 	addItemToCart,
 }: CartFreeUserPlanUpsellProps ) => {
 	const translate = useTranslate();
-	const shouldRender = useShouldRender( { cart, isCartPendingUpdate } );
+	const upsellPlanSlug = useUpsellPlanSlug();
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = selectedSite ? selectedSite.ID : null;
+	const { isLoading: isLoadingPlans } = Plans.usePlans( { coupon: undefined } );
+	const isDataReady = ! ( isCartPendingUpdate || isLoadingPlans );
+	const isRegisteringOrTransferringDomain =
+		hasDomainRegistration( cart ) || hasTransferProduct( cart );
 
 	const handleAddPlanToCart = () => {
-		const planCartItem = planItem( PLAN_PERSONAL );
+		const planCartItem = planItem( upsellPlanSlug );
 
 		if ( planCartItem ) {
 			addItemToCart( planCartItem );
@@ -143,7 +127,16 @@ const CartFreeUserPlanUpsell = ( {
 		}
 	};
 
-	if ( ! shouldRender ) {
+	if (
+		isDataReady &&
+		! (
+			isRegisteringOrTransferringDomain &&
+			!! selectedSiteId &&
+			selectedSite &&
+			! siteHasPaidPlan( selectedSite ) &&
+			! hasPlan( cart )
+		)
+	) {
 		return null;
 	}
 
