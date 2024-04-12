@@ -28,12 +28,10 @@ const PlanCard: FC = () => {
 	} );
 	const translate = useTranslate();
 
-	console.debug( 'site', site );
-	console.debug( 'plan', plan );
-	console.debug( 'pricingMeta', pricing );
-
+	// TODO: Replace with real data using <PlanStorage /> component
 	const usedGigabytes = 47;
 	const availableUnitAmount = 50;
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
