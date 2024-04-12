@@ -18,8 +18,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -50,10 +50,13 @@ const StatsPurchasePage = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// `is_vip` option is not set in Odyssey, so we need to check `options.is_vip` as well.
+	const isVip = useSelector(
+		( state ) =>
+			!! isVipSite( state as object, siteId as number ) ||
+			!! getSiteOption( state, siteId, 'is_vip' )
+	);
 
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
@@ -73,14 +76,10 @@ const StatsPurchasePage = ( {
 		if ( ! siteSlug ) {
 			return;
 		}
-		const trafficPageUrl = `/stats/day/${ siteSlug }`;
-		// Redirect to Calypso Stats if:
-		// - the site is not Jetpack.
-		// TODO: remove this check once we have Stats in Calypso for all sites.
-		if ( ! isSiteJetpackNotAtomic && ! config.isEnabled( 'stats/paid-wpcom-stats' ) ) {
-			page.redirect( trafficPageUrl );
+		if ( isVip ) {
+			page.redirect( `/stats/day/${ siteSlug }` ); // Redirect to the stats page for VIP sites
 		}
-	}, [ siteSlug, isSiteJetpackNotAtomic ] );
+	}, [ siteSlug, isVip ] );
 
 	useEffect( () => {
 		// Scroll to top on page load
@@ -160,7 +159,9 @@ const StatsPurchasePage = ( {
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
 	const allowCommercialTierUpgrade =
 		isTierUpgradeSliderEnabled && isCommercialOwned && ! isLegacyCommercialLicense;
+
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
+	// VIP sites are exempt from being shown this page.
 	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
 	const variant = useMemo( () => {

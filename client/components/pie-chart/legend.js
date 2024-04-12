@@ -20,6 +20,7 @@ class PieChartLegend extends Component {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 		onlyPercent: PropTypes.bool,
 		fixedOrder: PropTypes.bool,
+		svgElement: PropTypes.element,
 	};
 
 	state = {
@@ -58,6 +59,7 @@ class PieChartLegend extends Component {
 							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum } pie-chart__legend-sample-${ datum.className }` }
 							percent={ percent }
 							description={ datum.description }
+							svgElement={ this.props.svgElement }
 						/>
 					);
 				} ) }

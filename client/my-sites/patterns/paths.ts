@@ -1,5 +1,5 @@
+import { isAssemblerSupported } from '@automattic/design-picker';
 import { addLocaleToPathLocaleInFront, localizeUrl } from '@automattic/i18n-utils';
-import { buildQueryString } from '@wordpress/url';
 import { PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 import type { Locale } from '@automattic/i18n-utils';
 
@@ -19,11 +19,18 @@ export function getCategoryUrlPath(
 }
 
 export function getOnboardingUrl( locale: Locale, isLoggedIn: boolean ) {
-	return localizeUrl(
-		`https://wordpress.com/setup/assembler-first?${ buildQueryString( {
-			ref: URL_REFERRER_PARAM,
-		} ) }`,
-		locale,
-		isLoggedIn
-	);
+	const refQuery = new URLSearchParams( {
+		ref: URL_REFERRER_PARAM,
+	} );
+
+	// The Assembler only works on larger viewports
+	if ( isAssemblerSupported() ) {
+		return localizeUrl(
+			`https://wordpress.com/setup/assembler-first?${ refQuery }`,
+			locale,
+			isLoggedIn
+		);
+	}
+
+	return localizeUrl( `https://wordpress.com/start?${ refQuery }`, locale, isLoggedIn );
 }

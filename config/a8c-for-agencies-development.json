@@ -30,7 +30,8 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"oauth": true,
-		"a4a/mock-api-data": true
+		"a4a/hosting-preview-pane": true,
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {

@@ -24,6 +24,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
@@ -75,7 +76,7 @@ const BackupPage = ( { queryDate } ) => {
 	return (
 		<div
 			className={ classNames( 'backup__page', {
-				wordpressdotcom: ! isJetpackCloud(),
+				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
 		>
 			<Main
@@ -85,7 +86,7 @@ const BackupPage = ( { queryDate } ) => {
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! isJetpackCloud() && (
+				{ ! ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<NavigationHeader
 						navigationItems={ [] }
 						title={ translate( 'Jetpack VaultPress Backup' ) }
@@ -197,7 +198,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
-				{ isJetpackCloud() && (
+				{ ( isJetpackCloud() || isA8CForAgencies() ) && (
 					<div className="backup__header">
 						<div className="backup__header-left">
 							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>

@@ -135,7 +135,7 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			isNew={ [ 'utm' ].includes( moduleType ) }
+			isNew={ [ 'utm', 'devices' ].includes( moduleType ) }
 			className={ classNames( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }

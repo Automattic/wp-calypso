@@ -1,7 +1,7 @@
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
 import type { FunctionComponent } from 'react';
@@ -43,7 +43,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	allVariants: WPCOMProductVariant[];
 } > = ( { variant, allVariants } ) => {
 	const isMobile = useMobileBreakpoint();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	// We offer a free month trial for selected yearly plans (for now, only Social Advanced)
 

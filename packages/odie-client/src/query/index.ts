@@ -7,7 +7,7 @@ import wpcom from 'calypso/lib/wp';
 import { WAPUU_ERROR_MESSAGE } from '..';
 import { useOdieAssistantContext } from '../context';
 import { broadcastOdieMessage, setOdieStorage } from '../data';
-import type { Chat, Message, OdieAllowedBots } from '../types';
+import type { Chat, Message, MessageRole, MessageType, OdieAllowedBots } from '../types';
 
 // Either we use wpcom or apiFetch for the request for accessing odie endpoint for atomic or wpcom sites
 const buildSendChatMessage = async (
@@ -35,7 +35,7 @@ const buildSendChatMessage = async (
 		: apiFetch( {
 				path: apiPathWithIds,
 				method: 'POST',
-				data: { message, version, context: { selectedSiteId } },
+				data: { message: message.content, version, context: { selectedSiteId } },
 		  } );
 };
 
@@ -80,7 +80,7 @@ export const useOdieSendMessage = (): UseMutationResult<
 		chat,
 		botNameSlug,
 		setIsLoading,
-		addMessage,
+		setChat,
 		updateMessage,
 		odieClientId,
 		selectedSiteId,
@@ -107,15 +107,31 @@ export const useOdieSendMessage = (): UseMutationResult<
 		},
 		onMutate: ( { message } ) => {
 			const internal_message_id = uuid();
-			addMessage( [
+			const messages = [
 				message,
 				{
 					internal_message_id,
 					content: '...',
-					role: 'bot',
-					type: 'placeholder',
+					role: 'bot' as MessageRole,
+					type: 'placeholder' as MessageType,
 				},
-			] );
+			];
+
+			setChat( ( prevChat: Chat ) => {
+				// Normalize message to always be an array
+				const newMessages = messages;
+
+				// Filter out 'placeholder' messages if new message is not 'dislike-feedback'
+				const filteredMessages = newMessages.some( ( msg ) => msg.type === 'dislike-feedback' )
+					? prevChat.messages
+					: prevChat.messages.filter( ( msg ) => msg.type !== 'placeholder' );
+
+				// Append new messages at the end
+				return {
+					chat_id: prevChat.chat_id,
+					messages: [ ...filteredMessages, ...newMessages ],
+				};
+			} );
 			setIsLoading( true );
 			userMessage.current = message;
 

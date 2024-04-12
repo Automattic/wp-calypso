@@ -293,6 +293,18 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 				) }
 			</div>
 
+			{ wooExtensions.length > 0 && (
+				<ListingSection
+					icon={ <WooLogo width={ 45 } height={ 28 } /> }
+					title={ translate( 'WooCommerce Extensions' ) }
+					description={ translate(
+						'You must have WooCommerce installed to utilize these paid extensions.'
+					) }
+				>
+					{ getProductCards( wooExtensions ) }
+				</ListingSection>
+			) }
+
 			{ plans.length > 0 && (
 				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
@@ -315,18 +327,6 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 					) }
 				>
 					{ getProductCards( products ) }
-				</ListingSection>
-			) }
-
-			{ wooExtensions.length > 0 && (
-				<ListingSection
-					icon={ <WooLogo width={ 45 } height={ 28 } /> }
-					title={ translate( 'WooCommerce Extensions' ) }
-					description={ translate(
-						'You must have WooCommerce installed to utilize these paid extensions.'
-					) }
-				>
-					{ getProductCards( wooExtensions ) }
 				</ListingSection>
 			) }
 

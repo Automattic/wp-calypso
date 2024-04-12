@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
 	JETPACK_BACKUP_ID,
@@ -9,11 +8,9 @@ import {
 	JETPACK_PLUGINS_ID,
 	JETPACK_SCAN_ID,
 	JETPACK_STATS_ID,
-	A4A_SITE_DETAILS_ID,
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
-import { A4A_SITES_DASHBOARD_DEFAULT_FEATURE } from '../../constants';
 import SitePreviewPane, { createFeaturePreview } from '../../site-preview-pane';
 import { PreviewPaneProps } from '../../site-preview-pane/types';
 import { JetpackActivityPreview } from './activity';
@@ -47,8 +44,9 @@ export function JetpackPreviewPane( {
 
 	useEffect( () => {
 		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( A4A_SITES_DASHBOARD_DEFAULT_FEATURE );
+			setSelectedSiteFeature( JETPACK_BOOST_ID );
 		}
+
 		return () => {
 			setSelectedSiteFeature( undefined );
 		};
@@ -71,7 +69,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackBackupPreview siteId={ site.blog_id } />
+				<JetpackBackupPreview site={ site } />
 			),
 			createFeaturePreview(
 				JETPACK_SCAN_ID,
@@ -120,15 +118,7 @@ export function JetpackPreviewPane( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<JetpackActivityPreview siteId={ site.blog_id } />
-			),
-			createFeaturePreview(
-				A4A_SITE_DETAILS_ID,
-				translate( 'Details' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<SiteDetails site={ site } />
+				<JetpackActivityPreview site={ site } />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]

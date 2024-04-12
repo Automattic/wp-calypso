@@ -25,9 +25,6 @@ export default function SitesHeaderActions() {
 					onClickAddNewSite={ () =>
 						dispatch( recordTracksEvent( 'calypso_a4a_sites_add_new_site_click' ) )
 					}
-					onClickWpcomMenuItem={ () =>
-						dispatch( recordTracksEvent( 'calypso_a4a_sites_create_wpcom_site_click' ) )
-					}
 					onClickJetpackMenuItem={ () =>
 						dispatch( recordTracksEvent( 'calypso_a4a_sites_connect_jetpack_site_click' ) )
 					}

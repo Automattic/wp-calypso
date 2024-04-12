@@ -9,6 +9,7 @@ import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import BackupContentsPage from 'calypso/my-sites/backup/backup-contents-page';
 import BackupUpsell from 'calypso/my-sites/backup/backup-upsell';
@@ -27,10 +28,11 @@ const debug = new Debug( 'calypso:my-sites:backup:controller' );
 export function showUpsellIfNoBackup( context, next ) {
 	debug( 'controller: showUpsellIfNoBackup', context.params );
 
-	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
-	const UpsellPlaceholder = isJetpackCloud()
-		? UpsellProductCardPlaceholder
-		: WpcomBackupUpsellPlaceholder;
+	const UpsellComponent = isJetpackCloud() || isA8CForAgencies() ? BackupUpsell : WPCOMBackupUpsell;
+	const UpsellPlaceholder =
+		isJetpackCloud() || isA8CForAgencies()
+			? UpsellProductCardPlaceholder
+			: WpcomBackupUpsellPlaceholder;
 	context.featurePreview = (
 		<>
 			<UpsellSwitch
@@ -54,11 +56,12 @@ export function showUpsellIfNoBackup( context, next ) {
 export function showJetpackIsDisconnected( context, next ) {
 	debug( 'controller: showJetpackIsDisconnected', context.params );
 
-	const JetpackConnectionFailed = isJetpackCloud() ? (
-		<BackupUpsell reason="no_connected_jetpack" />
-	) : (
-		<WPCOMBackupUpsell reason="no_connected_jetpack" />
-	);
+	const JetpackConnectionFailed =
+		isJetpackCloud() || isA8CForAgencies() ? (
+			<BackupUpsell reason="no_connected_jetpack" />
+		) : (
+			<WPCOMBackupUpsell reason="no_connected_jetpack" />
+		);
 	context.featurePreview = (
 		<IsJetpackDisconnectedSwitch
 			trueComponent={ JetpackConnectionFailed }
@@ -82,11 +85,12 @@ export function showNotAuthorizedForNonAdmins( context, next ) {
 export function showUnavailableForVaultPressSites( context, next ) {
 	debug( 'controller: showUnavailableForVaultPressSites', context.params );
 
-	const message = isJetpackCloud() ? (
-		<BackupUpsell reason="vp_active_on_site" />
-	) : (
-		<WPCOMBackupUpsell reason="vp_active_on_site" />
-	);
+	const message =
+		isJetpackCloud() || isA8CForAgencies() ? (
+			<BackupUpsell reason="vp_active_on_site" />
+		) : (
+			<WPCOMBackupUpsell reason="vp_active_on_site" />
+		);
 
 	context.featurePreview = (
 		<HasVaultPressSwitch trueComponent={ message } falseComponent={ context.featurePreview } />
@@ -100,11 +104,12 @@ export function showUnavailableForMultisites( context, next ) {
 
 	// Only show "Multisite not supported" card if the multisite does not already own a Backup subscription.
 	// https://href.li/?https://wp.me/pbuNQi-1jg
-	const message = isJetpackCloud() ? (
-		<BackupUpsell reason="multisite_not_supported" />
-	) : (
-		<WPCOMBackupUpsell reason="multisite_not_supported" />
-	);
+	const message =
+		isJetpackCloud() || isA8CForAgencies() ? (
+			<BackupUpsell reason="multisite_not_supported" />
+		) : (
+			<WPCOMBackupUpsell reason="multisite_not_supported" />
+		);
 
 	context.featurePreview = (
 		<MultisiteNoBackupPlanSwitch

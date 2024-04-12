@@ -10,7 +10,7 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
-import useSiteComplusoryPlanSelectionQualifiedCheck from '../hooks/use-site-complusory-plan-selection-qualified-check';
+import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -297,7 +297,7 @@ const StatsSingleItemPagePurchase = ( {
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const { supportCommercialUse } = useStatsPurchases( siteId );
-	const { isNewSite } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
+	const { isNewSite } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
 		<>
@@ -364,9 +364,11 @@ function StatsCommercialFlowOptOutForm( {
 
 	useEffect( () => {
 		setComemercialClassificationRunAt(
-			parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' )
+			parseInt(
+				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
+			)
 		);
-	}, [] );
+	}, [ siteId ] );
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -392,16 +394,19 @@ function StatsCommercialFlowOptOutForm( {
 		useOnDemandCommercialClassificationMutation( siteId );
 	const handleCommercialClassification = async () => {
 		const now = Date.now();
-		localStorage?.setItem( 'commercial_classification__button_clicked', `${ now }` );
+		localStorage?.setItem( `commercial_classification__button_clicked_${ siteId }`, `${ now }` );
 		setComemercialClassificationRunAt( now );
 		runCommercialClassificationAsync().catch( ( e ) => {
 			setErrorMessage( e.message );
 		} );
 	};
 	const commercialClassificationLastRunAt = useMemo(
-		() => parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' ),
+		() =>
+			parseInt(
+				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
+			),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ comemercialClassificationRunAt ]
+		[ comemercialClassificationRunAt, siteId ]
 	);
 	const hasRunLessThan3DAgo =
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day

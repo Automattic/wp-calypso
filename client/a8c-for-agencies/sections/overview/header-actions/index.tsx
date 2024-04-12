@@ -20,9 +20,6 @@ export default function OverviewHeaderActions() {
 				onClickAddNewSite={ () =>
 					dispatch( recordTracksEvent( 'calypso_a4a_overview_add_new_site_click' ) )
 				}
-				onClickWpcomMenuItem={ () =>
-					dispatch( recordTracksEvent( 'calypso_a4a_overview_create_wpcom_site_click' ) )
-				}
 				onClickJetpackMenuItem={ () =>
 					dispatch( recordTracksEvent( 'calypso_a4a_overview_connect_jetpack_site_click' ) )
 				}

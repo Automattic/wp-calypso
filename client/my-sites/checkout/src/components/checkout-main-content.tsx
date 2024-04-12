@@ -25,7 +25,7 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -61,7 +61,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -245,7 +244,7 @@ function CheckoutSidebarNudge( {
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -382,7 +381,7 @@ export default function CheckoutMainContent( {
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
 
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it

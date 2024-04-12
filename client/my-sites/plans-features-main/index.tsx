@@ -331,7 +331,11 @@ const PlansFeaturesMain = ( {
 		( cartItems?: MinimalRequestCartProduct[] | null, clickedPlanSlug?: PlanSlug ) => {
 			if ( isWpcomEnterpriseGridPlan( clickedPlanSlug ?? '' ) ) {
 				recordTracksEvent( 'calypso_plan_step_enterprise_click', { flow: flowName } );
-				window.open( 'https://wpvip.com/wordpress-vip-agile-content-platform', '_blank' );
+				const vipLandingPageURL = 'https://wpvip.com/wordpress-vip-agile-content-platform';
+				window.open(
+					`${ vipLandingPageURL }/?utm_source=WordPresscom&utm_medium=automattic_referral&utm_campaign=calypso_signup`,
+					'_blank'
+				);
 				return;
 			}
 			const cartItemForPlan = getPlanCartItem( cartItems );

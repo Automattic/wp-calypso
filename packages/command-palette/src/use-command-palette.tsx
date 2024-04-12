@@ -191,11 +191,19 @@ export const useCommandPalette = (): {
 				const currentSite = filteredSites.find( ( site ) => site.ID === currentSiteId );
 
 				if ( currentSite ) {
-					// Move current site to the top of the list
-					filteredSites = [
-						currentSite,
-						...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
-					];
+					if ( selectedCommand.name === 'switchSite' ) {
+						// Exclude the current site from the "Switch site" command;
+						filteredSites = filteredSites.filter( ( site ) => site.ID !== currentSiteId );
+						if ( filteredSites.length === 0 ) {
+							emptyListNotice = selectedCommand.emptyListNotice;
+						}
+					} else {
+						// Move current site to the top of the list
+						filteredSites = [
+							currentSite,
+							...filteredSites.filter( ( site ) => site.ID !== currentSiteId ),
+						];
+					}
 				}
 			}
 
@@ -254,16 +262,22 @@ export const useCommandPalette = (): {
 			isCommandAvailableOnSite( command, currentSite, userCapabilities )
 		);
 
-		sortedCommands = sortedCommands.map( ( command: Command ) => ( {
-			...command,
-			siteSelector: false,
-			callback: ( params ) => {
-				command.callback( {
-					...params,
-					site: currentSite,
-				} );
-			},
-		} ) );
+		sortedCommands = sortedCommands.map( ( command: Command ) => {
+			if ( command?.alwaysUseSiteSelector ) {
+				return command;
+			}
+
+			return {
+				...command,
+				siteSelector: false,
+				callback: ( params ) => {
+					command.callback( {
+						...params,
+						site: currentSite,
+					} );
+				},
+			};
+		} );
 	}
 
 	const finalSortedCommands = sortedCommands.map( ( command ) => {
