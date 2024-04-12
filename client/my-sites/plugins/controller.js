@@ -179,6 +179,10 @@ export function updatesManagerMultisite( context, next ) {
 		case 'edit':
 			context.primary = `Edit multisite scheduled updates ${ context.params.schedule_id }`;
 			break;
+
+		default:
+			context.primary = 'List of multisite scheduled updates';
+			break;
 	}
 
 	next();
