@@ -105,19 +105,27 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 			bashNodeScript {
 				name = "Prepare environment"
 				scriptContent = """
-					# Clone Gutenberg
-					mkdir gutenberg
+					# Set up the logs directory and define log file path
+					logs_dir="%system.teamcity.build.checkoutDir%/logs"
+					mkdir -p "${'$'}logs_dir"
+					exec &> "${'$'}logs_dir/prepare-environment.log"
+					set -x  # Enable debugging
+
+					echo "Starting environment preparation"
+					mkdir -p gutenberg
 					cd gutenberg
 					git init
 					git remote add origin https://github.com/WordPress/gutenberg.git
 					git fetch --depth=1 origin try/run-e2e-tests-against-wpcom
 					git checkout try/run-e2e-tests-against-wpcom
 
-					# Install deps
+					echo "Installing dependencies"
 					npm ci
 
-					# Build packages
+					echo "Building packages"
 					npm run build:packages
+
+					echo "Environment preparation complete"
 				""".trimIndent()
 				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
 				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
@@ -179,7 +187,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					echo "Appending 'foobar' to a log file to ensure file system is writable."
 					echo "foobar" >> "${'$'}logs_dir/test-foobar-log.log"
 					echo "End of Script"
-				"""
+				"""..trimIndent()
 				executionMode = BuildStep.ExecutionMode.ALWAYS
 			})
 		}
