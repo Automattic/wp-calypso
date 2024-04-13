@@ -57,20 +57,6 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							>
 								{ i === 0 && <strong>{ feature?.getTitle() }</strong> }
 								{ i > 0 && <span>{ feature?.getTitle() }</span> }
-								{ i === 2 && (
-									<>
-										<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
-											<strong>{ __( 'Storage' ) }</strong>
-										</li>
-										<li className={ classnames( 'import__upgrade-plan-feature' ) }>
-											{ storageOptions?.map( ( storage, i ) => (
-												<Badge type="info" key={ i }>
-													{ storage?.getTitle() }
-												</Badge>
-											) ) }
-										</li>
-									</>
-								) }
 							</Plans2023Tooltip>
 						</li>
 					) ) }
@@ -90,6 +76,16 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							</Plans2023Tooltip>
 						</li>
 					) ) }
+					<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
+						<strong>{ __( 'Storage' ) }</strong>
+					</li>
+					<li className={ classnames( 'import__upgrade-plan-feature' ) }>
+						{ storageOptions?.map( ( storage, i ) => (
+							<Badge type="info" key={ i }>
+								{ storage?.getTitle() }
+							</Badge>
+						) ) }
+					</li>
 				</>
 			) }
 		</ul>
