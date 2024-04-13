@@ -646,7 +646,7 @@ class ManagePurchase extends Component<
 		const { purchase, translate } = this.props;
 
 		// Hide if refund window has lapsed.
-		if ( ! purchase?.isRefundable || ! purchase?.refundText || ! purchase?.mostRecentRenewDate ) {
+		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
 			return;
 		}
 
@@ -656,43 +656,19 @@ class ManagePurchase extends Component<
 			lastRenewalDate.getTime() + purchase.refundPeriodInDays * ONE_DAY_IN_MILLISECONDS
 		);
 
-		const refundText = (() => {
-			// User would receive another free domain credit upon cancelling.
-			if ( isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
-			  return translate(
-				"If you're unsure about this domain, cancel it before {{refundDate/}} to choose another free domain instead.",
-				{
-					components: {
-						refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
-					},
-				}
-			);
-			}
-		  
-			// User would receive a financial refund upon cancelling.
-			return translate(
-				'Eligible for a refund of %(refundAmount)s until {{refundDate/}}.',
-				{
-					components: {
-						refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
-					},
-					args: {
-						refundAmount: purchase.refundText,
-					},
-					context: 'refundAmount contains the currency and amount - eg. £20',
-				}
-			);
-		  }) ();
-
-
-		// Neither a financial refund nor another domain credit would be available.
-		if ( ! isDomainRegistration( purchase ) && ! hasAmountAvailableToRefund( purchase ) ) {
-			return;
-		}
-
 		return (
 			<div className="manage-purchase__refund-text-wrapper">
-				<span className="manage-purchase__refund-text">{ refundText }</span>
+				<span className="manage-purchase__refund-text">
+					{ translate( 'Eligible for a refund of %(refundAmount)s until {{refundDate/}}.', {
+						components: {
+							refundDate: <FormattedDate date={ refundPeriodEndDate } format="LL" />,
+						},
+						args: {
+							refundAmount: purchase.refundText,
+						},
+						context: 'refundAmount contains the currency and amount - eg. £20',
+					} ) }
+				</span>
 				<InfoPopover iconSize={ 16 } position="top left">
 					<span>
 						{ translate(
