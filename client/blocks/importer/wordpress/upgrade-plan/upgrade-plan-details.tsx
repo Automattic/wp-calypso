@@ -17,6 +17,7 @@ import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
 	children: React.ReactNode;
+	isEligibleForTrialPlan: boolean;
 }
 
 export const UpgradePlanDetails = ( props: Props ) => {
@@ -24,7 +25,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ showFeatures, setShowFeatures ] = useState( false );
 
-	const { children } = props;
+	const { children, isEligibleForTrialPlan } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
@@ -70,6 +71,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 			<div
 				className={ classnames( 'import__upgrade-plan-container', {
 					'feature-list-expanded': showFeatures,
+					'is-not-eligible-for-trial-plan': ! isEligibleForTrialPlan,
 				} ) }
 			>
 				<div className={ classnames( 'import__upgrade-plan-features-container' ) }>
