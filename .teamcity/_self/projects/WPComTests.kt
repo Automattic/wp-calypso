@@ -187,7 +187,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 					echo "Appending 'foobar' to a log file to ensure file system is writable."
 					echo "foobar" >> "${'$'}logs_dir/test-foobar-log.log"
 					echo "End of Script"
-				"""..trimIndent()
+				""".trimIndent()
 				executionMode = BuildStep.ExecutionMode.ALWAYS
 			})
 		}
