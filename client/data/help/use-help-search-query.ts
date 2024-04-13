@@ -25,11 +25,13 @@ interface APIFetchOptions {
 }
 
 const filterOutDuplicatedItems = (
-	searchResultResponse: SearchResult[],
-	articlesResponse: SearchResult[]
+	articlesResponse: SearchResult[],
+	searchResultResponse: SearchResult[]
 ) => {
-	const searchResultIds = searchResultResponse.map( ( result ) => result.post_id );
-	return articlesResponse.filter( ( article ) => ! searchResultIds.includes( article.post_id ) );
+	const articlesIds = articlesResponse.map( ( result ) => result.post_id );
+	return searchResultResponse.filter(
+		( searchResult ) => ! articlesIds.includes( searchResult.post_id )
+	);
 };
 
 const fetchArticlesAPI = async (
