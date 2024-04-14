@@ -13,6 +13,7 @@ type PlanFeaturesListProps = {
 	options?: {
 		isTableCell?: boolean;
 	};
+	featureGroup?: string | null;
 };
 
 const PlanFeaturesList = ( {
@@ -23,6 +24,7 @@ const PlanFeaturesList = ( {
 	paidDomainName,
 	renderedGridPlans,
 	selectedFeature,
+	featureGroup,
 }: PlanFeaturesListProps ) => {
 	const plansWithFeatures = useMemo( () => {
 		return renderedGridPlans.filter(
@@ -32,6 +34,7 @@ const PlanFeaturesList = ( {
 
 	return (
 		<PlanFeaturesContainer
+			featureGroup={ featureGroup }
 			plansWithFeatures={ plansWithFeatures }
 			paidDomainName={ paidDomainName }
 			generatedWPComSubdomain={ generatedWPComSubdomain }

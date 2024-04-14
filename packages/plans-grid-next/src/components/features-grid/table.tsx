@@ -75,6 +75,8 @@ const Table = ( {
 	);
 	const translate = useTranslate();
 
+	const featureGroups = [ null ];
+
 	return (
 		<table className={ tableClasses }>
 			<caption className="plan-features-2023-grid__screen-reader-text screen-reader-text">
@@ -138,17 +140,20 @@ const Table = ( {
 						options={ { isTableCell: true } }
 					/>
 				</tr>
-				<tr>
-					<PlanFeaturesList
-						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
-						paidDomainName={ paidDomainName }
-						hideUnavailableFeatures={ hideUnavailableFeatures }
-						selectedFeature={ selectedFeature }
-						generatedWPComSubdomain={ generatedWPComSubdomain }
-						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-					/>
-				</tr>
+				{ featureGroups.map( ( featureGroup ) => (
+					<tr key={ featureGroup }>
+						<PlanFeaturesList
+							renderedGridPlans={ gridPlansWithoutSpotlight }
+							options={ { isTableCell: true } }
+							paidDomainName={ paidDomainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
+							selectedFeature={ selectedFeature }
+							generatedWPComSubdomain={ generatedWPComSubdomain }
+							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+							featureGroup={ featureGroup }
+						/>
+					</tr>
+				) ) }
 				<tr>
 					<PlanStorageOptions
 						renderedGridPlans={ gridPlansWithoutSpotlight }

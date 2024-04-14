@@ -14,6 +14,7 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	isTableCell: boolean | undefined;
+	featureGroup?: string | null;
 } > = ( {
 	plansWithFeatures,
 	paidDomainName,
@@ -22,20 +23,30 @@ const PlanFeaturesContainer: React.FC< {
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
 	isTableCell,
+	featureGroup,
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
+			const shouldRenderFeature = featureGroup
+				? wpcomFeatures.some( ( feature ) => feature.getTitle() ) // TODO: obviously check here if there's a feature in that group
+				: true;
+
+			if ( ! shouldRenderFeature ) {
+				return null;
+			}
+
 			return (
 				<PlanDivOrTdContainer
 					key={ `${ planSlug }-${ mapIndex }` }
 					isTableCell={ isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
+					{ featureGroup && <h2>{ featureGroup }</h2> }
 					<PlanFeatures2023GridFeatures
-						features={ wpcomFeatures }
+						features={ wpcomFeatures } // TODO: filter for the right feature group
 						planSlug={ planSlug }
 						paidDomainName={ paidDomainName }
 						generatedWPComSubdomain={ generatedWPComSubdomain }
