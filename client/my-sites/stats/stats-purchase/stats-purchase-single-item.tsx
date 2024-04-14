@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
@@ -27,7 +28,6 @@ import {
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
-import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
