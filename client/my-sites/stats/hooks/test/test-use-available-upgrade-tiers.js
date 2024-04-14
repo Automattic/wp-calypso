@@ -4,7 +4,7 @@ import stateFixture from './original-tiers-fixture.json';
 const tiers = stateFixture.productsList.items.jetpack_stats_yearly.price_tier_list;
 
 describe( 'getAvailableUpgradeTiers', () => {
-	it( 'should return original tiers if not purchased or with little monthly views', () => {
+	it( 'should return original tiers if not purchased or with no monthly views', () => {
 		const usageData = { views_limit: null, billableMonthlyViews: 0 };
 		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
 
@@ -49,6 +49,8 @@ describe( 'getAvailableUpgradeTiers', () => {
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( 2_000_000 );
 		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 95000 );
+		// the price for 7m views - 95000 + 25000 * 5
+		expect( extendedTiers[ 5 ].minimum_price ).toEqual( 220_000 );
 		expect( extendedTiers[ 5 ].views ).toEqual( 7_000_000 );
 	} );
 } );
