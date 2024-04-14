@@ -62,4 +62,13 @@ describe( 'getAvailableUpgradeTiers', () => {
 		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 120000 );
 		expect( extendedTiers[ 5 ].views ).toEqual( 8_000_000 );
 	} );
+	it( 'should return 17~22 tiers if purchased 10m and with 16m500k (not exact millions) monthly views', () => {
+		const usageData = { views_limit: 1_000_000, billableMonthlyViews: 16_500_000 };
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( 17_000_000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 470000 );
+		expect( extendedTiers[ 5 ].views ).toEqual( 22_000_000 );
+	} );
 } );
