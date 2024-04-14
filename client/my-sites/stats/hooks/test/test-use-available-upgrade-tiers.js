@@ -68,7 +68,55 @@ describe( 'getAvailableUpgradeTiers', () => {
 
 		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
 		expect( extendedTiers[ 0 ].views ).toEqual( 17_000_000 );
-		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 470000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 470_000 );
 		expect( extendedTiers[ 5 ].views ).toEqual( 22_000_000 );
+	} );
+	it( 'should return proper upgrade prices - 1m to 17m', () => {
+		const usageData = {
+			views_limit: 1_000_000,
+			current_tier: { minimum_price: 70000 },
+			billableMonthlyViews: 16_500_001,
+		};
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( 17_000_000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 470_000 );
+		expect( extendedTiers[ 0 ].upgrade_price ).toEqual( 400_000 );
+		expect( extendedTiers[ 5 ].views ).toEqual( 22_000_000 );
+		expect( extendedTiers[ 5 ].minimum_price ).toEqual( 595_000 );
+		expect( extendedTiers[ 5 ].upgrade_price ).toEqual( 525_000 );
+	} );
+	it( 'should return proper upgrade prices - 100k to 500k', () => {
+		const usageData = {
+			views_limit: 100_000,
+			current_tier: { minimum_price: 20000 },
+			billableMonthlyViews: 260_000,
+		};
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( 500_000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 50_000 );
+		expect( extendedTiers[ 0 ].upgrade_price ).toEqual( 30_000 );
+		expect( extendedTiers[ 5 ].views ).toEqual( 5_000_000 );
+		expect( extendedTiers[ 5 ].minimum_price ).toEqual( 170_000 );
+		expect( extendedTiers[ 5 ].upgrade_price ).toEqual( 150_000 );
+	} );
+	it( 'should return proper upgrade prices - 10k to 2m', () => {
+		const usageData = {
+			views_limit: 10_000,
+			current_tier: { minimum_price: 10000 },
+			billableMonthlyViews: 1_000_010,
+		};
+		const extendedTiers = getAvailableUpgradeTiers( stateFixture, usageData, true );
+
+		expect( extendedTiers.length ).toBe( MAX_TIERS_NUMBER );
+		expect( extendedTiers[ 0 ].views ).toEqual( 2_000_000 );
+		expect( extendedTiers[ 0 ].minimum_price ).toEqual( 95_000 );
+		expect( extendedTiers[ 0 ].upgrade_price ).toEqual( 85_000 );
+		expect( extendedTiers[ 5 ].views ).toEqual( 7_000_000 );
+		expect( extendedTiers[ 5 ].minimum_price ).toEqual( 220_000 );
+		expect( extendedTiers[ 5 ].upgrade_price ).toEqual( 210_000 );
 	} );
 } );
