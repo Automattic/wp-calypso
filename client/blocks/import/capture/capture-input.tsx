@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormLabel } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -95,7 +96,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				<FormTextInput
 					id="capture-site-url"
 					type="text"
-					className={ classnames( { 'is-error': showValidationMsg } ) }
+					className={ classnames( { 'is-error': showValidationMsg && urlValue } ) }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					autoComplete="off"
@@ -108,10 +109,20 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 				<FormSettingExplanation>
 					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
-						{ showValidationMsg && (
+						{ showValidationMsg && urlValue && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{ translate( 'Please enter a valid website address. You can copy and paste.' ) }
+								{
+									/* translators: the urlValue is a URL, eg: www.artfulbaker.blog */
+									sprintf(
+										translate(
+											'%(urlValue)s is not a valid website address. You can copy and paste.'
+										),
+										{
+											urlValue: urlValue,
+										}
+									)
+								}
 							</>
 						) }
 					</span>

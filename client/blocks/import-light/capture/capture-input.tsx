@@ -82,7 +82,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					{ translate( "Don't have a site address?" ) }
 				</Button>
 				<FormSettingExplanation>
-					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
+					<span className={ classnames( { 'is-error': showValidationMsg && urlValue } ) }>
 						{ ! showValidationMsg && (
 							<>
 								<Icon icon={ bulb } size={ 20 } />{ ' ' }
@@ -91,10 +91,20 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 								) }
 							</>
 						) }
-						{ showValidationMsg && (
+						{ showValidationMsg && urlValue && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{ translate( 'Please enter a valid website address. You can copy and paste.' ) }
+								{
+									/* translators: the urlValue is a URL, eg: www.artfulbaker.blog */
+									sprintf(
+										translate(
+											'%(urlValue)s is not a valid website address. You can copy and paste.'
+										),
+										{
+											urlValue: urlValue,
+										}
+									)
+								}
 							</>
 						) }
 					</span>
