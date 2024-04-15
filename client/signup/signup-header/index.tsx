@@ -1,10 +1,8 @@
 import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
-import { useEffect, useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import type { ReactNode } from 'react';
 import './style.scss';
 
 interface ProgressBarData {
@@ -20,40 +18,6 @@ interface Props {
 	pageTitle?: string;
 	showWooLogo?: boolean;
 }
-
-export const SignupHeaderBanner = ( {
-	children,
-}: {
-	stickyBannerOffset?: number;
-	height?: number;
-	children: ReactNode;
-} ) => {
-	const [ isAboveOffset, setIsAboveOffset ] = useState( false );
-
-	useEffect( () => {
-		const handleScroll = () => {
-			const scrollY = window.scrollY;
-			if ( scrollY > 40 ) {
-				setIsAboveOffset( true );
-			} else {
-				setIsAboveOffset( false );
-			}
-		};
-
-		window.addEventListener( 'scroll', handleScroll );
-
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [] );
-
-	const classes = classnames( 'signup-header__banner-refund', {
-		'is-sticky-banner': isAboveOffset,
-		'is-header-banner': ! isAboveOffset,
-	} );
-
-	return <div className={ classes }>{ children }</div>;
-};
 
 const SignupHeader = ( {
 	shouldShowLoadingScreen,
