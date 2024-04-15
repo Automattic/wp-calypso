@@ -91,8 +91,8 @@ const PlanCard: FC = () => {
 							</div>
 							<span>
 								{ translate(
-									'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount)dGB',
-									'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount)dGB',
+									'Using {{usedStorage}}%(usedGigabytes).1f GB{{/usedStorage}} of %(availableUnitAmount)d GB',
+									'Using {{usedStorage}}%(usedGigabytes).1f GB{{/usedStorage}} of %(availableUnitAmount)d GB',
 									{
 										count: usedGigabytes,
 										args: { usedGigabytes, availableUnitAmount },
