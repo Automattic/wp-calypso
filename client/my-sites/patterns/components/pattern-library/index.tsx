@@ -24,21 +24,20 @@ import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
-import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
 import { useRecordPatternsEvent } from 'calypso/my-sites/patterns/hooks/use-record-patterns-event';
 import { filterPatternsByTerm } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
+import { filterPatternsByType } from 'calypso/my-sites/patterns/lib/filter-patterns-by-type';
 import { getPatternPermalink } from 'calypso/my-sites/patterns/lib/get-pattern-permalink';
 import { getTracksPatternType } from 'calypso/my-sites/patterns/lib/get-tracks-pattern-type';
 import { getCategoryUrlPath, getOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import {
 	PatternTypeFilter,
 	PatternView,
-	type CategoryGalleryFC,
-	type Pattern,
-	type PatternGalleryFC,
+	CategoryGalleryFC,
+	PatternGalleryFC,
 } from 'calypso/my-sites/patterns/types';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -72,15 +71,6 @@ const ToggleGroupControlOptionWithNarrowTooltip = (
 		</Tooltip>
 	);
 };
-
-function filterPatternsByType( patterns: Pattern[], type: PatternTypeFilter ) {
-	return patterns.filter( ( pattern ) => {
-		const categorySlugs = Object.keys( pattern.categories );
-		const isPage = categorySlugs.includes( CATEGORY_PAGE );
-
-		return type === PatternTypeFilter.PAGES ? isPage : ! isPage;
-	} );
-}
 
 // Scroll to anchoring position of category pill navigation element
 function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
@@ -118,20 +108,20 @@ export const PatternLibrary = ( {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const navRef = useRef< HTMLDivElement >( null );
+
 	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const { category, searchTerm, isGridView, patternTypeFilter, referrer, patternPermalinkId } =
 		usePatternsContext();
 
 	const { data: categories = [] } = usePatternCategories( locale );
-	const { data: patterns = [], isFetching: isFetchingPatterns } = usePatterns( locale, category, {
-		select( patterns ) {
-			if ( searchTerm ) {
-				return filterPatternsByTerm( patterns, searchTerm );
-			}
+	const { data: rawPatterns = [], isFetching: isFetchingPatterns } = usePatterns(
+		locale,
+		category
+	);
 
-			return filterPatternsByType( patterns, patternTypeFilter );
-		},
-	} );
+	const patterns = searchTerm
+		? filterPatternsByTerm( rawPatterns, searchTerm )
+		: filterPatternsByType( rawPatterns, patternTypeFilter );
 
 	const hasEnTranslation = useHasEnTranslation();
 	let patternPermalinkName;
