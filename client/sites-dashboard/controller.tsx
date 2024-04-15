@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Context as PageJSContext } from '@automattic/calypso-router';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -11,7 +12,6 @@ import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );

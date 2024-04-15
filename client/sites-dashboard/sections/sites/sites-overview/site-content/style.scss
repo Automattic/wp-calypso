@@ -1,0 +1,128 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-content__large-screen-view {
+	.site-set-favorite__favorite-icon {
+		visibility: hidden;
+		color: var(--color-primary);
+	}
+
+	.sites-overview__status-count {
+		display: none;
+	}
+
+	.sites-overview__row-text {
+		margin-inline-start: 32px;
+		width: calc(100% - 30px);
+		font-size: 0.875rem !important;
+	}
+
+	.sites-overview__overlay {
+		inset-inline-end: 0;
+	}
+
+	.sites-overview__error-container {
+		margin: 0;
+		height: inherit;
+	}
+
+	.sites-overview__error-icon {
+		width: auto;
+		padding: 16px;
+	}
+
+	.sites-overview__status-critical {
+		display: none;
+	}
+
+	.sites-overview__critical {
+		color: var(--studio-white);
+	}
+
+	.sites-overview__column-content {
+		max-width: fit-content;
+	}
+
+	.site-select-checkbox {
+		input[type="checkbox"] {
+			@include break-wide {
+				inset-inline-start: 10px;
+			}
+
+			@include break-huge {
+				inset-inline-start: 16px;
+			}
+		}
+	}
+
+	.toggle-activate-monitoring__toggle-button .components-toggle-control
+	.components-base-control__field .components-form-toggle {
+		margin-right: 4px;
+	}
+
+	.site-actions__all-actions {
+		display: inline-flex;
+		height: 100%;
+	}
+}
+
+.site-content__mobile-view {
+	margin-bottom: 1.5rem;
+}
+
+.site-content__bulk-select {
+	margin-block-end: 8px;
+
+	.dashboard-bulk-actions {
+		display: flex;
+		justify-content: end;
+
+		.select-dropdown.is-compact {
+			width: 95%;
+			float: right;
+
+			@include break-mobile {
+				width: auto;
+			}
+		}
+	}
+
+	.dashboard-bulk-actions__edit-button {
+		float: right;
+	}
+
+	.site-bulk-select__bulk-select-label {
+		margin-inline-start: 12px;
+	}
+
+	.site-content__bulk-select-label {
+		color: var(--color-neutral-70);
+		font-size: 0.875rem;
+	}
+
+	@include break-mobile {
+		padding: 12px 16px;
+	}
+
+}
+
+.dashboard-bulk-actions {
+	.select-dropdown.is-compact {
+		width: 95%;
+		float: right;
+
+		@include break-mobile {
+			width: auto;
+		}
+	}
+}
+
+.button .gridicon {
+	color: var(--color-neutral-80);
+	width: 24px;
+	height: 24px;
+}
+
+.select-dropdown__item-text {
+	text-align: start;
+}
