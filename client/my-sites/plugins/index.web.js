@@ -15,7 +15,7 @@ import {
 	jetpackCanUpdate,
 	plugins,
 	updatesManager,
-	updatesManagerMultisite,
+	scheduledUpdatesMultisite,
 	relatedPlugins,
 	redirectTrialSites,
 	redirectMailPoetUpgrade,
@@ -148,7 +148,7 @@ export default function ( router ) {
 		],
 		redirectLoggedOut,
 		navigation,
-		updatesManagerMultisite,
+		scheduledUpdatesMultisite,
 		makeLayout,
 		clientRender
 	);

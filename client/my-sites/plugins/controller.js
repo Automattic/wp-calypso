@@ -170,7 +170,7 @@ export function updatesManager( context, next ) {
 	next();
 }
 
-export function updatesManagerMultisite( context, next ) {
+export function scheduledUpdatesMultisite( context, next ) {
 	switch ( context.params.action ) {
 		case 'create':
 			context.primary = 'Create multisite scheduled updates';
