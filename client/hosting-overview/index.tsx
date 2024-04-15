@@ -1,4 +1,4 @@
-import page from '@automattic/calypso-router';
+import page, { type Context } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -6,8 +6,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import hostingOverview from './controller';
 
 export default function () {
-	page( '/hosting-overview', ( context ) => {
-		const state = context.store.getState();
+	page( '/hosting-overview', ( { store: { getState } }: Context ) => {
+		const state = getState();
+
 		const primarySiteId = getPrimarySiteId( state );
 		const selectedSite = getSelectedSite( state );
 
