@@ -4,7 +4,7 @@ import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
@@ -15,7 +15,6 @@ import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent } from 'react';
 
 interface Props {
-	translate: typeof translate;
 	onInputEnter: OnInputEnter;
 	onInputChange?: OnInputChange;
 	onDontHaveSiteAddressClick?: () => void;
@@ -23,15 +22,10 @@ interface Props {
 	skipInitialChecking?: boolean;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
-	const {
-		translate,
-		onInputEnter,
-		onInputChange,
-		onDontHaveSiteAddressClick,
-		hasError,
-		skipInitialChecking,
-	} = props;
+	const { onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError, skipInitialChecking } =
+		props;
 
+	const translate = useTranslate();
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
@@ -133,4 +127,4 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default localize( CaptureInput );
+export default CaptureInput;
