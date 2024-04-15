@@ -2,7 +2,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
@@ -161,10 +161,7 @@ export function VatForm( {
 	const genericTaxName =
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
 		translate( 'tax (VAT/GST/CT)' );
-	const fallbackTaxName =
-		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
-			? genericTaxName
-			: translate( 'VAT', { textOnly: true } );
+	const fallbackTaxName = genericTaxName;
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const addVatText = translate( 'Add %s details', {
 		textOnly: true,
