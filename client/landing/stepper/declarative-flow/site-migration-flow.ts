@@ -34,20 +34,43 @@ const siteMigration: Flow = {
 		];
 	},
 	useSideEffect( currentStepSlug ) {
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		const urlQueryParams = useQuery();
 		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
+		const siteSlugParam = urlQueryParams.get( 'siteSlug' );
 
 		useLayoutEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				return;
+			}
+
 			if ( restoreFlowQueryParam === null ) {
-				localStorageHelper.set(
-					'site-migration-url',
-					window.location.pathname + window.location.search
+				localStorageHelper.set( 'site-migration-url', window.location.href );
+				return;
+			}
+
+			let validURL = false;
+			const storedUrlString = localStorageHelper.get( 'site-migration-url' );
+			try {
+				const storedUrl = new URL( storedUrlString );
+				validURL = storedUrl.searchParams.has( 'from' ) && storedUrl.searchParams.has( 'siteSlug' );
+			} catch ( e ) {}
+
+			if ( validURL ) {
+				window.location.assign( storedUrlString );
+				return;
+			}
+
+			if ( siteSlugParam ) {
+				window.location.assign(
+					`/setup/site-migration/site-migration-identify?siteSlug=${ siteSlugParam }`
 				);
 				return;
 			}
-			const storedUrl = localStorageHelper.get( 'site-migration-url' );
-			window.location.assign( storedUrl );
-		}, [ currentStepSlug, restoreFlowQueryParam ] );
+		}, [ currentStepSlug, siteSlugParam, restoreFlowQueryParam, userIsLoggedIn ] );
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
