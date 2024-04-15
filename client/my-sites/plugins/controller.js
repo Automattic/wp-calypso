@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
+import { PluginsScheduledUpdates } from 'client/blocks/plugins-scheduled-updates';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
-import { PluginsUpdateManager } from 'calypso/blocks/plugins-update-manager';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
@@ -129,7 +129,7 @@ export function scheduledUpdates( context, next ) {
 
 	switch ( context.params.action ) {
 		case 'logs':
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				scheduleId,
 				context: 'logs',
@@ -138,7 +138,7 @@ export function scheduledUpdates( context, next ) {
 			break;
 
 		case 'create':
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				context: 'create',
 				onNavBack: goToScheduledUpdatesList,
@@ -146,7 +146,7 @@ export function scheduledUpdates( context, next ) {
 			break;
 
 		case 'edit':
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				scheduleId,
 				context: 'edit',
@@ -156,7 +156,7 @@ export function scheduledUpdates( context, next ) {
 
 		case 'list':
 		default:
-			context.primary = createElement( PluginsUpdateManager, {
+			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				context: 'list',
 				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),

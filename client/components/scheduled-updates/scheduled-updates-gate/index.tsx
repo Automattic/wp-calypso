@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode, FocusEvent, useState } from 'react';
-import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
+import { useIsEligibleForFeature } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-is-eligible-for-feature';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import HostingActivateStatus from 'calypso/my-sites/hosting/hosting-activate-status';
