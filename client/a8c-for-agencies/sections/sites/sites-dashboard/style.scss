@@ -471,10 +471,6 @@
 			transition: all 0.2s;
 			background: var(--studio-white);
 
-			.site-set-favorite__favorite-icon {
-				position: relative;
-			}
-
 			.sites-overview__content {
 				margin-top: 24px;
 
@@ -506,6 +502,10 @@
 			background: var(--studio-white);
 			max-height: calc(100vh - 32px);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
+		}
+
+		.site-preview__open {
+			display: block;
 		}
 
 
@@ -996,7 +996,8 @@
 	}
 
 	.sites-dataviews__favorite-btn-wrapper {
-		position: relative;
+		display: flex;
+		align-items: center;
 
 		.site-set-favorite__favorite-icon {
 			visibility: hidden;

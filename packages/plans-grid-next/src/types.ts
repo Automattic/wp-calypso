@@ -99,7 +99,7 @@ export interface CommonGridProps {
 	/**
 	 * Site id may not be used in ComparisonGrid, but need to be investigated further
 	 */
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
 	isLaunchPage?: boolean | null;
@@ -142,7 +142,7 @@ export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
@@ -176,7 +176,7 @@ export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
@@ -213,7 +213,7 @@ export type PlanTypeSelectorProps = {
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
-	| 'selectedSiteId'
+	| 'siteId'
 	| 'displayedIntervals'
 	| 'plans'
 	| 'isInSignup'
@@ -235,3 +235,12 @@ export type SupportedUrlFriendlyTermType = Extract<
 	UrlFriendlyTermType,
 	'yearly' | '2yearly' | '3yearly' | 'monthly'
 >;
+
+export type HiddenPlans = {
+	hideFreePlan?: boolean;
+	hidePersonalPlan?: boolean;
+	hidePremiumPlan?: boolean;
+	hideBusinessPlan?: boolean;
+	hideEcommercePlan?: boolean;
+	hideEnterprisePlan?: boolean;
+};
