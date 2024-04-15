@@ -98,7 +98,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -138,7 +138,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );

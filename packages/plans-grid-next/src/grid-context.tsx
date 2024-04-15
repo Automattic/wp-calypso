@@ -5,7 +5,7 @@ import type { Plans } from '@automattic/data-stores';
 
 interface PlansGridContext {
 	intent?: PlansIntent;
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	gridPlans: GridPlan[];
 	gridPlansIndex: { [ key: string ]: GridPlan };
 	allFeaturesList: FeatureList;
@@ -24,7 +24,7 @@ const PlansGridContextProvider = ( {
 	useCheckPlanAvailabilityForPurchase,
 	recordTracksEvent,
 	allFeaturesList,
-	selectedSiteId,
+	siteId,
 	children,
 	coupon,
 }: GridContextProps ) => {
@@ -40,7 +40,7 @@ const PlansGridContextProvider = ( {
 		<PlansGridContext.Provider
 			value={ {
 				intent,
-				selectedSiteId,
+				siteId,
 				gridPlans,
 				gridPlansIndex,
 				allFeaturesList,

@@ -1,15 +1,15 @@
 import { getFeaturesList } from '@automattic/calypso-products';
 import { Meta } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { FeaturesGrid, useGridPlansForFeaturesGrid } from '../..';
+import { ComparisonGrid, useGridPlansForComparisonGrid } from '../..';
 import { defaultArgs } from '../../storybook-mocks';
 
 const queryClient = new QueryClient();
 
-const RenderFeaturesGrid = ( props: any ) => {
+const RenderComparisonGrid = ( props: any ) => {
 	const useGridPlans = () => defaultArgs.gridPlans;
 
-	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid(
+	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid(
 		{
 			allFeaturesList: getFeaturesList(),
 			selectedFeature: props.selectedFeature,
@@ -20,12 +20,12 @@ const RenderFeaturesGrid = ( props: any ) => {
 		useGridPlans
 	);
 
-	return <FeaturesGrid { ...props } gridPlans={ gridPlansForFeaturesGrid } />;
+	return <ComparisonGrid { ...props } gridPlans={ gridPlansForComparisonGrid } />;
 };
 
 export default {
 	title: 'plans-grid-next',
-	component: RenderFeaturesGrid,
+	component: RenderComparisonGrid,
 	decorators: [
 		( Story ) => (
 			<QueryClientProvider client={ queryClient }>
@@ -41,9 +41,9 @@ export default {
 } as Meta;
 
 const storyDefaults = {
-	args: defaultArgs,
+	args: { ...defaultArgs, showLegacyStorageFeature: true, selectedFeature: 'storage' },
 };
 
-export const FeaturesGridTest = {
+export const ComparisonGridTest = {
 	...storyDefaults,
 };
