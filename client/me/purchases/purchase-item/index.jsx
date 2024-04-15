@@ -269,49 +269,25 @@ class PurchaseItem extends Component {
 				};
 				switch ( purchase.billPeriodDays ) {
 					case PLAN_MONTHLY_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation( 'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}' )
-						) {
-							return translate(
-								'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 					case PLAN_ANNUAL_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation( 'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}' )
-						) {
-							return translate(
-								'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 					case PLAN_BIENNIAL_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation(
-								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
-							)
-						) {
-							return translate(
-								'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 					case PLAN_TRIENNIAL_PERIOD:
-						if (
-							locale === 'en' ||
-							i18n.hasTranslation(
-								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}'
-							)
-						) {
-							return translate(
-								'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-								translateOptions
-							);
-						}
+						return translate(
+							'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+							translateOptions
+						);
 				}
 			}
 
