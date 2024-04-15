@@ -776,12 +776,6 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals' ],
-		module: 'calypso/a8c-for-agencies/sections/referrals',
-		group: 'a8c-for-agencies',
-	},
-	{
 		name: 'a8c-for-agencies-signup',
 		paths: [ '/signup' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
