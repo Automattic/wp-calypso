@@ -91,7 +91,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel htmlFor="capture-site-url">
-					{ translate( 'Enter the URL of the site:' ) }
+					{ translate( 'Enter your site address:' ) }
 				</FormLabel>
 				<FormTextInput
 					id="capture-site-url"
@@ -115,9 +115,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 								{
 									/* translators: the urlValue is a URL, eg: www.artfulbaker.blog */
 									sprintf(
-										translate(
-											'%(urlValue)s is not a valid website address. You can copy and paste.'
-										),
+										translate( '%(urlValue)s is not a valid site address. Please try again.' ),
 										{
 											urlValue: urlValue,
 										}
