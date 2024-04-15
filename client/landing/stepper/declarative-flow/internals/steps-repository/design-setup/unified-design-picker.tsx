@@ -11,6 +11,13 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
 	isFreePlan,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL_3_YEARS,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_PERSONAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -43,6 +50,7 @@ import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
@@ -377,10 +385,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		marketplaceThemeProducts.length !== 0
 			? getPreferredBillingCycleProductSlug( marketplaceThemeProducts )
 			: null;
-	const currentPlanTerm = ! isFreePlan( site?.plan?.product_slug || '' )
-		? getPlan( site?.plan?.product_slug || '' )?.term || ''
-		: TERM_MONTHLY;
 
+	const requiredPlanSlug = getRequiredPlan( selectedDesign, site?.plan?.product_slug || '' );
 	const selectedMarketplaceProduct =
 		marketplaceThemeProducts.find(
 			( product ) => product.product_slug === marketplaceProductSlug
@@ -462,21 +468,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		setShowUpgradeModal( false );
 	}
+
 	function navigateToCheckout() {
-		const themeHasBundle = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
-
-		let plan;
-		if ( themeHasBundle ) {
-			plan = 'business-bundle';
-		} else if ( selectedDesign?.is_externally_managed ) {
-			const businessPlan = getBusinessPlanByTerm( currentPlanTerm );
-			plan = ! isExternallyManagedThemeAvailable ? businessPlan : '';
-		} else if ( selectedDesign?.design_tier === PERSONAL_THEME ) {
-			plan = PLAN_PERSONAL;
-		} else {
-			plan = 'premium';
-		}
-
 		// When the user is done with checkout, send them back to the current url
 		// If the theme is externally managed, send them to the marketplace thank you page
 		const destination = selectedDesign?.is_externally_managed
@@ -490,7 +483,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			stepName,
 			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 			destination,
-			plan,
+			plan: requiredPlanSlug,
 			extraProducts:
 				selectedDesign?.is_externally_managed && isMarketplaceThemeSubscriptionNeeded
 					? [ marketplaceProductSlug ]
@@ -799,16 +792,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		const stepContent = (
 			<>
-				<UpgradeModal
-					slug={ selectedDesign.slug }
-					isOpen={ showUpgradeModal }
-					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
-					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
-					marketplaceProduct={ selectedMarketplaceProduct }
-					currentPlanTerm={ currentPlanTerm }
-					closeModal={ closeUpgradeModal }
-					checkout={ handleCheckout }
-				/>
+				{ requiredPlanSlug && (
+					<UpgradeModal
+						slug={ selectedDesign.slug }
+						isOpen={ showUpgradeModal }
+						isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
+						isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
+						marketplaceProduct={ selectedMarketplaceProduct }
+						requiredPlan={ requiredPlanSlug }
+						closeModal={ closeUpgradeModal }
+						checkout={ handleCheckout }
+					/>
+				) }
 				<QueryEligibility siteId={ site?.ID } />
 				<EligibilityWarningsModal
 					site={ site }
@@ -950,6 +945,66 @@ function getBusinessPlanByTerm( term: string ) {
 		case TERM_MONTHLY:
 		default:
 			return PLAN_BUSINESS_MONTHLY;
+	}
+}
+
+function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: string ) {
+	if ( ! selectedDesign || ! selectedDesign?.design_tier ) {
+		return;
+	}
+	// Different designs require different plans to unlock them, additionally the terms required can vary.
+	// A site with a plan of a given length cannot upgrade a plan of a shorter length. For example,
+	// if a site is on a 2 year starter plan and want to buy an explorer theme, they must buy a 2 year explorer plan
+	// not a 1 year explorer plan.
+	const tierMinimumUpsellPlan =
+		THEME_TIERS[ selectedDesign.design_tier as keyof typeof THEME_TIERS ]?.minimumUpsellPlan;
+
+	let requiredTerm;
+	if ( ! currentPlanSlug || isFreePlan( currentPlanSlug ) ) {
+		// Marketplace themes require upgrading to a monthly business plan or higher, everything else requires an annual plan.
+		if ( selectedDesign?.is_externally_managed ) {
+			requiredTerm = TERM_MONTHLY;
+		} else {
+			requiredTerm = TERM_ANNUALLY;
+		}
+	} else {
+		requiredTerm = getPlan( currentPlanSlug )?.term || '';
+	}
+
+	return getPlanByTerm( tierMinimumUpsellPlan, requiredTerm );
+}
+
+function getPlanByTerm( plan: string, term: string ) {
+	// This is icky, replace later with less hard-coding.
+	switch ( plan ) {
+		case PLAN_PERSONAL:
+			switch ( term ) {
+				case TERM_TRIENNIALLY:
+					return PLAN_PERSONAL_3_YEARS;
+				case TERM_BIENNIALLY:
+					return PLAN_PERSONAL_2_YEARS;
+				case TERM_MONTHLY:
+					return PLAN_PERSONAL_MONTHLY;
+				case TERM_ANNUALLY:
+				default:
+					return PLAN_PERSONAL;
+			}
+		case PLAN_PREMIUM:
+			switch ( term ) {
+				case TERM_TRIENNIALLY:
+					return PLAN_PREMIUM_3_YEARS;
+				case TERM_BIENNIALLY:
+					return PLAN_PREMIUM_2_YEARS;
+				case TERM_MONTHLY:
+					return PLAN_PREMIUM_MONTHLY;
+				case TERM_ANNUALLY:
+				default:
+					return PLAN_PREMIUM;
+			}
+		case PLAN_BUSINESS:
+			return getBusinessPlanByTerm( term );
+		default:
+			return plan;
 	}
 }
 

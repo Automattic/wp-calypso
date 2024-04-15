@@ -19,10 +19,6 @@ import {
 	FEATURE_WAF_V2,
 	FEATURE_WORDADS,
 	PLAN_BUSINESS,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
-	TERM_TRIENNIALLY,
 	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -56,7 +52,7 @@ interface UpgradeModalProps {
 	isOpen: boolean;
 	isMarketplaceThemeSubscriptionNeeded?: boolean;
 	isMarketplacePlanSubscriptionNeeeded?: boolean;
-	currentPlanTerm?: string;
+	requiredPlan: string;
 	marketplaceProduct?: ProductListItem;
 	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
@@ -80,7 +76,7 @@ export const ThemeUpgradeModal = ( {
 	isOpen,
 	isMarketplaceThemeSubscriptionNeeded,
 	isMarketplacePlanSubscriptionNeeeded,
-	currentPlanTerm,
+	requiredPlan,
 	marketplaceProduct,
 	closeModal,
 	checkout,
@@ -100,41 +96,35 @@ export const ThemeUpgradeModal = ( {
 	const firstThemeSoftwareSet = themeSoftwareSet?.[ 0 ];
 	const bundleSettings = useBundleSettings( firstThemeSoftwareSet?.slug );
 
-	const personalPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL ),
-		[]
-	);
-	const premiumPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
-		[]
-	);
-	const businessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle' ),
-		[]
-	);
-	const monthlyBusinessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-monthly' ),
-		[]
-	);
-	const biAnnualBusinessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-2y' ),
-		[]
-	);
-	const triAnnualBusinessPlanProduct = useSelect(
-		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle-3y' ),
-		[]
+	const requiredPlanProduct = useSelect(
+		( select ) => select( ProductsList.store ).getProductBySlug( requiredPlan ),
+		[ requiredPlan ]
 	);
 
 	//Wait until we have theme and product data to show content
-	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
+	const isLoading = ! requiredPlanProduct || ! theme.data;
 
 	const personalPlanName = getPlan( PLAN_PERSONAL )?.getTitle() || '';
 	const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() || '';
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
 
+	const getPlanTextByTerm = ( term: string, cost: string ) => {
+		switch ( term ) {
+			case 'three years':
+				return translate( '%(cost)s per three years', { args: { cost } } );
+			case 'two years':
+				return translate( '%(cost)s per two years', { args: { cost } } );
+			case 'month':
+				return translate( '%(cost)s per month', { args: { cost } } );
+			case 'year':
+			default:
+				return translate( '%(cost)s per year', { args: { cost } } );
+		}
+	};
+
 	const getPersonalPlanModalData = (): UpgradeModalContent => {
-		const planPrice = personalPlanProduct?.combined_cost_display;
+		const planPrice = requiredPlanProduct?.combined_cost_display;
 
 		return {
 			header: (
@@ -178,7 +168,7 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const planPrice = premiumPlanProduct?.combined_cost_display;
+		const planPrice = requiredPlanProduct?.combined_cost_display;
 
 		return {
 			header: (
@@ -222,7 +212,7 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
-		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		const businessPlanPrice = requiredPlanProduct?.combined_cost_display;
 
 		if ( ! bundleSettings ) {
 			return {
@@ -289,42 +279,10 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
-		const getBusinessPlanByTerm = ( term: string ) => {
-			switch ( term ) {
-				case TERM_TRIENNIALLY:
-					return triAnnualBusinessPlanProduct;
-				case TERM_BIENNIALLY:
-					return biAnnualBusinessPlanProduct;
-				case TERM_ANNUALLY:
-					return businessPlanProduct;
-				case TERM_MONTHLY:
-				default:
-					return monthlyBusinessPlanProduct;
-			}
-		};
-
-		const getPlanTextByTerm = ( term: string, cost: string ) => {
-			switch ( term ) {
-				case TERM_TRIENNIALLY:
-					return translate( '%(cost)s per three years', { args: { cost } } );
-				case TERM_BIENNIALLY:
-					return translate( '%(cost)s per two years', { args: { cost } } );
-				case TERM_ANNUALLY:
-					return translate( '%(cost)s per year', { args: { cost } } );
-				case TERM_MONTHLY:
-				default:
-					return translate( '%(cost)s per month', { args: { cost } } );
-			}
-		};
-
-		const businessPlan = getBusinessPlanByTerm( currentPlanTerm || '' );
-
-		const businessPlanPrice = businessPlan?.combined_cost_display;
 		const productPrice = marketplaceProduct?.cost_display;
-
 		const businessPlanPriceText = getPlanTextByTerm(
-			currentPlanTerm || '',
-			businessPlanPrice || ''
+			requiredPlanProduct?.product_term || '',
+			requiredPlanProduct?.combined_cost_display || ''
 		);
 
 		const productPriceText =
