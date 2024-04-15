@@ -110,7 +110,7 @@
 	&,
 	.license-details__actions a:not(.license-details__assign-button),
 	.license-details__actions button {
-		background-color: #fafafa;
+		background-color: var(--studio-gray-0);
 	}
 }
 
@@ -119,6 +119,11 @@
 	font-size: 1rem;
 	font-weight: 500;
 	line-height: 1.375;
+
+	&:hover {
+		background-color: var(--color-accent-0);
+
+	}
 
 	@include break-large {
 		padding: 7px;
