@@ -1,12 +1,12 @@
 import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSiteDateTimeFormat } from 'calypso/blocks/plugins-update-manager/hooks/use-site-date-time-format';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { Badge } from './badge';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
+import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ellipsis } from './icons';
 
