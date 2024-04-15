@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
-import { PluginsScheduledUpdates } from 'client/blocks/plugins-scheduled-updates';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
+import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-updates';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
