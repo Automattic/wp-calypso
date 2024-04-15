@@ -9,7 +9,7 @@ import {
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
-import { setup } from './pages/controller';
+import { connection, setup } from './pages/controller';
 
 import 'calypso/my-sites/promote-post-i2/style.scss';
 // Needed because the placeholder component that we use doesn't import the css, webpack excludes it from the final build
@@ -50,6 +50,8 @@ export default function ( pageBase = '/' ) {
 	page.base( pageBase );
 
 	blazePage( getAdvertisingDashboardPath( '/setup/:site' ), setup );
+
+	blazePage( getAdvertisingDashboardPath( '/connection-info/:site' ), connection );
 
 	blazePage( getAdvertisingDashboardPath( '/:site' ), promotedPosts );
 
