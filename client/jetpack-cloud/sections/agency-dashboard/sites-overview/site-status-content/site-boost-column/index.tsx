@@ -105,15 +105,16 @@ export default function SiteBoostColumn( { site, siteError }: Props ) {
 						: 'sites-overview__row-status'
 				}
 			>
-				<a
+				<Button
+					borderless
 					className="sites-overview__column-action-button is-link"
 					href={ siteError ? '' : jetpackBoostHref }
 					target="_blank"
-					rel="noreferrer"
+					disabled={ siteError }
 					onClick={ () => recordEvent( 'boost_column_configure_click' ) }
 				>
 					{ translate( 'Configure Boost' ) }
-				</a>
+				</Button>
 			</span>
 		);
 	}
