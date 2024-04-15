@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormLabel } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -112,15 +111,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						{ showValidationMsg && urlValue && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{
-									/* translators: the urlValue is a URL, eg: www.artfulbaker.blog */
-									sprintf(
-										translate( '%(urlValue)s is not a valid site address. Please try again.' ),
-										{
-											urlValue: urlValue,
-										}
-									)
-								}
+								{ translate( 'Please enter a valid website address. You can copy and paste.' ) }
 							</>
 						) }
 					</span>

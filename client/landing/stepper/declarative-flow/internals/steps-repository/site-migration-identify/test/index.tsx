@@ -48,7 +48,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
 
 		await userEvent.type(
-			screen.getByLabelText( /Enter the URL of the site/ ),
+			screen.getByLabelText( /Enter your site address/ ),
 			'https://example.com'
 		);
 
@@ -69,7 +69,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
 
 		await userEvent.type(
-			screen.getByLabelText( /Enter the URL of the site/ ),
+			screen.getByLabelText( /Enter your site address/ ),
 			'https://example.com'
 		);
 
@@ -103,7 +103,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.reply( 500, new Error( 'Internal Server Error' ) );
 
 		await userEvent.type(
-			screen.getByLabelText( /Enter the URL of the site/ ),
+			screen.getByLabelText( /Enter your site address/ ),
 			'https://example.com'
 		);
 
