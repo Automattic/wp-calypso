@@ -1,6 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.is-section-reader.is-global-sidebar-visible {
+	--color-primary: #3858e9;
+	--color-link: #3858e9;
+}
+
 body.is-section-reader:not(.is-reader-full-post) {
 	div.layout.is-global-sidebar-visible {
 		.main {
