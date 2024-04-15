@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
