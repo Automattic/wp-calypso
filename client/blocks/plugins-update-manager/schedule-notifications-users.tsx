@@ -25,7 +25,7 @@ export const ScheduleNotificationsUsers = ( { initUsers = [], onChange }: Props 
 		data: userPages,
 		isLoading: isUsersLoading,
 		isFetched: isUsersFetched,
-	} = useUsersQuery( siteSlug, { role: 'administrator' } );
+	} = useUsersQuery( siteSlug, { capabilities: [ 'update_plugins' ] } );
 	const users = userPages?.pages
 		?.reduce( ( acc, page ) => [ ...acc, ...page.users ], [] )
 		.sort( ( a: User, b: User ) => a.name.localeCompare( b.name ) );
