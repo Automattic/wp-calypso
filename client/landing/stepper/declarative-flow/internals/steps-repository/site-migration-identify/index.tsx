@@ -1,4 +1,4 @@
-import { StepContainer, Title } from '@automattic/onboarding';
+import { StepContainer, Title, SubTitle } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -41,7 +41,10 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 	return (
 		<div>
 			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Where will you import from?' ) }</Title>
+				<Title>{ translate( 'Where is your current content or website?' ) }</Title>
+				<SubTitle>
+					{ translate( 'We can help you import your content from a variety of platforms.' ) }
+				</SubTitle>
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
@@ -50,6 +53,8 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 					hasError={ hasError }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ onSkip }
+					placeholder={ translate( 'yoursite.com or tumblr.com/username' ) }
+					label={ translate( 'Enter your site address or platform address:' ) }
 				/>
 			</div>
 		</div>
