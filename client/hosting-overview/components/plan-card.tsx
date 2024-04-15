@@ -15,10 +15,11 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 const PlanCard: FC = () => {
 	const moment = useLocalizedMoment();
 	const site = useSelector( getSelectedSite );
-	const sitePlan = site?.plan;
-	const planName = sitePlan?.product_name_short ?? '';
-	const planSlug = ( sitePlan?.product_slug || '' ) as PlanSlug;
-	const plan = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
+	const planDetails = site?.plan;
+	const planName = planDetails?.product_name_short ?? '';
+	const planSlug = ( planDetails?.product_slug || '' ) as PlanSlug;
+	const isPaidPlan = ! planDetails?.is_free;
+	const planData = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
 	const pricing = usePricingMetaForGridPlans( {
 		coupon: undefined,
 		planSlugs: [ planSlug ],
@@ -48,33 +49,39 @@ const PlanCard: FC = () => {
 							{ translate( 'Manage plan' ) }
 						</Button>
 					</div>
-					<PlanPrice
-						className="hosting-overview__plan-price"
-						currencyCode={ plan?.currencyCode }
-						displayPerMonthNotation
-						isSmallestUnit
-						rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
-					/>
-					<div className="hosting-overview__plan-info">
-						{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually.', {
-							args: {
-								rawPrice: formatCurrency(
-									pricing?.[ planSlug ].originalPrice.full ?? 0,
-									plan?.currencyCode ?? '',
-									{
-										stripZeros: true,
-										isSmallestUnit: true,
-									}
-								),
-							},
-							components: {
-								span: <span />,
-							},
-						} ) }
-					</div>
-					<div className="hosting-overview__plan-info">
-						{ translate( 'Expires on %s.', { args: moment( plan?.expiryDate ).format( 'LL' ) } ) }
-					</div>
+					{ isPaidPlan && (
+						<>
+							<PlanPrice
+								className="hosting-overview__plan-price"
+								currencyCode={ planData?.currencyCode }
+								displayPerMonthNotation
+								isSmallestUnit
+								rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
+							/>
+							<div className="hosting-overview__plan-info">
+								{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually.', {
+									args: {
+										rawPrice: formatCurrency(
+											pricing?.[ planSlug ].originalPrice.full ?? 0,
+											planData?.currencyCode ?? '',
+											{
+												stripZeros: true,
+												isSmallestUnit: true,
+											}
+										),
+									},
+									components: {
+										span: <span />,
+									},
+								} ) }
+							</div>
+							<div className="hosting-overview__plan-info">
+								{ translate( 'Expires on %s.', {
+									args: moment( planData?.expiryDate ).format( 'LL' ),
+								} ) }
+							</div>
+						</>
+					) }
 					<div className="hosting-overview__plan-storage">
 						<div className="hosting-overview__plan-storage-title-wrapper">
 							<div className="hosting-overview__plan-storage-title">
