@@ -79,7 +79,7 @@ const PlanCard: FC = () => {
 						<div className="hosting-overview__plan-storage-title-wrapper">
 							<div className="hosting-overview__plan-storage-title">
 								<Icon icon={ cloud } />
-								{ translate( 'STORAGE' ) }
+								{ translate( 'Storage' ) }
 							</div>
 							<span>
 								{ translate(
