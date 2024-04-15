@@ -112,7 +112,7 @@ export function plugins( context, next ) {
 	next();
 }
 
-export function updatesManager( context, next ) {
+export function scheduledUpdates( context, next ) {
 	const siteSlug = context?.params?.site_slug;
 	const scheduleId = context?.params?.schedule_id;
 	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/${ siteSlug }` );

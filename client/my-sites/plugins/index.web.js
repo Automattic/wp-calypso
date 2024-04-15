@@ -14,7 +14,7 @@ import {
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
-	updatesManager,
+	scheduledUpdates,
 	scheduledUpdatesMultisite,
 	relatedPlugins,
 	redirectTrialSites,
@@ -162,7 +162,7 @@ export default function ( router ) {
 		redirectLoggedOut,
 		siteSelection,
 		navigation,
-		updatesManager,
+		scheduledUpdates,
 		makeLayout,
 		clientRender
 	);
