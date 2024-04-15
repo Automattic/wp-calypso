@@ -16,6 +16,12 @@ const globalStyleOverrides = css`
 			.signup-header .wordpress-logo {
 				fill: var( --color-text-inverted );
 			}
+
+			.signup:not( .is-onboarding-2023-pricing-grid )
+				.step-wrapper:not( .is-horizontal-layout )
+				.step-wrapper__header {
+				margin-top: 70px;
+			}
 		}
 	}
 `;

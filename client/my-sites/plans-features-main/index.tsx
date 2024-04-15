@@ -648,20 +648,25 @@ const PlansFeaturesMain = ( {
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;
+	const refundPeriodInSignupHeaderBanner =
+		( config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) ||
+			config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step-sticky' ) ) &&
+		flowName === 'onboarding';
+	const showStickyHeaderBanner = config.isEnabled(
+		'onboarding/emphasize-refund-period-in-plans-step-sticky'
+	);
+	const stickyHeaderBannerOffset = showStickyHeaderBanner ? 40 : 0;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
 	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
-		? stickyPlanTypeSelectorHeight + masterbarHeight
-		: masterbarHeight;
+		? stickyPlanTypeSelectorHeight + masterbarHeight + stickyHeaderBannerOffset
+		: masterbarHeight + stickyHeaderBannerOffset;
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
 		siteId,
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
-	const refundPeriodInSignupHeaderBanner =
-		config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) &&
-		flowName === 'onboarding';
 
 	const {
 		primary: { callback: onFreePlanCTAClick },
@@ -684,10 +689,9 @@ const PlansFeaturesMain = ( {
 	return (
 		<>
 			<div
-				className={ classNames(
-					'plans-features-main',
-					'is-pricing-grid-2023-plans-features-main'
-				) }
+				className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main', {
+					'is-header-banner-visible': refundPeriodInSignupHeaderBanner,
+				} ) }
 			>
 				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
@@ -695,7 +699,11 @@ const PlansFeaturesMain = ( {
 				<QueryActivePromotions />
 				<QueryProductsList />
 				{ refundPeriodInSignupHeaderBanner && (
-					<SignupHeaderBanner height={ 80 } stickyBannerOffset={ 40 } sticky={ true }>
+					<SignupHeaderBanner
+						height={ 80 }
+						stickyBannerOffset={ 40 }
+						sticky={ showStickyHeaderBanner }
+					>
 						{ translate( 'Refund Policy' ) }
 					</SignupHeaderBanner>
 				) }
@@ -756,7 +764,7 @@ const PlansFeaturesMain = ( {
 								plans={ gridPlansForPlanTypeSelector }
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
-								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
+								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 + stickyHeaderBannerOffset }
 								coupon={ coupon }
 							/>
 						) }
