@@ -1,7 +1,5 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form-frequency';
-import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form-plugins';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
@@ -13,6 +11,8 @@ import {
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
+import { ScheduleFormFrequency } from './schedule-form-frequency';
+import { ScheduleFormPlugins } from './schedule-form-plugins';
 import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
 import type { SyncSuccessParams } from './types';
 
