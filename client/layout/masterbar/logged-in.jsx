@@ -84,7 +84,6 @@ class MasterbarLoggedIn extends Component {
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
 		isEcommerce: PropTypes.bool,
-		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
@@ -312,15 +311,7 @@ class MasterbarLoggedIn extends Component {
 
 	// will render as back button on mobile and in editor
 	renderMySites() {
-		const {
-			domainOnlySite,
-			hasNoSites,
-			hasMoreThanOneSite,
-			siteSlug,
-			translate,
-			section,
-			currentRoute,
-		} = this.props;
+		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
 		const { isMenuOpen, isResponsiveMenu } = this.state;
 
 		const homeUrl = this.getHomeUrl();
@@ -349,11 +340,7 @@ class MasterbarLoggedIn extends Component {
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
-			>
-				{ hasNoSites || hasMoreThanOneSite
-					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-			</Item>
+			/>
 		);
 	}
 
@@ -833,7 +820,6 @@ export default connect(
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
-			hasMoreThanOneSite: siteCount > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
 			isInEditor: getSectionName( state ) === 'gutenberg-editor',

@@ -95,7 +95,7 @@ export default function ( { path }: Props ) {
 				},
 			} }
 			menuItems={ menuItems }
-			withGetHelpLink
+			withUserProfileFooter
 		/>
 	);
 }

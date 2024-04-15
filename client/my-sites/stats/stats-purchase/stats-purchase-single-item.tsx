@@ -9,8 +9,9 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
-import useSiteComplusoryPlanSelectionQualifiedCheck from '../hooks/use-site-complusory-plan-selection-qualified-check';
+import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuentity } from './stats-commercial-upgrade-slider';
 import gotoCheckoutPage from './stats-purchase-checkout-redirect';
@@ -27,7 +28,6 @@ import {
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
-import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -297,7 +297,7 @@ const StatsSingleItemPagePurchase = ( {
 }: StatsSingleItemPagePurchaseProps ) => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const { supportCommercialUse } = useStatsPurchases( siteId );
-	const { isNewSite } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
+	const { isNewSite } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 
 	return (
 		<>
@@ -364,9 +364,11 @@ function StatsCommercialFlowOptOutForm( {
 
 	useEffect( () => {
 		setComemercialClassificationRunAt(
-			parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' )
+			parseInt(
+				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
+			)
 		);
-	}, [] );
+	}, [ siteId ] );
 
 	const handleSwitchToPersonalClick = () => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
@@ -392,16 +394,19 @@ function StatsCommercialFlowOptOutForm( {
 		useOnDemandCommercialClassificationMutation( siteId );
 	const handleCommercialClassification = async () => {
 		const now = Date.now();
-		localStorage?.setItem( 'commercial_classification__button_clicked', `${ now }` );
+		localStorage?.setItem( `commercial_classification__button_clicked_${ siteId }`, `${ now }` );
 		setComemercialClassificationRunAt( now );
 		runCommercialClassificationAsync().catch( ( e ) => {
 			setErrorMessage( e.message );
 		} );
 	};
 	const commercialClassificationLastRunAt = useMemo(
-		() => parseInt( localStorage.getItem( 'commercial_classification__button_clicked' ) ?? '0' ),
+		() =>
+			parseInt(
+				localStorage?.getItem( `commercial_classification__button_clicked_${ siteId }` ) ?? '0'
+			),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ comemercialClassificationRunAt ]
+		[ comemercialClassificationRunAt, siteId ]
 	);
 	const hasRunLessThan3DAgo =
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
@@ -415,7 +420,7 @@ function StatsCommercialFlowOptOutForm( {
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
+				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define a site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
 				{
 					args: {
 						reasons:

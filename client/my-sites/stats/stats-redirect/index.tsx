@@ -12,7 +12,7 @@ import {
 	requestStatNoticeSettings,
 } from 'calypso/state/stats/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useSiteComplusoryPlanSelectionQualifiedCheck from '../hooks/use-site-complusory-plan-selection-qualified-check';
+import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsLoader from './stats-loader';
 
@@ -53,14 +53,14 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 
 	const isLoading = ! hasLoadedSitePurchases || isRequestingSitePurchases || isLoadingNotices;
 	const hasPlan = isFreeOwned || isPWYWOwned || isCommercialOwned || supportCommercialUse;
-	const { isNewSite, isQualified } = useSiteComplusoryPlanSelectionQualifiedCheck( siteId );
+	const { isNewSite, shouldShowPaywall } = useSiteCompulsoryPlanSelectionQualifiedCheck( siteId );
 	// to redirect the user can't have a plan purached and can't have the flag true, if either is true the user either has a plan or is postponing
 	const redirectToPurchase =
 		config.isEnabled( 'stats/checkout-flows-v2' ) &&
 		isSiteJetpackNotAtomic &&
 		! hasPlan &&
 		purchaseNotPostponed &&
-		isQualified;
+		shouldShowPaywall;
 
 	// TODO: If notices are not used by class components, we don't have any reasons to launch any of those actions anymore. If we do need them, we should consider refactoring them to another component.
 	const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
 	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isLoading && redirectToPurchase && siteSlug ) {
+	if ( ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
@@ -101,7 +101,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isLoading || ( canUserViewStats && ! canUserManageOptions ) ) {
+	} else if ( ! isLoading && ( canUserViewStats || canUserManageOptions ) ) {
 		return <>{ children }</>;
 	} else if ( isLoading ) {
 		return <StatsLoader />;

@@ -125,26 +125,26 @@ export function OverviewPreviewPane( {
 				setSelectedSiteFeature,
 				<JetpackActivityPreview site={ site } />
 			),
-			...( isEnabled( 'a4a/hosting-preview-pane' )
-				? [
-						createFeaturePreview(
-							HOSTING_OVERVIEW_ID,
-							translate( 'Hosting' ),
-							true,
-							selectedSiteFeature,
-							setSelectedSiteFeature,
-							<HostingOverviewPreview site={ site } />
-						),
-				  ]
-				: [] ),
 			createFeaturePreview(
-				A4A_SITE_DETAILS_ID,
-				translate( 'Details' ),
+				HOSTING_OVERVIEW_ID,
+				translate( 'Hosting' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<SiteDetails site={ site } />
+				<HostingOverviewPreview site={ site } />
 			),
+			...( isEnabled( 'a4a/site-details-pane' )
+				? [
+						createFeaturePreview(
+							A4A_SITE_DETAILS_ID,
+							translate( 'Details' ),
+							true,
+							selectedSiteFeature,
+							setSelectedSiteFeature,
+							<SiteDetails site={ site } />
+						),
+				  ]
+				: [] ),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
 	);

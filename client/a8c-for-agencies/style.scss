@@ -89,6 +89,16 @@
 
 		box-sizing: border-box;
 		border-radius: 4px;
+
+		background-color: var(--color-surface);
+		border-color: var(--color-accent-5);
+		fill: var(--color-accent-100);
+		color: var(--color-accent-100);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-0);
+		}
 	}
 
 	.button.split-button__toggle {
@@ -103,12 +113,13 @@
 		background-color: var(--color-primary-50);
 		border-color: var(--color-primary-50);
 		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
 
 		&:hover,
-		&:focus,
 		&:focus-visible {
 			background-color: var(--color-primary-70);
 			border-color: var(--color-primary-70);
+			fill: var(--color-text-inverted);
 			color: var(--color-text-inverted);
 			box-shadow: none;
 			border: 1px solid;
@@ -119,6 +130,12 @@
 	.button.is-borderless:hover,
 	.button.is-borderless {
 		background: none;
+		color: var(--studio-gray-80);
+	}
+
+	.split-button .button {
+		font-size: 1rem;
+		height: 40px;
 	}
 
 	.components-form-toggle.is-checked .components-form-toggle__track {

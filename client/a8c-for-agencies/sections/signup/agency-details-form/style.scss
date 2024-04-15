@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .agency-details-form {
 
 	.agency-details-form__controls {
@@ -21,4 +24,17 @@
 	select {
 		width: 100%;
 	}
+
+	.agency-details-form__fullname-container {
+		@include break-small {
+			display: flex;
+			flex-direction: row;
+			gap: 16px;
+
+			> * {
+				flex-grow: 1;
+			}
+		}
+	}
+
 }

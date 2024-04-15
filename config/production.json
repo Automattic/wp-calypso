@@ -170,6 +170,7 @@
 		"ssr/sample-log-cache-misses": true,
 		"stats/checkout-flows-v2": true,
 		"stats/date-control": true,
+		"stats/devices": false,
 		"stats/new-video-summary": false,
 		"stats/paid-wpcom-stats": true,
 		"stats/paid-wpcom-v2": true,
@@ -198,7 +199,7 @@
 		"videomaker-trial": true,
 		"videopress-tv": false,
 		"woop": false,
-		"woo/passwordless": false,
+		"woo/passwordless": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true

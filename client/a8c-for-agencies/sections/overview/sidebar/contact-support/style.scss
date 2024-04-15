@@ -3,6 +3,9 @@
 
 .overview__contact-support-button {
 	width: 100%;
+	border: 1px solid var(--color-accent);
+	font-weight: 500;
+	color: var(--color-accent);
 }
 
 // Zendesk Chat Button

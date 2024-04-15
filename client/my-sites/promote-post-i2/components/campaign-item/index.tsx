@@ -5,9 +5,8 @@ import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
-import { Moment } from 'moment';
+import moment from 'moment';
 import { Fragment, useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Campaign } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useSelector } from 'calypso/state';
@@ -26,18 +25,16 @@ import './style.scss';
 interface Props {
 	campaign: Campaign;
 }
-const getCampaignEndText = ( end_date: Moment, status: string, is_evergreen = 0 ) => {
-	if (
-		[ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.REJECTED ].includes( status )
-	) {
+
+const getCampaignEndText = ( end_date: string, status: string, is_evergreen = 0 ) => {
+	if ( is_evergreen && [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
+		return __( 'Until stopped' );
+	} else if ( ! end_date ) {
 		return '-';
-	} else if ( [ campaignStatus.APPROVED, campaignStatus.ACTIVE ].includes( status ) ) {
-		return is_evergreen ? __( 'Until stopped' ) : __( 'Ongoing' );
-	} else if ( [ campaignStatus.CANCELED, campaignStatus.FINISHED ].includes( status ) ) {
-		// return moment in format similar to 27 June
-		return end_date.format( 'D MMMM' );
 	}
-	return '-';
+
+	// return moment in format similar to 27 June
+	return moment( end_date ).format( 'D MMMM' );
 };
 
 export default function CampaignItem( props: Props ) {
@@ -64,7 +61,6 @@ export default function CampaignItem( props: Props ) {
 		? `${ conversion_rate_percentage.toFixed( 2 ) }%`
 		: '-';
 
-	const moment = useLocalizedMoment();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
@@ -201,13 +197,7 @@ export default function CampaignItem( props: Props ) {
 			</td>
 			<td className="campaign-item__ends">
 				<div>
-					{ campaign.end_date
-						? getCampaignEndText(
-								moment( campaign.end_date ),
-								campaign.status,
-								campaign?.is_evergreen
-						  )
-						: '-' }
+					{ getCampaignEndText( campaign.end_date, campaign.status, campaign?.is_evergreen ) }
 				</div>
 			</td>
 			<td className="campaign-item__budget">

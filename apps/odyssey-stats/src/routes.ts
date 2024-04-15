@@ -86,6 +86,7 @@ export default function ( pageBase = '/' ) {
 		'searchterms',
 		'annualstats',
 		'utm',
+		'devices',
 	].join( '|' );
 
 	page.base( pageBase );
