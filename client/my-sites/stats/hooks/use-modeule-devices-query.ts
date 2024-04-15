@@ -1,34 +1,49 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { requestMetrics } from 'calypso/state/stats/utm-metrics/actions';
-import { getMetrics, isLoading } from 'calypso/state/stats/utm-metrics/selectors';
+import { useQuery } from '@tanstack/react-query';
+import wpcom from 'calypso/lib/wp';
+import getDefaultQueryParams from './default-query-params';
 
-// TODO: replace UTM endopint with Devices when ready
+export interface QueryStatsDevicesParams {
+	date?: string;
+	days?: number;
+	max?: number;
+}
+
+function queryStatsDevices( siteId: number, deviceParam: string, query: QueryStatsDevicesParams ) {
+	return wpcom.req.get( `/sites/${ siteId }/stats/devices/${ deviceParam }`, query );
+}
+
+function capitalizeFirstLetter( string: string ) {
+	// Special cases for Apple devices.
+	if ( [ 'iphone', 'ios' ].includes( string ) ) {
+		return string.charAt( 0 ) + string.charAt( 1 ).toUpperCase() + string.slice( 2 );
+	}
+
+	return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
+}
+
+const parseDevicesData = ( data: { top_values: { [ key: string ]: number } } ) => {
+	const keys = Object.keys( data.top_values );
+
+	return keys.map( ( key: string ) => {
+		return {
+			label: capitalizeFirstLetter( key ),
+			value: data.top_values[ key ],
+		};
+	} );
+};
+
 const useModuleDevicesQuery = (
 	siteId: number,
-	devicesParam: string,
-	query: object,
-	postId?: number
+	deviceParam: string,
+	query: QueryStatsDevicesParams
 ) => {
-	const dispatch = useDispatch();
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
-
-	// The query object is used as a dependency for the effect,
-	// so it needs to be stringified.
-	const queryKey = JSON.stringify( query );
-	useEffect( () => {
-		dispatch( requestMetrics( siteId, devicesParam, query, postId, siteSlug ) );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ dispatch, siteId, devicesParam, queryKey, postId, siteSlug ] );
-
-	const isFetching = useSelector( ( state ) => isLoading( state, siteId ) );
-	const metrics = useSelector( ( state ) => getMetrics( state, siteId, postId ) );
-
-	return {
-		isFetching,
-		metrics,
-	};
+	return useQuery( {
+		...getDefaultQueryParams(),
+		queryKey: [ 'stats', 'devices', siteId, deviceParam, query ],
+		queryFn: () => queryStatsDevices( siteId, deviceParam, query ),
+		select: ( data ) => parseDevicesData( data as { top_values: { [ key: string ]: number } } ),
+		staleTime: 1000 * 60 * 5,
+	} );
 };
 
 export default useModuleDevicesQuery;

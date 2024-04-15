@@ -8,7 +8,7 @@ import PieChartLegend from 'calypso/components/pie-chart/legend';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { JETPACK_SUPPORT_URL } from '../const';
-import useModuleDevicesQuery from '../hooks/use-modeule-devices-query';
+import useModuleDevicesQuery, { QueryStatsDevicesParams } from '../hooks/use-modeule-devices-query';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
@@ -17,9 +17,9 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import './stats-module-devices.scss';
 
 const OPTION_KEYS = {
-	SIZE: 'screen-size',
+	SIZE: 'screensize',
 	BROWSER: 'browser',
-	OS: 'os',
+	OS: 'platform',
 };
 
 type SelectOptionType = {
@@ -32,7 +32,7 @@ interface StatsModuleDevicesProps {
 	className?: string;
 	period?: string;
 	postId?: number;
-	query: object;
+	query: QueryStatsDevicesParams;
 	summary?: boolean;
 	isLoading?: boolean;
 }
@@ -43,7 +43,6 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	// period, // we will need period once the API endpoint is done
 	isLoading,
 	query,
-	postId,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const translate = useTranslate();
@@ -65,14 +64,12 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.BROWSER );
 
-	const { isFetching: isFetchingUTM, metrics: data } = useModuleDevicesQuery(
-		siteId,
-		selectedOption,
-		query,
-		postId
-	);
+	const { isPending, data } = useModuleDevicesQuery( siteId, selectedOption, {
+		...query,
+		days: 7,
+	} );
 
-	const showLoader = isLoading || isFetchingUTM;
+	const showLoader = isLoading || isPending;
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
@@ -133,7 +130,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	const title = translate( 'Devices', { context: 'Stats: title of module', textOnly: true } );
 
 	// Use dedicated StatsCard for the screen size chart section.
-	if ( 'screen-size' === selectedOption ) {
+	if ( OPTION_KEYS.SIZE === selectedOption ) {
 		return (
 			<StatsCard
 				className={ classNames( className, 'stats-module__card', path ) }
