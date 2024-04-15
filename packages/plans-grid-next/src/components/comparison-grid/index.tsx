@@ -990,7 +990,7 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, selectedSiteId, gridPlansIndex } = usePlansGridContext();
+	const { gridPlans, siteId, gridPlansIndex } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -1120,7 +1120,7 @@ const ComparisonGrid = ( {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
-		selectedSiteId: selectedSiteId,
+		selectedSiteId: siteId,
 	} );
 
 	/**
