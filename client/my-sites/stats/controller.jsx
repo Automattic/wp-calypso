@@ -440,19 +440,7 @@ export function wordAds( context, next ) {
 
 	bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
-			<AsyncLoad
-				require="calypso/my-sites/stats/wordads"
-				placeholder={ PageLoading }
-				path={ context.pathname }
-				date={ date }
-				chartTab={ queryOptions.tab || 'impressions' }
-				context={ context }
-				period={ rangeOfPeriod( activeFilter.period, date ) }
-			/>
-		</LoadStatsPage>
-	) : (
+	context.primary = (
 		<AsyncLoad
 			require="calypso/my-sites/stats/wordads"
 			placeholder={ PageLoading }
