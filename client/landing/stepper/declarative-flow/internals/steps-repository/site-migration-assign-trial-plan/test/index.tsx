@@ -51,12 +51,7 @@ describe( 'SiteMigrationAssignTrialPlanStep', () => {
 			.post( `/wpcom/v2/sites/${ siteId }/hosting/trial/add/${ planSlug }`, {
 				hosting_intent: 'migrate',
 			} )
-			.reply(
-				400,
-				new Error(
-					'You cannot add WordPress.com Migration Trial when you already have paid upgrades'
-				)
-			);
+			.reply( 500, new Error( 'Internal Server Error' ) );
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { error: true } ) )
