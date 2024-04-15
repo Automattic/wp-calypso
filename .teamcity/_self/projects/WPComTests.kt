@@ -80,7 +80,7 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 
 		artifactRules = """
 			gutenberg/artifacts => artifacts
-			logs/docker-logs.log => logs
+			logs/*.log => logs
 		""".trimIndent()
 
 		vcs {
@@ -105,19 +105,27 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 			bashNodeScript {
 				name = "Prepare environment"
 				scriptContent = """
-					# Clone Gutenberg
-					mkdir gutenberg
+					# Set up the logs directory and define log file path
+					logs_dir="%system.teamcity.build.checkoutDir%/logs"
+					mkdir -p "${'$'}logs_dir"
+					exec &> "${'$'}logs_dir/prepare-environment.log"
+					set -x  # Enable debugging
+
+					echo "Starting environment preparation"
+					mkdir -p gutenberg
 					cd gutenberg
 					git init
 					git remote add origin https://github.com/WordPress/gutenberg.git
 					git fetch --depth=1 origin try/run-e2e-tests-against-wpcom
 					git checkout try/run-e2e-tests-against-wpcom
 
-					# Install deps
+					echo "Installing dependencies"
 					npm ci
 
-					# Build packages
+					echo "Building packages"
 					npm run build:packages
+
+					echo "Environment preparation complete"
 				""".trimIndent()
 				dockerImage = "%docker_image_ci_e2e_gb_core_on_dotcom%"
 				dockerRunParameters = "-u %env.UID% --log-driver=json-file --log-opt max-size=10m --log-opt max-file=3"
@@ -144,12 +152,42 @@ fun gutenbergCoreE2eBuildType(): BuildType {
 			}
 
 			step(ScriptBuildStep {
-				name = "Copy Docker Logs"
+				name = "Copy Docker Container Logs and Capture Script Output"
 				scriptContent = """
 					#!/bin/bash
-					mkdir -p %system.teamcity.build.checkoutDir%/logs
-					docker logs $(docker ps -ql --no-trunc) > %system.teamcity.build.checkoutDir%/logs/docker-logs.log
-				"""
+					# Ensure the logs directory exists
+					logs_dir="%system.teamcity.build.checkoutDir%/logs"
+					mkdir -p "${'$'}logs_dir"
+					echo "Logs directory prepared at ${'$'}logs_dir"
+
+					# Redirect all output to script-run.log
+					exec &> "${'$'}logs_dir/script-run.log"
+					set -x  # Enable debugging
+
+					echo "Attempting to copy logs for all known containers, regardless of state:"
+					docker ps -a --no-trunc | awk '{print ${'$'}1}' | tail -n +2 > container_ids.txt
+
+					if [ ! -s container_ids.txt ]; then
+						echo "No Docker containers found. No logs to copy."
+					else
+						while read id; do
+							echo "Checking logs for container ${'$'}id"
+							src_log_file="/var/lib/docker/containers/${'$'}id/${'$'}id-json.log"
+							dest_log_file="${'$'}logs_dir/${'$'}id-json.log"
+
+							if [ -f "${'$'}src_log_file" ]; then
+								cp "${'$'}src_log_file" "${'$'}dest_log_file"
+								echo "Logs copied from ${'$'}src_log_file to ${'$'}dest_log_file"
+							else
+								echo "Log file ${'$'}src_log_file does not exist"
+							fi
+						done < container_ids.txt
+					fi
+
+					echo "Appending 'foobar' to a log file to ensure file system is writable."
+					echo "foobar" >> "${'$'}logs_dir/test-foobar-log.log"
+					echo "End of Script"
+				""".trimIndent()
 				executionMode = BuildStep.ExecutionMode.ALWAYS
 			})
 		}

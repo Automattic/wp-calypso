@@ -5,14 +5,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
-import useLinkAnswersMutation from '../use-link-answers-mutation';
+import useSaveAnswersMutation from '../use-save-answers-mutation';
 
 const MockedComponent = () => {
-	const { mutate } = useLinkAnswersMutation();
+	const { mutate } = useSaveAnswersMutation( { surveyKey: 'test-key', blogId: 123 } );
 	return (
 		<div>
 			<button
-				onClick={ () => mutate( { blogId: 123, surveyKey: 'test_key' } ) }
+				onClick={ () =>
+					mutate( { questionKey: 'question-key', answerKeys: [ 'option-1', 'option-2' ] } )
+				}
 				data-testid="button-mutate"
 			>
 				Click me
@@ -27,7 +29,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-describe( 'useLinkAnswersMutation', () => {
+describe( 'useSaveAnswersMutation', () => {
 	let queryClient: QueryClient;
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
@@ -59,10 +61,12 @@ describe( 'useLinkAnswersMutation', () => {
 		waitFor( () =>
 			expect( wpcom.req.post ).toHaveBeenCalledWith( {
 				apiNamespace: 'wpcom/v2',
-				path: '/segmentation-survey/answers/link',
+				path: '/segmentation-survey/answers',
 				body: {
 					blog_id: 123,
-					survey_key: 'test_key',
+					survey_key: 'test-key',
+					question_key: 'question-key',
+					answers: [ 'option-1', 'option-2' ],
 				},
 			} )
 		);

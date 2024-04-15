@@ -1,6 +1,7 @@
-import { category, home, tag, currencyDollar } from '@wordpress/icons';
+import { category, home, tag, currencyDollar, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import Sidebar from '../sidebar';
 import {
 	A4A_OVERVIEW_LINK,
@@ -9,6 +10,7 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_LICENSES_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
+	A4A_REFERRALS_LINK,
 } from './lib/constants';
 import { createItem } from './lib/utils';
 
@@ -71,6 +73,19 @@ export default function ( { path }: Props ) {
 				},
 				withChevron: true,
 			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-referrals' )
+				? [
+						{
+							icon: reusableBlock,
+							path: '/',
+							link: A4A_REFERRALS_LINK,
+							title: translate( 'Referrals' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Referrals',
+							},
+						},
+				  ]
+				: [] ),
 		].map( ( item ) => createItem( item, path ) );
 	}, [ path, translate ] );
 

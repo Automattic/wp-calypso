@@ -77,7 +77,7 @@ describe( 'useSurveyStructureQuery', () => {
 			mockResponse
 		);
 
-		const { result } = renderHook( () => useSurveyStructureQuery( { surveyKey: 'test_key' } ), {
+		const { result } = renderHook( () => useSurveyStructureQuery( { surveyKey: 'test-key' } ), {
 			wrapper,
 		} );
 
@@ -85,7 +85,7 @@ describe( 'useSurveyStructureQuery', () => {
 
 		expect( wpcom.req.get ).toHaveBeenCalledWith( {
 			apiNamespace: 'wpcom/v2',
-			path: '/segmentation-survey/test_key',
+			path: '/segmentation-survey/test-key',
 		} );
 	} );
 
@@ -94,7 +94,7 @@ describe( 'useSurveyStructureQuery', () => {
 			mockResponse
 		);
 
-		const { result } = renderHook( () => useSurveyStructureQuery( { surveyKey: 'test_key' } ), {
+		const { result } = renderHook( () => useSurveyStructureQuery( { surveyKey: 'test-key' } ), {
 			wrapper,
 		} );
 

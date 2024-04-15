@@ -163,7 +163,9 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				</div>
 			) }
 
-			<UpgradePlanDetails>{ renderCTAs() }</UpgradePlanDetails>
+			<UpgradePlanDetails isEligibleForTrialPlan={ isEligibleForTrialPlan }>
+				{ renderCTAs() }
+			</UpgradePlanDetails>
 		</div>
 	);
 };
