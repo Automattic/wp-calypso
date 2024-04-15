@@ -17,6 +17,7 @@ export const createSitePlanObject = ( plan ) => {
 		formattedPrice: plan.formatted_price,
 		freeTrial: Boolean( plan.free_trial ),
 		hasDomainCredit: Boolean( plan.has_domain_credit ),
+		hasRedeemedDomainCredit: Boolean( plan.has_redeemed_domain_credit ),
 		id: Number( plan.id ),
 		interval: Number( plan.interval ),
 		introductoryOfferFormattedPrice: plan.introductory_offer_formatted_price,

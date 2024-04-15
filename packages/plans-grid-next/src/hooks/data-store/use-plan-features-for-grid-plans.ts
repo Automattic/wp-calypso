@@ -18,6 +18,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList,
+	hasRedeemedDomainCredit,
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
@@ -25,7 +26,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
-	hasDomainCredit?: boolean;
+	hasRedeemedDomainCredit?: boolean;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
@@ -40,7 +41,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	allFeaturesList,
-	hasDomainCredit,
+	hasRedeemedDomainCredit,
 	intent,
 	selectedFeature,
 	showLegacyStorageFeature,
@@ -135,14 +136,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						};
 					} );
 
-					// if ( ! hasDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
-					// 	console.log( 'HERE' );
-					// 	wpcomFeaturesTransformed.push( {
-					// 		...feature,
-					// 		availableOnlyForAnnualPlans,
-					// 		availableForCurrentPlan: false,
-					// 	} );
-
 					if ( highlightedFeatures ) {
 						// slice() and reverse() are needed to the preserve order of features
 						highlightedFeatures
@@ -188,9 +181,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 								return;
 							}
 
-							// TODO: We need to update information from the API about whether a domain credit has been used,
-							// not whether or not a credit is available.
-							if ( ! hasDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
+							if ( ! hasRedeemedDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
 								return;
 							}
 
