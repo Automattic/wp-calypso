@@ -9,7 +9,6 @@ import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
 	showOnlyFavoritesInitialState?: boolean;
-	hideListingInitialState?: boolean;
 	categoryInitialState?: string;
 	siteUrlInitialState?: string;
 	siteFeatureInitialState?: string;
@@ -37,7 +36,6 @@ const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
 };
 
 export const SitesDashboardProvider = ( {
-	hideListingInitialState = false,
 	showOnlyFavoritesInitialState = false,
 	categoryInitialState,
 	siteUrlInitialState,
@@ -50,7 +48,6 @@ export const SitesDashboardProvider = ( {
 	sort,
 	featurePreview,
 }: Props ) => {
-	const [ hideListing, setHideListing ] = useState( hideListingInitialState );
 	const [ selectedCategory, setSelectedCategory ] = useState( categoryInitialState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( siteFeatureInitialState );
 	const [ showOnlyFavorites, setShowOnlyFavorites ] = useState( showOnlyFavoritesInitialState );
@@ -88,7 +85,6 @@ export const SitesDashboardProvider = ( {
 		setInitialSelectedSiteUrl( siteUrlInitialState );
 		if ( ! siteUrlInitialState ) {
 			setShowOnlyFavorites( showOnlyFavoritesInitialState );
-			setHideListing( false );
 		}
 
 		setSitesViewState( ( previousState ) => ( {
@@ -118,8 +114,6 @@ export const SitesDashboardProvider = ( {
 		setSelectedCategory: setSelectedCategory,
 		selectedSiteFeature: selectedSiteFeature,
 		setSelectedSiteFeature: setSelectedSiteFeature,
-		hideListing: hideListing,
-		setHideListing: setHideListing,
 		showOnlyFavorites: showOnlyFavorites,
 		setShowOnlyFavorites: setShowOnlyFavorites,
 		path,
