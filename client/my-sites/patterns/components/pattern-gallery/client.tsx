@@ -6,7 +6,7 @@ import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PatternGalleryServer } from 'calypso/my-sites/patterns/components/pattern-gallery/server';
 import {
-	DESKTOP_VIEWPORT_WIDTH,
+	GRID_VIEW_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { RENDERER_SITE_ID } from 'calypso/my-sites/patterns/constants';
@@ -175,7 +175,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 							key={ pattern.ID }
 							pattern={ pattern }
 							patternTypeFilter={ patternTypeFilter }
-							viewportWidth={ isGridView ? DESKTOP_VIEWPORT_WIDTH : undefined }
+							viewportWidth={ isGridView ? GRID_VIEW_VIEWPORT_WIDTH : undefined }
 						/>
 					) ) }
 

@@ -7,7 +7,7 @@ import { encodePatternId } from 'calypso/landing/stepper/declarative-flow/intern
 import { CategoryGalleryServer } from 'calypso/my-sites/patterns/components/category-gallery/server';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import {
-	DESKTOP_VIEWPORT_WIDTH,
+	GRID_VIEW_VIEWPORT_WIDTH,
 	PatternPreview,
 } from 'calypso/my-sites/patterns/components/pattern-preview';
 import { PatternsSection } from 'calypso/my-sites/patterns/components/section';
@@ -77,7 +77,7 @@ function CategoryGalleryItem( { category, patternTypeFilter }: CategoryGalleryIt
 						className="pattern-preview--category-gallery"
 						pattern={ pattern }
 						patternTypeFilter={ patternTypeFilter }
-						viewportWidth={ DESKTOP_VIEWPORT_WIDTH }
+						viewportWidth={ GRID_VIEW_VIEWPORT_WIDTH }
 					/>
 				</div>
 			</div>

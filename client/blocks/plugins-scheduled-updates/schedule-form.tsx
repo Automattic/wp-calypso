@@ -1,7 +1,6 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import { ScheduleFormFrequency } from 'calypso/blocks/plugins-update-manager/schedule-form-frequency';
-import { ScheduleFormPlugins } from 'calypso/blocks/plugins-update-manager/schedule-form-plugins';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
 	useCreateUpdateScheduleMutation,
 	useEditUpdateScheduleMutation,
@@ -12,6 +11,8 @@ import {
 } from 'calypso/data/plugins/use-update-schedules-query';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
+import { ScheduleFormFrequency } from './schedule-form-frequency';
+import { ScheduleFormPlugins } from './schedule-form-plugins';
 import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
 import type { SyncSuccessParams } from './types';
 
@@ -64,6 +65,11 @@ export const ScheduleForm = ( props: Props ) => {
 	};
 	const { createUpdateSchedule } = useCreateUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
 	const { editUpdateSchedule } = useEditUpdateScheduleMutation( siteSlug, serverSyncCallbacks );
+	const {
+		data: plugins = [],
+		isLoading: isPluginsFetching,
+		isFetched: isPluginsFetched,
+	} = useCorePluginsQuery( siteSlug, true, true );
 
 	const onFormSubmit = () => {
 		const formValid = ! Object.values( validationErrors ).filter( ( e ) => !! e ).length;
@@ -139,7 +145,10 @@ export const ScheduleForm = ( props: Props ) => {
 				</FlexItem>
 				<FlexItem>
 					<ScheduleFormPlugins
-						initPlugins={ selectedPlugins }
+						plugins={ plugins }
+						selectedPlugins={ selectedPlugins }
+						isPluginsFetching={ isPluginsFetching }
+						isPluginsFetched={ isPluginsFetched }
 						error={ validationErrors?.plugins }
 						showError={ fieldTouched?.plugins }
 						onChange={ setSelectedPlugins }

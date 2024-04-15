@@ -2,9 +2,6 @@ import { Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useIsEligibleForFeature } from 'calypso/blocks/plugins-update-manager/hooks/use-is-eligible-for-feature';
-import { useSiteHasEligiblePlugins } from 'calypso/blocks/plugins-update-manager/hooks/use-site-has-eligible-plugins';
-import { ScheduleLogs } from 'calypso/blocks/plugins-update-manager/schedule-logs';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import MainComponent from 'calypso/components/main';
@@ -17,9 +14,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MAX_SCHEDULES } from './config';
 import { PluginUpdateManagerContextProvider } from './context';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
+import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
+import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
+import { ScheduleLogs } from './schedule-logs';
 import './styles.scss';
 
 interface Props {
@@ -32,7 +32,7 @@ interface Props {
 	onShowLogs: ( id: string ) => void;
 }
 
-export const PluginsUpdateManager = ( props: Props ) => {
+export const PluginsScheduledUpdates = ( props: Props ) => {
 	const translate = useTranslate();
 	const {
 		siteSlug,
