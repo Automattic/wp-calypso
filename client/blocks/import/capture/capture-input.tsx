@@ -12,7 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { OnInputChange, OnInputEnter } from './types';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
 
 interface Props {
 	onInputEnter: OnInputEnter;
@@ -20,17 +20,25 @@ interface Props {
 	onDontHaveSiteAddressClick?: () => void;
 	hasError?: boolean;
 	skipInitialChecking?: boolean;
+	label?: ReactNode;
+	placeholder?: string;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
-	const { onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError, skipInitialChecking } =
-		props;
+	const {
+		onInputEnter,
+		onInputChange,
+		onDontHaveSiteAddressClick,
+		hasError,
+		skipInitialChecking,
+		label,
+		placeholder = 'artfulbaker.blog',
+	} = props;
 
 	const translate = useTranslate();
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
 	const lastInvalidValue = useRef< string | undefined >();
-	const exampleInputWebsite = 'artfulbaker.blog';
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -84,7 +92,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel htmlFor="capture-site-url">
-					{ translate( 'Enter the URL of the site:' ) }
+					{ label ?? translate( 'Enter the URL of the site:' ) }
 				</FormLabel>
 				<FormTextInput
 					id="capture-site-url"
@@ -96,7 +104,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					autoCorrect="off"
 					spellCheck="false"
 					value={ urlValue }
-					placeholder={ exampleInputWebsite }
+					placeholder={ placeholder }
 					onChange={ onChange }
 				/>
 
