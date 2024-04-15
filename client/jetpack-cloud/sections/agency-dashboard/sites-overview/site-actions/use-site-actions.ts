@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -16,7 +17,7 @@ export default function useSiteActions(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
-	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses ) || isA8CForAgencies();
 
 	const siteValue = site?.value;
 
@@ -35,7 +36,8 @@ export default function useSiteActions(
 		};
 
 		const isWPCOMAtomicSiteCreationEnabled =
-			isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && is_atomic;
+			( isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) || isA8CForAgencies() ) &&
+			is_atomic;
 
 		const isUrlOnly = site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 
@@ -112,5 +114,13 @@ export default function useSiteActions(
 				isEnabled: true && ! isUrlOnly,
 			},
 		];
-	}, [ dispatch, isLargeScreen, partnerCanIssueLicense, siteError, siteValue, translate ] );
+	}, [
+		dispatch,
+		isLargeScreen,
+		partnerCanIssueLicense,
+		site?.value?.sticker,
+		siteError,
+		siteValue,
+		translate,
+	] );
 }
