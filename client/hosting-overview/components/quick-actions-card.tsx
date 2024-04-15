@@ -29,7 +29,7 @@ const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 
 const QuickActionsCard: FC = () => {
 	const site = useSelector( getSelectedSite );
-	const editorUrl = useSelector( ( state ) => getEditorUrl( state, site?.ID ) );
+	const editorUrl = useSelector( ( state ) => ( site?.ID ? getEditorUrl( state, site.ID ) : '#' ) );
 	const translate = useTranslate();
 
 	return (
