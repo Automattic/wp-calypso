@@ -1,6 +1,6 @@
 import { FeatureList, PlanSlug, TERMS_LIST } from '@automattic/calypso-products';
 import { AddOnMeta, Plans } from '@automattic/data-stores';
-import { HiddenPlans, PlansIntent } from '../../types';
+import { GridPlan, HiddenPlans, PlansIntent } from '../../types';
 import { UseFreeTrialPlanSlugs } from './use-grid-plans';
 
 export interface UseGridPlansParams {
@@ -21,3 +21,7 @@ export interface UseGridPlansParams {
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs?: UseFreeTrialPlanSlugs;
 }
+
+export type UseGridPlansType = (
+	params: UseGridPlansParams
+) => Omit< GridPlan, 'features' >[] | null;

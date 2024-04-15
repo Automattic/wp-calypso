@@ -26,10 +26,10 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
-import { UseGridPlansParams } from './types';
+import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { GridPlan, HiddenPlans, PlansIntent } from '../../types';
+import type { HiddenPlans, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -201,7 +201,7 @@ const usePlanTypesWithIntent = ( {
 };
 
 // TODO clk: move to plans data store
-const useGridPlans = ( {
+const useGridPlans: UseGridPlansType = ( {
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
@@ -215,7 +215,7 @@ const useGridPlans = ( {
 	coupon,
 	siteId,
 	isDisplayingPlansNeededForFeature,
-}: UseGridPlansParams ): Omit< GridPlan, 'features' >[] | null => {
+} ) => {
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
