@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -17,7 +18,7 @@ export default function useSiteActions(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
-	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses ) || isA8CForAgencies();
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const siteValue = site?.value;
 
@@ -27,6 +28,14 @@ export default function useSiteActions(
 		}
 
 		const { url, url_with_scheme, blog_id, has_backup, is_atomic } = siteValue;
+
+		let issueLicenseURL = undefined;
+
+		if ( isA8CForAgencies() ) {
+			issueLicenseURL = A4A_MARKETPLACE_LINK;
+		} else if ( partnerCanIssueLicense ) {
+			issueLicenseURL = `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`;
+		}
 
 		const siteSlug = urlToSlug( url );
 
@@ -65,12 +74,14 @@ export default function useSiteActions(
 			},
 			{
 				name: translate( 'Issue new license' ),
-				href: partnerCanIssueLicense
-					? `/partner-portal/issue-license/?site_id=${ blog_id }&source=dashboard`
-					: undefined,
+				href: issueLicenseURL,
 				onClick: () => handleClickMenuItem( 'issue_license' ),
 				isExternalLink: false,
-				isEnabled: partnerCanIssueLicense && ! siteError && ! is_atomic && ! isUrlOnly,
+				isEnabled:
+					( partnerCanIssueLicense || isA8CForAgencies() ) &&
+					! siteError &&
+					! is_atomic &&
+					! isUrlOnly,
 			},
 			{
 				name: translate( 'View activity' ),
