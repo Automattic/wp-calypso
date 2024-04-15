@@ -1,7 +1,21 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import hostingOverview from './controller';
 
 export default function () {
-	page( '/hosting-overview', hostingOverview, makeLayout, clientRender );
+	page( '/hosting-overview', ( context ) => {
+		const state = context.store.getState();
+		const primarySiteId = getPrimarySiteId( state );
+		const selectedSite = getSelectedSite( state );
+
+		page.redirect(
+			`/hosting-overview/${
+				selectedSite ? selectedSite?.slug : getSiteSlug( state, primarySiteId )
+			}`
+		);
+	} );
+	page( '/hosting-overview/:site', hostingOverview, makeLayout, clientRender );
 }
