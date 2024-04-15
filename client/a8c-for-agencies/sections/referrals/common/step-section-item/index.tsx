@@ -10,7 +10,7 @@ interface StepSectionItemProps {
 	icon: JSX.Element;
 	heading: string;
 	description: string;
-	buttonProps: React.ComponentProps< typeof Button >;
+	buttonProps?: React.ComponentProps< typeof Button >;
 }
 
 export default function StepSectionItem( {
@@ -33,9 +33,11 @@ export default function StepSectionItem( {
 				<div className="step-section-item__heading">{ heading }</div>
 				<div className="step-section-item__description">{ description }</div>
 			</div>
-			<div className="step-section-item__button">
-				<Button { ...buttonProps } />
-			</div>
+			{ buttonProps && (
+				<div className="step-section-item__button">
+					<Button { ...buttonProps } />
+				</div>
+			) }
 		</div>
 	);
 }
