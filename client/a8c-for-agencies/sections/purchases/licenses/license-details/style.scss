@@ -110,7 +110,7 @@
 	&,
 	.license-details__actions a:not(.license-details__assign-button),
 	.license-details__actions button {
-		background-color: #fafafa;
+		background-color: var(--studio-gray-0);
 	}
 }
 
@@ -121,7 +121,7 @@
 	line-height: 1.375;
 
 	&:hover {
-		background-color: var(--studio-gray-0);
+		background-color: var(--color-accent-0);
 
 	}
 
