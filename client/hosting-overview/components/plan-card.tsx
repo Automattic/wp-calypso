@@ -59,7 +59,7 @@ const PlanCard: FC = () => {
 								rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
 							/>
 							<div className="hosting-overview__plan-info">
-								{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually.', {
+								{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excl. taxes', {
 									args: {
 										rawPrice: formatCurrency(
 											pricing?.[ planSlug ].originalPrice.full ?? 0,
@@ -70,6 +70,7 @@ const PlanCard: FC = () => {
 											}
 										),
 									},
+									comment: 'excl. taxes is short for excluding taxes',
 									components: {
 										span: <span />,
 									},
