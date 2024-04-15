@@ -57,7 +57,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { SignupHeaderBanner } from 'calypso/signup/signup-header';
+import SignupHeaderBanner from 'calypso/signup/signup-header/overflow-banner';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -659,6 +659,9 @@ const PlansFeaturesMain = ( {
 		siteId,
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
+	const refundPeriodInSignupHeaderBanner =
+		config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) &&
+		flowName === 'onboarding';
 
 	const {
 		primary: { callback: onFreePlanCTAClick },
@@ -691,9 +694,11 @@ const PlansFeaturesMain = ( {
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
 				<QueryProductsList />
-				<SignupHeaderBanner height={ 80 } stickyBannerOffset={ 40 }>
-					{ translate( 'Refund Policy' ) }
-				</SignupHeaderBanner>
+				{ refundPeriodInSignupHeaderBanner && (
+					<SignupHeaderBanner height={ 80 } stickyBannerOffset={ 40 } sticky={ true }>
+						{ translate( 'Refund Policy' ) }
+					</SignupHeaderBanner>
+				) }
 				<PlanUpsellModal
 					isModalOpen={ isModalOpen }
 					paidDomainName={ paidDomainName }

@@ -1,10 +1,31 @@
+import { css, Global } from '@emotion/react';
 import { useEffect, useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { ReactNode } from 'react';
+import './style.scss';
 
-export const SignupHeaderBanner = ( {
+const globalStyleOverrides = css`
+	body.is-section-signup.is-white-signup {
+		.layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+			.step-wrapper__navigation .navigation-link.button.is-borderless {
+				color: var( --color-text-inverted );
+				svg {
+					fill: var( --color-text-inverted );
+				}
+			}
+			.signup-header .wordpress-logo {
+				fill: var( --color-text-inverted );
+			}
+		}
+	}
+`;
+
+const SignupHeaderBanner = ( {
 	children,
+	sticky,
+	stickyBannerOffset = 0,
 }: {
+	sticky?: boolean;
 	stickyBannerOffset?: number;
 	height?: number;
 	children: ReactNode;
@@ -14,7 +35,7 @@ export const SignupHeaderBanner = ( {
 	useEffect( () => {
 		const handleScroll = () => {
 			const scrollY = window.scrollY;
-			if ( scrollY > 40 ) {
+			if ( scrollY > stickyBannerOffset ) {
 				setIsAboveOffset( true );
 			} else {
 				setIsAboveOffset( false );
@@ -28,10 +49,17 @@ export const SignupHeaderBanner = ( {
 		};
 	}, [] );
 
-	const classes = classnames( 'signup-header__overlfow-banner', {
-		'is-sticky-banner': isAboveOffset,
-		'is-header-banner': ! isAboveOffset,
+	const classes = classnames( 'signup-header__overflow-banner', {
+		'is-sticky-banner': isAboveOffset && sticky,
+		'is-header-banner': ! isAboveOffset || ! sticky,
 	} );
 
-	return <div className={ classes }>{ children }</div>;
+	return (
+		<>
+			<Global styles={ globalStyleOverrides } />
+			<div className={ classes }>{ children }</div>
+		</>
+	);
 };
+
+export default SignupHeaderBanner;
