@@ -23,13 +23,12 @@ import {
 	usePaymentMethod,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -346,7 +345,6 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
 } ) {
-	const locale = useLocale();
 	const cartKey = useCartKey();
 	const {
 		responseCart,
@@ -518,10 +516,7 @@ export default function CheckoutMainContent( {
 		);
 	}
 
-	const nextStepButtonText =
-		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
-			? translate( 'Continue to payment', { textOnly: true } )
-			: translate( 'Continue', { textOnly: true } );
+	const nextStepButtonText = translate( 'Continue to payment', { textOnly: true } );
 
 	return (
 		<WPCheckoutWrapper>
