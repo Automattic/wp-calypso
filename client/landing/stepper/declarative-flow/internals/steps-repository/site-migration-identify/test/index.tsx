@@ -99,13 +99,10 @@ describe( 'SiteMigrationIdentify', () => {
 
 		mockApi()
 			.get( '/wpcom/v2/imports/analyze-url' )
-			.query( { site_url: 'https://example.com' } )
+			.query( { site_url: 'https://example' } )
 			.reply( 500, new Error( 'Internal Server Error' ) );
 
-		await userEvent.type(
-			screen.getByLabelText( /Enter your site address/ ),
-			'https://example.com'
-		);
+		await userEvent.type( screen.getByLabelText( /Enter your site address/ ), 'https://example' );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
