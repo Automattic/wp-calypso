@@ -146,20 +146,6 @@
 	font-weight: 400;
 }
 
-.sites-dataviews__site.is-disconnected {
-	cursor: not-allowed;
-	.sites-dataviews__site-name {
-		color: var(--studio-gray-50);
-	}
-}
-
-.sites-dataviews__site-disconnected {
-	color: #d94f4f;
-	font-style: italic;
-	font-size: 1rem;
-	padding-bottom: 5px;
-}
-
 .preview-hidden {
 	@media (min-width: 2040px) {
 		.sites-dataviews__site-name {
