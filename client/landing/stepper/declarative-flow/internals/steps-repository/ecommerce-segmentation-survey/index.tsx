@@ -3,10 +3,12 @@ import DocumentHead from 'calypso/components/data/document-head';
 import SurveyContainer from 'calypso/components/survey-container';
 import { useSurveyContext } from 'calypso/components/survey-container/context';
 import { Question } from 'calypso/components/survey-container/types';
-import useCachedAnswers from './hooks/use-cached-answers';
-import useSaveAnswersMutation from './mutations/use-save-answers-mutation';
+import {
+	useCachedAnswers,
+	useSaveAnswersMutation,
+	useSurveyStructureQuery,
+} from 'calypso/data/segmentaton-survey';
 import EcommerceSegmentationSurveyProvider from './provider';
-import useSurveyStructureQuery from './queries/use-survey-structure-query';
 import type { Step } from '../../types';
 import './style.scss';
 
