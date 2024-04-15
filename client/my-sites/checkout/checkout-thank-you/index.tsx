@@ -26,7 +26,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -712,33 +711,6 @@ export class CheckoutThankYou extends Component<
 		const hasFailedPurchases = failedPurchases.length > 0;
 		const componentAndPrimaryPurchaseAndDomain = this.getComponentAndPrimaryPurchaseAndDomain();
 		const [ component, primaryPurchase ] = componentAndPrimaryPurchaseAndDomain;
-
-		if ( ! this.isDataLoaded() ) {
-			return (
-				<div>
-					<CheckoutThankYouHeader
-						isDataLoaded={ false }
-						isSimplified={ isSimplified }
-						selectedSite={ selectedSite }
-						upgradeIntent={ upgradeIntent }
-						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-						displayMode={ displayMode }
-					/>
-
-					{ ! isSimplified && (
-						<>
-							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
-
-							<div className="checkout-thank-you__purchase-details-list">
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-							</div>
-						</>
-					) }
-				</div>
-			);
-		}
 
 		return (
 			<div>
