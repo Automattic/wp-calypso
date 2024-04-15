@@ -392,6 +392,8 @@ jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
 describe( 'getFinishedBackupForSiteById()', () => {
 	const TEST_SITE_ID = 123;
+	const TEST_BACKUP_ID_1 = 1;
+	const TEST_BACKUP_ID_2 = 2;
 	const state = {};
 
 	beforeEach( () => {
@@ -399,41 +401,36 @@ describe( 'getFinishedBackupForSiteById()', () => {
 	} );
 
 	test( 'Should receive the finished backup.', () => {
-		const BACKUP_ID = 1;
+		getRewindBackups.mockReturnValue( [
+			{ id: TEST_BACKUP_ID_1, status: 'finished' },
+			{ id: TEST_BACKUP_ID_2, status: 'started' },
+		] );
 
-		getRewindBackups.mockReturnValue( [ { id: BACKUP_ID, status: 'finished' } ] );
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
 
-		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, BACKUP_ID );
-
-		expect( finishedBackup.id ).toEqual( BACKUP_ID );
+		expect( finishedBackup.id ).toEqual( TEST_BACKUP_ID_1 );
 	} );
 
 	test( 'Shouldnt receive backup since it is in progress.', () => {
-		const BACKUP_ID = 1;
+		getRewindBackups.mockReturnValue( [ { id: TEST_BACKUP_ID_1, status: 'started' } ] );
 
-		getRewindBackups.mockReturnValue( [ { id: BACKUP_ID, status: 'started' } ] );
-
-		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, BACKUP_ID );
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
 
 		expect( finishedBackup ).toBeNull;
 	} );
 
 	test( 'Shouldnt receive backup since it failed.', () => {
-		const BACKUP_ID = 1;
+		getRewindBackups.mockReturnValue( [ { id: TEST_BACKUP_ID_1, status: 'not-accessible' } ] );
 
-		getRewindBackups.mockReturnValue( [ { id: BACKUP_ID, status: 'not-accessible' } ] );
-
-		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, BACKUP_ID );
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
 
 		expect( finishedBackup ).toBeNull;
 	} );
 
 	test( 'Shouldnt receive backup if id doesnt match.', () => {
-		const BACKUP_ID = 1;
+		getRewindBackups.mockReturnValue( [ { id: TEST_BACKUP_ID_2, status: 'finished' } ] );
 
-		getRewindBackups.mockReturnValue( [ { id: 2, status: 'finished' } ] );
-
-		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, BACKUP_ID );
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
 
 		expect( finishedBackup ).toBeNull;
 	} );
