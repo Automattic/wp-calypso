@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
@@ -20,7 +21,7 @@ import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
-import siteHasUnlimitedSubscribers from 'calypso/state/selectors/site-has-unlimited-subscribers';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -272,10 +273,14 @@ class Followers extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state, ownProps ) => {
 	return {
 		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
-		siteHasUnlimitedSubscribers: siteHasUnlimitedSubscribers( state ),
+		siteHasUnlimitedSubscribers: siteHasFeature(
+			state,
+			ownProps?.site?.ID,
+			FEATURE_UNLIMITED_SUBSCRIBERS
+		),
 	};
 };
 
