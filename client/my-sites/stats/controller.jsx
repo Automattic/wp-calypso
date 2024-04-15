@@ -487,21 +487,7 @@ export function emailStats( context, next ) {
 	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks_count' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : validTabs[ 0 ];
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
-			<StatsEmailDetail
-				path={ context.path }
-				postId={ postId }
-				statType={ statType }
-				chartTab={ chartTab }
-				context={ context }
-				givenSiteId={ givenSiteId }
-				period={ rangeOfPeriod( activeFilter.period, date ) }
-				date={ date }
-				isValidStartDate={ isValidStartDate }
-			/>
-		</LoadStatsPage>
-	) : (
+	context.primary = (
 		<StatsEmailDetail
 			path={ context.path }
 			postId={ postId }
@@ -539,13 +525,7 @@ export function emailSummary( context, next ) {
 
 	const date = moment().locale( 'en' );
 
-	context.primary = isPurchaseFlowEnabled ? (
-		<LoadStatsPage>
-			<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />
-		</LoadStatsPage>
-	) : (
-		<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />
-	);
+	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
 
 	next();
 }
