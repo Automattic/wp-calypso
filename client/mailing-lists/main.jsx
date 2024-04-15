@@ -106,6 +106,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Promotions' );
 		} else if ( 'reports' === category ) {
 			return this.props.translate( 'Reports' );
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Scheduled Updates' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate( 'Learn Faster to Grow Faster' );
 		} else if ( 'jetpack_marketing' === category ) {
@@ -157,6 +159,8 @@ class MainComponent extends Component {
 			return this.props.translate(
 				'Complimentary reports and updates regarding site performance and traffic.'
 			);
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Complimentary reports regarding scheduled plugin updates.' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate(
 				'Take your WordPress.com site to new heights with expert webinars, courses, and community forums.'
