@@ -1,15 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { LoadingBar } from 'calypso/components/loading-bar';
-import { useSiteHasUnlimitedSubscribers } from 'calypso/landing/stepper/hooks/use-site-has-unlimited-subscribers';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
+import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { AppState } from 'calypso/types';
 
 type AddSubscribersModalProps = {
 	site: SiteDetails;
@@ -19,7 +22,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
-	const hasUnlimitedSubscribers = useSiteHasUnlimitedSubscribers( site?.ID );
+	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
+		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
+	);
 
 	useEffect( () => {
 		const handleHashChange = () => {
