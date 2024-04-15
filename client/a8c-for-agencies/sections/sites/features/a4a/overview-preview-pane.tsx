@@ -125,18 +125,14 @@ export function OverviewPreviewPane( {
 				setSelectedSiteFeature,
 				<JetpackActivityPreview site={ site } />
 			),
-			...( isEnabled( 'a4a/hosting-preview-pane' )
-				? [
-						createFeaturePreview(
-							HOSTING_OVERVIEW_ID,
-							translate( 'Hosting' ),
-							true,
-							selectedSiteFeature,
-							setSelectedSiteFeature,
-							<HostingOverviewPreview site={ site } />
-						),
-				  ]
-				: [] ),
+			createFeaturePreview(
+				HOSTING_OVERVIEW_ID,
+				translate( 'Hosting' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<HostingOverviewPreview site={ site } />
+			),
 			...( isEnabled( 'a4a/site-details-pane' )
 				? [
 						createFeaturePreview(

@@ -200,6 +200,9 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
+				domains: {
+					useAlternateDomainMessaging: true,
+				},
 				plans: {
 					/**
 					 * This intent is geared towards customizations related to the paid media flow

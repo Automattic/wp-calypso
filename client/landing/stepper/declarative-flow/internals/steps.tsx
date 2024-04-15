@@ -235,4 +235,9 @@ export const STEPS = {
 		slug: 'site-migration-plugin-install',
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
+
+	SEGMENTATION_SURVEY: {
+		slug: 'segmentation-survey',
+		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
+	},
 };

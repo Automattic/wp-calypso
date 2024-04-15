@@ -1,28 +1,29 @@
 import { PlanButton } from '@automattic/plans-grid-next';
 import { useTranslate } from 'i18n-calypso';
-import type { PlanUpsellInfo } from '../hooks/use-plan-upsell-info';
+import { usePlanUpsellInfo } from '../hooks/use-plan-upsell-info';
 import type { PlanSlug } from '@automattic/calypso-products';
 
 function PlanUpsellButton( {
-	planUpsellInfo,
+	planSlug,
 	onPlanSelected,
 	disabled = false,
 	isBusy = false,
 }: {
-	planUpsellInfo: PlanUpsellInfo;
+	planSlug: PlanSlug;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
 	disabled?: boolean;
 	isBusy?: boolean;
 } ) {
 	const translate = useTranslate();
+	const planUpsellInfo = usePlanUpsellInfo( { planSlug } );
 
 	return (
 		<PlanButton
-			planSlug={ planUpsellInfo.planSlug }
+			planSlug={ planSlug }
 			disabled={ disabled }
 			busy={ isBusy }
 			onClick={ () => {
-				onPlanSelected( planUpsellInfo.planSlug );
+				onPlanSelected( planSlug );
 			} }
 		>
 			{ translate( 'Get %(planTitle)s - %(planPrice)s/month', {
