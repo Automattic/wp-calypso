@@ -122,7 +122,28 @@
 			fill: var(--color-text-inverted);
 			color: var(--color-text-inverted);
 			box-shadow: none;
-			border: 1px solid;
+		}
+	}
+
+	.button.is-scary {
+		color: var(--color-scary-50);
+		border-color: var(--color-scary-50);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-scary-0);
+			border-color: var(--color-scary-60);
+			color: var(--color-scary-60);
+		}
+	}
+
+	.button.is-primary.is-scary {
+		background-color: var(--color-scary-50);
+		color: var(--color-text-inverted);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-scary-60);
 		}
 	}
 

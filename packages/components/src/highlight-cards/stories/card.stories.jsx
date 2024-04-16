@@ -1,4 +1,4 @@
-import { Icon, institution } from '@wordpress/icons';
+import { institution } from '@wordpress/icons';
 import BaseCard from '../base-card';
 import CountCard from '../count-card';
 
@@ -31,7 +31,7 @@ export const BaseCard_ = () => (
 
 export const CountCard_ = () => (
 	<>
-		<CountCard heading="String Value" icon={ <Icon icon={ institution } /> } value="123456789" />
-		<CountCard heading="Number Value" icon={ <Icon icon={ institution } /> } value={ 123456789 } />
+		<CountCard heading="String Value" icon={ institution } value="123456789" />
+		<CountCard heading="Number Value" icon={ institution } value={ 123456789 } />
 	</>
 );

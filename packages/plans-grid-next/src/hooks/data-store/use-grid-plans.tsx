@@ -156,9 +156,6 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-jetpack-app-site-creation':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
-		case 'plans-paid-media':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
 		case 'plans-p2':
 			planTypes = [ TYPE_FREE ];
 
