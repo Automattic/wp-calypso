@@ -265,6 +265,7 @@ function PatternPreviewFragment( {
 
 			<div className="pattern-preview__renderer">
 				<PatternRenderer
+					maxHeight="none"
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }
