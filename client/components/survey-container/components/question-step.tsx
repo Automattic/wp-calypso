@@ -49,7 +49,6 @@ const QuestionStep = ( {
 					subHeaderText={ question.subHeaderText }
 				/>
 			}
-			shouldStickyNavButtons={ true }
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">
