@@ -23,7 +23,7 @@ const PlanCard: FC = () => {
 	const pricing = usePricingMetaForGridPlans( {
 		coupon: undefined,
 		planSlugs: [ planSlug ],
-		selectedSiteId: site?.ID,
+		siteId: site?.ID,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
