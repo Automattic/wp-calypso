@@ -252,9 +252,8 @@ export const PatternLibrary = ( {
 	let mainHeading: Substitution = '';
 
 	if ( searchTerm && isFetchingPatterns && ! patterns.length ) {
-		mainHeading = translate( 'Loading patterns…', {
-			comment: 'Heading text displayed while pattern search results are loading',
-		} );
+		// Non-breaking space
+		mainHeading = '\u00A0';
 	} else if ( searchTerm ) {
 		mainHeading = translate( '%(count)d pattern', '%(count)d patterns', {
 			count: patterns.length,
