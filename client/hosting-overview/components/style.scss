@@ -1,15 +1,33 @@
-.hosting-overview__top-cards-wrapper {
-	display: flex;
-	gap: 33px;
-	margin-bottom: 38px;
+.hosting-overview {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto auto;
+	grid-column-gap: 33px;
+	grid-row-gap: 38px;
 }
 
 .hosting-overview__card {
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-5);
 	box-shadow: none;
-	flex: 1;
 	padding: 22px;
+	width: 100%;
+	height: 100%;
+}
+
+.hosting-overview__plan {
+	grid-column: 1 / 2;
+	grid-row: 1 / 2;
+}
+
+.hosting-overview__quick-actions {
+	grid-column: 2 / 3;
+	grid-row: 1 / 2;
+}
+
+.hosting-overview__active-domains {
+	grid-column: 1 / 3;
+	grid-row: 2 / 3;
 }
 
 .hosting-overview__plan-card-header,

@@ -3,6 +3,7 @@ import { ProgressBar, Button, Card, PlanPrice } from '@automattic/components';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
 import { Icon, cloud } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
@@ -36,7 +37,7 @@ const PlanCard: FC = () => {
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
-			<Card className="hosting-overview__card">
+			<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__plan' ) }>
 				<div>
 					<div className="hosting-overview__plan-card-header">
 						<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
