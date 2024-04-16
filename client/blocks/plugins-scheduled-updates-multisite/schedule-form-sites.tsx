@@ -1,4 +1,5 @@
 import { CheckboxControl, SearchControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useState } from 'react';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -6,9 +7,10 @@ import type { SiteExcerptData } from '@automattic/sites';
 interface Props {
 	sites: SiteExcerptData[];
 	initSites?: number[];
+	boarderWrapper?: boolean;
 }
 export const ScheduleFormSites = ( props: Props ) => {
-	const { sites, initSites = [] } = props;
+	const { sites, initSites = [], boarderWrapper = true } = props;
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( initSites );
@@ -26,7 +28,7 @@ export const ScheduleFormSites = ( props: Props ) => {
 	return (
 		<div className="form-field">
 			<label htmlFor="sites">{ translate( 'Select sites' ) }</label>
-			<div className="form-control-container">
+			<div className={ classnames( { 'form-control-container': boarderWrapper } ) }>
 				<SearchControl
 					id="sites"
 					onChange={ ( s ) => setSearchTerm( s.trim() ) }

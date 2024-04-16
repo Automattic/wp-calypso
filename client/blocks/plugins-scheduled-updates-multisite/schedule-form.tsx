@@ -13,13 +13,14 @@ export const ScheduleForm = () => {
 			<div className="form-control-container">
 				<Flex direction={ [ 'column', 'row' ] } expanded={ true } align="start">
 					<FlexItem>
-						<ScheduleFormSites sites={ atomicSites } />
+						<ScheduleFormSites sites={ atomicSites } boarderWrapper={ false } />
 					</FlexItem>
 					<FlexItem>
 						<ScheduleFormPlugins
 							plugins={ [] }
 							isPluginsFetching={ false }
 							isPluginsFetched={ true }
+							boarderWrapper={ false }
 						/>
 					</FlexItem>
 				</Flex>
