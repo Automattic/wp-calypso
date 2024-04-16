@@ -11,7 +11,6 @@ import {
 } from 'calypso/data/segmentaton-survey';
 import SegmentationSurveyProvider from './provider';
 import type { Step } from '../../types';
-import './style.scss';
 
 const SURVEY_KEY = 'survey-1';
 
