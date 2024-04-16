@@ -451,30 +451,31 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
-		allFeaturesList: getFeaturesList(),
-		coupon,
-		eligibleForFreeHostingTrial,
-		hiddenPlans,
-		intent,
-		isDisplayingPlansNeededForFeature,
-		isInSignup,
-		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
-		selectedFeature,
-		selectedPlan,
-		showLegacyStorageFeature,
-		siteId,
-		storageAddOns,
-		term,
-		useCheckPlanAvailabilityForPurchase,
-		useFreeTrialPlanSlugs,
-	} )?.filter( ( { planSlug } ) => {
-		// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
-		if ( deemphasizeFreePlan ) {
-			return planSlug !== PLAN_FREE;
-		}
-		return true;
-	} );
+	const gridPlansForFeaturesGrid =
+		useGridPlansForFeaturesGrid( {
+			allFeaturesList: getFeaturesList(),
+			coupon,
+			eligibleForFreeHostingTrial,
+			hiddenPlans,
+			intent,
+			isDisplayingPlansNeededForFeature,
+			isInSignup,
+			isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+			selectedFeature,
+			selectedPlan,
+			showLegacyStorageFeature,
+			siteId,
+			storageAddOns,
+			term,
+			useCheckPlanAvailabilityForPurchase,
+			useFreeTrialPlanSlugs,
+		} )?.filter( ( { planSlug } ) => {
+			// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+			if ( deemphasizeFreePlan ) {
+				return planSlug !== PLAN_FREE;
+			}
+			return true;
+		} ) ?? null; // optional chaining can result in `undefined`; we don't want to introduce it here.
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
