@@ -250,15 +250,24 @@ export const PatternLibrary = ( {
 
 	return (
 		<>
-			<PatternsPageViewTracker
-				category={ category }
-				patternPermalinkName={ patternPermalinkName }
-				patternTypeFilter={ patternTypeFilter }
-				view={ currentView }
-				searchTerm={ searchTerm }
-				referrer={ referrer }
-				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
-			/>
+			{ isHomePage ? (
+				<PatternsPageViewTracker
+					patternPermalinkName={ patternPermalinkName }
+					searchTerm={ searchTerm }
+					referrer={ referrer }
+					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+				/>
+			) : (
+				<PatternsPageViewTracker
+					category={ category }
+					patternPermalinkName={ patternPermalinkName }
+					patternTypeFilter={ patternTypeFilter }
+					view={ currentView }
+					searchTerm={ searchTerm }
+					referrer={ referrer }
+					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+				/>
+			) }
 
 			<PatternsDocumentHead category={ category } />
 
