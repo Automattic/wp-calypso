@@ -22,7 +22,7 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 						onClick={ () => onChange( question.key, [ option.value ] ) }
 						onKeyDown={ handleKeyDown }
 						aria-checked={ isSelected ? 'true' : 'false' }
-						aria-labelledby={ `optionLabel-${ option.value } optionHelpText-${ option.value }` }
+						aria-labelledby={ `option-label-${ option.value } option-help-text-${ option.value }` }
 					>
 						<input
 							type="radio"
@@ -36,12 +36,12 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 							aria-hidden="true"
 						/>
 						<div className="question-options__option-label">
-							<label id={ `optionLabel-${ option.value }` } htmlFor={ `option-${ option.value }` }>
+							<label id={ `option-label-${ option.value }` } htmlFor={ `option-${ option.value }` }>
 								{ option.label }
 							</label>
 							{ option.helpText && (
 								<span
-									id={ `optionHelpText-${ option.value }` }
+									id={ `option-help-text-${ option.value }` }
 									className="question-options__option-help-text"
 								>
 									{ option.helpText }
