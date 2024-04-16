@@ -67,6 +67,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					{ ! isWpcomMigration && (
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							isWooOnboarding={ isWooOnboarding }
 							isWooCoreProfiler={ isWooCoreProfiler }
 							isWooDna={ isWooDna }
