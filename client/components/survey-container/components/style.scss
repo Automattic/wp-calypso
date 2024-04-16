@@ -1,4 +1,5 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
 $blueberry-color: #2145e6;
@@ -89,7 +90,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				padding-left: 16px;
 
 				label {
-					font-size: medium;
+					font-size: $font-body;
 					font-weight: 500;
 					line-height: 24px;
 					color: $studio-gray-100;
@@ -97,10 +98,11 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 
 				.question-options__option-help-text {
 					display: block;
-					font-size: small;
+					font-size: $font-body-extra-small;
 					font-weight: 400;
 					line-height: 20px;
 					color: $studio-gray-80;
+					padding-top: 4px;
 				}
 			}
 		}
