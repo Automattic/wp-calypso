@@ -198,7 +198,11 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 	// pricing that is difficult to display as a simple discount. Currently
 	// that is offers with different term lengths or price increases.
 	if (
-		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product ) &&
+		! doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+			product.cost_overrides,
+			product.introductory_offer_terms,
+			product.months_per_bill_period
+		) &&
 		! doesIntroductoryOfferHavePriceIncrease( product )
 	) {
 		return null;
@@ -230,7 +234,11 @@ function LineItemIntroOfferCostOverrideDetail( { product }: { product: ResponseC
 		return null;
 	}
 
-	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct( product );
+	const shouldShowDueDate = doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+		product.cost_overrides,
+		product.introductory_offer_terms,
+		product.months_per_bill_period
+	);
 
 	return (
 		<div>
