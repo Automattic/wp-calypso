@@ -69,6 +69,7 @@ export type PlansIntent =
 	| 'plans-p2'
 	| 'plans-default-wpcom'
 	| 'plans-business-trial'
+	| 'plans-entrepreneur-trial'
 	| 'plans-videopress'
 	| 'default';
 

@@ -2,6 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { plansLink } from '@automattic/calypso-products';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import UpgradeButton from '../components/upgrade-button/upgrade-button';
+import useGoToCheckoutWithPlan from '../current-plan/trials/use-go-to-checkout-with-plan';
 import useOneDollarOfferTrack from '../hooks/use-onedollar-offer-track';
 import TrialBanner from '../trials/trial-banner';
 import { WooExpressPlans } from './wooexpress-plans';
@@ -27,6 +29,8 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		} );
 	}, [] );
 
+	const goToCheckoutWithPlan = useGoToCheckoutWithPlan();
+
 	useOneDollarOfferTrack( siteId, 'plans' );
 
 	return (
@@ -34,7 +38,14 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<div className="e-commerce-trial-plans__banner-wrapper">
-				<TrialBanner isWooExpressTrial={ isWooExpressTrial } />
+				<TrialBanner
+					isWooExpressTrial={ isWooExpressTrial }
+					callToAction={
+						! isWooExpressTrial ? (
+							<UpgradeButton goToCheckoutWithPlan={ goToCheckoutWithPlan } />
+						) : null
+					}
+				/>
 			</div>
 
 			<WooExpressPlans
@@ -45,6 +56,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
 				showIntervalToggle={ true }
 				triggerTracksEvent={ triggerPlansGridTracksEvent }
+				isWooExpressTrial={ isWooExpressTrial }
 			/>
 		</>
 	);

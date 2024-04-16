@@ -2,6 +2,8 @@ import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
 	getPlanPath,
 	getPlans,
 	isWooExpressPlan,
@@ -34,6 +36,7 @@ interface WooExpressPlansProps {
 	triggerTracksEvent?: ( planSlug: string ) => void;
 	yearlyControlProps: SegmentedOptionProps;
 	showIntervalToggle?: boolean;
+	isWooExpressTrial: boolean;
 }
 
 export function WooExpressPlans( props: WooExpressPlansProps ) {
@@ -45,17 +48,19 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		siteSlug,
 		triggerTracksEvent,
 		yearlyControlProps,
+		isWooExpressTrial,
 	} = props;
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
-	const mediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
+	const monthlyPlan =
+		getPlans()[ isWooExpressTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_ECOMMERCE_MONTHLY ];
+	const annualPlan = getPlans()[ isWooExpressTrial ? PLAN_WOOEXPRESS_MEDIUM : PLAN_ECOMMERCE ];
 	const annualPlanMonthlyPrice = useSelector(
-		( state ) => getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0
+		( state ) => getPlanRawPrice( state, annualPlan.getProductId(), true ) || 0
 	);
 	const monthlyPlanPrice = useSelector(
-		( state ) => getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0
+		( state ) => getPlanRawPrice( state, monthlyPlan.getProductId() ) || 0
 	);
 	const percentageSavings = Math.floor( ( 1 - annualPlanMonthlyPrice / monthlyPlanPrice ) * 100 );
 
@@ -130,25 +135,27 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					intervalType={ interval }
 					hidePlanTypeSelector={ true }
 					hideUnavailableFeatures={ true }
-					intent="plans-woocommerce"
+					intent={ isWooExpressTrial ? 'plans-woocommerce' : 'plans-entrepreneur-trial' }
 				/>
 			</div>
 
-			<div className="enterprise-ecommerce__banner">
-				<div className="enterprise-ecommerce__content">
-					<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
-					<div className="enterprise-ecommerce__subtitle">
-						{ translate(
-							'Learn how Woo can support the unique needs of high-volume stores through dedicated support, discounts, and more.'
-						) }
-					</div>
-					<div className="enterprise-ecommerce__cta">
-						<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
-							{ translate( 'Learn more' ) }
-						</Button>
+			{ isWooExpressTrial && (
+				<div className="enterprise-ecommerce__banner">
+					<div className="enterprise-ecommerce__content">
+						<h3 className="enterprise-ecommerce__title">{ translate( 'Enterprise ecommerce' ) }</h3>
+						<div className="enterprise-ecommerce__subtitle">
+							{ translate(
+								'Learn how Woo can support the unique needs of high-volume stores through dedicated support, discounts, and more.'
+							) }
+						</div>
+						<div className="enterprise-ecommerce__cta">
+							<Button href="https://woocommerce.com/enterprise-ecommerce/?utm_source=wooexpress&utm_campaign=plans_grid">
+								{ translate( 'Learn more' ) }
+							</Button>
+						</div>
 					</div>
 				</div>
-			</div>
+			) }
 		</>
 	);
 }
