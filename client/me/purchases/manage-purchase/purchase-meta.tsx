@@ -7,7 +7,7 @@ import {
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -77,10 +77,7 @@ export default function PurchaseMeta( {
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
 
-	const renewalPriceHeader =
-		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
-			? translate( 'Renewal Price' )
-			: translate( 'Price' );
+	const renewalPriceHeader = translate( 'Renewal Price' );
 
 	const hideRenewalPriceSection = isOneTimePurchase( purchase );
 	const hideTaxString = isIncludedWithPlan( purchase );
@@ -89,10 +86,9 @@ export default function PurchaseMeta( {
 	// The country is not included in the purchase information envelope
 	// We should add this information so we can utilize useTaxName to retrieve the correct taxName
 	// For now, we are using a fallback tax name
-	const taxName =
-		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax' )
-			? translate( 'tax' )
-			: translate( 'tax (VAT/GST/CT)' );
+	const taxName = translate( 'tax', {
+		context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+	} );
 
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const excludeTaxStringAbbreviation = translate( 'excludes %s', {

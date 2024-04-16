@@ -110,7 +110,7 @@
 	&,
 	.license-details__actions a:not(.license-details__assign-button),
 	.license-details__actions button {
-		background-color: #fafafa;
+		background-color: var(--studio-gray-0);
 	}
 }
 

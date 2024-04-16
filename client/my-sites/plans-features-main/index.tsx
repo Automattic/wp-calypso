@@ -73,6 +73,7 @@ import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
+import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -188,6 +189,12 @@ export interface PlansFeaturesMainProps {
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
+
+	/*
+	 * Shows the free plan as a plain text anchor instead of a plan card.
+	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
+	 */
+	deemphasizeFreePlan?: boolean;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -245,6 +252,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -424,7 +432,13 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
+	// The hook is introduced temporarily to alter the value dynamically according to the ExPlat variant loaded.
+	// Once the experiment concludes, we will clean it up and simply use the prop value.
+	// For more details, please refer to peP6yB-23n-p2
+	const resolvedDeemphasizeFreePlan = useDeemphasizeFreePlan( flowName, paidDomainName );
+	const deemphasizeFreePlan = deemphasizeFreePlanFromProps || resolvedDeemphasizeFreePlan.result;
+
+	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
@@ -443,25 +457,32 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 	} );
 
-	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
-		allFeaturesList: getFeaturesList(),
-		coupon,
-		eligibleForFreeHostingTrial,
-		hiddenPlans,
-		intent,
-		isDisplayingPlansNeededForFeature,
-		isInSignup,
-		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
-		selectedFeature,
-		selectedPlan,
-		showLegacyStorageFeature,
-		siteId,
-		storageAddOns,
-		term,
-		useCheckPlanAvailabilityForPurchase,
-		useFreeTrialPlanSlugs,
-	} );
+	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
+	const gridPlansForFeaturesGrid =
+		useGridPlansForFeaturesGrid( {
+			allFeaturesList: getFeaturesList(),
+			coupon,
+			eligibleForFreeHostingTrial,
+			hiddenPlans,
+			intent,
+			isDisplayingPlansNeededForFeature,
+			isInSignup,
+			isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+			selectedFeature,
+			selectedPlan,
+			showLegacyStorageFeature,
+			siteId,
+			storageAddOns,
+			term,
+			useCheckPlanAvailabilityForPurchase,
+			useFreeTrialPlanSlugs,
+		} )?.filter( ( { planSlug } ) => {
+			// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+			if ( deemphasizeFreePlan ) {
+				return planSlug !== PLAN_FREE;
+			}
+			return true;
+		} ) ?? null; // optional chaining can result in `undefined`; we don't want to introduce it here.
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -719,7 +740,10 @@ const PlansFeaturesMain = ( {
 	const isLoadingGridPlans = Boolean(
 		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
 	);
-	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
+	const isPlansGridReady =
+		! isLoadingGridPlans &&
+		! resolvedSubdomainName.isLoading &&
+		! resolvedDeemphasizeFreePlan.isLoading;
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
 	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
@@ -785,7 +809,7 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ intent === 'plans-paid-media' && (
+				{ deemphasizeFreePlan && (
 					<FreePlanSubHeader>
 						{ translate(
 							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,

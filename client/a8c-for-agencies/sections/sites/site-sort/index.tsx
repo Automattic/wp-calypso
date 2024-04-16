@@ -19,7 +19,7 @@ const SITE_COLUMN_KEY_MAP: { [ key: string ]: string } = {
 	site: 'url',
 };
 
-export default function A4ASiteSort( {
+export default function SiteSort( {
 	columnKey,
 	isLargeScreen,
 	children,

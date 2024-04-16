@@ -4,6 +4,7 @@
 	}
 
 	.form-control-container {
+		box-sizing: border-box;
 		padding: 1.5rem;
 		border: solid 1px var(--studio-gray-10);
 		border-radius: 2px;
