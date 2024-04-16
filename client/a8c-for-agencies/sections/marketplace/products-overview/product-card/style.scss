@@ -31,8 +31,8 @@
 .product-card:focus-within,
 .product-card.selected {
 	.product-card__inner {
-		border: 1px solid var(--studio-white);
-		background: var(--studio-white);
+		border: 1px solid var(--color-border-light);
+		background: var(--color-border-light);
 		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
 	}
 }

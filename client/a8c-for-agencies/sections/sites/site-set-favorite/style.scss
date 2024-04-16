@@ -13,7 +13,7 @@
 }
 
 button.button.site-set-favorite__view-favorite {
-	color: var(--studio-white);
+	color: var(--color-text-white);
 	text-decoration: underline;
 	font-size: inherit;
 	position: relative;
@@ -22,6 +22,6 @@ button.button.site-set-favorite__view-favorite {
 	padding: 0;
 
 	&:hover {
-		color: var(--studio-white);
+		color: var(--color-text-white);
 	}
 }
