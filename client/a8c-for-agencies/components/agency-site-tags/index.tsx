@@ -52,13 +52,15 @@ export default function AgencySiteTags( { tags, isLoading, onAddTags, onRemoveTa
 					{ translate( 'Add' ) }
 				</Button>
 			</Card>
-			<Card tagName="ul" className="agency-site-tags__list">
-				{ tags.map( ( tag ) => (
-					<li>
-						<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
-					</li>
-				) ) }
-			</Card>
+			{ tags.length > 0 && (
+				<Card tagName="ul" className="agency-site-tags__list">
+					{ tags.map( ( tag ) => (
+						<li>
+							<AgencySiteTag key={ tag } tag={ tag } onRemoveTag={ onRemoveTag } />
+						</li>
+					) ) }
+				</Card>
+			) }
 		</div>
 	);
 }

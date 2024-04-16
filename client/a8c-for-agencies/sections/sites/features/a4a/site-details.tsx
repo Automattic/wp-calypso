@@ -12,7 +12,7 @@ export default function SiteDetails( { site }: any ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	/* eslint-disable-next-line */
-	const { a4a_site_id: siteId, a4a_site_tags: initialTags } = site;
+	const { a4a_agency_id: agencyId, a4a_site_id: siteId, a4a_site_tags: initialTags } = site;
 
 	const [ tags, setTags ] = useState(
 		initialTags ? initialTags.map( ( tag: SiteTagType ) => tag.label ) : []
@@ -66,15 +66,19 @@ export default function SiteDetails( { site }: any ) {
 
 	return (
 		<div className="site-details">
-			<h3 className="site-details__section-header">{ translate( 'Tags' ) }</h3>
-			<AgencySiteTags
-				{ ...{
-					tags,
-					onAddTags,
-					onRemoveTag,
-					isLoading,
-				} }
-			/>
+			{ agencyId && siteId && (
+				<>
+					<h3 className="site-details__section-header">{ translate( 'Tags' ) }</h3>
+					<AgencySiteTags
+						{ ...{
+							tags,
+							onAddTags,
+							onRemoveTag,
+							isLoading,
+						} }
+					/>
+				</>
+			) }
 		</div>
 	);
 }
