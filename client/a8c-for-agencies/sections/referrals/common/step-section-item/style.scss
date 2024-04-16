@@ -1,0 +1,47 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.step-section-item {
+	margin-block-end: 16px;
+	border-radius: 4px;
+	border: 1px solid var(--color-accent-5);
+	padding: 16px 24px;
+
+	@include break-large {
+		display: flex;
+		gap: 16px;
+	}
+
+	.step-section-item__icon {
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	.step-section-item__heading {
+		font-size: rem(16px);
+		font-weight: 500;
+	}
+
+	.step-section-item__description {
+		font-size: rem(13px);
+		color: var(--color-accent);
+	}
+
+	.step-section-item__button {
+		margin-block-start: 16px;
+		margin-inline-start: auto;
+
+		button {
+			width: 100%;
+		}
+
+		@include break-large {
+			margin-block: auto;
+			display: flex;
+			gap: 16px;
+		}
+	}
+}
