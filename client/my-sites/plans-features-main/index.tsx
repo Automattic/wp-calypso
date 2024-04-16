@@ -188,6 +188,12 @@ export interface PlansFeaturesMainProps {
 	 */
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
+
+	/*
+	 * Shows the free plan as a plain text anchor instead of a plan card.
+	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
+	 */
+	deemphasizeFreePlan?: boolean;
 }
 
 const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
@@ -245,6 +251,7 @@ const PlansFeaturesMain = ( {
 	isStepperUpgradeFlow = false,
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
+	deemphasizeFreePlan = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -424,7 +431,7 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	// we neeed only the visible ones for comparison grid (these should extend into plans-ui data store selectors)
+	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
@@ -443,25 +450,32 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 	} );
 
-	// we neeed only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const gridPlansForFeaturesGrid = useGridPlansForFeaturesGrid( {
-		allFeaturesList: getFeaturesList(),
-		coupon,
-		eligibleForFreeHostingTrial,
-		hiddenPlans,
-		intent,
-		isDisplayingPlansNeededForFeature,
-		isInSignup,
-		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
-		selectedFeature,
-		selectedPlan,
-		showLegacyStorageFeature,
-		siteId,
-		storageAddOns,
-		term,
-		useCheckPlanAvailabilityForPurchase,
-		useFreeTrialPlanSlugs,
-	} );
+	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
+	const gridPlansForFeaturesGrid =
+		useGridPlansForFeaturesGrid( {
+			allFeaturesList: getFeaturesList(),
+			coupon,
+			eligibleForFreeHostingTrial,
+			hiddenPlans,
+			intent,
+			isDisplayingPlansNeededForFeature,
+			isInSignup,
+			isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+			selectedFeature,
+			selectedPlan,
+			showLegacyStorageFeature,
+			siteId,
+			storageAddOns,
+			term,
+			useCheckPlanAvailabilityForPurchase,
+			useFreeTrialPlanSlugs,
+		} )?.filter( ( { planSlug } ) => {
+			// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+			if ( deemphasizeFreePlan ) {
+				return planSlug !== PLAN_FREE;
+			}
+			return true;
+		} ) ?? null; // optional chaining can result in `undefined`; we don't want to introduce it here.
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -785,7 +799,7 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				{ intent === 'plans-paid-media' && (
+				{ deemphasizeFreePlan && (
 					<FreePlanSubHeader>
 						{ translate(
 							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
