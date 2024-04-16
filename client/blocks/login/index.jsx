@@ -999,8 +999,6 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
 		),
-		isFromAutomatticForAgenciesPlugin:
-			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 		currentQuery: getCurrentQueryArguments( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
