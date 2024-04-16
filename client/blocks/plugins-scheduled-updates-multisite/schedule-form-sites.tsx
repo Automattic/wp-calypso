@@ -60,10 +60,12 @@ export const ScheduleFormSites = ( props: Props ) => {
 					onChange={ ( s ) => setSearchTerm( s.trim() ) }
 					placeholder={ translate( 'Search site' ) }
 				/>
-				<Text className="info-msg">
-					You can only select sites with Creator plan. Please upgrade your site to enable this
-					feature.
-				</Text>
+				{ ! sites.length && (
+					<Text className="info-msg">
+						You can only select sites with Creator plan. Please upgrade your site to enable this
+						feature.
+					</Text>
+				) }
 				<div className="checkbox-options-container">
 					{ sites.map( ( site ) => (
 						<Fragment key={ site.ID }>
