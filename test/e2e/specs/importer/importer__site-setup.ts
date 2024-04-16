@@ -74,8 +74,8 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 		// One of several errors found on Blogs::get_blog_name_error_code.
 		// A deleted wpcom site does generate the same error.
 		it( 'Start an invalid WordPress import typo', async () => {
-			// 1.gravatar.com is guaranteed never to be a valid DNS
-			await startImportFlow.enterURL( 'zz.gravatar.com' );
+			// Enter an invalid site address/URL
+			await startImportFlow.enterURL( 'https://example' );
 
 			// Support both Legacy and Goals Capture versions
 			// of the error message.
