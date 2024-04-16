@@ -198,27 +198,32 @@ const StatsPurchasePage = ( {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
-				<NavigationHeader
-					className="stats__section-header modernized-header"
-					title={ translate( 'Jetpack Stats' ) }
-					subtitle={ translate(
-						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-							},
-						}
-					) }
-					navigationItems={ [] }
-				></NavigationHeader>
-				<StatsNavigation
-					selectedItem="traffic"
-					interval="day"
-					siteId={ siteId }
-					slug={ siteSlug }
-					showLock={ ! hasAnyPlan && ! isWPCOMSite && ! isVip }
-					hideModuleSettings
-				/>
+				{ ! hasAnyPlan && (
+					<>
+						<NavigationHeader
+							className="stats__section-header modernized-header"
+							title={ translate( 'Jetpack Stats' ) }
+							subtitle={ translate(
+								"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+								{
+									components: {
+										learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+									},
+								}
+							) }
+							navigationItems={ [] }
+						></NavigationHeader>
+						<StatsNavigation
+							selectedItem="traffic"
+							interval="day"
+							siteId={ siteId }
+							slug={ siteSlug }
+							/** Force redirected */
+							showLock={ query.from?.startsWith( 'cmp-red' ) }
+							hideModuleSettings
+						/>
+					</>
+				) }
 				{ ! isLoading && (
 					<PageViewTracker
 						path="/stats/purchase/:site"
