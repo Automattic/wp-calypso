@@ -10,7 +10,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import type { AppState } from 'calypso/types';
 
 type PatternsPageViewTrackerProps = {
-	category: string;
+	category?: string;
 	searchTerm?: string;
 	patternPermalinkName?: string;
 	patternTypeFilter?: PatternTypeFilter;
