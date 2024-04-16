@@ -1,4 +1,5 @@
 export type SitePlugin = {
+	id: string;
 	active: boolean;
 	author: string;
 	author_url: string;

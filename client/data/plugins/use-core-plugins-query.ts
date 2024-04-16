@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { decodeEntitiesFromPlugins } from './helpers';
+import { decodeEntitiesFromPlugins, mapPluginExtension } from './helpers';
 import type { CorePlugin } from './types';
 import type { SiteId, SiteSlug } from 'calypso/types';
 
@@ -23,10 +23,7 @@ export const useCorePluginsQuery = (
 		}
 
 		if ( addPluginExtension ) {
-			_plugins = _plugins.map( ( plugin ) => ( {
-				...plugin,
-				plugin: plugin.plugin.endsWith( ext ) ? plugin.plugin : `${ plugin.plugin }${ ext }`,
-			} ) );
+			_plugins = _plugins.map( ( plugin ) => mapPluginExtension( plugin, ext ) );
 		}
 
 		return _plugins;
