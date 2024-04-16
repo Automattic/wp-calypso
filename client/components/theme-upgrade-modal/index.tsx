@@ -109,20 +109,6 @@ export const ThemeUpgradeModal = ( {
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 	const ecommercePlanName = getPlan( PLAN_ECOMMERCE )?.getTitle() || '';
 
-	const getPlanTextByTerm = ( term: string, cost: string ) => {
-		switch ( term ) {
-			case 'three years':
-				return translate( '%(cost)s per three years', { args: { cost } } );
-			case 'two years':
-				return translate( '%(cost)s per two years', { args: { cost } } );
-			case 'month':
-				return translate( '%(cost)s per month', { args: { cost } } );
-			case 'year':
-			default:
-				return translate( '%(cost)s per year', { args: { cost } } );
-		}
-	};
-
 	const getPersonalPlanModalData = (): UpgradeModalContent => {
 		const planPrice = requiredPlanProduct?.combined_cost_display;
 
@@ -168,28 +154,76 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const planPrice = requiredPlanProduct?.combined_cost_display;
-
-		return {
-			header: (
-				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
-			),
-			text: (
-				<p>
-					{ translate(
-						'Get access to this theme, and a ton of other features, with a subscription to the %(premiumPlanName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} a year, risk-free with a 14-day money-back guarantee.',
+		const getPlanText = ( planName: string, term: string, planPrice: string ) => {
+			switch ( term ) {
+				case 'three years':
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} per three years, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
 							},
 							args: {
 								planPrice: planPrice || '',
-								premiumPlanName: premiumPlanName,
+								planName: planName,
 							},
 						}
-					) }
-				</p>
+					);
+				case 'two years':
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} per two years, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'month':
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} per month, risk-free with a 7-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'year':
+				default:
+					return translate(
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} anually, risk-free with a 14-day money-back guarantee.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+			}
+		};
+		const planPrice = requiredPlanProduct?.combined_cost_display;
+
+		const planText = getPlanText(
+			premiumPlanName,
+			requiredPlanProduct?.product_term || '',
+			planPrice
+		);
+
+		return {
+			header: (
+				<h1 className="theme-upgrade-modal__heading">{ translate( 'Unlock this theme' ) }</h1>
 			),
+			text: <p>{ planText }</p>,
 			price: null,
 			action: (
 				<div className="theme-upgrade-modal__actions bundle">
@@ -212,6 +246,52 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
+		const getPlanText = ( planName: string, term: string, planPrice: string ) => {
+			switch ( term ) {
+				case 'three years':
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per three years with a 14-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'two years':
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per two years with a 14-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+
+				case 'month':
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per month with a 7-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+				case 'year':
+				default:
+					return translate(
+						'Upgrade to a %(planName)s plan to select this theme and unlock all its features. It’s %(planPrice)s per year with a 14-day money-back guarantee',
+						{
+							args: {
+								planPrice: planPrice || '',
+								planName: planName,
+							},
+						}
+					);
+			}
+		};
 		const businessPlanPrice = requiredPlanProduct?.combined_cost_display;
 
 		if ( ! bundleSettings ) {
@@ -227,6 +307,11 @@ export const ThemeUpgradeModal = ( {
 		const bundledPluginMessage = bundleSettings.bundledPluginMessage;
 		const color = bundleSettings.color;
 		const Icon = bundleSettings.iconComponent;
+		const planText = getPlanText(
+			businessPlanName,
+			requiredPlanProduct?.product_term || '',
+			businessPlanPrice
+		);
 
 		return {
 			header: (
@@ -244,17 +329,7 @@ export const ThemeUpgradeModal = ( {
 			),
 			text: (
 				<p>
-					{ bundledPluginMessage }{ ' ' }
-					{ translate(
-						// translators: %s is the business plan price.
-						'Upgrade to a %(businessPlanName)s plan to select this theme and unlock all its features. It’s %(businessPlanPrice)s per year with a 14-day money-back guarantee.',
-						{
-							args: {
-								businessPlanPrice: businessPlanPrice || '',
-								businessPlanName: businessPlanName,
-							},
-						}
-					) }
+					{ bundledPluginMessage } { planText }
 				</p>
 			),
 			price: null,
@@ -279,8 +354,22 @@ export const ThemeUpgradeModal = ( {
 	};
 
 	const getExternallyManagedPurchaseModalData = (): UpgradeModalContent => {
+		const getMarketplacePlanTextByTerm = ( term: string, cost: string ) => {
+			switch ( term ) {
+				case 'three years':
+					return translate( '%(cost)s per three years', { args: { cost } } );
+				case 'two years':
+					return translate( '%(cost)s per two years', { args: { cost } } );
+				case 'month':
+					return translate( '%(cost)s per month', { args: { cost } } );
+				case 'year':
+				default:
+					return translate( '%(cost)s per year', { args: { cost } } );
+			}
+		};
+
 		const productPrice = marketplaceProduct?.cost_display;
-		const businessPlanPriceText = getPlanTextByTerm(
+		const businessPlanPriceText = getMarketplacePlanTextByTerm(
 			requiredPlanProduct?.product_term || '',
 			requiredPlanProduct?.combined_cost_display || ''
 		);
