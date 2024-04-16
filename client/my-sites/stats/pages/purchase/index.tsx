@@ -9,11 +9,14 @@ import { ProductsList } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -38,6 +41,7 @@ import StatsPurchaseWizard, {
 	TYPE_PERSONAL,
 } from '../../stats-purchase/stats-purchase-wizard';
 import StatsLoader from '../../stats-redirect/stats-loader';
+import './style.scss';
 
 const StatsPurchasePage = ( {
 	query,
@@ -187,21 +191,44 @@ const StatsPurchasePage = ( {
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-			{ ! isLoading && (
-				<PageViewTracker
-					path="/stats/purchase/:site"
-					title="Stats > Purchase"
-					from={ query.from ?? '' }
-					variant={ variant }
-					is_upgrade={ +supportCommercialUse }
-					is_site_commercial={ isCommercial === null ? '' : +isCommercial }
-				/>
-			) }
+
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
+				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ translate( 'Jetpack Stats' ) }
+					subtitle={ translate(
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+							},
+						}
+					) }
+					navigationItems={ [] }
+				></NavigationHeader>
+				<StatsNavigation
+					selectedItem="traffic"
+					interval="day"
+					siteId={ siteId }
+					slug={ siteSlug }
+					showLock
+					hideModuleSettings
+				/>
+				{ ! isLoading && (
+					<PageViewTracker
+						path="/stats/purchase/:site"
+						title="Stats > Purchase"
+						from={ query.from ?? '' }
+						variant={ variant }
+						is_upgrade={ +supportCommercialUse }
+						is_site_commercial={ isCommercial === null ? '' : +isCommercial }
+					/>
+				) }
+
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />
