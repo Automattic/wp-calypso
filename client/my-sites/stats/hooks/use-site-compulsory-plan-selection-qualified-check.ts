@@ -3,7 +3,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import usePlanUsageQuery from './use-plan-usage-query';
 
-const MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL = 1;
+const MIN_MONTHLY_VIEWS_TO_APPLY_PAYWALL = 1000;
 
 export default function useSiteCompulsoryPlanSelectionQualifiedCheck( siteId: number | null ) {
 	const siteCreatedTimeStamp = useSelector( ( state ) =>
