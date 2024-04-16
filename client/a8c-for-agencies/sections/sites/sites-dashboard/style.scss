@@ -111,7 +111,7 @@
 
 				.sites-overview__tabs,
 				.dataviews-filters__view-actions {
-					border-bottom: 1px solid var(--studio-gray-5);
+					border-bottom: 1px solid var(--color-accent-5);
 				}
 
 				.sites-overview__content {
@@ -278,7 +278,7 @@
 
 			.sites-overview__tabs,
 			.dataviews-filters__view-actions {
-				border-bottom: 1px solid var(--studio-gray-5);
+				border-bottom: 1px solid var(--color-accent-5);
 			}
 
 			.dataviews-filters__view-actions {
@@ -323,7 +323,7 @@
 
 				li {
 					padding: 8px 24px;
-					border-bottom: 1px solid var(--studio-gray-5);
+					border-bottom: 1px solid var(--color-accent-5);
 				}
 
 				.dataviews-view-list__fields {
@@ -602,8 +602,8 @@
 		font-weight: 500;
 		font-size: 0.75rem;
 		vertical-align: middle;
-		color: var(--studio-gray-80);
-		border: 1px solid var(--studio-gray-5);
+		color: var(--color-accent-80);
+		border: 1px solid var(--color-accent-5);
 		padding: 2px 11px;
 		cursor: pointer;
 		white-space: nowrap;
@@ -615,12 +615,12 @@
 			margin-inline-start: -0.4em;
 		}
 		&:hover:not(.is-link) {
-			background: var(--studio-gray-80);
+			background: var(--color-accent-80);
 			color: var(--studio-white);
 		}
 
 		&:visited:not(:hover) {
-			color: var(--studio-gray-80);
+			color: var(--color-accent-80);
 		}
 
 		&.is-selected {
@@ -638,18 +638,18 @@
 			padding: 0;
 
 			&:hover {
-				color: var(--studio-gray-80);
+				color: var(--color-accent-80);
 			}
 		}
 	}
 
 	.sites-overview__grey-icon {
 		vertical-align: middle;
-		color: var(--studio-gray-40);
+		color: var(--color-accent-40);
 	}
 	.sites-overview__icon-active {
 		vertical-align: middle;
-		color: var(--studio-gray-5);
+		color: var(--color-accent-5);
 	}
 	.sites-overview__stats-trend__up,
 	.sites-overview__stats-trend__down {
@@ -661,14 +661,14 @@
 		fill: var(--studio-jetpack-green-40);
 	}
 	.sites-overview__stats-trend__down {
-		fill: var(--studio-red-50);
+		fill: var(--color-scary-50);
 	}
 	.sites-overview__stats-trend__same .empty-icon {
 		vertical-align: middle;
 		height: 8px;
 		width: 8px;
 		border-radius: 50%;
-		background: var(--studio-gray-5);
+		background: var(--color-accent-5);
 		display: inline-flex;
 		margin-inline-end: 5px;
 		@media screen and (max-width: $break-xlarge) {
@@ -678,7 +678,7 @@
 	.sites-overview__stats .shortened-number,
 	.sites-overview__stats-trend .shortened-number {
 		vertical-align: middle;
-		color: var(--studio-gray-80);
+		color: var(--color-accent-80);
 		font-size: 0.75rem;
 	}
 	.sites-overview__stats-trend svg {
@@ -689,7 +689,7 @@
 		}
 	}
 	.sites-overview__disabled {
-		color: var(--studio-gray-5);
+		color: var(--color-accent-5);
 		cursor: not-allowed;
 		opacity: 0.5;
 		button {
@@ -703,7 +703,7 @@
 		overflow: hidden;
 		text-overflow: clip;
 		vertical-align: middle;
-		color: var(--studio-gray-100);
+		color: var(--color-accent-100);
 		align-items: center;
 		@include break-zoomed-in {
 			width: calc(100% - 120px);
@@ -799,19 +799,19 @@
 	.sites-overview__tooltip {
 		.popover__arrow {
 			&::before {
-				border-bottom-color: var(--studio-gray-60) !important;
+				border-bottom-color: var(--color-accent-60) !important;
 				inset-block-start: 1px !important;
 			}
 		}
 		.popover__inner {
-			background: var(--studio-gray-60);
+			background: var(--color-accent-60);
 			color: var(--studio-white);
 			padding: 10px 12px;
 			border: none;
 		}
 	}
 	.sites-overview__status-critical {
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 		position: absolute;
 		inset-inline-end: 42px;
 		inset-block-start: 50%;
@@ -834,8 +834,8 @@
 		box-sizing: border-box;
 	}
 	.sites-overview__status-failed {
-		background-color: var(--studio-red-50);
-		border-color: var(--studio-red-50);
+		background-color: var(--color-scary-50);
+		border-color: var(--color-scary-50);
 		color: var(--color-text-inverted);
 	}
 	.sites-overview__status-warning {
@@ -922,13 +922,13 @@
 
 	.sites-overview__failed {
 		@extend .sites-overview__column-content;
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 	}
 
 	.sites-overview__critical {
 		@extend .sites-overview__column-content;
 		padding: 15px;
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 	}
 
 	@mixin boost-score-style($color, $background-color) {
@@ -963,7 +963,7 @@
 		}
 
 		&.boost-score-bad {
-			@include boost-score-style(var(--studio-red-50), var(--studio-red-0));
+			@include boost-score-style(var(--color-scary-50), var(--color-scary-0));
 		}
 	}
 

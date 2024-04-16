@@ -1,4 +1,5 @@
 const THEMES = {
+	//
 	// Jetpack Color Theme
 	jetpack: {
 		'--jetpack-white-off': '#f9f9f6',
