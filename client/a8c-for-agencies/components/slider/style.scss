@@ -31,7 +31,7 @@
 	@mixin slider-thumb-style {
 		-webkit-appearance: none;
 		appearance: none;
-		background-color: var(--color-black);
+		background-color: var(--color-surface-backdrop);
 		height: 16px;
 		width: 16px;
 		border-radius: 50%;
