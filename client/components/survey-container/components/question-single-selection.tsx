@@ -19,7 +19,7 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 						}` }
 						role="radio"
 						tabIndex={ 0 }
-						aria-checked={ isSelected.toString() }
+						aria-checked={ isSelected ? 'true' : 'false' }
 						onClick={ () => onChange( question.key, [ option.value ] ) }
 						onKeyDown={ handleKeyDown }
 						aria-labelledby={ `optionLabel-${ option.value } optionHelpText-${ option.value }` }
