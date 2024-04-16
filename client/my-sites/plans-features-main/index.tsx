@@ -455,10 +455,7 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
-		hiddenPlans: {
-			...hiddenPlans,
-			hideFreePlan: hideFreePlan || deemphasizeFreePlan,
-		},
+		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
 		isInSignup,
@@ -471,6 +468,12 @@ const PlansFeaturesMain = ( {
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
+	} )?.filter( ( { planSlug } ) => {
+		// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+		if ( deemphasizeFreePlan ) {
+			return planSlug !== PLAN_FREE;
+		}
+		return true;
 	} );
 
 	let hidePlanSelector = false;
