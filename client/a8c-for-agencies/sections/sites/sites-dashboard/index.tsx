@@ -56,6 +56,8 @@ export default function SitesDashboard() {
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
 		showOnlyFavorites,
+		hideListing,
+		setHideListing,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
@@ -98,6 +100,7 @@ export default function SitesDashboard() {
 	useEffect( () => {
 		if ( sitesViewState.selectedSite && ! initialSelectedSiteUrl ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			setHideListing( false );
 			return;
 		}
 
@@ -116,7 +119,7 @@ export default function SitesDashboard() {
 		}
 		// Omitting sitesViewState to prevent infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState ] );
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setSitesViewState, setHideListing ] );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -127,7 +130,7 @@ export default function SitesDashboard() {
 
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( ! sitesViewState.selectedSite ) {
+		if ( hideListing && ! sitesViewState.selectedSite ) {
 			return;
 		}
 
@@ -160,13 +163,15 @@ export default function SitesDashboard() {
 		sitesViewState.page,
 		showOnlyFavorites,
 		sitesViewState.sort,
+		hideListing,
 	] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( sitesViewState.selectedSite ) {
 			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+			setHideListing( false );
 		}
-	}, [ sitesViewState, setSitesViewState ] );
+	}, [ sitesViewState, setSitesViewState, setHideListing ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -213,52 +218,54 @@ export default function SitesDashboard() {
 			sidebarNavigation={ <MobileSidebarNavigation /> }
 			title={ sitesViewState.selectedSite ? null : translate( 'Sites' ) }
 		>
-			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop withNavigation={ navItems.length > 1 }>
-					<LayoutHeader>
-						{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
-						<Actions>
-							<SitesHeaderActions />
-						</Actions>
-					</LayoutHeader>
-					{ navItems.length > 1 && (
-						<LayoutNavigation { ...selectedItemProps }>
-							<NavigationTabs { ...selectedItemProps } items={ navItems } />
-						</LayoutNavigation>
-					) }
-				</LayoutTop>
+			{ ! hideListing && (
+				<LayoutColumn className="sites-overview" wide>
+					<LayoutTop withNavigation={ navItems.length > 1 }>
+						<LayoutHeader>
+							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
+							<Actions>
+								<SitesHeaderActions />
+							</Actions>
+						</LayoutHeader>
+						{ navItems.length > 1 && (
+							<LayoutNavigation { ...selectedItemProps }>
+								<NavigationTabs { ...selectedItemProps } items={ navItems } />
+							</LayoutNavigation>
+						) }
+					</LayoutTop>
 
-				<SiteNotifications />
-				{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
+					<SiteNotifications />
+					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
 
-				<DashboardDataContext.Provider
-					value={ {
-						verifiedContacts: {
-							emails: verifiedContacts?.emails ?? [],
-							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-							refetchIfFailed: () => {
-								if ( fetchContactFailed ) {
-									refetchContacts();
-								}
-								return;
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
 							},
-						},
-						products: products ?? [],
-						isLargeScreen: isLargeScreen || false,
-					} }
-				>
-					<SitesDataViews
-						className={ classNames( 'sites-overview__content', {
-							'is-hiding-navigation': navItems.length <= 1,
-						} ) }
-						data={ data }
-						isLoading={ isLoading }
-						isLargeScreen={ isLargeScreen || false }
-						onSitesViewChange={ onSitesViewChange }
-						sitesViewState={ sitesViewState }
-					/>
-				</DashboardDataContext.Provider>
-			</LayoutColumn>
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<SitesDataViews
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
+							data={ data }
+							isLoading={ isLoading }
+							isLargeScreen={ isLargeScreen || false }
+							onSitesViewChange={ onSitesViewChange }
+							sitesViewState={ sitesViewState }
+						/>
+					</DashboardDataContext.Provider>
+				</LayoutColumn>
+			) }
 
 			{ sitesViewState.selectedSite && (
 				<LayoutColumn className="site-preview-pane" wide>
