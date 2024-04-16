@@ -41,7 +41,7 @@ export const groupDomainProducts = (
 			existingGroup.product.cost_overrides = existingGroup.product.cost_overrides.map(
 				( existingGroupOverride ) => {
 					const productOverride = product.cost_overrides.find(
-						( override ) => override.id === existingGroupOverride.id
+						( override ) => override.override_code === existingGroupOverride.override_code
 					);
 					if ( productOverride ) {
 						return {
