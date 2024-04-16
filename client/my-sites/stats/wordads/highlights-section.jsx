@@ -15,9 +15,6 @@ function getAmountAsFormattedString( amount, stripZeros ) {
 }
 
 function useHighlights( earnings ) {
-	// TODO: Consider refactor of icon/svg for clarity.
-	// I think it makes sense to the provide the SVG data here and not the Icon component.
-	// As it currently stands, the dependency on the Icon component is not clear from the type.
 	return useMemo( () => {
 		const total = earnings?.total_earnings ? Number( earnings.total_earnings ) : 0;
 		const owed = earnings?.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
@@ -26,24 +23,21 @@ function useHighlights( earnings ) {
 		const highlights = [
 			{
 				heading: translate( 'Earnings', { comment: 'Total WordAds earnings to date' } ),
-				icon: <Icon icon={ payment } />,
-				svg: payment,
+				svgIcon: payment,
 				value: getAmountAsFormattedString( total ),
 			},
 			{
 				heading: translate( 'Paid', {
 					comment: 'Total WordAds earnings that have been paid out',
 				} ),
-				icon: <Icon icon={ receipt } />,
-				svg: receipt,
+				svgIcon: receipt,
 				value: getAmountAsFormattedString( paid ),
 			},
 			{
 				heading: translate( 'Outstanding amount', {
 					comment: 'Total WordAds earnings currently unpaid',
 				} ),
-				icon: <Icon icon={ tip } />,
-				svg: tip,
+				svgIcon: tip,
 				value: getAmountAsFormattedString( owed ),
 			},
 		];
@@ -137,7 +131,7 @@ function HighlightsListing( { highlights } ) {
 				<CountCard
 					key={ highlight.id }
 					heading={ highlight.heading }
-					icon={ highlight.icon }
+					icon={ highlight.svgIcon }
 					value={ highlight.value }
 				/>
 			) ) }
@@ -148,12 +142,11 @@ function HighlightsListing( { highlights } ) {
 function HighlightsListingMobile( { highlights } ) {
 	// Convert the highlights data for the MobileHighlightCardListing component.
 	// Use preformattedValue property as an override to the count value.
-	// Send the SVG data (and not the provided Icon component).
 	const mobileHighlights = highlights.map( ( highlight ) => {
 		return {
 			count: 0,
 			heading: highlight.heading,
-			icon: highlight.svg,
+			icon: highlight.svgIcon,
 			preformattedValue: highlight.value,
 		};
 	} );
