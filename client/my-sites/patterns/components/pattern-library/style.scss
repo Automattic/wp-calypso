@@ -30,7 +30,8 @@
 
 	@media ( max-width: $break-wide ) {
 		.pattern-library__filters-inner {
-			padding: 24px;
+			padding-top: 24px;
+			padding-bottom: 24px;
 		}
 	}
 
@@ -118,7 +119,8 @@
 	padding-bottom: 96px;
 
 	@media ( max-width: $break-wide ) {
-		padding: 24px;
+		padding-top: 24px;
+		padding-bottom: 24px;
 	}
 }
 

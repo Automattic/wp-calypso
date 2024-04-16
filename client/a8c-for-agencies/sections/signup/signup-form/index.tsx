@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
+import { loadScript } from '@automattic/load-script';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import AgencyDetailsForm from 'calypso/a8c-for-agencies/sections/signup/agency-details-form';
 import useCreateAgencyMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-agency-mutation';
 import AutomatticLogo from 'calypso/components/automattic-logo';
@@ -39,10 +40,13 @@ export default function SignupForm() {
 
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_create_agency_submit', {
+					first_name: payload.firstName,
+					last_name: payload.lastName,
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
 					managed_sites: payload.managedSites,
 					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
+					products_offered: ( payload.productsOffered || [] ).join( ',' ),
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
@@ -55,6 +59,11 @@ export default function SignupForm() {
 		},
 		[ notificationId, createAgency, dispatch ]
 	);
+
+	useEffect( () => {
+		// We need to include HubSpot tracking code on the signup form.
+		loadScript( '//js.hs-scripts.com/45522507.js' );
+	}, [] );
 
 	return (
 		<Card className="agency-signup-form">

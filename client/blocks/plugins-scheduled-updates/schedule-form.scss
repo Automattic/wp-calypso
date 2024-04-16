@@ -3,6 +3,12 @@
 		width: 100%;
 	}
 
+	.form-control-container {
+		padding: 1.5rem;
+		border: solid 1px var(--studio-gray-10);
+		border-radius: 2px;
+	}
+
 	.components-text-control__input {
 		border-color: var(--studio-gray-10);
 	}
@@ -47,12 +53,6 @@
 			border: solid 1px var(--studio-gray-10);
 			background-color: var(--studio-white);
 		}
-	}
-
-	.checkbox-options {
-		padding: 1.5rem;
-		border: solid 1px var(--studio-gray-10);
-		border-radius: 2px;
 	}
 
 	.checkbox-options-container {

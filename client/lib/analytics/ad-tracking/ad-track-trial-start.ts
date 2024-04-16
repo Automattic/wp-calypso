@@ -27,7 +27,7 @@ export const redditTrackerFreeTrialStarted = ( trial_flow_name: string ): void =
 			},
 		],
 	};
-	window.rdt( 'track', 'Lead', params );
+	window.rdt( 'track', 'SignUp', params );
 };
 
 /**
