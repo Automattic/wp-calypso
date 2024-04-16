@@ -12,6 +12,7 @@ import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list
 import {
 	BillingTransaction,
 	BillingTransactionItem,
+	ReceiptCostOverride,
 } from 'calypso/state/billing-transactions/types';
 
 interface GroupedDomainProduct {
@@ -38,8 +39,34 @@ export const groupDomainProducts = (
 	>( ( groups, product ) => {
 		const existingGroup = groups.get( product.domain );
 		if ( existingGroup ) {
+			const mergedOverrides: ReceiptCostOverride[] = [];
+			existingGroup.product.cost_overrides = existingGroup.product.cost_overrides.map(
+				( existingGroupOverride ) => {
+					const productOverride = product.cost_overrides.find(
+						( override ) => override.override_code === existingGroupOverride.override_code
+					);
+					if ( productOverride ) {
+						mergedOverrides.push( productOverride );
+						return {
+							...existingGroupOverride,
+							new_price_integer:
+								existingGroupOverride.new_price_integer + productOverride.new_price_integer,
+							old_price_integer:
+								existingGroupOverride.old_price_integer + productOverride.old_price_integer,
+						};
+					}
+					return existingGroupOverride;
+				}
+			);
+			product.cost_overrides.forEach( ( override ) => {
+				if ( ! mergedOverrides.some( ( merged ) => merged.id === override.id ) ) {
+					existingGroup.product.cost_overrides.push( override );
+				}
+			} );
 			existingGroup.product.raw_amount += product.raw_amount;
 			existingGroup.product.amount_integer += product.amount_integer;
+			existingGroup.product.subtotal_integer += product.subtotal_integer;
+			existingGroup.product.tax_integer += product.tax_integer;
 			existingGroup.groupCount++;
 		} else {
 			const newGroup = {
