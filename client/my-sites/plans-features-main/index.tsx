@@ -30,6 +30,7 @@ import {
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
+import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import {
 	useCallback,
@@ -649,12 +650,9 @@ const PlansFeaturesMain = ( {
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;
 	const refundPeriodInSignupHeaderBanner =
-		( config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) ||
-			config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step-sticky' ) ) &&
+		config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) &&
 		flowName === 'onboarding';
-	const showStickyHeaderBanner = config.isEnabled(
-		'onboarding/emphasize-refund-period-in-plans-step-sticky'
-	);
+	const showStickyHeaderBanner = true;
 	const stickyHeaderBannerOffset = showStickyHeaderBanner ? 40 : 0;
 
 	const isMobile = useMobileBreakpoint();
@@ -689,9 +687,10 @@ const PlansFeaturesMain = ( {
 	return (
 		<>
 			<div
-				className={ classNames( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main', {
-					'is-header-banner-visible': refundPeriodInSignupHeaderBanner,
-				} ) }
+				className={ classNames(
+					'plans-features-main',
+					'is-pricing-grid-2023-plans-features-main'
+				) }
 			>
 				<QueryPlans coupon={ coupon } />
 				<QuerySites siteId={ siteId } />
@@ -699,12 +698,34 @@ const PlansFeaturesMain = ( {
 				<QueryActivePromotions />
 				<QueryProductsList />
 				{ refundPeriodInSignupHeaderBanner && (
-					<SignupHeaderBanner
-						height={ 80 }
-						stickyBannerOffset={ 40 }
-						sticky={ showStickyHeaderBanner }
-					>
-						{ translate( 'Refund Policy' ) }
+					<SignupHeaderBanner sticky={ showStickyHeaderBanner }>
+						{ ( isStuck: boolean ) => (
+							<div
+								className={ classNames( 'plans-features-main__signup-header-banner-refund-period', {
+									'is-mobile': isMobile,
+									'is-stuck': isStuck,
+								} ) }
+							>
+								{ translate(
+									'{{icon/}} {{text}}14-day money-back guarantee on all annual plans{{/text}}',
+									{
+										components: {
+											icon: (
+												<Icon
+													icon={
+														<BraveTickIcon className="plans-features-main__signup-header-banner-refund-period-icon" />
+													}
+													size={ 30 }
+												/>
+											),
+											text: (
+												<span className="plans-features-main__signup-header-banner-refund-period-text" />
+											),
+										},
+									}
+								) }
+							</div>
+						) }
 					</SignupHeaderBanner>
 				) }
 				<PlanUpsellModal

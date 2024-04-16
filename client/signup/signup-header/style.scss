@@ -59,7 +59,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #00f;
+	background-color: #0675c4;
 	color: var(--color-text-inverted);
 
 	&.is-header-banner {
@@ -79,33 +79,3 @@
 		}
 	}
 }
-
-// .signup-header__banner-refund {
-// 	display: none;
-// 	justify-content: center;
-// 	align-items: center;
-// 	width: 100vw;
-// 	background-color: #00f;
-// 	color: var(--color-text-inverted);
-
-// 	&.is-signup-header-banner {
-// 		display: flex;
-// 		position: fixed;
-// 		top: 0;
-// 		margin-top: -8px;
-// 		height: 80px;
-// 	}
-
-// 	&.is-sticky-banner {
-// 		display: flex;
-// 		position: fixed;
-// 		top: 0;
-// 		z-index: 3;
-// 		margin-top: 0;
-// 		height: 40px;
-// 		.layout__content & {
-// 			overflow: unset;
-// 			overflow-x: unset;
-// 		}
-// 	}
-// }

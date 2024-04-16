@@ -1,7 +1,7 @@
 import { css, Global } from '@emotion/react';
 import { useEffect, useState } from '@wordpress/element';
 import classnames from 'classnames';
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 import './style.scss';
 
 const globalStyleOverrides = css`
@@ -29,12 +29,11 @@ const globalStyleOverrides = css`
 const SignupHeaderBanner = ( {
 	children,
 	sticky,
-	stickyBannerOffset = 0,
+	stickyBannerOffset = 40,
 }: {
 	sticky?: boolean;
 	stickyBannerOffset?: number;
-	height?: number;
-	children: ReactNode;
+	children: ( isStuck: boolean ) => ReactNode;
 } ) => {
 	const [ isAboveOffset, setIsAboveOffset ] = useState( false );
 
@@ -63,9 +62,9 @@ const SignupHeaderBanner = ( {
 	return (
 		<>
 			<Global styles={ globalStyleOverrides } />
-			<div className={ classes }>{ children }</div>
+			<div className={ classes }>{ children( Boolean( isAboveOffset && sticky ) ) }</div>
 		</>
 	);
 };
 
-export default SignupHeaderBanner;
+export default forwardRef( SignupHeaderBanner );
