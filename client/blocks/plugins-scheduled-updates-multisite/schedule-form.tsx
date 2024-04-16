@@ -11,7 +11,7 @@ export const ScheduleForm = () => {
 	const sites = useSiteExcerptsSorted();
 	const atomicSites = sites
 		.filter( ( site ) => site.is_wpcom_atomic )
-		.sort( ( a, b ) => ( a.name > b.name ? 1 : -1 ) );
+		.sort( ( a, b ) => ( ( a.name || '' ) > ( b.name || '' ) ? 1 : -1 ) );
 	const atomicSiteIds = sites.map( ( site ) => site.ID );
 
 	const {
