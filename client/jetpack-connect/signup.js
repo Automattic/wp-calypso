@@ -155,6 +155,10 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
+	isFromAutomatticForAgenciesPlugin() {
+		return 'automattic-for-agencies-client' === this.props.authQuery.from;
+	}
+
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
@@ -483,6 +487,7 @@ export class JetpackSignup extends Component {
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
