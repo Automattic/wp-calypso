@@ -1,5 +1,6 @@
 import page, { type Context } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { siteSelection } from 'calypso/my-sites/controller';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -18,5 +19,6 @@ export default function () {
 			}`
 		);
 	} );
-	page( '/hosting-overview/:site', hostingOverview, makeLayout, clientRender );
+
+	page( '/hosting-overview/:site', siteSelection, hostingOverview, makeLayout, clientRender );
 }
