@@ -15,15 +15,18 @@ export const ScheduleFormSites = ( props: Props ) => {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( initSites );
 
-	const onSiteSelectionChange = useCallback( ( site: SiteExcerptData, isChecked: boolean ) => {
-		if ( isChecked ) {
-			const _sites: number[] = [ ...selectedSites ];
-			_sites.push( site.ID );
-			setSelectedSites( _sites );
-		} else {
-			setSelectedSites( selectedSites.filter( ( id ) => id !== site.ID ) );
-		}
-	}, [] );
+	const onSiteSelectionChange = useCallback(
+		( site: SiteExcerptData, isChecked: boolean ) => {
+			if ( isChecked ) {
+				const _sites: number[] = [ ...selectedSites ];
+				_sites.push( site.ID );
+				setSelectedSites( _sites );
+			} else {
+				setSelectedSites( selectedSites.filter( ( id ) => id !== site.ID ) );
+			}
+		},
+		[ selectedSites ]
+	);
 
 	return (
 		<div className="form-field">
