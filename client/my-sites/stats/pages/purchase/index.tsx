@@ -74,6 +74,7 @@ const StatsPurchasePage = ( {
 		supportCommercialUse,
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
+		hasAnyPlan,
 	} = useStatsPurchases( siteId );
 
 	useEffect( () => {
@@ -215,7 +216,7 @@ const StatsPurchasePage = ( {
 					interval="day"
 					siteId={ siteId }
 					slug={ siteSlug }
-					showLock
+					showLock={ ! hasAnyPlan && ! isWPCOMSite && ! isVip }
 					hideModuleSettings
 				/>
 				{ ! isLoading && (
