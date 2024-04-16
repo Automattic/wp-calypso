@@ -38,8 +38,27 @@ export const groupDomainProducts = (
 	>( ( groups, product ) => {
 		const existingGroup = groups.get( product.domain );
 		if ( existingGroup ) {
+			existingGroup.product.cost_overrides = existingGroup.product.cost_overrides.map(
+				( existingGroupOverride ) => {
+					const productOverride = product.cost_overrides.find(
+						( override ) => override.id === existingGroupOverride.id
+					);
+					if ( productOverride ) {
+						return {
+							...existingGroupOverride,
+							new_price_integer:
+								existingGroupOverride.new_price_integer + productOverride.new_price_integer,
+							old_price_integer:
+								existingGroupOverride.old_price_integer + productOverride.old_price_integer,
+						};
+					}
+					return existingGroupOverride;
+				}
+			);
 			existingGroup.product.raw_amount += product.raw_amount;
 			existingGroup.product.amount_integer += product.amount_integer;
+			existingGroup.product.subtotal_integer += product.subtotal_integer;
+			existingGroup.product.tax_integer += product.tax_integer;
 			existingGroup.groupCount++;
 		} else {
 			const newGroup = {
