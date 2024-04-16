@@ -1,7 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useLayoutEffect } from 'react';
-import localStorageHelper from 'store';
+import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -37,45 +36,7 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 		];
 	},
-	useSideEffect( currentStepSlug ) {
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		const urlQueryParams = useQuery();
-		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
-		const siteSlugParam = urlQueryParams.get( 'siteSlug' );
 
-		useLayoutEffect( () => {
-			if ( ! userIsLoggedIn ) {
-				return;
-			}
-
-			if ( restoreFlowQueryParam === null ) {
-				localStorageHelper.set( 'site-migration-url', window.location.href );
-				return;
-			}
-
-			let validURL = false;
-			const storedUrlString = localStorageHelper.get( 'site-migration-url' );
-			try {
-				const storedUrl = new URL( storedUrlString );
-				validURL = storedUrl.searchParams.has( 'from' ) && storedUrl.searchParams.has( 'siteSlug' );
-			} catch ( e ) {}
-
-			if ( validURL ) {
-				window.location.assign( storedUrlString );
-				return;
-			}
-
-			if ( siteSlugParam ) {
-				window.location.assign(
-					`/setup/site-migration/site-migration-identify?siteSlug=${ siteSlugParam }`
-				);
-				return;
-			}
-		}, [ currentStepSlug, siteSlugParam, restoreFlowQueryParam, userIsLoggedIn ] );
-	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
