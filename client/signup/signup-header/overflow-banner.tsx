@@ -1,7 +1,10 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css, Global } from '@emotion/react';
-import { useEffect, useState } from '@wordpress/element';
+import { Icon } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactNode, forwardRef } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
+import BraveTickIcon from './assets/icons/brave-tick';
 import './style.scss';
 
 const globalStyleOverrides = css`
@@ -26,45 +29,42 @@ const globalStyleOverrides = css`
 	}
 `;
 
-const SignupHeaderBanner = ( {
-	children,
-	sticky,
-	stickyBannerOffset = 40,
-}: {
-	sticky?: boolean;
-	stickyBannerOffset?: number;
-	children: ( isStuck: boolean ) => ReactNode;
-} ) => {
-	const [ isAboveOffset, setIsAboveOffset ] = useState( false );
-
-	useEffect( () => {
-		const handleScroll = () => {
-			const scrollY = window.scrollY;
-			if ( scrollY > stickyBannerOffset ) {
-				setIsAboveOffset( true );
-			} else {
-				setIsAboveOffset( false );
-			}
-		};
-
-		window.addEventListener( 'scroll', handleScroll );
-
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [] );
-
-	const classes = classnames( 'signup-header__overflow-banner', {
-		'is-sticky-banner': isAboveOffset && sticky,
-		'is-header-banner': ! isAboveOffset || ! sticky,
-	} );
-
+const SignupHeaderBanner = ( { children }: { children: ReactNode } ) => {
 	return (
 		<>
 			<Global styles={ globalStyleOverrides } />
-			<div className={ classes }>{ children( Boolean( isAboveOffset && sticky ) ) }</div>
+			<div className="signup-header__overflow-banner">{ children }</div>
 		</>
 	);
 };
 
-export default forwardRef( SignupHeaderBanner );
+export const SignupHeaderBannerWithRefundPeriod = () => {
+	const isMobile = useMobileBreakpoint();
+	const translate = useTranslate();
+
+	return (
+		<SignupHeaderBanner>
+			<div
+				className={ classnames( 'signup-header__overflow-banner-with-refund-period', {
+					'is-mobile': isMobile,
+				} ) }
+			>
+				{ translate( '{{icon/}} {{text}}14-day money-back guarantee on all annual plans{{/text}}', {
+					components: {
+						icon: (
+							<Icon
+								icon={
+									<BraveTickIcon className="signup-header__overflow-banner-with-refund-period-icon" />
+								}
+								size={ 30 }
+							/>
+						),
+						text: <span className="signup-header__overflow-banner-with-refund-period-text" />,
+					},
+				} ) }
+			</div>
+		</SignupHeaderBanner>
+	);
+};
+
+export default SignupHeaderBanner;

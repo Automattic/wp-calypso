@@ -30,7 +30,6 @@ import {
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
-import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import {
 	useCallback,
@@ -58,7 +57,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import SignupHeaderBanner from 'calypso/signup/signup-header/overflow-banner';
+import { SignupHeaderBannerWithRefundPeriod } from 'calypso/signup/signup-header/overflow-banner';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
@@ -649,18 +648,13 @@ const PlansFeaturesMain = ( {
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;
-	const refundPeriodInSignupHeaderBanner =
-		config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) &&
-		flowName === 'onboarding';
-	const showStickyHeaderBanner = true;
-	const stickyHeaderBannerOffset = showStickyHeaderBanner ? 40 : 0;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
 	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
-		? stickyPlanTypeSelectorHeight + masterbarHeight + stickyHeaderBannerOffset
-		: masterbarHeight + stickyHeaderBannerOffset;
+		? stickyPlanTypeSelectorHeight + masterbarHeight
+		: masterbarHeight;
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable(
 		siteId,
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
@@ -697,37 +691,7 @@ const PlansFeaturesMain = ( {
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
 				<QueryProductsList />
-				{ refundPeriodInSignupHeaderBanner && (
-					<SignupHeaderBanner sticky={ showStickyHeaderBanner }>
-						{ ( isStuck: boolean ) => (
-							<div
-								className={ classNames( 'plans-features-main__signup-header-banner-refund-period', {
-									'is-mobile': isMobile,
-									'is-stuck': isStuck,
-								} ) }
-							>
-								{ translate(
-									'{{icon/}} {{text}}14-day money-back guarantee on all annual plans{{/text}}',
-									{
-										components: {
-											icon: (
-												<Icon
-													icon={
-														<BraveTickIcon className="plans-features-main__signup-header-banner-refund-period-icon" />
-													}
-													size={ 30 }
-												/>
-											),
-											text: (
-												<span className="plans-features-main__signup-header-banner-refund-period-text" />
-											),
-										},
-									}
-								) }
-							</div>
-						) }
-					</SignupHeaderBanner>
-				) }
+				{ refundPeriodInSignupHeaderBanner && <SignupHeaderBannerWithRefundPeriod /> }
 				<PlanUpsellModal
 					isModalOpen={ isModalOpen }
 					paidDomainName={ paidDomainName }
@@ -785,7 +749,7 @@ const PlansFeaturesMain = ( {
 								plans={ gridPlansForPlanTypeSelector }
 								layoutClassName="plans-features-main__plan-type-selector-layout"
 								enableStickyBehavior={ enablePlanTypeSelectorStickyBehavior }
-								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 + stickyHeaderBannerOffset }
+								stickyPlanTypeSelectorOffset={ masterbarHeight - 1 }
 								coupon={ coupon }
 							/>
 						) }

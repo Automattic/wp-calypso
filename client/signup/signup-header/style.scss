@@ -52,30 +52,31 @@
 }
 
 .signup-header__overflow-banner {
+	position: absolute;
 	top: 0;
 	left: 0;
 	margin-top: 0;
 	width: 100vw;
+	height: 80px;
+	z-index: -2;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background-color: #0675c4;
 	color: var(--color-text-inverted);
 
-	&.is-header-banner {
-		position: absolute;
-		height: 80px;
-		z-index: -2;
-	}
+	.signup-header__overflow-banner-with-refund-period {
+		font-size: var(--scss-font-body-small);
 
-	&.is-sticky-banner {
-		position: fixed;
-		padding: 10px 0;
-		z-index: 31; // above action-buttons (they are 30) so it hides them
+		.signup-header__overflow-banner-with-refund-period-icon,
+		.signup-header__overflow-banner-with-refund-period-text {
+			display: inline;
+			vertical-align: middle;
+		}
 
-		.layout__content & {
-			overflow: unset;
-			overflow-x: unset;
+		&.is-mobile {
+			max-width: 230px;
+			text-align: center;
 		}
 	}
 }

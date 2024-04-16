@@ -190,21 +190,3 @@ body.is-section-signup.is-white-signup {
 		margin: 24px 20px 38px;
 	}
 }
-
-.plans-features-main__signup-header-banner-refund-period {
-	font-size: var(--scss-font-body-small);
-
-	.plans-features-main__signup-header-banner-refund-period-icon,
-	.plans-features-main__signup-header-banner-refund-period-text {
-		display: inline;
-		vertical-align: middle;
-	}
-
-	&.is-mobile {
-		max-width: 230px;
-		text-align: center;
-	}
-	&.is-stuck {
-		max-width: unset;
-	}
-}
