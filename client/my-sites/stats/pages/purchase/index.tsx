@@ -198,7 +198,8 @@ const StatsPurchasePage = ( {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
-				{ ! hasAnyPlan && (
+				{ /** Only show the navigation header on force redirections and site has no plans */ }
+				{ ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
 						<NavigationHeader
 							className="stats__section-header modernized-header"
@@ -218,8 +219,7 @@ const StatsPurchasePage = ( {
 							interval="day"
 							siteId={ siteId }
 							slug={ siteSlug }
-							/** Force redirected */
-							showLock={ query.from?.startsWith( 'cmp-red' ) }
+							showLock={ true }
 							hideModuleSettings
 						/>
 					</>
