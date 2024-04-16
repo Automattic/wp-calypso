@@ -278,13 +278,16 @@ export class JetpackSignup extends Component {
 			return null;
 		}
 
+		const allowSiteConnection =
+			authQuery.allowSiteConnection && ! this.isFromAutomatticForAgenciesPlugin();
+
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 
-				{ authQuery.allowSiteConnection && (
+				{ allowSiteConnection && (
 					<JetpackConnectSiteOnly
 						homeUrl={ authQuery.homeUrl }
 						redirectAfterAuth={ authQuery.redirectAfterAuth }
@@ -495,6 +498,7 @@ export class JetpackSignup extends Component {
 						authQuery={ this.props.authQuery }
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
+						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
