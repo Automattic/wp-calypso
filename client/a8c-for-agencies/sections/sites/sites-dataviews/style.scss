@@ -30,7 +30,7 @@
 			background: var(--studio-white);
 			td {
 				padding: 16px 0;
-				border-bottom: 1px solid var(--studio-gray-5);
+				border-bottom: 1px solid var(--color-neutral-5);
 			}
 		}
 	}
@@ -56,7 +56,7 @@
 		}
 
 		&:hover {
-			background: var(--studio-gray-0);
+			background: var(--color-neutral-0);
 
 			.site-set-favorite__favorite-icon,
 			.components-checkbox-control__input {
@@ -66,7 +66,7 @@
 
 		th {
 			padding: 13px 4px 13px 48px;
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--color-neutral-5);
 			font-size: rem(13px);
 			font-weight: 400;
 			vertical-align: middle;
@@ -74,7 +74,7 @@
 
 		td {
 			padding: 16px 4px 16px 48px;
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--color-neutral-5);
 			vertical-align: middle;
 		}
 
@@ -93,24 +93,24 @@
 				display: none;
 			}
 			&[type="checkbox"] {
-				border-color: var(--studio-gray-5);
+				border-color: var(--color-neutral-5);
 			}
 		}
 	}
 
 	ul.dataviews-view-list {
 		li:hover {
-			background: var(--studio-gray-0);
+			background: var(--color-neutral-0);
 		}
 		.is-selected {
-			background-color: var(--studio-jetpack-green-0);
+			background-color: var(--color-neutral-0);
 		}
 	}
 }
 
 .components-search-control input[type="search"].components-search-control__input {
 	background: var(--studio-white);
-	border: 1px solid var(--studio-gray-5);
+	border: 1px solid var(--color-neutral-5);
 }
 
 .dataviews-filters__view-actions {
@@ -142,7 +142,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	font-size: rem(12px);
-	color: var(--studio-gray-60);
+	color: var(--color-neutral-60);
 	font-weight: 400;
 }
 
