@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-import A4ASiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
+import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
@@ -15,7 +15,6 @@ import SiteSort from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-over
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SiteSetFavorite from '../site-set-favorite';
 import { AllowedTypes, Site } from '../types';
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
 import './style.scss';
@@ -288,19 +287,11 @@ const SitesDataViews = ( {
 					}
 					return (
 						<span className="sites-dataviews__favorite-btn-wrapper">
-							{ isA4AEnabled ? (
-								<A4ASiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) : (
-								<SiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) }
+							<SiteSetFavorite
+								isFavorite={ item.isFavorite || false }
+								siteId={ item.site.value.blog_id }
+								siteUrl={ item.site.value.url }
+							/>
 						</span>
 					);
 				},

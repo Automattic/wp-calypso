@@ -5,7 +5,6 @@ import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import A4ASiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import A4ASiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
@@ -195,19 +194,11 @@ const SitesDataViews = ( {
 					}
 					return (
 						<span className="sites-dataviews__favorite-btn-wrapper">
-							{ isA4AEnabled ? (
-								<A4ASiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) : (
-								<SiteSetFavorite
-									isFavorite={ item.isFavorite || false }
-									siteId={ item.site.value.blog_id }
-									siteUrl={ item.site.value.url }
-								/>
-							) }
+							<SiteSetFavorite
+								isFavorite={ item.isFavorite || false }
+								siteId={ item.site.value.blog_id }
+								siteUrl={ item.site.value.url }
+							/>
 						</span>
 					);
 				},
