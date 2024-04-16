@@ -34,6 +34,11 @@ export const UpgradePlanHostingDetails = () => {
 		urlData
 	);
 
+	const shouldDisplayHostIdentificationMessage =
+		hostingProviderName &&
+		hostingProviderName !== 'Unknown' &&
+		hostingProviderName !== 'WordPress.com';
+
 	return (
 		<div className="import__upgrade-plan-hosting-details">
 			<div className="import__upgrade-plan-hosting-details-card-container">
@@ -90,7 +95,7 @@ export const UpgradePlanHostingDetails = () => {
 					</div>
 				) }
 			</div>
-			{ hostingProviderName && hostingProviderName !== 'Unknown' && (
+			{ shouldDisplayHostIdentificationMessage && (
 				<div className="import__upgrade-plan-hosting-details-identified-host">
 					{ translate( "We've identified %(hostingProviderName)s as your host.", {
 						args: { hostingProviderName },
