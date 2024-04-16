@@ -55,6 +55,7 @@ import {
 	planItem as getCartItemForPlan,
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
@@ -736,14 +737,18 @@ const PlansFeaturesMain = ( {
 			'is-hidden': ! showPlansComparisonGrid,
 		}
 	);
-
+	const [ isModalExperimentLoaded ] = useExperiment( 'calypso_plans_modal_experiment' );
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
+		! intent ||
+			! gridPlansForFeaturesGrid ||
+			! gridPlansForComparisonGrid ||
+			! isModalExperimentLoaded
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;
+
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
 	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
