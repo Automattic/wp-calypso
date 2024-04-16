@@ -27,36 +27,55 @@ $business-plan-color: #7f54b3;
 					margin-bottom: 8.5rem;
 				}
 			}
+		}
 
-			.import__upgrade-plan-hosting-details-card-container {
+		&.is-not-eligible-for-trial-plan {
+			.import__upgrade-plan-hosting-details {
 				@include break-medium {
-					height: 94rem;
+					margin-top: 0;
 				}
 			}
 		}
 
-		&.is-not-eligible-for-trial-plan {
+		&.is-not-eligible-for-trial-plan.feature-list-expanded {
+
 			.import__upgrade-plan-features-container {
 				@include break-medium {
 					height: initial;
 				}
 			}
 
-			.import__upgrade-plan-hosting-details {
+			.import__upgrade-plan-hosting-details-card-container {
 				@include break-medium {
-					margin-top: 12px;
+					height: 97.125rem;
+				}
+			}
+		}
+
+		&.feature-list-expanded:not(.is-not-eligible-for-trial-plan) {
+			.import__upgrade-plan-hosting-details-card-container {
+				@include break-medium {
+					height: 94.375rem;
 				}
 			}
 		}
 
 		&.is-not-eligible-for-trial-plan:not(.feature-list-expanded) {
+			.import__upgrade-plan-features-container {
+				@include break-medium {
+					height: 443px;
+				}
+			}
 			.import__upgrade-plan-hosting-details {
 				@include break-medium {
-					margin-top: 27px;
-					height: 392px;
-					margin-bottom: 27px;
-					padding-top: 32px;
-					padding-bottom: 32px;
+					height: initial;
+					margin-top: 33px;
+				}
+			}
+
+			.import__upgrade-plan-hosting-details-card-container {
+				@include break-medium {
+					margin-top: 0;
 				}
 			}
 		}
@@ -81,8 +100,8 @@ $business-plan-color: #7f54b3;
 			margin-bottom: 1rem;
 			margin-right: 0;
 			margin-left: 0;
-			width: 324px;
-			min-height: 400px;
+			width: 352px;
+			height: 400px;
 		}
 	}
 
@@ -288,6 +307,11 @@ $business-plan-color: #7f54b3;
 	.import__upgrade-plan-hosting-details {
 		margin-bottom: 60px;
 
+		@include break-medium {
+			margin-bottom: 0;
+			width: 352px;
+		}
+
 		.import__upgrade-plan-hosting-details-card-container {
 			background-color: #fbfbfb;
 			border-bottom: 1px solid #e0e0e0;
@@ -315,7 +339,6 @@ $business-plan-color: #7f54b3;
 				border-bottom-left-radius: 0;
 				border-bottom: 1px solid #e0e0e0;
 				border-left: 0;
-				width: 324px;
 				height: 376px;
 			}
 
@@ -439,6 +462,7 @@ $business-plan-color: #7f54b3;
 			font-size: 0.875rem;
 			text-align: center;
 			padding: 0.5rem 1.5rem;
+			line-height: 16px;
 		}
 	}
 
@@ -498,8 +522,8 @@ $business-plan-color: #7f54b3;
 				height: 431px;
 			}
 
-			.import__upgrade-plan-hosting-details {
-				height: 407px;
+			.import__upgrade-plan-hosting-details-card-container {
+				height: 400px;
 			}
 		}
 
