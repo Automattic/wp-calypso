@@ -28,7 +28,7 @@
 
 		&.main {
 			max-width: 750px;
-			padding: 0 24px 0;
+			padding: 0;
 			display: flex;
 			flex-direction: column;
 			text-align: initial;
@@ -660,6 +660,15 @@
 	100% {
 		transform: translateY(-80px);
 		opacity: 1;
+	}
+}
+
+.is-section-checkout-thank-you {
+	background: var(--studio-white);
+
+	.layout__content {
+		padding-right: 0;
+		padding-left: 0;
 	}
 }
 
