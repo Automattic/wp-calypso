@@ -6,11 +6,11 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 interface Props {
 	sites: SiteExcerptData[];
-	initSites?: number[];
+	selectedSites?: number[];
 	borderWrapper?: boolean;
 }
 export const ScheduleFormSites = ( props: Props ) => {
-	const { sites, initSites = [], borderWrapper = true } = props;
+	const { sites, selectedSites: initSites = [], borderWrapper = true } = props;
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( initSites );
