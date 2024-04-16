@@ -1,16 +1,25 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
+import { useSitesPluginsQuery } from 'calypso/data/plugins/use-sites-plugins-query';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { ScheduleFormFrequency } from '../plugins-scheduled-updates/schedule-form-frequency';
 import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-plugins';
-import { validateSites } from '../plugins-scheduled-updates/schedule-form.helper';
+import { validateSites, validatePlugins } from '../plugins-scheduled-updates/schedule-form.helper';
 import { ScheduleFormSites } from './schedule-form-sites';
 
 export const ScheduleForm = () => {
 	const sites = useSiteExcerptsSorted();
 	const atomicSites = sites.filter( ( site ) => site.is_wpcom_atomic );
+	const atomicSiteIds = sites.map( ( site ) => site.ID );
+
+	const {
+		data: plugins = [],
+		isLoading: isPluginsFetching,
+		isFetched: isPluginsFetched,
+	} = useSitesPluginsQuery( atomicSiteIds );
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
@@ -24,6 +33,16 @@ export const ScheduleForm = () => {
 		[ selectedSites ]
 	);
 
+	// Sites selection validation
+	useEffect(
+		() =>
+			setValidationErrors( {
+				...validationErrors,
+				plugins: validatePlugins( selectedPlugins ),
+			} ),
+		[ selectedPlugins ]
+	);
+
 	return (
 		<div className="schedule-form">
 			<div className="form-control-container">
@@ -32,16 +51,21 @@ export const ScheduleForm = () => {
 						<ScheduleFormSites
 							sites={ atomicSites }
 							borderWrapper={ false }
-							onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, sites: touched } ) }
 							onChange={ setSelectedSites }
+							onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, sites: touched } ) }
 							error={ validationErrors?.sites }
+							showError={ fieldTouched?.sites }
 						/>
 					</FlexItem>
 					<FlexItem>
 						<ScheduleFormPlugins
-							plugins={ [] }
-							isPluginsFetching={ false }
-							isPluginsFetched={ true }
+							plugins={ plugins }
+							isPluginsFetching={ isPluginsFetching }
+							isPluginsFetched={ isPluginsFetched }
+							onChange={ setSelectedPlugins }
+							onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, plugins: touched } ) }
+							error={ validationErrors?.plugins }
+							showError={ fieldTouched?.plugins }
 							borderWrapper={ false }
 						/>
 					</FlexItem>
