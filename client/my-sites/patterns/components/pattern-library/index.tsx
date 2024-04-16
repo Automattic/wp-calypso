@@ -252,7 +252,6 @@ export const PatternLibrary = ( {
 		<>
 			{ isHomePage ? (
 				<PatternsPageViewTracker
-					patternPermalinkName={ patternPermalinkName }
 					searchTerm={ searchTerm }
 					referrer={ referrer }
 					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
