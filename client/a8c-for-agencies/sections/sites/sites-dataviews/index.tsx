@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { Icon, starFilled } from '@wordpress/icons';
@@ -7,11 +6,11 @@ import { useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
+import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
-import SiteSort from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-sort';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -34,7 +33,6 @@ const SitesDataViews = ( {
 	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
@@ -347,7 +345,6 @@ const SitesDataViews = ( {
 			isLoading,
 			openSitePreviewPane,
 			renderField,
-			isA4AEnabled,
 			isLargeScreen,
 		]
 	);
