@@ -36,14 +36,19 @@ function renderCategoryNotFound( context: RouterContext, next: RouterNext ) {
 
 function renderPatterns( context: RouterContext, next: RouterNext ) {
 	if ( ! context.primary ) {
+		let patternTypeFilter;
+		if ( context.query[ QUERY_PARAM_SEARCH ] || context.params.category ) {
+			patternTypeFilter =
+				context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR;
+		}
+
 		context.primary = (
 			<PatternsContext.Provider
 				value={ {
-					searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
-					category: context.params.category ?? '',
+					searchTerm: context.query[ QUERY_PARAM_SEARCH ] || undefined,
+					category: context.params.category || undefined,
 					isGridView: !! context.query.grid,
-					patternTypeFilter:
-						context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+					patternTypeFilter,
 					patternPermalinkId: extractPatternIdFromHash(),
 					referrer: context.query.ref,
 				} }

@@ -147,7 +147,12 @@ export const PatternLibrary = ( {
 		} );
 	};
 
-	const currentView = isGridView ? 'grid' : 'list';
+	const isHomePage = ! category && ! searchTerm;
+
+	let currentView;
+	if ( ! isHomePage ) {
+		currentView = isGridView ? 'grid' : 'list';
+	}
 
 	const handleViewChange = ( view: PatternView ) => {
 		if ( currentView === view ) {
@@ -243,30 +248,21 @@ export const PatternLibrary = ( {
 		};
 	} );
 
-	const isHomePage = ! category && ! searchTerm;
 	const patternGalleryKey = searchTerm
 		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
 		: `${ category }-${ patternTypeFilter }`;
 
 	return (
 		<>
-			{ isHomePage ? (
-				<PatternsPageViewTracker
-					searchTerm={ searchTerm }
-					referrer={ referrer }
-					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
-				/>
-			) : (
-				<PatternsPageViewTracker
-					category={ category }
-					patternPermalinkName={ patternPermalinkName }
-					patternTypeFilter={ patternTypeFilter }
-					view={ currentView }
-					searchTerm={ searchTerm }
-					referrer={ referrer }
-					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
-				/>
-			) }
+			<PatternsPageViewTracker
+				category={ category }
+				patternPermalinkName={ patternPermalinkName }
+				patternTypeFilter={ patternTypeFilter }
+				view={ currentView }
+				searchTerm={ searchTerm }
+				referrer={ referrer }
+				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+			/>
 
 			<PatternsDocumentHead category={ category } />
 
