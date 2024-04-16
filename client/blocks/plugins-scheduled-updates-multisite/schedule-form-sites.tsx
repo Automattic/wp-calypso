@@ -7,10 +7,10 @@ import type { SiteExcerptData } from '@automattic/sites';
 interface Props {
 	sites: SiteExcerptData[];
 	initSites?: number[];
-	boarderWrapper?: boolean;
+	borderWrapper?: boolean;
 }
 export const ScheduleFormSites = ( props: Props ) => {
-	const { sites, initSites = [], boarderWrapper = true } = props;
+	const { sites, initSites = [], borderWrapper = true } = props;
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( initSites );
@@ -28,7 +28,7 @@ export const ScheduleFormSites = ( props: Props ) => {
 	return (
 		<div className="form-field">
 			<label htmlFor="sites">{ translate( 'Select sites' ) }</label>
-			<div className={ classnames( { 'form-control-container': boarderWrapper } ) }>
+			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<SearchControl
 					id="sites"
 					onChange={ ( s ) => setSearchTerm( s.trim() ) }
