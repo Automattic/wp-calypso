@@ -4,31 +4,29 @@ import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
-// No
+// todo: extract
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-// No
+// todo: extract
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
-// No
+// todo: extract?? We could keep a common context through the ItemsDashboard environment.
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
-// No. Customizable via columns
+// todo: extract. Customizable via columns
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
-// No. Leave a placeholder
+// todo: extract/refactor
 import { AllowedTypes, Site } from 'calypso/a8c-for-agencies/sections/sites/types';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
-// No??
+// todo: extract??
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
-// Leave as optional
-// No
+// todo: extract
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
-// No
+// todo: extract
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
-// No
+// todo: extract
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-// No
-// Partially
+// todo: extract
 import { SitesDataViewsProps, SiteInfo } from './interfaces';
 import SiteSort from './site-sort';
-// Partially, extract common styles
+// todo: extract partially. Extract common styles
 import './style.scss';
 
 const ItemsDataViews = ( {
