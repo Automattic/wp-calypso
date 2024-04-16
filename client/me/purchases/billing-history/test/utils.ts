@@ -90,7 +90,7 @@ describe( 'utils', () => {
 			expect( result.length ).toEqual( 2 );
 		} );
 
-		test( 'should sum the raw_amount for multiple items with the same domain', () => {
+		test( 'should sum the prices for multiple items with the same domain', () => {
 			const items = deepFreeze( [
 				{ foo: 'bar', product_slug: 'foobar' },
 				{
@@ -101,6 +101,8 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 2,
 					amount_integer: 200,
+					subtotal_integer: 210,
+					tax_integer: 10,
 					cost_overrides: [],
 				},
 				{
@@ -111,6 +113,8 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 3,
 					amount_integer: 300,
+					subtotal_integer: 310,
+					tax_integer: 10,
 					cost_overrides: [],
 				},
 				{
@@ -121,6 +125,8 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 7,
 					amount_integer: 700,
+					subtotal_integer: 711,
+					tax_integer: 11,
 					cost_overrides: [],
 				},
 				{
@@ -131,17 +137,23 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 9,
 					amount_integer: 900,
+					subtotal_integer: 912,
+					tax_integer: 12,
 					cost_overrides: [],
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
 			expect( result[ 1 ].raw_amount ).toEqual( 2 );
 			expect( result[ 1 ].amount_integer ).toEqual( 200 );
+			expect( result[ 1 ].subtotal_integer ).toEqual( 210 );
+			expect( result[ 1 ].tax_integer ).toEqual( 10 );
 			expect( result[ 2 ].raw_amount ).toEqual( 19 );
 			expect( result[ 2 ].amount_integer ).toEqual( 1900 );
+			expect( result[ 2 ].subtotal_integer ).toEqual( 1933 );
+			expect( result[ 2 ].tax_integer ).toEqual( 33 );
 		} );
 
-		test( 'should include the formatted, summed raw_amount as amount for multiple items with teh same domain', () => {
+		test( 'should include the formatted, summed raw_amount as amount for multiple items with the same domain', () => {
 			const items = deepFreeze( [
 				{ foo: 'bar', product_slug: 'foobar' },
 				{
