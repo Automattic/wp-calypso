@@ -89,6 +89,11 @@
 		display: flex;
 		gap: 8px;
 
+		&.is-placeholder {
+			pointer-events: none;
+			user-select: none;
+		}
+
 		&:enabled:hover,
 		&:focus {
 			background-color: var(--button-color-hover);

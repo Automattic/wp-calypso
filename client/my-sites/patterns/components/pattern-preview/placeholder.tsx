@@ -40,7 +40,7 @@ export function PatternPreviewPlaceholder( { className, title }: PatternPreviewP
 			<div className="pattern-preview__header">
 				<div className="pattern-preview__title">{ title }</div>
 
-				<Button className="pattern-preview__copy" primary>
+				<Button className="pattern-preview__copy is-placeholder" primary>
 					<Icon height={ 18 } icon={ copy } width={ 18 } /> { copyButtonText }
 				</Button>
 			</div>
