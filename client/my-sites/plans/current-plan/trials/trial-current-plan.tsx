@@ -13,7 +13,7 @@ import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import useOneDollarOfferTrack from '../../hooks/use-onedollar-offer-track';
 import TrialBanner from '../../trials/trial-banner';
 import BusinessTrialIncluded from './business-trial-included';
@@ -36,11 +36,13 @@ const TrialCurrentPlan = () => {
 
 	const currentPlanSlug = selectedSite?.plan?.product_slug ?? '';
 	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+	const purchase = useSelector( getSelectedPurchase );
 	// const isMigrationTrial = currentPlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
 
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 	const bodyClass = isEcommerceTrial ? [ 'is-ecommerce-trial-plan' ] : [ 'is-business-trial-plan' ];
+	const isWooExpressTrial = purchase?.isWooExpressTrial;
 
 	const targetPlan = isEcommerceTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_BUSINESS;
 	const trackEvent = isEcommerceTrial
@@ -89,7 +91,7 @@ const TrialCurrentPlan = () => {
 			<BodySectionCssClass bodyClass={ bodyClass } />
 
 			<div className="trial-current-plan__banner-wrapper">
-				<TrialBanner callToAction={ bannerCallToAction } isEcommerceTrial={ isEcommerceTrial } />
+				<TrialBanner callToAction={ bannerCallToAction } isWooExpressTrial={ isWooExpressTrial } />
 			</div>
 
 			<h2 className="trial-current-plan__section-title">

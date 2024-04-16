@@ -15,11 +15,11 @@ import './style.scss';
 
 interface TrialBannerProps {
 	callToAction?: JSX.Element | null;
-	isEcommerceTrial?: boolean;
+	isWooExpressTrial?: boolean;
 }
 
 const TrialBanner = ( props: TrialBannerProps ) => {
-	const { callToAction, isEcommerceTrial } = props;
+	const { callToAction, isWooExpressTrial } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId ) || -1;
 
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
@@ -48,7 +48,7 @@ const TrialBanner = ( props: TrialBannerProps ) => {
 		trialDaysLeftToDisplay,
 		trialExpiration,
 		selectedSiteId,
-		isEcommerceTrial
+		isWooExpressTrial
 	);
 
 	return (

@@ -300,7 +300,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const { selectedSite } = this.props;
+		const { selectedSite, purchase } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
@@ -308,7 +308,13 @@ class Plans extends Component {
 
 		const interval = this.getIntervalForWooExpressPlans();
 
-		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
+		return (
+			<ECommerceTrialPlansPage
+				isWooExpressTrial={ !! purchase?.isWooExpressTrial }
+				interval={ interval }
+				site={ selectedSite }
+			/>
+		);
 	}
 
 	renderBusinessTrialPage() {
@@ -411,6 +417,7 @@ class Plans extends Component {
 
 		// Hide for WooExpress plans
 		const showPlansNavigation = ! isWooExpressPlan;
+		// const showPlansNavigation = false;
 
 		return (
 			<div>
