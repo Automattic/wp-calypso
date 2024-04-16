@@ -172,16 +172,13 @@ export function noSite( siteFragment: string | undefined, context: PageJSContext
 	const { getState } = context.store;
 	const currentUser = getCurrentUser( getState() ) as UserData;
 
-	if ( 0 === currentUser?.jetpack_site_count && 0 === currentUser?.atomic_site_count ) {
+	if ( 0 === currentUser?.site_count ) {
 		renderNoJetpackSites( context, currentUser.primarySiteSlug );
 		recordNoJetpackSitesPageView( context, siteFragment );
 		return true;
 	}
 
-	if (
-		0 === currentUser?.jetpack_visible_site_count &&
-		0 === currentUser?.atomic_visible_site_count
-	) {
+	if ( 0 === currentUser?.visible_site_count ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleJetpackSitesPageView( context, siteFragment );
 		return true;
