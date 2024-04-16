@@ -90,7 +90,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel htmlFor="capture-site-url">
-					{ translate( 'Enter your site address:' ) }
+					{ translate( 'Enter the URL of the site:' ) }
 				</FormLabel>
 				<FormTextInput
 					id="capture-site-url"

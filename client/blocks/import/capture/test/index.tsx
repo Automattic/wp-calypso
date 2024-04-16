@@ -23,7 +23,7 @@ describe( 'CaptureInput', () => {
 		);
 
 		await userEvent.type(
-			screen.getByLabelText( /Enter your site address/ ),
+			screen.getByLabelText( /Enter the URL of the site/ ),
 			'https://example.wordpress.com'
 		);
 
@@ -41,7 +41,7 @@ describe( 'CaptureInput', () => {
 		);
 
 		// enter an invalid URL
-		await userEvent.type( screen.getByLabelText( /Enter your site address/ ), 'not a url' );
+		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'not a url' );
 
 		// try to submit the same value twice
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
@@ -49,9 +49,9 @@ describe( 'CaptureInput', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
 		// Now, enter a valid URL and confirm we can submit ok
-		await userEvent.clear( screen.getByLabelText( /Enter your site address/ ) );
+		await userEvent.clear( screen.getByLabelText( /Enter the URL of the site/ ) );
 		await userEvent.type(
-			screen.getByLabelText( /Enter your site address/ ),
+			screen.getByLabelText( /Enter the URL of the site/ ),
 			'https://example.wordpress.com'
 		);
 
