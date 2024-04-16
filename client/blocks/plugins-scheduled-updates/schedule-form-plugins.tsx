@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { MAX_SELECTABLE_PLUGINS } from './config';
-import type { CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
+import type { CorePlugin } from 'calypso/data/plugins/types';
 
 interface Props {
 	plugins: CorePlugin[];
