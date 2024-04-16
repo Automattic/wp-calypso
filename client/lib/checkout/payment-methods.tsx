@@ -85,6 +85,7 @@ export interface StoredPaymentMethodStripeSource extends StoredPaymentMethodBase
 
 export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
 	payment_partner: 'razorpay';
+	razorpay_vpa: string;
 }
 
 export interface StoredPaymentMethodTaxLocation {
@@ -138,17 +139,23 @@ export const PaymentMethodSummary = ( {
 	type,
 	digits,
 	email,
+	razorpayVpa,
 }: {
 	type: string;
 	digits?: string;
 	email?: string;
+	razorpayVpa?: string;
 } ) => {
 	const translate = useTranslate();
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
 		return <>{ email || '' }</>;
 	}
 	if ( type === PARTNER_RAZORPAY ) {
-		return <>{ translate( 'Unified Payments Interface (UPI)' ) }</>;
+		return (
+			<>
+				{ translate( 'Unified Payments Interface (UPI)' ) } { razorpayVpa || '' }{ ' ' }
+			</>
+		);
 	}
 	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {
