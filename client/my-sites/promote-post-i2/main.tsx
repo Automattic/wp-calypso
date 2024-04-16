@@ -81,6 +81,8 @@ export default function PromotedPosts( { tab }: Props ) {
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
+	const isRunningInClassicSimple = selectedSite?.options?.is_wpcom_simple;
+	const isRunningJetpackOrClassicSimple = isRunningInJetpack || isRunningInClassicSimple;
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
@@ -248,7 +250,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInJetpack }
+						showSupportModal={ ! isRunningJetpackOrClassicSimple }
 					/>
 					<Button
 						variant="primary"

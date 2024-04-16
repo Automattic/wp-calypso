@@ -1,5 +1,4 @@
 import { PRODUCT_JETPACK_STATS_YEARLY, PriceTierEntry } from '@automattic/calypso-products';
-import { ProductsList } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import {
 	default as usePlanUsageQuery,
@@ -7,11 +6,12 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { StatsPlanTierUI } from './types';
+import { IAppState } from 'calypso/state/types';
+import { StatsPlanTierUI } from '../stats-purchase/types';
 
 // Special case for per-unit fees over the max tier.
 export const EXTENSION_THRESHOLD_IN_MILLION = 2;
-const EXTENDED_TIERS_AMOUNT = 6;
+export const MAX_TIERS_NUMBER = 6;
 
 // TODO: Remove the mock data after release.
 // No need to translate mock data.
@@ -56,21 +56,26 @@ const MOCK_PLAN_DATA = [
 	},
 ];
 
-function filterPurchasedTiers(
+/**
+ * Filter the tiers that are lower than the current usage / limit
+ */
+function filterLowerTiers(
 	availableTiers: StatsPlanTierUI[],
 	usageData: PlanUsage | undefined
 ): StatsPlanTierUI[] {
 	// Filter out already purchased tiers.
 	let tiers: StatsPlanTierUI[];
 
-	if ( ! usageData || usageData?.views_limit === null || usageData?.views_limit === 0 ) {
-		// No tier has been purchased.
+	if ( ! usageData || ( ! usageData?.views_limit && ! usageData?.billableMonthlyViews ) ) {
+		// No tier has been purchased or we don't have billable monthly views.
 		tiers = availableTiers;
 	} else {
+		// Filter out tiers that have been purchased or lower than the current usage.
 		tiers = availableTiers.filter( ( availableTier ) => {
 			return (
 				!! availableTier.transform_quantity_divide_by ||
-				( availableTier?.views as number ) > usageData?.views_limit
+				( availableTier?.views as number ) >
+					Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 )
 			);
 		} );
 	}
@@ -83,14 +88,36 @@ function extendTiersBeyondHighestTier(
 	currencyCode: string,
 	usageData: PlanUsage
 ): StatsPlanTierUI[] {
-	if ( availableTiers.length === 1 && !! availableTiers[ 0 ].transform_quantity_divide_by ) {
-		const highestTier = availableTiers[ 0 ];
+	const highestTier = availableTiers[ availableTiers.length - 1 ];
+	if ( availableTiers.length < MAX_TIERS_NUMBER && !! highestTier.transform_quantity_divide_by ) {
+		// Calculate the number of tiers to extend based on either current purchase or billable monthly views.
+		const startingTier =
+			Math.floor(
+				Math.max( usageData?.views_limit, usageData?.billableMonthlyViews, 0 ) /
+					( highestTier.transform_quantity_divide_by || 1 )
+			) -
+			EXTENSION_THRESHOLD_IN_MILLION +
+			1;
 
-		const purchasedExtendedTierCount =
-			usageData?.views_limit / ( highestTier.transform_quantity_divide_by || 1 ) -
-			EXTENSION_THRESHOLD_IN_MILLION;
-		const extendedTierCountStart = purchasedExtendedTierCount + 1;
-		const extendedTierCountEnd = extendedTierCountStart + EXTENDED_TIERS_AMOUNT;
+		// Calculate the price of the current purchased tier, which may be an extended tier.
+		const currentPurchaseTier = Math.floor(
+			( usageData?.views_limit || 0 ) / ( highestTier.transform_quantity_divide_by || 1 )
+		);
+		const currentPurchaseExtendedTierCount =
+			currentPurchaseTier > EXTENSION_THRESHOLD_IN_MILLION
+				? currentPurchaseTier - EXTENSION_THRESHOLD_IN_MILLION
+				: 0;
+		const currentPurchaseTierPrice =
+			( usageData?.current_tier?.minimum_price ?? 0 ) +
+			( highestTier.per_unit_fee ?? 0 ) * currentPurchaseExtendedTierCount;
+
+		// Remove the only tier that is used to extend higher tiers.
+		if ( availableTiers.length === 1 && startingTier > 0 ) {
+			availableTiers = availableTiers.slice( 1 );
+		}
+
+		const extendedTierCountStart = Math.max( startingTier, 1 );
+		const extendedTierCountEnd = extendedTierCountStart + MAX_TIERS_NUMBER - availableTiers.length;
 
 		for (
 			let extendedTierCount = extendedTierCountStart;
@@ -99,6 +126,8 @@ function extendTiersBeyondHighestTier(
 		) {
 			const totalPrice =
 				highestTier?.minimum_price + ( highestTier.per_unit_fee ?? 0 ) * extendedTierCount;
+			// Avoid showing the upgrade price for extended tiers based on no purchased tier.
+			const upgradePrice = currentPurchaseTierPrice > 0 ? totalPrice - currentPurchaseTierPrice : 0;
 			const monthlyPriceDisplay = formatCurrency( totalPrice / 12, currencyCode, {
 				isSmallestUnit: true,
 				stripZeros: true,
@@ -107,43 +136,22 @@ function extendTiersBeyondHighestTier(
 				( highestTier?.views ?? 0 ) +
 				( highestTier.transform_quantity_divide_by ?? 0 ) * extendedTierCount;
 
-			const extendedTierAmount = extendedTierCount - purchasedExtendedTierCount;
-
 			availableTiers.push( {
 				minimum_price: totalPrice,
-				// Upgrade price for every 1M views.
-				upgrade_price: ( highestTier.per_unit_fee || 0 ) * extendedTierAmount,
+				upgrade_price: upgradePrice,
 				price: monthlyPriceDisplay,
 				views: views,
 				extension: true,
 			} );
 		}
-
-		// Remove the first tier, which is used to extend higher tiers.
-		availableTiers = availableTiers.slice( 1 );
 	}
 
 	return availableTiers;
 }
 
-function useAvailableUpgradeTiers(
-	siteId: number | null,
-	shouldFilterPurchasedTiers = true
-): StatsPlanTierUI[] {
-	// 1. Get the tiers. Default to yearly pricing.
-	const commercialProduct = useSelector( ( state ) =>
-		getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY )
-	) as ProductsList.RawAPIProduct | null;
-	// TODO: Add the loading state of the plan usage query to avoid redundant re-rendering.
-	const { data: usageData } = usePlanUsageQuery( siteId );
-
-	if ( ! commercialProduct?.price_tier_list ) {
-		return MOCK_PLAN_DATA;
-	}
-
-	const currentTierPrice = usageData?.current_tier?.minimum_price;
-	let tiersForUi = commercialProduct.price_tier_list.map(
-		( tier: PriceTierEntry ): StatsPlanTierUI => {
+function transformTiers( price_tier_list: PriceTierEntry[] | null, currentTierPrice = 0 ) {
+	return (
+		price_tier_list?.map( ( tier: PriceTierEntry ): StatsPlanTierUI => {
 			// TODO: Some description of transform logic here.
 			// So as to clarify what we should expect from the API.
 			let tierUpgradePrice = 0;
@@ -173,8 +181,24 @@ function useAvailableUpgradeTiers(
 				price: tier.minimum_price_monthly_display ?? undefined,
 				views: tier.maximum_units ?? null,
 			};
-		}
+		} ) ?? []
 	);
+}
+
+export function getAvailableUpgradeTiers(
+	state: IAppState,
+	usageData: PlanUsage | undefined,
+	shouldFilterPurchasedTiers: boolean
+): StatsPlanTierUI[] {
+	// 1. Get the tiers. Default to yearly pricing.
+	const commercialProduct = getProductBySlug( state, PRODUCT_JETPACK_STATS_YEARLY );
+
+	if ( ! commercialProduct?.price_tier_list ) {
+		return MOCK_PLAN_DATA;
+	}
+
+	const currentTierPrice = usageData?.current_tier?.minimum_price;
+	let tiersForUi = transformTiers( commercialProduct?.price_tier_list, currentTierPrice );
 
 	// If usage is not available then we return early, as without usage we can't filter / extend tiers.
 	if ( ! usageData ) {
@@ -183,12 +207,25 @@ function useAvailableUpgradeTiers(
 
 	// 2. Filter based on current plan.
 	if ( shouldFilterPurchasedTiers ) {
-		tiersForUi = filterPurchasedTiers( tiersForUi, usageData );
+		tiersForUi = filterLowerTiers( tiersForUi, usageData );
 	}
 
 	const currencyCode = commercialProduct.currency_code;
 	tiersForUi = extendTiersBeyondHighestTier( tiersForUi, currencyCode, usageData );
 
+	// 3. Return the relevant upgrade options as a list.
+	return tiersForUi;
+}
+
+function useAvailableUpgradeTiers(
+	siteId: number | null,
+	shouldFilterPurchasedTiers = true
+): StatsPlanTierUI[] {
+	const { data: usageData } = usePlanUsageQuery( siteId );
+
+	const tiersForUi = useSelector( ( state ) =>
+		getAvailableUpgradeTiers( state, usageData, shouldFilterPurchasedTiers )
+	);
 	// 3. Return the relevant upgrade options as a list.
 	return tiersForUi;
 }

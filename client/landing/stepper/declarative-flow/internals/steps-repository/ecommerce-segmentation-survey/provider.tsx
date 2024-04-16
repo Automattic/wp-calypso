@@ -13,7 +13,7 @@ type EcommerceSegmentationSurveyProviderType = {
 	children: React.ReactNode;
 	navigation: NavigationControls;
 	onSubmitQuestion: ( currentQuestion: Question ) => void;
-	questions: Question[];
+	questions?: Question[];
 };
 
 const EcommerceSegmentationSurveyProvider = ( {
@@ -24,7 +24,7 @@ const EcommerceSegmentationSurveyProvider = ( {
 }: EcommerceSegmentationSurveyProviderType ) => {
 	const searchParams = new URLSearchParams( page.current.split( '?' )[ 1 ] );
 	const currentPage = parseInt( searchParams.get( PAGE_QUERY_PARAM ) || '1', 10 );
-	const currentQuestion = questions[ currentPage - 1 ];
+	const currentQuestion = questions?.[ currentPage - 1 ];
 
 	const previousPage = () => {
 		if ( currentPage === 1 ) {
@@ -36,11 +36,11 @@ const EcommerceSegmentationSurveyProvider = ( {
 	};
 
 	const nextPage = ( skip: boolean ) => {
-		if ( ! skip ) {
+		if ( ! skip && currentQuestion ) {
 			onSubmitQuestion( currentQuestion );
 		}
 
-		if ( currentPage === questions.length ) {
+		if ( currentPage === questions?.length ) {
 			navigation.submit?.();
 			return;
 		}

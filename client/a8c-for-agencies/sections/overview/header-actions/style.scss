@@ -15,20 +15,10 @@
 		border-right: none;
 		font-size: 1rem;
 		height: 40px;
-
-		&:hover {
-			background: #fff;
-			border-color: var(--color-neutral-20);
-		}
 	}
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4 0;
-
-		&:hover {
-			background: #fff;
-			border-color: var(--color-neutral-20);
-		}
 
 		svg {
 			fill: #000;

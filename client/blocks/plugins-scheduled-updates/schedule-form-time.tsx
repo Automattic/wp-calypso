@@ -1,10 +1,7 @@
 import { SelectControl } from '@wordpress/components';
 import { useState } from 'react';
-import {
-	convertHourTo12,
-	convertHourTo24,
-} from 'calypso/blocks/plugins-update-manager/schedule-form.helper';
 import { HOUR_OPTIONS, HOUR_OPTIONS_24, PERIOD_OPTIONS } from './schedule-form.const';
+import { convertHourTo12, convertHourTo24 } from './schedule-form.helper';
 
 interface Props {
 	initHour: string;

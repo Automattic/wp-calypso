@@ -28,3 +28,23 @@
 	font-weight: 400;
 	margin: 0;
 }
+
+.hosting-card__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+
+	.badge {
+		display: flex;
+		background-color: #b8e6bf;
+		color: #00450c;
+
+	}
+}
+
+.hosting-card__pressable-dashboard-button {
+	svg {
+		margin-inline-start: 6px;
+	}
+}

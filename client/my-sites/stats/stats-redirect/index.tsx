@@ -78,7 +78,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 	}, [ dispatch, siteId, isLoadingNotices, purchaseNotPostponed ] );
 
 	// render purchase flow for Jetpack sites created after February 2024
-	if ( ! isLoading && redirectToPurchase && siteSlug ) {
+	if ( ! isLoading && redirectToPurchase && siteSlug && canUserManageOptions ) {
 		// We need to ensure we pass the irclick id for impact affiliate tracking if its set.
 		const currentParams = new URLSearchParams( window.location.search );
 		const queryParams = new URLSearchParams();
@@ -101,7 +101,7 @@ const StatsRedirectFlow: React.FC< StatsRedirectFlowProps > = ( { children } ) =
 		);
 
 		return null;
-	} else if ( ! isLoading || ( canUserViewStats && ! canUserManageOptions ) ) {
+	} else if ( ! isLoading && ( canUserViewStats || canUserManageOptions ) ) {
 		return <>{ children }</>;
 	} else if ( isLoading ) {
 		return <StatsLoader />;

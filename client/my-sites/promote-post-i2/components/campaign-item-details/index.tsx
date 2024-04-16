@@ -30,6 +30,7 @@ import {
 	getCampaignDurationFormatted,
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	formatCents,
@@ -88,6 +89,10 @@ const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
 
 export default function CampaignItemDetails( props: Props ) {
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isRunningInClassicSimple = useSelector( ( state ) =>
+		getSiteOption( state, props.siteId, 'is_wpcom_simple' )
+	);
+	const isRunningJetpackOrClassicSimple = isRunningInJetpack || isRunningInClassicSimple;
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -935,7 +940,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
-									showSupportModal={ ! isRunningInJetpack }
+									showSupportModal={ ! isRunningJetpackOrClassicSimple }
 								>
 									{ translate( 'View documentation' ) }
 									{ getExternalLinkIcon() }
