@@ -1,19 +1,22 @@
 import { CheckboxControl, SearchControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import type { SiteExcerptData } from '@automattic/sites';
 
 interface Props {
 	sites: SiteExcerptData[];
 	selectedSites?: number[];
+	onChange?: ( value: number[] ) => void;
 	borderWrapper?: boolean;
 }
 export const ScheduleFormSites = ( props: Props ) => {
-	const { sites, selectedSites: initSites = [], borderWrapper = true } = props;
+	const { sites, selectedSites: initSites = [], onChange, borderWrapper = true } = props;
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( initSites );
+
+	useEffect( () => onChange?.( selectedSites ), [ selectedSites ] );
 
 	const onSiteSelectionChange = useCallback(
 		( site: SiteExcerptData, isChecked: boolean ) => {
