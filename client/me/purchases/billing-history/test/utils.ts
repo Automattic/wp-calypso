@@ -36,12 +36,14 @@ describe( 'utils', () => {
 					product_slug: 'wp-domains',
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
+					cost_overrides: [],
 				},
 				{
 					id: '3',
 					product_slug: 'wp-domains',
 					domain: 'bar.com',
 					variation_slug: 'wp-private-registration',
+					cost_overrides: [],
 				},
 			] );
 			const expected = [
@@ -51,12 +53,14 @@ describe( 'utils', () => {
 					product_slug: 'wp-domains',
 					variation_slug: 'wp-private-registration',
 					domain: 'foo.com',
+					cost_overrides: [],
 				},
 				{
 					id: '3',
 					product_slug: 'wp-domains',
 					variation_slug: 'wp-private-registration',
 					domain: 'bar.com',
+					cost_overrides: [],
 				},
 			];
 			const result = groupDomainProducts( items, ident );
@@ -72,12 +76,14 @@ describe( 'utils', () => {
 					product_slug: 'wp-domains',
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
+					cost_overrides: [],
 				},
 				{
 					id: '3',
 					product_slug: 'wp-domains',
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
+					cost_overrides: [],
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
@@ -95,6 +101,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 2,
 					amount_integer: 200,
+					cost_overrides: [],
 				},
 				{
 					id: '2',
@@ -104,6 +111,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 3,
 					amount_integer: 300,
+					cost_overrides: [],
 				},
 				{
 					id: '3',
@@ -113,6 +121,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 7,
 					amount_integer: 700,
+					cost_overrides: [],
 				},
 				{
 					id: '4',
@@ -122,6 +131,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 9,
 					amount_integer: 900,
+					cost_overrides: [],
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
@@ -143,6 +153,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 2,
 					amount_integer: 200,
+					cost_overrides: [],
 				},
 				{
 					id: '2',
@@ -153,6 +164,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 3,
 					amount_integer: 300,
+					cost_overrides: [],
 				},
 				{
 					id: '3',
@@ -163,6 +175,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 7,
 					amount_integer: 700,
+					cost_overrides: [],
 				},
 				{
 					id: '4',
@@ -173,6 +186,7 @@ describe( 'utils', () => {
 					currency: 'USD',
 					raw_amount: 9,
 					amount_integer: 900,
+					cost_overrides: [],
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
