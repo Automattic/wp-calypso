@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useExperiment } from 'calypso/lib/explat';
 import type { DataResponse } from '@automattic/plans-grid-next';
 
@@ -9,13 +8,6 @@ function useRefundPeriodInSignupHeaderBanner( flowName?: string | null ): DataRe
 			isEligible: flowName === 'onboarding',
 		}
 	);
-
-	if ( config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) ) {
-		return {
-			isLoading: false,
-			result: true,
-		};
-	}
 
 	return {
 		isLoading,

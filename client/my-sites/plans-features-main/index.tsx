@@ -77,6 +77,7 @@ import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { usePlanUpgradeCreditsApplicable } from './hooks/use-plan-upgrade-credits-applicable';
+import useRefundPeriodInSignupHeaderBanner from './hooks/use-refund-period-in-signup-header-banner';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
