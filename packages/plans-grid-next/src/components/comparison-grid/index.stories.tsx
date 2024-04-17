@@ -3,21 +3,29 @@ import { Meta } from '@storybook/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ComparisonGrid, useGridPlansForComparisonGrid } from '../..';
 import { defaultArgs } from '../../storybook-mocks';
-const queryClient = new QueryClient();
-const RenderFeaturesGrid = ( props: any ) => {
-	const filteredPlansForPlanFeatures = defaultArgs.gridPlans;
 
-	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
-		allFeaturesList: getFeaturesList(),
-		gridPlans: filteredPlansForPlanFeatures,
-		selectedFeature: props.selectedFeature,
-		showLegacyStorageFeature: props.showLegacyStorageFeature,
-	} );
+const queryClient = new QueryClient();
+
+const RenderComparisonGrid = ( props: any ) => {
+	const useGridPlans = () => defaultArgs.gridPlans;
+
+	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid(
+		{
+			allFeaturesList: getFeaturesList(),
+			selectedFeature: props.selectedFeature,
+			showLegacyStorageFeature: props.showLegacyStorageFeature,
+			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
+			storageAddOns: [],
+		},
+		useGridPlans
+	);
+
 	return <ComparisonGrid { ...props } gridPlans={ gridPlansForComparisonGrid } />;
 };
+
 export default {
 	title: 'plans-grid-next',
-	component: RenderFeaturesGrid,
+	component: RenderComparisonGrid,
 	decorators: [
 		( Story ) => (
 			<QueryClientProvider client={ queryClient }>

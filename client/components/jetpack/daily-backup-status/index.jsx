@@ -19,6 +19,7 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import {
 	getInProgressBackupForSite,
 	getRewindStorageUsageLevel,
+	getFinishedBackupForSiteById,
 } from 'calypso/state/rewind/selectors';
 import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -71,6 +72,14 @@ const DailyBackupStatus = ( {
 		}
 	}, [ backupCurrentlyInProgress ] );
 
+	// Using the id from backupPreviouslyInProgress get the backup if it finished successfully.
+	const backupFinishedSuccessfully = useSelector( ( state ) => {
+		if ( backupPreviouslyInProgress.current ) {
+			return getFinishedBackupForSiteById( state, siteId, backupPreviouslyInProgress.current.id );
+		}
+		return null;
+	} );
+
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch
 	const inProgressDate = backupPreviouslyInProgress.current
@@ -102,12 +111,16 @@ const DailyBackupStatus = ( {
 	// but unfortunately there's a lag between the time a backup completes
 	// and when it becomes visible through the Activity Log API.
 	if ( selectedDate.isSame( today, 'day' ) && backupPreviouslyInProgress.current ) {
-		return (
-			<BackupJustCompleted
-				justCompletedBackupDate={ inProgressDate }
-				lastBackupDate={ lastBackupDate }
-			/>
-		);
+		if ( backupFinishedSuccessfully ) {
+			return (
+				<BackupJustCompleted
+					justCompletedBackupDate={ inProgressDate }
+					lastBackupDate={ lastBackupDate }
+				/>
+			);
+		}
+		// There was a backup in progress, but it failed.
+		return <BackupFailed backup={ { activityTs: Date.now() } } />;
 	}
 
 	if ( backup ) {

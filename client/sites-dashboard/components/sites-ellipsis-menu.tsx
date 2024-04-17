@@ -38,6 +38,7 @@ import {
 	getSiteMonitoringUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
+	isSimpleSite,
 	isP2Site,
 } from '../utils';
 import type { SiteExcerptData } from '@automattic/sites';
@@ -448,6 +449,7 @@ export const SitesEllipsisMenu = ( {
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
 	const isLaunched = site.launch_status !== 'unlaunched';
+	const isClassicSimple = isWpAdminInterface && isSimpleSite( site );
 	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
 
 	return (
@@ -468,18 +470,20 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (
 						<CopySiteItem { ...props } onClick={ startSiteCopy } />
 					) }
-					<MenuItemLink
-						href={
-							isWpAdminInterface
-								? `${ wpAdminUrl }options-general.php?page=page-optimize`
-								: `/settings/performance/${ site.slug }`
-						}
-						onClick={ () =>
-							recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
-						}
-					>
-						{ __( 'Performance settings' ) }
-					</MenuItemLink>
+					{ ! isClassicSimple && (
+						<MenuItemLink
+							href={
+								isWpAdminInterface
+									? `${ wpAdminUrl }options-general.php?page=page-optimize`
+									: `/settings/performance/${ site.slug }`
+							}
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
+							}
+						>
+							{ __( 'Performance settings' ) }
+						</MenuItemLink>
+					) }
 					{ isLaunched && (
 						<MenuItemLink
 							href={ `/settings/general/${ site.slug }#site-privacy-settings` }

@@ -95,6 +95,7 @@ export class PlansStep extends Component {
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
+			deemphasizeFreePlan,
 			hideFreePlan,
 			isLaunchPage,
 			selectedSite,
@@ -138,6 +139,7 @@ export class PlansStep extends Component {
 					onUpgradeClick={ ( cartItems ) => this.onSelectPlan( cartItems ) }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain } // TODO clk investigate
+					deemphasizeFreePlan={ deemphasizeFreePlan }
 					plansWithScroll={ this.state.isDesktop }
 					intent={ intent }
 					flowName={ flowName }

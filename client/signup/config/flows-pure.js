@@ -200,14 +200,12 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
+				domains: {
+					useAlternateDomainMessaging: true,
+				},
 				plans: {
-					/**
-					 * This intent is geared towards customizations related to the paid media flow
-					 * Current customizations are as follows
-					 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
-					 */
-					intent: 'plans-paid-media',
 					isCustomDomainAllowedOnFreePlan: true,
+					deemphasizeFreePlan: true,
 				},
 			},
 		},

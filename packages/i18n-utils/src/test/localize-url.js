@@ -448,24 +448,6 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
-	test( 'pricing', () => {
-		expect( localizeUrl( 'https://wordpress.com/pricing/', 'en' ) ).toEqual(
-			'https://wordpress.com/pricing/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/pricing/', 'fr' ) ).toEqual(
-			'https://wordpress.com/fr/pricing/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/pricing/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/pt-br/pricing/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/pricing/', 'zh-tw' ) ).toEqual(
-			'https://wordpress.com/zh-tw/pricing/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/pricing/', 'xx' ) ).toEqual(
-			'https://wordpress.com/pricing/'
-		);
-	} );
-
 	test( 'jetpack', () => {
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'en' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'

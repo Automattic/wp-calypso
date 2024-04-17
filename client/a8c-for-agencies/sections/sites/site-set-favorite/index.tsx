@@ -27,7 +27,7 @@ interface Props {
 	siteUrl: string;
 }
 
-export default function A4ASiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
+export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();

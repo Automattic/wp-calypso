@@ -41,16 +41,19 @@ type NavItem = {
 	label: string;
 	path: string;
 	showIntervals: boolean;
+	paywall?: boolean;
 };
 const traffic = {
 	label: translate( 'Traffic' ),
 	path: '/stats',
 	showIntervals: true,
+	paywall: true,
 } as NavItem;
 const insights = {
 	label: translate( 'Insights' ),
 	path: '/stats/insights',
 	showIntervals: false,
+	paywall: true,
 } as NavItem;
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.

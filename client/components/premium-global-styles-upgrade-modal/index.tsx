@@ -40,7 +40,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
 		planSlugs: [ PLAN_PREMIUM ],
-		selectedSiteId,
+		siteId: selectedSiteId,
 		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
