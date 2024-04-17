@@ -31,6 +31,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
@@ -68,6 +69,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation();
 
 	const urlData = useSelector( getUrlData );
 
@@ -197,6 +199,16 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
 			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
+
+			return {
+				siteId: site.siteId,
+				siteSlug: site.siteSlug,
+				goToCheckout: false,
+			};
+		}
+
+		if ( isEntrepreneurFlow( flow ) && site ) {
+			await addEcommerceTrial( { siteId: site.siteId } );
 
 			return {
 				siteId: site.siteId,
