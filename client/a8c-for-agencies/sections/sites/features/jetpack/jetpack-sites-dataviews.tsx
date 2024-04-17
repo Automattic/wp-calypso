@@ -1,37 +1,42 @@
-import { Button, Gridicon, Spinner } from '@automattic/components';
-import { DataViews } from '@wordpress/dataviews';
+import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
-import ItemsDataViews, {
-	ItemsDataViewsProps,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsColumn } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
-import { SiteInfo } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
+import {
+	SiteInfo,
+	SitesDataViewsProps,
+} from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { AllowedTypes, Site } from '../types';
+import { AllowedTypes, Site } from '../../types';
 
-//ItemsDataViewsProps get all the props as parameters
 export const JetpackSitesDataViews = ( {
 	data,
-	isLoading = false,
+	isLoading,
 	isLargeScreen,
+	onSitesViewChange,
+	sitesViewState,
+	forceTourExampleSite = false,
 	className,
-}: ItemsDataViewsProps ) => {
+}: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 
-	const [ itemsData, setItemsData ] = useState< ItemsDataViews >( {
-		...data,
-	} );
+	const { showOnlyFavorites } = useContext( SitesDashboardContext );
+	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
+	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
+	const totalPages = Math.ceil( totalSites / sitesPerPage );
+
+	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
@@ -347,13 +352,37 @@ export const JetpackSitesDataViews = ( {
 		]
 	);
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
+	const useExampleDataForTour =
+		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
+
+	const [ itemsData, setItemsData ] = useState< ItemsDataViews >( {
+		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
+		pagination: {
+			totalItems: totalSites,
+			totalPages: totalPages,
+		},
+		itemFieldId: 'site.value.blog_id',
+		searchLabel: translate( 'Search for Sites' ),
+		fields: [],
+		actions: [],
+		onDataViewsStateChange: onSitesViewChange,
+		dataViewsState: sitesViewState,
+		selectedItem: sitesViewState.selectedSite,
+	} );
+
 	// Update the data packet
 	useEffect( () => {
 		setItemsData( ( prevState ) => ( {
 			...prevState,
+			items: data?.sites,
 			fields: fields,
+			onDataViewsStateChange: onSitesViewChange,
+			dataViewsState: sitesViewState,
+			selectedItem: sitesViewState.selectedSite,
 		} ) );
-	}, [ fields ] );
+	}, [ fields, sitesViewState, onSitesViewChange, data?.sites ] );
 
 	return (
 		<ItemsDataViews
