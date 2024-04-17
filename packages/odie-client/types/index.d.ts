@@ -77,6 +77,6 @@ declare module 'calypso/components/async-load' {
 interface Window {
 	odieUserData: {
 		displayName: string;
-		avatarUrl?: string;
+		email?: string;
 	};
 }

@@ -128,17 +128,13 @@ class Help_Center {
 		);
 
 		$current_user = wp_get_current_user();
-		$avatar_url   = \wpcom_get_avatar_url( $current_user->ID, 32 );
-		$user_data    = array(
-			'displayName' => $current_user->first_name,
-			'avatarUrl'   => $avatar_url,
-		);
 
 		wp_localize_script(
 			'help-center-script',
 			'odieUserData',
 			array(
-				'userData' => $user_data,
+				'displayName' => $current_user->data->display_name,
+				'email'       => $current_user->data->user_email,
 			)
 		);
 
