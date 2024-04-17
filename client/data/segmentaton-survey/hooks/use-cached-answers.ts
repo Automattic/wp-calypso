@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Answers } from 'calypso/components/survey-container/types';
 
 const useCachedAnswers = ( surveyKey: string ) => {
-	const cacheKey = useMemo( () => `survey-${ surveyKey }`, [ surveyKey ] );
+	const cacheKey = `survey-${ surveyKey }`;
 
 	const [ answers, setAnswersState ] = useState< Answers >(
 		JSON.parse( localStorage.getItem( cacheKey ) || '{}' )

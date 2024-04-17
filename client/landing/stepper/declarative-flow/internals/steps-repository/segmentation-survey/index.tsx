@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SurveyContainer from 'calypso/components/survey-container';
@@ -30,21 +31,27 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 	const { mutate } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
 	const { answers, setAnswers } = useCachedAnswers( SURVEY_KEY );
 
+	const onChangeAnswer = useCallback(
+		( questionKey: string, value: string[] ) => {
+			const newAnswers = { ...answers, [ questionKey ]: value };
+			setAnswers( newAnswers );
+		},
+		[ answers, setAnswers ]
+	);
+
+	const onSubmitQuestion = useCallback(
+		( currentQuestion: Question ) => {
+			mutate( {
+				questionKey: currentQuestion.key,
+				answerKeys: answers[ currentQuestion.key ] || [],
+			} );
+		},
+		[ answers, mutate ]
+	);
+
 	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {
 		return null;
 	}
-
-	const onChangeAnswer = ( questionKey: string, value: string[] ) => {
-		const newAnswers = { ...answers, [ questionKey ]: value };
-		setAnswers( newAnswers );
-	};
-
-	const onSubmitQuestion = ( currentQuestion: Question ) => {
-		mutate( {
-			questionKey: currentQuestion.key,
-			answerKeys: answers[ currentQuestion.key ] || [],
-		} );
-	};
 
 	return (
 		<Main className="segmentation-survey-step">
