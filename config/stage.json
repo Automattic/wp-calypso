@@ -20,7 +20,7 @@
 		"ad-tracking": false,
 		"akismet/checkout-quantity-dropdown": true,
 		"calypso/ai-blogging-prompts": false,
-		"calypso/ai-assembler": false,
+		"calypso/ai-assembler": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
