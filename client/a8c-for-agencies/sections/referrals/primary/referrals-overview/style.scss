@@ -1,0 +1,11 @@
+.referrals-overview__section-heading {
+	margin-block-start: 24px;
+	font-size: rem(24px);
+	margin-block-end: 48px;
+}
+
+.referrals-overview__section-container {
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+}

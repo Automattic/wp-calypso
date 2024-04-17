@@ -14,6 +14,9 @@ export interface SitesDashboardContextInterface {
 	sitesViewState: SitesViewState;
 	setSitesViewState: React.Dispatch< React.SetStateAction< SitesViewState > >;
 
+	hideListing?: boolean;
+	setHideListing: ( hideListing: boolean ) => void;
+
 	showOnlyFavorites?: boolean;
 	setShowOnlyFavorites: ( showOnlyFavorites: boolean ) => void;
 

@@ -792,6 +792,7 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isSignupExistingAccount,
 			isSocialFirst,
+			isFromAutomatticForAgenciesPlugin,
 			loginButtons,
 		} = this.props;
 
@@ -900,6 +901,7 @@ class Login extends Component {
 							signupUrl={ signupUrl }
 							showSocialLoginFormOnly={ true }
 							sendMagicLoginLink={ this.sendMagicLoginLink }
+							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 						/>
 					</div>
 				);
@@ -928,6 +930,7 @@ class Login extends Component {
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
 				loginButtons={ loginButtons }
+				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			/>
 		);
 	}
@@ -937,13 +940,15 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo } = this.props;
+		const { isJetpack, oauth2Client, locale, isWoo, isFromAutomatticForAgenciesPlugin } =
+			this.props;
 
 		return (
 			<div
 				className={ classNames( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
 				} ) }
 			>
@@ -979,6 +984,8 @@ export default connect(
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
+		isFromAutomatticForAgenciesPlugin:
+			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
@@ -992,8 +999,6 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
 		),
-		isFromAutomatticForAgenciesPlugin:
-			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 		currentQuery: getCurrentQueryArguments( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),

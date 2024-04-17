@@ -120,11 +120,6 @@
 	font-weight: 500;
 	line-height: 1.375;
 
-	&:hover {
-		background-color: var(--color-accent-0);
-
-	}
-
 	@include break-large {
 		padding: 7px;
 		font-size: 0.75rem;
