@@ -573,6 +573,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
+		{
+			name: 'ecommerce-3y',
+			steps: [ userSocialStep, 'domains', 'plans-ecommerce-3y' ],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2024-04-17',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
 
 		{
 			name: 'business-2y',
@@ -581,6 +590,16 @@ export function generateFlows( {
 			description:
 				'Create an account and a blog and then add the business 2y plan to the users cart.',
 			lastModified: '2023-10-11',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'business-3y',
+			steps: [ userSocialStep, 'domains', 'plans-business-3y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the business 3y plan to the users cart.',
+			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -596,12 +615,32 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
+			name: 'premium-3y',
+			steps: [ userSocialStep, 'domains', 'plans-premium-3y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the premium 3y plan to the users cart.',
+			lastModified: '2024-04-17',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'personal-2y',
 			steps: [ userSocialStep, 'domains', 'plans-personal-2y' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal 2y plan to the users cart.',
 			lastModified: '2023-10-11',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'personal-3y',
+			steps: [ userSocialStep, 'domains', 'plans-personal-3y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the personal 3y plan to the users cart.',
+			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
