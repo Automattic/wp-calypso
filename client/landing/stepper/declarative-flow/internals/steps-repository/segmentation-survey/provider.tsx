@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router';
 import { SurveyContext } from 'calypso/components/survey-container/context';
 import { Question } from 'calypso/components/survey-container/types';
 import type { NavigationControls } from '../../types';
@@ -15,30 +17,40 @@ const SegmentationSurveyProvider = ( {
 	onSubmitQuestion,
 	questions,
 }: SegmentationSurveyProviderType ) => {
-	const currentPage = parseInt( window.location.hash.replace( '#', '' ), 10 ) || 1;
-	const currentQuestion = questions?.[ currentPage - 1 ];
+	const { hash } = useLocation();
+	const currentPage = useMemo( () => parseInt( hash.replace( '#', '' ), 10 ) || 1, [ hash ] );
 
-	const previousPage = () => {
+	const currentQuestion = useMemo(
+		() => questions?.[ currentPage - 1 ],
+		[ currentPage, questions ]
+	);
+
+	const previousPage = useCallback( () => {
 		if ( currentPage === 1 ) {
 			navigation.goBack?.();
 			return;
 		}
 
 		window.location.hash = `${ currentPage - 1 }`;
-	};
+	}, [ currentPage, navigation ] );
 
-	const nextPage = ( skip: boolean ) => {
-		if ( ! skip && currentQuestion ) {
-			onSubmitQuestion( currentQuestion );
-		}
+	const nextPage = useCallback(
+		( skip: boolean = false ) => {
+			if ( ! skip && currentQuestion ) {
+				onSubmitQuestion( currentQuestion );
+			}
 
-		if ( currentPage === questions?.length ) {
-			navigation.submit?.();
-			return;
-		}
+			if ( currentPage === questions?.length ) {
+				navigation.submit?.();
+				return;
+			}
 
-		window.location.hash = `${ currentPage + 1 }`;
-	};
+			window.location.hash = `${ currentPage + 1 }`;
+		},
+		[ currentPage, currentQuestion, navigation, onSubmitQuestion, questions?.length ]
+	);
+
+	const skip = useCallback( () => nextPage( true ), [ nextPage ] );
 
 	return (
 		<SurveyContext.Provider
@@ -46,8 +58,8 @@ const SegmentationSurveyProvider = ( {
 				currentQuestion,
 				currentPage,
 				previousPage,
-				nextPage: () => nextPage( false ),
-				skip: () => nextPage( true ),
+				nextPage,
+				skip,
 			} }
 		>
 			{ children }
