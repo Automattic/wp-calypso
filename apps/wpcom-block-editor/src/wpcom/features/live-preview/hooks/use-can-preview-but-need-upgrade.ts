@@ -136,6 +136,8 @@ export const useCanPreviewButNeedUpgrade = (
 	const [ checkoutTab, setCheckoutTab ] = useState< Window | null >();
 	const [ checkoutStatus, setCheckoutStatus ] = useState< CheckoutStatus >( '' );
 
+	// TODO: This doesn't work on sites with longer length plans, the plan should be the
+	// biannual / trieenial plan.
 	let requiredPlanSlug = '';
 	switch ( previewingTheme.type ) {
 		case WOOCOMMERCE_THEME:
