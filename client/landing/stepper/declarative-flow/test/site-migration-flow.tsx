@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
@@ -27,6 +28,7 @@ describe( 'Site Migration Flow', () => {
 	describe( 'navigation', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
@@ -54,7 +56,15 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify`
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						from: 'https://example-to-be-migrated.com',
+						origin: 'site-migration-identify',
+						backToFlow: '/site-migration/site-migration-identify',
+					},
+					'/setup/site-setup/importList'
+				)
 			);
 		} );
 
@@ -68,7 +78,14 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/setup/site-setup/${ STEPS.IMPORT_LIST.slug }?siteSlug=example.wordpress.com&origin=site-migration-identify`
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						origin: 'site-migration-identify',
+						backToFlow: '/site-migration/site-migration-identify',
+					},
+					'/setup/site-setup/importList'
+				)
 			);
 		} );
 
@@ -157,7 +174,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from verifyEmail back to upgrade-plan', () => {
+		it( 'redirects from verifyEmail to site-migration-assign-trial-plan step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -168,14 +185,27 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }`,
+				path: `/${ STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug }`,
 				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-assign-trial-plan step to bundleTransfer step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: '/bundleTransfer',
+				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 	} );
 
 	describe( 'goBack', () => {
-		it( 'backs to the indentify step', async () => {
+		it( 'backs to the identify step', async () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {

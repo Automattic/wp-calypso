@@ -4,8 +4,8 @@ export type Survey = {
 };
 
 export enum QuestionType {
-	SINGLE_CHOICE = 'single',
-	MULTIPLE_CHOICE = 'multiple',
+	SINGLE_CHOICE = 'single_choice',
+	MULTIPLE_CHOICE = 'multiple_choice',
 }
 
 export type Option = {

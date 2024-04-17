@@ -50,6 +50,10 @@ export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
 };
 
+export const isSimpleSite = ( site: SiteExcerptNetworkData ) => {
+	return ! site?.jetpack && ! site?.is_wpcom_atomic;
+};
+
 export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 	return site.options?.is_wpforteams_site;
 };

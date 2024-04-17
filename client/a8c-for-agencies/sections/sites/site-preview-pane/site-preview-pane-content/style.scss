@@ -43,13 +43,6 @@
 		fill: #fff;
 		padding-left: 8px;
 	}
-
-	.button {
-		font-weight: 500;
-		border-color: unset;
-		border: 1px solid var(--color-accent);
-	}
-
 }
 
 .site-preview-pane__stats-content,
@@ -118,5 +111,9 @@
 
 	.site-expanded-content__card-content-score-title {
 		text-align: left;
+	}
+
+	a.site-expanded-content__card-button {
+		color: var(--color-surface-backdrop);
 	}
 }

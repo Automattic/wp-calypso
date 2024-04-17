@@ -89,6 +89,16 @@
 
 		box-sizing: border-box;
 		border-radius: 4px;
+
+		background-color: var(--color-surface);
+		border-color: var(--color-accent-5);
+		fill: var(--color-accent-100);
+		color: var(--color-accent-100);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-accent-0);
+		}
 	}
 
 	.button.split-button__toggle {
@@ -103,15 +113,37 @@
 		background-color: var(--color-primary-50);
 		border-color: var(--color-primary-50);
 		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
 
 		&:hover,
-		&:focus,
 		&:focus-visible {
 			background-color: var(--color-primary-70);
 			border-color: var(--color-primary-70);
+			fill: var(--color-text-inverted);
 			color: var(--color-text-inverted);
 			box-shadow: none;
-			border: 1px solid;
+		}
+	}
+
+	.button.is-scary {
+		color: var(--color-scary-50);
+		border-color: var(--color-scary-50);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-scary-0);
+			border-color: var(--color-scary-60);
+			color: var(--color-scary-60);
+		}
+	}
+
+	.button.is-primary.is-scary {
+		background-color: var(--color-scary-50);
+		color: var(--color-text-inverted);
+
+		&:hover,
+		&:focus-visible {
+			background-color: var(--color-scary-60);
 		}
 	}
 
