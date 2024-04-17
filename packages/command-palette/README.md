@@ -67,8 +67,7 @@ The `CommandPalette` component requires the following properties:
 - `userCapabilities`: Type `object`, used to indicate the capabilities of the user on all the sites.
 
 ```tsx
-import CommandPalette from '@automattic/command-palette';
-import { COMMANDS } from '@automattic/command-palette';
+import CommandPalette, { COMMANDS } from '@automattic/command-palette';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';

@@ -90,6 +90,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 		supportCommercialUse,
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
+		hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
 		isLoading: ! hasLoadedSitePurchases || isRequestingSitePurchases,
 	};
 }

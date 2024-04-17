@@ -2223,7 +2223,7 @@ __metadata:
     eslint-plugin-inclusive-language: "npm:^2.2.1"
     eslint-plugin-json-es: "npm:^1.5.7"
     eslint-plugin-md: "npm:^1.0.19"
-    eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.13.0"
+    eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.14.0"
     jest: "npm:^29.7.0"
     lodash: "npm:^4.17.21"
     moment: "npm:^2.26.0"
@@ -12430,7 +12430,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
     lru: "npm:^3.1.0"
-    lunr: "npm:^2.3.8"
+    lunr: "npm:^2.3.9"
     marked: "npm:^4.0.0"
     mock-fs: "npm:^5.2.0"
     mockdate: "npm:^2.0.5"
@@ -16431,15 +16431,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-mocha@npm:^10.3.0":
-  version: 10.3.0
-  resolution: "eslint-plugin-mocha@npm:10.3.0"
+"eslint-plugin-mocha@npm:^10.4.1":
+  version: 10.4.2
+  resolution: "eslint-plugin-mocha@npm:10.4.2"
   dependencies:
     eslint-utils: "npm:^3.0.0"
+    globals: "npm:^13.24.0"
     rambda: "npm:^7.4.0"
   peerDependencies:
     eslint: ">=7.0.0"
-  checksum: 33f46c73dc89dec02b586045875d4e4b74857e96c0a8dcf6071b033bb91bbce30875179732008a5158eea5acd7eb633f59e5f9509b045bd5856cbed67f1aada9
+  checksum: b7eb4b1b2766f1a3c3dce7534ede0db7dc67510d241c56a57d4cd45ffbdc425c5cb021a2e9fffc07f3f8339e03bc5a1d853b2a1b75d07e0bae3fe12f0602a603
   languageName: node
   linkType: hard
 
@@ -16485,9 +16486,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.27.0, eslint-plugin-react@npm:^7.34.0":
-  version: 7.34.0
-  resolution: "eslint-plugin-react@npm:7.34.0"
+"eslint-plugin-react@npm:^7.27.0, eslint-plugin-react@npm:^7.34.1":
+  version: 7.34.1
+  resolution: "eslint-plugin-react@npm:7.34.1"
   dependencies:
     array-includes: "npm:^3.1.7"
     array.prototype.findlast: "npm:^1.2.4"
@@ -16509,7 +16510,7 @@ __metadata:
     string.prototype.matchall: "npm:^4.0.10"
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
-  checksum: 9bf0b959373ace66e799adbbfb493a7ceae54751e8f90fcce1da1a2a67b277ee23ba845571eaa4d4f05d96dba4e4977bf938b350f18bad26201fa616ee6aa4b8
+  checksum: 7c61b1314d37a4ac2f2474f9571f801f1a1a5d81dcd4abbb5d07145406518722fb792367267757ee116bde254be9753242d6b93c9619110398b3fe1746e4848c
   languageName: node
   linkType: hard
 
@@ -16527,7 +16528,7 @@ __metadata:
     eslint: ">=8.57.0"
     eslint-plugin-inclusive-language: ^2.2.1
     eslint-plugin-jsdoc: ^46.10.1
-    eslint-plugin-react: ^7.34.0
+    eslint-plugin-react: ^7.34.1
     eslint-plugin-react-hooks: ^4.3.0
   peerDependenciesMeta:
     eslint-plugin-react:
@@ -16537,12 +16538,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"eslint-plugin-you-dont-need-lodash-underscore@npm:^6.13.0":
-  version: 6.13.0
-  resolution: "eslint-plugin-you-dont-need-lodash-underscore@npm:6.13.0"
+"eslint-plugin-you-dont-need-lodash-underscore@npm:^6.14.0":
+  version: 6.14.0
+  resolution: "eslint-plugin-you-dont-need-lodash-underscore@npm:6.14.0"
   dependencies:
     kebab-case: "npm:^1.0.0"
-  checksum: 5990d24745f38f110ad7ce61ac6f358fbd1a119412a2aed7ece3b8a86555636d4c591af2e81858e64903631e7506412eaa4369825d69b69a4029a0339f759551
+  checksum: 23dadc91b754b9afdd5c9d87509f21e1c627888dc8a5e34c3d3181521ce9c5e87b4d1f5c693413d857e7fbb6e54b6d471adb1ee1e912fc8824a982f1762a11e0
   languageName: node
   linkType: hard
 
@@ -18347,12 +18348,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^13.12.0, globals@npm:^13.19.0":
-  version: 13.20.0
-  resolution: "globals@npm:13.20.0"
+"globals@npm:^13.12.0, globals@npm:^13.19.0, globals@npm:^13.24.0":
+  version: 13.24.0
+  resolution: "globals@npm:13.24.0"
   dependencies:
     type-fest: "npm:^0.20.2"
-  checksum: 9a028f136f1e7a3574689f430f7d57faa0d699c4c7e92ade00b02882a892be31c314d50dff07b48e607283013117bb8a997406d03a1f7ab4a33a005eb16efd6c
+  checksum: d3c11aeea898eb83d5ec7a99508600fbe8f83d2cf00cbb77f873dbf2bcb39428eff1b538e4915c993d8a3b3473fa71eeebfe22c9bb3a3003d1e26b1f2c8a42cd
   languageName: node
   linkType: hard
 
@@ -22356,10 +22357,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lunr@npm:^2.3.8":
-  version: 2.3.8
-  resolution: "lunr@npm:2.3.8"
-  checksum: 6838c0ac49480d14e10b9f431a3ab52155d2136c02ad45c423a930b98dacb906d3d75cea97bf0a3e427c2ca48e245fb3f2cfc48cb9e1e7a6b4ac0c56acc72286
+"lunr@npm:^2.3.9":
+  version: 2.3.9
+  resolution: "lunr@npm:2.3.9"
+  checksum: 77d7dbb4fbd602aac161e2b50887d8eda28c0fa3b799159cee380fbb311f1e614219126ecbbd2c3a9c685f1720a8109b3c1ca85cc893c39b6c9cc6a62a1d8a8b
   languageName: node
   linkType: hard
 
@@ -22372,7 +22373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lzma-native@npm:^8.0.5":
+"lzma-native@npm:^8.0.6":
   version: 8.0.6
   resolution: "lzma-native@npm:8.0.6"
   dependencies:
@@ -30763,8 +30764,8 @@ __metadata:
   linkType: hard
 
 "tar@npm:^6.0.2, tar@npm:^6.0.5, tar@npm:^6.1.11, tar@npm:^6.1.13, tar@npm:^6.1.2":
-  version: 6.2.0
-  resolution: "tar@npm:6.2.0"
+  version: 6.2.1
+  resolution: "tar@npm:6.2.1"
   dependencies:
     chownr: "npm:^2.0.0"
     fs-minipass: "npm:^2.0.0"
@@ -30772,7 +30773,7 @@ __metadata:
     minizlib: "npm:^2.1.1"
     mkdirp: "npm:^1.0.3"
     yallist: "npm:^4.0.0"
-  checksum: 02ca064a1a6b4521fef88c07d389ac0936730091f8c02d30ea60d472e0378768e870769ab9e986d87807bfee5654359cf29ff4372746cc65e30cbddc352660d8
+  checksum: a5eca3eb50bc11552d453488344e6507156b9193efd7635e98e867fab275d527af53d8866e2370cd09dfe74378a18111622ace35af6a608e5223a7d27fe99537
   languageName: node
   linkType: hard
 
@@ -33341,12 +33342,12 @@ __metadata:
     eslint-plugin-jsdoc: "npm:^46.10.1"
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
     eslint-plugin-md: "npm:^1.0.19"
-    eslint-plugin-mocha: "npm:^10.3.0"
+    eslint-plugin-mocha: "npm:^10.4.1"
     eslint-plugin-prettier: "npm:^5.1.3"
-    eslint-plugin-react: "npm:^7.34.0"
+    eslint-plugin-react: "npm:^7.34.1"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-wpcalypso: "workspace:^"
-    eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.13.0"
+    eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.14.0"
     fsevents: "npm:^2.3.3"
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.1.6"
@@ -33363,7 +33364,7 @@ __metadata:
     loader-utils: "npm:^1.4.2"
     lodash: "npm:^4.17.21"
     lottie-web: "npm:^5.9.6"
-    lunr: "npm:^2.3.8"
+    lunr: "npm:^2.3.9"
     mixedindentlint: "npm:^1.2.0"
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
