@@ -115,7 +115,6 @@ const importHostedSiteFlow: Flow = {
 							urlQueryParams.set( 'siteSlug', selectedSite.slug );
 							urlQueryParams.set( 'from', fromParam as string );
 							urlQueryParams.set( 'option', 'everything' );
-
 							return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 						}
 
@@ -206,9 +205,13 @@ const importHostedSiteFlow: Flow = {
 					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
-					// remove the siteSlug in case they want to change the destination site
-					urlQueryParams.delete( 'siteSlug' );
-					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+					if ( urlQueryParams.has( 'showModal' ) ) {
+						// remove the siteSlug in case they want to change the destination site
+						urlQueryParams.delete( 'siteSlug' );
+						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+					}
+					urlQueryParams.set( 'showModal', 'true' );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker':
 					// remove the from parameter to restart the flow

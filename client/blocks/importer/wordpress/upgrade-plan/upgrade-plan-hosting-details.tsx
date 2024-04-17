@@ -4,6 +4,7 @@ import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
@@ -16,6 +17,7 @@ export const UpgradePlanHostingDetails = () => {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	let importSiteHostName = '';
+	const showModal = getQueryArg( window.location.href, 'showModal' )?.toString() === 'true';
 
 	try {
 		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
@@ -39,8 +41,24 @@ export const UpgradePlanHostingDetails = () => {
 		hostingProviderName !== 'Unknown' &&
 		hostingProviderName !== 'WordPress.com';
 
+	const navigateBack = () => {
+		const queryParams = new URLSearchParams( window.location.search );
+		queryParams.delete( 'siteSlug' );
+		queryParams.delete( 'showModal' );
+		// Navigate back to site picker keeping necessary the query params.
+		window.location.assign( `sitePicker?${ queryParams.toString() }` );
+	};
+
 	return (
 		<div className="import__upgrade-plan-hosting-details">
+			{ showModal && (
+				<ConfirmModal
+					confirmText="Take the deal"
+					cancelText="Navigate back"
+					onClose={ navigateBack }
+					onConfirm={ () => {} }
+				/>
+			) }
 			<div className="import__upgrade-plan-hosting-details-card-container">
 				<div className="import__upgrade-plan-hosting-details-header">
 					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>
