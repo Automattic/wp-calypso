@@ -84,8 +84,8 @@ export function ScheduleFormFrequency( props: Props ) {
 						<Flex gap={ 6 }>
 							<FlexBlock>
 								<ScheduleFormTime
-									initHour={ hour }
-									initPeriod={ period }
+									hour={ hour }
+									period={ period }
 									isAmPmFormat={ isAmPmFormat }
 									onChange={ ( hour, period ) => {
 										setHour( hour );
@@ -119,8 +119,8 @@ export function ScheduleFormFrequency( props: Props ) {
 							</FlexItem>
 							<FlexBlock>
 								<ScheduleFormTime
-									initHour={ hour }
-									initPeriod={ period }
+									hour={ hour }
+									period={ period }
 									isAmPmFormat={ isAmPmFormat }
 									onChange={ ( hour, period ) => {
 										setHour( hour );

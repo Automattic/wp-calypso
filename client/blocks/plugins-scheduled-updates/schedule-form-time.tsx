@@ -4,13 +4,13 @@ import { HOUR_OPTIONS, HOUR_OPTIONS_24, PERIOD_OPTIONS } from './schedule-form.c
 import { convertHourTo12, convertHourTo24 } from './schedule-form.helper';
 
 interface Props {
-	initHour: string;
-	initPeriod: string;
+	hour: string;
+	period: string;
 	isAmPmFormat: boolean;
 	onChange: ( hour: string, period: string ) => void;
 }
 export function ScheduleFormTime( props: Props ) {
-	const { initHour, initPeriod, isAmPmFormat, onChange } = props;
+	const { hour: initHour, period: initPeriod, isAmPmFormat, onChange } = props;
 
 	const [ hour, setHour ] = useState(
 		isAmPmFormat ? initHour : convertHourTo24( initHour, initPeriod )
