@@ -4,7 +4,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import { DataViewsColumn } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import {
+	DataViewsColumn,
+	ItemsDataViewsType,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
@@ -357,7 +360,7 @@ export const JetpackSitesDataViews = ( {
 	const useExampleDataForTour =
 		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
 
-	const [ itemsData, setItemsData ] = useState< ItemsDataViews >( {
+	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType >( {
 		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
 		pagination: {
 			totalItems: totalSites,
@@ -376,13 +379,13 @@ export const JetpackSitesDataViews = ( {
 	useEffect( () => {
 		setItemsData( ( prevState ) => ( {
 			...prevState,
-			items: data?.sites,
+			items: sites,
 			fields: fields,
 			onDataViewsStateChange: onSitesViewChange,
 			dataViewsState: sitesViewState,
 			selectedItem: sitesViewState.selectedSite,
 		} ) );
-	}, [ fields, sitesViewState, onSitesViewChange, data?.sites ] );
+	}, [ fields, sitesViewState, onSitesViewChange, data ] );
 
 	return (
 		<ItemsDataViews
