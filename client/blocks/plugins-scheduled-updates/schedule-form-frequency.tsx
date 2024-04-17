@@ -27,6 +27,7 @@ interface Props {
 	optionsDirection?: FlexDirection[];
 	error?: string;
 	showError?: boolean;
+	showAllOptionControls?: boolean;
 	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( frequency: Frequency, timestamp: number ) => void;
 }
@@ -41,6 +42,7 @@ export function ScheduleFormFrequency( props: Props ) {
 		optionsDirection = [ 'column' ],
 		error,
 		showError,
+		showAllOptionControls,
 		onChange,
 		onTouch,
 	} = props;
@@ -78,7 +80,7 @@ export function ScheduleFormFrequency( props: Props ) {
 						onChange={ ( f ) => setFrequency( f as 'daily' ) }
 						onBlur={ () => setFieldTouched( true ) }
 					></RadioControl>
-					{ frequency === 'daily' && (
+					{ ( showAllOptionControls || frequency === 'daily' ) && (
 						<Flex gap={ 6 }>
 							<FlexBlock>
 								<ScheduleFormTime
@@ -102,7 +104,7 @@ export function ScheduleFormFrequency( props: Props ) {
 						onChange={ ( f ) => setFrequency( f as 'weekly' ) }
 						onBlur={ () => setFieldTouched( true ) }
 					></RadioControl>
-					{ frequency === 'weekly' && (
+					{ ( showAllOptionControls || frequency === 'weekly' ) && (
 						<Flex gap={ 6 } direction={ [ 'column', 'row' ] }>
 							<FlexItem>
 								<div className="form-field">
