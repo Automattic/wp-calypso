@@ -1249,6 +1249,7 @@ export class JetpackAuthorize extends Component {
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -1267,6 +1268,7 @@ export class JetpackAuthorize extends Component {
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
+							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 							wooDnaConfig={ wooDna }
 						/>
 						{ this.renderContent() }

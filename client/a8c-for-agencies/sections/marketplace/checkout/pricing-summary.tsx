@@ -28,6 +28,8 @@ export default function PricingSummary( { items, onRemoveItem }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_checkout_learn_more_click' ) );
 	}, [ dispatch ] );
 
+	const showLearnMoreLink = false; // FIXME: Remove this once the correct link is added
+
 	return (
 		<div className="checkout__summary">
 			<div className="checkout__summary-pricing">
@@ -62,21 +64,25 @@ export default function PricingSummary( { items, onRemoveItem }: Props ) {
 			</div>
 
 			<div className="checkout__summary-notice">
-				{ translate(
-					'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
-					{
-						components: {
-							a: (
-								<a
-									href={ learnMoreLink }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ onClickLearnMore }
-								/>
-							),
-						},
-					}
-				) }
+				{ showLearnMoreLink
+					? translate(
+							'You will be billed at the end of every month. Your first month may be less than the above amount. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: (
+										<a
+											href={ learnMoreLink }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ onClickLearnMore }
+										/>
+									),
+								},
+							}
+					  )
+					: translate(
+							'You will be billed at the end of every month. Your first month may be less than the above amount.'
+					  ) }
 			</div>
 		</div>
 	);

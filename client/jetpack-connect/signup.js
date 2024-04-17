@@ -155,6 +155,10 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
+	isFromAutomatticForAgenciesPlugin() {
+		return 'automattic-for-agencies-client' === this.props.authQuery.from;
+	}
+
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
@@ -274,13 +278,16 @@ export class JetpackSignup extends Component {
 			return null;
 		}
 
+		const allowSiteConnection =
+			authQuery.allowSiteConnection && ! this.isFromAutomatticForAgenciesPlugin();
+
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
 
-				{ authQuery.allowSiteConnection && (
+				{ allowSiteConnection && (
 					<JetpackConnectSiteOnly
 						homeUrl={ authQuery.homeUrl }
 						redirectAfterAuth={ authQuery.redirectAfterAuth }
@@ -483,6 +490,7 @@ export class JetpackSignup extends Component {
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
@@ -490,6 +498,7 @@ export class JetpackSignup extends Component {
 						authQuery={ this.props.authQuery }
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooCoreProfiler={ this.isWooCoreProfiler() }
+						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }

@@ -125,3 +125,11 @@ export const validatePlugins = ( plugins: string[], existingPlugins: Array< stri
 
 	return error;
 };
+
+/**
+ * Validate sites
+ * check if at least one site is selected
+ */
+export const validateSites = ( sites: number[] ): string => {
+	return sites.length === 0 ? translate( 'Please select at least one site.' ) : '';
+};

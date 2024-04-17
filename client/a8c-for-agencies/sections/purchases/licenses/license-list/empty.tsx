@@ -35,11 +35,13 @@ export default function LicenseListEmpty( { filter }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_empty_issue_license_click' ) );
 	};
 
+	const showLearnMoreLink = false; // FIXME: Remove this once the correct link is added
+
 	return (
 		<div className="license-list__empty-list">
 			<h2>{ licenseFilterStatusTitle }</h2>
 
-			{ filter === LicenseFilter.NotRevoked && (
+			{ showLearnMoreLink && filter === LicenseFilter.NotRevoked && (
 				<p>
 					{ translate(
 						'Learn more about {{a}}adding licenses and billing {{icon}}{{/icon}}{{/a}}.',
