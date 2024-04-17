@@ -153,7 +153,7 @@ const StatsListCard = ( {
 					{ data?.map( ( item, index ) => {
 						const leftSideItem = generateLeftItem( item );
 						const isInteractive = item?.link || item?.page || item?.children;
-						const key = item?.id || index; // not every item has an id
+						const key = item?.id ?? index; // not every item has an id
 
 						return (
 							<HorizontalBarListItem
