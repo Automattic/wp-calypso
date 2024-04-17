@@ -1,7 +1,7 @@
 import { QuestionSelectionType } from './question-step';
 import SurveyRadioOption from './survey-radio-option';
 
-const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelectionType ) => {
+const SurveyRadioControl = ( { onChange, question, value }: QuestionSelectionType ) => {
 	return (
 		<div className="question-options__container" role="radiogroup">
 			{ question.options.map( ( option, index ) => (
@@ -17,4 +17,4 @@ const QuestionSingleSelection = ( { onChange, question, value }: QuestionSelecti
 	);
 };
 
-export default QuestionSingleSelection;
+export default SurveyRadioControl;
