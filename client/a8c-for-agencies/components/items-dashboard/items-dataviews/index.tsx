@@ -52,7 +52,7 @@ export const createItemColumn = (
 	id: string,
 	header: ReactNode,
 	displayField: () => ReactNode,
-	getValue: () => null,
+	getValue: () => undefined,
 	isSortable: boolean = false,
 	canHide: boolean = false
 ): DataViewsColumn => {
@@ -66,7 +66,7 @@ export const createItemColumn = (
 	};
 };
 
-type Props = {
+export type ItemsDataViewsProps = {
 	data: ItemsDataViews;
 	isLoading?: boolean;
 	// todo: is it necessary? Could we get it in this component?
@@ -80,7 +80,7 @@ const ItemsDataViews = ( {
 	// todo: extract
 	//forceTourExampleSite = false,
 	className,
-}: Props ) => {
+}: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
 
 	// todo: update/extract. We have to receive info about the total pages via props
