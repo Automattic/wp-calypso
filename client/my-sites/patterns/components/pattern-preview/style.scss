@@ -35,7 +35,6 @@
 		overflow: hidden;
 	}
 
-	&:target .pattern-preview__renderer,
 	&.is-targeted .pattern-preview__renderer {
 		animation: 0.8s linear 3.5s backwards pattern-preview-target;
 	}
