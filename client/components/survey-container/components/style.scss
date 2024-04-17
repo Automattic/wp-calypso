@@ -1,6 +1,7 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "client/components/forms/form-radio/style.scss";
 
 $blueberry-color: #2145e6;
 $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
