@@ -12,6 +12,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useScheduledUpdatesNotificationSettingsMutation } from 'calypso/data/plugins/use-scheduled-updates-notification-settings-mutation';
 import { useScheduledUpdatesNotificationSettingsQuery } from 'calypso/data/plugins/use-scheduled-updates-notification-settings-query';
+import { useDispatch, useSelector } from 'calypso/state';
+import { fetchSettings } from 'calypso/state/notification-settings/actions';
+import { getNotificationSettings } from 'calypso/state/notification-settings/selectors';
 import { useSiteSlug } from './hooks/use-site-slug';
 
 import './notification-settings.scss';
@@ -23,10 +26,19 @@ type Props = {
 export const NotificationSettings = ( { onNavBack }: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const { data: settings, isFetched } = useScheduledUpdatesNotificationSettingsQuery( siteSlug );
 	const [ formValues, setFormValues ] = useState( {
 		success: false,
 		failure: false,
+	} );
+	useEffect( () => {
+		dispatch( fetchSettings() );
+	}, [ dispatch ] );
+
+	const wpcomNotificationSettings = useSelector( ( state ) => {
+		return getNotificationSettings( state, 'wpcom' );
 	} );
 
 	const { updateNotificationSettings, isPending: isSaving } =
@@ -78,7 +90,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 						label={ translate( 'On successful updates' ) }
 						checked={ formValues.success }
 						onChange={ handleCheckboxChange( 'success' ) }
-						disabled={ ! isFetched }
+						disabled={ ! isFetched || ! wpcomNotificationSettings?.scheduled_updates }
 					/>
 				</div>
 				<div className="form-field">
@@ -86,9 +98,22 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 						label={ translate( 'On failed updates' ) }
 						checked={ formValues.failure }
 						onChange={ handleCheckboxChange( 'failure' ) }
-						disabled={ ! isFetched }
+						disabled={ ! isFetched || ! wpcomNotificationSettings?.scheduled_updates }
 					/>
 				</div>
+
+				{ ! wpcomNotificationSettings?.scheduled_updates && (
+					<Text className="info-msg">
+						{ translate(
+							'You have opted out of scheduled updates notifications on WordPress.com. Visit {{notificationSettingsLink}}Notification Settings{{/notificationSettingsLink}} to enable scheduled updates notifications.',
+							{
+								components: {
+									notificationSettingsLink: <a href="/me/notifications/updates" />,
+								},
+							}
+						) }
+					</Text>
+				) }
 			</CardBody>
 			<CardFooter>
 				<Button variant="primary" disabled={ isSaving } onClick={ onSave }>
