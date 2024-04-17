@@ -18,7 +18,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
-import SitesDataViews from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews';
+import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
@@ -39,6 +39,7 @@ import SiteNotifications from '../sites-notifications';
 import EmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
+
 import './style.scss';
 
 export default function SitesDashboard() {
@@ -253,7 +254,7 @@ export default function SitesDashboard() {
 							isLargeScreen: isLargeScreen || false,
 						} }
 					>
-						<SitesDataViews
+						<JetpackSitesDataViews
 							className={ classNames( 'sites-overview__content', {
 								'is-hiding-navigation': navItems.length <= 1,
 							} ) }
