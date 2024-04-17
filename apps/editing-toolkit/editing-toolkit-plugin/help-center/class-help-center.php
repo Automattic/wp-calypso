@@ -128,7 +128,7 @@ class Help_Center {
 		);
 
 		$current_user = wp_get_current_user();
-		$avatar_url   = wpcom_get_avatar_url( $current_user->ID, 32 );
+		$avatar_url   = \wpcom_get_avatar_url( $current_user->ID, 32 );
 		$user_data    = array(
 			'displayName' => $current_user->first_name,
 			'avatarUrl'   => $avatar_url,
