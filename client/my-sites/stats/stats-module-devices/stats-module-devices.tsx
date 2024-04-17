@@ -64,12 +64,12 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.BROWSER );
 
-	const { isPending, data } = useModuleDevicesQuery( siteId, selectedOption, {
+	const { isFetching, data } = useModuleDevicesQuery( siteId, selectedOption, {
 		...query,
 		days: 7,
 	} );
 
-	const showLoader = isLoading || isPending;
+	const showLoader = isLoading || isFetching;
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
