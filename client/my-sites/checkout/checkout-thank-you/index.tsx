@@ -26,8 +26,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
@@ -75,6 +73,7 @@ import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
+import { PlaceholderThankYou } from './redesign-v2/pages/placeholder';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import TransferPending from './transfer-pending';
@@ -498,7 +497,6 @@ export class CheckoutThankYou extends Component<
 	render() {
 		const { translate, email, receiptId, selectedFeature } = this.props;
 		let purchases: ReceiptPurchase[] = [];
-		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! this.props.isSimplified;
@@ -506,28 +504,31 @@ export class CheckoutThankYou extends Component<
 		let wasTitanEmailOnlyProduct = false;
 		let wasBulkDomainTransfer = false;
 
-		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+		if ( ! this.isDataLoaded() ) {
+			const siteId = this.props.selectedSite?.ID;
+			const siteSlug = this.props.selectedSite?.slug;
+
+			return (
+				<>
+					<MasterbarStyled
+						onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+						backText={ translate( 'Back to dashboard' ) }
+						canGoBack={ !! siteId }
+						showContact
+					/>
+					<PlaceholderThankYou />
+				</>
+			);
+		}
+
+		if ( ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
-			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 			wasBulkDomainTransfer = isBulkDomainTransfer( purchases );
-		}
-
-		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if (
-			! purchases.length &&
-			! failedPurchases.length &&
-			! this.isGenericReceipt() &&
-			! this.props.selectedSite
-		) {
-			// disabled because we use global loader icon
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			return <WordPressLogo className="wpcom-site__logo" />;
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
 		// Continue to show the TransferPending progress bar until both the Atomic transfer is complete
@@ -607,7 +608,7 @@ export class CheckoutThankYou extends Component<
 					<Main className="checkout-thank-you is-redesign-v2">
 						<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
-						{ this.isDataLoaded() && siteId && <QuerySitePurchases siteId={ siteId } /> }
+						{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 
 						<MasterbarStyled
 							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
@@ -712,33 +713,6 @@ export class CheckoutThankYou extends Component<
 		const hasFailedPurchases = failedPurchases.length > 0;
 		const componentAndPrimaryPurchaseAndDomain = this.getComponentAndPrimaryPurchaseAndDomain();
 		const [ component, primaryPurchase ] = componentAndPrimaryPurchaseAndDomain;
-
-		if ( ! this.isDataLoaded() ) {
-			return (
-				<div>
-					<CheckoutThankYouHeader
-						isDataLoaded={ false }
-						isSimplified={ isSimplified }
-						selectedSite={ selectedSite }
-						upgradeIntent={ upgradeIntent }
-						siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-						displayMode={ displayMode }
-					/>
-
-					{ ! isSimplified && (
-						<>
-							<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
-
-							<div className="checkout-thank-you__purchase-details-list">
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-								<PurchaseDetail isPlaceholder />
-							</div>
-						</>
-					) }
-				</div>
-			);
-		}
 
 		return (
 			<div>
