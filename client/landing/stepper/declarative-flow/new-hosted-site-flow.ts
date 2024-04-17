@@ -83,10 +83,7 @@ const hosting: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
-					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const destination = addQueryArgs( '/setup/transferring-hosted-site', {
-						siteId: providedDependencies.siteId,
-					} );
+					const destination = '/home/' + providedDependencies.siteSlug;
 
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
