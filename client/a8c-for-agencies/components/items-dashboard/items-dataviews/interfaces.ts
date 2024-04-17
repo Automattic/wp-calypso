@@ -18,8 +18,9 @@ export interface ItemsDataViews {
 	actions?: DataViewsAction[];
 	getItemId?: ( item: any ) => string;
 	itemFieldId?: string; // The path to get the item id: `id` or `site.blog_id`
-	onSitesViewChange: ( view: DataViewsState ) => void;
-	sitesViewState: DataViewsState;
+	onDataViewsStateChange: ( view: DataViewsState ) => void;
+	dataViewsState: DataViewsState;
+	selectedItem?: any | undefined;
 	// todo: forceTourExampleSite should not be here. Extract
 	//forceTourExampleSite?: boolean;
 }
@@ -78,8 +79,6 @@ export interface DataViewsState {
 	sort: DataViewsSort;
 	hiddenFields: string[];
 	layout: object;
-	// todo: This is not part of the DataViews. We could extends the DataViewsState interface into a new one adding this.
-	selectedSite?: Site | undefined;
 }
 
 // todo: extract?

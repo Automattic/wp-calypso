@@ -176,7 +176,7 @@ const ItemsDataViews = ( {
 				//paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				paginationInfo={ data.pagination }
 				fields={ data.fields }
-				view={ data.sitesViewState }
+				view={ data.dataViewsState }
 				search={ true }
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
 				// todo: update/extract this. DataViews should take the id info, from the item, if it exists.
@@ -186,7 +186,7 @@ const ItemsDataViews = ( {
 						return data.itemFieldId && getIdByPath( item, data.itemFieldId );
 					} )
 				}
-				onChangeView={ data.onSitesViewChange }
+				onChangeView={ data.onDataViewsStateChange }
 				supportedLayouts={ [ 'table' ] }
 				actions={ data.actions }
 				isLoading={ isLoading }
