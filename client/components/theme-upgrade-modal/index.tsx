@@ -198,7 +198,7 @@ export const ThemeUpgradeModal = ( {
 				case 'year':
 				default:
 					return translate(
-						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} anually, risk-free with a 14-day money-back guarantee.',
+						'Get access to this theme, and a ton of other features, with a subscription to the %(planName)s plan. It’s {{strong}}%(planPrice)s{{/strong}} annually, risk-free with a 14-day money-back guarantee.',
 						{
 							components: {
 								strong: <strong />,
