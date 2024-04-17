@@ -33,7 +33,7 @@ export const useSitesPluginsQuery = ( siteIds: number[] ): UseQueryResult< CoreP
 	};
 
 	return useQuery( {
-		queryKey: [ 'plugins', siteIds ],
+		queryKey: [ 'me-sites-plugins' ],
 		queryFn: () => {
 			return wpcomRequest< PluginsResponse >( {
 				path: `/me/sites/plugins`,

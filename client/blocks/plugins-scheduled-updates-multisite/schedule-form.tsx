@@ -14,16 +14,16 @@ export const ScheduleForm = () => {
 		.sort( ( a, b ) => ( ( a.name || '' ) > ( b.name || '' ) ? 1 : -1 ) );
 	const atomicSiteIds = sites.map( ( site ) => site.ID );
 
-	const {
-		data: plugins = [],
-		isLoading: isPluginsFetching,
-		isFetched: isPluginsFetched,
-	} = useSitesPluginsQuery( atomicSiteIds );
-
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
+
+	const {
+		data: plugins = [],
+		isLoading: isPluginsFetching,
+		isFetched: isPluginsFetched,
+	} = useSitesPluginsQuery( selectedSites.length ? selectedSites : atomicSiteIds );
 
 	// Sites selection validation
 	useEffect(
