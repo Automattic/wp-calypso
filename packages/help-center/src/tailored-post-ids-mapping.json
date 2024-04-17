@@ -56,13 +56,13 @@
 		{ "locale": "en", "post_ids": [ 86, 1698, 163330, 124077, 189860 ], "blog_id": 9619154 }
 	],
 	"/purchases/subscriptions/": [
-		{ "locale": "en", "post_ids": [ 111341, 80135, 151483, 40792, 1988 ], "blog_id": 9619154 }
+		{ "locale": "en", "post_ids": [ 111349, 80135, 151483, 40792, 1988 ], "blog_id": 9619154 }
 	],
 	"/purchases/payment-methods/": [
-		{ "locale": "en", "post_ids": [ 111341, 80135, 76237, 40792, 1988 ], "blog_id": 9619154 }
+		{ "locale": "en", "post_ids": [ 111349, 80135, 76237, 40792, 1988 ], "blog_id": 9619154 }
 	],
 	"/purchases/billing-history/": [
-		{ "locale": "en", "post_ids": [ 111341, 80135, 234670, 40792, 1988 ], "blog_id": 9619154 }
+		{ "locale": "en", "post_ids": [ 111349, 80135, 234670, 40792, 1988 ], "blog_id": 9619154 }
 	],
 	"/activity-log/": [
 		{ "locale": "en", "post_ids": [ 145800, 159843, 115025, 151496, 134940 ], "blog_id": 9619154 }
@@ -77,7 +77,7 @@
 		{ "locale": "en", "post_ids": [ 89, 80368, 58847, 10977, 91 ], "blog_id": 9619154 }
 	],
 	"/me/purchases": [
-		{ "locale": "en", "post_ids": [ 111341, 80135, 276100, 40792, 1988 ], "blog_id": 9619154 }
+		{ "locale": "en", "post_ids": [ 111349, 80135, 267100, 40792, 1988 ], "blog_id": 9619154 }
 	],
 	"/me/account": [
 		{ "locale": "en", "post_ids": [ 91, 80368, 9394, 134698, 2116 ], "blog_id": 9619154 }
@@ -104,7 +104,7 @@
 		{ "locale": "en", "post_ids": [ 100846, 84, 176675, 191604, 147594 ], "blog_id": 9619154 }
 	],
 	"/marketing/tools/": [
-		{ "locale": "en", "post_ids": [ 216472, 152657, 121282, 5022, 3077 ], "blog_id": 9619154 }
+		{ "locale": "en", "post_ids": [ 216472, 152657, 121282, 5022, 3307 ], "blog_id": 9619154 }
 	],
 	"/marketing/traffic/": [
 		{ "locale": "en", "post_ids": [ 155209, 98905, 142, 134940, 5022 ], "blog_id": 9619154 }
