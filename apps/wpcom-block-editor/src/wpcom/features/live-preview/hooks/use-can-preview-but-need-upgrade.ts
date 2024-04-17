@@ -136,6 +136,16 @@ export const useCanPreviewButNeedUpgrade = (
 	const [ checkoutTab, setCheckoutTab ] = useState< Window | null >();
 	const [ checkoutStatus, setCheckoutStatus ] = useState< CheckoutStatus >( '' );
 
+	let requiredPlanSlug = '';
+	switch ( previewingTheme.type ) {
+		case WOOCOMMERCE_THEME:
+			requiredPlanSlug = PLAN_BUSINESS;
+		case PREMIUM_THEME:
+			requiredPlanSlug = PLAN_PREMIUM;
+		case PERSONAL_THEME:
+			requiredPlanSlug = PLAN_PERSONAL;
+	}
+
 	const handleCanPreviewButNeedUpgrade = useCallback(
 		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
 			// Currently, Live Preview only supports upgrades for these themes
@@ -207,30 +217,14 @@ export const useCanPreviewButNeedUpgrade = (
 			}/${ plan }?checkoutBackUrl=${ encodeURIComponent( url ) }`;
 		};
 
-		let link = '';
-		switch ( previewingTheme.type ) {
-			/**
-			 * For a WooCommerce theme, the users should have the Business plan or higher,
-			 * AND the WooCommerce plugin has to be installed.
-			 */
-			case WOOCOMMERCE_THEME:
-				link = generateCheckoutUrl( PLAN_BUSINESS );
-				break;
-			// For a Premium theme, the users should have the Premium plan or higher.
-			case PREMIUM_THEME:
-				link = generateCheckoutUrl( PLAN_PREMIUM );
-				break;
-			case PERSONAL_THEME:
-				link = generateCheckoutUrl( PLAN_PERSONAL );
-				break;
-		}
+		const link = generateCheckoutUrl( requiredPlanSlug );
 		// Open the checkout in a new tab.
 		if ( checkoutTab && ! checkoutTab.closed ) {
 			checkoutTab.focus();
 		} else {
 			setCheckoutTab( window.open( link, 'wpcom-live-preview-upgrade-plan-window' ) );
 		}
-	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug ] );
+	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug, requiredPlanSlug ] );
 
 	useDisplayCheckoutNotice( checkoutStatus );
 
@@ -280,5 +274,6 @@ export const useCanPreviewButNeedUpgrade = (
 	return {
 		canPreviewButNeedUpgrade,
 		upgradePlan,
+		requiredPlanSlug,
 	};
 };
