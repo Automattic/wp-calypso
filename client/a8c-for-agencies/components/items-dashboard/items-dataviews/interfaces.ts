@@ -39,6 +39,18 @@ export interface DataViewsColumn {
 	render?: () => ReactNode;
 }
 
+export interface DataViewsAction {
+	id: string;
+	label: string;
+	isPrimary?: boolean;
+	icon?: string;
+	isEligible?: ( record: Site ) => boolean;
+	isDestructive?: boolean;
+	callback?: () => void;
+	RenderModal?: ReactNode;
+	hideModalHeader?: boolean;
+}
+
 export interface DataViewsPaginationInfo {
 	totalItems: number;
 	totalPages: number;
@@ -72,5 +84,3 @@ export interface DataViewsState {
 export interface SiteInfo extends SiteData {
 	id: number;
 }
-
-// todo: Add the DataViewsAction interface: https://github.com/WordPress/gutenberg/blob/trunk/packages/dataviews/README.md#actions-object
