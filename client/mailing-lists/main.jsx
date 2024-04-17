@@ -268,7 +268,7 @@ class MainComponent extends Component {
 				</div>
 
 				{
-					// Don't show the unsubscribe / resubscribe button and the manage link for Gravatar.
+					// Don't show the unsubscribe / resubscribe button and the manage link for Gravatar-related categories.
 					! categoryName.startsWith( 'gravatar_' ) && (
 						<>
 							<Card className="mailing-lists__details">
