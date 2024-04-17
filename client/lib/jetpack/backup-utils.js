@@ -1,5 +1,7 @@
 export const INDEX_FORMAT = 'YYYYMMDD';
 
+export const MINUTE_IN_MS = 60 * 1000;
+
 export const DELTA_ACTIVITIES = [
 	'attachment__uploaded',
 	// 'attachment__updated',

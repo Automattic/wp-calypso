@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
@@ -9,6 +9,7 @@ import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-wa
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
+	MINUTE_IN_MS,
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 	isStorageOrRetentionReached,
@@ -58,32 +59,41 @@ const DailyBackupStatus = ( {
 	const hasRealtimeBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
 	);
-	const backupCurrentlyInProgress = useSelector( ( state ) =>
-		getInProgressBackupForSite( state, siteId )
-	);
 
-	// If a backup is in progress when the component first loads,
-	// we'll "lose" the data we know about it when it finishes;
-	// adding a ref here makes sure we hold onto that data.
-	const backupPreviouslyInProgress = useRef();
-	useEffect( () => {
-		if ( backupCurrentlyInProgress ) {
-			backupPreviouslyInProgress.current = backupCurrentlyInProgress;
+	const [ backupPreviouslyInProgress, setBackupPreviouslyInProgress ] = useState( null );
+	const backupCurrentlyInProgress = useSelector( ( state ) => {
+		const inProgressBackup = getInProgressBackupForSite( state, siteId );
+
+		if ( inProgressBackup && ! backupPreviouslyInProgress ) {
+			setBackupPreviouslyInProgress( inProgressBackup );
 		}
-	}, [ backupCurrentlyInProgress ] );
+		return inProgressBackup;
+	} );
 
 	// Using the id from backupPreviouslyInProgress get the backup if it finished successfully.
 	const backupFinishedSuccessfully = useSelector( ( state ) => {
-		if ( backupPreviouslyInProgress.current ) {
-			return getFinishedBackupForSiteById( state, siteId, backupPreviouslyInProgress.current.id );
+		if ( backupPreviouslyInProgress ) {
+			const backupFinished = getFinishedBackupForSiteById(
+				state,
+				siteId,
+				backupPreviouslyInProgress.id
+			);
+
+			if ( backupFinished ) {
+				setTimeout( () => {
+					setBackupPreviouslyInProgress( null );
+				}, MINUTE_IN_MS );
+			}
+
+			return backupFinished;
 		}
 		return null;
 	} );
 
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch
-	const inProgressDate = backupPreviouslyInProgress.current
-		? moment( backupPreviouslyInProgress.current.period * 1000 )
+	const inProgressDate = backupPreviouslyInProgress
+		? moment( backupPreviouslyInProgress.period * 1000 )
 		: undefined;
 
 	// If we're looking at today and a backup is in progress,
@@ -110,7 +120,7 @@ const DailyBackupStatus = ( {
 	// state and show up-to-date details immediately after a backup finishes,
 	// but unfortunately there's a lag between the time a backup completes
 	// and when it becomes visible through the Activity Log API.
-	if ( selectedDate.isSame( today, 'day' ) && backupPreviouslyInProgress.current ) {
+	if ( selectedDate.isSame( today, 'day' ) && backupPreviouslyInProgress ) {
 		if ( backupFinishedSuccessfully ) {
 			return (
 				<BackupJustCompleted
