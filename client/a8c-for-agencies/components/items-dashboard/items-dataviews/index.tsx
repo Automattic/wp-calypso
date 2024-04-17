@@ -22,7 +22,7 @@ import ReactDOM from 'react-dom';
 //import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 // todo: extract
 //import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { ItemsDataViewsProps, DataViewsColumn } from './interfaces';
+import { ItemsDataViews, DataViewsColumn } from './interfaces';
 //import SiteSort from './site-sort';
 // todo: extract partially. Extract common styles
 import './style.scss';
@@ -66,21 +66,21 @@ export const createItemColumn = (
 	};
 };
 
+type Props = {
+	data: ItemsDataViews;
+	isLoading?: boolean;
+	// todo: is it necessary? Could we get it in this component?
+	isLargeScreen?: boolean;
+	className?: string;
+};
+
 const ItemsDataViews = ( {
-	items,
-	pagination,
-	isLoading,
-	onSitesViewChange,
-	sitesViewState,
-	fields,
-	actions = [],
-	searchLabel,
-	getItemId,
-	itemFieldId,
+	data,
+	isLoading = false,
 	// todo: extract
 	//forceTourExampleSite = false,
 	className,
-}: ItemsDataViewsProps ) => {
+}: Props ) => {
 	const translate = useTranslate();
 
 	// todo: update/extract. We have to receive info about the total pages via props
@@ -171,24 +171,24 @@ const ItemsDataViews = ( {
 		<div className={ className }>
 			<DataViews
 				// todo: extract => data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
-				data={ items }
+				data={ data.items }
 				// todo: extract
 				//paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
-				paginationInfo={ pagination }
-				fields={ fields }
-				view={ sitesViewState }
+				paginationInfo={ data.pagination }
+				fields={ data.fields }
+				view={ data.sitesViewState }
 				search={ true }
-				searchLabel={ searchLabel ?? translate( 'Search' ) }
+				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
 				// todo: update/extract this. DataViews should take the id info, from the item, if it exists.
 				getItemId={
-					getItemId ??
+					data.getItemId ??
 					( ( item: object ) => {
-						return itemFieldId && getIdByPath( item, itemFieldId );
+						return data.itemFieldId && getIdByPath( item, data.itemFieldId );
 					} )
 				}
-				onChangeView={ onSitesViewChange }
+				onChangeView={ data.onSitesViewChange }
 				supportedLayouts={ [ 'table' ] }
-				actions={ actions }
+				actions={ data.actions }
 				isLoading={ isLoading }
 			/>
 		</div>

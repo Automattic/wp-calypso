@@ -10,15 +10,9 @@ export interface SitesDataResponse {
 	totalFavorites: number;
 }
 
-export interface ItemsDataViewsProps {
-	className?: string;
+export interface ItemsDataViews {
 	items: any[] | undefined;
 	pagination: DataViewsPaginationInfo;
-	// todo: forceTourExampleSite should not be here. Extract
-	//forceTourExampleSite?: boolean;
-	// todo: is it necessary? Could we get that info inside of the ItemsDataViews component?
-	isLargeScreen?: boolean;
-	isLoading: boolean;
 	searchLabel?: string;
 	fields: DataViewsColumn[];
 	actions?: DataViewsAction[];
@@ -26,6 +20,8 @@ export interface ItemsDataViewsProps {
 	itemFieldId?: string; // The path to get the item id: `id` or `site.blog_id`
 	onSitesViewChange: ( view: DataViewsState ) => void;
 	sitesViewState: DataViewsState;
+	// todo: forceTourExampleSite should not be here. Extract
+	//forceTourExampleSite?: boolean;
 }
 
 export interface DataViewsColumn {
