@@ -20,7 +20,7 @@ function queryStatsDevices( siteId: number, deviceParam: string, query: QuerySta
 
 function capitalizeFirstLetter( string: string ) {
 	// Special cases for Apple devices.
-	if ( [ 'iphone', 'ios' ].includes( string ) ) {
+	if ( [ 'iphone', 'ios', 'ipad' ].includes( string ) ) {
 		return string.charAt( 0 ) + string.charAt( 1 ).toUpperCase() + string.slice( 2 );
 	}
 
