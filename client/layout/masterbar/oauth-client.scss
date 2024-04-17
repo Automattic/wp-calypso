@@ -711,23 +711,23 @@
 .a8c-for-agencies {
 	input:focus:hover[type],
 	input:focus[type] {
-		box-shadow: 0 0 0 2px var(--studio-automattic-blue-10);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 
 	.button:not(.social-buttons__button) {
-		color: var(--studio-automattic-blue-60);
+		color: var(--color-primary-60);
 		background: var(--studio-white);
-		border: 1px solid var(--studio-automattic-blue-40);
+		border: 1px solid var(--color-primary-40);
 		border-radius: 2px;
 
 		&:hover,
 		&:focus {
-			background: var(--studio-automattic-blue-0);
+			background: var(--color-primary-0);
 		}
 
 		&:active {
-			background: var(--studio-automattic-blue-5);
-			border-color: var(--studio-automattic-blue-40);
+			background: var(--color-primary-5);
+			border-color: var(--color-primary-40);
 			border-width: 1px;
 		}
 
@@ -745,18 +745,18 @@
 
 	.button.is-primary {
 		color: var(--studio-white);
-		background: var(--studio-automattic-blue-40);
-		border-color: var(--studio-automattic-blue-40);
+		background: var(--color-primary-40);
+		border-color: var(--color-primary-40);
 
 		&:hover,
 		&:focus {
-			background: var(--studio-automattic-blue-30);
-			border-color: var(--studio-automattic-blue-30);
+			background: var(--color-primary-30);
+			border-color: var(--color-primary-30);
 		}
 
 		&:active {
-			background: var(--studio-automattic-blue-50);
-			border-color: var(--studio-automattic-blue-50);
+			background: var(--color-primary-50);
+			border-color: var(--color-primary-50);
 		}
 
 		&[disabled],
@@ -771,11 +771,11 @@
 	a:visited,
 	.login__form-change-username,
 	.wp-login__links button {
-		color: var(--studio-automattic-blue-40);
+		color: var(--color-primary-40);
 
 		&:hover,
 		&:focus {
-			color: var(--studio-automattic-blue-60);
+			color: var(--color-primary-60);
 		}
 	}
 }
