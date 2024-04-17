@@ -71,6 +71,8 @@ import CheckoutThankYouHeader from './header';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
 import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import { FailedAndSuccessfulPurchasesThankYou } from './redesign-v2/pages/failed-and-successful-purchases';
+import { FailedPurchasesThankYou } from './redesign-v2/pages/failed-purchases';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import { PlaceholderThankYou } from './redesign-v2/pages/placeholder';
@@ -494,9 +496,28 @@ export class CheckoutThankYou extends Component<
 		return { path: '/checkout/thank-you/no-site', properties: {} };
 	};
 
+	getMasterBar = () => {
+		const { translate } = this.props;
+		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
+		const wasEcommercePlanPurchased = purchases.some( isEcommerce );
+
+		const siteId = this.props.selectedSite?.ID;
+		const siteSlug = this.props.selectedSite?.slug;
+
+		return (
+			<MasterbarStyled
+				onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
+				backText={ translate( 'Back to dashboard' ) }
+				canGoBack={ !! siteId && ! wasEcommercePlanPurchased }
+				showContact
+			/>
+		);
+	};
+
 	render() {
 		const { translate, email, receiptId, selectedFeature } = this.props;
-		let purchases: ReceiptPurchase[] = [];
+		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
+		const failedPurchases = getFailedPurchases( this.props );
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let showHappinessSupport = ! this.props.isSimplified;
@@ -505,24 +526,28 @@ export class CheckoutThankYou extends Component<
 		let wasBulkDomainTransfer = false;
 
 		if ( ! this.isDataLoaded() ) {
-			const siteId = this.props.selectedSite?.ID;
-			const siteSlug = this.props.selectedSite?.slug;
-
 			return (
 				<>
-					<MasterbarStyled
-						onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-						backText={ translate( 'Back to dashboard' ) }
-						canGoBack={ !! siteId }
-						showContact
-					/>
+					{ this.getMasterBar() }
 					<PlaceholderThankYou />
 				</>
 			);
 		}
 
+		if ( failedPurchases.length && ! purchases.length ) {
+			return (
+				<>
+					{ this.getMasterBar() }
+					<FailedPurchasesThankYou
+						siteSlug={ this.props.selectedSite?.slug }
+						failedPurchases={ failedPurchases }
+						receiptTotalAmount={ this.props.receipt.data?.displayPrice }
+					/>
+				</>
+			);
+		}
+
 		if ( ! this.isGenericReceipt() ) {
-			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
@@ -546,7 +571,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		/** REFACTORED REDESIGN */
-		if ( this.isDataLoaded() && isRefactoredForThankYouV2( this.props ) ) {
+		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
@@ -602,7 +627,6 @@ export class CheckoutThankYou extends Component<
 
 			if ( pageContent ) {
 				const siteId = this.props.selectedSite?.ID;
-				const siteSlug = this.props.selectedSite?.slug;
 
 				return (
 					<Main className="checkout-thank-you is-redesign-v2">
@@ -610,14 +634,18 @@ export class CheckoutThankYou extends Component<
 
 						{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 
-						<MasterbarStyled
-							onClick={ () => page( `/home/${ siteSlug ?? '' }` ) }
-							backText={ translate( 'Back to dashboard' ) }
-							canGoBack={ !! siteId && ! wasEcommercePlanPurchased }
-							showContact
-						/>
+						{ this.getMasterBar() }
 
-						{ pageContent }
+						{ ! failedPurchases.length ? (
+							pageContent
+						) : (
+							<FailedAndSuccessfulPurchasesThankYou
+								siteSlug={ this.props.selectedSite?.slug }
+								failedPurchases={ failedPurchases }
+								successfulPurchasesComponent={ pageContent }
+								receiptTotalAmount={ this.props.receipt.data?.displayPrice }
+							/>
+						) }
 					</Main>
 				);
 			}

@@ -1,0 +1,67 @@
+@import "@automattic/components/src/styles/typography";
+
+.failed-purchase-thank-you {
+	border: 1px solid #e65054;
+	border-radius: 2px;
+	margin: 60px auto;
+	padding: 36px 25px 0;
+	max-width: 600px;
+}
+
+.failed-purchase-thank-you__title {
+	font-family: $font-sf-pro-display;
+	font-size: rem(20px);
+	color: #e65054;
+	line-height: 1.3;
+	letter-spacing: 0.38px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding-bottom: 8px;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.failed-purchase-thank-you__description {
+	font-family: $font-sf-pro-text;
+	font-size: rem(14px);
+	color: #3c434a;
+	line-height: 1.4;
+	letter-spacing: -0.2px;
+	padding-bottom: 30px;
+}
+
+.failed-purchase-thank-you__items {
+	padding-bottom: 22px;
+
+	.failed-purchase-thank-you__item {
+		padding: 12px 24px;
+		border: 1px solid #dcdcde;
+		border-radius: 2px;
+		margin-bottom: 8px;
+
+		.failed-purchase-thank-you__item-title {
+			font-family: $font-sf-pro-text;
+			font-size: rem(16px);
+			color: #646970;
+			line-height: 1.5;
+			letter-spacing: -0.32px;
+			word-break: break-word;
+		}
+	}
+}
+
+.failed-purchase-thank-you__footer {
+	padding-bottom: 36px;
+
+	.thank-you__footer {
+		margin: 0;
+
+		.thank-you__footer-inner {
+			padding: 0;
+			margin: 0;
+		}
+	}
+}
