@@ -198,6 +198,16 @@ const StatsPurchasePage = ( {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
+				{ ! isLoading && (
+					<PageViewTracker
+						path="/stats/purchase/:site"
+						title="Stats > Purchase"
+						from={ query.from ?? '' }
+						variant={ variant }
+						is_upgrade={ +supportCommercialUse }
+						is_site_commercial={ isCommercial === null ? '' : +isCommercial }
+					/>
+				) }
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
 				{ ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
@@ -223,16 +233,6 @@ const StatsPurchasePage = ( {
 							hideModuleSettings
 						/>
 					</>
-				) }
-				{ ! isLoading && (
-					<PageViewTracker
-						path="/stats/purchase/:site"
-						title="Stats > Purchase"
-						from={ query.from ?? '' }
-						variant={ variant }
-						is_upgrade={ +supportCommercialUse }
-						is_site_commercial={ isCommercial === null ? '' : +isCommercial }
-					/>
 				) }
 
 				{ /* Only query site purchases on Calypso via existing data component */ }
