@@ -23,7 +23,6 @@ import {
 } from './controller';
 
 export default function () {
-	// FIXME: check access, TOS consent, valid payment method, all sites context and partner key selection if needed
 	page( A4A_MARKETPLACE_LINK, requireAccessContext, marketplaceContext, makeLayout, clientRender );
 	page(
 		A4A_MARKETPLACE_PRODUCTS_LINK,

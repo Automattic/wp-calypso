@@ -24,6 +24,16 @@ interface APIFetchOptions {
 	path: string;
 }
 
+const filterOutDuplicatedItems = (
+	articlesResponse: SearchResult[],
+	searchResultResponse: SearchResult[]
+) => {
+	const articlesIds = articlesResponse.map( ( result ) => result.post_id );
+	return searchResultResponse.filter(
+		( searchResult ) => ! articlesIds.includes( searchResult.post_id )
+	);
+};
+
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
@@ -66,8 +76,11 @@ const fetchArticlesAPI = async (
 			path: `/help-center/search?${ queryString }`,
 		} as APIFetchOptions ) ) as SearchResult[];
 	}
+	// Remove articles that are already in the tailored articles.
+	const searchResult = filterOutDuplicatedItems( articlesResponse, searchResultResponse );
+
 	//Add tailored results first then add search results.
-	const combinedResults = [ ...articlesResponse, ...searchResultResponse ];
+	const combinedResults = [ ...articlesResponse, ...searchResult ];
 	return combinedResults.slice( 0, 5 );
 };
 

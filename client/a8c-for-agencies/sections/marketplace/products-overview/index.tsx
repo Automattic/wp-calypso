@@ -1,5 +1,3 @@
-// FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
-
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
