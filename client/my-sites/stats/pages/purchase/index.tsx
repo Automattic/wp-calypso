@@ -209,7 +209,7 @@ const StatsPurchasePage = ( {
 					/>
 				) }
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
-				{ ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
+				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
 						<NavigationHeader
 							className="stats__section-header modernized-header"
