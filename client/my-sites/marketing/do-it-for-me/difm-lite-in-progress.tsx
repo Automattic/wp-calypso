@@ -56,7 +56,7 @@ function SupportLink( { siteId }: { siteId?: number } ) {
 			onClick={ () => {
 				setInitialRoute( emailUrl );
 				setSite( site );
-				setSubject( `I have a question about my project` );
+				setSubject( translate( 'I have a question about my project' ) );
 				setShowHelpCenter( true );
 			} }
 		>
