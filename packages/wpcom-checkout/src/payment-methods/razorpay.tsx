@@ -30,7 +30,7 @@ export function createRazorpayMethod( {
 			/>
 		),
 		inactiveContent: <RazorpaySummary />,
-		getAriaLabel: ( __ ) => __( 'Razorpay' ),
+		getAriaLabel: ( __ ) => __( 'UPI' ),
 	};
 }
 
@@ -39,7 +39,7 @@ export function RazorpayLabel() {
 
 	return (
 		<Fragment>
-			<span>{ __( 'Razorpay' ) }</span>
+			<span>{ __( 'UPI' ) }</span>
 			<PaymentMethodLogos className="razorpay__logo payment-logos">
 				<RazorpayIcon />
 			</PaymentMethodLogos>
@@ -49,7 +49,7 @@ export function RazorpayLabel() {
 
 export function RazorpaySummary() {
 	const { __ } = useI18n();
-	return <Fragment>{ __( 'Razorpay' ) }</Fragment>;
+	return <Fragment>{ __( 'UPI' ) }</Fragment>;
 }
 
 export function RazorpaySubmitButton( {
