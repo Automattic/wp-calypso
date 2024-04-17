@@ -18,10 +18,16 @@ function queryStatsDevices( siteId: number, deviceParam: string, query: QuerySta
 	return wpcom.req.get( `/sites/${ siteId }/stats/devices/${ deviceParam }`, query );
 }
 
+// TODO: Create or reuse a function to handle particular string capitalization.
 function capitalizeFirstLetter( string: string ) {
 	// Special cases for Apple devices.
 	if ( [ 'iphone', 'ios', 'ipad' ].includes( string ) ) {
 		return string.charAt( 0 ) + string.charAt( 1 ).toUpperCase() + string.slice( 2 );
+	}
+
+	// Special cases for all-char capitalized string.
+	if ( [ 'ie' ].includes( string ) ) {
+		return string.toUpperCase();
 	}
 
 	return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
