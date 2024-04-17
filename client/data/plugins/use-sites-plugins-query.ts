@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { mapToCorePlugin, mapPluginExtension } from './helpers';
+import { mapToCorePlugin, mapPluginExtension, decodeEntitiesFromPlugins } from './helpers';
 import type { CorePlugin, SitePlugin } from './types';
 
 type PluginsResponse = {
@@ -23,11 +23,11 @@ export const useSitesPluginsQuery = ( siteIds: number[] ): UseQueryResult< CoreP
 		// unique list of plugins sorted by slug
 		const unique = [ ...new Map( plugins.map( ( item ) => [ item.slug, item ] ) ).values() ].sort(
 			( a, b ) => {
-				return a.slug.localeCompare( b.slug );
+				return a.name.localeCompare( b.name );
 			}
 		);
 
-		return unique
+		return decodeEntitiesFromPlugins( unique )
 			.map( mapToCorePlugin )
 			.map( ( p ) => mapPluginExtension( p as CorePlugin, '.php' ) );
 	};
