@@ -139,23 +139,17 @@ export const PaymentMethodSummary = ( {
 	type,
 	digits,
 	email,
-	razorpayVpa,
 }: {
 	type: string;
 	digits?: string;
 	email?: string;
-	razorpayVpa?: string;
 } ) => {
 	const translate = useTranslate();
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
 		return <>{ email || '' }</>;
 	}
 	if ( type === PARTNER_RAZORPAY ) {
-		return (
-			<>
-				{ translate( 'Unified Payments Interface (UPI)' ) } { razorpayVpa || '' }{ ' ' }
-			</>
-		);
+		return <>{ translate( 'Unified Payments Interface (UPI)' ) }</>;
 	}
 	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {
