@@ -1,5 +1,5 @@
 import { SelectControl } from '@wordpress/components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HOUR_OPTIONS, HOUR_OPTIONS_24, PERIOD_OPTIONS } from './schedule-form.const';
 import { convertHourTo12, convertHourTo24 } from './schedule-form.helper';
 
@@ -16,6 +16,19 @@ export function ScheduleFormTime( props: Props ) {
 		isAmPmFormat ? initHour : convertHourTo24( initHour, initPeriod )
 	);
 	const [ period, setPeriod ] = useState( initPeriod );
+
+	useEffect( () => {
+		if ( isAmPmFormat ) {
+			setHour( initHour );
+		} else {
+			setHour( convertHourTo24( initHour, initPeriod ) );
+			setPeriod( parseInt( initHour ) < 12 ? 'am' : 'pm' );
+		}
+	}, [ initHour ] );
+
+	useEffect( () => {
+		setPeriod( initPeriod );
+	}, [ initPeriod ] );
 
 	return (
 		<div className="form-field">
