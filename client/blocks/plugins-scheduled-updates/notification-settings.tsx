@@ -23,12 +23,14 @@ type Props = {
 export const NotificationSettings = ( { onNavBack }: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
-	const [ touched, setIsTouched ] = useState( false );
 	const { data: settings, isFetched } = useScheduledUpdatesNotificationSettingsQuery( siteSlug );
 	const [ formValues, setFormValues ] = useState( {
 		success: false,
 		failure: false,
 	} );
+
+	const { updateNotificationSettings, isPending: isSaving } =
+		useScheduledUpdatesNotificationSettingsMutation( siteSlug );
 
 	useEffect( () => {
 		if ( isFetched && settings ) {
@@ -44,15 +46,10 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 			...prevValues,
 			[ field ]: checked,
 		} ) );
-		setIsTouched( true );
 	};
-
-	const { updateNotificationSettings } =
-		useScheduledUpdatesNotificationSettingsMutation( siteSlug );
 
 	const onSave = useCallback( () => {
 		updateNotificationSettings( formValues );
-		setIsTouched( false );
 	}, [ formValues, updateNotificationSettings ] );
 
 	return (
@@ -94,7 +91,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 				</div>
 			</CardBody>
 			<CardFooter>
-				<Button variant="primary" disabled={ ! touched } onClick={ onSave }>
+				<Button variant="primary" disabled={ isSaving } onClick={ onSave }>
 					{ translate( 'Save' ) }
 				</Button>
 			</CardFooter>
