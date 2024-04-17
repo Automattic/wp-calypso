@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export interface ItemsDataViews {
+export interface ItemsDataViewsType {
 	items: any[] | undefined;
 	pagination: DataViewsPaginationInfo;
 	searchLabel?: string;

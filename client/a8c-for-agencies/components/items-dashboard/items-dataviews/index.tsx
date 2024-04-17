@@ -3,7 +3,7 @@ import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
-import { ItemsDataViews, DataViewsColumn } from './interfaces';
+import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
 // todo: Extract from style.scss not common styles (colors and specific to Jetpack Cloud components)
 import './style.scss';
 
@@ -47,7 +47,7 @@ export const createItemColumn = (
 };
 
 export type ItemsDataViewsProps = {
-	data: ItemsDataViews;
+	data: ItemsDataViewsType;
 	isLoading?: boolean;
 	// todo: is it necessary? Could we get it in this component?
 	isLargeScreen?: boolean;
@@ -58,6 +58,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 	const translate = useTranslate();
 
 	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
+	// todo: The DataViews v0.9 has the spinner support. Remove this once we upgrade the package.
 	const SpinnerWrapper = () => {
 		return (
 			<div className="spinner-wrapper">
@@ -65,7 +66,6 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 			</div>
 		);
 	};
-
 	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
 	if ( dataviewsWrapper ) {
 		// Remove any existing spinner if present
