@@ -3,13 +3,13 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { Question, QuestionType } from '../types';
-import QuestionMultipleOptions from './question-multiple-selection';
+import SurveyCheckboxControl from './survey-checkbox-control';
 import SurveyRadioControl from './survey-radio-control';
 import './style.scss';
 
 const questionTypeComponentMap = {
 	[ QuestionType.SINGLE_CHOICE ]: SurveyRadioControl,
-	[ QuestionType.MULTIPLE_CHOICE ]: QuestionMultipleOptions,
+	[ QuestionType.MULTIPLE_CHOICE ]: SurveyCheckboxControl,
 };
 
 export type QuestionSelectionType = {

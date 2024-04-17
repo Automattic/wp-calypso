@@ -1,7 +1,7 @@
 import { CheckboxControl } from '@wordpress/components';
 import { QuestionSelectionType } from './question-step';
 
-const QuestionMultipleSelection = ( { onChange, question, value }: QuestionSelectionType ) => {
+const SurveyCheckboxControl = ( { onChange, question, value }: QuestionSelectionType ) => {
 	// Placeholder component
 	return (
 		<div className="question__multiple-selection">
@@ -24,4 +24,4 @@ const QuestionMultipleSelection = ( { onChange, question, value }: QuestionSelec
 	);
 };
 
-export default QuestionMultipleSelection;
+export default SurveyCheckboxControl;
