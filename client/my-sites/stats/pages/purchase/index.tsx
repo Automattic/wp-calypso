@@ -192,22 +192,21 @@ const StatsPurchasePage = ( {
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
-
+			{ ! isLoading && (
+				<PageViewTracker
+					path="/stats/purchase/:site"
+					title="Stats > Purchase"
+					from={ query.from ?? '' }
+					variant={ variant }
+					is_upgrade={ +supportCommercialUse }
+					is_site_commercial={ isCommercial === null ? '' : +isCommercial }
+				/>
+			) }
 			<div
 				className={ classNames( 'stats', 'stats-purchase-page', {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
-				{ ! isLoading && (
-					<PageViewTracker
-						path="/stats/purchase/:site"
-						title="Stats > Purchase"
-						from={ query.from ?? '' }
-						variant={ variant }
-						is_upgrade={ +supportCommercialUse }
-						is_site_commercial={ isCommercial === null ? '' : +isCommercial }
-					/>
-				) }
 				{ /** Only show the navigation header on force redirections and site has no plans */ }
 				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
 					<>
