@@ -35,7 +35,14 @@ const PlanFeaturesContainer: React.FC< {
 				: true;
 
 			if ( ! shouldRenderFeatures ) {
-				return null;
+				// Render a placeholder to keep the grid aligned
+				return (
+					<PlanDivOrTdContainer
+						key={ `${ planSlug }-${ mapIndex }` }
+						isTableCell={ isTableCell }
+						className="plan-features-2023-grid__table-item"
+					/>
+				);
 			}
 
 			return (
