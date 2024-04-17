@@ -336,6 +336,26 @@
 					width: 100%;
 				}
 
+				/* This styling is a bit of a hack: To make the site name clickable area larger, will need
+				 * to hide the other fields when in preview mode.
+				 */
+				.dataviews-view-list__field {
+					// Hide the field except first (Site name) and last (actions menu)
+					&:not(:first-child):not(:last-child) {
+						display: none;
+					}
+
+					// Force the site name to take up the full width
+					&:first-child {
+						flex-grow: 1;
+
+						.sites-dataviews__site {
+							width: 100%;
+							justify-content: flex-start;
+						}
+					}
+				}
+
 				.sites-overview__stats-trend,
 				.sites-overview__column-action-button,
 				.sites-overview__row-status,
