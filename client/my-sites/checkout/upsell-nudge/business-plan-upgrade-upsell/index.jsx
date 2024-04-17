@@ -183,7 +183,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					busy={ isLoading }
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( 'Upgrade Now' ) }
+					{ isLoading ? translate( 'Loading' ) : translate( 'Upgrade Now' ) }
 				</Button>
 				<Button
 					data-e2e-button="decline"
