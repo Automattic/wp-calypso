@@ -25,6 +25,10 @@
 		div.radio-option {
 			flex-basis: 100%;
 			min-height: 85px;
+
+			& > .components-radio-control {
+				margin-bottom: 1rem;
+			}
 		}
 	}
 
