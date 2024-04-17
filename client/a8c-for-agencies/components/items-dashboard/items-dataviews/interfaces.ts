@@ -37,9 +37,10 @@ export interface DataViewsColumn {
 		operators: string[];
 		isPrimary?: boolean;
 	};
+	type?: string;
 	header: ReactNode;
-	getValue: () => null;
-	render?: () => ReactNode;
+	getValue: ( item: any ) => string | boolean | number | undefined;
+	render?: ( item: any ) => ReactNode | null;
 }
 
 export interface DataViewsAction {
