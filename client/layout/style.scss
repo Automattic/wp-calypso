@@ -401,9 +401,9 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--color-neutral-0);
+	background: var(--studio-white);
 	min-height: 100vh;
 	.layout__content {
-		background: var(--color-neutral-0);
+		background: var(--studio-white);
 	}
 }
