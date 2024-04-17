@@ -52,7 +52,7 @@ export function PatternsPageViewTracker( {
 				category,
 				is_logged_in: isLoggedIn,
 				user_is_dev_account: isDevAccount ? '1' : '0',
-				search_term: searchTerm ? searchTerm : undefined,
+				search_term: searchTerm || undefined,
 				type: getTracksPatternType( patternTypeFilter ),
 				view,
 				referrer,
