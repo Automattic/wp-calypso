@@ -10,6 +10,7 @@ import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
 import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
+import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 
 import './style.scss';
 
@@ -21,6 +22,7 @@ const LOGO_PATHS = {
 	mastercard: creditCardMasterCardImage,
 	unionpay: creditCardUnionPayImage,
 	visa: creditCardVisaImage,
+	razorpay: razorpayImage,
 };
 
 const ALT_TEXT = {
@@ -39,6 +41,7 @@ const ALT_TEXT = {
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
 	placeholder: 'Payment logo',
+	razorpay: 'Razorpay',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
