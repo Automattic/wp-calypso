@@ -66,7 +66,6 @@ const entrepreneurFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, '' /* intent */, flowName, currentStep );
 
-			// Steps pre-site creation
 			switch ( currentStep ) {
 				case 'start': {
 					if ( userIsLoggedIn ) {
