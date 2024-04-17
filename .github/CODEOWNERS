@@ -120,6 +120,10 @@
 /packages/wpcom.js/src/lib/domain.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
+# Odie chat client
+/packages/odie-client @Automattic/ @Automattic/applied-ai-team
+/apps/editing-toolkit/editing-toolkit-plugin/help-center/class-wp-rest-help-center-odie.php @Automattic/ @Automattic/applied-ai-team
+
 # Plans
 /client/my-sites/plans-grid @Automattic/martech-decepticons
 /packages/plans-grid @Automattic/martech-decepticons
