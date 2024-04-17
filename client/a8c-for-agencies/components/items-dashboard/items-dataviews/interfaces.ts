@@ -1,14 +1,4 @@
 import { ReactNode } from 'react';
-// todo: Site and SiteDate should not be here
-import { Site, SiteData } from 'calypso/a8c-for-agencies/sections/sites/types';
-
-// todo: extract
-export interface SitesDataResponse {
-	sites: Array< Site >;
-	total: number;
-	perPage: number;
-	totalFavorites: number;
-}
 
 export interface ItemsDataViews {
 	items: any[] | undefined;
@@ -21,8 +11,6 @@ export interface ItemsDataViews {
 	onDataViewsStateChange: ( view: DataViewsState ) => void;
 	dataViewsState: DataViewsState;
 	selectedItem?: any | undefined;
-	// todo: forceTourExampleSite should not be here. Extract
-	//forceTourExampleSite?: boolean;
 }
 
 export interface DataViewsColumn {
@@ -48,7 +36,7 @@ export interface DataViewsAction {
 	label: string;
 	isPrimary?: boolean;
 	icon?: string;
-	isEligible?: ( record: Site ) => boolean;
+	isEligible?: ( record: any ) => boolean;
 	isDestructive?: boolean;
 	callback?: () => void;
 	RenderModal?: ReactNode;
@@ -80,9 +68,4 @@ export interface DataViewsState {
 	sort: DataViewsSort;
 	hiddenFields: string[];
 	layout: object;
-}
-
-// todo: extract?
-export interface SiteInfo extends SiteData {
-	id: number;
 }
