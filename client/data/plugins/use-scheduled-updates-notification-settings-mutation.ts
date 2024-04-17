@@ -16,7 +16,7 @@ export function useScheduledUpdatesNotificationSettingsMutation(
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation( {
-		mutationKey: [ 'create-update-schedule', siteSlug ],
+		mutationKey: [ 'scheduled-updates-notification-settings', siteSlug ],
 		mutationFn: ( params: ScheduledUpdatesNotificationSettings ) =>
 			wpcomRequest( {
 				path: `/sites/${ siteSlug }/scheduled-updates/notifications`,
