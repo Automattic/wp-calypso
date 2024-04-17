@@ -51,11 +51,11 @@ const prepareChartData = ( data: Array< StatsDevicesData > | undefined ) => {
 		switch ( device.key ) {
 			case 'desktop':
 				icon =
-					'<svg width="20" height="12" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M18.5 10H17.8V2C17.8 0.9 16.9 0 15.8 0H4.2C3.1 0 2.2 0.9 2.2 2V10H1.5C0.7 10 0 10.7 0 11.5H20C20 10.7 19.3 10 18.5 10ZM3.7 2C3.7 1.7 3.9 1.5 4.2 1.5H15.8C16.1 1.5 16.3 1.7 16.3 2V9.6H3.7V2Z" fill="white"/> </svg>';
+					'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M20.5 16H19.8V8C19.8 6.9 18.9 6 17.8 6H6.2C5.1 6 4.2 6.9 4.2 8V16H3.5C2.7 16 2 16.7 2 17.5H22C22 16.7 21.3 16 20.5 16ZM5.7 8C5.7 7.7 5.9 7.5 6.2 7.5H17.8C18.1 7.5 18.3 7.7 18.3 8V15.6H5.7V8Z" fill="white"/> </svg>';
 				break;
 			case 'mobile':
 				icon =
-					'<svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M8 0H2C0.9 0 0 0.9 0 2V14C0 15.1 0.9 16 2 16H8C9.1 16 10 15.1 10 14V2C10 0.9 9.1 0 8 0ZM8.5 14C8.5 14.3 8.3 14.5 8 14.5H2C1.7 14.5 1.5 14.3 1.5 14V2C1.5 1.7 1.7 1.5 2 1.5H8C8.3 1.5 8.5 1.7 8.5 2V14ZM4 13.5H6V12H4V13.5Z" fill="white"/> </svg>';
+					'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M15 4H9C7.9 4 7 4.9 7 6V18C7 19.1 7.9 20 9 20H15C16.1 20 17 19.1 17 18V6C17 4.9 16.1 4 15 4ZM15.5 18C15.5 18.3 15.3 18.5 15 18.5H9C8.7 18.5 8.5 18.3 8.5 18V6C8.5 5.7 8.7 5.5 9 5.5H15C15.3 5.5 15.5 5.7 15.5 6V18ZM11 17.5H13V16H11V17.5Z" fill="white"/> </svg>';
 				break;
 			case 'tablet':
 				icon =
@@ -63,7 +63,7 @@ const prepareChartData = ( data: Array< StatsDevicesData > | undefined ) => {
 				break;
 			default:
 				icon =
-					'<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" clip-rule="evenodd" d="M19 10C19 14.9706 14.9706 19 10 19C7.62008 19 5.45591 18.0762 3.8465 16.5677L16.5677 3.8465C18.0762 5.45591 19 7.62008 19 10ZM3.15559 15.8444L15.8444 3.15559C14.2719 1.81158 12.2307 1 10 1C5.02944 1 1 5.02944 1 10C1 12.2307 1.81158 14.2719 3.15559 15.8444ZM20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10Z" fill="white"/> </svg>';
+					'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" clip-rule="evenodd" d="M21 12C21 16.9706 16.9706 21 12 21C9.62008 21 7.45591 20.0762 5.8465 18.5677L18.5677 5.8465C20.0762 7.45591 21 9.62008 21 12ZM5.15559 17.8444L17.8444 5.15559C16.2719 3.81158 14.2307 3 12 3C7.02944 3 3 7.02944 3 12C3 14.2307 3.81158 16.2719 5.15559 17.8444ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" fill="white"/> </svg>';
 		}
 
 		return {
