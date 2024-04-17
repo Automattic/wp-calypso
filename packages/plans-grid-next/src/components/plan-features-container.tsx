@@ -30,11 +30,11 @@ const PlanFeaturesContainer: React.FC< {
 
 	return plansWithFeatures.map(
 		( { planSlug, features: { wpcomFeatures, jetpackFeatures } }, mapIndex ) => {
-			const shouldRenderFeature = featureGroup
-				? wpcomFeatures.some( ( feature ) => feature.getTitle() ) // TODO: obviously check here if there's a feature in that group
+			const shouldRenderFeatures = featureGroup
+				? false // TODO: this is a placeholder. obviously check here if there's a feature in that group
 				: true;
 
-			if ( ! shouldRenderFeature ) {
+			if ( ! shouldRenderFeatures ) {
 				return null;
 			}
 
@@ -44,7 +44,9 @@ const PlanFeaturesContainer: React.FC< {
 					isTableCell={ isTableCell }
 					className="plan-features-2023-grid__table-item"
 				>
-					{ featureGroup && <h2>{ featureGroup }</h2> }
+					{ featureGroup && (
+						<h2 className="plan-features-2023-grid__feature-group-title">{ featureGroup }</h2>
+					) }
 					<PlanFeatures2023GridFeatures
 						features={ wpcomFeatures } // TODO: filter for the right feature group
 						planSlug={ planSlug }
@@ -56,28 +58,32 @@ const PlanFeaturesContainer: React.FC< {
 						setActiveTooltipId={ setActiveTooltipId }
 						activeTooltipId={ activeTooltipId }
 					/>
-					{ jetpackFeatures.length !== 0 && (
-						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-							<Plans2023Tooltip
-								text={ translate( 'Security, performance, and growth tools—powered by Jetpack.' ) }
+					{ ! featureGroup && jetpackFeatures.length !== 0 && (
+						<>
+							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+								<Plans2023Tooltip
+									text={ translate(
+										'Security, performance, and growth tools—powered by Jetpack.'
+									) }
+									setActiveTooltipId={ setActiveTooltipId }
+									activeTooltipId={ activeTooltipId }
+									id={ `${ planSlug }-jp-logo-${ mapIndex }` }
+								>
+									<JetpackLogo size={ 16 } />
+								</Plans2023Tooltip>
+							</div>
+							<PlanFeatures2023GridFeatures
+								features={ jetpackFeatures }
+								planSlug={ planSlug }
+								paidDomainName={ paidDomainName }
+								generatedWPComSubdomain={ generatedWPComSubdomain }
+								hideUnavailableFeatures={ hideUnavailableFeatures }
+								isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
-								id={ `${ planSlug }-jp-logo-${ mapIndex }` }
-							>
-								<JetpackLogo size={ 16 } />
-							</Plans2023Tooltip>
-						</div>
+							/>
+						</>
 					) }
-					<PlanFeatures2023GridFeatures
-						features={ jetpackFeatures }
-						planSlug={ planSlug }
-						paidDomainName={ paidDomainName }
-						generatedWPComSubdomain={ generatedWPComSubdomain }
-						hideUnavailableFeatures={ hideUnavailableFeatures }
-						isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						setActiveTooltipId={ setActiveTooltipId }
-						activeTooltipId={ activeTooltipId }
-					/>
 				</PlanDivOrTdContainer>
 			);
 		}
