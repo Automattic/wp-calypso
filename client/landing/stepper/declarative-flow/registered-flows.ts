@@ -6,7 +6,6 @@ import {
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	DESIGN_FIRST_FLOW,
-	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	VIDEOPRESS_TV_FLOW,
@@ -112,11 +111,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
-
-	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
-		),
 	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
 
