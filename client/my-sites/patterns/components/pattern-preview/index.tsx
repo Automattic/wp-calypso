@@ -30,7 +30,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
 
-export const GRID_VIEW_VIEWPORT_WIDTH = 1200;
+export const GRID_VIEW_VIEWPORT_WIDTH = 1400;
 export const ASPECT_RATIO = 7 / 4;
 
 // This style is injected into pattern preview iframes to prevent users from navigating away from
