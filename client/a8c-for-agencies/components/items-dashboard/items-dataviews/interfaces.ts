@@ -10,14 +10,20 @@ export interface SitesDataResponse {
 	totalFavorites: number;
 }
 
-export interface SitesDataViewsProps {
+export interface ItemsDataViewsProps {
 	className?: string;
-	data: SitesDataResponse | undefined;
-	forceTourExampleSite?: boolean;
-	isLargeScreen: boolean;
+	data: any | undefined;
+	items: any[] | undefined;
+	pagination: DataViewsPaginationInfo;
+	// todo: forceTourExampleSite should not be here. Extract
+	//forceTourExampleSite?: boolean;
+	// todo: is it necessary? Could we get that info inside of the ItemsDataViews component?
+	isLargeScreen?: boolean;
 	isLoading: boolean;
+	searchLabel?: string;
 	fields: DataViewsColumn[];
-	actions: string[];
+	actions?: DataViewsAction[];
+	getItemId?: ( item: any ) => string;
 	onSitesViewChange: ( view: DataViewsState ) => void;
 	sitesViewState: DataViewsState;
 }
