@@ -8,6 +8,12 @@ export interface QueryStatsDevicesParams {
 	max?: number;
 }
 
+export interface StatsDevicesData {
+	key: string;
+	label: string;
+	value: number;
+}
+
 function queryStatsDevices( siteId: number, deviceParam: string, query: QueryStatsDevicesParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/devices/${ deviceParam }`, query );
 }
@@ -21,11 +27,14 @@ function capitalizeFirstLetter( string: string ) {
 	return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
 }
 
-const parseDevicesData = ( data: { top_values: { [ key: string ]: number } } ) => {
+const parseDevicesData = ( data: {
+	top_values: { [ key: string ]: number };
+} ): Array< StatsDevicesData > => {
 	const keys = Object.keys( data.top_values );
 
 	return keys.map( ( key: string ) => {
 		return {
+			key,
 			label: capitalizeFirstLetter( key ),
 			value: data.top_values[ key ],
 		};
