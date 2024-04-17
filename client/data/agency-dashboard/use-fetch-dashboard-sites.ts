@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import { useRef } from 'react';
 import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type {
 	AgencyDashboardFilter,
@@ -57,6 +58,9 @@ const useFetchDashboardSites = ( {
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 
+	const esHitsRef = useRef< number >( 0 );
+	const esHitsPageRef = useRef< number >( 0 );
+
 	// If perPage is not provided, we want to remove perPage from the query_key as existing tests don't pass otherwise.
 	if ( ! perPage ) {
 		queryKey = [
@@ -89,9 +93,15 @@ const useFetchDashboardSites = ( {
 					...agencyDashboardSortToQueryObject( sort ),
 					per_page: perPage,
 					...( agencyId && { agency_id: agencyId } ),
+					...( esHitsRef.current && { es_hits: esHitsRef.current } ),
+					...( esHitsPageRef.current && { es_hits_page: esHitsPageRef.current } ),
 				}
 			),
 		select: ( data ) => {
+			esHitsRef.current = data.es_hits ?? 0;
+			// Pagination starts with 1
+			esHitsPageRef.current = data.es_hits_page ?? 1;
+
 			return {
 				sites: data.sites,
 				total: data.total,
