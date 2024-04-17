@@ -21,6 +21,7 @@ class NavTabs extends Component {
 		selectedCount: PropTypes.number,
 		label: PropTypes.string,
 		hasSiblingControls: PropTypes.bool,
+		hasHorizontalScroll: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -133,10 +134,14 @@ class NavTabs extends Component {
 			}
 
 			const navGroupWidth = this.navGroupRef.current.offsetWidth;
-
 			this.getTabWidths();
 
-			if ( navGroupWidth <= this.tabsWidth && ! this.state.isDropdown ) {
+			if (
+				navGroupWidth <= this.tabsWidth &&
+				! this.state.isDropdown &&
+				this.props.hasHorizontalScroll &&
+				navGroupWidth < 480
+			) {
 				this.setState( {
 					isDropdown: true,
 				} );
