@@ -34,7 +34,7 @@
 
 @media ( max-width: $break-xlarge ) {
 	.hosting-overview {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(300px, 1fr);
 		grid-template-rows: auto auto auto;
 		grid-row-gap: 16px;
 	}
