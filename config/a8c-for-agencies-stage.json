@@ -25,7 +25,8 @@
 	"oauth_client_id": 95931,
 	"features": {
 		"a8c-for-agencies": true,
-		"oauth": true
+		"oauth": true,
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {

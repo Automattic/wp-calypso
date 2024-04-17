@@ -2,11 +2,12 @@
 	margin-right: 16px;
 
 	.site-icon {
-		border-radius: 10px; /* stylelint-disable-line scales/radii */
+		border-radius: 4px;
+
 		&.is-blank {
 			background: transparent;
 			.wpcom-favicon {
-				fill: var(--studio-blue-50);
+				fill: var(--color-primary-50);
 			}
 
 			.no-favicon {

@@ -33,10 +33,13 @@ interface Props {
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 	referer?: string | null;
 	initialValues?: {
+		firstName?: string;
+		lastName?: string;
 		agencyName?: string;
 		agencyUrl?: string;
 		managedSites?: string;
 		servicesOffered?: string[];
+		productsOffered?: string[];
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -66,9 +69,12 @@ export default function AgencyDetailsForm( {
 	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
+	const [ firstName, setFirstName ] = useState( initialValues.firstName ?? '' );
+	const [ lastName, setLastName ] = useState( initialValues.lastName ?? '' );
 	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
 	const [ managedSites, setManagedSites ] = useState( initialValues.managedSites ?? '1-5' );
 	const [ servicesOffered, setServicesOffered ] = useState( initialValues.servicesOffered ?? [] );
+	const [ productsOffered, setProductsOffered ] = useState( initialValues.productsOffered ?? [] );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
@@ -80,10 +86,13 @@ export default function AgencyDetailsForm( {
 
 	const payload: AgencyDetailsPayload = useMemo(
 		() => ( {
+			firstName,
+			lastName,
 			agencyName,
 			agencyUrl,
 			managedSites,
 			servicesOffered,
+			productsOffered,
 			city,
 			line1,
 			line2,
@@ -94,10 +103,13 @@ export default function AgencyDetailsForm( {
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
+			firstName,
+			lastName,
 			agencyName,
 			agencyUrl,
 			managedSites,
 			servicesOffered,
+			productsOffered,
 			city,
 			line1,
 			line2,
@@ -132,6 +144,16 @@ export default function AgencyDetailsForm( {
 		];
 	};
 
+	const getProductsOfferedOptions = () => {
+		return [
+			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
+			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
+			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
+			{ value: 'Pressable', label: translate( 'Pressable' ) },
+			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
+		];
+	};
+
 	// <FormSelect> complains if we "just" pass "setManagedSites" because it expects
 	// React.FormEventHandler, so this wrapper function is made to satisfy everything
 	// in an easily readable way.
@@ -144,9 +166,39 @@ export default function AgencyDetailsForm( {
 		setServicesOffered( services.value );
 	};
 
+	const handleSetProductsOffered = ( products: ChangeList< string > ) => {
+		setProductsOffered( products.value );
+	};
+
 	return (
 		<div className="agency-details-form">
 			<form onSubmit={ handleSubmit }>
+				<div className="agency-details-form__fullname-container">
+					<FormFieldset>
+						<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
+						<FormTextInput
+							id="firstName"
+							name="firstName"
+							value={ firstName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setFirstName( event.target.value )
+							}
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastName">{ translate( 'Last name' ) }</FormLabel>
+						<FormTextInput
+							id="lastName"
+							name="lastName"
+							value={ lastName }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+								setLastName( event.target.value )
+							}
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+				</div>
 				<FormFieldset>
 					<FormLabel htmlFor="agencyName">{ translate( 'Agency name' ) }</FormLabel>
 					<FormTextInput
@@ -182,11 +234,11 @@ export default function AgencyDetailsForm( {
 						onChange={ handleSetManagedSites }
 					>
 						<option value="1-5">{ translate( '1-5' ) }</option>
-						<option value="6-25">{ translate( '6-25' ) }</option>
-						<option value="26-50">{ translate( '26-50' ) }</option>
+						<option value="6-20">{ translate( '6-20' ) }</option>
+						<option value="21-50">{ translate( '21-50' ) }</option>
 						<option value="51-100">{ translate( '51-100' ) }</option>
 						<option value="101-500">{ translate( '101-500' ) }</option>
-						<option value="501+">{ translate( '501+' ) }</option>
+						<option value="500+">{ translate( '500+' ) }</option>
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -204,6 +256,20 @@ export default function AgencyDetailsForm( {
 						// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
 						// the expected custom event type for `onChange` and the standard event types.
 						onChange={ handleSetServicesOffered as any }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="products_offered">
+						{ translate( 'What Automattic products do you currently offer your customers?' ) }
+					</FormLabel>
+					<MultiCheckbox
+						id="products_offered"
+						name="products_offered"
+						checked={ productsOffered }
+						options={ getProductsOfferedOptions() }
+						// // Using 'as any' to bypass TypeScript type checks due to a known and intentional type mismatch between
+						// the expected custom event type for `onChange` and the standard event types.
+						onChange={ handleSetProductsOffered as any }
 					/>
 				</FormFieldset>
 				<FormFieldset>

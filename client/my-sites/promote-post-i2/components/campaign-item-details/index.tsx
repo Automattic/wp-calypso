@@ -31,6 +31,7 @@ import {
 } from 'calypso/my-sites/promote-post-i2/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
 import {
 	formatCents,
 	formatNumber,
@@ -87,7 +88,7 @@ const getExternalTabletIcon = ( fillColor = '#A7AAAD' ) => (
 );
 
 export default function CampaignItemDetails( props: Props ) {
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const translate = useTranslate();
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
@@ -788,9 +789,13 @@ export default function CampaignItemDetails( props: Props ) {
 														const originalDate = moment( createdAt );
 
 														// We only have the "created at" date stored, so we need to subtract a week to match the billing cycle
-														const weekBefore = originalDate.clone().subtract( 7, 'days' );
+														let periodStart = originalDate.clone().subtract( 7, 'days' );
 
-														return `${ weekBefore.format( 'MMM, D' ) } - ${ originalDate.format(
+														if ( periodStart.isBefore( moment( start_date ) ) ) {
+															periodStart = moment( start_date );
+														}
+
+														return `${ periodStart.format( 'MMM, D' ) } - ${ originalDate.format(
 															'MMM, D'
 														) }`;
 													};
@@ -931,7 +936,7 @@ export default function CampaignItemDetails( props: Props ) {
 									className="is-link components-button campaign-item-details__support-link"
 									supportContext="advertising"
 									showIcon={ false }
-									showSupportModal={ ! isRunningInJetpack }
+									showSupportModal={ ! isRunningInWpAdmin }
 								>
 									{ translate( 'View documentation' ) }
 									{ getExternalLinkIcon() }

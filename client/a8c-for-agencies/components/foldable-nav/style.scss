@@ -12,11 +12,11 @@
 		padding-left: 12px;
 
 		.foldable-card__expand .gridicon {
-			color: var(--studio-gray-50);
+			color: var(--color-accent-50);
 		}
 
 		.foldable-card__main {
-			color: var(--studio-gray-100);
+			color: var(--color-accent-100);
 			font-weight: 500;
 			font-size: rem(16px);
 		}
@@ -28,7 +28,7 @@
 
 		p.no-content,
 		.components-flex-item {
-			color: var(--studio-gray-80);
+			color: var(--color-accent-80);
 			font-size: rem(14px);
 			margin-bottom: 0;
 		}
@@ -36,6 +36,7 @@
 		a {
 			padding: 8px;
 		}
+
 	}
 
 	ul {

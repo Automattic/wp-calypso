@@ -30,13 +30,13 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import './style.scss';
 
-export const DESKTOP_VIEWPORT_WIDTH = 1200;
+export const GRID_VIEW_VIEWPORT_WIDTH = 1200;
 export const ASPECT_RATIO = 7 / 4;
 
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
 const noClickStyle = {
-	css: 'a, button, input { pointer-events: none; }',
+	css: 'a[href], button, input { pointer-events: none; }',
 	isGlobalStyles: true,
 };
 
@@ -103,7 +103,7 @@ function PatternPreviewFragment( {
 	pattern,
 	patternTypeFilter,
 	isGridView,
-	viewportWidth,
+	viewportWidth: fixedViewportWidth,
 }: PatternPreviewProps ) {
 	const { recordPatternsEvent } = useRecordPatternsEvent();
 	const ref = useRef< HTMLDivElement >( null );
@@ -121,6 +121,14 @@ function PatternPreviewFragment( {
 	const [ isAuthModalOpen, setIsAuthModalOpen ] = useState( false );
 
 	const isPreviewLarge = nodeSize?.width ? nodeSize.width > 960 : true;
+
+	let viewportWidth: number | undefined = undefined;
+
+	if ( fixedViewportWidth ) {
+		viewportWidth = fixedViewportWidth;
+	} else if ( nodeSize.width ) {
+		viewportWidth = nodeSize.width * 1.16;
+	}
 
 	const translate = useTranslate();
 	const isEnglish = useIsEnglishLocale();
@@ -257,6 +265,7 @@ function PatternPreviewFragment( {
 
 			<div className="pattern-preview__renderer">
 				<PatternRenderer
+					maxHeight="none"
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }
@@ -364,7 +373,7 @@ export function PatternPreview( props: PatternPreviewProps ) {
 				topLeft: false,
 			} }
 			handleWrapperClass="pattern-preview__resizer"
-			minWidth={ 375 }
+			minWidth={ 335 }
 			maxWidth="100%"
 			onResizeStop={ () => {
 				recordResizeEvent( 'calypso_pattern_library_resize' );

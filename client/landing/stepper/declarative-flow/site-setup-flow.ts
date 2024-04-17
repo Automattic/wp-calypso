@@ -128,6 +128,8 @@ const siteSetupFlow: Flow = {
 
 		const origin = urlQueryParams.get( 'origin' );
 		const from = urlQueryParams.get( 'from' );
+		const backToStep = urlQueryParams.get( 'backToStep' );
+		const backToFlow = urlQueryParams.get( 'backToFlow' );
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -146,6 +148,14 @@ const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
+
+		const goToFlow = ( fullStepPath: string ) => {
+			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
+
+			return window.location.assign(
+				addQueryArgs( { siteSlug, from, origin: `site-setup/${ currentStep }` }, path )
+			);
+		};
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
@@ -501,11 +511,12 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importList':
-					// eslint-disable-next-line no-case-declarations
-					const backToStep = urlQueryParams.get( 'backToStep' );
-
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
+					}
+
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
 					}
 
 					return navigate( `import?siteSlug=${ siteSlug }` );

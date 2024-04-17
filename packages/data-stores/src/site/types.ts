@@ -129,7 +129,6 @@ export interface SiteDetails {
 	is_deleted?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
-	is_wpcom_simple?: boolean;
 	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
@@ -253,6 +252,7 @@ export interface SiteDetailsOptions {
 	is_pending_plan?: boolean;
 	is_redirect?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_simple?: boolean;
 	is_wpcom_store?: boolean;
 	is_wpforteams_site?: boolean;
 	jetpack_connection_active_plugins?: string[];

@@ -26,7 +26,7 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const planMonthly = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_PREMIUM ],
-		selectedSiteId,
+		siteId: selectedSiteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,

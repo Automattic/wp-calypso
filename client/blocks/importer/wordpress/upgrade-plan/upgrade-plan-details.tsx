@@ -17,13 +17,15 @@ import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';
 
 interface Props {
 	children: React.ReactNode;
+	isEligibleForTrialPlan: boolean;
 }
 
 export const UpgradePlanDetails = ( props: Props ) => {
 	const { __ } = useI18n();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+	const [ showFeatures, setShowFeatures ] = useState( false );
 
-	const { children } = props;
+	const { children, isEligibleForTrialPlan } = props;
 	const [ selectedPlan, setSelectedPlan ] = useState<
 		typeof PLAN_BUSINESS | typeof PLAN_BUSINESS_MONTHLY
 	>( PLAN_BUSINESS );
@@ -66,7 +68,12 @@ export const UpgradePlanDetails = ( props: Props ) => {
 				</ButtonGroup>
 			</div>
 
-			<div className={ classnames( 'import__upgrade-plan-container' ) }>
+			<div
+				className={ classnames( 'import__upgrade-plan-container', {
+					'feature-list-expanded': showFeatures,
+					'is-not-eligible-for-trial-plan': ! isEligibleForTrialPlan,
+				} ) }
+			>
 				<div className={ classnames( 'import__upgrade-plan-features-container' ) }>
 					<div className={ classnames( 'import__upgrade-plan-header' ) }>
 						<Plans2023Tooltip
@@ -82,7 +89,7 @@ export const UpgradePlanDetails = ( props: Props ) => {
 						<Title className="plan-title" tagName="h2">
 							{ plan?.getTitle() }
 						</Title>
-						<small>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</small>
+						<p>{ __( 'Unlock the power of WordPress with plugins and cloud tools.' ) }</p>
 					</div>
 
 					<div className={ classnames( 'import__upgrade-plan-price' ) }>
@@ -96,7 +103,11 @@ export const UpgradePlanDetails = ( props: Props ) => {
 					<div className={ classnames( 'import__upgrade-plan-cta' ) }>{ children }</div>
 
 					<div className={ classnames( 'import__upgrade-plan-features-list' ) }>
-						<UpgradePlanFeatureList plan={ plan } />
+						<UpgradePlanFeatureList
+							plan={ plan }
+							showFeatures={ showFeatures }
+							setShowFeatures={ setShowFeatures }
+						/>
 					</div>
 				</div>
 				<UpgradePlanHostingDetails />

@@ -8,6 +8,7 @@ import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-plac
 import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ScanHistoryPage from 'calypso/my-sites/scan/history';
 import ScanPage from 'calypso/my-sites/scan/main';
@@ -20,9 +21,10 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 export const showUpsellIfNoScan = ( context, next ) => {
-	const ScanUpsellPlaceholder = isJetpackCloud()
-		? UpsellProductCardPlaceholder
-		: WpcomScanUpsellPlaceholder;
+	const ScanUpsellPlaceholder =
+		isJetpackCloud() || isA8CForAgencies()
+			? UpsellProductCardPlaceholder
+			: WpcomScanUpsellPlaceholder;
 	context.featurePreview = scanUpsellSwitcher( <ScanUpsellPlaceholder />, context.featurePreview );
 	next();
 };
@@ -44,11 +46,12 @@ export const showNotAuthorizedForNonAdmins = ( context, next ) => {
 };
 
 export const showJetpackIsDisconnected = ( context, next ) => {
-	const JetpackConnectionFailed = isJetpackCloud() ? (
-		<ScanUpsellPage reason="no_connected_jetpack" />
-	) : (
-		<WPCOMScanUpsellPage reason="no_connected_jetpack" />
-	);
+	const JetpackConnectionFailed =
+		isJetpackCloud() || isA8CForAgencies() ? (
+			<ScanUpsellPage reason="no_connected_jetpack" />
+		) : (
+			<WPCOMScanUpsellPage reason="no_connected_jetpack" />
+		);
 	context.featurePreview = (
 		<IsJetpackDisconnectedSwitch
 			trueComponent={ JetpackConnectionFailed }
@@ -59,11 +62,12 @@ export const showJetpackIsDisconnected = ( context, next ) => {
 };
 
 export const showUnavailableForVaultPressSites = ( context, next ) => {
-	const message = isJetpackCloud() ? (
-		<ScanUpsellPage reason="vp_active_on_site" />
-	) : (
-		<WPCOMScanUpsellPage reason="vp_active_on_site" />
-	);
+	const message =
+		isJetpackCloud() || isA8CForAgencies() ? (
+			<ScanUpsellPage reason="vp_active_on_site" />
+		) : (
+			<WPCOMScanUpsellPage reason="vp_active_on_site" />
+		);
 
 	context.featurePreview = (
 		<HasVaultPressSwitch trueComponent={ message } falseComponent={ context.featurePreview } />
@@ -76,11 +80,12 @@ export const showUnavailableForMultisites = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	if ( siteId && isJetpackSiteMultiSite( state, siteId ) ) {
-		context.featurePreview = isJetpackCloud() ? (
-			<ScanUpsellPage reason="multisite_not_supported" />
-		) : (
-			<WPCOMScanUpsellPage reason="multisite_not_supported" />
-		);
+		context.featurePreview =
+			isJetpackCloud() || isA8CForAgencies() ? (
+				<ScanUpsellPage reason="multisite_not_supported" />
+			) : (
+				<WPCOMScanUpsellPage reason="multisite_not_supported" />
+			);
 	}
 
 	next();
@@ -99,7 +104,8 @@ export const scanHistory = ( context, next ) => {
 };
 
 function scanUpsellSwitcher( placeholder, primary ) {
-	const UpsellComponent = isJetpackCloud() ? ScanUpsellPage : WPCOMScanUpsellPage;
+	const UpsellComponent =
+		isJetpackCloud() || isA8CForAgencies() ? ScanUpsellPage : WPCOMScanUpsellPage;
 	return (
 		<UpsellSwitch
 			UpsellComponent={ UpsellComponent }

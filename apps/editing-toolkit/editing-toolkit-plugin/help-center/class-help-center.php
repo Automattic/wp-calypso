@@ -226,6 +226,10 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-user-fields.php';
 		$controller = new WP_REST_Help_Center_User_Fields();
 		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-odie.php';
+		$controller = new WP_REST_Help_Center_Odie();
+		$controller->register_rest_route();
 	}
 	/**
 	 * Returns true if the current site is a support site.

@@ -3,14 +3,15 @@ import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	EXTENSION_THRESHOLD_IN_MILLION,
+	default as useAvailableUpgradeTiers,
+} from 'calypso/my-sites/stats/hooks/use-available-upgrade-tiers';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { StatsPlanTierUI } from '../types';
-import {
-	EXTENSION_THRESHOLD_IN_MILLION,
-	default as useAvailableUpgradeTiers,
-} from '../use-available-upgrade-tiers';
+
 import './styles.scss';
 
 function useTranslatedStrings() {
@@ -33,7 +34,6 @@ function useTranslatedStrings() {
 }
 
 function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
-	// TODO: Review tier values from API.
 	// Should consider validating the inputs before displaying them.
 	return tiers.map( ( tier ) => {
 		// No transformation needed (yet).
@@ -42,21 +42,11 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 			price = tier.price;
 		}
 
-		// View should be a number but the current mock data
-		// includes a string for the final tier.
-		// Special case that scenario for now.
-		let views = '';
-		if ( tier.views === null ) {
-			views = `${ formatNumber( EXTENSION_THRESHOLD_IN_MILLION * 1000000 ) }+`;
-		} else {
-			views = formatNumber( tier.views );
-		}
-
 		const tierUpgradePricePerMonth = ( tier.upgrade_price || 0 ) / 12;
 
 		// Return the new step with string values.
 		return {
-			lhValue: views,
+			lhValue: formatNumber( tier.views ),
 			rhValue: price,
 			originalPrice: tier.price,
 			upgradePrice: tierUpgradePricePerMonth
@@ -65,7 +55,7 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 						stripZeros: true,
 				  } )
 				: '',
-			tierViews: tier.views === null ? EXTENSION_THRESHOLD_IN_MILLION * 1000000 : tier.views,
+			tierViews: tier.views,
 		};
 	} );
 }

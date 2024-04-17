@@ -18,7 +18,6 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
-import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
 import SitesDataViews from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
@@ -33,6 +32,7 @@ import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
@@ -269,7 +269,7 @@ export default function SitesDashboard() {
 
 			{ sitesViewState.selectedSite && (
 				<LayoutColumn className="site-preview-pane" wide>
-					<OverviewFamily
+					<OverviewPreviewPane
 						site={ sitesViewState.selectedSite }
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }

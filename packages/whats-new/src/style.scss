@@ -173,7 +173,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	height: 50%;
 	max-height: 230px;
 	padding: 32px 52px 0;
-	background: #a6b1ee;
+	// Hardcoding color here so that it's guranteed to match what's recorded in the "Find anything" video
+	background: #3858e9;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
