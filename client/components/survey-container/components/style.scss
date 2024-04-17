@@ -12,6 +12,10 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 	flex-wrap: wrap;
 	gap: 28px;
 	width: 100%;
+
+	@media (max-width: $break-medium) {
+		flex-direction: column;
+	}
 }
 
 @mixin question-option-control {

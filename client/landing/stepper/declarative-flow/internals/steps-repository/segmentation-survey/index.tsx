@@ -11,10 +11,11 @@ import {
 } from 'calypso/data/segmentaton-survey';
 import SegmentationSurveyProvider from './provider';
 import type { Step } from '../../types';
+import './style.scss';
 
 const SURVEY_KEY = 'survey-1';
 
-const CustomDocumentHead = () => {
+const SegmentationSurveyDocumentHead = () => {
 	const { currentQuestion } = useSurveyContext();
 
 	if ( ! currentQuestion ) {
@@ -46,13 +47,13 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 	};
 
 	return (
-		<Main>
+		<Main className="segmentation-survey-step">
 			<SegmentationSurveyProvider
 				navigation={ navigation }
 				onSubmitQuestion={ onSubmitQuestion }
 				questions={ questions }
 			>
-				<CustomDocumentHead />
+				<SegmentationSurveyDocumentHead />
 
 				<SurveyContainer
 					answers={ answers }
