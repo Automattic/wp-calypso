@@ -74,6 +74,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 			planDiscountedRawPrice,
 			currencyCode,
 			hasSevenDayRefundPeriod,
+			isLoading,
 		} = this.props;
 		return (
 			<>
@@ -148,10 +149,13 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					</p>
 					<p>
 						{ translate(
-							'Simply click below to upgrade. You’ll only have to pay the difference to the %(planName)s Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
+							'Simply click below to upgrade. You’ll only have to pay the difference to the %(planName)s Plan {{PriceWrapper}}({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).{{/PriceWrapper}}',
 							{
 								components: {
 									del: <del />,
+									PriceWrapper: (
+										<span className={ isLoading ? 'upsell-nudge__small-placeholder' : '' } />
+									),
 								},
 								args: {
 									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
@@ -170,12 +174,13 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	}
 
 	footer() {
-		const { translate, handleClickAccept, handleClickDecline } = this.props;
+		const { translate, handleClickAccept, handleClickDecline, isLoading } = this.props;
 		return (
 			<footer>
 				<Button
 					primary
 					className="business-plan-upgrade-upsell-new-design__accept-offer-button"
+					busy={ isLoading }
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
 					{ translate( 'Upgrade Now' ) }
