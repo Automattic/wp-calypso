@@ -131,7 +131,9 @@ const withAIAssemblerFlow: Flow = {
 						const homePagePostId = results[ 1 ].id;
 						// This will redirect and we will never resolve.
 						setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
-							window.location.assign( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` )
+							window.location.assign(
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
+							)
 						);
 						return Promise.resolve();
 					} );
