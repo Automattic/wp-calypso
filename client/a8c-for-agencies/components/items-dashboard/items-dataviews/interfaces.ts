@@ -12,7 +12,6 @@ export interface SitesDataResponse {
 
 export interface ItemsDataViewsProps {
 	className?: string;
-	data: any | undefined;
 	items: any[] | undefined;
 	pagination: DataViewsPaginationInfo;
 	// todo: forceTourExampleSite should not be here. Extract
@@ -24,6 +23,7 @@ export interface ItemsDataViewsProps {
 	fields: DataViewsColumn[];
 	actions?: DataViewsAction[];
 	getItemId?: ( item: any ) => string;
+	itemFieldId?: string; // The path to get the item id: `id` or `site.blog_id`
 	onSitesViewChange: ( view: DataViewsState ) => void;
 	sitesViewState: DataViewsState;
 }
