@@ -1,45 +1,103 @@
 import {
 	__experimentalText as Text,
-	PanelRow,
-	PanelBody,
 	CheckboxControl,
+	Card,
+	CardHeader,
+	Button,
+	CardBody,
+	CardFooter,
 } from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useState } from 'react';
 import { useScheduledUpdatesNotificationSettingsMutation } from 'calypso/data/plugins/use-scheduled-updates-notification-settings-mutation';
 import { useScheduledUpdatesNotificationSettingsQuery } from 'calypso/data/plugins/use-scheduled-updates-notification-settings-query';
 import { useSiteSlug } from './hooks/use-site-slug';
 
-export const NotificationSettings = () => {
+import './notification-settings.scss';
+
+type Props = {
+	onNavBack?: () => void;
+};
+
+export const NotificationSettings = ( { onNavBack }: Props ) => {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const [ touched, setIsTouched ] = useState( false );
 	const { data: settings, isFetched } = useScheduledUpdatesNotificationSettingsQuery( siteSlug );
+	const [ formValues, setFormValues ] = useState( {
+		success: false,
+		failure: false,
+	} );
+
+	useEffect( () => {
+		if ( isFetched && settings ) {
+			setFormValues( {
+				success: settings.success,
+				failure: settings.failure,
+			} );
+		}
+	}, [ isFetched, settings ] );
+
+	const handleCheckboxChange = ( field: keyof typeof formValues ) => ( checked: boolean ) => {
+		setFormValues( ( prevValues ) => ( {
+			...prevValues,
+			[ field ]: checked,
+		} ) );
+		setIsTouched( true );
+	};
+
 	const { updateNotificationSettings } =
 		useScheduledUpdatesNotificationSettingsMutation( siteSlug );
 
-	return isFetched ? (
-		<PanelBody>
-			<PanelRow>
-				<Text className="notification-settings__title">{ translate( 'Email me' ) }</Text>
-			</PanelRow>
-			<PanelRow>
-				<CheckboxControl
-					label={ translate( 'On successful updates' ) }
-					checked={ settings?.success }
-					onChange={ ( checked ) =>
-						updateNotificationSettings( { success: checked, failure: settings?.failure ?? false } )
-					}
-				/>
-			</PanelRow>
+	const onSave = useCallback( () => {
+		updateNotificationSettings( formValues );
+		setIsTouched( false );
+	}, [ formValues, updateNotificationSettings ] );
 
-			<PanelRow>
-				<CheckboxControl
-					label={ translate( 'On failed updates' ) }
-					checked={ settings?.failure }
-					onChange={ ( checked ) =>
-						updateNotificationSettings( { success: settings?.success ?? false, failure: checked } )
-					}
-				/>
-			</PanelRow>
-		</PanelBody>
-	) : null;
+	return (
+		<Card className="plugins-update-manager">
+			<CardHeader size="extraSmall">
+				<div className="ch-placeholder">
+					{ onNavBack && (
+						<Button icon={ arrowLeft } onClick={ onNavBack }>
+							{ translate( 'Back' ) }
+						</Button>
+					) }
+				</div>
+				<Text>{ translate( 'Notification management' ) }</Text>
+				<div className="ch-placeholder"></div>
+			</CardHeader>
+			<CardBody className="notification-settings-form">
+				<label>{ translate( 'Email me' ) }</label>
+				<Text className="info-msg">
+					{ translate(
+						'Receive email notifications to stay informed about the performance of the plugin updates.'
+					) }
+				</Text>
+
+				<div className="form-field">
+					<CheckboxControl
+						label={ translate( 'On successful updates' ) }
+						checked={ formValues.success }
+						onChange={ handleCheckboxChange( 'success' ) }
+						disabled={ ! isFetched }
+					/>
+				</div>
+				<div className="form-field">
+					<CheckboxControl
+						label={ translate( 'On failed updates' ) }
+						checked={ formValues.failure }
+						onChange={ handleCheckboxChange( 'failure' ) }
+						disabled={ ! isFetched }
+					/>
+				</div>
+			</CardBody>
+			<CardFooter>
+				<Button variant="primary" disabled={ ! touched } onClick={ onSave }>
+					{ translate( 'Save' ) }
+				</Button>
+			</CardFooter>
+		</Card>
+	);
 };

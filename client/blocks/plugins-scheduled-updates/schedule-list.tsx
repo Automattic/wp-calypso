@@ -18,7 +18,6 @@ import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
 import { useSiteSlug } from './hooks/use-site-slug';
-import { NotificationSettings } from './notification-settings';
 import { ScheduleListCards } from './schedule-list-cards';
 import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListTable } from './schedule-list-table';
@@ -143,7 +142,6 @@ export const ScheduleList = ( props: Props ) => {
 								) }
 							</>
 						) }
-					{ ! isLoading && ! showScheduleListEmpty && <NotificationSettings /> }
 				</CardBody>
 			</Card>
 		</>
