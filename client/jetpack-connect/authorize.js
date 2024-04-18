@@ -309,7 +309,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
-			( this.isFromJetpackBackupPlugin() && siteHasBackups )
+			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
+			this.isFromAutomatticForAgenciesPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -1249,6 +1250,7 @@ export class JetpackAuthorize extends Component {
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -1267,6 +1269,7 @@ export class JetpackAuthorize extends Component {
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
+							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 							wooDnaConfig={ wooDna }
 						/>
 						{ this.renderContent() }

@@ -67,6 +67,13 @@ export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	day: 'numeric',
 } ).format;
 
+export const formatMastodonDate = new Intl.DateTimeFormat( 'en-US', {
+	// Result: "Apr 7, 2024", "Dec 31, 2023"
+	month: 'short',
+	day: 'numeric',
+	year: 'numeric',
+} ).format;
+
 export type Platform = 'twitter' | 'facebook' | 'linkedin' | 'instagram' | 'mastodon' | 'nextdoor';
 
 type PreviewTextOptions = {

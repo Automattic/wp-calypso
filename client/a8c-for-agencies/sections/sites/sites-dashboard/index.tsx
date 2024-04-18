@@ -104,7 +104,10 @@ export default function SitesDashboard() {
 			return;
 		}
 
-		if ( dataViewsState.selectedItem ) {
+		if (
+			dataViewsState.selectedItem &&
+			dataViewsState.selectedItem.url === initialSelectedSiteUrl
+		) {
 			return;
 		}
 
@@ -151,7 +154,7 @@ export default function SitesDashboard() {
 			showOnlyFavorites,
 		} );
 		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
-			page.replace( updatedUrl );
+			page.show( updatedUrl );
 		}
 	}, [
 		dataViewsState.selectedItem,

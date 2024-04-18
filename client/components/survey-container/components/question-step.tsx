@@ -4,11 +4,11 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { Question, QuestionType } from '../types';
 import QuestionMultipleOptions from './question-multiple-selection';
-import QuestionSingleOption from './question-single-selection';
+import SurveyRadioControl from './survey-radio-control';
 import './style.scss';
 
 const questionTypeComponentMap = {
-	[ QuestionType.SINGLE_CHOICE ]: QuestionSingleOption,
+	[ QuestionType.SINGLE_CHOICE ]: SurveyRadioControl,
 	[ QuestionType.MULTIPLE_CHOICE ]: QuestionMultipleOptions,
 };
 

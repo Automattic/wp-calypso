@@ -5,8 +5,13 @@
 	--a4a-corners-soft: 4px;
 
 	--color-surface-backdrop: #021a23;
+	--color-light-backdrop: var(--studio-white);
+
+	--color-border-light: var(--studio-white);
 
 	--color-text-gray: "#333";
+	--color-text-white: var(--studio-white);
+	--color-text-black: var(--studio-black);
 	--color-sidebar-text-alternative: #bbe0fa;
 
 	// FIXME: Need to move this colors to a color scheme file
@@ -78,6 +83,43 @@
 	--color-accent-90-rgb: var(--studio-gray-90-rgb);
 	--color-accent-100: var(--studio-gray-100);
 	--color-accent-100-rgb: var(--studio-gray-100-rgb);
+
+	--color-jetpack: var(--studio-jetpack-green);
+	--color-jetpack-rgb: var(--studio-jetpack-green-rgb);
+	--color-jetpack-dark: var(--studio-jetpack-green-70);
+	--color-jetpack-dark-rgb: var(--studio-jetpack-green-70-rgb);
+	--color-jetpack-light: var(--studio-jetpack-green-30);
+	--color-jetpack-light-rgb: var(--studio-jetpack-green-30-rgb);
+	--color-jetpack-0: var(--studio-jetpack-green-0);
+	--color-jetpack-0-rgb: var(--studio-jetpack-green-0-rgb);
+	--color-jetpack-5: var(--studio-jetpack-green-5);
+	--color-jetpack-5-rgb: var(--studio-jetpack-green-5-rgb);
+	--color-jetpack-10: var(--studio-jetpack-green-10);
+	--color-jetpack-10-rgb: var(--studio-jetpack-green-10-rgb);
+	--color-jetpack-20: var(--studio-jetpack-green-20);
+	--color-jetpack-20-rgb: var(--studio-jetpack-green-20-rgb);
+	--color-jetpack-30: var(--studio-jetpack-green-30);
+	--color-jetpack-30-rgb: var(--studio-jetpack-green-30-rgb);
+	--color-jetpack-40: var(--studio-jetpack-green-40);
+	--color-jetpack-40-rgb: var(--studio-jetpack-green-40-rgb);
+	--color-jetpack-50: var(--studio-jetpack-green-50);
+	--color-jetpack-50-rgb: var(--studio-jetpack-green-rgb);
+	--color-jetpack-60: var(--studio-jetpack-green-60);
+	--color-jetpack-60-rgb: var(--studio-jetpack-green-60-rgb);
+	--color-jetpack-70: var(--studio-jetpack-green-70);
+	--color-jetpack-70-rgb: var(--studio-jetpack-green-70-rgb);
+	--color-jetpack-80: var(--studio-jetpack-green-80);
+	--color-jetpack-80-rgb: var(--studio-jetpack-green-80-rgb);
+	--color-jetpack-90: var(--studio-jetpack-green-90);
+	--color-jetpack-90-rgb: var(--studio-jetpack-green-90-rgb);
+	--color-jetpack-100: var(--studio-jetpack-green-100);
+	--color-jetpack-100-rgb: var(--studio-jetpack-green-100-rgb);
+
+	--color-orange-40: var(--studio-orange-40);
+
+	--color-yellow-0: var(--studio-yellow-0);
+	--color-yellow-20: var(--studio-yellow-20);
+	--color-yellow-50: var(--studio-yellow-50);
 }
 
 .theme-a8c-for-agencies {
@@ -151,7 +193,7 @@
 	.button.is-borderless:hover,
 	.button.is-borderless {
 		background: none;
-		color: var(--studio-gray-80);
+		color: var(--color-accent-80);
 	}
 
 	.split-button .button {

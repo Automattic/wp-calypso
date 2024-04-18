@@ -36,7 +36,7 @@ export const ASPECT_RATIO = 7 / 4;
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
 const noClickStyle = {
-	css: 'a, button, input { pointer-events: none; }',
+	css: 'a[href], button, input { pointer-events: none; }',
 	isGlobalStyles: true,
 };
 
@@ -238,6 +238,39 @@ function PatternPreviewFragment( {
 		};
 	}, [ renderedPattern, idAttr ] );
 
+	// When an iframe loses focus, browsers will scroll them back into view. This behavior can be
+	// annoying and make for a glitchy impression. This callback continuously stores the latest
+	// window scroll position and restores it just after this preview iframe loses focus
+	useEffect( () => {
+		const iframe = ref.current?.querySelector( 'iframe' );
+
+		if ( ! iframe ) {
+			return;
+		}
+
+		let lastScrollPosition = window.scrollY;
+
+		function onWindowScroll() {
+			lastScrollPosition = window.scrollY;
+		}
+
+		function onIframeBlur() {
+			const storedLastScrollPosition = lastScrollPosition;
+
+			requestAnimationFrame( () => {
+				window.scrollTo( { top: storedLastScrollPosition } );
+			} );
+		}
+
+		window.addEventListener( 'scroll', onWindowScroll, { passive: true } );
+		iframe.contentWindow?.addEventListener( 'blur', onIframeBlur );
+
+		return () => {
+			window.removeEventListener( 'scroll', onWindowScroll );
+			iframe.contentWindow?.removeEventListener( 'blur', onIframeBlur );
+		};
+	} );
+
 	if ( ! pattern ) {
 		return null;
 	}
@@ -265,6 +298,7 @@ function PatternPreviewFragment( {
 
 			<div className="pattern-preview__renderer">
 				<PatternRenderer
+					maxHeight="none"
 					minHeight={ nodeSize.width ? nodeSize.width / ASPECT_RATIO : undefined }
 					patternId={ patternId }
 					scripts={ redrawScript }

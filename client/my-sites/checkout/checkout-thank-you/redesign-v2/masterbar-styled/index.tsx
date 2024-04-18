@@ -8,6 +8,7 @@ import { DefaultMasterbarContact } from './default-contact';
 const MasterbarStyledBlock = styled( Masterbar )`
 	--color-masterbar-background: var( --studio-white );
 	--color-masterbar-text: var( --studio-gray-60 );
+	padding-right: 24px;
 	border-bottom: 0;
 `;
 

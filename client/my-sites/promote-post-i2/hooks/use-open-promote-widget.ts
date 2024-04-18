@@ -1,12 +1,12 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordDSPEntryPoint, useDspOriginProps } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getAdvertisingDashboardPath } from '../utils';
+import useIsRunningInWpAdmin from './use-is-running-in-wpadmin';
 
 export interface Props {
 	keyValue: string;
@@ -17,11 +17,7 @@ export interface Props {
 const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const siteId = useSelector( getSelectedSiteId );
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isRunningInClassicSimple = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'is_wpcom_simple' )
-	);
-	const isRunningJetpackOrClassicSimple = isRunningInJetpack || isRunningInClassicSimple;
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const dspOriginProps = useDspOriginProps();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
@@ -29,7 +25,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 
 	const onOpenPromoteWidget = useCallback( () => {
 		dispatch( recordDSPEntryPoint( entrypoint, dspOriginProps ) );
-		if ( isRunningJetpackOrClassicSimple ) {
+		if ( isRunningInWpAdmin ) {
 			const blazeURL = getAdvertisingDashboardPath( `/posts/promote/${ keyValue }/${ siteSlug }` );
 
 			if ( external ) {
@@ -51,7 +47,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 		dspOriginProps,
 		external,
 		siteAdminUrl,
-		isRunningJetpackOrClassicSimple,
+		isRunningInWpAdmin,
 		openModal,
 		dispatch,
 	] );

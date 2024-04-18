@@ -61,6 +61,8 @@ class StatsNavigation extends Component {
 		slug: PropTypes.string,
 		isLegacy: PropTypes.bool,
 		adminUrl: PropTypes.string,
+		showLock: PropTypes.bool,
+		hideModuleSettings: PropTypes.bool,
 	};
 
 	state = {
@@ -138,8 +140,16 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const { slug, selectedItem, interval, isLegacy, showSettingsTooltip, statsAdminVersion } =
-			this.props;
+		const {
+			slug,
+			selectedItem,
+			interval,
+			isLegacy,
+			showSettingsTooltip,
+			statsAdminVersion,
+			showLock,
+			hideModuleSettings,
+		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
@@ -189,6 +199,7 @@ class StatsNavigation extends Component {
 										selected={ selectedItem === item }
 									>
 										{ navItem.label }
+										{ navItem.paywall && showLock && ' 🔒' }
 									</NavItem>
 								);
 							} ) }
@@ -205,7 +216,8 @@ class StatsNavigation extends Component {
 
 				{ ! isLegacy &&
 					isModuleSettingsSupported &&
-					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] && (
+					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
+					! hideModuleSettings && (
 						<PageModuleToggler
 							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
 							pageModules={ pageModules }
