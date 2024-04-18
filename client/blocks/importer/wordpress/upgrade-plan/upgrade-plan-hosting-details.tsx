@@ -53,11 +53,24 @@ export const UpgradePlanHostingDetails = () => {
 		<div className="import__upgrade-plan-hosting-details">
 			{ showModal && (
 				<ConfirmModal
+					compact={ false }
+					title={ translate( 'Migration sounds daunting? It shouldn’t be!' ) }
 					confirmText="Take the deal"
-					cancelText="Navigate back"
+					cancelText="No, thanks"
 					onClose={ navigateBack }
 					onConfirm={ () => {} }
-				/>
+				>
+					<p>
+						{ translate(
+							'Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move magical-pinneaples.fun to WordPress.com.'
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Take this deal now and let our Happiness Engineers make the move seamless and stress-free.'
+						) }
+					</p>
+				</ConfirmModal>
 			) }
 			<div className="import__upgrade-plan-hosting-details-card-container">
 				<div className="import__upgrade-plan-hosting-details-header">
