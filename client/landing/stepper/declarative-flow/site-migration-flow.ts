@@ -173,10 +173,12 @@ const siteMigration: Flow = {
 						action: SiteMigrationIdentifyAction;
 					};
 
-					// Set the in_site_migration_flow option at the start of the flow.
-					await saveSiteSettings( providedDependencies?.siteSlug, {
-						in_site_migration_flow: true,
-					} );
+					if ( siteSlug ) {
+						// Set the in_site_migration_flow option at the start of the flow.
+						await saveSiteSettings( siteSlug, {
+							in_site_migration_flow: true,
+						} );
+					}
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
 						return exitFlow(
@@ -247,10 +249,12 @@ const siteMigration: Flow = {
 
 					// If the plugin was installed successfully, go to the migration instructions.
 					if ( providedDependencies?.pluginInstall ) {
-						// Remove the in_site_migration_flow option at the end of the flow.
-						await saveSiteSettings( providedDependencies?.siteSlug, {
-							in_site_migration_flow: false,
-						} );
+						if ( siteSlug ) {
+							// Remove the in_site_migration_flow option at the end of the flow.
+							await saveSiteSettings( siteSlug, {
+								in_site_migration_flow: false,
+							} );
+						}
 
 						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 					}
