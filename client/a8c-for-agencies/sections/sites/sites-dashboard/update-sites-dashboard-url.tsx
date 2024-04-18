@@ -68,7 +68,7 @@ export const updateSitesDashboardUrl = ( {
 }: {
 	category?: string;
 	setCategory: ( category: string ) => void;
-	filters?: DataViewsFilter[];
+	filters: DataViewsFilter[];
 	selectedSite?: Site;
 	selectedSiteFeature?: string;
 	search: string;
