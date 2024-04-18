@@ -26,7 +26,7 @@ const SurveyCheckboxOption = ( {
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			handleToggle( event );
+			handleToggle();
 		}
 	};
 
