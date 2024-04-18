@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
 	isFreePlan,
-	findSimilarPlansKeys,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -940,7 +940,7 @@ function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: s
 		requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
 	}
 
-	return findSimilarPlansKeys( tierMinimumUpsellPlan, { term: requiredTerm } );
+	return findFirstSimilarPlanKey( tierMinimumUpsellPlan, { term: requiredTerm } );
 }
 
 export default UnifiedDesignPickerStep;
