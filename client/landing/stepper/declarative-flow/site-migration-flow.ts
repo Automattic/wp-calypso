@@ -3,10 +3,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useIsCurrentUserLoggedIn } from 'calypso/landing/stepper/hooks/use-is-current-user-logged-in';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
 import { getLoginUrl } from '../utils/path';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -40,6 +42,7 @@ const siteMigration: Flow = {
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const userIsLoggedIn = useIsCurrentUserLoggedIn();
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+		const { isOwner } = useIsSiteOwner();
 
 		const flowName = this.name;
 
@@ -111,6 +114,12 @@ const siteMigration: Flow = {
 				window.location.assign( logInUrl );
 			}
 		}, [] );
+
+		useEffect( () => {
+			if ( isOwner === false ) {
+				window.location.assign( '/start' );
+			}
+		}, [ isOwner ] );
 
 		if ( ! userIsLoggedIn ) {
 			result = {

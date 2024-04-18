@@ -2,21 +2,22 @@
  * @jest-environment jsdom
  */
 import { useIsCurrentUserLoggedIn } from 'calypso/landing/stepper/hooks/use-is-current-user-logged-in';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
-import { getFlowLocation, renderFlow } from './helpers';
 import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-current-user-logged-in' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn() },
 			value: { ...originalLocation, assign: jest.fn() },
 		} );
 	} );
@@ -28,7 +29,11 @@ describe( 'Site Migration Flow', () => {
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
 		( useIsCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
+			isOwner: true,
+		} );
 	} );
+
 	describe( 'useAssertConditions', () => {
 		it( 'redirects the user to the login page when they are not logged in', () => {
 			( useIsCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
@@ -49,6 +54,17 @@ describe( 'Site Migration Flow', () => {
 			runUseAssertionCondition( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=&siteId=`,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+		} );
+
+		it( 'redirects the user to the start page when the user is not the site owner', () => {
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+			( useIsSiteOwner as jest.Mock ).mockReturnValue( { isOwner: false } );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
