@@ -104,7 +104,10 @@ export default function SitesDashboard() {
 			return;
 		}
 
-		if ( sitesViewState.selectedSite ) {
+		if (
+			sitesViewState.selectedSite &&
+			sitesViewState.selectedSite.url === initialSelectedSiteUrl
+		) {
 			return;
 		}
 
