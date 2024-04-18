@@ -141,6 +141,8 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				splitHeader
 				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 				toggleControl={ toggleControlComponent }
+				isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
+				emptyMessage={ devicesStrings.empty }
 			>
 				{ showLoader ? (
 					<StatsModulePlaceholder isLoading={ showLoader } />
