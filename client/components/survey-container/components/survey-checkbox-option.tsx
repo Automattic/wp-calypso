@@ -16,17 +16,20 @@ const SurveyCheckboxOption = ( {
 }: SurveyCheckboxOptionType ) => {
 	const isSelected = value.includes( option.value );
 
-	const handleToggle = () => {
-		const newValue = isSelected
-			? value.filter( ( v ) => v !== option.value )
-			: [ ...value, option.value ];
+	const handleToggle = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+		//console.log('event', event.target.tagName);
+		if ( ! ( event.target.tagName === 'LABEL' ) ) {
+			const newValue = isSelected
+				? value.filter( ( v ) => v !== option.value )
+				: [ ...value, option.value ];
 
-		onChange( question.key, newValue );
+			onChange( question.key, newValue );
+		}
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			handleToggle();
+			handleToggle( event );
 		}
 	};
 
@@ -52,7 +55,11 @@ const SurveyCheckboxOption = ( {
 			/>
 
 			<div className="question-options__option-label">
-				<label id={ `option-label-${ option.value }` } htmlFor={ `option-${ option.value }` }>
+				<label
+					id={ `option-label-${ option.value }` }
+					htmlFor={ `option-${ option.value }` }
+					//onClick={ ( e ) => e.stopPropagation() }
+				>
 					{ option.label }
 				</label>
 				{ option.helpText && (
