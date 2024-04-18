@@ -3,7 +3,7 @@ import SurveyCheckboxOption from './survey-checkbox-option';
 
 const SurveyCheckboxControl = ( { onChange, question, value }: QuestionSelectionType ) => {
 	return (
-		<div className="question__multiple-selection">
+		<div className="question-options__container">
 			{ question.options.map( ( option, index ) => (
 				<SurveyCheckboxOption
 					key={ index }

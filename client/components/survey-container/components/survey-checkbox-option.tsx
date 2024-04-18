@@ -15,11 +15,12 @@ const SurveyCheckboxOption = ( {
 	onChange,
 	value,
 }: SurveyCheckboxOptionType ) => {
+	const isSelected = value.includes( option.value );
 	return (
-		<div className="question__multiple-selection-option">
+		<div className={ `question-options__option-control ${ isSelected ? 'checked' : '' }` }>
 			<CheckboxControl
 				label={ option.label }
-				checked={ value.includes( option.value ) }
+				checked={ isSelected }
 				onChange={ ( checked ) => {
 					const newValue = checked
 						? [ ...value, option.value ]
