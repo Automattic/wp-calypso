@@ -22,6 +22,7 @@ interface Props {
 	skipInitialChecking?: boolean;
 	label?: ReactNode;
 	placeholder?: string;
+	dontHaveSiteAddressLabel?: string;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const {
@@ -32,6 +33,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		skipInitialChecking,
 		label,
 		placeholder = 'artfulbaker.blog',
+		dontHaveSiteAddressLabel,
 	} = props;
 
 	const translate = useTranslate();
@@ -124,12 +126,16 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 			<div className="action-buttons__importer-list">
 				{ onDontHaveSiteAddressClick &&
-					createInterpolateElement( translate( 'Or <button>choose a content platform</button>' ), {
-						button: createElement( Button, {
-							borderless: true,
-							onClick: onDontHaveSiteAddressClick,
-						} ),
-					} ) }
+					createInterpolateElement(
+						dontHaveSiteAddressLabel ??
+							translate( 'Or <button>choose a content platform</button>' ),
+						{
+							button: createElement( Button, {
+								borderless: true,
+								onClick: onDontHaveSiteAddressClick,
+							} ),
+						}
+					) }
 			</div>
 		</form>
 	);

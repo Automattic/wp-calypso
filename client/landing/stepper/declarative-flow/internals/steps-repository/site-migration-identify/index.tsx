@@ -41,10 +41,8 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 	return (
 		<div>
 			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Where is your current content or website?' ) }</Title>
-				<SubTitle>
-					{ translate( 'We can help you import your content from a variety of platforms.' ) }
-				</SubTitle>
+				<Title>{ translate( 'Let’s import your content' ) }</Title>
+				<SubTitle>{ translate( 'Drop your current site address below to get started.' ) }</SubTitle>
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
@@ -53,8 +51,11 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 					hasError={ hasError }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ onSkip }
-					placeholder={ translate( 'yoursite.com or tumblr.com/username' ) }
-					label={ translate( 'Enter your site address or platform address:' ) }
+					placeholder={ translate( 'mygreatnewblog.com' ) }
+					label={ translate( 'Enter your site address:' ) }
+					dontHaveSiteAddressLabel={ translate(
+						'Or <button>pick your current platform from a list</button>'
+					) }
 				/>
 			</div>
 		</div>

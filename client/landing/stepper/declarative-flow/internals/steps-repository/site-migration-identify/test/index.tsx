@@ -80,7 +80,9 @@ describe( 'SiteMigrationIdentify', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /choose a content platform/ } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: /pick your current platform from a list/ } )
+		);
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith(
