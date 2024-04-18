@@ -1,10 +1,12 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { SitesDashboardContextInterface } from 'calypso/a8c-for-agencies/sections/sites/types';
 import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { filtersMap, initialSitesViewState } from './constants';
+import { filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
@@ -76,8 +78,8 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
-		...initialSitesViewState,
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
 		page: currentPage,
 		search: searchQuery,
 		sort,
@@ -91,7 +93,7 @@ export const SitesDashboardProvider = ( {
 			setHideListing( false );
 		}
 
-		setSitesViewState( ( previousState ) => ( {
+		setDataViewsState( ( previousState ) => ( {
 			...previousState,
 			...( siteUrlInitialState
 				? {}
@@ -104,7 +106,7 @@ export const SitesDashboardProvider = ( {
 			...( siteUrlInitialState ? {} : { type: 'table' } ),
 		} ) );
 	}, [
-		setSitesViewState,
+		setDataViewsState,
 		showOnlyFavoritesInitialState,
 		searchQuery,
 		sort,
@@ -113,7 +115,7 @@ export const SitesDashboardProvider = ( {
 		setInitialSelectedSiteUrl,
 	] );
 
-	const sitesDashboardContextValue = {
+	const sitesDashboardContextValue: SitesDashboardContextInterface = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
 		selectedSiteFeature: selectedSiteFeature,
@@ -136,8 +138,8 @@ export const SitesDashboardProvider = ( {
 		setMostRecentConnectedSite,
 		isPopoverOpen,
 		setIsPopoverOpen,
-		sitesViewState,
-		setSitesViewState,
+		dataViewsState,
+		setDataViewsState,
 		featurePreview,
 	};
 	return (
