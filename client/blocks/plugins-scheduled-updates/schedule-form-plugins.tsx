@@ -7,7 +7,7 @@ import {
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
 import { MAX_SELECTABLE_PLUGINS } from './config';
 import type { CorePlugin } from 'calypso/data/plugins/types';
 
@@ -25,8 +25,7 @@ interface Props {
 }
 export function ScheduleFormPlugins( props: Props ) {
 	const {
-		plugins,
-		selectedPlugins: initPlugins = [],
+		selectedPlugins: initSelectedPlugins = [],
 		isPluginsFetching,
 		isPluginsFetched,
 		error,
@@ -36,13 +35,17 @@ export function ScheduleFormPlugins( props: Props ) {
 		borderWrapper = true,
 	} = props;
 	const translate = useTranslate();
+	const plugins = useMemo( () => props.plugins, [ props.plugins ] );
 
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
-	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( initPlugins );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( initSelectedPlugins );
 	const [ fieldTouched, setFieldTouched ] = useState( false );
 
-	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
-	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
+	const removeUnlistedSelectedPlugins = useCallback( () => {
+		setSelectedPlugins(
+			selectedPlugins.filter( ( plugin ) => plugins.find( ( p ) => p.plugin === plugin ) )
+		);
+	}, [ plugins, selectedPlugins ] );
 
 	const onPluginSelectionChange = useCallback(
 		( plugin: CorePlugin, isChecked: boolean ) => {
@@ -75,6 +78,10 @@ export function ScheduleFormPlugins( props: Props ) {
 		},
 		[ selectedPlugins ]
 	);
+
+	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
+	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
+	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins ] );
 
 	return (
 		<div className="form-field">

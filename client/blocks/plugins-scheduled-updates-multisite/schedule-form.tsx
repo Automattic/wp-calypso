@@ -21,7 +21,7 @@ export const ScheduleForm = () => {
 	const {
 		data: plugins = [],
 		isInitialLoading: isPluginsFetching,
-		isFetched: isPluginsFetched,
+		isFetchedAfterMount: isPluginsFetched,
 	} = useCoreSitesPluginsQuery( selectedSites, true, true );
 
 	// Sites selection validation
@@ -61,6 +61,7 @@ export const ScheduleForm = () => {
 					<FlexItem>
 						<ScheduleFormPlugins
 							plugins={ plugins }
+							selectedPlugins={ selectedPlugins }
 							isPluginsFetching={ isPluginsFetching }
 							isPluginsFetched={ isPluginsFetched }
 							onChange={ setSelectedPlugins }
