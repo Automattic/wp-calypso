@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { useIsCurrentUserLoggedIn } from 'calypso/landing/stepper/hooks/use-is-current-user-logged-in';
+import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
@@ -12,7 +12,7 @@ import { getAssertionConditionResult, getFlowLocation, renderFlow } from './help
 const originalLocation = window.location;
 
 jest.mock( '../../utils/checkout' );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-current-user-logged-in' );
+jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 
 describe( 'Site Migration Flow', () => {
@@ -28,7 +28,7 @@ describe( 'Site Migration Flow', () => {
 
 	beforeEach( () => {
 		( window.location.assign as jest.Mock ).mockClear();
-		( useIsCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
 		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
 			isOwner: true,
 		} );
@@ -36,7 +36,7 @@ describe( 'Site Migration Flow', () => {
 
 	describe( 'useAssertConditions', () => {
 		it( 'redirects the user to the login page when they are not logged in', () => {
-			( useIsCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
+			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
 
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 			runUseAssertionCondition( {
