@@ -152,6 +152,7 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
@@ -159,7 +160,7 @@ const siteMigration: Flow = {
 		};
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
@@ -171,6 +172,11 @@ const siteMigration: Flow = {
 						platform: string;
 						action: SiteMigrationIdentifyAction;
 					};
+
+					// Set the in_site_migration_flow option at the start of the flow.
+					await saveSiteSettings( providedDependencies?.siteSlug, {
+						in_site_migration_flow: true,
+					} );
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
 						return exitFlow(
@@ -241,6 +247,11 @@ const siteMigration: Flow = {
 
 					// If the plugin was installed successfully, go to the migration instructions.
 					if ( providedDependencies?.pluginInstall ) {
+						// Remove the in_site_migration_flow option at the end of the flow.
+						await saveSiteSettings( providedDependencies?.siteSlug, {
+							in_site_migration_flow: false,
+						} );
+
 						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 					}
 
