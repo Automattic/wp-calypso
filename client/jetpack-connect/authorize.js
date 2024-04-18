@@ -309,7 +309,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
-			( this.isFromJetpackBackupPlugin() && siteHasBackups )
+			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
+			this.isFromAutomatticForAgenciesPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
