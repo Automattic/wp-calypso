@@ -104,10 +104,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.BROWSER );
 
-	const { isFetching, data } = useModuleDevicesQuery( siteId, selectedOption, {
-		...query,
-		days: 7,
-	} );
+	const { isFetching, data } = useModuleDevicesQuery( siteId, selectedOption, query );
 
 	const showLoader = isLoading || isFetching;
 
