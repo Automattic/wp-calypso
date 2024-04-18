@@ -214,9 +214,9 @@ export const ThemeUpgradeModal = ( {
 		const planPrice = requiredPlanProduct?.combined_cost_display;
 
 		const planText = getPlanText(
-			premiumPlanName,
+			premiumPlanName as string,
 			requiredPlanProduct?.product_term || '',
-			planPrice
+			planPrice || ''
 		);
 
 		return {
@@ -308,9 +308,9 @@ export const ThemeUpgradeModal = ( {
 		const color = bundleSettings.color;
 		const Icon = bundleSettings.iconComponent;
 		const planText = getPlanText(
-			businessPlanName,
+			businessPlanName as string,
 			requiredPlanProduct?.product_term || '',
-			businessPlanPrice
+			businessPlanPrice || ''
 		);
 
 		return {
