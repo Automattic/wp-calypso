@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { includes, some } from 'lodash';
 import { createElement } from 'react';
 import { PluginsScheduledUpdates } from 'calypso/blocks/plugins-scheduled-updates';
+import { PluginsScheduledUpdatesMultisite } from 'calypso/blocks/plugins-scheduled-updates-multisite';
 import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
@@ -153,13 +154,21 @@ export function scheduledUpdates( context, next ) {
 				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
-
+		case 'notifications':
+			context.primary = createElement( PluginsScheduledUpdates, {
+				siteSlug,
+				context: 'notifications',
+				onNavBack: goToScheduledUpdatesList,
+			} );
+			break;
 		case 'list':
 		default:
 			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				context: 'list',
 				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onNotificationManagement: () =>
+					page.show( `/plugins/scheduled-updates/notifications/${ siteSlug }` ),
 				onEditSchedule: ( id ) =>
 					page.show( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
 				onShowLogs: ( id ) => page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
@@ -173,7 +182,7 @@ export function scheduledUpdates( context, next ) {
 export function scheduledUpdatesMultisite( context, next ) {
 	switch ( context.params.action ) {
 		case 'create':
-			context.primary = 'Create multisite scheduled updates';
+			context.primary = createElement( PluginsScheduledUpdatesMultisite );
 			break;
 
 		case 'edit':

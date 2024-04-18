@@ -21,6 +21,7 @@ interface Props {
 	showError?: boolean;
 	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( value: string[] ) => void;
+	borderWrapper?: boolean;
 }
 export function ScheduleFormPlugins( props: Props ) {
 	const {
@@ -32,6 +33,7 @@ export function ScheduleFormPlugins( props: Props ) {
 		showError,
 		onChange,
 		onTouch,
+		borderWrapper = true,
 	} = props;
 	const translate = useTranslate();
 
@@ -91,7 +93,7 @@ export function ScheduleFormPlugins( props: Props ) {
 					{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
 				</Text>
 			) }
-			<div className="form-control-container">
+			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<SearchControl id="plugins" onChange={ setPluginSearchTerm } value={ pluginSearchTerm } />
 				<div className="checkbox-options-container">
 					{ isPluginsFetching && <Spinner /> }

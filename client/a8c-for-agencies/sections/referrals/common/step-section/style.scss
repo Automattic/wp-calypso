@@ -1,0 +1,25 @@
+.step-section {
+	.step-section__header {
+		display: flex;
+		align-items: center;
+		margin-block-end: 16px;
+		gap: 8px;
+
+		.step-section__step-count {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border: 2px solid var(--color-primary-60);
+			font-size: rem(12px);
+			font-weight: 600;
+			color: var(--color-primary-60);
+			width: 24px;
+			border-radius: 50%;
+			height: 24px;
+		}
+
+		.step-section__step-heading {
+			font-size: rem(20px);
+		}
+	}
+}

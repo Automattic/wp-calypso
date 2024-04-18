@@ -346,7 +346,7 @@ function StatsCommercialFlowOptOutForm( {
 		exoclick: 'ExoClick',
 		'live-chat': translate( 'Live Chat' ),
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
-		'contact-details': translate( 'Contact Details' ),
+		'contact-details': translate( 'Business Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
 		ecommerce: translate( 'Ecommerce' ),
 	};

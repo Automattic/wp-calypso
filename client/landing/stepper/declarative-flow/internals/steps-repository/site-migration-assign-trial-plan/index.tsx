@@ -13,7 +13,7 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	const site = useSite();
 
 	const dispatch = useDispatch();
-	const { addHostingTrial, isError } = useAddHostingTrialMutation( {
+	const { addHostingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
 			// After the trial is added, we need to request the site again to get the updated plan
 			site && dispatch( requestSite( site.ID ) );
@@ -21,7 +21,7 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 		},
 		onError: () => {
 			// If adding the trial fails, submit with error dependency.
-			submit?.( { error: isError } );
+			submit?.( { error: true } );
 		},
 	} );
 

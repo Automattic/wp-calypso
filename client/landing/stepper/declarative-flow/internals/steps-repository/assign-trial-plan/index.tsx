@@ -1,4 +1,4 @@
-import { isWooExpressFlow, isEntrepreneurFlow, StepContainer } from '@automattic/onboarding';
+import { isWooExpressFlow, StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -25,19 +25,6 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProfilerData(), [] ) ||
 		{};
 
-	let requestBody = {};
-
-	if ( isWooExpressFlow( flow ) ) {
-		requestBody = {
-			wpcom_woocommerce_onboarding: profilerData,
-		};
-	}
-
-	if ( isEntrepreneurFlow( flow ) ) {
-		// TODO: Add WPCOM marker.
-		requestBody = {};
-	}
-
 	useEffect( () => {
 		if ( submit ) {
 			const assignTrialPlan = async () => {
@@ -51,7 +38,9 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						{
 							apiVersion: '1.1',
 						},
-						requestBody
+						{
+							wpcom_woocommerce_onboarding: profilerData,
+						}
 					);
 
 					submit?.( { siteSlug: data?.siteSlug }, AssignTrialResult.SUCCESS );
