@@ -46,10 +46,10 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 								>
 									<div className="patterns-category-gallery__item-preview-inner">
 										<PatternPreviewPlaceholder
-											pattern={
+											title={
 												patternTypeFilter === PatternTypeFilter.PAGES
-													? category.pagePreviewPattern
-													: category.regularPreviewPattern
+													? category.pagePreviewPattern?.title
+													: category.regularPreviewPattern?.title
 											}
 										/>
 									</div>
