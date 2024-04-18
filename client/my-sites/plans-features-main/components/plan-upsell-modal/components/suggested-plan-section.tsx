@@ -120,11 +120,11 @@ export default function SuggestedPlanSection( props: {
 } ) {
 	const translate = useTranslate();
 	const { paidDomainName, onPlanSelected, isBusy } = props;
-	const [ isExperimentLoaded, assignment ] = useExperiment(
+	const [ isExperimentLoading, assignment ] = useExperiment(
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
 
-	if ( ! isExperimentLoaded ) {
+	if ( isExperimentLoading ) {
 		return null;
 	}
 

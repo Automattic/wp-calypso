@@ -737,14 +737,11 @@ const PlansFeaturesMain = ( {
 			'is-hidden': ! showPlansComparisonGrid,
 		}
 	);
-	const [ isModalExperimentLoaded ] = useExperiment(
+	const [ isExperimentLoading ] = useExperiment(
 		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
 	);
 	const isLoadingGridPlans = Boolean(
-		! intent ||
-			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid ||
-			! isModalExperimentLoaded
+		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
