@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSiteData } from '../hooks/use-site-data';
@@ -43,7 +44,9 @@ const siteMigration: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
+
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+		const { isOwner } = useIsSiteOwner();
 
 		const flowName = this.name;
 
@@ -115,6 +118,12 @@ const siteMigration: Flow = {
 				window.location.assign( logInUrl );
 			}
 		}, [] );
+
+		useEffect( () => {
+			if ( isOwner === false ) {
+				window.location.assign( '/start' );
+			}
+		}, [ isOwner ] );
 
 		if ( ! userIsLoggedIn ) {
 			result = {
