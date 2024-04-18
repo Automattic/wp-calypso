@@ -66,7 +66,12 @@ export const UpgradePlanHostingDetails = () => {
 				>
 					<p>
 						{ translate(
-							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move hostingProviderName to WordPress.com.`
+							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.`,
+							{
+								args: {
+									importSiteHostName,
+								},
+							}
 						) }
 					</p>
 					<p>
