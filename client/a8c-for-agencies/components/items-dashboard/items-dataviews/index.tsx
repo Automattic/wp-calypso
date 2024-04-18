@@ -2,6 +2,7 @@ import { Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import ReactDOM from 'react-dom';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
 // todo: Extract from style.scss not common styles (colors and specific to Jetpack Cloud components)
 import './style.scss';
