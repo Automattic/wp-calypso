@@ -9,8 +9,8 @@ import {
 	DataViewsState,
 	ItemsDataViewsType,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import SiteSort from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/site-sort';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
-import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import {
 	SiteInfo,
