@@ -36,7 +36,7 @@ export const ASPECT_RATIO = 7 / 4;
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
 const noClickStyle = {
-	css: 'a, button, input { pointer-events: none; }',
+	css: 'a[href], button, input { pointer-events: none; }',
 	isGlobalStyles: true,
 };
 
