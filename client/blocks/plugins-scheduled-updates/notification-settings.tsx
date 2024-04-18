@@ -121,7 +121,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 				{ hasGlobalNotificationsDisabled && (
 					<Text className="info-msg">
 						{ translate(
-							'You have opted out of scheduled updates notifications on WordPress.com. Visit {{notificationSettingsLink}}Notification Settings{{/notificationSettingsLink}} to enable scheduled updates notifications.',
+							"You've opted out of WordPress.com's scheduled update notifications. Head to {{notificationSettingsLink}}Notification Settings{{/notificationSettingsLink}} to re-enable them.",
 							{
 								components: {
 									notificationSettingsLink: <a href="/me/notifications/updates" />,
