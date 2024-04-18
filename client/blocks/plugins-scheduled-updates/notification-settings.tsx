@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useScheduledUpdatesNotificationSettingsMutation } from 'calypso/data/plugins/use-scheduled-updates-notification-settings-mutation';
 import { useScheduledUpdatesNotificationSettingsQuery } from 'calypso/data/plugins/use-scheduled-updates-notification-settings-query';
 import { useDispatch, useSelector } from 'calypso/state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchSettings } from 'calypso/state/notification-settings/actions';
 import { getNotificationSettings } from 'calypso/state/notification-settings/selectors';
 import { useSiteSlug } from './hooks/use-site-slug';
@@ -42,8 +43,12 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 		return settings && ! settings.scheduled_updates;
 	} );
 
-	const { updateNotificationSettings, isPending: isSaving } =
-		useScheduledUpdatesNotificationSettingsMutation( siteSlug );
+	const {
+		updateNotificationSettings,
+		isPending: isSaving,
+		isSuccess,
+		isError,
+	} = useScheduledUpdatesNotificationSettingsMutation( siteSlug );
 
 	useEffect( () => {
 		if ( isFetched && settings ) {
@@ -53,6 +58,16 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 			} );
 		}
 	}, [ isFetched, settings ] );
+
+	useEffect( () => {
+		if ( isSuccess ) {
+			dispatch( successNotice( translate( 'Your notification settings have been saved.' ) ) );
+		} else if ( isError ) {
+			dispatch(
+				errorNotice( translate( 'Failed to save notification settings. Please try again.' ) )
+			);
+		}
+	}, [ isSuccess, isError ] );
 
 	const handleCheckboxChange = ( field: keyof typeof formValues ) => ( checked: boolean ) => {
 		setFormValues( ( prevValues ) => ( {
