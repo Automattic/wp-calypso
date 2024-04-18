@@ -251,7 +251,7 @@ const importHostedSiteFlow: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-	useSideEffect() {
+	useSideEffect( currentStep ) {
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -281,7 +281,7 @@ const importHostedSiteFlow: Flow = {
 				window.location.assign( storedUrlString );
 				return;
 			}
-		}, [ userIsLoggedIn, restoreFlowQueryParam ] );
+		}, [ userIsLoggedIn, currentStep, restoreFlowQueryParam ] );
 	},
 };
 

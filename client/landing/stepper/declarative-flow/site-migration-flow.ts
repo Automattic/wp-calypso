@@ -36,7 +36,6 @@ const siteMigration: Flow = {
 			STEPS.ERROR,
 		];
 	},
-
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
 		const { setProfilerData } = useDispatch( ONBOARD_STORE );
