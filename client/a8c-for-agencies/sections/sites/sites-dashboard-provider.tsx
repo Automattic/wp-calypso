@@ -102,7 +102,7 @@ export const SitesDashboardProvider = ( {
 				  } ),
 			...( siteUrlInitialState ? {} : { search: searchQuery } ),
 			...( siteUrlInitialState ? {} : { sort } ),
-			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
+			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),
 			...( siteUrlInitialState ? {} : { type: 'table' } ),
 		} ) );
 	}, [

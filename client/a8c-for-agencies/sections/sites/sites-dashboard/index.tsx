@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -114,9 +115,9 @@ export default function SitesDashboard() {
 		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
 			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
 
-			setDataViewsState( ( prevState ) => ( {
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
-				selectedSite: site,
+				selectedItem: site,
 				type: 'list',
 			} ) );
 		}
