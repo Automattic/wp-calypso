@@ -2,7 +2,6 @@ import { Spinner } from '@automattic/components';
 import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import ReactDOM from 'react-dom';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
 // todo: Extract from style.scss not common styles (colors and specific to Jetpack Cloud components)
 import './style.scss';
@@ -47,7 +46,7 @@ export const createItemColumn = (
 };
 
 export type ItemsDataViewsProps = {
-	data: ItemsDataViewsType;
+	data: ItemsDataViewsType< any >;
 	isLoading?: boolean;
 	// todo: is it necessary? Could we get it in this component?
 	isLargeScreen?: boolean;
@@ -95,7 +94,7 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 						return data.itemFieldId && getIdByPath( item, data.itemFieldId );
 					} )
 				}
-				onChangeView={ data.onDataViewsStateChange }
+				onChangeView={ data.setDataViewsState }
 				supportedLayouts={ [ 'table' ] }
 				actions={ data.actions }
 				isLoading={ isLoading }
