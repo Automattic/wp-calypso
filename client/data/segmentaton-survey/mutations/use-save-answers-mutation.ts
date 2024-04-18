@@ -1,21 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type SaveAnswersMutationParams = {
+type SaveAnswersMutationArgs = {
 	surveyKey: string;
 	blogId?: number;
 };
 
-type SaveAnswersMutationFnParams = {
+type SaveAnswersMutationFnArgs = {
 	questionKey: string;
 	answerKeys: string[];
 };
 
-const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersMutationParams ) => {
+const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersMutationArgs ) => {
 	const queryClient = useQueryClient();
 
 	return useMutation( {
-		mutationFn: async ( { answerKeys, questionKey }: SaveAnswersMutationFnParams ) => {
+		mutationFn: async ( { answerKeys, questionKey }: SaveAnswersMutationFnArgs ) => {
 			return wpcom.req.post( {
 				path: `/segmentation-survey/answers`,
 				apiNamespace: 'wpcom/v2',
