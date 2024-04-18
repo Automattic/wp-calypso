@@ -27,7 +27,7 @@ export interface DataViewsColumn {
 	};
 	type?: string;
 	header: ReactNode;
-	getValue: ( item: any ) => string | boolean | number | undefined;
+	getValue?: ( item: any ) => string | boolean | number | undefined;
 	render?: ( item: any ) => ReactNode | null;
 }
 
@@ -62,7 +62,7 @@ export interface DataViewsFilter {
 export interface DataViewsState {
 	type: 'table' | 'list' | 'grid';
 	search: string;
-	filters: DataViewsFilter[];
+	filters?: DataViewsFilter[];
 	perPage: number;
 	page: number;
 	sort: DataViewsSort;
