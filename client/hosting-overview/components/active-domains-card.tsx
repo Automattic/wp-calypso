@@ -4,10 +4,8 @@ import { DomainsTable } from '@automattic/domains-table';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { navigate } from 'calypso/lib/navigate';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
-import { useDispatch, useSelector } from 'calypso/state';
-import { setRoute } from 'calypso/state/route/actions';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const ActiveDomainsCard: FC = () => {
@@ -16,7 +14,6 @@ const ActiveDomainsCard: FC = () => {
 		queryFn: () => fetchSiteDomains( site?.ID ),
 	} );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__active-domains' ) }>
@@ -29,10 +26,7 @@ const ActiveDomainsCard: FC = () => {
 						'hosting-overview__mobile-hidden-link-button'
 					) }
 					plain
-					onClick={ () => {
-						navigate( `/domains/add/${ site?.slug }` );
-						dispatch( setRoute( `/domains/add/${ site?.slug }`, { from: 'foo' } ) );
-					} }
+					href={ `/domains/add/${ site?.slug }` }
 				>
 					{ translate( 'Add new domain' ) }
 				</Button>
