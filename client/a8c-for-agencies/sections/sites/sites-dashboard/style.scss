@@ -319,7 +319,7 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 175px); /* It subtracts the header height to allow scrolling in this block, plus a 10px margin */
+				max-height: calc(100vh - 300px); /* 300px is the size of all content above the dataview in list style, which includes our CTA elements, the pagination bottom bar, and an additional 20px margin. */
 
 				li {
 					padding: 8px 24px;
