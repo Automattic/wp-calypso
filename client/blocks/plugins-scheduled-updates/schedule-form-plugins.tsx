@@ -94,7 +94,12 @@ export function ScheduleFormPlugins( props: Props ) {
 				</Text>
 			) }
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
-				<SearchControl id="plugins" onChange={ setPluginSearchTerm } value={ pluginSearchTerm } />
+				<SearchControl
+					id="plugins"
+					onChange={ setPluginSearchTerm }
+					value={ pluginSearchTerm }
+					placeholder={ translate( 'Search plugins' ) }
+				/>
 				<div className="checkbox-options-container">
 					{ isPluginsFetching && <Spinner /> }
 					{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
