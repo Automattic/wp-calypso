@@ -83,16 +83,32 @@ export function ScheduleFormPlugins( props: Props ) {
 				{ selectedPlugins.length }/
 				{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
 			</span>
-			{ ( showError && error ) || ( fieldTouched && error ) ? (
-				<Text className="validation-msg">
-					<Icon className="icon-info" icon={ info } size={ 16 } />
-					{ error }
-				</Text>
-			) : (
-				<Text className="info-msg">
-					{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
-				</Text>
-			) }
+
+			{ ( () => {
+				if ( ( showError && error ) || ( fieldTouched && error ) ) {
+					return (
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ error }
+						</Text>
+					);
+				} else if ( isPluginsFetched && plugins.length === 0 ) {
+					return (
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ translate(
+								'The current site selection does not have any plugins that can be scheduled for updates.'
+							) }
+						</Text>
+					);
+				}
+				return (
+					<Text className="info-msg">
+						{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
+					</Text>
+				);
+			} )() }
+
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<SearchControl
 					id="plugins"
@@ -102,16 +118,18 @@ export function ScheduleFormPlugins( props: Props ) {
 				/>
 				<div className="checkbox-options-container">
 					{ isPluginsFetching && <Spinner /> }
-					{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
-						<CheckboxControl
-							label={ translate( 'Select all' ) }
-							indeterminate={
-								selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
-							}
-							checked={ selectedPlugins.length === plugins.length }
-							onChange={ onPluginSelectAllChange }
-						/>
-					) }
+					{ isPluginsFetched &&
+						plugins.length !== 0 &&
+						plugins.length <= MAX_SELECTABLE_PLUGINS && (
+							<CheckboxControl
+								label={ translate( 'Select all' ) }
+								indeterminate={
+									selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
+								}
+								checked={ selectedPlugins.length === plugins.length }
+								onChange={ onPluginSelectAllChange }
+							/>
+						) }
 					{ isPluginsFetched &&
 						plugins.map( ( plugin ) => (
 							<Fragment key={ plugin.plugin }>
