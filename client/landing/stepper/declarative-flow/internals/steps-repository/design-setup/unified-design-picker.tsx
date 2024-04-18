@@ -949,7 +949,7 @@ function getBusinessPlanByTerm( term: string ) {
 }
 
 function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: string ) {
-	if ( ! selectedDesign || ! selectedDesign?.design_tier ) {
+	if ( ! selectedDesign?.design_tier ) {
 		return;
 	}
 	// Different designs require different plans to unlock them, additionally the terms required can vary.
@@ -962,11 +962,7 @@ function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: s
 	let requiredTerm;
 	if ( ! currentPlanSlug || isFreePlan( currentPlanSlug ) ) {
 		// Marketplace themes require upgrading to a monthly business plan or higher, everything else requires an annual plan.
-		if ( selectedDesign?.is_externally_managed ) {
-			requiredTerm = TERM_MONTHLY;
-		} else {
-			requiredTerm = TERM_ANNUALLY;
-		}
+		requiredTerm = selectedDesign?.is_externally_managed ? TERM_MONTHLY : TERM_ANNUALLY;
 	} else {
 		requiredTerm = getPlan( currentPlanSlug )?.term || '';
 	}
