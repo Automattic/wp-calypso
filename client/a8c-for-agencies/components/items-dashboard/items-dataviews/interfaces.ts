@@ -61,7 +61,7 @@ export interface DataViewsFilter {
 export interface DataViewsState {
 	type: 'table' | 'list' | 'grid';
 	search: string;
-	filters?: DataViewsFilter[];
+	filters: DataViewsFilter[];
 	perPage: number;
 	page: number;
 	sort: DataViewsSort;
