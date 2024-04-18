@@ -6,7 +6,7 @@ import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { filtersMap } from './constants';
+import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
@@ -77,6 +77,10 @@ export const SitesDashboardProvider = ( {
 	const onHideLicenseInfo = () => {
 		setCurrentLicenseInfo( null );
 	};
+
+	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
+	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
+	initialDataViewsState.hiddenFields = [ 'status' ];
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
