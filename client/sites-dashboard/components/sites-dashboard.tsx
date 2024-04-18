@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -18,7 +17,6 @@ import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { withoutHttp } from 'calypso/lib/url';
-import SitesDashboardV2 from 'calypso/sites-dashboard/components/sites-dashboard-v2';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
@@ -210,16 +208,6 @@ export function SitesDashboard( {
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
-
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		// sites={ allSites }
-		return (
-			<main>
-				<DocumentHead title={ __( 'Sites' ) } />
-				<SitesDashboardV2 />
-			</main>
-		);
-	}
 
 	return (
 		<main>
