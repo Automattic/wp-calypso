@@ -169,8 +169,7 @@ export const PatternGalleryClient: PatternGalleryFC = ( props ) => {
 								'pattern-preview--grid': isGridView,
 								'pattern-preview--list': ! isGridView,
 							} ) }
-							// Non-breaking space
-							title={ '\u00A0' }
+							title=""
 						/>
 					) }
 
