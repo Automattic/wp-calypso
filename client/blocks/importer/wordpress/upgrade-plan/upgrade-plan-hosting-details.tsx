@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
@@ -12,12 +13,15 @@ import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from '.
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
+	const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_modal' );
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	let importSiteHostName = '';
-	const showModal = getQueryArg( window.location.href, 'showModal' )?.toString() === 'true';
+	const showModal =
+		isMigrationModalFeatureEnabled &&
+		getQueryArg( window.location.href, 'showModal' )?.toString() === 'true';
 
 	try {
 		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
