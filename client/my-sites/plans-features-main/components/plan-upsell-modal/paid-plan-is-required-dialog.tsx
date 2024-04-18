@@ -61,6 +61,7 @@ export default function PaidPlanIsRequiredDialog( {
 						) }
 					</DomainName>
 					<PlanButton
+						borderless
 						disabled={ generatedWPComSubdomain.isLoading || ! generatedWPComSubdomain.result }
 						busy={ isBusy }
 						onClick={ handleFreeDomainClick }

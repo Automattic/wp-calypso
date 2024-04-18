@@ -60,7 +60,7 @@ function SuggestedPlanExplorerCreator( {
 	);
 }
 
-function SuggestedPlanStartedExplorerCreator( {
+function SuggestedPlanStarterExplorerCreator( {
 	paidDomainName,
 	onPlanSelected,
 	isBusy,
@@ -120,16 +120,18 @@ export default function SuggestedPlanSection( props: {
 } ) {
 	const translate = useTranslate();
 	const { paidDomainName, onPlanSelected, isBusy } = props;
-	const [ isExperimentLoaded, assignment ] = useExperiment( 'calypso_plans_modal_experiment' );
+	const [ isExperimentLoaded, assignment ] = useExperiment(
+		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
+	);
 
 	if ( ! isExperimentLoaded ) {
 		return null;
 	}
 
-	if ( assignment?.experimentName === 'variant_explorer_creator' ) {
+	if ( assignment?.experimentName === 'creator_for_starter' ) {
 		return <SuggestedPlanExplorerCreator { ...props } />;
-	} else if ( assignment?.experimentName === 'variant_starter_explorer_creator' ) {
-		return <SuggestedPlanStartedExplorerCreator { ...props } />;
+	} else if ( assignment?.experimentName === 'creator_and_free_link' ) {
+		return <SuggestedPlanStarterExplorerCreator { ...props } />;
 	}
 
 	return (
