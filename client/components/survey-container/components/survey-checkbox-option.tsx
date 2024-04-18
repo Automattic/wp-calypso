@@ -17,14 +17,10 @@ const SurveyCheckboxOption = ( {
 	const isSelected = value.includes( option.value );
 
 	const handleToggle = () => {
-		//debugger;
-		//e.stopPropagation();
-		//console.log( 'isSelected', isSelected );
 		const newValue = isSelected
 			? value.filter( ( v ) => v !== option.value )
 			: [ ...value, option.value ];
 
-		//console.log( 'newValue', newValue );
 		onChange( question.key, newValue );
 	};
 
@@ -57,13 +53,7 @@ const SurveyCheckboxOption = ( {
 			/>
 
 			<div className="question-options__option-label">
-				<label
-					id={ `option-label-${ option.value }` }
-					//htmlFor={ `option-${ option.value }` }
-					//onClick={ ( e ) => e.stopPropagation() }
-				>
-					{ option.label }
-				</label>
+				<label id={ `option-label-${ option.value }` }>{ option.label }</label>
 				{ option.helpText && (
 					<span
 						id={ `option-help-text-${ option.value }` }
