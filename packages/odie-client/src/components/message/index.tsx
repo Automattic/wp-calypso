@@ -40,7 +40,6 @@ const ChatMessage = (
 	const [ isFullscreen, setIsFullscreen ] = useState( false );
 	const currentUser = useSelector( getCurrentUser ) ?? {
 		display_name: window?.odieUserData?.displayName ?? 'Me',
-		avatar_URL: window?.odieUserData?.avatarUrl,
 	};
 	const translate = useTranslate();
 
