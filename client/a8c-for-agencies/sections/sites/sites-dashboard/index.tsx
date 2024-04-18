@@ -150,7 +150,7 @@ export default function SitesDashboard() {
 			showOnlyFavorites,
 		} );
 		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
-			page.replace( updatedUrl );
+			page.show( updatedUrl );
 		}
 	}, [
 		sitesViewState.selectedSite,
