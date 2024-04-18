@@ -21,7 +21,7 @@ const useSurveyAnswersQuery = ( { surveyKey }: SurveyAnswersQueryParams ) => {
 		queryKey: [ 'survey-answers', surveyKey ],
 		queryFn: () => {
 			return wpcom.req.get( {
-				path: `/segmentation-survey/answer?survey_key=${ surveyKey }`,
+				path: `/segmentation-survey/answers?survey_key=${ surveyKey }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},

@@ -61,7 +61,7 @@ describe( 'useSurveyAnswersQuery', () => {
 
 		expect( wpcom.req.get ).toHaveBeenCalledWith( {
 			apiNamespace: 'wpcom/v2',
-			path: '/segmentation-survey/answer?survey_key=test_key',
+			path: '/segmentation-survey/answers?survey_key=test_key',
 		} );
 	} );
 
