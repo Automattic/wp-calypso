@@ -1,16 +1,15 @@
 import { ReactNode } from 'react';
 
-export interface ItemsDataViewsType {
-	items: any[] | undefined;
+export interface ItemsDataViewsType< T > {
+	items: T[] | undefined;
 	pagination: DataViewsPaginationInfo;
 	searchLabel?: string;
 	fields: DataViewsColumn[];
 	actions?: DataViewsAction[];
-	getItemId?: ( item: any ) => string;
-	itemFieldId?: string; // The path to get the item id: `id` or `site.blog_id`
-	onDataViewsStateChange: ( view: DataViewsState ) => void;
+	getItemId?: ( item: T ) => string;
+	itemFieldId?: string; // The field path to get the item id. Examples `id` or `site.blog_id`
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	dataViewsState: DataViewsState;
-	selectedItem?: any | undefined;
 }
 
 export interface DataViewsColumn {
@@ -68,4 +67,5 @@ export interface DataViewsState {
 	sort: DataViewsSort;
 	hiddenFields: string[];
 	layout: object;
+	selectedItem?: any | undefined;
 }
