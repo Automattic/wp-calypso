@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
@@ -22,27 +23,27 @@ const SitesDataViews = ( {
 	data,
 	isLoading,
 	isLargeScreen,
-	onSitesViewChange,
-	sitesViewState,
+	setDataViewsState,
+	dataViewsState,
 	forceTourExampleSite = false,
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
 	const { showOnlyFavorites } = useContext( SitesDashboardContext );
 	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
-	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
+	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
-			onSitesViewChange( {
-				...sitesViewState,
-				selectedSite: site,
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
+				...prevState,
+				selectedItem: site,
 				type: 'list',
-			} );
+			} ) );
 		},
-		[ onSitesViewChange, sitesViewState ]
+		[ setDataViewsState, dataViewsState ]
 	);
 
 	const renderField = useCallback(
@@ -438,14 +439,14 @@ const SitesDataViews = ( {
 				data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
 				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
 				fields={ fields }
-				view={ sitesViewState }
+				view={ dataViewsState }
 				search={ true }
 				searchLabel={ translate( 'Search for sites' ) }
 				getItemId={ ( item: SiteInfo ) => {
 					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
 					return item.id;
 				} }
-				onChangeView={ onSitesViewChange }
+				onChangeView={ setDataViewsState }
 				supportedLayouts={ [ 'table' ] }
 				actions={ [] } // Replace with actions when bulk selections are implemented.
 				isLoading={ isLoading }
