@@ -137,10 +137,13 @@ class NavTabs extends Component {
 			this.getTabWidths();
 
 			if (
-				navGroupWidth <= this.tabsWidth &&
-				! this.state.isDropdown &&
-				this.props.hasHorizontalScroll &&
-				navGroupWidth < 480
+				( navGroupWidth <= this.tabsWidth &&
+					! this.state.isDropdown &&
+					this.props.hasHorizontalScroll &&
+					navGroupWidth < 480 ) ||
+				( navGroupWidth <= this.tabsWidth &&
+					! this.state.isDropdown &&
+					! this.props.hasHorizontalScroll )
 			) {
 				this.setState( {
 					isDropdown: true,
