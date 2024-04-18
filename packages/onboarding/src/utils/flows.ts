@@ -4,7 +4,6 @@ export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
-export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
@@ -91,15 +90,8 @@ export const isNewHostedSiteCreationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && NEW_HOSTED_SITE_FLOW === flowName );
 };
 
-export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && TRANSFERRING_HOSTED_SITE_FLOW === flowName );
-};
-
 export const isAnyHostingFlow = ( flowName?: string | null ) => {
-	return Boolean(
-		flowName &&
-			[ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW, TRANSFERRING_HOSTED_SITE_FLOW ].includes( flowName )
-	);
+	return Boolean( flowName && [ HOSTING_LP_FLOW, NEW_HOSTED_SITE_FLOW ].includes( flowName ) );
 };
 
 export const isAnyMigrationFlow = ( flowName?: string | null ) => {

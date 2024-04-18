@@ -2,7 +2,6 @@ import { Onboard } from '@automattic/data-stores';
 import {
 	isWooExpressFlow,
 	isNewHostedSiteCreationFlow,
-	isTransferringHostedSiteCreationFlow,
 	VIDEOPRESS_FLOW,
 	VIDEOPRESS_TV_FLOW,
 	VIDEOPRESS_TV_PURCHASE_FLOW,
@@ -27,17 +26,6 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 
 	if ( flow && isNewHostedSiteCreationFlow( flow ) ) {
 		return [ { title: __( 'Creating your site' ), duration: Infinity } ];
-	}
-
-	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
-		return [
-			{ title: __( 'Laying the foundations' ), duration: 5000 },
-			{ title: __( 'Warming up CPUs' ), duration: 3000 },
-			{ title: __( 'Installing WordPress' ), duration: 3000 },
-			{ title: __( 'Securing your data' ), duration: 5000 },
-			{ title: __( 'Distributing your site worldwide' ), duration: 5000 },
-			{ title: __( 'Closing the loop' ), duration: Infinity },
-		];
 	}
 
 	if ( flow === 'copy-site' ) {
