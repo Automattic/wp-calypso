@@ -154,6 +154,7 @@
 		"onboarding/new-user-survey": false,
 		"onboarding/new-user-survey-scrambled": false,
 		"p2/p2-plus": true,
+		"p2-enabled": false,
 		"page/export": true,
 		"pattern-assembler/v2": true,
 		"plans/hosting-trial": true,

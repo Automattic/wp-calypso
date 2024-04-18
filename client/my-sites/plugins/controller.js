@@ -154,13 +154,21 @@ export function scheduledUpdates( context, next ) {
 				onNavBack: goToScheduledUpdatesList,
 			} );
 			break;
-
+		case 'notifications':
+			context.primary = createElement( PluginsScheduledUpdates, {
+				siteSlug,
+				context: 'notifications',
+				onNavBack: goToScheduledUpdatesList,
+			} );
+			break;
 		case 'list':
 		default:
 			context.primary = createElement( PluginsScheduledUpdates, {
 				siteSlug,
 				context: 'list',
 				onCreateNewSchedule: () => page.show( `/plugins/scheduled-updates/create/${ siteSlug }` ),
+				onNotificationManagement: () =>
+					page.show( `/plugins/scheduled-updates/notifications/${ siteSlug }` ),
 				onEditSchedule: ( id ) =>
 					page.show( `/plugins/scheduled-updates/edit/${ siteSlug }/${ id }` ),
 				onShowLogs: ( id ) => page.show( `/plugins/scheduled-updates/logs/${ siteSlug }/${ id }` ),
