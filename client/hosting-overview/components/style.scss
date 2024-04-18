@@ -64,6 +64,7 @@
 	line-height: 32px;
 }
 
+.hosting-overview__link-button,
 a.hosting-overview__link-button {
 	color: var(--Primary-Blue, #007cba);
 	font-family: "SF Pro Text", $sans;
@@ -83,6 +84,10 @@ a.hosting-overview__link-button {
 	display: flex;
 	gap: var(--grid-unit-15, 12px);
 	margin-bottom: 16px;
+}
+
+.hosting-overview__active-domains-card-header {
+	align-items: center;
 }
 
 .hosting-overview__card-title {
