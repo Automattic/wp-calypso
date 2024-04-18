@@ -65,7 +65,7 @@ export interface DataViewsState {
 	perPage: number;
 	page: number;
 	sort: DataViewsSort;
-	hiddenFields: string[];
+	hiddenFields?: string[];
 	layout: object;
 	selectedItem?: any | undefined;
 }

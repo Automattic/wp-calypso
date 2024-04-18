@@ -5,6 +5,10 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
 import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
+import {
+	DATAVIEWS_LIST,
+	DATAVIEWS_TABLE,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
@@ -100,7 +104,7 @@ export default function SitesDashboard() {
 
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
-			setDataViewsState( { ...dataViewsState, type: 'table', selectedItem: undefined } );
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
 			setHideListing( false );
 			return;
 		}
@@ -118,21 +122,13 @@ export default function SitesDashboard() {
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
 				selectedItem: site,
-				type: 'list',
+				type: DATAVIEWS_LIST,
 			} ) );
 		}
 		// Omitting sitesViewState to prevent infinite loop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState, setHideListing ] );
 
-	/*
-	const onSitesViewChange = useCallback(
-		( sitesViewData: DataViewsState ) => {
-			setDataViewsState( sitesViewData );
-		},
-		[ setDataViewsState ]
-	);
-	*/
 	useEffect( () => {
 		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
 		if ( hideListing && ! dataViewsState.selectedItem ) {
@@ -173,7 +169,7 @@ export default function SitesDashboard() {
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
-			setDataViewsState( { ...dataViewsState, type: 'table', selectedItem: undefined } );
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
 			setHideListing( false );
 		}
 	}, [ dataViewsState, setDataViewsState, setHideListing ] );

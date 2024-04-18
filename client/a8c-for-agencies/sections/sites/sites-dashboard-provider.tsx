@@ -1,5 +1,8 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import {
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { SitesDashboardContextInterface } from 'calypso/a8c-for-agencies/sections/sites/types';
 import {
@@ -107,7 +110,7 @@ export const SitesDashboardProvider = ( {
 			...( siteUrlInitialState ? {} : { search: searchQuery } ),
 			...( siteUrlInitialState ? {} : { sort } ),
 			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),
-			...( siteUrlInitialState ? {} : { type: 'table' } ),
+			...( siteUrlInitialState ? {} : { type: DATAVIEWS_TABLE } ),
 		} ) );
 	}, [
 		setDataViewsState,

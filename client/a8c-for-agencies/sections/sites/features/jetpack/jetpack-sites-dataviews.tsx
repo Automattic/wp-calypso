@@ -3,6 +3,7 @@ import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
+import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import {
 	DataViewsColumn,
@@ -47,7 +48,7 @@ export const JetpackSitesDataViews = ( {
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
 				selectedItem: site,
-				type: 'list',
+				type: DATAVIEWS_LIST,
 			} ) );
 		},
 		[ setDataViewsState, dataViewsState ]
