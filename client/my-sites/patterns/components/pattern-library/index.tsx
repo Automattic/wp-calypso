@@ -14,7 +14,7 @@ import {
 import { ToggleGroupControlOptionProps } from '@wordpress/components/build-types/toggle-group-control/types';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { Substitution, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { CategoryPillNavigation } from 'calypso/components/category-pill-navigation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -116,7 +116,8 @@ export const PatternLibrary = ( {
 	const { data: categories = [] } = usePatternCategories( locale );
 	const { data: rawPatterns = [], isFetching: isFetchingPatterns } = usePatterns(
 		locale,
-		category
+		category,
+		{ enabled: Boolean( category || searchTerm ) }
 	);
 
 	const patterns = searchTerm
@@ -248,17 +249,45 @@ export const PatternLibrary = ( {
 		? `${ searchTerm }-${ category }-${ patternTypeFilter }`
 		: `${ category }-${ patternTypeFilter }`;
 
+	let mainHeading: Substitution = '';
+
+	if ( searchTerm && isFetchingPatterns && ! patterns.length ) {
+		// Non-breaking space
+		mainHeading = '\u00A0';
+	} else if ( searchTerm ) {
+		mainHeading = translate( '%(count)d pattern', '%(count)d patterns', {
+			count: patterns.length,
+			args: { count: patterns.length },
+		} );
+	} else if ( patternTypeFilter === PatternTypeFilter.PAGES ) {
+		mainHeading = translate( 'Page Layouts', {
+			comment: 'Refers to block patterns that contain entire page layouts',
+		} );
+	} else if ( patternTypeFilter === PatternTypeFilter.REGULAR ) {
+		mainHeading = translate( 'Patterns', {
+			comment: 'Refers to block patterns',
+		} );
+	}
+
 	return (
 		<>
-			<PatternsPageViewTracker
-				category={ category }
-				patternPermalinkName={ patternPermalinkName }
-				patternTypeFilter={ patternTypeFilter }
-				view={ currentView }
-				searchTerm={ searchTerm }
-				referrer={ referrer }
-				patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
-			/>
+			{ isHomePage ? (
+				<PatternsPageViewTracker
+					searchTerm={ searchTerm }
+					referrer={ referrer }
+					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+				/>
+			) : (
+				<PatternsPageViewTracker
+					category={ category }
+					patternPermalinkName={ patternPermalinkName }
+					patternTypeFilter={ patternTypeFilter }
+					view={ currentView }
+					searchTerm={ searchTerm }
+					referrer={ referrer }
+					patternsCount={ ! isFetchingPatterns ? patterns.length : undefined }
+				/>
+			) }
 
 			<PatternsDocumentHead category={ category } />
 
@@ -323,21 +352,7 @@ export const PatternLibrary = ( {
 									'pattern-library__title--search': searchTerm,
 								} ) }
 							>
-								{ searchTerm &&
-									translate( '%(count)d pattern', '%(count)d patterns', {
-										count: patterns.length,
-										args: { count: patterns.length },
-									} ) }
-								{ ! searchTerm &&
-									patternTypeFilter === PatternTypeFilter.PAGES &&
-									translate( 'Page Layouts', {
-										comment: 'Refers to block patterns that contain entire page layouts',
-									} ) }
-								{ ! searchTerm &&
-									patternTypeFilter === PatternTypeFilter.REGULAR &&
-									translate( 'Patterns', {
-										comment: 'Refers to block patterns',
-									} ) }
+								{ mainHeading }
 							</h1>
 
 							{ shouldDisplayPatternTypeToggle && (
@@ -412,6 +427,7 @@ export const PatternLibrary = ( {
 
 						<PatternGallery
 							category={ category }
+							displayPlaceholder={ isFetchingPatterns && ! patterns.length }
 							getPatternPermalink={ ( pattern ) =>
 								getPatternPermalink( pattern, category, patternTypeFilter, categories )
 							}
