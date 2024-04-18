@@ -51,7 +51,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 	const { isEligibleForFeature, isSitePlansLoaded } = useIsEligibleForFeature();
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
 
-	const hideButtons =
+	const hideCreateButton =
 		! isEligibleForFeature || schedules.length === MAX_SCHEDULES || schedules.length === 0;
 
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins( siteSlug );
@@ -89,7 +89,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		},
 		notifications: {
 			component: <NotificationSettings onNavBack={ onNavBack } />,
-			title: translate( 'Notification management' ),
+			title: translate( 'Notification settings' ),
 		},
 	}[ context ];
 
@@ -105,7 +105,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 						'Streamline your workflow with scheduled updates, timed to suit your needs.'
 					) }
 				>
-					{ context === 'list' && ! hideButtons && (
+					{ context === 'list' && (
 						<>
 							{ onNotificationManagement && (
 								<Button
@@ -113,11 +113,11 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 									variant="secondary"
 									onClick={ onNotificationManagement }
 								>
-									{ translate( 'Notification management' ) }
+									{ translate( 'Notification settings' ) }
 								</Button>
 							) }
 
-							{ onCreateNewSchedule && (
+							{ onCreateNewSchedule && ! hideCreateButton && (
 								<Button
 									__next40pxDefaultSize
 									icon={ plus }

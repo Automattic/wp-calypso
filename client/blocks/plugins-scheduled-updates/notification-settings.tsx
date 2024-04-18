@@ -37,8 +37,9 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 		dispatch( fetchSettings() );
 	}, [ dispatch ] );
 
-	const wpcomNotificationSettings = useSelector( ( state ) => {
-		return getNotificationSettings( state, 'wpcom' );
+	const hasGlobalNotificationsDisabled = useSelector( ( state ) => {
+		const settings = getNotificationSettings( state, 'wpcom' );
+		return settings && ! settings.scheduled_updates;
 	} );
 
 	const { updateNotificationSettings, isPending: isSaving } =
@@ -74,7 +75,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 						</Button>
 					) }
 				</div>
-				<Text>{ translate( 'Notification management' ) }</Text>
+				<Text>{ translate( 'Notification Settings' ) }</Text>
 				<div className="ch-placeholder"></div>
 			</CardHeader>
 			<CardBody className="notification-settings-form">
@@ -90,7 +91,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 						label={ translate( 'On successful updates' ) }
 						checked={ formValues.success }
 						onChange={ handleCheckboxChange( 'success' ) }
-						disabled={ ! isFetched || ! wpcomNotificationSettings?.scheduled_updates }
+						disabled={ ! isFetched || ! hasGlobalNotificationsDisabled }
 					/>
 				</div>
 				<div className="form-field">
@@ -98,11 +99,11 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 						label={ translate( 'On failed updates' ) }
 						checked={ formValues.failure }
 						onChange={ handleCheckboxChange( 'failure' ) }
-						disabled={ ! isFetched || ! wpcomNotificationSettings?.scheduled_updates }
+						disabled={ ! isFetched || hasGlobalNotificationsDisabled }
 					/>
 				</div>
 
-				{ ! wpcomNotificationSettings?.scheduled_updates && (
+				{ hasGlobalNotificationsDisabled && (
 					<Text className="info-msg">
 						{ translate(
 							'You have opted out of scheduled updates notifications on WordPress.com. Visit {{notificationSettingsLink}}Notification Settings{{/notificationSettingsLink}} to enable scheduled updates notifications.',
