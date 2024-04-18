@@ -1,6 +1,6 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import { useSitesPluginsQuery } from 'calypso/data/plugins/use-sites-plugins-query';
+import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { ScheduleFormFrequency } from '../plugins-scheduled-updates/schedule-form-frequency';
 import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-plugins';
@@ -12,7 +12,6 @@ export const ScheduleForm = () => {
 	const atomicSites = sites
 		.filter( ( site ) => site.is_wpcom_atomic )
 		.sort( ( a, b ) => ( ( a.name || '' ) > ( b.name || '' ) ? 1 : -1 ) );
-	const atomicSiteIds = sites.map( ( site ) => site.ID );
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
@@ -21,9 +20,9 @@ export const ScheduleForm = () => {
 
 	const {
 		data: plugins = [],
-		isLoading: isPluginsFetching,
+		isInitialLoading: isPluginsFetching,
 		isFetched: isPluginsFetched,
-	} = useSitesPluginsQuery( selectedSites.length ? selectedSites : atomicSiteIds );
+	} = useCoreSitesPluginsQuery( selectedSites, true, true );
 
 	// Sites selection validation
 	useEffect(
