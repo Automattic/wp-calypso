@@ -91,7 +91,7 @@ export const NotificationSettings = ( { onNavBack }: Props ) => {
 						label={ translate( 'On successful updates' ) }
 						checked={ formValues.success }
 						onChange={ handleCheckboxChange( 'success' ) }
-						disabled={ ! isFetched || ! hasGlobalNotificationsDisabled }
+						disabled={ ! isFetched || hasGlobalNotificationsDisabled }
 					/>
 				</div>
 				<div className="form-field">
