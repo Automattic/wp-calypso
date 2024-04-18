@@ -1,6 +1,6 @@
-import { DataViewsState } from './types';
+import { DataViewsState } from './items-dataviews/interfaces';
 
-export const initialSitesViewState: DataViewsState = {
+export const initialDataViewsState: DataViewsState = {
 	type: 'table',
 	perPage: 50,
 	page: 1,
@@ -11,5 +11,4 @@ export const initialSitesViewState: DataViewsState = {
 	search: '',
 	hiddenFields: [],
 	layout: {},
-	selectedSiteId: undefined,
 };
