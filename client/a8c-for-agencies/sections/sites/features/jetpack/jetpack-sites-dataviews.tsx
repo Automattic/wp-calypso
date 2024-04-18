@@ -375,6 +375,14 @@ export const JetpackSitesDataViews = ( {
 		dataViewsState: dataViewsState,
 	} );
 
+	// Hide the status column
+	useEffect( () => {
+		setDataViewsState( ( prevState: DataViewsState ) => ( {
+			...prevState,
+			hiddenFields: [ 'status' ],
+		} ) );
+	}, [ setDataViewsState ] );
+
 	// Update the data packet
 	useEffect( () => {
 		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
