@@ -50,6 +50,20 @@ const SurveyCheckboxOption = ( {
 				tabIndex={ -1 }
 				aria-hidden="true"
 			/>
+
+			<div className="question-options__option-label">
+				<label id={ `option-label-${ option.value }` } htmlFor={ `option-${ option.value }` }>
+					{ option.label }
+				</label>
+				{ option.helpText && (
+					<span
+						id={ `option-help-text-${ option.value }` }
+						className="question-options__option-help-text"
+					>
+						{ option.helpText }
+					</span>
+				) }
+			</div>
 		</div>
 	);
 };
