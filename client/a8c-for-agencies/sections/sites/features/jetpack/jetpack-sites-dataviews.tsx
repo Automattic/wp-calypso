@@ -6,6 +6,7 @@ import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import {
 	DataViewsColumn,
+	DataViewsState,
 	ItemsDataViewsType,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
@@ -21,14 +22,14 @@ import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/s
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { AllowedTypes, Site } from '../../types';
+import { AllowedTypes, Site, SiteData } from '../../types';
 
 export const JetpackSitesDataViews = ( {
 	data,
 	isLoading,
 	isLargeScreen,
-	onSitesViewChange,
-	sitesViewState,
+	setDataViewsState,
+	dataViewsState,
 	forceTourExampleSite = false,
 	className,
 }: SitesDataViewsProps ) => {
@@ -36,20 +37,20 @@ export const JetpackSitesDataViews = ( {
 
 	const { showOnlyFavorites } = useContext( SitesDashboardContext );
 	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
-	const sitesPerPage = sitesViewState.perPage > 0 ? sitesViewState.perPage : 20;
+	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
 
 	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
 		( site: Site ) => {
-			onSitesViewChange( {
-				...sitesViewState,
-				selectedSite: site,
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
+				...prevState,
+				selectedItem: site,
 				type: 'list',
-			} );
+			} ) );
 		},
-		[ onSitesViewChange, sitesViewState ]
+		[ setDataViewsState, dataViewsState ]
 	);
 
 	const renderField = useCallback(
@@ -360,7 +361,7 @@ export const JetpackSitesDataViews = ( {
 	const useExampleDataForTour =
 		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
 
-	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType >( {
+	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteData > >( {
 		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
 		pagination: {
 			totalItems: totalSites,
@@ -370,22 +371,21 @@ export const JetpackSitesDataViews = ( {
 		searchLabel: translate( 'Search for Sites' ),
 		fields: [],
 		actions: [],
-		onDataViewsStateChange: onSitesViewChange,
-		dataViewsState: sitesViewState,
-		selectedItem: sitesViewState.selectedSite,
+		setDataViewsState: setDataViewsState,
+		dataViewsState: dataViewsState,
 	} );
 
 	// Update the data packet
 	useEffect( () => {
-		setItemsData( ( prevState ) => ( {
+		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
 			...prevState,
 			items: sites,
 			fields: fields,
-			onDataViewsStateChange: onSitesViewChange,
-			dataViewsState: sitesViewState,
-			selectedItem: sitesViewState.selectedSite,
+			setDataViewsState: setDataViewsState,
+			dataViewsState: dataViewsState,
+			selectedItem: dataViewsState.selectedItem,
 		} ) );
-	}, [ fields, sitesViewState, onSitesViewChange, data ] );
+	}, [ fields, dataViewsState, setDataViewsState, data ] );
 
 	return (
 		<ItemsDataViews
