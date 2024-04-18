@@ -81,7 +81,7 @@
 		"@wordpress/data": "^9.25.0",
 		"@wordpress/data-controls": "^3.24.0",
 		"@wordpress/date": "^4.55.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^5.5.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^5.6.0",
 		"@wordpress/dom-ready": "^3.55.0",
 		"@wordpress/edit-post": "^7.32.0",
 		"@wordpress/element": "^5.32.0",
@@ -129,7 +129,7 @@
 		"@testing-library/react": "^14.2.1",
 		"@types/node": "^20.8.6",
 		"@wordpress/eslint-plugin": "^17.12.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^2.37.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^2.38.0",
 		"babel-jest": "^29.6.1",
 		"eslint-filtered-fix": "^0.3.0",
 		"eslint-nibble": "^8.1.0",
@@ -139,6 +139,6 @@
 		"eslint-plugin-you-dont-need-lodash-underscore": "^6.14.0",
 		"prettier": "npm:wp-prettier@3.0.3",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.90.3"
+		"webpack": "^5.91.0"
 	}
 }
