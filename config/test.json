@@ -81,7 +81,7 @@
 		"mailchimp": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
-		"migration_modal": false,
+		"migration_assistance_modal": false,
 		"me/account-close": true,
 		"me/vat-details": true,
 		"my-sites/add-ons": true,

@@ -201,7 +201,7 @@ const importHostedSiteFlow: Flow = {
 		};
 
 		const goBack = () => {
-			const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_modal' );
+			const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_assistance_modal' );
 
 			switch ( _currentStep ) {
 				case 'import':

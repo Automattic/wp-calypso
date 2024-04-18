@@ -13,7 +13,7 @@ import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from '.
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
-	const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_modal' );
+	const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_assistance_modal' );
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
@@ -66,7 +66,7 @@ export const UpgradePlanHostingDetails = () => {
 				>
 					<p>
 						{ translate(
-							'Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move magical-pinneaples.fun to WordPress.com.'
+							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move hostingProviderName to WordPress.com.`
 						) }
 					</p>
 					<p>

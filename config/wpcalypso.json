@@ -102,7 +102,7 @@
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,
 		"marketplace-test": true,
-		"migration_modal": false,
+		"migration_assistance_modal": false,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
