@@ -72,5 +72,6 @@ export const useCoreSitesPluginsQuery = (
 		retry: false,
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
+		enabled: !! siteIds.length,
 	} );
 };
