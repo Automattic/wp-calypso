@@ -1,6 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { fetchSiteDomains } from 'calypso/my-sites/domains/domain-management/domains-table-fetch-functions';
@@ -15,11 +16,18 @@ const ActiveDomainsCard: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<Card className="hosting-overview__card">
+		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__active-domains' ) }>
 			<div className="hosting-overview__card-header">
 				<h3 className="hosting-overview__card-title">{ translate( 'Active domains' ) }</h3>
 
-				<Button className="hosting-overview__link-button" plain href="/start/domain">
+				<Button
+					className={ classNames(
+						'hosting-overview__link-button',
+						'hosting-overview__mobile-hidden-link-button'
+					) }
+					plain
+					href="/start/domain"
+				>
 					{ translate( 'Add new domain' ) }
 				</Button>
 				<Button

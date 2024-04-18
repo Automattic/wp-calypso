@@ -6,13 +6,11 @@ import './style.scss';
 
 const HostingOverview: FC = () => {
 	return (
-		<>
-			<div className="hosting-overview__top-cards-wrapper">
-				<PlanCard />
-				<QuickActionsCard />
-			</div>
+		<div className="hosting-overview">
+			<PlanCard />
+			<QuickActionsCard />
 			<ActiveDomainsCard />
-		</>
+		</div>
 	);
 };
 

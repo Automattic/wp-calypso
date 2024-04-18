@@ -1,5 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { chevronRightSmall, Icon } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
@@ -33,7 +34,7 @@ const QuickActionsCard: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<Card className="hosting-overview__card">
+		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
 			<div className="hosting-overview__card-header">
 				<h3 className="hosting-overview__card-title">{ translate( 'Quick actions' ) }</h3>
 			</div>
