@@ -1,19 +1,23 @@
 /**
  * @jest-environment jsdom
  */
+import { useIsCurrentUserLoggedIn } from 'calypso/landing/stepper/hooks/use-is-current-user-logged-in';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
 import { getFlowLocation, renderFlow } from './helpers';
+import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
 jest.mock( '../../utils/checkout' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-current-user-logged-in' );
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			value: { assign: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn() },
 		} );
 	} );
 
@@ -22,7 +26,43 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		( window.location.assign as jest.Mock ).mockClear();
+		( useIsCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+	} );
+	describe( 'useAssertConditions', () => {
+		it( 'redirects the user to the login page when they are not logged in', () => {
+			( useIsCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
+
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				`/start/account/user-social?variationName=site-migration&toStepper=true&redirect_to=/setup/site-migration`
+			);
+		} );
+
+		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=&siteId=`,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+		} );
+
+		it( 'renders the step with success', () => {
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( getAssertionConditionResult() ).toEqual( { state: 'success' } );
+		} );
 	} );
 
 	describe( 'navigation', () => {
