@@ -4495,12 +4495,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@github/webauthn-json@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "@github/webauthn-json@npm:0.4.1"
+"@github/webauthn-json@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@github/webauthn-json@npm:2.1.1"
   bin:
-    webauthn-json: ./dist/bin/webauthn-json.js
-  checksum: e8834ae2082d38e5f8eba2cd4576060c53cdc2d0152e3635f87fecbc3ab4f142c709b7a1f8bb1c898e30eed5d7b3d5fb00dc1f815b48ae31a880c4b14d9ba757
+    webauthn-json: dist/bin/main.js
+  checksum: 4423ddd1e5b74d91ded02ea551923a73c45b1ee2ee4294943aaddfc12e1929405ea1e8b4380456db829fcdc3a4d8a89bf8ee29c6a35be3889dc00236b1c96968
   languageName: node
   linkType: hard
 
@@ -12334,7 +12334,7 @@ __metadata:
     "@emotion/jest": "npm:^11.11.0"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
-    "@github/webauthn-json": "npm:^0.4.1"
+    "@github/webauthn-json": "npm:^2.1.1"
     "@sentry/webpack-plugin": "npm:^1.21.0"
     "@storybook/addon-actions": "npm:^7.6.17"
     "@stripe/react-stripe-js": "npm:^2.1.0"
