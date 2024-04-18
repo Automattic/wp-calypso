@@ -964,7 +964,7 @@ function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: s
 		// Marketplace themes require upgrading to a monthly business plan or higher, everything else requires an annual plan.
 		requiredTerm = selectedDesign?.is_externally_managed ? TERM_MONTHLY : TERM_ANNUALLY;
 	} else {
-		requiredTerm = getPlan( currentPlanSlug )?.term || '';
+		requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
 	}
 
 	return getPlanByTerm( tierMinimumUpsellPlan, requiredTerm );
