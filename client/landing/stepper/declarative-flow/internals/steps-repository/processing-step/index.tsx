@@ -6,7 +6,6 @@ import {
 	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
-	isTransferringHostedSiteCreationFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
@@ -35,7 +34,7 @@ interface ProcessingStepProps extends StepProps {
 
 const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const { submit } = props.navigation;
-	const { flow, data } = props;
+	const { flow } = props;
 
 	const { __ } = useI18n();
 	const loadingMessages = useProcessingLoadingMessages( flow );
@@ -155,9 +154,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<>
 						<div className="processing-step">
 							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-							{ progress >= 0 ||
-							isWooExpressFlow( flow ) ||
-							isTransferringHostedSiteCreationFlow( flow ) ? (
+							{ progress >= 0 || isWooExpressFlow( flow ) ? (
 								<LoadingBar
 									progress={ progress }
 									className="processing-step__content woocommerce-install__content"
