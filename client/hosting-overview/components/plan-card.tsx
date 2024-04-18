@@ -41,7 +41,14 @@ const PlanCard: FC = () => {
 				<div className="hosting-overview__plan-card-header">
 					<h3 className="hosting-overview__plan-card-title">{ planName }</h3>
 
-					<Button className="hosting-overview__link-button" plain href={ `/plans/${ site?.slug }` }>
+					<Button
+						className={ classNames(
+							'hosting-overview__link-button',
+							'hosting-overview__mobile-hidden-link-button'
+						) }
+						plain
+						href={ `/plans/${ site?.slug }` }
+					>
 						{ translate( 'Manage plan' ) }
 					</Button>
 				</div>

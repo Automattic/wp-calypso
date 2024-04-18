@@ -20,7 +20,14 @@ const ActiveDomainsCard: FC = () => {
 			<div className="hosting-overview__card-header">
 				<h3 className="hosting-overview__card-title">{ translate( 'Active domains' ) }</h3>
 
-				<Button className="hosting-overview__link-button" plain href="/start/domain">
+				<Button
+					className={ classNames(
+						'hosting-overview__link-button',
+						'hosting-overview__mobile-hidden-link-button'
+					) }
+					plain
+					href="/start/domain"
+				>
 					{ translate( 'Add new domain' ) }
 				</Button>
 				<Button
