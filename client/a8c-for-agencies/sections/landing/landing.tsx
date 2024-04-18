@@ -12,6 +12,7 @@ import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency, hasFetchedAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -40,7 +41,8 @@ export default function Landing() {
 			return page.redirect( A4A_OVERVIEW_LINK );
 		}
 
-		page.redirect( A4A_SIGNUP_LINK );
+		const source = getQueryArg( window.location.href, 'source' ) as string;
+		page.redirect( addQueryArgs( { source }, A4A_SIGNUP_LINK ) );
 	}, [ agency, hasFetched ] );
 
 	return (
