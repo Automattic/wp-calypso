@@ -14,7 +14,10 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 }
 
 @mixin question-option-control {
+	display: flex;
 	flex-basis: calc(100% - 48px);
+	gap: 16px;
+	align-items: center;
 	border-radius: 2px;
 	border: solid 1px $studio-gray-5;
 	padding: 16px;
@@ -87,8 +90,6 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 			}
 
 			.question-options__option-label {
-				padding-left: 16px;
-
 				label {
 					font-size: $font-body;
 					font-weight: 500;

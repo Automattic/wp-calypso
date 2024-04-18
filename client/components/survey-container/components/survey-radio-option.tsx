@@ -17,9 +17,7 @@ const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOp
 
 	return (
 		<div
-			className={ `question-options__option-control components-radio-control__option ${
-				isSelected ? 'checked' : ''
-			}` }
+			className={ `question-options__option-control ${ isSelected ? 'checked' : '' }` }
 			role="radio"
 			tabIndex={ 0 }
 			onClick={ () => onChange( question.key, [ option.value ] ) }
