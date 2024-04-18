@@ -1,23 +1,10 @@
 import {
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_BUSINESS_3_YEARS,
-	PLAN_PERSONAL,
 	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-	TERM_TRIENNIALLY,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	getPlan,
 	isFreePlan,
-	PLAN_PREMIUM,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PREMIUM_3_YEARS,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PREMIUM_MONTHLY,
-	PLAN_PERSONAL_MONTHLY,
+	findSimilarPlansKeys,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
@@ -934,20 +921,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 };
 
-function getBusinessPlanByTerm( term: string ) {
-	switch ( term ) {
-		case TERM_TRIENNIALLY:
-			return PLAN_BUSINESS_3_YEARS;
-		case TERM_BIENNIALLY:
-			return PLAN_BUSINESS_2_YEARS;
-		case TERM_ANNUALLY:
-			return PLAN_BUSINESS;
-		case TERM_MONTHLY:
-		default:
-			return PLAN_BUSINESS_MONTHLY;
-	}
-}
-
 function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: string ) {
 	if ( ! selectedDesign?.design_tier ) {
 		return;
@@ -967,41 +940,7 @@ function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: s
 		requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
 	}
 
-	return getPlanByTerm( tierMinimumUpsellPlan, requiredTerm );
-}
-
-function getPlanByTerm( plan: string, term: string ) {
-	// This is icky, replace later with less hard-coding.
-	switch ( plan ) {
-		case PLAN_PERSONAL:
-			switch ( term ) {
-				case TERM_TRIENNIALLY:
-					return PLAN_PERSONAL_3_YEARS;
-				case TERM_BIENNIALLY:
-					return PLAN_PERSONAL_2_YEARS;
-				case TERM_MONTHLY:
-					return PLAN_PERSONAL_MONTHLY;
-				case TERM_ANNUALLY:
-				default:
-					return PLAN_PERSONAL;
-			}
-		case PLAN_PREMIUM:
-			switch ( term ) {
-				case TERM_TRIENNIALLY:
-					return PLAN_PREMIUM_3_YEARS;
-				case TERM_BIENNIALLY:
-					return PLAN_PREMIUM_2_YEARS;
-				case TERM_MONTHLY:
-					return PLAN_PREMIUM_MONTHLY;
-				case TERM_ANNUALLY:
-				default:
-					return PLAN_PREMIUM;
-			}
-		case PLAN_BUSINESS:
-			return getBusinessPlanByTerm( term );
-		default:
-			return plan;
-	}
+	return findSimilarPlansKeys( tierMinimumUpsellPlan, { term: requiredTerm } );
 }
 
 export default UnifiedDesignPickerStep;
