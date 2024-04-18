@@ -81,7 +81,7 @@ export default function SitePreviewPane( {
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
 					{ navItems && navItems.length > 0 ? (
-						<NavTabs hasHorizontalScroll="true">{ navItems }</NavTabs>
+						<NavTabs hasHorizontalScroll={ true }>{ navItems }</NavTabs>
 					) : null }
 				</SectionNav>
 			</div>
