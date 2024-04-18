@@ -21,10 +21,6 @@ export const useCoreSitesPluginsQuery = (
 	return useQuery( {
 		queryKey: [ 'core-plugins', ...siteIds ],
 		queryFn: () => {
-			if ( siteIds.length === 0 ) {
-				return [];
-			}
-
 			const promises = siteIds.map( ( siteId ) => {
 				const cachedData = queryClient.getQueryData( [ 'core-plugins', siteId ] ) as CorePlugin[];
 
