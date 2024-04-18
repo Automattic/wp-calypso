@@ -65,6 +65,7 @@
 		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
 		"oauth": false,
+		"p2-enabled": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
 		"subscriber-csv-upload": true,
