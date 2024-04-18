@@ -16,15 +16,12 @@ const SurveyCheckboxOption = ( {
 }: SurveyCheckboxOptionType ) => {
 	const isSelected = value.includes( option.value );
 
-	const handleToggle = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
-		//console.log('event', event.target.tagName);
-		if ( ! ( event.target.tagName === 'LABEL' ) ) {
-			const newValue = isSelected
-				? value.filter( ( v ) => v !== option.value )
-				: [ ...value, option.value ];
+	const handleToggle = () => {
+		const newValue = isSelected
+			? value.filter( ( v ) => v !== option.value )
+			: [ ...value, option.value ];
 
-			onChange( question.key, newValue );
-		}
+		onChange( question.key, newValue );
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -36,9 +33,9 @@ const SurveyCheckboxOption = ( {
 	return (
 		<div
 			className={ `question-options__option-control ${ isSelected ? 'checked' : '' }` }
+			role="checkbox"
 			onClick={ handleToggle }
 			onKeyDown={ handleKeyDown }
-			role="checkbox"
 			tabIndex={ 0 }
 			aria-checked={ isSelected ? 'true' : 'false' }
 		>
@@ -47,8 +44,8 @@ const SurveyCheckboxOption = ( {
 				id={ `option-${ option.value }` }
 				name={ question.key }
 				value={ option.value }
-				onChange={ handleToggle }
 				checked={ isSelected }
+				onChange={ handleToggle }
 				className="form-checkbox"
 				tabIndex={ -1 }
 				aria-hidden="true"
