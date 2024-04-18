@@ -1,5 +1,4 @@
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -7,13 +6,13 @@ import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { JETPACK_SUPPORT_URL } from '../const';
 import useModuleDevicesQuery, {
 	QueryStatsDevicesParams,
 	StatsDevicesData,
 } from '../hooks/use-modeule-devices-query';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import statsStrings from '../stats-strings';
 
 // import '../stats-module/style.scss';
 // import '../stats-list/style.scss';
@@ -84,6 +83,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 	isLoading,
 	query,
 } ) => {
+	const { devices: devicesStrings } = statsStrings();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const translate = useTranslate();
 
@@ -128,8 +128,6 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		/>
 	);
 
-	const title = translate( 'Devices', { context: 'Stats: title of module', textOnly: true } );
-
 	// Use dedicated StatsCard for the screen size chart section.
 	if ( OPTION_KEYS.SIZE === selectedOption ) {
 		const chartData = prepareChartData( data );
@@ -137,7 +135,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		return (
 			<StatsCard
 				className={ classNames( className, 'stats-module__card', path ) }
-				title={ title }
+				title={ devicesStrings.title }
 				titleURL=""
 				metricLabel=""
 				splitHeader
@@ -176,17 +174,8 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 			className={ classNames( className, 'stats-module__card', path ) }
 			moduleType={ path }
 			data={ data }
-			title={ title }
-			emptyMessage={ translate(
-				'If you use UTM codes, your {{link}}campaign performance data{{/link}} will show here.',
-				{
-					comment: '{{link}} links to support documentation.',
-					components: {
-						link: <a href={ localizeUrl( `${ JETPACK_SUPPORT_URL }#devices-stats` ) } />,
-					},
-					context: 'Stats: Info box label when the UTM module is empty',
-				}
-			) }
+			title={ devicesStrings.title }
+			emptyMessage={ devicesStrings.empty }
 			metricLabel={ translate( 'Visitors' ) }
 			loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
 			splitHeader
