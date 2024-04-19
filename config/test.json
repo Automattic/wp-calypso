@@ -86,6 +86,7 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"p2-enabled": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

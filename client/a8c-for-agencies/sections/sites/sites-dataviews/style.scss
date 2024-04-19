@@ -4,21 +4,21 @@
 .sites-overview__content {
 
 	.components-checkbox-control__input[type="checkbox"]:focus {
-		box-shadow: 0 0 0 var(--studio-jetpack-green-50) #fff, 0 0 0 calc(2* var(--studio-jetpack-green-50)) var(--studio-jetpack-green-50);
+		box-shadow: 0 0 0 var(--color-jetpack-50) #fff, 0 0 0 calc(2* var(--color-jetpack-50)) var(--color-jetpack-50);
 		outline: 2px solid transparent;
 		outline-offset: 2px;
 	}
 	.components-checkbox-control__input[type="checkbox"]:checked,
 	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-		border-color: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
+		background: var(--wp-components-color-accent, var(--color-jetpack-50));
+		border-color: var(--wp-components-color-accent, var(--color-jetpack-50));
 	}
 
 	.dataviews-bulk-edit-button.components-button.is-tertiary:active:not(:disabled),
 	.dataviews-bulk-edit-button.components-button.is-tertiary:hover:not(:disabled) {
 		box-shadow: none;
 		background-color: transparent;
-		color: var(--studio-jetpack-green-50);
+		color: var(--color-jetpack-50);
 	}
 
 	.dataviews-view-table__actions-column {
@@ -27,7 +27,7 @@
 
 	thead {
 		th.sites-dataviews__site {
-			background: var(--studio-white);
+			background: var(--color-light-backdrop);
 			td {
 				padding: 16px 0;
 				border-bottom: 1px solid var(--color-neutral-5);
@@ -36,7 +36,7 @@
 	}
 
 	tr.dataviews-view-table__row {
-		background: var(--studio-white);
+		background: var(--color-light-backdrop);
 
 		.components-checkbox-control__input {
 			opacity: 0;
@@ -109,7 +109,7 @@
 }
 
 .components-search-control input[type="search"].components-search-control__input {
-	background: var(--studio-white);
+	background: var(--color-light-backdrop);
 	border: 1px solid var(--color-neutral-5);
 }
 

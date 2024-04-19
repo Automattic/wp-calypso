@@ -1,9 +1,7 @@
-.segmentation-survey {
-	width: 50%;
-	margin: 0 auto;
-	padding: 5em;
+@import "@wordpress/base-styles/breakpoints";
 
-	button {
-		margin: 1em;
+.segmentation-survey-step {
+	@media (max-width: $break-medium) {
+		margin: 0 24px;
 	}
 }

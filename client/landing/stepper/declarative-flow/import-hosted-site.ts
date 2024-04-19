@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
+import localStorageHelper from 'store';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
@@ -261,17 +262,37 @@ const importHostedSiteFlow: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-	useSideEffect() {
+	useSideEffect( currentStep ) {
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 
+		const urlQueryParams = useQuery();
+		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
+
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
 				window.location.assign( '/start/hosting' );
 			}
-		}, [ userIsLoggedIn ] );
+
+			if ( restoreFlowQueryParam === null ) {
+				localStorageHelper.set( 'site-migration-url', window.location.href );
+				return;
+			}
+
+			let validURL = false;
+			const storedUrlString = localStorageHelper.get( 'site-migration-url' );
+			try {
+				const storedUrl = new URL( storedUrlString );
+				validURL = storedUrl.searchParams.has( 'from' );
+			} catch ( e ) {}
+
+			if ( validURL ) {
+				window.location.assign( storedUrlString );
+				return;
+			}
+		}, [ userIsLoggedIn, currentStep, restoreFlowQueryParam ] );
 	},
 };
 

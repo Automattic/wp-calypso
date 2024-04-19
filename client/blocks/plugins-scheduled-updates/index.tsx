@@ -16,6 +16,7 @@ import { PluginUpdateManagerContextProvider } from './context';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
+import { NotificationSettings } from './notification-settings';
 import { ScheduleCreate } from './schedule-create';
 import { ScheduleEdit } from './schedule-edit';
 import { ScheduleList } from './schedule-list';
@@ -24,11 +25,12 @@ import './styles.scss';
 
 interface Props {
 	siteSlug: string;
-	context: 'list' | 'create' | 'edit' | 'logs';
+	context: 'list' | 'create' | 'edit' | 'logs' | 'notifications';
 	scheduleId?: string;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
+	onNotificationManagement?: () => void;
 	onShowLogs: ( id: string ) => void;
 }
 
@@ -40,6 +42,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		scheduleId,
 		onNavBack,
 		onCreateNewSchedule,
+		onNotificationManagement,
 		onEditSchedule,
 		onShowLogs,
 	} = props;
@@ -84,6 +87,10 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 			component: <ScheduleEdit scheduleId={ scheduleId } onNavBack={ onNavBack } />,
 			title: translate( 'Edit schedule' ),
 		},
+		notifications: {
+			component: <NotificationSettings onNavBack={ onNavBack } />,
+			title: translate( 'Notification settings' ),
+		},
 	}[ context ];
 
 	return (
@@ -98,16 +105,30 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 						'Streamline your workflow with scheduled updates, timed to suit your needs.'
 					) }
 				>
-					{ context === 'list' && ! hideCreateButton && onCreateNewSchedule && (
-						<Button
-							__next40pxDefaultSize
-							icon={ plus }
-							variant={ canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary' }
-							onClick={ onCreateNewSchedule }
-							disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
-						>
-							{ translate( 'Add new schedule' ) }
-						</Button>
+					{ context === 'list' && (
+						<>
+							{ onNotificationManagement && (
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ onNotificationManagement }
+								>
+									{ translate( 'Notification settings' ) }
+								</Button>
+							) }
+
+							{ onCreateNewSchedule && ! hideCreateButton && (
+								<Button
+									__next40pxDefaultSize
+									icon={ plus }
+									variant={ canCreateSchedules && siteHasEligiblePlugins ? 'primary' : 'secondary' }
+									onClick={ onCreateNewSchedule }
+									disabled={ ! canCreateSchedules || ! siteHasEligiblePlugins }
+								>
+									{ translate( 'Add new schedule' ) }
+								</Button>
+							) }
+						</>
 					) }
 				</NavigationHeader>
 				<ScheduledUpdatesGate siteId={ siteId as number }>{ component }</ScheduledUpdatesGate>

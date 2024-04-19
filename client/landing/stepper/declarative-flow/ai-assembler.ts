@@ -72,6 +72,7 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
+			STEPS.LAUNCHPAD,
 			STEPS.ERROR,
 			STEPS.PLANS,
 			STEPS.DOMAINS,
@@ -130,7 +131,9 @@ const withAIAssemblerFlow: Flow = {
 						const homePagePostId = results[ 1 ].id;
 						// This will redirect and we will never resolve.
 						setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
-							window.location.assign( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` )
+							window.location.assign(
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
+							)
 						);
 						return Promise.resolve();
 					} );

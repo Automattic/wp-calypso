@@ -1,4 +1,5 @@
 import { decodeEntities } from 'calypso/lib/formatting';
+import type { SitePlugin, CorePlugin } from './types';
 
 /**
  * Takes an array of objects and a list of fields to decode HTML entities from.
@@ -29,4 +30,28 @@ const decodeEntitiesFromPlugins = < T >(
 	} );
 };
 
-export { decodeEntitiesFromPlugins };
+/**
+ * Maps a SitePlugin object to a CorePlugin object.
+ * @param plugin
+ */
+const mapToCorePlugin = ( plugin: SitePlugin ): Partial< CorePlugin > => {
+	return {
+		...plugin,
+		plugin: plugin.id,
+		status: plugin.active ? 'active' : 'inactive',
+		plugin_uri: plugin.plugin_url,
+		author_uri: plugin.author_url,
+	};
+};
+
+/**
+ * Maps a plugin property with a given extension.
+ * @param plugin
+ * @param ext
+ */
+const mapPluginExtension = ( plugin: CorePlugin, ext: string ): CorePlugin => ( {
+	...plugin,
+	plugin: plugin.plugin.endsWith( ext ) ? plugin.plugin : `${ plugin.plugin }${ ext }`,
+} );
+
+export { decodeEntitiesFromPlugins, mapToCorePlugin, mapPluginExtension };

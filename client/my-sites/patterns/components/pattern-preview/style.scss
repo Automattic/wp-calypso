@@ -1,6 +1,6 @@
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/components/src/styles/typography";
 
 @keyframes pattern-preview-target {
 	from {
@@ -35,7 +35,6 @@
 		overflow: hidden;
 	}
 
-	&:target .pattern-preview__renderer,
 	&.is-targeted .pattern-preview__renderer {
 		animation: 0.8s linear 3.5s backwards pattern-preview-target;
 	}
@@ -89,6 +88,11 @@
 		display: flex;
 		gap: 8px;
 
+		&.is-placeholder {
+			pointer-events: none;
+			user-select: none;
+		}
+
 		&:enabled:hover,
 		&:focus {
 			background-color: var(--button-color-hover);
@@ -97,6 +101,14 @@
 
 		path {
 			fill: currentColor;
+		}
+	}
+
+	&.is-server .pattern-preview__copy {
+		visibility: hidden;
+
+		@include break-medium {
+			visibility: visible;
 		}
 	}
 
