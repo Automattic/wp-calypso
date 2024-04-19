@@ -382,6 +382,10 @@ export const JetpackSitesDataViews = ( {
 			...prevState,
 			items: sites,
 			fields: fields,
+			pagination: {
+				totalItems: totalSites,
+				totalPages: totalPages,
+			},
 			setDataViewsState: setDataViewsState,
 			dataViewsState: dataViewsState,
 			selectedItem: dataViewsState.selectedItem,
