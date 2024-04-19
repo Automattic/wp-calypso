@@ -839,17 +839,35 @@ export interface TermsOfServiceRecordArgsBase {
 export interface TermsOfServiceRecordArgsRenewal extends TermsOfServiceRecordArgsBase {
 	/**
 	 * The date that the promotional pricing will end, formatted as a ISO 8601
-	 * date (eg: `2004-02-12T15:19:21+00:00`). This will be the date that an
-	 * auto-renew will be attempted with the non-promotional price
-	 * (`maybe_prorated_regular_renewal_price_integer`).
-	 *
-	 * If the promotional price only lasts for the initial purchase, then this
-	 * will be the same as `subscription_auto_renew_date`.
+	 * date (eg: `2004-02-12T15:19:21+00:00`). This may be the date that an
+	 * auto-renew will be attempted with the non-promotional price, but if the
+	 * subscription renews earlier than the expiry date, the renewal may happen
+	 * earlier than this date. See `subscription_regular_auto_renew_date` for
+	 * the actual date of the non-promotional renewal.
 	 *
 	 * Only set if we can easily determine when the product will renew. Does not
 	 * apply to domain transfers or multi-year domains.
 	 */
 	subscription_end_of_promotion_date: string;
+
+	/**
+	 * This date that an auto-renew will be attempted with the non-promotional
+	 * price (`maybe_prorated_regular_renewal_price_integer`).
+	 *
+	 * This is ISO 8601 formatted (eg: `2004-02-12T15:19:21+00:00`).
+	 *
+	 * If the promotional price only lasts for the initial purchase, then this
+	 * will be the same as `subscription_auto_renew_date`.
+	 *
+	 * If the auto-renewal happens on the same date as the end of the
+	 * promotion, this may be the same as `subscription_end_of_promotion_date`,
+	 * but if the subscription renews earlier than its expiry date, it will be
+	 * before that.
+	 *
+	 * Only set if we can easily determine when the product will renew. Does not
+	 * apply to domain transfers or multi-year domains.
+	 */
+	subscription_regular_auto_renew_date: string;
 
 	/**
 	 * The date when the product's subscription will expire if not renewed. This
