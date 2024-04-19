@@ -102,13 +102,14 @@ const entrepreneurFlow: Flow = {
 							'.wpcomstaging.com'
 						);
 
-						// TODO: The cause of redirection failure is within Jetpack SSO.
-						// Remove this comment after Jetpack SSO is fixed.
 						const redirectTo = encodeURIComponent(
-							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=wpcom-entrepreneur-signup`
+							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
 						);
 
 						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to Woo CYS's Design With AI after.
+
+						// Note: This is just symbolic because somewhere within Jetpack SSO
+						// or some plugin is stripping off the `redirect_to` param. The actual work that is doing the redirection is in wpcomsh/1801.
 						const redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
 
 						return window.location.assign( redirectToWithSSO );
