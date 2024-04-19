@@ -24,7 +24,6 @@ interface Props {
 	initFrequency: Frequency;
 	error?: string;
 	showError?: boolean;
-	showAllOptionControls?: boolean;
 	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( frequency: Frequency, timestamp: number ) => void;
 }
@@ -38,7 +37,6 @@ export function ScheduleFormFrequency( props: Props ) {
 		initFrequency = 'daily',
 		error,
 		showError,
-		showAllOptionControls,
 		onChange,
 		onTouch,
 	} = props;
@@ -69,30 +67,28 @@ export function ScheduleFormFrequency( props: Props ) {
 			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
 			<Flex direction={ [ 'column', 'row' ] }>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
-					{ ( showAllOptionControls || frequency === 'daily' ) && (
-						<Flex gap={ 6 }>
-							<FlexItem>
-								<RadioControl
-									name="frequency"
-									options={ [ DAILY_OPTION ] }
-									selected={ frequency }
-									onChange={ ( f ) => setFrequency( f as 'daily' ) }
-									onBlur={ () => setFieldTouched( true ) }
-								></RadioControl>
-							</FlexItem>
-							<FlexItem>
-								<ScheduleFormTime
-									hour={ hour }
-									period={ period }
-									isAmPmFormat={ isAmPmFormat }
-									onChange={ ( hour, period ) => {
-										setHour( hour );
-										setPeriod( period );
-									} }
-								/>
-							</FlexItem>
-						</Flex>
-					) }
+					<Flex gap={ 6 }>
+						<FlexItem>
+							<RadioControl
+								name="frequency"
+								options={ [ DAILY_OPTION ] }
+								selected={ frequency }
+								onChange={ ( f ) => setFrequency( f as 'daily' ) }
+								onBlur={ () => setFieldTouched( true ) }
+							></RadioControl>
+						</FlexItem>
+						<FlexItem>
+							<ScheduleFormTime
+								hour={ hour }
+								period={ period }
+								isAmPmFormat={ isAmPmFormat }
+								onChange={ ( hour, period ) => {
+									setHour( hour );
+									setPeriod( period );
+								} }
+							/>
+						</FlexItem>
+					</Flex>
 				</FlexItem>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
 					<Flex gap={ 6 } direction={ [ 'column', 'row' ] }>

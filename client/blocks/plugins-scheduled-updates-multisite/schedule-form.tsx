@@ -87,11 +87,7 @@ export const ScheduleForm = () => {
 				</Flex>
 			</div>
 			<div className="form-control-container">
-				<ScheduleFormFrequency
-					initFrequency="daily"
-					optionsDirection={ [ 'column', 'row' ] }
-					showAllOptionControls={ true }
-				/>
+				<ScheduleFormFrequency initFrequency="daily" />
 			</div>
 		</div>
 	);
