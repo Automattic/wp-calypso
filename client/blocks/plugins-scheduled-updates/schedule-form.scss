@@ -16,6 +16,7 @@
 
 	.components-radio-control__input {
 		padding: 0;
+		margin-right: 1rem;
 		background: transparent;
 		border-color: var(--studio-gray-50);
 
@@ -106,7 +107,6 @@
 	.radio-option {
 		padding: 1.5rem;
 		flex-basis: 100%;
-		min-height: 85px;
 
 		& > .components-radio-control {
 			margin-bottom: 1rem;
@@ -131,6 +131,10 @@
 	}
 
 	.form-field--frequency {
+		.components-base-control__field {
+			margin: 0;
+		}
+
 		& > .components-flex {
 			gap: 2rem;
 
