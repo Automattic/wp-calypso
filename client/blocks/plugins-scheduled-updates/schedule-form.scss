@@ -105,14 +105,17 @@
 
 	.radio-option {
 		padding: 1.5rem;
+		flex-basis: 100%;
+		min-height: 85px;
+
+		& > .components-radio-control {
+			margin-bottom: 1rem;
+		}
 
 		&.selected {
 			border: solid 1px var(--wp-admin-theme-color) !important;
 			border-radius: 2px;
 
-			& > .components-radio-control {
-				margin-bottom: 1rem;
-			}
 		}
 
 		&:not(.selected) {
@@ -125,10 +128,17 @@
 				border-color: var(--studio-gray-20);
 			}
 		}
+	}
 
-		&:last-of-type {
-			border-bottom: solid 1px var(--color-border-subtle);
-			margin-bottom: 1rem;
+	.form-field--frequency {
+		& > .components-flex {
+			gap: 2rem;
+
+			& > .components-flex-item {
+				margin-bottom: 0;
+				border: solid 1px var(--studio-gray-10);
+				border-radius: 2px;
+			}
 		}
 	}
 
