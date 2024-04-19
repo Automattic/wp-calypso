@@ -263,3 +263,11 @@
 		display: none;
 	}
 }
+
+a.site-actions__menu-item {
+	&:hover,
+	&:focus {
+		background: var(--wp-components-color-accent);
+		color: var(--color-text-inverted);
+	}
+}
