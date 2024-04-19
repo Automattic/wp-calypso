@@ -239,11 +239,18 @@ class DomainSearch extends Component {
 	}
 
 	getBackButtonHref() {
-		const { selectedSiteSlug, currentRoute, isFromMyHome } = this.props;
+		const {
+			context: { query },
+			selectedSiteSlug,
+			currentRoute,
+			isFromMyHome,
+		} = this.props;
 
 		// If we have the from query param, we should use that as the back button href
 		if ( isFromMyHome ) {
 			return `/home/${ selectedSiteSlug }`;
+		} else if ( query?.redirect_to ) {
+			return query.redirect_to;
 		}
 
 		return domainManagementList( selectedSiteSlug, currentRoute );
