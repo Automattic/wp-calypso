@@ -1,3 +1,4 @@
+import { CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternTypeFilter, Category, Pattern } from 'calypso/my-sites/patterns/types';
 
@@ -6,14 +7,17 @@ import { PatternTypeFilter, Category, Pattern } from 'calypso/my-sites/patterns/
 export function getPatternPermalink(
 	pattern: Pattern,
 	activeCategory: string,
-	patternTypeFilter: PatternTypeFilter,
-	categories: Category[]
+	allCategories: Category[]
 ) {
+	const categoryNames = Object.keys( pattern.categories );
 	// Get the first pattern category that is also included in the `usePatternCategories` data
-	const patternCategory = Object.keys( pattern.categories ).find( ( categorySlug ) =>
-		categories.find( ( { name } ) => name === categorySlug )
+	const patternCategory = categoryNames.find( ( categorySlug ) =>
+		allCategories.find( ( { name } ) => name === categorySlug )
 	);
-	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternTypeFilter );
+	const patternType = categoryNames.includes( CATEGORY_PAGE )
+		? PatternTypeFilter.PAGES
+		: PatternTypeFilter.REGULAR;
+	const pathname = getCategoryUrlPath( activeCategory || patternCategory || '', patternType );
 
 	const url = new URL( pathname, location.origin );
 	url.hash = `#pattern-${ pattern.ID }`;
