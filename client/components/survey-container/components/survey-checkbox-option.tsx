@@ -39,6 +39,7 @@ const SurveyCheckboxOption = ( {
 			onKeyDown={ handleKeyDown }
 			tabIndex={ 0 }
 			aria-checked={ isSelected ? 'true' : 'false' }
+			aria-labelledby={ `option-label-${ option.value } option-help-text-${ option.value }` }
 		>
 			<CheckboxControl
 				id={ `option-${ option.value }` }
