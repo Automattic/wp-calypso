@@ -3,10 +3,6 @@
 .site-preview__header {
 
 	@media ( min-width: $break-large ) {
-		.site-preview__header-favicon {
-			margin-right: 24px;
-			position: relative;
-		}
 
 		.site-preview__header-content {
 			padding: 48px 48px 24px 48px;
@@ -50,10 +46,6 @@
 	@media ( max-width: $break-large ) {
 		display: flex;
 		padding: 24px 24px 8px;
-
-		.sites-dataviews__site-favicon {
-			border-radius: 2px;
-		}
 
 		.site-preview__header-content {
 			flex-grow: 1;

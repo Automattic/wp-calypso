@@ -1,0 +1,20 @@
+.site-preview__pane {
+
+	.preview-pane__navigation {
+
+		.section-nav-tabs__list {
+			padding: 0 0 0 32px;
+			width: unset;
+		}
+
+		@media (min-width: 481px) {
+			.section-nav-group {
+				overflow-x: auto;
+			}
+
+			.section-nav-tabs {
+				width: unset;
+			}
+		}
+	}
+}
