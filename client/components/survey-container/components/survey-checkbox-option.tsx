@@ -1,7 +1,6 @@
 import { CheckboxControl } from '@wordpress/components';
 import { Question, Option } from '../types';
 
-// todo: consider renaming and moving the type into ../types
 type SurveyCheckboxOptionType = {
 	question: Question;
 	option: Option;
@@ -16,7 +15,6 @@ const SurveyCheckboxOption = ( {
 	value,
 }: SurveyCheckboxOptionType ) => {
 	const isSelected = value.includes( option.value );
-
 	const handleToggle = () => {
 		const newValue = isSelected
 			? value.filter( ( v ) => v !== option.value )
