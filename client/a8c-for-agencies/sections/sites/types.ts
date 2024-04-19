@@ -1,5 +1,5 @@
 import { ReactNode, SetStateAction, Dispatch } from 'react';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 export * from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -11,8 +11,8 @@ export interface SitesDashboardContextInterface {
 	selectedSiteFeature?: string;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 
-	sitesViewState: SitesViewState;
-	setSitesViewState: React.Dispatch< React.SetStateAction< SitesViewState > >;
+	dataViewsState: DataViewsState;
+	setDataViewsState: React.Dispatch< React.SetStateAction< DataViewsState > >;
 
 	hideListing?: boolean;
 	setHideListing: ( hideListing: boolean ) => void;

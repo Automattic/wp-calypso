@@ -30,7 +30,7 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
 
 	const { isLargeScreen } = useContext( DashboardDataContext );
 
@@ -46,14 +46,14 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 			isA4AEnabled
 				? [
 						'jetpack-agency-dashboard-sites',
-						sitesViewState?.search,
-						sitesViewState?.page,
+						dataViewsState?.search,
+						dataViewsState?.page,
 						{
-							issueTypes: getSelectedFilters( sitesViewState?.filters ),
+							issueTypes: getSelectedFilters( dataViewsState?.filters ),
 							showOnlyFavorites: showOnlyFavorites || false,
 						},
-						sitesViewState.sort,
-						sitesViewState?.perPage,
+						dataViewsState.sort,
+						dataViewsState?.perPage,
 						...( agencyId ? [ agencyId ] : [] ),
 				  ]
 				: [
@@ -66,11 +66,11 @@ export default function BoostLicenseInfoModal( { onClose, site, upgradeOnly }: P
 				  ],
 		[
 			isA4AEnabled,
-			sitesViewState?.search,
-			sitesViewState?.page,
-			sitesViewState?.filters,
-			sitesViewState.sort,
-			sitesViewState?.perPage,
+			dataViewsState?.search,
+			dataViewsState?.page,
+			dataViewsState?.filters,
+			dataViewsState.sort,
+			dataViewsState?.perPage,
 			showOnlyFavorites,
 			agencyId,
 			search,
