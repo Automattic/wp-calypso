@@ -67,7 +67,7 @@ export function ScheduleFormFrequency( props: Props ) {
 			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
 			<Flex direction={ [ 'column', 'row' ] }>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
-					<Flex gap={ 6 }>
+					<Flex className="form-field--frequency-container" gap={ 6 }>
 						<FlexItem>
 							<RadioControl
 								name="frequency"
@@ -91,7 +91,11 @@ export function ScheduleFormFrequency( props: Props ) {
 					</Flex>
 				</FlexItem>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
-					<Flex gap={ 6 } direction={ [ 'column', 'row' ] }>
+					<Flex
+						className="form-field--frequency-container"
+						gap={ 6 }
+						direction={ [ 'column', 'row' ] }
+					>
 						<FlexItem>
 							<RadioControl
 								name="frequency"
