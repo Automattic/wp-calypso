@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { ItemData } from '../types';
 
 import './style.scss';
@@ -23,11 +24,16 @@ export default function SitePreviewPaneHeader( {
 	className,
 }: Props ) {
 	const siteColor = itemColor ?? 'linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4)';
+	const size = 40;
+
+	const defaultFavicon = <div className="no-favicon" style={ { background: siteColor } } />;
 
 	return (
 		<div className={ classNames( 'site-preview__header', className ) }>
 			<div className="site-preview__header-content">
-				<div className="no-favicon" style={ { background: siteColor } } />
+				<div className={ classNames( 'site-favicon', className ) }>
+					<SiteIcon size={ size } defaultIcon={ defaultFavicon } />
+				</div>
 				<div className="site-preview__header-title-summary">
 					<div className="site-preview__header-title">{ itemTitle }</div>
 					<div className="site-preview__header-summary">
