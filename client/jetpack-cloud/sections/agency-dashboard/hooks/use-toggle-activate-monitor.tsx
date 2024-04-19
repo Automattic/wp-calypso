@@ -25,21 +25,21 @@ export default function useToggleActivateMonitor(
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { sitesViewState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
 
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const queryKey = isEnabled( 'a8c-for-agencies' )
 		? [
 				'jetpack-agency-dashboard-sites',
-				sitesViewState.search,
-				sitesViewState.page,
+				dataViewsState.search,
+				dataViewsState.page,
 				{
-					issueTypes: getSelectedFilters( sitesViewState.filters ),
+					issueTypes: getSelectedFilters( dataViewsState.filters ),
 					showOnlyFavorites: showOnlyFavorites || false,
 				},
-				sitesViewState.sort,
-				sitesViewState.perPage,
+				dataViewsState.sort,
+				dataViewsState.perPage,
 				...( agencyId ? [ agencyId ] : [] ),
 		  ]
 		: [

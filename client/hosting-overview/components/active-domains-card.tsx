@@ -26,7 +26,7 @@ const ActiveDomainsCard: FC = () => {
 						'hosting-overview__mobile-hidden-link-button'
 					) }
 					plain
-					href="/start/domain"
+					href={ `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }` }
 				>
 					{ translate( 'Add new domain' ) }
 				</Button>

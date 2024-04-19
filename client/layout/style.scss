@@ -83,7 +83,8 @@ body.command-palette-modal-open {
 		margin: 0;
 	}
 
-	.is-section-themes.has-no-sidebar.is-logged-in & {
+	.is-section-themes.has-no-sidebar.is-logged-in &,
+	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
 		padding: 79px 32px 32px;
 	}
 

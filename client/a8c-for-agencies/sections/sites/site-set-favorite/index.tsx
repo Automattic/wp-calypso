@@ -32,28 +32,28 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { sitesViewState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],
 		showOnlyFavorites: showOnlyFavorites || false,
 	} );
 	useEffect( () => {
-		const selectedFilters = getSelectedFilters( sitesViewState.filters );
+		const selectedFilters = getSelectedFilters( dataViewsState.filters );
 
 		setAgencyDashboardFilter( {
 			issueTypes: selectedFilters,
 			showOnlyFavorites: showOnlyFavorites || false,
 		} );
-	}, [ sitesViewState.filters, showOnlyFavorites ] );
-	const search = sitesViewState.search;
+	}, [ dataViewsState.filters, showOnlyFavorites ] );
+	const search = dataViewsState.search;
 
 	const queryKey = [
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
 		filter,
-		sitesViewState.sort,
-		sitesViewState.perPage,
+		dataViewsState.sort,
+		dataViewsState.perPage,
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 
@@ -61,7 +61,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
-		{ ...filter, ...sitesViewState.sort, showOnlyFavorites: ! showOnlyFavorites },
+		{ ...filter, ...dataViewsState.sort, showOnlyFavorites: ! showOnlyFavorites },
 		...( agencyId ? [ agencyId ] : [] ),
 	];
 	const successNoticeId = 'success-notice';
