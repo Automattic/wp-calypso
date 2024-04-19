@@ -38,6 +38,7 @@ export default function ItemPreviewPane( {
 	itemSubtitle,
 	itemUrl,
 	itemColor,
+	itemIcon,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -86,6 +87,7 @@ export default function ItemPreviewPane( {
 				itemSubtitle={ itemSubtitle }
 				itemUrl={ itemUrl }
 				itemColor={ itemColor }
+				itemIcon={ itemIcon }
 			/>
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
