@@ -73,7 +73,7 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 				header: __( 'Site' ),
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
-					return <SiteField site={ item } />;
+					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
 				enableSorting: false,
