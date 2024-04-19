@@ -2,8 +2,11 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { useCallback, useState } from 'react';
+import {
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
@@ -13,6 +16,7 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
+import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews from './sites-dataviews';
 
@@ -75,10 +79,16 @@ const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 	 */
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
+	const closeSitePreviewPane = useCallback( () => {
+		if ( dataViewsState.selectedItem ) {
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
+			//setHideListing( false );
+		}
+	}, [ dataViewsState, setDataViewsState ] );
+
 	// todo: temporary mock data
 	const hideListing = false;
 	const isNarrowView = false;
-	const selectedSite = dataViewsState.selectedItem;
 
 	return (
 		<Layout
@@ -88,7 +98,6 @@ const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 				! dataViewsState.selectedItem && 'preview-hidden'
 			) }
 			wide
-			//sidebarNavigation={ <MobileSidebarNavigation /> }
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
 			<DocumentHead title={ __( 'Sites' ) } />
@@ -116,7 +125,10 @@ const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 
 			{ dataViewsState.selectedItem && (
 				<LayoutColumn className="site-preview-pane" wide>
-					The Preview Pane for <b>{ selectedSite.URL }</b>
+					<DotcomPreviewPane
+						site={ dataViewsState.selectedItem }
+						closeSitePreviewPane={ closeSitePreviewPane }
+					/>
 				</LayoutColumn>
 			) }
 		</Layout>
