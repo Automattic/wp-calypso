@@ -91,14 +91,15 @@
 			margin-bottom: 0;
 		}
 
-		& > label {
-			display: inline-block;
-			margin-bottom: 0.5rem;
-		}
-
 		label {
 			font-size: 0.875rem;
 			font-weight: 500;
+		}
+
+		& > label {
+			display: inline-block;
+			margin-bottom: 0.875rem;
+			font-size: 1.25rem;
 		}
 	}
 

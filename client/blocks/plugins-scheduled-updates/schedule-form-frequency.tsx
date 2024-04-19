@@ -70,7 +70,7 @@ export function ScheduleFormFrequency( props: Props ) {
 
 	return (
 		<div className={ `form-field form-field--frequency ${ className }` }>
-			<label htmlFor="frequency">{ translate( 'Update every' ) }</label>
+			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
 			<Flex direction={ optionsDirection }>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
 					<RadioControl
