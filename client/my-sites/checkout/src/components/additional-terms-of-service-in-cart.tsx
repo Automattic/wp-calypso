@@ -81,6 +81,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 		const endDate = moment( args.subscription_end_of_promotion_date ).format( 'll' );
 		const numberOfDays = args.subscription_pre_renew_reminder_days || 7;
 		const renewalDate = moment( args.subscription_auto_renew_date ).format( 'll' );
+		const regularRenewalDate = moment( args.subscription_regular_auto_renew_date ).format( 'll' );
 
 		const termLengthText = translate(
 			'The promotional period for your %(productName)s subscription lasts from %(startDate)s to %(endDate)s.',
@@ -108,7 +109,7 @@ function getMessageForTermsOfServiceRecordUnknown(
 			'On %(endDate)s, we will attempt to renew your subscription for %(maybeProratedRegularPrice)s.',
 			{
 				args: {
-					endDate,
+					endDate: regularRenewalDate,
 					maybeProratedRegularPrice,
 				},
 			}
@@ -147,9 +148,9 @@ function getMessageForTermsOfServiceRecordUnknown(
 		// we are already showing as the next renewal info is the same as the
 		// end of promotion renewal info.
 		const shouldShowEndOfPromotionText =
-			// Show the endOfPromotionChargeText if the endDate differs from
-			// the renewalDate because it is about the endDate.
-			renewalDate !== endDate ||
+			// Show the endOfPromotionChargeText if the regularRenewalDate differs from
+			// the renewalDate because it is about the regularRenewalDate.
+			renewalDate !== regularRenewalDate ||
 			// Show the endOfPromotionChargeText if the
 			// maybeProratedRegularPrice differs from the renewalPrice because
 			// it is about the maybeProratedRegularPrice.
