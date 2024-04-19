@@ -369,7 +369,7 @@ export const JetpackSitesDataViews = ( {
 			totalPages: totalPages,
 		},
 		itemFieldId: 'site.value.blog_id',
-		searchLabel: translate( 'Search for Sites' ),
+		searchLabel: translate( 'Search for sites' ),
 		fields: [],
 		actions: [],
 		setDataViewsState: setDataViewsState,
