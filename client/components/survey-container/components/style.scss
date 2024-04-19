@@ -19,7 +19,10 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 }
 
 @mixin question-option-control {
+	display: flex;
 	flex-basis: calc(100% - 48px);
+	gap: 16px;
+	align-items: center;
 	border-radius: 2px;
 	border: solid 1px $studio-gray-5;
 	padding: 16px;
@@ -72,6 +75,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				border-color: $blueberry-color;
 			}
 
+			// Radio styles
 			input[type="radio"] {
 				height: 20px;
 				width: 20px;
@@ -91,9 +95,35 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				}
 			}
 
-			.question-options__option-label {
-				padding-left: 16px;
+			// Checkbox styles
+			.components-checkbox-control__input-container {
+				margin-right: 0;
+			}
 
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+
+			.components-checkbox-control__input[type="checkbox"] {
+				border-color: $studio-gray-20;
+
+				&:checked {
+					border-color: $blueberry-color;
+					background: $blueberry-color;
+					box-shadow: inset 0 0 0 1px $studio-white;
+
+					&:focus {
+						box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px $studio-gray-10;
+					}
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 2px $studio-gray-10;
+				}
+			}
+
+			// Option label and help text styles
+			.question-options__option-label {
 				label {
 					font-size: $font-body;
 					font-weight: 500;

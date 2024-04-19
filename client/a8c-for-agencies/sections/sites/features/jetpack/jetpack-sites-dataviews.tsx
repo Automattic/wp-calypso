@@ -1,26 +1,31 @@
-import { Button, Gridicon, Spinner } from '@automattic/components';
-import { DataViews } from '@wordpress/dataviews';
+import { Button, Gridicon } from '@automattic/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useMemo, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { useCallback, useEffect, useContext, useMemo, useState, ReactNode } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import {
+	DataViewsColumn,
+	DataViewsState,
+	ItemsDataViewsType,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import SiteSort from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/site-sort';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
-import SiteSort from 'calypso/a8c-for-agencies/sections/sites/site-sort';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import {
+	SiteInfo,
+	SitesDataViewsProps,
+} from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
 import SiteActions from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-actions';
 import useFormattedSites from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { AllowedTypes, Site } from '../types';
-import { SitesDataViewsProps, SiteInfo } from './interfaces';
-import './style.scss';
+import { AllowedTypes, Site, SiteData } from '../../types';
 
-const SitesDataViews = ( {
+export const JetpackSitesDataViews = ( {
 	data,
 	isLoading,
 	isLargeScreen,
@@ -30,10 +35,12 @@ const SitesDataViews = ( {
 	className,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
+
 	const { showOnlyFavorites } = useContext( SitesDashboardContext );
 	const totalSites = showOnlyFavorites ? data?.totalFavorites || 0 : data?.total || 0;
 	const sitesPerPage = dataViewsState.perPage > 0 ? dataViewsState.perPage : 20;
 	const totalPages = Math.ceil( totalSites / sitesPerPage );
+
 	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const openSitePreviewPane = useCallback(
@@ -78,15 +85,14 @@ const SitesDataViews = ( {
 	const [ pluginsRef, setPluginsRef ] = useState< HTMLElement | null >();
 	const [ actionsRef, setActionsRef ] = useState< HTMLElement | null >();
 
-	// todo - refactor: extract fields, along actions, to the upper component
-	const fields = useMemo(
+	const fields = useMemo< DataViewsColumn[] >(
 		() => [
 			{
 				id: 'status',
 				header: translate( 'Status' ),
 				getValue: ( { item }: { item: SiteInfo } ) =>
 					item.site.error || item.scan.status === 'critical',
-				render: () => {},
+				render: () => null,
 				type: 'enumeration',
 				elements: [
 					{ value: 1, label: translate( 'Needs Attention' ) },
@@ -123,7 +129,7 @@ const SitesDataViews = ( {
 					</>
 				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.site.value.url,
-				render: ( { item }: { item: SiteInfo } ) => {
+				render: ( { item }: { item: SiteInfo } ): ReactNode => {
 					if ( isLoading ) {
 						return <TextPlaceholder />;
 					}
@@ -351,11 +357,29 @@ const SitesDataViews = ( {
 		]
 	);
 
+	const urlParams = new URLSearchParams( window.location.search );
+	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
+	const useExampleDataForTour =
+		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
+
+	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteData > >( {
+		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
+		pagination: {
+			totalItems: totalSites,
+			totalPages: totalPages,
+		},
+		itemFieldId: 'site.value.blog_id',
+		searchLabel: translate( 'Search for sites' ),
+		fields: [],
+		actions: [],
+		setDataViewsState: setDataViewsState,
+		dataViewsState: dataViewsState,
+	} );
+
 	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
-	// todo - refactor: extract actions, along fields, to the upper component
-	// Currently not in use until bulk selections are properly implemented.
+	// todo: Currently not in use until bulk selections are properly implemented.
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const actions = useMemo(
+	/*const actions = useMemo(
 		() => [
 			{
 				id: 'pause-monitor',
@@ -403,57 +427,26 @@ const SitesDataViews = ( {
 			},
 		],
 		[ translate ]
-	);
+	);*/
 
-	// Until the DataViews package is updated to support the spinner, we need to manually add the (loading) spinner to the table wrapper for now.
-	const SpinnerWrapper = () => {
-		return (
-			<div className="spinner-wrapper">
-				<Spinner />
-			</div>
-		);
-	};
+	// Update the data packet
+	useEffect( () => {
+		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
+			...prevState,
+			items: sites,
+			fields: fields,
+			//actions: actions,
+			pagination: {
+				totalItems: totalSites,
+				totalPages: totalPages,
+			},
+			setDataViewsState: setDataViewsState,
+			dataViewsState: dataViewsState,
+			selectedItem: dataViewsState.selectedItem,
+		} ) );
+	}, [ fields, dataViewsState, setDataViewsState, data ] ); // add actions when implemented
 
-	const dataviewsWrapper = document.getElementsByClassName( 'dataviews-wrapper' )[ 0 ];
-	if ( dataviewsWrapper ) {
-		// Remove any existing spinner if present
-		const existingSpinner = dataviewsWrapper.querySelector( '.spinner-wrapper' );
-		if ( existingSpinner ) {
-			existingSpinner.remove();
-		}
-
-		const spinnerWrapper = dataviewsWrapper.appendChild( document.createElement( 'div' ) );
-		spinnerWrapper.classList.add( 'spinner-wrapper' );
-		// Render the SpinnerWrapper component inside the spinner wrapper
-		ReactDOM.hydrate( <SpinnerWrapper />, spinnerWrapper );
-		//}
-	}
-
-	const urlParams = new URLSearchParams( window.location.search );
-	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
-	const useExampleDataForTour =
-		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
-
-	return (
-		<div className={ className }>
-			<DataViews
-				data={ ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE }
-				paginationInfo={ { totalItems: totalSites, totalPages: totalPages } }
-				fields={ fields }
-				view={ dataViewsState }
-				search={ true }
-				searchLabel={ translate( 'Search for sites' ) }
-				getItemId={ ( item: SiteInfo ) => {
-					item.id = item.site.value.blog_id; // setting the id because of a issue with the DataViews component
-					return item.id;
-				} }
-				onChangeView={ setDataViewsState }
-				supportedLayouts={ [ 'table' ] }
-				actions={ [] } // Replace with actions when bulk selections are implemented.
-				isLoading={ isLoading }
-			/>
-		</div>
-	);
+	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className } />;
 };
 
-export default SitesDataViews;
+export default JetpackSitesDataViews;

@@ -126,6 +126,13 @@
 	padding: 0;
 }
 
+.license-preview__toggle::before {
+	content: "";
+	position: absolute;
+	width: 3.9rem;
+	height: 3.9rem;
+}
+
 .license-preview__assign-button {
 	font-size: 0.75rem;
 	font-weight: 400;

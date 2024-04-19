@@ -64,12 +64,12 @@ export const getLogIconStatus = ( log: ScheduleLog ) => {
 	switch ( log.action ) {
 		case 'PLUGIN_UPDATES_SUCCESS':
 		case 'PLUGIN_UPDATE_SUCCESS':
+		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
 		case 'PLUGIN_SITE_HEALTH_CHECK_SUCCESS':
 			return 'success';
 		case 'PLUGIN_UPDATES_FAILURE':
 		case 'PLUGIN_UPDATE_FAILURE':
 		case 'PLUGIN_SITE_HEALTH_CHECK_FAILURE':
-		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
 		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK_FAIL':
 			return 'error';
 	}
