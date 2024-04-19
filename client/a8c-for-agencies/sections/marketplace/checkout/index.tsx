@@ -136,7 +136,10 @@ export default function Checkout() {
 						</div>
 					</div>
 					<div className="checkout__aside">
-						<PricingSummary items={ checkoutItems } onRemoveItem={ onRemoveItem } />
+						<PricingSummary
+							items={ checkoutItems }
+							onRemoveItem={ siteId ? undefined : onRemoveItem }
+						/>
 
 						<div className="checkout__aside-actions">
 							<Button
