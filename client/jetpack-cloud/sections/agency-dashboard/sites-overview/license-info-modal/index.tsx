@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
-import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -86,7 +86,7 @@ export default function LicenseInfoModal( {
 						source: 'sitesdashboard',
 						site_id: siteId,
 					},
-					A4A_MARKETPLACE_PRODUCTS_LINK
+					A4A_MARKETPLACE_CHECKOUT_LINK
 				)
 			);
 		} else {
