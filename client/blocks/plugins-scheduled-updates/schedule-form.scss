@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .schedule-form {
 	& > div {
 		width: 100%;
@@ -64,8 +67,26 @@
 		margin: -3px;
 		padding: 3px;
 
+		display: flex;
+		flex-wrap: wrap;
+
 		> * {
-			margin-bottom: 0.875rem;
+			box-sizing: border-box;
+			margin-bottom: 0.5rem;
+
+			flex: 0 0 calc(100% - 2rem);
+			max-width: calc(100% - 2rem);
+			margin-right: 2rem;
+
+			@include break-large {
+				flex: 0 0 calc(50% - 2rem);
+				max-width: calc(50% - 2rem);
+			}
+
+			@include break-xlarge {
+				flex: 0 0 calc(33.33% - 2rem);
+				max-width: calc(33.33% - 2rem);
+			}
 
 			&:last-child:not(.components-spinner) {
 				margin-bottom: 0;
