@@ -70,6 +70,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				border-color: $blueberry-color;
 			}
 
+			// Radio styles
 			input[type="radio"] {
 				height: 20px;
 				width: 20px;
@@ -89,6 +90,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				}
 			}
 
+			// Checkbox styles
 			.components-checkbox-control__input-container {
 				margin-right: 0;
 			}
@@ -115,6 +117,7 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				}
 			}
 
+			// Option label and help text styles
 			.question-options__option-label {
 				label {
 					font-size: $font-body;
