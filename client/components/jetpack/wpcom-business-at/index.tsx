@@ -22,6 +22,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -234,7 +235,7 @@ export default function WPCOMBusinessAT() {
 				</div>
 			</PromoCard>
 
-			<WhatIsJetpack className="wpcom-business-at__footer" />
+			{ ! isJetpackCloud() && <WhatIsJetpack className="wpcom-business-at__footer" /> }
 
 			<Dialog
 				isVisible={ showDialog }

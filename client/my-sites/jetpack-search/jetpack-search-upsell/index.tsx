@@ -21,9 +21,11 @@ import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackSearchFooter from '../footer';
+import WPCOMSearchUpsell from '../wpcom-search-upsell';
 
 import './style.scss';
 
@@ -45,6 +47,13 @@ export default function JetpackSearchUpsell() {
 		() => dispatch( recordTracksEvent( 'calypso_jetpack_search_upsell' ) ),
 		[ dispatch ]
 	);
+
+	const isSimple = useSelector( isSimpleSite );
+
+	// If in Jetpack Cloud and the site is a Simple site, we show the WPCOM upsell instead
+	if ( isJetpackCloud() && isSimple ) {
+		return <WPCOMSearchUpsell />;
+	}
 
 	return (
 		<Main className="jetpack-search-upsell" wideLayout={ isJetpackCloud() }>
