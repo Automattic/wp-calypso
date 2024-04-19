@@ -18,13 +18,11 @@ import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedu
 import { prepareTimestamp } from './schedule-form.helper';
 
 type Frequency = 'daily' | 'weekly';
-type FlexDirection = 'column' | 'row';
 
 interface Props {
 	className?: string;
 	initTimestamp?: number;
 	initFrequency: Frequency;
-	optionsDirection?: FlexDirection[];
 	error?: string;
 	showError?: boolean;
 	showAllOptionControls?: boolean;
@@ -39,7 +37,6 @@ export function ScheduleFormFrequency( props: Props ) {
 		className = '',
 		initTimestamp,
 		initFrequency = 'daily',
-		optionsDirection = [ 'column' ],
 		error,
 		showError,
 		showAllOptionControls,
@@ -71,7 +68,7 @@ export function ScheduleFormFrequency( props: Props ) {
 	return (
 		<div className={ `form-field form-field--frequency ${ className }` }>
 			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
-			<Flex direction={ optionsDirection }>
+			<Flex direction={ [ 'column', 'row' ] }>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
 					<RadioControl
 						name="frequency"
