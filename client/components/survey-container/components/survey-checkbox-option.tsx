@@ -1,4 +1,5 @@
 import { CheckboxControl } from '@wordpress/components';
+import { useCallback } from 'react';
 import { Question, Option } from '../types';
 
 type SurveyCheckboxOptionType = {
@@ -15,19 +16,22 @@ const SurveyCheckboxOption = ( {
 	value,
 }: SurveyCheckboxOptionType ) => {
 	const isSelected = value.includes( option.value );
-	const handleToggle = () => {
+	const handleToggle = useCallback( () => {
 		const newValue = isSelected
 			? value.filter( ( v ) => v !== option.value )
 			: [ ...value, option.value ];
 
 		onChange( question.key, newValue );
-	};
+	}, [ isSelected, value, option.value, onChange, question.key ] );
 
-	const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			handleToggle();
-		}
-	};
+	const handleKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement > ) => {
+			if ( event.key === 'Enter' || event.key === ' ' ) {
+				handleToggle();
+			}
+		},
+		[ handleToggle ]
+	);
 
 	return (
 		<div
