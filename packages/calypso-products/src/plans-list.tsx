@@ -725,7 +725,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	type: TYPE_PERSONAL,
 	getTitle: () =>
 		getPlansListExperiment( 'wpcom_plan_name_change_starter_to_beginner' ) === 'treatment'
-			? // translators: Starter is a plan name
+			? // translators: Beginner is a plan name
 			  i18n.translate( 'Beginner' )
 			: // translators: Starter is a plan name
 			  i18n.translate( 'Starter' ),
