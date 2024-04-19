@@ -264,10 +264,22 @@
 	}
 }
 
-a.site-actions__menu-item {
-	&:hover,
-	&:focus {
-		background: var(--wp-components-color-accent);
-		color: var(--color-text-inverted);
+.is-section-a8c-for-agencies-sites {
+	a.site-actions__menu-item {
+		&:hover,
+		&:focus {
+			background: var(--wp-components-color-accent);
+			color: var(--color-text-inverted);
+		}
+	}
+
+	.components-dropdown-menu {
+		padding: 8px;
+		border-radius: 4px;
+
+		[role="menuitem"],
+		[role="menuitemradio"] {
+			border-radius: 4px;
+		}
 	}
 }
