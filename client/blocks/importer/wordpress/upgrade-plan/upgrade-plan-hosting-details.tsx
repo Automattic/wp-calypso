@@ -1,11 +1,9 @@
-import config from '@automattic/calypso-config';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
@@ -13,15 +11,11 @@ import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from '.
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
-	const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_assistance_modal' );
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	let importSiteHostName = '';
-	const showModal =
-		isMigrationModalFeatureEnabled &&
-		getQueryArg( window.location.href, 'showModal' )?.toString() === 'true';
 
 	try {
 		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
@@ -45,42 +39,8 @@ export const UpgradePlanHostingDetails = () => {
 		hostingProviderName !== 'Unknown' &&
 		hostingProviderName !== 'WordPress.com';
 
-	const navigateBack = () => {
-		const queryParams = new URLSearchParams( window.location.search );
-		queryParams.delete( 'siteSlug' );
-		queryParams.delete( 'showModal' );
-		// Navigate back to site picker keeping necessary the query params.
-		window.location.assign( `sitePicker?${ queryParams.toString() }` );
-	};
-
 	return (
 		<div className="import__upgrade-plan-hosting-details">
-			{ showModal && (
-				<ConfirmModal
-					compact={ false }
-					title={ translate( 'Migration sounds daunting? It shouldn’t be!' ) }
-					confirmText="Take the deal"
-					cancelText="No, thanks"
-					onClose={ navigateBack }
-					onConfirm={ () => {} }
-				>
-					<p>
-						{ translate(
-							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.`,
-							{
-								args: {
-									importSiteHostName,
-								},
-							}
-						) }
-					</p>
-					<p>
-						{ translate(
-							'Take this deal now and let our Happiness Engineers make the move seamless and stress-free.'
-						) }
-					</p>
-				</ConfirmModal>
-			) }
 			<div className="import__upgrade-plan-hosting-details-card-container">
 				<div className="import__upgrade-plan-hosting-details-header">
 					<p className="import__upgrade-plan-hosting-details-header-main">{ headerMainText }</p>

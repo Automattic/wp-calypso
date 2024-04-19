@@ -1,11 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
+import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import useAddHostingTrialMutation, {
 	HOSTING_INTENT_MIGRATE,
 } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
@@ -32,6 +34,7 @@ interface Props {
 }
 
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
+	let importSiteHostName = '';
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
@@ -49,6 +52,17 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		isBusy,
 		trackingEventsProps,
 	} = props;
+
+	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
+	const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_assistance_modal' );
+	const showModal =
+		isMigrationModalFeatureEnabled &&
+		getQueryArg( window.location.href, 'showModal' )?.toString() === 'true';
+
+	try {
+		importSiteHostName = new URL( importSiteQueryParam )?.hostname;
+	} catch ( e ) {}
+
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
 		migrationTrialEligibility?.eligible ||
@@ -126,8 +140,42 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		);
 	};
 
+	const navigateBack = () => {
+		const queryParams = new URLSearchParams( window.location.search );
+		queryParams.delete( 'siteSlug' );
+		queryParams.delete( 'showModal' );
+		// Navigate back to site picker keeping necessary the query params.
+		window.location.assign( `sitePicker?${ queryParams.toString() }` );
+	};
+
 	return (
 		<div className="import__upgrade-plan">
+			{ showModal && (
+				<ConfirmModal
+					compact={ false }
+					title={ translate( 'Migration sounds daunting? It shouldn’t be!' ) }
+					confirmText="Take the deal"
+					cancelText="No, thanks"
+					onClose={ navigateBack }
+					onConfirm={ () => {} }
+				>
+					<p>
+						{ translate(
+							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.`,
+							{
+								args: {
+									importSiteHostName,
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Take this deal now and let our Happiness Engineers make the move seamless and stress-free.'
+						) }
+					</p>
+				</ConfirmModal>
+			) }
 			{ ! hideTitleAndSubTitle && (
 				<div className="import__heading import__heading-center">
 					<Title>
