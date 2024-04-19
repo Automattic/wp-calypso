@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Answers } from 'calypso/components/survey-container/types';
 
 const useCachedAnswers = ( surveyKey: string ) => {
@@ -8,16 +8,23 @@ const useCachedAnswers = ( surveyKey: string ) => {
 		JSON.parse( localStorage.getItem( cacheKey ) || '{}' )
 	);
 
-	return {
-		answers,
-		setAnswers: ( newAnswers: Answers ) => {
+	const setAnswers = useCallback(
+		( newAnswers: Answers ) => {
 			setAnswersState( newAnswers );
 			localStorage.setItem( cacheKey, JSON.stringify( newAnswers ) );
 		},
-		clearAnswers: () => {
-			setAnswersState( {} );
-			localStorage.removeItem( cacheKey );
-		},
+		[ cacheKey ]
+	);
+
+	const clearAnswers = useCallback( () => {
+		setAnswersState( {} );
+		localStorage.removeItem( cacheKey );
+	}, [ cacheKey ] );
+
+	return {
+		answers,
+		setAnswers,
+		clearAnswers,
 	};
 };
 

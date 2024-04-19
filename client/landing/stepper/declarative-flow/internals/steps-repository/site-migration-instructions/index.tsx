@@ -8,6 +8,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migraiton-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { MaybeLink } from './maybe-link';
 import { ShowHideInput } from './show-hide-input';
 import type { Step } from '../../types';
 
@@ -15,10 +16,14 @@ import './style.scss';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
 
-const getInstallationURL = ( fromUrl: string ) => {
-	return removeDuplicatedSlashes(
-		`${ fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
-	);
+const getPluginInstallationPage = ( fromUrl: string ) => {
+	if ( fromUrl !== '' ) {
+		return removeDuplicatedSlashes(
+			`${ fromUrl }/wp-admin/plugin-install.php?s=%2522migrate%2520guru%2522&tab=search&type=term`
+		);
+	}
+
+	return 'https://wordpress.org/plugins/migrate-guru/';
 };
 
 const getMigrateGuruPageURL = ( siteURL: string ) =>
@@ -69,7 +74,13 @@ const SiteMigrationInstructions: Step = function () {
 						'Install and activate the {{a}}Migrate Guru plugin{{/a}} on your existing site.',
 						{
 							components: {
-								a: <a href={ getInstallationURL( fromUrl ) } target="_blank" rel="noreferrer" />,
+								a: (
+									<a
+										href={ getPluginInstallationPage( fromUrl ) }
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
 							},
 						}
 					) }
@@ -79,7 +90,14 @@ const SiteMigrationInstructions: Step = function () {
 						'Go to the {{a}}Migrate Guru page on your source site{{/a}}, enter your email address, and click {{strong}}{{migrateButton /}}{{/strong}}.',
 						{
 							components: {
-								a: <a href={ getMigrateGuruPageURL( fromUrl ) } target="_blank" rel="noreferrer" />,
+								a: (
+									<MaybeLink
+										href={ fromUrl ? getMigrateGuruPageURL( fromUrl ) : undefined }
+										target="_blank"
+										rel="noreferrer"
+										fallback={ <strong /> }
+									/>
+								),
 								migrateButton: <DoNotTranslateIt value="Migrate" />,
 								strong: <strong />,
 							},

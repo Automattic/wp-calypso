@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import type { CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
+import type { CorePlugin } from 'calypso/data/plugins/types';
 import type { ScheduleLog } from 'calypso/data/plugins/use-update-schedule-logs-query';
 
 export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
@@ -64,12 +64,12 @@ export const getLogIconStatus = ( log: ScheduleLog ) => {
 	switch ( log.action ) {
 		case 'PLUGIN_UPDATES_SUCCESS':
 		case 'PLUGIN_UPDATE_SUCCESS':
+		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
 		case 'PLUGIN_SITE_HEALTH_CHECK_SUCCESS':
 			return 'success';
 		case 'PLUGIN_UPDATES_FAILURE':
 		case 'PLUGIN_UPDATE_FAILURE':
 		case 'PLUGIN_SITE_HEALTH_CHECK_FAILURE':
-		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
 		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK_FAIL':
 			return 'error';
 	}

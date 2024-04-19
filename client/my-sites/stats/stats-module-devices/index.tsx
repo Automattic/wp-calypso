@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { default as usePlanUsageQuery } from '../hooks/use-plan-usage-query';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import statsStrings from '../stats-strings';
 import StatsModuleDevices from './stats-module-devices';
 import StatsModuleUpgradeOverlay from './stats-module-upgrade-overlay';
 
@@ -25,6 +26,8 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 	// summary,
 	className,
 } ) => {
+	const { devices: devicesStrings } = statsStrings();
+
 	// Check if blog is internal.
 	const { isPending: isFetchingUsage, data: usageData } = usePlanUsageQuery( siteId );
 	const { isLoading: isLoadingFeatureCheck, supportCommercialUse } = useStatsPurchases( siteId );
@@ -43,7 +46,7 @@ const StatsModuleDevicesWrapper: React.FC< StatsModuleDevicesWrapperProps > = ( 
 			{ isFetching && (
 				// @ts-expect-error TODO: Refactor StatsCard with TypeScript.
 				<StatsCard
-					title="Devices"
+					title={ devicesStrings.title }
 					className={ classNames( className, DEVICES_CLASS_NAME, 'stats-module__card', 'devices' ) }
 					isNew
 				>

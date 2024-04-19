@@ -39,7 +39,7 @@ p.listing-section-description {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
-	@include break-wide {
+	@include break-huge {
 		grid-template-columns: repeat(3, 1fr);
 	}
 }

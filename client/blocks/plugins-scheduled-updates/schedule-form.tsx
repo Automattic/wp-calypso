@@ -133,7 +133,7 @@ export const ScheduleForm = ( props: Props ) => {
 						initTimestamp={ timestamp }
 						initFrequency={ frequency }
 						error={ validationErrors?.timestamp }
-						showError={ fieldTouched?.plugins }
+						showError={ fieldTouched?.timestamp }
 						onChange={ ( frequency, timestamp ) => {
 							setTimestamp( timestamp );
 							setFrequency( frequency );
