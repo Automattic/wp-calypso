@@ -19,6 +19,7 @@ export type QuestionSelectionType = {
 };
 
 type QuestionStepType = {
+	hideBack: boolean;
 	previousPage: () => void;
 	nextPage: () => void;
 	skip: () => void;
@@ -26,6 +27,7 @@ type QuestionStepType = {
 } & QuestionSelectionType;
 
 const QuestionStep = ( {
+	hideBack,
 	previousPage,
 	nextPage,
 	skip,
@@ -40,6 +42,7 @@ const QuestionStep = ( {
 	return (
 		<StepContainer
 			className="question-step"
+			hideBack={ hideBack }
 			goBack={ previousPage }
 			goNext={ skip }
 			formattedHeader={
@@ -49,7 +52,6 @@ const QuestionStep = ( {
 					subHeaderText={ question.subHeaderText }
 				/>
 			}
-			shouldStickyNavButtons={ true }
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">
