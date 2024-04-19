@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -29,6 +30,7 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
+import SitesDashboardV2 from './sites-dashboard-v2';
 import { SitesTable } from './sites-table';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -208,6 +210,10 @@ export function SitesDashboard( {
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		return <SitesDashboardV2 sites={ allSites } />;
+	}
 
 	return (
 		<main>
