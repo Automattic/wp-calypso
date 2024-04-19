@@ -124,7 +124,6 @@ export const ScheduleForm = ( props: Props ) => {
 			<ScheduleFormFrequency
 				initTimestamp={ timestamp }
 				initFrequency={ frequency }
-				showAllOptionControls={ true }
 				error={ validationErrors?.timestamp }
 				showError={ fieldTouched?.timestamp }
 				onChange={ ( frequency, timestamp ) => {
