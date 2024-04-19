@@ -91,8 +91,10 @@ const ItemsDataViews = ( { data, isLoading = false, className }: ItemsDataViewsP
 				searchLabel={ data.searchLabel ?? translate( 'Search' ) }
 				getItemId={
 					data.getItemId ??
-					( ( item: object ) => {
-						return data.itemFieldId && getIdByPath( item, data.itemFieldId );
+					( ( item: any ) => {
+						// todo: this item.id assignation is to fix an issue with the DataViews component and item selection. It should be removed once the issue is fixed.
+						item.id = data.itemFieldId && getIdByPath( item, data.itemFieldId );
+						return item.id;
 					} )
 				}
 				onChangeView={ data.setDataViewsState }
