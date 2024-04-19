@@ -29,15 +29,12 @@ interface SitesDataViewsSite {
 
 type Props = {
 	sites: SiteExcerptData[];
+	isLoading: boolean;
 };
 
-const DotcomSitesDataViews = ( { sites }: Props ) => {
+const DotcomSitesDataViews = ( { sites, isLoading }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
-
-	// todo: get these from the props (the SitesDashboard component have to pass them down)
-	const isLoading = false;
-	const isLargeScreen = true;
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 

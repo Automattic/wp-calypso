@@ -212,7 +212,7 @@ export function SitesDashboard( {
 	useShowSiteTransferredNotice();
 
 	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		return <SitesDashboardV2 sites={ allSites } />;
+		return <SitesDashboardV2 sites={ allSites } isLoading={ isLoading } />;
 	}
 
 	return (

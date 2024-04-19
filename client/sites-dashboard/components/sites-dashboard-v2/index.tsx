@@ -8,15 +8,16 @@ import 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];
+	isLoading: boolean;
 };
 
-const SitesDashboardV2 = ( { sites }: Props ) => {
+const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 	const { __ } = useI18n();
 
 	return (
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
-			<DotcomSitesDataViews sites={ sites } />
+			<DotcomSitesDataViews sites={ sites } isLoading={ isLoading } />
 		</main>
 	);
 };
