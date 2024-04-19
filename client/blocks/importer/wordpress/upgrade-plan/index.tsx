@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
@@ -55,9 +55,9 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	} = props;
 
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
-	const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_assistance_modal' );
+
 	const showModal =
-		isMigrationModalFeatureEnabled &&
+		isEnabled( 'migration_assistance_modal' ) &&
 		getQueryArg( window.location.href, 'showModal' )?.toString() === 'true';
 
 	try {

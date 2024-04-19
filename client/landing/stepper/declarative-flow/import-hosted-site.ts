@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
@@ -202,20 +202,18 @@ const importHostedSiteFlow: Flow = {
 		};
 
 		const goBack = () => {
-			const isMigrationModalFeatureEnabled = config.isEnabled( 'migration_assistance_modal' );
-
 			switch ( _currentStep ) {
 				case 'import':
 					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
-					if ( urlQueryParams.has( 'showModal' ) || ! isMigrationModalFeatureEnabled ) {
+					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
 						// remove the siteSlug in case they want to change the destination site
 						urlQueryParams.delete( 'siteSlug' );
 						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
 					}
 
-					if ( isMigrationModalFeatureEnabled ) {
+					if ( isEnabled( 'migration_assistance_modal' ) ) {
 						// remove the siteSlug in case they want to change the destination site
 						urlQueryParams.set( 'showModal', 'true' );
 					}
