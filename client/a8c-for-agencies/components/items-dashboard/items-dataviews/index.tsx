@@ -49,8 +49,6 @@ export const createItemColumn = (
 export type ItemsDataViewsProps = {
 	data: ItemsDataViewsType< any >;
 	isLoading?: boolean;
-	// todo: is it necessary? Could we get it in this component?
-	isLargeScreen?: boolean;
 	className?: string;
 };
 

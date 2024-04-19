@@ -446,14 +446,7 @@ export const JetpackSitesDataViews = ( {
 		} ) );
 	}, [ fields, dataViewsState, setDataViewsState, data ] ); // add actions when implemented
 
-	return (
-		<ItemsDataViews
-			data={ itemsData }
-			isLoading={ isLoading }
-			isLargeScreen={ isLargeScreen }
-			className={ className }
-		/>
-	);
+	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className } />;
 };
 
 export default JetpackSitesDataViews;
