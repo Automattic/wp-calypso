@@ -15,7 +15,7 @@ export const ScheduleForm = () => {
 
 	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ] );
 	const {
-		data: plugins = [],
+		data: plugins,
 		isInitialLoading: isPluginsFetching,
 		isFetchedAfterMount: isPluginsFetched,
 	} = useCoreSitesPluginsQuery( selectedSites, true, true );

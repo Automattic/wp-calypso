@@ -12,7 +12,7 @@ import { MAX_SELECTABLE_PLUGINS } from './config';
 import type { CorePlugin } from 'calypso/data/plugins/types';
 
 interface Props {
-	plugins: CorePlugin[];
+	plugins?: CorePlugin[];
 	isPluginsFetching: boolean;
 	isPluginsFetched: boolean;
 	selectedPlugins?: string[];
@@ -35,7 +35,7 @@ export function ScheduleFormPlugins( props: Props ) {
 		borderWrapper = true,
 	} = props;
 	const translate = useTranslate();
-	const plugins = useMemo( () => props.plugins, [ props.plugins ] );
+	const plugins = useMemo( () => props.plugins || [], [ props.plugins ] );
 
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( initSelectedPlugins );

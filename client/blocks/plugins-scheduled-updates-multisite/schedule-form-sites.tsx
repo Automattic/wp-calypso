@@ -6,7 +6,7 @@ import { useEffect, Fragment, useCallback, useState } from 'react';
 import type { SiteExcerptData } from '@automattic/sites';
 
 interface Props {
-	sites: SiteExcerptData[];
+	sites?: SiteExcerptData[];
 	selectedSites?: number[];
 	error?: string;
 	showError?: boolean;
@@ -16,7 +16,7 @@ interface Props {
 }
 export const ScheduleFormSites = ( props: Props ) => {
 	const {
-		sites,
+		sites = [],
 		selectedSites: initSites = [],
 		error,
 		showError,
