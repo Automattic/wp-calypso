@@ -6,7 +6,7 @@ import { useEffect, Fragment, useCallback, useState } from 'react';
 import type { SiteExcerptData } from '@automattic/sites';
 
 interface Props {
-	sites: SiteExcerptData[];
+	sites?: SiteExcerptData[];
 	selectedSites?: number[];
 	error?: string;
 	showError?: boolean;
@@ -16,7 +16,7 @@ interface Props {
 }
 export const ScheduleFormSites = ( props: Props ) => {
 	const {
-		sites,
+		sites = [],
 		selectedSites: initSites = [],
 		error,
 		showError,
@@ -60,10 +60,12 @@ export const ScheduleFormSites = ( props: Props ) => {
 					onChange={ ( s ) => setSearchTerm( s.trim() ) }
 					placeholder={ translate( 'Search site' ) }
 				/>
-				<Text className="info-msg">
-					You can only select sites with Creator plan. Please upgrade your site to enable this
-					feature.
-				</Text>
+				{ ! sites.length && (
+					<Text className="info-msg">
+						You can only select sites with Creator plan. Please upgrade your site to enable this
+						feature.
+					</Text>
+				) }
 				<div className="checkbox-options-container">
 					{ sites.map( ( site ) => (
 						<Fragment key={ site.ID }>

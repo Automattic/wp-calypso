@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import type { CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
+import type { CorePlugin } from 'calypso/data/plugins/types';
 import type { ScheduleLog } from 'calypso/data/plugins/use-update-schedule-logs-query';
 
 export const getLogDetails = ( log: ScheduleLog, plugins: CorePlugin[] ) => {
