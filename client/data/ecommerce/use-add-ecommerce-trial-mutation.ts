@@ -11,9 +11,15 @@ export default function useAddEcommerceTrialMutation(
 ) {
 	const mutation = useMutation( {
 		mutationFn: async ( { siteId }: Variables ) => {
-			await wp.req.post( `/sites/${ siteId }/ecommerce-trial/add/ecommerce-trial-bundle-monthly`, {
-				apiVersion: '1.1',
-			} );
+			await wp.req.post(
+				`/sites/${ siteId }/ecommerce-trial/add/ecommerce-trial-bundle-monthly`,
+				{
+					apiVersion: '1.1',
+				},
+				{
+					is_entrepreneur_signup: 1,
+				}
+			);
 		},
 		...options,
 	} );
