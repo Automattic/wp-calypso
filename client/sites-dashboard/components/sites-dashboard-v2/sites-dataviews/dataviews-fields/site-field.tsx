@@ -4,7 +4,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { useInView } from 'react-intersection-observer';
+//import { useInView } from 'react-intersection-observer';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteAdminLink } from 'calypso/sites-dashboard/components/sites-site-admin-link';
@@ -32,7 +32,7 @@ type Props = {
 
 const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
-	const { inView } = useInView( { triggerOnce: true } );
+	//const { inView } = useInView( { triggerOnce: true } );
 
 	const SiteListTile = styled( ListTile )`
 		margin-inline-end: 0;
@@ -99,7 +99,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 			` }
 			leading={
 				<ListTileLeading title={ title } onClick={ onSiteClick }>
-					<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
+					<SiteItemThumbnail displayMode="list" showPlaceholder={ false } site={ site } />
 				</ListTileLeading>
 			}
 			title={
