@@ -128,9 +128,9 @@ export default function SuggestedPlanSection( props: {
 		return null;
 	}
 
-	if ( assignment?.experimentName === 'creator_for_starter' ) {
+	if ( assignment?.variationName === 'creator_for_starter' ) {
 		return <SuggestedPlanExplorerCreator { ...props } />;
-	} else if ( assignment?.experimentName === 'creator_and_free_link' ) {
+	} else if ( assignment?.variationName === 'creator_and_free_link' ) {
 		return <SuggestedPlanStarterExplorerCreator { ...props } />;
 	}
 
