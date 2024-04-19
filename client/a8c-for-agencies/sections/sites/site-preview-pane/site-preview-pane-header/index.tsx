@@ -8,7 +8,6 @@ import SiteFavicon from '../../site-favicon';
 import { Site } from '../../types';
 
 import './style.scss';
-import './a4a-style.scss';
 
 const ICON_SIZE = 24;
 
