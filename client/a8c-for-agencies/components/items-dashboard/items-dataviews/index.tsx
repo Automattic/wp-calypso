@@ -9,7 +9,7 @@ import './style.scss';
 
 const getIdByPath = ( item: object, path: string ) => {
 	const fields = path.split( '.' );
-	let result: any = item;
+	let result: Record< string, any > = item;
 	for ( const field of fields ) {
 		if ( result[ field ] === undefined ) {
 			return undefined;
