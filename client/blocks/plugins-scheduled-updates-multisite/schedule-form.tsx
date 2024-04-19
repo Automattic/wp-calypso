@@ -1,5 +1,5 @@
 import { Flex, FlexItem } from '@wordpress/components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { ScheduleFormFrequency } from '../plugins-scheduled-updates/schedule-form-frequency';
@@ -19,6 +19,17 @@ export const ScheduleForm = () => {
 		isInitialLoading: isPluginsFetching,
 		isFetchedAfterMount: isPluginsFetched,
 	} = useCoreSitesPluginsQuery( selectedSites, true, true );
+
+	const prevPlugins = useRef( plugins );
+
+	const getPlugins = useCallback( () => {
+		// There is a case when the selectedSites updated but the plugins are not fetched yet
+		// In this case plugins will be undefined, so we need to keep the previous plugins
+		if ( selectedSites.length && plugins === undefined ) {
+			return prevPlugins.current;
+		}
+		return plugins;
+	}, [ plugins, selectedSites ] );
 
 	// Sites selection validation
 	useEffect(
@@ -40,6 +51,12 @@ export const ScheduleForm = () => {
 		[ selectedPlugins ]
 	);
 
+	useEffect( () => {
+		if ( selectedSites.length && plugins !== undefined ) {
+			prevPlugins.current = plugins;
+		}
+	}, [ plugins ] );
+
 	return (
 		<div className="schedule-form">
 			<div className="form-control-container">
@@ -56,7 +73,7 @@ export const ScheduleForm = () => {
 					</FlexItem>
 					<FlexItem>
 						<ScheduleFormPlugins
-							plugins={ plugins }
+							plugins={ getPlugins() }
 							selectedPlugins={ selectedPlugins }
 							isPluginsFetching={ isPluginsFetching }
 							isPluginsFetched={ isPluginsFetched }
