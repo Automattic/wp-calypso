@@ -33,6 +33,9 @@
 
 	.a4a-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-block-start: 0;
+		}
 	}
 
 	@media (min-width: $break-large) {

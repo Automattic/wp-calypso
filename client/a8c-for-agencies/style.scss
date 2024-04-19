@@ -145,6 +145,9 @@
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4px 0;
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 4px;
+		}
 	}
 
 	.button.split-button__main {
