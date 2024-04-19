@@ -103,6 +103,15 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				&:checked {
 					border-color: $blueberry-color;
 					background: $blueberry-color;
+					box-shadow: inset 0 0 0 1px $studio-white;
+
+					&:focus {
+						box-shadow: inset 0 0 0 1px #fff, 0 0 0 2px $studio-gray-10;
+					}
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 2px $studio-gray-10;
 				}
 			}
 
