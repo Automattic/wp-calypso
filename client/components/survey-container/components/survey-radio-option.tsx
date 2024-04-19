@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Question, Option } from '../types';
 
 type SurveyRadioOptionType = {
@@ -9,11 +10,19 @@ type SurveyRadioOptionType = {
 
 const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOptionType ) => {
 	const isSelected = value.includes( option.value );
-	const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			onChange( question.key, [ option.value ] );
-		}
-	};
+
+	const handleKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement > ) => {
+			if ( event.key === 'Enter' || event.key === ' ' ) {
+				onChange( question.key, [ option.value ] );
+			}
+		},
+		[ onChange, question.key, option.value ]
+	);
+
+	const handleClick = useCallback( () => {
+		onChange( question.key, [ option.value ] );
+	}, [ onChange, question.key, option.value ] );
 
 	return (
 		<div
@@ -22,7 +31,7 @@ const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOp
 			}` }
 			role="radio"
 			tabIndex={ 0 }
-			onClick={ () => onChange( question.key, [ option.value ] ) }
+			onClick={ handleClick }
 			onKeyDown={ handleKeyDown }
 			aria-checked={ isSelected ? 'true' : 'false' }
 			aria-labelledby={ `option-label-${ option.value } option-help-text-${ option.value }` }
@@ -32,7 +41,7 @@ const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOp
 				id={ `option-${ option.value }` }
 				name={ question.key }
 				value={ option.value }
-				onChange={ () => onChange( question.key, [ option.value ] ) }
+				onChange={ handleClick }
 				checked={ isSelected }
 				className="form-radio"
 				tabIndex={ -1 }
