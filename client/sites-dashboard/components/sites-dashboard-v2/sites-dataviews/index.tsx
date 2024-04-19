@@ -1,7 +1,6 @@
 import { useSitesListSorting } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import {
 	DataViewsColumn,
@@ -23,19 +22,19 @@ import { getSitesPagination, mapFieldIdToSortKey } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { SitesSortOptions } from '@automattic/sites/src/use-sites-list-sorting';
 
-import './style.scss';
-
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
+	dataViewsState: DataViewsState;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 };
 
-const DotcomSitesDataViews = ( { sites, isLoading }: Props ) => {
+const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsState }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 	const dispatch = useDispatch();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	//const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
@@ -105,7 +104,7 @@ const DotcomSitesDataViews = ( { sites, isLoading }: Props ) => {
 				id: 'stats',
 				header: (
 					<>
-						<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
+						<JetpackLogo size={ 16 } /> { __( 'Stats' ) }
 					</>
 				),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
