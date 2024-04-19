@@ -7,12 +7,12 @@ import {
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
 import { MAX_SELECTABLE_PLUGINS } from './config';
-import type { CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
+import type { CorePlugin } from 'calypso/data/plugins/types';
 
 interface Props {
-	plugins: CorePlugin[];
+	plugins?: CorePlugin[];
 	isPluginsFetching: boolean;
 	isPluginsFetched: boolean;
 	selectedPlugins?: string[];
@@ -25,8 +25,7 @@ interface Props {
 }
 export function ScheduleFormPlugins( props: Props ) {
 	const {
-		plugins,
-		selectedPlugins: initPlugins = [],
+		selectedPlugins: initSelectedPlugins = [],
 		isPluginsFetching,
 		isPluginsFetched,
 		error,
@@ -36,13 +35,17 @@ export function ScheduleFormPlugins( props: Props ) {
 		borderWrapper = true,
 	} = props;
 	const translate = useTranslate();
+	const plugins = useMemo( () => props.plugins || [], [ props.plugins ] );
 
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
-	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( initPlugins );
+	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( initSelectedPlugins );
 	const [ fieldTouched, setFieldTouched ] = useState( false );
 
-	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
-	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
+	const removeUnlistedSelectedPlugins = useCallback( () => {
+		setSelectedPlugins(
+			selectedPlugins.filter( ( plugin ) => plugins.find( ( p ) => p.plugin === plugin ) )
+		);
+	}, [ plugins, selectedPlugins ] );
 
 	const onPluginSelectionChange = useCallback(
 		( plugin: CorePlugin, isChecked: boolean ) => {
@@ -76,6 +79,10 @@ export function ScheduleFormPlugins( props: Props ) {
 		[ selectedPlugins ]
 	);
 
+	useEffect( () => onTouch?.( fieldTouched ), [ fieldTouched ] );
+	useEffect( () => onChange?.( selectedPlugins ), [ selectedPlugins ] );
+	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins ] );
+
 	return (
 		<div className="form-field">
 			<label htmlFor="plugins">{ translate( 'Select plugins' ) }</label>
@@ -83,30 +90,53 @@ export function ScheduleFormPlugins( props: Props ) {
 				{ selectedPlugins.length }/
 				{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
 			</span>
-			{ ( showError && error ) || ( fieldTouched && error ) ? (
-				<Text className="validation-msg">
-					<Icon className="icon-info" icon={ info } size={ 16 } />
-					{ error }
-				</Text>
-			) : (
-				<Text className="info-msg">
-					{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
-				</Text>
-			) }
+
+			{ ( () => {
+				if ( ( showError && error ) || ( fieldTouched && error ) ) {
+					return (
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ error }
+						</Text>
+					);
+				} else if ( isPluginsFetched && plugins.length === 0 ) {
+					return (
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ translate(
+								'The current site selection does not have any plugins that can be scheduled for updates.'
+							) }
+						</Text>
+					);
+				}
+				return (
+					<Text className="info-msg">
+						{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
+					</Text>
+				);
+			} )() }
+
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
-				<SearchControl id="plugins" onChange={ setPluginSearchTerm } value={ pluginSearchTerm } />
+				<SearchControl
+					id="plugins"
+					onChange={ setPluginSearchTerm }
+					value={ pluginSearchTerm }
+					placeholder={ translate( 'Search plugins' ) }
+				/>
 				<div className="checkbox-options-container">
 					{ isPluginsFetching && <Spinner /> }
-					{ isPluginsFetched && plugins.length <= MAX_SELECTABLE_PLUGINS && (
-						<CheckboxControl
-							label={ translate( 'Select all' ) }
-							indeterminate={
-								selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
-							}
-							checked={ selectedPlugins.length === plugins.length }
-							onChange={ onPluginSelectAllChange }
-						/>
-					) }
+					{ isPluginsFetched &&
+						plugins.length !== 0 &&
+						plugins.length <= MAX_SELECTABLE_PLUGINS && (
+							<CheckboxControl
+								label={ translate( 'Select all' ) }
+								indeterminate={
+									selectedPlugins.length > 0 && selectedPlugins.length < plugins.length
+								}
+								checked={ selectedPlugins.length === plugins.length }
+								onChange={ onPluginSelectAllChange }
+							/>
+						) }
 					{ isPluginsFetched &&
 						plugins.map( ( plugin ) => (
 							<Fragment key={ plugin.plugin }>
