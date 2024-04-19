@@ -34,9 +34,10 @@ interface Props {
 }
 
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
-	let importSiteHostName = '';
-	const dispatch = useDispatch();
 	const translate = useTranslate();
+	let importSiteHostName = translate( 'your site' );
+	const dispatch = useDispatch();
+
 	const isEnglishLocale = useIsEnglishLocale();
 	const plan = getPlan( PLAN_BUSINESS );
 	const {
