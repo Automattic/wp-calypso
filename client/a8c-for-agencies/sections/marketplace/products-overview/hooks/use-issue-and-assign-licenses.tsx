@@ -68,6 +68,9 @@ function useIssueAndAssignLicenses(
 	options: UseIssueAndAssignLicensesOptions = {}
 ) {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	const products = useProductsQuery();
 
 	const { isReady: isIssueReady, issueLicenses } = useIssueLicenses( {
 		onError: options.onIssueError ?? NO_OP,
@@ -129,11 +132,29 @@ function useIssueAndAssignLicenses(
 			// TODO: Move dispatch events and redirects outside this function
 			dispatch( resetSite() );
 			dispatch( setPurchasedLicense( assignLicensesStatus ) );
-
 			// If we know this person came from the dashboard,
 			// let's politely send them back there
-			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'sitesdashboard';
 			if ( fromDashboard ) {
+				const licenseItem =
+					products?.data?.find?.( ( p ) => p.slug === issuedLicenses[ 0 ].slug )?.name ?? '';
+				const message =
+					selectedSite?.domain && licenseItem
+						? translate(
+								'{{strong}}%(licenseItem)s{{/strong}} was successfully assigned to ' +
+									'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
+									'for your features to activate.',
+								{
+									args: { selectedSite: selectedSite.domain, licenseItem },
+									components: {
+										strong: <strong />,
+										em: <em />,
+									},
+								}
+						  )
+						: translate( 'Your license has been successfully issued and assigned to your site.' );
+				dispatch( successNotice( message, { displayOnNextPage: true } ) );
+
 				page.redirect( A4A_SITES_LINK );
 				return;
 			}
@@ -152,6 +173,9 @@ function useIssueAndAssignLicenses(
 		issueLicenses,
 		options,
 		selectedSite?.ID,
+		selectedSite?.domain,
+		products?.data,
+		translate,
 	] );
 }
 

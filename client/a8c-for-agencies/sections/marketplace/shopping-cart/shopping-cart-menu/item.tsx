@@ -7,6 +7,8 @@ import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import type { ShoppingCartItem } from '../../types';
 
+import './style.scss';
+
 type ItemProps = {
 	item: ShoppingCartItem;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
