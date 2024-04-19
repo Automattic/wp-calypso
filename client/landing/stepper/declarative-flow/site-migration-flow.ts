@@ -173,13 +173,6 @@ const siteMigration: Flow = {
 						action: SiteMigrationIdentifyAction;
 					};
 
-					if ( siteSlug ) {
-						// Set the in_site_migration_flow option at the start of the flow.
-						await saveSiteSettings( siteSlug, {
-							in_site_migration_flow: true,
-						} );
-					}
-
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
 						return exitFlow(
 							addQueryArgs(
@@ -280,6 +273,12 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.verifyEmail ) {
+						if ( siteSlug ) {
+							// Set the in_site_migration_flow option at the start of the flow.
+							await saveSiteSettings( siteSlug, {
+								in_site_migration_flow: true,
+							} );
+						}
 						return navigate( STEPS.VERIFY_EMAIL.slug );
 					}
 
