@@ -1,4 +1,3 @@
-import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
