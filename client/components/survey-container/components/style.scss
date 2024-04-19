@@ -122,6 +122,10 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				}
 			}
 
+			svg.components-checkbox-control__checked {
+				animation: grow 0.2s ease-in-out;
+			}
+
 			// Option label and help text styles
 			.question-options__option-label {
 				label {
