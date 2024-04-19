@@ -1,3 +1,4 @@
+import { CheckboxControl } from '@wordpress/components';
 import { Question, Option } from '../types';
 
 // todo: consider renaming and moving the type into ../types
@@ -39,14 +40,12 @@ const SurveyCheckboxOption = ( {
 			tabIndex={ 0 }
 			aria-checked={ isSelected ? 'true' : 'false' }
 		>
-			<input
-				type="checkbox"
+			<CheckboxControl
 				id={ `option-${ option.value }` }
 				name={ question.key }
 				value={ option.value }
 				checked={ isSelected }
 				onChange={ handleToggle }
-				className="form-checkbox"
 				tabIndex={ -1 }
 				aria-hidden="true"
 				onClick={ ( e ) => e.stopPropagation() }

@@ -89,22 +89,20 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 				}
 			}
 
-			input[type="checkbox"] {
-				height: 20px;
-				width: 20px;
-				min-width: 20px;
-				margin: 0;
+			.components-checkbox-control__input-container {
+				margin-right: 0;
+			}
+
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+
+			.components-checkbox-control__input[type="checkbox"] {
 				border-color: $studio-gray-20;
 
 				&:checked {
 					border-color: $blueberry-color;
-				}
-
-				&:checked::before {
-					margin: 1px;
-					width: 16px;
-					height: 16px;
-					background-color: $blueberry-color;
+					background: $blueberry-color;
 				}
 			}
 
