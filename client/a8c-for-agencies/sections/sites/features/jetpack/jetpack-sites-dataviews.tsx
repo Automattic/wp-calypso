@@ -376,12 +376,66 @@ export const JetpackSitesDataViews = ( {
 		dataViewsState: dataViewsState,
 	} );
 
+	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
+	// todo: Currently not in use until bulk selections are properly implemented.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	/*const actions = useMemo(
+		() => [
+			{
+				id: 'pause-monitor',
+				label: translate( 'Pause Monitor' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'active';
+				},
+				callback() {
+					// todo: pause monitor. Param: sites: SiteInfo[]
+				},
+			},
+			{
+				id: 'resume-monitor',
+				label: translate( 'Resume Monitor' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'inactive';
+				},
+				callback() {
+					// todo: resume monitor. Param: sites: SiteInfo[]
+				},
+			},
+			{
+				id: 'custom-notification',
+				label: translate( 'Custom Notification' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'active';
+				},
+				callback() {
+					// todo: custom notification. Param: sites: SiteInfo[]
+				},
+			},
+			{
+				id: 'reset-notification',
+				label: translate( 'Reset Notification' ),
+				supportsBulk: true,
+				isEligible( site: SiteInfo ) {
+					return site.monitor.status === 'active';
+				},
+				callback() {
+					// todo: reset notification. Param: sites: SiteInfo[]
+				},
+			},
+		],
+		[ translate ]
+	);*/
+
 	// Update the data packet
 	useEffect( () => {
 		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
 			...prevState,
 			items: sites,
 			fields: fields,
+			//actions: actions,
 			pagination: {
 				totalItems: totalSites,
 				totalPages: totalPages,
@@ -390,7 +444,7 @@ export const JetpackSitesDataViews = ( {
 			dataViewsState: dataViewsState,
 			selectedItem: dataViewsState.selectedItem,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data ] );
+	}, [ fields, dataViewsState, setDataViewsState, data ] ); // add actions when implemented
 
 	return (
 		<ItemsDataViews
