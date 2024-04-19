@@ -1,23 +1,19 @@
 import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
 import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
-import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { ScheduleFormFrequency } from '../plugins-scheduled-updates/schedule-form-frequency';
 import { ScheduleFormPlugins } from '../plugins-scheduled-updates/schedule-form-plugins';
 import { validateSites, validatePlugins } from '../plugins-scheduled-updates/schedule-form.helper';
 import { ScheduleFormSites } from './schedule-form-sites';
 
 export const ScheduleForm = () => {
-	const sites = useSiteExcerptsSorted();
-	const atomicSites = sites
-		.filter( ( site ) => site.is_wpcom_atomic )
-		.sort( ( a, b ) => ( ( a.name || '' ) > ( b.name || '' ) ? 1 : -1 ) );
-
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
 	const [ fieldTouched, setFieldTouched ] = useState< Record< string, boolean > >( {} );
 
+	const { data: sites } = useSiteExcerptsQuery( [ 'atomic' ] );
 	const {
 		data: plugins = [],
 		isInitialLoading: isPluginsFetching,
@@ -50,7 +46,7 @@ export const ScheduleForm = () => {
 				<Flex direction={ [ 'column', 'row' ] } expanded={ true } align="start">
 					<FlexItem>
 						<ScheduleFormSites
-							sites={ atomicSites }
+							sites={ sites }
 							borderWrapper={ false }
 							onChange={ setSelectedSites }
 							onTouch={ ( touched ) => setFieldTouched( { ...fieldTouched, sites: touched } ) }
