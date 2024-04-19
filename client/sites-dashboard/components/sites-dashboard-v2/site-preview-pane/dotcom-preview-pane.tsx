@@ -10,6 +10,8 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
 
+import './style.scss';
+
 type Props = {
 	site: SiteExcerptData;
 	closeSitePreviewPane: () => void;
@@ -39,10 +41,15 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<>
-					<h2>
-						<b>Overview</b> Preview Pane for
-					</h2>{ ' ' }
-					<b>{ site.slug }</b>
+					<div className="dotcom-preview-pane-content">
+						<h2>
+							<b>Overview</b>
+							<br />
+						</h2>
+						Preview Pane
+						<br />
+						<b>{ site.slug }</b>
+					</div>
 				</>
 			),
 			createFeaturePreview(
@@ -52,10 +59,14 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<>
-					<h2>
-						<b>Monitoring</b> Preview Pane for
-					</h2>{ ' ' }
-					<b>{ site.slug }</b>
+					<div className="dotcom-preview-pane-content">
+						<h2>
+							<b>Monitoring</b>
+						</h2>
+						Preview Pane
+						<br />
+						<b>{ site.slug }</b>
+					</div>
 				</>
 			),
 			createFeaturePreview(
@@ -65,10 +76,14 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<>
-					<h2>
-						<b>GitHub Deployments</b> Preview Pane for
-					</h2>{ ' ' }
-					<b>{ site.slug }</b>
+					<div className="dotcom-preview-pane-content">
+						<h2>
+							<b>GitHub Deployments</b>
+						</h2>
+						Preview Pane
+						<br />
+						<b>{ site.slug }</b>
+					</div>
 				</>
 			),
 			createFeaturePreview(
@@ -78,10 +93,14 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<>
-					<h2>
-						<b>Hosting Config</b> Preview Pane for
-					</h2>{ ' ' }
-					<b>{ site.slug }</b>
+					<div className="dotcom-preview-pane-content">
+						<h2>
+							<b>Hosting Config</b>
+						</h2>
+						Preview Pane
+						<br />
+						<b>{ site.slug }</b>
+					</div>
 				</>
 			),
 		],
