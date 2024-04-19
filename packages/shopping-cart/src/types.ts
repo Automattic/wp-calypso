@@ -829,7 +829,7 @@ export interface TermsOfServiceRecordArgsBase {
 	 * included.
 	 *
 	 * This is the price that we will attempt to charge on
-	 * `subscription_end_of_promotion_date`.
+	 * `subscription_regular_auto_renew_date`.
 	 *
 	 * This price is an integer in the currency's smallest unit.
 	 */
