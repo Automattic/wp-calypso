@@ -271,6 +271,7 @@ function PatternPreviewFragment( {
 		};
 	} );
 
+	// This fetches forms and adds a listener that disables submission
 	useEffect( () => {
 		const iframe = ref.current?.querySelector( 'iframe' );
 
