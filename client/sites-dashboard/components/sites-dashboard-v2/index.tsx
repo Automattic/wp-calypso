@@ -2,7 +2,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -16,6 +16,8 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews from './sites-dataviews';
@@ -30,6 +32,7 @@ type Props = {
 
 const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	/*
 		const dispatch = useDispatch();
@@ -78,6 +81,12 @@ const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 	] );
 	 */
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+
+	useEffect( () => {
+		if ( dataViewsState.selectedItem ) {
+			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
+		}
+	}, [ dataViewsState.selectedItem ] );
 
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
