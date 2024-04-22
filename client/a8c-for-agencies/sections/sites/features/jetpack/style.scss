@@ -63,6 +63,10 @@
 		width: 100%;
 	}
 
+	.dataviews-wrapper {
+		overflow-y: auto;
+		max-height: calc(100vh - 260px);
+	}
 
 }
 
