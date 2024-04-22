@@ -289,7 +289,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const getTypeLabel = ( type: BackupBrowserItemType, allSelected: boolean ) => {
 		switch ( type ) {
 			case 'file':
-				return translate( 'Files and directories' );
+				return translate( 'Files and directories that will be restored' );
 			case 'theme':
 				return allSelected
 					? translate( 'All site themes will be restored' )
@@ -409,19 +409,16 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			<div className="rewind-flow__header">
 				<Icon icon={ backup } size={ 48 } />
 			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Restore files' ) }</h3>
+			<h3 className="rewind-flow__title">{ translate( 'Restore your files' ) }</h3>
 			<p className="rewind-flow__info">
-				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
+				{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
+					args: {
+						backupDisplayDate,
+					},
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</p>
 			{ renderSection( 'theme' ) }
 			{ renderSection( 'plugin' ) }
@@ -429,7 +426,9 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			{ renderSection( 'file' ) }
 			<RewindFlowNotice
 				gridicon="notice"
-				title={ translate( 'Restoring will override and remove all content after this point.' ) }
+				title={ translate(
+					'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+				) }
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
 			<>
@@ -453,7 +452,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					onClick={ onConfirm }
 					disabled={ disableRestore }
 				>
-					{ translate( 'Confirm restore' ) }
+					{ translate( 'Restore now' ) }
 				</Button>
 			</div>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />

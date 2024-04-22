@@ -89,6 +89,10 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 		align-items: center;
 		display: flex;
 	}
+
+	h4 {
+		text-wrap: wrap;
+	}
 }
 
 // when the reminder is default make the header more bold
