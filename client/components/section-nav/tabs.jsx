@@ -31,7 +31,7 @@ class NavTabs extends Component {
 	state = {
 		isDropdown: false,
 	};
-
+	//
 	navGroupRef = createRef();
 	tabRefMap = new Map();
 

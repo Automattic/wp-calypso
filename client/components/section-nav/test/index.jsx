@@ -5,6 +5,8 @@ import { createElement, Children } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import SectionNav from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {
@@ -144,6 +146,62 @@ describe( 'section-nav', () => {
 				expect( spy ).toHaveBeenCalledTimes( 2 );
 				done();
 			} );
+		} );
+	} );
+
+	describe( 'Nav Tabs', () => {
+		test( 'should render the mobile header if dropdown is enabled and NavTabs hasHorizontalScroll true', () => {
+			const children = createComponent(
+				NavTabs,
+				{
+					label: 'NavTabs',
+					hasHorizontalScroll: true,
+				},
+				<NavItem path="/demo" selected>
+					Demo
+				</NavItem>
+			);
+
+			const component = createComponent(
+				SectionNav,
+				{
+					selectedText: 'Test',
+					allowDropdown: true,
+				},
+				children
+			);
+
+			const header = component.props.children.find(
+				( child ) => child && child.props && child.props.className === 'section-nav__mobile-header'
+			);
+			expect( header ).toBeDefined();
+		} );
+
+		test( 'should not render the mobile header if dropdown is not enabled and NavTabs hasHorizontalScroll true', () => {
+			const children = createComponent(
+				NavTabs,
+				{
+					label: 'NavTabs',
+					hasHorizontalScroll: true,
+				},
+				<NavItem path="/demo" selected>
+					Demo
+				</NavItem>
+			);
+
+			const component = createComponent(
+				SectionNav,
+				{
+					selectedText: 'Test',
+					allowDropdown: false,
+				},
+				children
+			);
+
+			const header = component.props.children.find(
+				( child ) => child && child.props && child.props.className === 'section-nav__mobile-header'
+			);
+			expect( header ).toBeUndefined();
 		} );
 	} );
 } );
