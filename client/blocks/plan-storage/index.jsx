@@ -86,16 +86,18 @@ export function PlanStorage( { children, className, siteId } ) {
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
-	const planStorageComponents = (
-		<>
-			<PlanStorageBar
-				sitePlanSlug={ sitePlanSlug }
-				mediaStorage={ mediaStorage }
-				displayUpgradeLink={ displayUpgradeLink }
-			>
-				{ children }
-			</PlanStorageBar>
-		</>
+	const hasPlanUnlimitedStorage = planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE );
+	const noMediaStorage = ! mediaStorage || mediaStorage.maxStorageBytes === -1;
+	const shouldRenderStorageBar = ! hasPlanUnlimitedStorage && ! noMediaStorage;
+
+	const planStorageComponents = shouldRenderStorageBar && (
+		<PlanStorageBar
+			sitePlanSlug={ sitePlanSlug }
+			mediaStorage={ mediaStorage }
+			displayUpgradeLink={ displayUpgradeLink }
+		>
+			{ children }
+		</PlanStorageBar>
 	);
 
 	const showTooltip = () => setTooltipVisible( true );
@@ -121,6 +123,7 @@ export function PlanStorage( { children, className, siteId } ) {
 			</>
 		);
 	}
+
 	if ( isSharedQuota ) {
 		return (
 			<>
@@ -140,6 +143,7 @@ export function PlanStorage( { children, className, siteId } ) {
 			</>
 		);
 	}
+
 	return <div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
 
