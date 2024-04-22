@@ -222,6 +222,7 @@ export interface PricedAPISitePlan
 	/* product_id: number; // not included in the plan's payload */
 	product_slug: StorePlanSlug;
 	current_plan?: boolean;
+	has_redeemed_domain_credit?: boolean;
 
 	/**
 	 * This is the purchase ID present when `current_plan` is true.
