@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -163,8 +164,6 @@ const siteMigration: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
-			// TODO - this should be replaced by a proper check for the processing flag.
-			const removeProcessingFlag = false;
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -228,7 +227,7 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
-					if ( removeProcessingFlag ) {
+					if ( config.isEnabled( 'migration-flow/remove-processing-step' ) ) {
 						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
