@@ -40,10 +40,20 @@ const useSiteMenuItems = () => {
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
 	const shouldShowGlobalSidebar = useSelector( ( state ) => {
-		return getShouldShowGlobalSidebar( state, selectedSiteId, currentSection?.group );
+		return getShouldShowGlobalSidebar(
+			state,
+			selectedSiteId,
+			currentSection?.group,
+			currentSection?.name
+		);
 	} );
 	const shouldShowCollapsedGlobalSidebar = useSelector( ( state ) => {
-		return getShouldShowCollapsedGlobalSidebar( state, selectedSiteId, currentSection?.group );
+		return getShouldShowCollapsedGlobalSidebar(
+			state,
+			selectedSiteId,
+			currentSection?.group,
+			currentSection?.name
+		);
 	} );
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
