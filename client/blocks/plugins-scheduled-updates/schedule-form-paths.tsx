@@ -8,46 +8,101 @@ import {
 import { check, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useCallback } from 'react';
+import { MAX_SELECTABLE_PATHS } from './config';
+import { useSiteSlug } from './hooks/use-site-slug';
+import { validatePath } from './schedule-form.helper';
 
 interface Props {
+	paths?: string[];
 	borderWrapper?: boolean;
 }
 export function ScheduleFormPaths( props: Props ) {
 	const translate = useTranslate();
-	const { borderWrapper = true } = props;
+	const siteSlug = useSiteSlug();
+	const { paths: initPaths = [], borderWrapper = true } = props;
+
+	const [ paths, setPaths ] = useState( initPaths );
+	const [ newPath, setNewPath ] = useState( '' );
+	const [ newPathError, setNewPathError ] = useState( '' );
+
+	const onNewPathSubmit = useCallback( () => {
+		const pathError = validatePath( newPath );
+		setNewPathError( pathError );
+
+		if ( pathError ) {
+			return;
+		}
+
+		setPaths( [ ...paths, newPath ] );
+		setNewPath( '' );
+	}, [ newPath, paths ] );
 
 	return (
 		<div className="form-field form-field--paths">
 			<label htmlFor="paths">{ translate( 'Test URL paths' ) }</label>
 
-			<Text className="info-msg">
-				{ translate(
-					'Your schedule will test your front page for errors. Do you want to add additional paths?'
-				) }
-			</Text>
+			{ newPathError ? (
+				<Text className="validation-msg">{ newPathError }</Text>
+			) : (
+				<Text className="info-msg">
+					{ translate(
+						'Your schedule will test your front page for errors. Do you want to add additional paths?'
+					) }
+				</Text>
+			) }
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<Text className="info-msg">Website URL paths</Text>
 
 				<div className="paths">
 					<Flex className="path" gap={ 2 }>
 						<FlexItem isBlock={ true }>
-							<InputControl value="lorem-ipsum-dolor.sit" size="__unstable-large" readOnly />
+							<InputControl value={ siteSlug } size="__unstable-large" readOnly />
 						</FlexItem>
 						<FlexItem>
 							<Button disabled icon={ check } __next40pxDefaultSize />
 						</FlexItem>
 					</Flex>
+					{ paths.map( ( path, i ) => (
+						<Flex className="path" gap={ 2 } key={ i }>
+							<FlexItem isBlock={ true }>
+								<InputControl value={ path } size="__unstable-large" readOnly />
+							</FlexItem>
+							<FlexItem>
+								<Button disabled icon={ check } __next40pxDefaultSize />
+							</FlexItem>
+						</Flex>
+					) ) }
 				</div>
-				<div className="new-path">
-					<Flex className="path" gap={ 2 }>
-						<FlexItem isBlock={ true }>
-							<InputControl value="lorem-ipsum-dolor.sit" size="__unstable-large" />
-						</FlexItem>
-						<FlexItem>
-							<Button variant="secondary" icon={ plus } __next40pxDefaultSize />
-						</FlexItem>
-					</Flex>
-				</div>
+				{ paths.length < MAX_SELECTABLE_PATHS && (
+					<div className="new-path">
+						<Flex className="path" gap={ 2 }>
+							<FlexItem isBlock={ true }>
+								<InputControl
+									value={ newPath }
+									name="path"
+									size="__unstable-large"
+									placeholder={ translate( '/add-path' ) }
+									onChange={ ( p ) => setNewPath( p || '' ) }
+									onKeyPress={ ( e ) => {
+										if ( e.key === 'Enter' ) {
+											e.preventDefault();
+											onNewPathSubmit();
+										}
+									} }
+								/>
+							</FlexItem>
+							<FlexItem>
+								<Button
+									icon={ plus }
+									variant="secondary"
+									onClick={ onNewPathSubmit }
+									__next40pxDefaultSize
+								/>
+							</FlexItem>
+						</Flex>
+					</div>
+				) }
 			</div>
 		</div>
 	);
