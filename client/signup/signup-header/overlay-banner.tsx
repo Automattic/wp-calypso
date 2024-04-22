@@ -10,16 +10,14 @@ import './style.scss';
 const globalStyleOverrides = css`
 	body.is-section-signup.is-white-signup {
 		.layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+			// navigation links for step-wrapper are not part of header
 			.step-wrapper__navigation .navigation-link.button.is-borderless {
 				color: var( --color-text-inverted );
 				svg {
 					fill: var( --color-text-inverted );
 				}
 			}
-			.signup-header .wordpress-logo {
-				fill: var( --color-text-inverted );
-			}
-
+			// slightly more space between navigation links and heading when blue or bordered banner in header
 			.signup:not( .is-onboarding-2023-pricing-grid )
 				.step-wrapper:not( .is-horizontal-layout )
 				.step-wrapper__header {
@@ -29,23 +27,26 @@ const globalStyleOverrides = css`
 	}
 `;
 
-const SignupHeaderBanner = ( { children }: { children: ReactNode } ) => {
+const SignupHeaderOverlayBanner = ( { children }: { children: ReactNode } ) => {
+	const classes = classnames( 'signup-header__overlay-banner', {
+		'is-dark-background': true,
+	} );
 	return (
 		<>
 			<Global styles={ globalStyleOverrides } />
-			<div className="signup-header__overflow-banner">{ children }</div>
+			<div className={ classes }>{ children }</div>
 		</>
 	);
 };
 
-export const SignupHeaderBannerWithRefundPeriod = () => {
+export const SignupHeaderOverlayBannerWithRefundPeriod = () => {
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 
 	return (
-		<SignupHeaderBanner>
+		<SignupHeaderOverlayBanner>
 			<div
-				className={ classnames( 'signup-header__overflow-banner-with-refund-period', {
+				className={ classnames( 'signup-header__overlay-banner-with-refund-period', {
 					'is-mobile': isMobile,
 				} ) }
 			>
@@ -54,17 +55,15 @@ export const SignupHeaderBannerWithRefundPeriod = () => {
 						icon: (
 							<Icon
 								icon={
-									<BraveTickIcon className="signup-header__overflow-banner-with-refund-period-icon" />
+									<BraveTickIcon className="signup-header__overlay-banner-with-refund-period-icon" />
 								}
 								size={ 30 }
 							/>
 						),
-						text: <span className="signup-header__overflow-banner-with-refund-period-text" />,
+						text: <span className="signup-header__overlay-banner-with-refund-period-text" />,
 					},
 				} ) }
 			</div>
-		</SignupHeaderBanner>
+		</SignupHeaderOverlayBanner>
 	);
 };
-
-export default SignupHeaderBanner;
