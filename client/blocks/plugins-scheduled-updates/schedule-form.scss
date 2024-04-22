@@ -201,6 +201,12 @@
 			.components-input-control__backdrop {
 				border-color: var(--studio-gray-10);
 			}
+
+			.components-input-base[class*="Root-rootFocusedStyles"] {
+				.components-input-control__backdrop {
+					border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+				}
+			}
 		}
 
 		.path {
