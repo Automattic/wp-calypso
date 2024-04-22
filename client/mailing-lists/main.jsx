@@ -126,6 +126,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Akismet Marketing' );
 		} else if ( 'woopay_marketing' === category ) {
 			return this.props.translate( 'WooPay Marketing' );
+		} else if ( 'gravatar_onboarding' === category ) {
+			return this.props.translate( 'Gravatar Onboarding' );
 		}
 
 		return category;
@@ -185,6 +187,10 @@ class MainComponent extends Component {
 			);
 		} else if ( 'woopay_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of WooPay.' );
+		} else if ( 'gravatar_onboarding' === category ) {
+			return this.props.translate(
+				'Get tips and reminders to optimize your Gravatar profile setup.'
+			);
 		}
 
 		return null;
@@ -256,7 +262,6 @@ class MainComponent extends Component {
 		const messageLabel = this.state.isSubscribed
 			? translate( "We'll send you updates for this mailing list." )
 			: translate( 'You will no longer receive updates for this mailing list.' );
-		const categoryName = this.getCategoryName();
 
 		return (
 			<div className="mailing-lists">
@@ -267,38 +272,37 @@ class MainComponent extends Component {
 					<p>{ preventWidows( messageLabel, 2 ) }</p>
 				</div>
 
+				<Card className="mailing-lists__details">
+					<h4>{ this.getCategoryName() }</h4>
+					<p>{ this.getCategoryDescription() }</p>
+					{ this.state.isSubscribed ? (
+						<button
+							className="mailing-lists__unsubscribe-button button is-primary"
+							onClick={ this.onUnsubscribeClick }
+						>
+							{ translate( 'Unsubscribe' ) }
+						</button>
+					) : (
+						<button
+							className="mailing-lists__resubscribe-button button"
+							onClick={ this.onResubscribeClick }
+						>
+							{ translate( 'Resubscribe' ) }
+						</button>
+					) }
+				</Card>
+
 				{
-					// Don't show the unsubscribe / resubscribe button and the manage link for Gravatar-related categories.
-					! categoryName?.startsWith( 'gravatar_' ) && (
-						<>
-							<Card className="mailing-lists__details">
-								<h4>{ categoryName }</h4>
-								<p>{ this.getCategoryDescription() }</p>
-								{ this.state.isSubscribed ? (
-									<button
-										className="mailing-lists__unsubscribe-button button is-primary"
-										onClick={ this.onUnsubscribeClick }
-									>
-										{ translate( 'Unsubscribe' ) }
-									</button>
-								) : (
-									<button
-										className="mailing-lists__resubscribe-button button"
-										onClick={ this.onResubscribeClick }
-									>
-										{ translate( 'Resubscribe' ) }
-									</button>
-								) }
-							</Card>
-							<p className="mailing-lists__manage-link">
-								<button
-									className="mailing-lists__manage-button button is-link"
-									onClick={ this.onManageUpdatesClick }
-								>
-									{ translate( 'Manage all your email subscriptions' ) }
-								</button>
-							</p>
-						</>
+					// Don't show the manage link for Gravatar-related categories.
+					! this.getCategoryFromMessageTypeId()?.startsWith( 'gravatar_' ) && (
+						<p className="mailing-lists__manage-link">
+							<button
+								className="mailing-lists__manage-button button is-link"
+								onClick={ this.onManageUpdatesClick }
+							>
+								{ translate( 'Manage all your email subscriptions' ) }
+							</button>
+						</p>
 					)
 				}
 			</div>
