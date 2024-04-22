@@ -288,7 +288,7 @@ export const PatternLibrary = ( {
 				/>
 			) }
 
-			<PatternsHeader category={ category } />
+			<PatternsHeader />
 
 			<div className="pattern-library__wrapper">
 				<div
