@@ -76,7 +76,7 @@ export default function ItemPreviewPane( {
 	} );
 
 	return (
-		<div className={ classNames( 'site-preview__pane', className ) }>
+		<div className={ classNames( 'item-preview__pane', className ) }>
 			<ItemPreviewPaneHeader closeItemPreviewPane={ closeItemPreviewPane } itemData={ itemData } />
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
@@ -90,7 +90,7 @@ export default function ItemPreviewPane( {
 				tourId="sitesWalkthrough"
 				context={ navRef }
 			/>
-			{ selectedFeature.preview }
+			<div className="preview-pane__content">{ selectedFeature.preview }</div>
 		</div>
 	);
 }
