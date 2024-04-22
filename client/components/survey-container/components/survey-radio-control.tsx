@@ -1,7 +1,17 @@
+import { useCallback } from 'react';
 import { QuestionSelectionType } from './question-step';
 import SurveyRadioOption from './survey-radio-option';
 
 const SurveyRadioControl = ( { onChange, question, value }: QuestionSelectionType ) => {
+	const handleChange = useCallback(
+		( questionKey: string, newValue: string[] ) => {
+			if ( ! value.includes( newValue[ 0 ] ) ) {
+				onChange( questionKey, newValue );
+			}
+		},
+		[ onChange, value ]
+	);
+
 	return (
 		<div className="question-options__container" role="radiogroup">
 			{ question.options.map( ( option, index ) => (
@@ -9,9 +19,9 @@ const SurveyRadioControl = ( { onChange, question, value }: QuestionSelectionTyp
 					key={ index }
 					question={ question }
 					option={ option }
-					onChange={ onChange }
+					onChange={ handleChange }
 					value={ value }
-				></SurveyRadioOption>
+				/>
 			) ) }
 		</div>
 	);
