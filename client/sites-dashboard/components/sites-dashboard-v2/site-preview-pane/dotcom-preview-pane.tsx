@@ -4,6 +4,7 @@ import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -42,7 +43,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Overview" />
+				<HostingOverview />
 			),
 			createFeaturePreview(
 				DOTCOM_MONITORING,
