@@ -706,8 +706,8 @@ const sections = [
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/my-sites/github-deployments',
-		group: 'sites',
+		module: 'calypso/github-deployments',
+		group: 'sites-dashboard',
 	},
 	{
 		name: 'a8c-for-agencies',
