@@ -127,6 +127,17 @@ class Help_Center {
 			)
 		);
 
+		$current_user = wp_get_current_user();
+
+		wp_localize_script(
+			'help-center-script',
+			'odieUserData',
+			array(
+				'displayName' => $current_user->data->display_name,
+				'email'       => $current_user->data->user_email,
+			)
+		);
+
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
 	}
 

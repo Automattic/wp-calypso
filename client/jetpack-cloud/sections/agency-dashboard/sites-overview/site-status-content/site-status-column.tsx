@@ -4,8 +4,7 @@ import { Gridicon, Tooltip } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { CART_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/marketplace/shopping-cart';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -62,7 +61,7 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 
 	const handleA4AAddAction = useCallback( () => {
 		const productSlug = DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ];
-		const productPurchaseLink = `${ A4A_MARKETPLACE_PRODUCTS_LINK }?product_slug=${ productSlug }&source=sitesdashboard&site_id=${ siteId }${ CART_URL_HASH_FRAGMENT }`;
+		const productPurchaseLink = `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ productSlug }&source=sitesdashboard&site_id=${ siteId }`;
 
 		return page( productPurchaseLink );
 	}, [ siteId, type ] );

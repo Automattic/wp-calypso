@@ -98,6 +98,10 @@ $blueberry-hover-color: var(--wp-components-color-accent, var(--wp-admin-theme-c
 			// Checkbox styles
 			.components-checkbox-control__input-container {
 				margin-right: 0;
+
+				svg.components-checkbox-control__checked {
+					animation: grow 0.2s ease-in-out;
+				}
 			}
 
 			.components-base-control__field {

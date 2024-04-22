@@ -21,26 +21,5 @@
 				}
 			}
 		}
-
-		div.radio-option {
-			flex-basis: 100%;
-			min-height: 85px;
-
-			& > .components-radio-control {
-				margin-bottom: 1rem;
-			}
-		}
-	}
-
-	.form-field--frequency {
-		& > .components-flex {
-			gap: 2rem;
-
-			& > .components-flex-item {
-				margin-bottom: 0;
-				border: solid 1px var(--studio-gray-10);
-				border-radius: 2px;
-			}
-		}
 	}
 }

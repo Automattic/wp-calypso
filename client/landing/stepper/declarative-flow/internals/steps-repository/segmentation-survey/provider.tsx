@@ -34,23 +34,21 @@ const SegmentationSurveyProvider = ( {
 		window.location.hash = `${ currentPage - 1 }`;
 	}, [ currentPage, navigation ] );
 
-	const nextPage = useCallback(
-		( skip: boolean = false ) => {
-			if ( ! skip && currentQuestion ) {
-				onSubmitQuestion( currentQuestion );
-			}
+	const nextPage = useCallback( () => {
+		if ( currentPage === questions?.length ) {
+			navigation.submit?.();
+			return;
+		}
 
-			if ( currentPage === questions?.length ) {
-				navigation.submit?.();
-				return;
-			}
+		window.location.hash = `${ currentPage + 1 }`;
+	}, [ currentPage, navigation, questions?.length ] );
 
-			window.location.hash = `${ currentPage + 1 }`;
-		},
-		[ currentPage, currentQuestion, navigation, onSubmitQuestion, questions?.length ]
-	);
-
-	const skip = useCallback( () => nextPage( true ), [ nextPage ] );
+	const submitAndNextPage = useCallback( () => {
+		if ( currentQuestion ) {
+			onSubmitQuestion( currentQuestion );
+		}
+		nextPage();
+	}, [ currentQuestion, nextPage, onSubmitQuestion ] );
 
 	return (
 		<SurveyContext.Provider
@@ -58,8 +56,8 @@ const SegmentationSurveyProvider = ( {
 				currentQuestion,
 				currentPage,
 				previousPage,
-				nextPage,
-				skip,
+				nextPage: submitAndNextPage,
+				skip: nextPage,
 			} }
 		>
 			{ children }
