@@ -23,7 +23,7 @@ import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews from './sites-dataviews';
 
 // todo use this A4A styles until we extract them as common styles in the ItemsDashboard component
-import 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/style.scss';
+import './style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];
