@@ -25,14 +25,21 @@ function selectPlanUsage( payload: PlanUsage ): PlanUsage {
 	const recent_usages = payload?.recent_usages
 		?.map( ( usage ) => usage?.views_count ?? 0 )
 		.filter( ( views ) => views > 0 );
+	if ( payload?.current_usage?.views_count > 0 ) {
+		recent_usages.push( payload.current_usage.views_count );
+	}
 
 	if ( recent_usages.length === 1 ) {
+		// Only one number non-zero, use it.
 		billableMonthlyViews = recent_usages[ 0 ];
 	} else if ( recent_usages.length === 2 ) {
+		// Two numbers non-zero, use the average.
 		billableMonthlyViews = ( recent_usages[ 0 ] + recent_usages[ 1 ] ) / 2;
 	} else if ( recent_usages.length === 3 ) {
+		// Three numbers non-zero, use the middle one.
 		billableMonthlyViews = recent_usages[ 1 ];
 	} else if ( recent_usages.length === 4 ) {
+		// Four numbers non-zero, use the average of the second and third.
 		billableMonthlyViews = ( recent_usages[ 1 ] + recent_usages[ 2 ] ) / 2;
 	}
 
