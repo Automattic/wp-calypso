@@ -1,4 +1,5 @@
 import { SiteExcerptData } from '@automattic/sites';
+import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useMemo, useState } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
@@ -21,6 +22,8 @@ type Props = {
 };
 
 const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
+	const { __ } = useI18n();
+
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState< string | undefined >(
 		'dotcom-overview'
 	);
@@ -39,7 +42,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		() => [
 			createFeaturePreview(
 				DOTCOM_OVERVIEW,
-				'Overview',
+				__( 'Overview' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -47,7 +50,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			),
 			createFeaturePreview(
 				DOTCOM_MONITORING,
-				'Monitoring',
+				__( 'Monitoring' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -55,7 +58,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
-				'GitHub Deployments',
+				__( 'GitHub Deployments' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
@@ -63,7 +66,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
-				'Hosting Config',
+				__( 'Hosting Config' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
