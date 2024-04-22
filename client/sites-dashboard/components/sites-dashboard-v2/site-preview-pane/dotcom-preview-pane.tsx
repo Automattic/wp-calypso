@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
+import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
@@ -71,12 +72,16 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		[ selectedSiteFeature, setSelectedSiteFeature, site ]
 	);
 
+	const itemData: ItemData = {
+		title: site.title,
+		subtitle: site.slug,
+		icon: site.icon?.img,
+	};
+
 	return (
 		<ItemPreviewPane
-			itemTitle={ site.title }
-			itemSubtitle={ site.slug }
-			itemIcon={ site.icon?.img }
-			closeSitePreviewPane={ closeSitePreviewPane }
+			itemData={ itemData }
+			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
 		/>
 	);
