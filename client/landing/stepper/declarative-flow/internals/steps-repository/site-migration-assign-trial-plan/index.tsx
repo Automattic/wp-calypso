@@ -35,8 +35,7 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 
 			assignMigrationTrialPlan();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ site, isAddingTrial ] );
+	}, [ site, isAddingTrial, addHostingTrial ] );
 
 	return null;
 };
