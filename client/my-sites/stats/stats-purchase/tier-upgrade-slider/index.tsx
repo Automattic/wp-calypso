@@ -19,6 +19,7 @@ interface TierStep {
 type TierUpgradeSliderProps = {
 	className?: string;
 	uiStrings: TierUIStrings;
+	firstTierInfo?: string;
 	popupInfoString?: string;
 	steps: TierStep[];
 	initialValue?: number;
@@ -29,6 +30,7 @@ type TierUpgradeSliderProps = {
 function TierUpgradeSlider( {
 	className,
 	uiStrings,
+	firstTierInfo,
 	popupInfoString,
 	steps,
 	initialValue = 0,
@@ -84,6 +86,10 @@ function TierUpgradeSlider( {
 	// Only visible if the slider is at the max value and we have a string/node to display.
 	const infoReferenceElement = useRef( null );
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
+
+	const firstTierInfoRef = useRef( null );
+	const showFirstTierInfo = currentPlanIndex === 0 && firstTierInfo !== undefined;
+
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const originalPrice = steps[ currentPlanIndex ]?.rhValue;
 	const discountedPrice = steps[ currentPlanIndex ]?.upgradePrice;
@@ -95,12 +101,15 @@ function TierUpgradeSlider( {
 			<div className="tier-upgrade-slider__step-callouts">
 				<div className="tier-upgrade-slider__step-callout">
 					<h2>{ uiStrings.limits }</h2>
-					<p>{ lhValue }</p>
+					<b ref={ firstTierInfoRef }>
+						{ lhValue }
+						{ showFirstTierInfo && <Icon icon={ info } /> }
+					</b>
 				</div>
 				{ ! secondaryCalloutIsHidden && (
 					<div className="tier-upgrade-slider__step-callout right-aligned">
 						<h2>{ uiStrings.price }</h2>
-						<p ref={ infoReferenceElement }>
+						<b ref={ infoReferenceElement }>
 							{ discountedPrice ? (
 								<>
 									<span className="full-price-label">{ originalPrice }</span>
@@ -110,7 +119,7 @@ function TierUpgradeSlider( {
 								<span>{ originalPrice }</span>
 							) }
 							{ showPopup && <Icon icon={ info } /> }
-						</p>
+						</b>
 					</div>
 				) }
 			</div>
@@ -128,12 +137,21 @@ function TierUpgradeSlider( {
 			) }
 			<Popover
 				position="right"
+				context={ firstTierInfoRef?.current }
+				isVisible={ showFirstTierInfo }
+				focusOnShow={ false }
+				className="stats-purchase__info-popover"
+			>
+				<div className="stats-purchase__info-popover-content">{ firstTierInfo }</div>
+			</Popover>
+			<Popover
+				position="right"
 				context={ infoReferenceElement?.current }
 				isVisible={ showPopup }
 				focusOnShow={ false }
 				className="stats-purchase__info-popover"
 			>
-				<div className="stats-purchase__info-popover-content">{ showPopup && popupInfoString }</div>
+				<div className="stats-purchase__info-popover-content">{ popupInfoString }</div>
 			</Popover>
 			<p className="tier-upgrade-slider__info-message">{ uiStrings.strategy }</p>
 		</div>
