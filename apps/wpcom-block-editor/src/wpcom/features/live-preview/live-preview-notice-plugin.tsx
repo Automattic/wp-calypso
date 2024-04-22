@@ -55,7 +55,8 @@ const LivePreviewNotice: FC< {
 const LivePreviewNoticePlugin = () => {
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const previewingTheme = usePreviewingTheme();
-	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( previewingTheme );
+	const { canPreviewButNeedUpgrade, upgradePlan, requiredPlanSlug } =
+		useCanPreviewButNeedUpgrade( previewingTheme );
 	const dashboardLink = useSelect(
 		( select ) =>
 			unlock &&
@@ -72,7 +73,7 @@ const LivePreviewNoticePlugin = () => {
 	if ( canPreviewButNeedUpgrade ) {
 		return (
 			<>
-				<LivePreviewUpgradeModal { ...{ previewingTheme, upgradePlan } } />
+				<LivePreviewUpgradeModal { ...{ previewingTheme, upgradePlan, requiredPlanSlug } } />
 				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);

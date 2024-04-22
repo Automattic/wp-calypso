@@ -1,55 +1,57 @@
-import { useCallback } from 'react';
+import { CheckboxControl } from '@wordpress/components';
 import { Question, Option } from '../types';
 
-type SurveyRadioOptionType = {
+type SurveyCheckboxOptionType = {
 	question: Question;
 	option: Option;
 	onChange: ( key: string, value: string[] ) => void;
 	value: string[];
 };
 
-const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOptionType ) => {
+const SurveyCheckboxOption = ( {
+	question,
+	option,
+	onChange,
+	value,
+}: SurveyCheckboxOptionType ) => {
 	const isSelected = value.includes( option.value );
+	const handleToggle = () => {
+		const newValue = isSelected
+			? value.filter( ( v ) => v !== option.value )
+			: [ ...value, option.value ];
 
-	const handleKeyDown = useCallback(
-		( event: React.KeyboardEvent< HTMLDivElement > ) => {
-			if ( event.key === 'Enter' || event.key === ' ' ) {
-				onChange( question.key, [ option.value ] );
-			}
-		},
-		[ onChange, question.key, option.value ]
-	);
+		onChange( question.key, newValue );
+	};
 
-	const handleClick = useCallback( () => {
-		onChange( question.key, [ option.value ] );
-	}, [ onChange, question.key, option.value ] );
+	const handleKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			handleToggle();
+		}
+	};
 
 	return (
 		<div
 			className={ `question-options__option-control ${ isSelected ? 'checked' : '' }` }
-			role="radio"
-			tabIndex={ 0 }
-			onClick={ handleClick }
+			role="checkbox"
+			onClick={ handleToggle }
 			onKeyDown={ handleKeyDown }
+			tabIndex={ 0 }
 			aria-checked={ isSelected ? 'true' : 'false' }
 			aria-labelledby={ `option-label-${ option.value } option-help-text-${ option.value }` }
 		>
-			<input
-				type="radio"
+			<CheckboxControl
 				id={ `option-${ option.value }` }
 				name={ question.key }
 				value={ option.value }
-				onChange={ handleClick }
 				checked={ isSelected }
-				className="form-radio"
+				onChange={ handleToggle }
 				tabIndex={ -1 }
 				aria-hidden="true"
+				onClick={ ( e ) => e.stopPropagation() }
 			/>
 
 			<div className="question-options__option-label">
-				<label id={ `option-label-${ option.value }` } htmlFor={ `option-${ option.value }` }>
-					{ option.label }
-				</label>
+				<label id={ `option-label-${ option.value }` }>{ option.label }</label>
 				{ option.helpText && (
 					<span
 						id={ `option-help-text-${ option.value }` }
@@ -63,4 +65,4 @@ const SurveyRadioOption = ( { question, option, onChange, value }: SurveyRadioOp
 	);
 };
 
-export default SurveyRadioOption;
+export default SurveyCheckboxOption;
