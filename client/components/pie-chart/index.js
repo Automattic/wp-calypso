@@ -10,6 +10,9 @@ import './style.scss';
 
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
+
+// Bottom left position relative to the cursor for the tooltip,
+// which is the tooltip width offset the distance from the right edge to the arrow.
 const TOOLTIP_OFFSET_X = -207;
 const TOOLTIP_OFFSET_Y = 0;
 
