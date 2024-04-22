@@ -6,11 +6,11 @@ type Props = {
 	className?: string;
 };
 
-export default function SitePreviewPaneFooter( { children, className }: Props ) {
+export default function ItemPreviewPaneFooter( { children, className }: Props ) {
 	return (
 		children && (
 			<>
-				<div className={ classNames( 'site-preview__footer', className ) }>{ children }</div>
+				<div className={ classNames( 'item-preview__footer', className ) }>{ children }</div>
 			</>
 		)
 	);

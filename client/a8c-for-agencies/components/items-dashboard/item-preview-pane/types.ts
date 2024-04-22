@@ -17,15 +17,16 @@ export interface FeatureTabInterface {
 }
 
 export interface ItemData {
-	itemTitle: string;
-	itemSubtitle: string;
-	itemUrl?: string;
-	itemIcon?: string;
-	itemColor?: string;
+	title: string;
+	subtitle: string;
+	url?: string;
+	icon?: string;
+	color?: string;
 }
 
-export interface PreviewPaneProps extends ItemData {
-	closeSitePreviewPane?: () => void;
+export interface PreviewPaneProps {
+	itemData: ItemData;
+	closeItemPreviewPane?: () => void;
 	selectedFeatureId?: string;
 	features?: FeaturePreviewInterface[];
 	className?: string;

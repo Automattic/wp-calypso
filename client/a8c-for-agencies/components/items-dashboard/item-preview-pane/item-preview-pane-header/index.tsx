@@ -10,46 +10,44 @@ import './style.scss';
 
 const ICON_SIZE = 24;
 
-interface Props extends ItemData {
-	closeSitePreviewPane?: () => void;
+interface Props {
+	closeItemPreviewPane?: () => void;
+	itemData: ItemData;
 	className?: string;
 }
 
-export default function SitePreviewPaneHeader( {
-	itemTitle,
-	itemSubtitle,
-	itemUrl,
-	itemColor,
-	closeSitePreviewPane,
+export default function ItemPreviewPaneHeader( {
+	itemData,
+	closeItemPreviewPane,
 	className,
 }: Props ) {
-	const siteColor = itemColor ?? 'linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4)';
+	const itemColor = itemData.color ?? 'linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4)';
 	const size = 40;
 
-	const defaultFavicon = <div className="no-favicon" style={ { background: siteColor } } />;
+	const defaultFavicon = <div className="no-favicon" style={ { background: itemColor } } />;
 
 	return (
-		<div className={ classNames( 'site-preview__header', className ) }>
-			<div className="site-preview__header-content">
+		<div className={ classNames( 'item-preview__header', className ) }>
+			<div className="item-preview__header-content">
 				<div className={ classNames( 'site-favicon', className ) }>
 					<SiteIcon size={ size } defaultIcon={ defaultFavicon } />
 				</div>
-				<div className="site-preview__header-title-summary">
-					<div className="site-preview__header-title">{ itemTitle }</div>
-					<div className="site-preview__header-summary">
+				<div className="item-preview__header-title-summary">
+					<div className="item-preview__header-title">{ itemData.title }</div>
+					<div className="item-preview__header-summary">
 						<Button
 							variant="link"
 							className="site-preview__header-summary-link"
-							href={ itemUrl }
+							href={ itemData.url }
 							target="_blank"
 						>
-							<span>{ itemSubtitle }</span>
+							<span>{ itemData.subtitle }</span>
 							<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
 						</Button>
 					</div>
 				</div>
 				<Button
-					onClick={ closeSitePreviewPane }
+					onClick={ closeItemPreviewPane }
 					className="site-preview__close-preview"
 					aria-label={ translate( 'Close Preview' ) }
 				>

@@ -4,7 +4,7 @@ import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SitePreviewPaneHeader from './site-preview-pane-header';
+import ItemPreviewPaneHeader from './item-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
 
 import './style.scss';
@@ -32,13 +32,9 @@ export const createFeaturePreview = (
 
 export default function ItemPreviewPane( {
 	features,
-	closeSitePreviewPane,
+	closeItemPreviewPane,
 	className,
-	itemTitle,
-	itemSubtitle,
-	itemUrl,
-	itemColor,
-	itemIcon,
+	itemData,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -81,14 +77,7 @@ export default function ItemPreviewPane( {
 
 	return (
 		<div className={ classNames( 'site-preview__pane', className ) }>
-			<SitePreviewPaneHeader
-				closeSitePreviewPane={ closeSitePreviewPane }
-				itemTitle={ itemTitle }
-				itemSubtitle={ itemSubtitle }
-				itemUrl={ itemUrl }
-				itemColor={ itemColor }
-				itemIcon={ itemIcon }
-			/>
+			<ItemPreviewPaneHeader closeItemPreviewPane={ closeItemPreviewPane } itemData={ itemData } />
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
 					{ navItems && navItems.length > 0 ? (
