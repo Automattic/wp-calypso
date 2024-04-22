@@ -155,8 +155,8 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 				<ConfirmModal
 					compact={ false }
 					title={ translate( 'Migration sounds daunting? It shouldn’t be!' ) }
-					confirmText="Take the deal"
-					cancelText="No, thanks"
+					confirmText={ translate( 'Take the deal' ) }
+					cancelText={ translate( 'No, thanks' ) }
 					onClose={ navigateBack }
 					onConfirm={ () => {} }
 				>
