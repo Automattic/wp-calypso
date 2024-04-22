@@ -1,14 +1,15 @@
 import { PlanSlug } from '@automattic/calypso-products';
-import { ProgressBar, Button, Card, PlanPrice } from '@automattic/components';
+import { Button, Card, PlanPrice } from '@automattic/components';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
-import { Icon, cloud } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
+import PlanStorage from 'calypso/blocks/plan-storage';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import PlanStorageBar from 'calypso/hosting-overview/components/plan-storage-bar';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -29,10 +30,6 @@ const PlanCard: FC = () => {
 		useCheckPlanAvailabilityForPurchase,
 	} );
 	const translate = useTranslate();
-
-	// TODO: Replace with real data using <PlanStorage /> component
-	const usedGigabytes = 47;
-	const availableUnitAmount = 50;
 
 	return (
 		<>
@@ -85,31 +82,12 @@ const PlanCard: FC = () => {
 						</div>
 					</>
 				) }
-				<div className="hosting-overview__plan-storage">
-					<div className="hosting-overview__plan-storage-title-wrapper">
-						<div className="hosting-overview__plan-storage-title">
-							<Icon icon={ cloud } />
-							{ translate( 'Storage' ) }
-						</div>
-						<span>
-							{ translate(
-								'Using {{usedStorage}}%(usedGigabytes).1f GB{{/usedStorage}} of %(availableUnitAmount)d GB',
-								'Using {{usedStorage}}%(usedGigabytes).1f GB{{/usedStorage}} of %(availableUnitAmount)d GB',
-								{
-									count: usedGigabytes,
-									args: { usedGigabytes, availableUnitAmount },
-									comment:
-										'Must use unit abbreviation; describes used vs available storage amounts (e.g., Using 20.0GB of 30GB, Using 0.5GB of 20GB)',
-									components: { usedStorage: <span className="used-space__span" /> },
-								}
-							) }
-						</span>
-					</div>
-					<ProgressBar
-						color="var(--studio-red-30)"
-						value={ usedGigabytes / availableUnitAmount }
-						total={ 1 }
-					/>
+				<PlanStorage
+					className="hosting-overview__plan-storage"
+					shouldDisplayUpgradeLink={ false }
+					siteId={ site?.ID }
+					StorageBarComponent={ PlanStorageBar }
+				>
 					<div className="hosting-overview__plan-storage-footer">
 						<Button
 							className="hosting-overview__link-button"
@@ -119,7 +97,7 @@ const PlanCard: FC = () => {
 							{ translate( 'Need more storage?' ) }
 						</Button>
 					</div>
-				</div>
+				</PlanStorage>
 			</Card>
 		</>
 	);
