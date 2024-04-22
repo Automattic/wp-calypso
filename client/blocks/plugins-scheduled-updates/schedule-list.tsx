@@ -14,6 +14,11 @@ import { useState } from 'react';
 import { useDeleteUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSelector } from 'calypso/state';
+import {
+	getSiteAdminUrl,
+	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
+} from 'calypso/state/sites/selectors';
 import { useCanCreateSchedules } from './hooks/use-can-create-schedules';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
@@ -23,6 +28,7 @@ import { ScheduleListEmpty } from './schedule-list-empty';
 import { ScheduleListTable } from './schedule-list-table';
 
 interface Props {
+	siteId: number | null;
 	onNavBack?: () => void;
 	onCreateNewSchedule?: () => void;
 	onEditSchedule: ( id: string ) => void;
@@ -36,9 +42,14 @@ export const ScheduleList = ( props: Props ) => {
 	const { siteHasEligiblePlugins, loading: siteHasEligiblePluginsLoading } =
 		useSiteHasEligiblePlugins();
 
-	const { onNavBack, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
+	const { siteId, onNavBack, onCreateNewSchedule, onEditSchedule, onShowLogs } = props;
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< undefined | string >();
+
+	const isGlobalSiteViewEnabled = useSelector( ( state ) =>
+		getIsGlobalSiteViewEnabled( state, siteId )
+	);
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const {
 		data: schedules = [],
@@ -117,6 +128,11 @@ export const ScheduleList = ( props: Props ) => {
 					{ schedules.length === 0 && isLoading && <Spinner /> }
 					{ ! isLoading && showScheduleListEmpty && (
 						<ScheduleListEmpty
+							pluginsUrl={
+								isGlobalSiteViewEnabled
+									? `${ siteAdminUrl }plugin-install.php`
+									: `/plugins/${ siteSlug }`
+							}
 							onCreateNewSchedule={ onCreateNewSchedule }
 							canCreateSchedules={ canCreateSchedules }
 						/>
