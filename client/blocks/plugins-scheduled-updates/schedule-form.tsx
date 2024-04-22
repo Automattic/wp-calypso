@@ -1,3 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { __experimentalText as Text } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
@@ -11,6 +14,7 @@ import {
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleFormFrequency } from './schedule-form-frequency';
+import { ScheduleFormPaths } from './schedule-form-paths';
 import { ScheduleFormPlugins } from './schedule-form-plugins';
 import { validatePlugins, validateTimeSlot } from './schedule-form.helper';
 import type { SyncSuccessParams } from './types';
@@ -24,6 +28,7 @@ interface Props {
 }
 export const ScheduleForm = ( props: Props ) => {
 	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
 	const { isEligibleForFeature } = useIsEligibleForFeature();
 	const { scheduleForEdit, onSyncSuccess, onSyncError } = props;
 
@@ -121,6 +126,7 @@ export const ScheduleForm = ( props: Props ) => {
 				onFormSubmit();
 			} }
 		>
+			<Text>{ translate( 'Step 1' ) }</Text>
 			<ScheduleFormFrequency
 				initTimestamp={ timestamp }
 				initFrequency={ frequency }
@@ -134,6 +140,7 @@ export const ScheduleForm = ( props: Props ) => {
 					setFieldTouched( { ...fieldTouched, timestamp: touched } );
 				} }
 			/>
+			<Text>{ translate( 'Step 2' ) }</Text>
 			<ScheduleFormPlugins
 				plugins={ plugins }
 				selectedPlugins={ selectedPlugins }
@@ -146,6 +153,12 @@ export const ScheduleForm = ( props: Props ) => {
 					setFieldTouched( { ...fieldTouched, plugins: touched } );
 				} }
 			/>
+			{ isEnabled( 'plugins/multisite-scheduled-updates' ) && (
+				<>
+					<Text>{ translate( 'Step 3' ) }</Text>
+					<ScheduleFormPaths borderWrapper={ false } />
+				</>
+			) }
 		</form>
 	);
 };
