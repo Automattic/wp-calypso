@@ -27,7 +27,12 @@ import PlanStorageBar from './bar';
 
 import './style.scss';
 
-export function PlanStorage( { children, className, siteId } ) {
+export function PlanStorage( {
+	children,
+	className,
+	StorageBarComponent = PlanStorageBar,
+	siteId,
+} ) {
 	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
@@ -87,15 +92,13 @@ export function PlanStorage( { children, className, siteId } ) {
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const planStorageComponents = (
-		<>
-			<PlanStorageBar
-				sitePlanSlug={ sitePlanSlug }
-				mediaStorage={ mediaStorage }
-				displayUpgradeLink={ displayUpgradeLink }
-			>
-				{ children }
-			</PlanStorageBar>
-		</>
+		<StorageBarComponent
+			sitePlanSlug={ sitePlanSlug }
+			mediaStorage={ mediaStorage }
+			displayUpgradeLink={ displayUpgradeLink }
+		>
+			{ children }
+		</StorageBarComponent>
 	);
 
 	const showTooltip = () => setTooltipVisible( true );
