@@ -9,6 +9,7 @@ import {
 	DOTCOM_MONITORING,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
+import PreviewPaneSample from './preview-pane-sample';
 
 import './style.scss';
 
@@ -40,17 +41,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<>
-					<div className="dotcom-preview-pane-content">
-						<h2>
-							<b>Overview</b>
-							<br />
-						</h2>
-						Preview Pane
-						<br />
-						<b>{ site.slug }</b>
-					</div>
-				</>
+				<PreviewPaneSample site={ site } tabName="Overview" />
 			),
 			createFeaturePreview(
 				DOTCOM_MONITORING,
@@ -58,16 +49,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<>
-					<div className="dotcom-preview-pane-content">
-						<h2>
-							<b>Monitoring</b>
-						</h2>
-						Preview Pane
-						<br />
-						<b>{ site.slug }</b>
-					</div>
-				</>
+				<PreviewPaneSample site={ site } tabName="Monitoring" />
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
@@ -75,16 +57,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<>
-					<div className="dotcom-preview-pane-content">
-						<h2>
-							<b>GitHub Deployments</b>
-						</h2>
-						Preview Pane
-						<br />
-						<b>{ site.slug }</b>
-					</div>
-				</>
+				<PreviewPaneSample site={ site } tabName="GitHub Deployments" />
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
@@ -92,16 +65,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<>
-					<div className="dotcom-preview-pane-content">
-						<h2>
-							<b>Hosting Config</b>
-						</h2>
-						Preview Pane
-						<br />
-						<b>{ site.slug }</b>
-					</div>
-				</>
+				<PreviewPaneSample site={ site } tabName="Hosting Config" />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site ]
