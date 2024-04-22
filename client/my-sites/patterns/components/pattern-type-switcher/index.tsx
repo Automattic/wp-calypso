@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -14,16 +13,11 @@ import { PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 const ToggleGroupControlOptionWithNarrowTooltip = (
 	props: ToggleGroupControlOptionProps & {
 		className: string;
-		showToolTip?: boolean;
 		toolTipText: string;
 	}
 ) => {
-	const { showToolTip, toolTipText, ...toggleControlProps } = props;
+	const { toolTipText, ...toggleControlProps } = props;
 	const toolTipProps = { style: { maxWidth: '200px', top: '3px' }, text: toolTipText };
-
-	if ( ! showToolTip ) {
-		return <ToggleGroupControlOption { ...toggleControlProps } />;
-	}
 
 	return (
 		<Tooltip { ...toolTipProps }>
@@ -38,7 +32,6 @@ type PatternTypeSwitcherProps = {
 
 export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const { category, isGridView, patternTypeFilter } = usePatternsContext();
 
 	return (
@@ -61,9 +54,6 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 					comment: 'Refers to block patterns',
 					textOnly: true,
 				} ) }
-				showToolTip={ hasEnTranslation(
-					'A collection of blocks that make up one section of a page'
-				) }
 				toolTipText={ translate( 'A collection of blocks that make up one section of a page' ) }
 				value={ PatternTypeFilter.REGULAR }
 			/>
@@ -74,7 +64,6 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 					comment: 'Refers to block patterns that contain entire page layouts',
 					textOnly: true,
 				} ) }
-				showToolTip={ hasEnTranslation( 'A collection of patterns that form an entire page' ) }
 				toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
 				value={ PatternTypeFilter.PAGES }
 			/>
