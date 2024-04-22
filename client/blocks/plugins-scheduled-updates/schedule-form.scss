@@ -189,4 +189,27 @@
 			}
 		}
 	}
+
+	.form-field--paths {
+		.paths {
+			.components-input-control__backdrop {
+				border-color: var(--studio-gray-0);
+			}
+		}
+
+		.new-path {
+			.components-input-control__backdrop {
+				border-color: var(--studio-gray-10);
+			}
+		}
+
+		.path {
+			margin-bottom: 0.75rem;
+		}
+
+		input[readonly] {
+			color: var(--studio-gray-50);
+			background: var(--studio-gray-0);
+		}
+	}
 }
