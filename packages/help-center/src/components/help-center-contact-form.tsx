@@ -197,6 +197,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 		! wapuuFlow;
 
 	const showingSearchResults = params.get( 'show-results' ) === 'true';
+	const DIFMInProgress = params.get( 'difm-in-progress' ) === 'true';
 	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
 
 	const redirectToArticle = useCallback(
@@ -266,7 +267,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	}
 
 	function handleCTA() {
-		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow ) {
+		if ( ! enableGPTResponse && ! showingSearchResults && ! wapuuFlow && ! DIFMInProgress ) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -515,7 +516,7 @@ export const HelpCenterContactForm = ( props: HelpCenterContactFormProps ) => {
 	const getCTALabel = () => {
 		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
 
-		if ( ! showingGPTResponse && ! showingSearchResults ) {
+		if ( ! showingGPTResponse && ! showingSearchResults && ! DIFMInProgress ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 

@@ -47,6 +47,7 @@ function SupportLink( { siteId }: { siteId?: number } ) {
 	const emailUrl = `/contact-form?${ new URLSearchParams( {
 		mode: 'EMAIL',
 		'disable-gpt': 'true',
+		'difm-in-progress': 'true',
 	} ).toString() }`;
 
 	return (
