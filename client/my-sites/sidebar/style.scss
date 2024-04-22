@@ -535,6 +535,43 @@ $font-size: rem(14px);
 		fill: var(--color-text);
 	}
 
+	/* stylelint-disable-next-line no-duplicate-selectors */
+	.is-unified-site-sidebar-visible {
+		.upsell-nudge.banner.card.is-compact {
+			margin-top: 0;
+			padding: 8px;
+			cursor: pointer;
+
+			.banner__content {
+				padding: 0;
+				flex-direction: column;
+				gap: 6px;
+			}
+
+			.banner__info {
+				margin: 0;
+				font-size: 0.75rem;
+				line-height: 16px;
+			}
+
+			.banner__action {
+				width: 100%;
+
+				button {
+					width: 100%;
+					/* stylelint-disable-next-line scales/font-sizes */
+					font-size: 0.8125rem;
+					line-height: 20px;
+					cursor: pointer;
+					min-height: 32px;
+					margin-bottom: 0;
+					padding-top: 0;
+					padding-bottom: 0;
+				}
+			}
+		}
+	}
+
 	// client/my-sites/current-site/style.scss
 	.current-site__switch-sites:hover .button.is-borderless:hover {
 		background-color: var(--color-sidebar-menu-hover-background);
