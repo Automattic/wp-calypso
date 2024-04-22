@@ -1,10 +1,10 @@
-import config from '@automattic/calypso-config';
 import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
+import useRefundPeriodInSignupHeaderBanner from './hooks/use-refund-period-in-signup-header-banner';
 import { SignupHeaderOverlayBannerWithRefundPeriod } from './overlay-banner';
 
 interface ProgressBarData {
@@ -43,11 +43,10 @@ const SignupHeader = ( {
 	);
 	const showProgressBar = progressBar.flowName !== FREE_FLOW;
 
-	const refundPeriodInSignupHeaderBanner =
-		config.isEnabled( 'onboarding/emphasize-refund-period-in-plans-step' ) &&
-		progressBar.flowName === 'onboarding' &&
-		progressBar.stepName === 'plans' &&
-		! shouldShowLoadingScreen;
+	const refundPeriodInSignupHeaderBanner = useRefundPeriodInSignupHeaderBanner( {
+		flowName: progressBar.flowName,
+		stepName: progressBar.stepName,
+	} ).result;
 
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
