@@ -30,8 +30,9 @@ import './style.scss';
 export function PlanStorage( {
 	children,
 	className,
-	StorageBarComponent = PlanStorageBar,
+	shouldDisplayUpgradeLink = true,
 	siteId,
+	StorageBarComponent = PlanStorageBar,
 } ) {
 	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
@@ -88,7 +89,8 @@ export function PlanStorage( {
 		isProPlan( sitePlanSlug ) ||
 		isWooExpressMediumPlan( sitePlanSlug );
 
-	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+	const displayUpgradeLink =
+		shouldDisplayUpgradeLink && canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const planStorageComponents = (
