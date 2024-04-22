@@ -173,7 +173,7 @@ const HorizontalBarListItem = ( {
 
 							return (
 								<HorizontalBarListItem
-									key={ `group-${ child?.id || index }` }
+									key={ `group-${ child?.id ?? index }` }
 									data={ child }
 									className={ className }
 									maxValue={ maxValue }

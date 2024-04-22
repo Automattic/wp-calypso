@@ -83,7 +83,8 @@ body.command-palette-modal-open {
 		margin: 0;
 	}
 
-	.is-section-themes.has-no-sidebar.is-logged-in & {
+	.is-section-themes.has-no-sidebar.is-logged-in &,
+	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
 		padding: 79px 32px 32px;
 	}
 
@@ -401,9 +402,9 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--color-neutral-0);
+	background: var(--studio-white);
 	min-height: 100vh;
 	.layout__content {
-		background: var(--color-neutral-0);
+		background: var(--studio-white);
 	}
 }

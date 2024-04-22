@@ -9,7 +9,7 @@ import { getSelectedFilters } from 'calypso/a8c-for-agencies/sections/sites/site
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import type {
@@ -31,8 +31,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const agency = useSelector( getActiveAgency );
-	const agencyId = agency ? agency.id : undefined;
+	const agencyId = useSelector( getActiveAgencyId );
 	const { dataViewsState, showOnlyFavorites, currentPage } = useContext( SitesDashboardContext );
 	const [ filter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
 		issueTypes: [],

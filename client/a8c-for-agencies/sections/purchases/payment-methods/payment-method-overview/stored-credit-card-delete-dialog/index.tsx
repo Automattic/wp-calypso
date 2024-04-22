@@ -44,7 +44,13 @@ const StoredCreditCardDeleteDialog: FunctionComponent< Props > = ( {
 					{ translate( 'Go back' ) }
 				</Button>,
 
-				<Button disabled={ isDeleteInProgress } onClick={ onConfirm } primary scary>
+				<Button
+					busy={ isDeleteInProgress }
+					disabled={ isDeleteInProgress }
+					onClick={ onConfirm }
+					primary
+					scary
+				>
 					{ translate( 'Delete payment method' ) }
 				</Button>,
 			] }

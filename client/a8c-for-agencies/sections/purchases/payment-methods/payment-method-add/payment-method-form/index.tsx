@@ -22,11 +22,12 @@ import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useEffect } from 'react';
 import {
+	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_PAYMENT_METHODS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useIssueAndAssignLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-and-assign-licenses';
+import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -118,7 +119,6 @@ function PaymentMethodForm() {
 
 	const dispatch = useDispatch();
 
-	// FIXME: We will need to change this hook to use A4A-based hook.
 	const { issueAndAssignLicenses, isReady: isIssueAndAssignLicensesReady } =
 		useIssueAndAssignLicenses(
 			siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null,
@@ -238,6 +238,20 @@ function PaymentMethodForm() {
 
 	const getPreviousPageLink = () => {
 		if ( products ) {
+			if ( source === 'sitesdashboard' ) {
+				const productsSlugs = products
+					.split( ',' )
+					.map( ( product ) => product.split( ':' )[ 0 ] )
+					.join( ',' );
+				return addQueryArgs(
+					{
+						product_slug: productsSlugs,
+						...( siteId && { site_id: siteId } ),
+						...( source && { source } ),
+					},
+					A4A_MARKETPLACE_CHECKOUT_LINK
+				);
+			}
 			return addQueryArgs(
 				{
 					products,

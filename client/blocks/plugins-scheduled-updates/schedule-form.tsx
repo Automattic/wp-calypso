@@ -1,4 +1,3 @@
-import { Flex, FlexItem } from '@wordpress/components';
 import { useState, useEffect } from 'react';
 import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
 import {
@@ -116,48 +115,37 @@ export const ScheduleForm = ( props: Props ) => {
 	return (
 		<form
 			id="schedule"
+			className="schedule-form"
 			onSubmit={ ( e ) => {
 				e.preventDefault();
 				onFormSubmit();
 			} }
 		>
-			<Flex
-				className="schedule-form"
-				direction={ [ 'column', 'row' ] }
-				expanded={ true }
-				align="start"
-				gap={ 12 }
-			>
-				<FlexItem>
-					<ScheduleFormFrequency
-						initTimestamp={ timestamp }
-						initFrequency={ frequency }
-						error={ validationErrors?.timestamp }
-						showError={ fieldTouched?.plugins }
-						onChange={ ( frequency, timestamp ) => {
-							setTimestamp( timestamp );
-							setFrequency( frequency );
-						} }
-						onTouch={ ( touched ) => {
-							setFieldTouched( { ...fieldTouched, timestamp: touched } );
-						} }
-					/>
-				</FlexItem>
-				<FlexItem>
-					<ScheduleFormPlugins
-						plugins={ plugins }
-						selectedPlugins={ selectedPlugins }
-						isPluginsFetching={ isPluginsFetching }
-						isPluginsFetched={ isPluginsFetched }
-						error={ validationErrors?.plugins }
-						showError={ fieldTouched?.plugins }
-						onChange={ setSelectedPlugins }
-						onTouch={ ( touched ) => {
-							setFieldTouched( { ...fieldTouched, plugins: touched } );
-						} }
-					/>
-				</FlexItem>
-			</Flex>
+			<ScheduleFormFrequency
+				initTimestamp={ timestamp }
+				initFrequency={ frequency }
+				error={ validationErrors?.timestamp }
+				showError={ fieldTouched?.timestamp }
+				onChange={ ( frequency, timestamp ) => {
+					setTimestamp( timestamp );
+					setFrequency( frequency );
+				} }
+				onTouch={ ( touched ) => {
+					setFieldTouched( { ...fieldTouched, timestamp: touched } );
+				} }
+			/>
+			<ScheduleFormPlugins
+				plugins={ plugins }
+				selectedPlugins={ selectedPlugins }
+				isPluginsFetching={ isPluginsFetching }
+				isPluginsFetched={ isPluginsFetched }
+				error={ validationErrors?.plugins }
+				showError={ fieldTouched?.plugins }
+				onChange={ setSelectedPlugins }
+				onTouch={ ( touched ) => {
+					setFieldTouched( { ...fieldTouched, plugins: touched } );
+				} }
+			/>
 		</form>
 	);
 };

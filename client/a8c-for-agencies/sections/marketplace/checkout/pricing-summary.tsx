@@ -10,7 +10,7 @@ import type { ShoppingCartItem } from '../types';
 
 type Props = {
 	items: ShoppingCartItem[];
-	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	onRemoveItem?: ( item: ShoppingCartItem ) => void;
 };
 
 export default function PricingSummary( { items, onRemoveItem }: Props ) {
