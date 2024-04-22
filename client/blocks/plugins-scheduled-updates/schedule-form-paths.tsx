@@ -91,8 +91,8 @@ export function ScheduleFormPaths( props: Props ) {
 							<FlexItem isBlock={ true }>
 								<InputControl
 									value={ newPath }
-									name="path"
 									size="__unstable-large"
+									autoComplete="off"
 									placeholder={ translate( '/add-path' ) }
 									onChange={ ( p ) => setNewPath( p || '' ) }
 									onKeyPress={ ( e ) => {
