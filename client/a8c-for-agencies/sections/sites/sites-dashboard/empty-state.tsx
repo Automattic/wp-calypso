@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
+// import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -18,8 +18,8 @@ export default function EmptyState() {
 
 	const title = translate( 'Sites' );
 
-	const pluginDownloadLink = ''; // FIXME: Provide correct download link.
-	const resourceLink = ''; // FIXME: Provide correct resource link.
+	const pluginDownloadLink = 'https://wordpress.org/plugins/jetpack/'; // FIXME: Provide correct download link.
+	// const resourceLink = ''; // FIXME: Provide correct resource link.
 
 	return (
 		<Layout title={ title } wide withBorder sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -50,6 +50,19 @@ export default function EmptyState() {
 								)
 							}
 						>
+							{ translate( 'Connect sites with Jetpack (Temporary)' ) }
+						</Button>
+						{ /* TODO: replace this after A4A plugin and docs are ready */ }
+						{ /* <Button
+							href={ pluginDownloadLink }
+							target="_blank"
+							primary
+							onClick={ () =>
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_sites_dashboard_download_a4a_plugin_click' )
+								)
+							}
+						>
 							{ translate( 'Download A4A Plugin' ) }
 						</Button>
 						<Button
@@ -60,7 +73,7 @@ export default function EmptyState() {
 							}
 						>
 							{ translate( 'Learn more' ) } <Icon icon={ external } size={ 18 } />
-						</Button>
+						</Button> */ }
 					</div>
 				</div>
 			</LayoutBody>

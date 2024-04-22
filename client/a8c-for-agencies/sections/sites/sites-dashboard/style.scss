@@ -111,7 +111,7 @@
 
 				.sites-overview__tabs,
 				.dataviews-filters__view-actions {
-					border-bottom: 1px solid var(--studio-gray-5);
+					border-bottom: 1px solid var(--color-accent-5);
 				}
 
 				.sites-overview__content {
@@ -242,7 +242,7 @@
 
 			.is-hiding-navigation .dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 182px); /* 182px is the size of all the content above the dataview when in table style, which includes our CTA elements, plus a 10px margin. */
+				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
@@ -278,7 +278,7 @@
 
 			.sites-overview__tabs,
 			.dataviews-filters__view-actions {
-				border-bottom: 1px solid var(--studio-gray-5);
+				border-bottom: 1px solid var(--color-accent-5);
 			}
 
 			.dataviews-filters__view-actions {
@@ -319,11 +319,11 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: auto;
-				max-height: calc(100vh - 175px); /* It subtracts the header height to allow scrolling in this block, plus a 10px margin */
+				max-height: calc(100vh - 300px); /* 300px is the size of all content above the dataview in list style, which includes our CTA elements, the pagination bottom bar, and an additional 20px margin. */
 
 				li {
 					padding: 8px 24px;
-					border-bottom: 1px solid var(--studio-gray-5);
+					border-bottom: 1px solid var(--color-accent-5);
 				}
 
 				.dataviews-view-list__fields {
@@ -334,6 +334,26 @@
 				.components-h-stack,
 				.dataviews-view-list__item {
 					width: 100%;
+				}
+
+				/* This styling is a bit of a hack: To make the site name clickable area larger, will need
+				 * to hide the other fields when in preview mode.
+				 */
+				.dataviews-view-list__field {
+					// Hide the field except first (Site name) and last (actions menu)
+					&:not(:first-child):not(:last-child) {
+						display: none;
+					}
+
+					// Force the site name to take up the full width
+					&:first-child {
+						flex-grow: 1;
+
+						.sites-dataviews__site {
+							width: 100%;
+							justify-content: flex-start;
+						}
+					}
 				}
 
 				.sites-overview__stats-trend,
@@ -357,7 +377,7 @@
 		font-size: rem(11px);
 		font-weight: 500;
 		line-height: 20px;
-		color: var(--studio-automattic-80);
+		color: var(--color-accent-80);
 	}
 
 	tr.dataviews-view-table__row th[data-field-id="favorite"] {
@@ -469,11 +489,7 @@
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
-			background: var(--studio-white);
-
-			.site-set-favorite__favorite-icon {
-				position: relative;
-			}
+			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
 				margin-top: 24px;
@@ -503,9 +519,13 @@
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
-			background: var(--studio-white);
+			background: var(--color-light-backdrop);
 			max-height: calc(100vh - 32px);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
+		}
+
+		.site-preview__open {
+			display: block;
 		}
 
 
@@ -596,14 +616,14 @@
 		align-items: center;
 		width: fit-content;
 		height: 22px;
-		background: var(--studio-white);
+		background: var(--color-light-backdrop);
 		box-sizing: border-box;
 		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		font-weight: 500;
 		font-size: 0.75rem;
 		vertical-align: middle;
-		color: var(--studio-gray-80);
-		border: 1px solid var(--studio-gray-5);
+		color: var(--color-accent-80);
+		border: 1px solid var(--color-accent-5);
 		padding: 2px 11px;
 		cursor: pointer;
 		white-space: nowrap;
@@ -615,17 +635,17 @@
 			margin-inline-start: -0.4em;
 		}
 		&:hover:not(.is-link) {
-			background: var(--studio-gray-80);
-			color: var(--studio-white);
+			background: var(--color-accent-80);
+			color: var(--color-light-backdrop);
 		}
 
 		&:visited:not(:hover) {
-			color: var(--studio-gray-80);
+			color: var(--color-accent-80);
 		}
 
 		&.is-selected {
-			background: var(--studio-jetpack-green-50);
-			color: var(--studio-white);
+			background: var(--color-jetpack-50);
+			color: var(--color-light-backdrop);
 			border: none;
 		}
 
@@ -638,18 +658,18 @@
 			padding: 0;
 
 			&:hover {
-				color: var(--studio-gray-80);
+				color: var(--color-accent-80);
 			}
 		}
 	}
 
 	.sites-overview__grey-icon {
 		vertical-align: middle;
-		color: var(--studio-gray-40);
+		color: var(--color-accent-40);
 	}
 	.sites-overview__icon-active {
 		vertical-align: middle;
-		color: var(--studio-gray-5);
+		color: var(--color-accent-5);
 	}
 	.sites-overview__stats-trend__up,
 	.sites-overview__stats-trend__down {
@@ -658,17 +678,17 @@
 		margin-inline-start: -5px;
 	}
 	.sites-overview__stats-trend__up {
-		fill: var(--studio-jetpack-green-40);
+		fill: var(--color-jetpack-40);
 	}
 	.sites-overview__stats-trend__down {
-		fill: var(--studio-red-50);
+		fill: var(--color-scary-50);
 	}
 	.sites-overview__stats-trend__same .empty-icon {
 		vertical-align: middle;
 		height: 8px;
 		width: 8px;
 		border-radius: 50%;
-		background: var(--studio-gray-5);
+		background: var(--color-accent-5);
 		display: inline-flex;
 		margin-inline-end: 5px;
 		@media screen and (max-width: $break-xlarge) {
@@ -678,7 +698,7 @@
 	.sites-overview__stats .shortened-number,
 	.sites-overview__stats-trend .shortened-number {
 		vertical-align: middle;
-		color: var(--studio-gray-80);
+		color: var(--color-accent-80);
 		font-size: 0.75rem;
 	}
 	.sites-overview__stats-trend svg {
@@ -689,7 +709,7 @@
 		}
 	}
 	.sites-overview__disabled {
-		color: var(--studio-gray-5);
+		color: var(--color-accent-5);
 		cursor: not-allowed;
 		opacity: 0.5;
 		button {
@@ -703,7 +723,7 @@
 		overflow: hidden;
 		text-overflow: clip;
 		vertical-align: middle;
-		color: var(--studio-gray-100);
+		color: var(--color-accent-100);
 		align-items: center;
 		@include break-zoomed-in {
 			width: calc(100% - 120px);
@@ -721,7 +741,7 @@
 
 		.wordpress-logo {
 			display: inline-block;
-			fill: var(--studio-blue-50);
+			fill: var(--color-primary-50);
 			visibility: hidden;
 			margin: auto 0;
 
@@ -742,7 +762,7 @@
 	.sites-overview__error-icon {
 		background: #d94f4f;
 		padding: 11px;
-		color: var(--studio-white);
+		color: var(--color-light-backdrop);
 		width: 5%;
 		display: flex;
 		align-items: center;
@@ -750,7 +770,7 @@
 	}
 	.sites-overview__error-message {
 		font-size: 0.75rem;
-		color: var(--studio-white);
+		color: var(--color-light-backdrop);
 		padding: 0.5em;
 		margin: auto 0;
 	}
@@ -768,7 +788,7 @@
 	}
 	.sites-overview__error-message-link {
 		font-size: 0.75rem;
-		color: var(--studio-white) !important;
+		color: var(--color-text-white) !important;
 		padding: 6px;
 		position: absolute;
 		inset-inline-end: 16px;
@@ -790,7 +810,7 @@
 	}
 
 	.sites-overview__stats {
-		color: var(--studio-black);
+		color: var(--color-text-black);
 		display: inline-block;
 		line-height: 17px;
 		height: 18px;
@@ -799,19 +819,19 @@
 	.sites-overview__tooltip {
 		.popover__arrow {
 			&::before {
-				border-bottom-color: var(--studio-gray-60) !important;
+				border-bottom-color: var(--color-accent-60) !important;
 				inset-block-start: 1px !important;
 			}
 		}
 		.popover__inner {
-			background: var(--studio-gray-60);
-			color: var(--studio-white);
+			background: var(--color-accent-60);
+			color: var(--color-text-white);
 			padding: 10px 12px;
 			border: none;
 		}
 	}
 	.sites-overview__status-critical {
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 		position: absolute;
 		inset-inline-end: 42px;
 		inset-block-start: 50%;
@@ -834,13 +854,13 @@
 		box-sizing: border-box;
 	}
 	.sites-overview__status-failed {
-		background-color: var(--studio-red-50);
-		border-color: var(--studio-red-50);
+		background-color: var(--color-scary-50);
+		border-color: var(--color-scary-50);
 		color: var(--color-text-inverted);
 	}
 	.sites-overview__status-warning {
-		background-color: var(--studio-yellow-20);
-		border-color: var(--studio-yellow-20);
+		background-color: var(--color-yellow-20);
+		border-color: var(--color-yellow-20);
 		color: var(--color-warning-80);
 	}
 	@keyframes highlight-tab-animation {
@@ -888,7 +908,7 @@
 		right: 0;
 		bottom: 0;
 		padding: 1rem;
-		background: var(--studio-white);
+		background: var(--color-light-backdrop);
 		box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12);
 		z-index: 20;
 
@@ -922,13 +942,13 @@
 
 	.sites-overview__failed {
 		@extend .sites-overview__column-content;
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 	}
 
 	.sites-overview__critical {
 		@extend .sites-overview__column-content;
 		padding: 15px;
-		color: var(--studio-red-50);
+		color: var(--color-scary-50);
 	}
 
 	@mixin boost-score-style($color, $background-color) {
@@ -955,15 +975,15 @@
 		user-select: none;
 
 		&.boost-score-good {
-			@include boost-score-style(var(--studio-green-50), var(--studio-green-0));
+			@include boost-score-style(var(--color-jetpack-50), var(--color-jetpack-0));
 		}
 
 		&.boost-score-okay {
-			@include boost-score-style(var(--studio-yellow-50), var(--studio-yellow-0));
+			@include boost-score-style(var(--color-yellow-50), var(--color-yellow-0));
 		}
 
 		&.boost-score-bad {
-			@include boost-score-style(var(--studio-red-50), var(--studio-red-0));
+			@include boost-score-style(var(--color-scary-50), var(--color-scary-0));
 		}
 	}
 
@@ -996,7 +1016,8 @@
 	}
 
 	.sites-dataviews__favorite-btn-wrapper {
-		position: relative;
+		display: flex;
+		align-items: center;
 
 		.site-set-favorite__favorite-icon {
 			visibility: hidden;

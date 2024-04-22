@@ -1,0 +1,25 @@
+.plugins-update-manager-multisite {
+	h1 {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+
+	.schedule-form {
+		& > .form-control-container {
+			margin-bottom: 1.25rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			& > .components-flex {
+				gap: 2rem;
+
+				& > .components-flex-item {
+					flex-basis: 100%;
+					width: 100%;
+				}
+			}
+		}
+	}
+}

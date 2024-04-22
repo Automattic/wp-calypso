@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
@@ -16,6 +15,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -35,7 +35,6 @@ import './style.scss';
 const ActivityLogV2: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
@@ -50,15 +49,15 @@ const ActivityLogV2: FunctionComponent = () => {
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
 	let upsellURL;
-	if ( hasJetpackPartnerAccess && ! isA4AEnabled ) {
+	if ( hasJetpackPartnerAccess && ! isA8CForAgencies() ) {
 		upsellURL = `/partner-portal/issue-license?site_id=${ siteId }`;
-	} else if ( isA4AEnabled ) {
+	} else if ( isA8CForAgencies() ) {
 		upsellURL = `/marketplace/products?site_id=${ siteId }`;
 	} else {
 		upsellURL = `/pricing/${ selectedSiteSlug }`;
 	}
 
-	const isAtomicA4AEnabled = isA4AEnabled && isAtomic;
+	const isAtomicA4AEnabled = isA8CForAgencies() && isAtomic;
 
 	const jetpackCloudHeader = siteHasFullActivityLog ? (
 		<div className="activity-log-v2__header">
@@ -69,7 +68,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				</div>
 			</div>
 			<div className="activity-log-v2__header-right">
-				{ ( isJetpackCloud() || isA4AEnabled ) && selectedSiteSlug && (
+				{ ( isJetpackCloud() || isA8CForAgencies() ) && selectedSiteSlug && (
 					<Tooltip
 						text={ translate(
 							'To test your site changes, migrate or keep your data safe in another site'
@@ -119,9 +118,9 @@ const ActivityLogV2: FunctionComponent = () => {
 	return (
 		<Main
 			className={ classNames( 'activity-log-v2', {
-				wordpressdotcom: ! isJetpackCloud(),
+				wordpressdotcom: ! ( isJetpackCloud() || isA8CForAgencies() ),
 			} ) }
-			wideLayout={ ! isJetpackCloud() }
+			wideLayout={ ! ( isJetpackCloud() || isA8CForAgencies() ) }
 		>
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
@@ -130,7 +129,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
-			{ isJetpackCloud() || isA4AEnabled ? (
+			{ isJetpackCloud() || isA8CForAgencies() ? (
 				jetpackCloudHeader
 			) : (
 				<NavigationHeader

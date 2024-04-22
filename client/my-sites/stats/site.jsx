@@ -53,6 +53,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsModuleDevices from './stats-module-devices';
 import StatsModuleEmails from './stats-module-emails';
 import StatsModuleUTM from './stats-module-utm';
 import StatsNotices from './stats-notices';
@@ -211,12 +212,15 @@ class StatsSite extends Component {
 			supportsPlanUsage,
 			supportsEmailStats,
 			supportsUTMStatsFeature,
+			supportsDevicesStatsFeature,
 		} = this.props;
 
 		let defaultPeriod = PAST_SEVEN_DAYS;
 
 		const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 		const supportsUTMStats = supportsUTMStatsFeature || isInternal;
+		const supportsDevicesStats =
+			supportsDevicesStatsFeature || ( config.isEnabled( 'stats/devices' ) && isInternal );
 
 		// Set the current period based on the module settings.
 		// @TODO: Introduce the loading state to avoid flickering due to slow module settings request.
@@ -597,6 +601,17 @@ class StatsSite extends Component {
 								/>
 							)
 						}
+						{ supportsDevicesStats && (
+							<StatsModuleDevices
+								siteId={ siteId }
+								period={ this.props.period }
+								query={ query }
+								className={ classNames(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--xlarge'
+								) }
+							/>
+						) }
 					</div>
 				</div>
 				{ supportsPlanUsage && (
@@ -741,7 +756,7 @@ export default connect(
 		const upsellModalView =
 			config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
-		const { supportsPlanUsage, supportsEmailStats, supportsUTMStats } =
+		const { supportsPlanUsage, supportsEmailStats, supportsUTMStats, supportsDevicesStats } =
 			getEnvStatsFeatureSupportChecks( state, siteId );
 
 		return {
@@ -761,6 +776,7 @@ export default connect(
 			supportsEmailStats,
 			supportsPlanUsage,
 			supportsUTMStatsFeature: supportsUTMStats,
+			supportsDevicesStatsFeature: supportsDevicesStats,
 		};
 	},
 	{

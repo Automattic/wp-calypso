@@ -1,4 +1,3 @@
-// FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
 import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';

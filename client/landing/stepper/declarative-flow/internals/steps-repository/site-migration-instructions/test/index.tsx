@@ -16,12 +16,16 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 	ID: 'some-site-id',
 } );
 
+const FROM_URL = 'some-source-site-url.example.com';
+
 describe( 'SiteMigrationInstructions', () => {
-	const FROM_URL = 'some-source-site-url.example.com';
-	const render = ( props?: Partial< StepProps > ) => {
+	const render = (
+		props?: Partial< StepProps >,
+		initialEntry = `/some-path?from=${ FROM_URL }`
+	) => {
 		const combinedProps = { ...mockStepProps( props ) };
 		return renderStep( <SiteMigrationInstructions { ...combinedProps } />, {
-			initialEntry: `/some-path?from=${ FROM_URL }`,
+			initialEntry,
 		} );
 	};
 
@@ -37,6 +41,26 @@ describe( 'SiteMigrationInstructions', () => {
 		} );
 
 		expect( link ).toHaveAttribute( 'href', `${ FROM_URL }/wp-admin/admin.php?page=migrateguru` );
+	} );
+
+	it( 'render link to the wordpress.org when the from is not available', async () => {
+		render( {}, '/some-path' );
+
+		const link = await screen.findByRole( 'link', {
+			name: /Migrate Guru plugin/,
+		} );
+
+		expect( link ).toHaveAttribute( 'href', `https://wordpress.org/plugins/migrate-guru/` );
+	} );
+
+	it( 'render link to the wordpress.org when the from is empty', async () => {
+		render( {}, '/some-path?from=' );
+
+		const link = await screen.findByRole( 'link', {
+			name: /Migrate Guru plugin/,
+		} );
+
+		expect( link ).toHaveAttribute( 'href', `https://wordpress.org/plugins/migrate-guru/` );
 	} );
 
 	it( 'copies the migration key', async () => {

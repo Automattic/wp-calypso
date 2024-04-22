@@ -1,11 +1,12 @@
 .site-preview__content {
 	flex-grow: 1;
-	background-color: var(--studio-white);
+	background-color: var(--color-light-backdrop);
 	padding: 48px;
-	text-align: center;
+	text-align: left;
 	overflow-y: auto;
 
 	.expanded-card {
+		text-align: left;
 		width: auto;
 		max-width: unset !important;
 
@@ -42,7 +43,6 @@
 		fill: #fff;
 		padding-left: 8px;
 	}
-
 }
 
 .site-preview-pane__stats-content,
@@ -56,7 +56,6 @@
 .site-preview-pane__monitor-content {
 
 	text-align: unset !important;
-
 
 	.site-expanded-content__card-content-column {
 		max-width: unset;
@@ -112,5 +111,9 @@
 
 	.site-expanded-content__card-content-score-title {
 		text-align: left;
+	}
+
+	a.site-expanded-content__card-button {
+		color: var(--color-surface-backdrop);
 	}
 }

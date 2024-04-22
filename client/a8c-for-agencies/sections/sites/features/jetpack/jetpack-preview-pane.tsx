@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import SiteDetails from 'calypso/a8c-for-agencies/sections/sites/features/a4a/site-details';
 import {
 	JETPACK_ACTIVITY_ID,
 	JETPACK_BACKUP_ID,
@@ -10,7 +8,6 @@ import {
 	JETPACK_PLUGINS_ID,
 	JETPACK_SCAN_ID,
 	JETPACK_STATS_ID,
-	A4A_SITE_DETAILS_ID,
 } from 'calypso/a8c-for-agencies/sections/sites/features/features';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useJetpackAgencyDashboardRecordTrackEvent } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
@@ -123,18 +120,6 @@ export function JetpackPreviewPane( {
 				setSelectedSiteFeature,
 				<JetpackActivityPreview site={ site } />
 			),
-			...( isEnabled( 'a4a/site-details-pane' )
-				? [
-						createFeaturePreview(
-							A4A_SITE_DETAILS_ID,
-							translate( 'Details' ),
-							true,
-							selectedSiteFeature,
-							setSelectedSiteFeature,
-							<SiteDetails site={ site } />
-						),
-				  ]
-				: [] ),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site, trackEvent, hasError, translate ]
 	);

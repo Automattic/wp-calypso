@@ -353,13 +353,6 @@ function triggerPostRedirectNotices( {
 		} );
 		return;
 	}
-
-	reduxDispatch(
-		successNotice( translate( 'Your purchase has been completed!' ), {
-			id: 'checkout-thank-you-success',
-			displayOnNextPage: true,
-		} )
-	);
 }
 
 function displayRenewalSuccessNotice( {

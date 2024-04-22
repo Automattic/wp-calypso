@@ -157,7 +157,7 @@ const AnimatedCommand = () => {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 	const commands = [
 		{ icon: domainsIcon, label: __( 'Register new domain' ) },
-		{ icon: <Gridicon icon="reader" />, label: __( 'Open reader' ) },
+		{ icon: <Gridicon icon="reader" />, label: __( 'Open Reader' ) },
 		{ icon: plusIcon, label: __( 'Add new post' ) },
 		{ icon: wordpressIcon, label: __( 'View my sites' ) },
 		{ icon: settingsIcon, label: __( 'Open hosting configuration' ) },

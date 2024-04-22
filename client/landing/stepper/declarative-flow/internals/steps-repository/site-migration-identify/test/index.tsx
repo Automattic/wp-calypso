@@ -80,6 +80,19 @@ describe( 'SiteMigrationIdentify', () => {
 		);
 	} );
 
+	it( 'calls submit with the "skip" action when the user clicks on "choose a content platform"', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /choose a content platform/ } ) );
+
+		await waitFor( () =>
+			expect( submit ).toHaveBeenCalledWith(
+				expect.objectContaining( { action: 'skip_platform_identification' } )
+			)
+		);
+	} );
+
 	it( 'shows an error when the api analyzer returns error', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );

@@ -4,7 +4,7 @@ In [route-to-query-mapping.json](https://github.com/Automattic/wp-calypso/blob/a
 
 Example
 
-```json
+```
 // This will use `home` as a search query when the user navigates to wordpress.com/home
 "/home/": "home",
 // This will use `new post` as a search query when the user navigates to {site}/wp-admin/post-new.php
@@ -15,7 +15,7 @@ Example
 
 In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blob/add/tailored_posts_help_center/packages/help-center/src/tailored-post-ids-mapping.json), there is a JSON structure where you can specify which post id ( one or many ) from which blog ( just one blog ) should be displayed
 
-```json
+```
 // This will fetch posts `"post_ids": [ 248292, 150414 ]` from `"blog_id": 9619154` and display them on `/home`
 "/home/": [ { "locale": "en", "post_ids": [ 248292, 150414 ], "blog_id": 9619154 } ],
 

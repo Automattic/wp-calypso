@@ -1,18 +1,24 @@
 /**
  * @jest-environment jsdom
  */
+import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
+import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
-import { getFlowLocation, renderFlow } from './helpers';
+import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
 jest.mock( '../../utils/checkout' );
+jest.mock( '@automattic/data-stores/src/user/selectors' );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn() },
+			value: { ...originalLocation, assign: jest.fn() },
 		} );
 	} );
 
@@ -20,19 +26,76 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
+	beforeEach( () => {
+		( window.location.assign as jest.Mock ).mockClear();
+		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
+			isOwner: true,
+		} );
+	} );
+
+	describe( 'useAssertConditions', () => {
+		it( 'redirects the user to the login page when they are not logged in', () => {
+			( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( false );
+
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				`/start/account/user-social?variationName=site-migration&toStepper=true&redirect_to=/setup/site-migration`
+			);
+		} );
+
+		it( 'redirects the user to the start page when there is not siteSlug and SiteID', () => {
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=&siteId=`,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+		} );
+
+		it( 'redirects the user to the start page when the user is not the site owner', () => {
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+			( useIsSiteOwner as jest.Mock ).mockReturnValue( { isOwner: false } );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+		} );
+
+		it( 'renders the step with success', () => {
+			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
+
+			runUseAssertionCondition( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+			} );
+
+			expect( getAssertionConditionResult() ).toEqual( { state: 'success' } );
+		} );
+	} );
+
 	describe( 'navigation', () => {
 		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
+					action: 'continue',
 					platform: 'wordpress',
 					from: 'https://site-to-be-migrated.com',
 				},
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/site-migration-import-or-migrate?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com',
+				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
 				state: null,
 			} );
 		} );
@@ -42,13 +105,43 @@ describe( 'Site Migration Flow', () => {
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				dependencies: {
+					action: 'continue',
 					platform: 'unknown',
 					from: 'https://example-to-be-migrated.com',
 				},
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/importList?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample-to-be-migrated.com&origin=site-migration-identify'
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						from: 'https://example-to-be-migrated.com',
+						origin: 'site-migration-identify',
+						backToFlow: '/site-migration/site-migration-identify',
+					},
+					'/setup/site-setup/importList'
+				)
+			);
+		} );
+
+		it( 'redirects the user to the import content flow when the user skip the plaform identification', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				dependencies: {
+					action: 'skip_platform_identification',
+				},
+			} );
+
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						origin: 'site-migration-identify',
+						backToFlow: '/site-migration/site-migration-identify',
+					},
+					'/setup/site-setup/importList'
+				)
 			);
 		} );
 
@@ -63,7 +156,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: '/processing',
+				path: `/${ STEPS.PROCESSING.slug }`,
 				state: {
 					bundleProcessing: true,
 				},
@@ -74,8 +167,7 @@ describe( 'Site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL:
-					'/setup/site-migration-upgrade-plan?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com',
+				currentURL: `/setup/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
@@ -83,11 +175,10 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
-				destination:
-					'/setup/site-migration/bundleTransfer?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com',
+				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',
-				stepName: 'site-migration-upgrade-plan',
+				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 			} );
 		} );
 
@@ -139,7 +230,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from verifyEmail back to upgrade-plan', () => {
+		it( 'redirects from verifyEmail to site-migration-assign-trial-plan step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -150,14 +241,27 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }`,
+				path: `/${ STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug }`,
 				state: null,
+			} );
+		} );
+
+		it( 'redirects from site-migration-assign-trial-plan step to bundleTransfer step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: '/bundleTransfer',
+				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );
 	} );
 
 	describe( 'goBack', () => {
-		it( 'backs to the indentify step', async () => {
+		it( 'backs to the identify step', async () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationGoBack( {

@@ -990,7 +990,7 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, selectedSiteId } = usePlansGridContext();
+	const { gridPlans, siteId, gridPlansIndex } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -1014,28 +1014,44 @@ const ComparisonGrid = ( {
 	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
 
 	useEffect( () => {
-		let newVisiblePlans = displayedGridPlans.map( ( { planSlug } ) => planSlug );
-		let visibleLength = newVisiblePlans.length;
+		setVisiblePlans( ( prev ) => {
+			let visibleLength = displayedGridPlans.length;
+			switch ( gridSize ) {
+				case 'large':
+					visibleLength = 4;
+					break;
+				case 'medium':
+					visibleLength = 3;
+					break;
+				case 'smedium':
+				case 'small':
+					visibleLength = 2;
+					break;
+			}
 
-		switch ( gridSize ) {
-			case 'large':
-				visibleLength = 4;
-				break;
-			case 'medium':
-				visibleLength = 3;
-				break;
-			case 'smedium':
-			case 'small':
-				visibleLength = 2;
-				break;
-		}
+			// visible length changed, update with the current gridPlans
+			// - we don't care about previous order
+			if ( prev.length !== visibleLength ) {
+				return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+			}
 
-		if ( newVisiblePlans.length !== visibleLength ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
-		}
+			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
+			// - we care about previous order
+			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
+			if ( isPrevStale ) {
+				return prev.map( ( planSlug ) => {
+					const gridPlan = displayedGridPlans.find(
+						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
+					);
 
-		setVisiblePlans( newVisiblePlans );
-	}, [ gridSize, displayedGridPlans, isInSignup ] );
+					return gridPlan?.planSlug ?? planSlug;
+				} );
+			}
+
+			// nothing to update
+			return prev;
+		} );
+	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
@@ -1104,7 +1120,7 @@ const ComparisonGrid = ( {
 	const handleUpgradeClick = useUpgradeClickHandler( {
 		gridPlans,
 		onUpgradeClick,
-		selectedSiteId: selectedSiteId,
+		selectedSiteId: siteId,
 	} );
 
 	/**

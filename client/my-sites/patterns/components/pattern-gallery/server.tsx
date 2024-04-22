@@ -22,7 +22,7 @@ export const PatternGalleryServer: PatternGalleryFC = ( { isGridView, patterns =
 						'pattern-preview--list': ! isGridView,
 					} ) }
 					key={ pattern.ID }
-					pattern={ pattern }
+					title={ pattern.title }
 				/>
 			) ) }
 		</div>

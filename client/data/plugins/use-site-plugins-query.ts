@@ -1,22 +1,8 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { decodeEntitiesFromPlugins } from './helpers';
+import type { SitePlugin } from './types';
 import type { SiteId, SiteSlug } from 'calypso/types';
-
-export type SitePlugin = {
-	active: boolean;
-	author: string;
-	author_url: string;
-	autoupdate: boolean;
-	description: string;
-	display_name: string;
-	name: string;
-	network: boolean;
-	plugin_url: string;
-	slug: string;
-	uninstallable: boolean;
-	version: string;
-};
 
 export type SitePluginsResponse = {
 	file_mod_capabilities: {

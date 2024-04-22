@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React, { ReactNode } from 'react';
-import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';

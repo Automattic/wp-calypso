@@ -30,12 +30,11 @@
 
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-0);
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
+	border-radius: 0;
 	box-shadow: none;
 	margin: 0;
 	margin-bottom: 16px;
-	padding: 16px;
+	padding: 16px 0 32px 0;
 	position: relative;
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -291,6 +290,7 @@
 	.comments__comment-actions {
 		display: flex;
 		justify-content: flex-start;
+		padding-top: 8px;
 	}
 }
 
@@ -516,7 +516,6 @@
 	clear: both;
 	display: flex;
 	flex-direction: column;
-	margin-left: 52px;
 
 	.reader-post-card__post-details {
 		width: 100%;
@@ -534,7 +533,7 @@
 }
 
 .reader-post-card__post-details {
-	font-family: $serif;
+	font-family: $sans;
 }
 
 .reader-post-card__title {
@@ -554,6 +553,7 @@
 	font-weight: 600;
 	display: block;
 	line-height: 29px;
+	text-wrap: pretty;
 
 	&:hover {
 		color: var(--color-neutral-70);

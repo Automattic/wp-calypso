@@ -23,7 +23,7 @@
 					font-weight: 500;
 					font-size: rem(32px);
 					line-height: 32px;
-					color: var(--studio-black);
+					color: var(--color-text-black);
 					margin-bottom: 4px;
 				}
 
@@ -34,7 +34,7 @@
 						align-items: center;
 						font-size: rem(18px);
 						font-weight: 400;
-						color: var(--studio-gray-70);
+						color: var(--color-accent-70);
 						line-height: 26px;
 						width: fit-content;
 
@@ -70,7 +70,7 @@
 					font-weight: 500;
 					font-size: rem(16px);
 					line-height: 16px;
-					color: var(--studio-black);
+					color: var(--color-text-black);
 					margin-bottom: 4px;
 				}
 
@@ -81,7 +81,7 @@
 						align-items: center;
 						font-size: rem(13px);
 						font-weight: 400;
-						color: var(--studio-gray-70);
+						color: var(--color-accent-70);
 						line-height: 13px;
 						width: fit-content;
 						text-decoration: none;
