@@ -21,15 +21,24 @@ export interface PlanUsage {
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
+	let billableMonthlyViews = 0;
+	const recent_usages = payload?.recent_usages
+		?.map( ( usage ) => usage?.views_count ?? 0 )
+		.filter( ( views ) => views > 0 );
+
+	if ( recent_usages.length === 1 ) {
+		billableMonthlyViews = recent_usages[ 0 ];
+	} else if ( recent_usages.length === 2 ) {
+		billableMonthlyViews = ( recent_usages[ 0 ] + recent_usages[ 1 ] ) / 2;
+	} else if ( recent_usages.length === 3 ) {
+		billableMonthlyViews = recent_usages[ 1 ];
+	} else if ( recent_usages.length === 4 ) {
+		billableMonthlyViews = ( recent_usages[ 1 ] + recent_usages[ 2 ] ) / 2;
+	}
+
 	return {
 		...payload,
-		billableMonthlyViews: Math.max(
-			payload?.recent_usages[ 0 ]?.views_count ?? 0,
-			payload?.recent_usages[ 1 ]?.views_count ?? 0,
-			payload?.recent_usages[ 2 ]?.views_count ?? 0,
-			payload?.current_usage?.views_count ?? 0,
-			0
-		),
+		billableMonthlyViews,
 	};
 }
 
