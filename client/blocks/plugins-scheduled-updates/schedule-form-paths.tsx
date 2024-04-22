@@ -5,7 +5,7 @@ import {
 	Flex,
 	FlexItem,
 } from '@wordpress/components';
-import { check, plus } from '@wordpress/icons';
+import { check, plus, closeSmall } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
@@ -25,6 +25,13 @@ export function ScheduleFormPaths( props: Props ) {
 	const [ paths, setPaths ] = useState( initPaths );
 	const [ newPath, setNewPath ] = useState( '' );
 	const [ newPathError, setNewPathError ] = useState( '' );
+
+	const removePath = useCallback(
+		( index: number ) => {
+			setPaths( paths.filter( ( _, i ) => i !== index ) );
+		},
+		[ paths ]
+	);
 
 	const onNewPathSubmit = useCallback( () => {
 		const pathError = validatePath( newPath );
@@ -69,7 +76,11 @@ export function ScheduleFormPaths( props: Props ) {
 								<InputControl value={ path } size="__unstable-large" readOnly />
 							</FlexItem>
 							<FlexItem>
-								<Button disabled icon={ check } __next40pxDefaultSize />
+								<Button
+									icon={ closeSmall }
+									__next40pxDefaultSize
+									onClick={ () => removePath( i ) }
+								/>
 							</FlexItem>
 						</Flex>
 					) ) }
@@ -86,6 +97,7 @@ export function ScheduleFormPaths( props: Props ) {
 									onChange={ ( p ) => setNewPath( p || '' ) }
 									onKeyPress={ ( e ) => {
 										if ( e.key === 'Enter' ) {
+											// Prevent form submission on Enter key press
 											e.preventDefault();
 											onNewPathSubmit();
 										}
