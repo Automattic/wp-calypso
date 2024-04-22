@@ -597,7 +597,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				href={ goBackUrl }
 				onClick={ onGoBack }
 			>
-				<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go Back' ) }
+				<Icon icon={ arrowLeft } size={ 16 } /> { translate( 'Go back' ) }
 			</WordPressButton>
 			<Card className="granular-restore">{ render() }</Card>
 			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt align="center" type="restore" /> }
