@@ -148,7 +148,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 					<StatsModulePlaceholder isLoading={ showLoader } />
 				) : (
 					<div className="stats-card--body__chart">
-						<PieChart data={ chartData } donut hasTooltip startAngle={ 0 } />
+						<PieChart data={ chartData } startAngle={ 0 } svgSize={ 224 } donut hasTooltip />
 						<PieChartLegend
 							data={ chartData }
 							onlyPercent
