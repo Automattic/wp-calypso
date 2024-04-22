@@ -30,6 +30,7 @@ import './style.scss';
 export function PlanStorage( {
 	children,
 	className,
+	hideWhenNoStorageBar = false,
 	shouldDisplayUpgradeLink = true,
 	siteId,
 	StorageBarComponent = PlanStorageBar,
@@ -96,6 +97,10 @@ export function PlanStorage( {
 	const hasPlanUnlimitedStorage = planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE );
 	const noMediaStorage = ! mediaStorage || mediaStorage.maxStorageBytes === -1;
 	const shouldRenderStorageBar = ! hasPlanUnlimitedStorage && ! noMediaStorage;
+
+	if ( hideWhenNoStorageBar && ! shouldRenderStorageBar ) {
+		return null;
+	}
 
 	const planStorageComponents = shouldRenderStorageBar && (
 		<StorageBarComponent

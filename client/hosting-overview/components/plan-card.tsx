@@ -84,6 +84,7 @@ const PlanCard: FC = () => {
 				) }
 				<PlanStorage
 					className="hosting-overview__plan-storage"
+					hideWhenNoStorageBar
 					shouldDisplayUpgradeLink={ false }
 					siteId={ site?.ID }
 					StorageBarComponent={ PlanStorageBar }
