@@ -1,17 +1,11 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import {
-	useLocale,
-	addLocaleToPathLocaleInFront,
-	useHasEnTranslation,
-} from '@automattic/i18n-utils';
+import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	Tooltip,
 } from '@wordpress/components';
-import { ToggleGroupControlOptionProps } from '@wordpress/components/build-types/toggle-group-control/types';
 import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Substitution, useTranslate } from 'i18n-calypso';
@@ -22,6 +16,7 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
+import { PatternTypeSwitcher } from 'calypso/my-sites/patterns/components/pattern-type-switcher';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
@@ -50,27 +45,6 @@ import './style.scss';
 const PatternLibraryBody = styled.div``;
 
 export const patternFiltersClassName = 'pattern-library__filters';
-
-const ToggleGroupControlOptionWithNarrowTooltip = (
-	props: ToggleGroupControlOptionProps & {
-		className: string;
-		showToolTip?: boolean;
-		toolTipText: string;
-	}
-) => {
-	const { showToolTip, toolTipText, ...toggleControlProps } = props;
-	const toolTipProps = { style: { maxWidth: '200px', top: '3px' }, text: toolTipText };
-
-	if ( ! showToolTip ) {
-		return <ToggleGroupControlOption { ...toggleControlProps } />;
-	}
-
-	return (
-		<Tooltip { ...toolTipProps }>
-			<ToggleGroupControlOption { ...toggleControlProps } />
-		</Tooltip>
-	);
-};
 
 // Scroll to anchoring position of category pill navigation element
 function scrollToPatternView( stickyFiltersElement: HTMLDivElement, onlyIfBelowThreshold = false ) {
@@ -124,8 +98,8 @@ export const PatternLibrary = ( {
 		? filterPatternsByTerm( rawPatterns, searchTerm )
 		: filterPatternsByType( rawPatterns, patternTypeFilter );
 
-	const hasEnTranslation = useHasEnTranslation();
 	let patternPermalinkName;
+
 	if ( patternPermalinkId && ! isFetchingPatterns ) {
 		patternPermalinkName = patterns.find( ( pattern ) => pattern.ID === patternPermalinkId )?.name;
 	}
@@ -228,7 +202,7 @@ export const PatternLibrary = ( {
 	}, [ locale, isLoggedIn ] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
-	const shouldDisplayPatternTypeToggle =
+	const shouldDisplayPatternTypeSwitcher =
 		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
@@ -355,52 +329,12 @@ export const PatternLibrary = ( {
 								{ mainHeading }
 							</h1>
 
-							{ shouldDisplayPatternTypeToggle && (
-								<ToggleGroupControl
-									className="pattern-library__toggle pattern-library__toggle--pattern-type"
-									isBlock
-									label=""
+							{ shouldDisplayPatternTypeSwitcher && (
+								<PatternTypeSwitcher
 									onChange={ ( value ) => {
-										const href =
-											getCategoryUrlPath( category, value as PatternTypeFilter ) +
-											( isGridView ? '?grid=1' : '' );
-										recordClickEvent(
-											'calypso_pattern_library_type_switch',
-											currentView,
-											value as PatternTypeFilter
-										);
-										page( href );
+										recordClickEvent( 'calypso_pattern_library_type_switch', currentView, value );
 									} }
-									value={ patternTypeFilter }
-								>
-									<ToggleGroupControlOptionWithNarrowTooltip
-										className="pattern-library__toggle-option pattern-library__toggle-option--type"
-										label={ translate( 'Patterns', {
-											comment: 'Refers to block patterns',
-											textOnly: true,
-										} ) }
-										showToolTip={ hasEnTranslation(
-											'A collection of blocks that make up one section of a page'
-										) }
-										toolTipText={ translate(
-											'A collection of blocks that make up one section of a page'
-										) }
-										value={ PatternTypeFilter.REGULAR }
-									/>
-
-									<ToggleGroupControlOptionWithNarrowTooltip
-										className="pattern-library__toggle-option pattern-library__toggle-option--type"
-										label={ translate( 'Page Layouts', {
-											comment: 'Refers to block patterns that contain entire page layouts',
-											textOnly: true,
-										} ) }
-										showToolTip={ hasEnTranslation(
-											'A collection of patterns that form an entire page'
-										) }
-										toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
-										value={ PatternTypeFilter.PAGES }
-									/>
-								</ToggleGroupControl>
+								/>
 							) }
 
 							<ToggleGroupControl
