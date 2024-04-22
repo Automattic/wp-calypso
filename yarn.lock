@@ -147,7 +147,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     autoprefixer: "npm:^10.2.5"
     calypso: "workspace:^"
     classnames: "npm:^2.3.2"
@@ -167,7 +167,7 @@ __metadata:
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
@@ -278,7 +278,7 @@ __metadata:
     "@babel/core": "npm:^7.24.0"
     "@types/webpack-env": "npm:^1.18.4"
     "@wordpress/browserslist-config": "npm:^5.39.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     autoprefixer: "npm:^10.2.5"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.8.2"
@@ -556,7 +556,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^9.26.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     "@wordpress/dom-ready": "npm:^3.56.0"
     "@wordpress/i18n": "npm:^4.56.0"
     calypso: "workspace:^"
@@ -571,7 +571,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     redux: "npm:^4.2.1"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
 
@@ -1359,7 +1359,7 @@ __metadata:
     redux: "npm:^4.2.1"
     redux-thunk: "npm:^2.4.2"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-dev-server: "npm:^4.15.2"
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -1387,7 +1387,7 @@ __metadata:
     "@wordpress/icons": "npm:^9.47.0"
     "@wordpress/is-shallow-equal": "npm:^4.56.0"
     "@wordpress/primitives": "npm:^3.54.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.38.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.39.0"
     classnames: "npm:^2.3.2"
     lodash: "npm:^4.17.21"
     moment: "npm:^2.26.0"
@@ -1447,7 +1447,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/base-styles": "npm:^4.47.0"
     "@wordpress/data": "npm:^9.26.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     "@wordpress/icons": "npm:^9.47.0"
     autoprefixer: "npm:^10.2.5"
     babel-jest: "npm:^29.6.1"
@@ -1471,7 +1471,7 @@ __metadata:
     redux-thunk: "npm:^2.4.2"
     size-limit: "npm:^8.2.6"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
     wpcom: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -2086,7 +2086,7 @@ __metadata:
     "@wordpress/components": "npm:^27.4.0"
     "@wordpress/compose": "npm:^6.33.0"
     "@wordpress/data": "npm:^9.26.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     "@wordpress/dom-ready": "npm:^3.56.0"
     "@wordpress/edit-post": "npm:^7.33.0"
     "@wordpress/edit-site": "npm:^5.33.0"
@@ -2110,7 +2110,7 @@ __metadata:
     redux: "npm:^4.2.1"
     tinymce: "npm:^5.0.0"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
   languageName: unknown
   linkType: soft
 
@@ -2191,7 +2191,7 @@ __metadata:
     "@wordpress/data": "npm:^9.26.0"
     "@wordpress/data-controls": "npm:^3.25.0"
     "@wordpress/date": "npm:^4.56.0"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.6.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^5.7.0"
     "@wordpress/dom-ready": "npm:^3.56.0"
     "@wordpress/edit-post": "npm:^7.33.0"
     "@wordpress/element": "npm:^5.33.0"
@@ -2210,7 +2210,7 @@ __metadata:
     "@wordpress/plugins": "npm:^6.24.0"
     "@wordpress/primitives": "npm:^3.54.0"
     "@wordpress/private-apis": "npm:^0.38.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.38.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.39.0"
     "@wordpress/rich-text": "npm:^6.33.0"
     "@wordpress/server-side-render": "npm:^4.33.0"
     "@wordpress/url": "npm:^3.57.0"
@@ -9455,14 +9455,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dependency-extraction-webpack-plugin@npm:5.6.0":
-  version: 5.6.0
-  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:5.6.0"
+"@wordpress/dependency-extraction-webpack-plugin@npm:5.7.0":
+  version: 5.7.0
+  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:5.7.0"
   dependencies:
     json2php: "npm:^0.0.7"
   peerDependencies:
     webpack: ^5.0.0
-  checksum: dbaa79cceea95f837c467cad6211a3a9ed7db9f401ec54b3f34af4ffac2de3f26eaded300cd246614809b45b6d6c866b1361f6fbe33d9e85cc775028d6d9b99d
+  checksum: 0a258af310294a5ce8dc8c87cc840d6f25e61ea5d04cc1f3019294beef34cce41259472b504da4d0a45ed634fc8959b12d24799cb05e730da7418a82eaf36a86
   languageName: node
   linkType: hard
 
@@ -10051,12 +10051,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/readable-js-assets-webpack-plugin@npm:2.38.0":
-  version: 2.38.0
-  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:2.38.0"
+"@wordpress/readable-js-assets-webpack-plugin@npm:2.39.0":
+  version: 2.39.0
+  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:2.39.0"
   peerDependencies:
     webpack: ^4.8.3 || ^5.0.0
-  checksum: a206576f48a083a4006e6c9b902fb48ab437a14313423bf95cb8fd7acf4e454216a91f4549e06f08c2d7e0023b2acd8e5edf7f321cbcc7009b2debdd01d05e73
+  checksum: 550f980f8e1d789a9b5c87c8ed7450beb13f8a334b60181218c7eb7b86de4bd7a24fe359c166072f7f1549a49617dee58a27dfc815e64d68d384e5443779d432
   languageName: node
   linkType: hard
 
@@ -12477,7 +12477,7 @@ __metadata:
     uuid: "npm:^9.0.1"
     valid-url: "npm:^1.0.9"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-dev-middleware: "npm:^5.3.4"
     webpack-hot-middleware: "npm:^2.26.1"
     webpack-node-externals: "npm:^3.0.0"
@@ -18637,7 +18637,7 @@ __metadata:
     "@wordpress/data": "npm:^9.26.0"
     "@wordpress/element": "npm:^5.33.0"
     "@wordpress/i18n": "npm:^4.56.0"
-    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.38.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^2.39.0"
     classnames: "npm:^2.3.2"
     copy-webpack-plugin: "npm:^10.2.4"
     glob: "npm:^7.1.6"
@@ -32711,9 +32711,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:^4.10.1":
-  version: 4.10.1
-  resolution: "webpack-bundle-analyzer@npm:4.10.1"
+"webpack-bundle-analyzer@npm:^4.10.2":
+  version: 4.10.2
+  resolution: "webpack-bundle-analyzer@npm:4.10.2"
   dependencies:
     "@discoveryjs/json-ext": "npm:0.5.7"
     acorn: "npm:^8.0.4"
@@ -32723,14 +32723,13 @@ __metadata:
     escape-string-regexp: "npm:^4.0.0"
     gzip-size: "npm:^6.0.0"
     html-escaper: "npm:^2.0.2"
-    is-plain-object: "npm:^5.0.0"
     opener: "npm:^1.5.2"
     picocolors: "npm:^1.0.0"
     sirv: "npm:^2.0.3"
     ws: "npm:^7.3.1"
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
-  checksum: 6a94c8f6aa03296fb2eb00d6ad3b27bd5c551590fd253772bc61debf3177414d42701014079d4f85c74ba1ca685ae9f0cb4063812b58c21f294d108e9908e5cd
+  checksum: 00603040e244ead15b2d92981f0559fa14216381349412a30070a7358eb3994cd61a8221d34a3b3fb8202dc3d1c5ee1fbbe94c5c52da536e5b410aa1cf279a48
   languageName: node
   linkType: hard
 
@@ -33357,7 +33356,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     v8-profiler-next: "npm:^1.10.0"
     webpack: "npm:^5.91.0"
-    webpack-bundle-analyzer: "npm:^4.10.1"
+    webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^4.10.0"
     webpack-dev-middleware: "npm:^5.3.4"
     whybundled: "npm:^2.0.0"
