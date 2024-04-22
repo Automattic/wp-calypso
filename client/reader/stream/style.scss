@@ -259,8 +259,9 @@
 .is-reader-page {
 
 	.reader__card.card.is-x-post {
-		margin: 0 15px;
-		padding: 16px 0 16px;
+		margin: 0;
+		padding: 16px 0 32px;
+		border-bottom: 1px solid #e9e9ea;
 
 		+ .reader-post-card {
 			margin-top: 16px;
@@ -291,6 +292,10 @@
 		.gravatar {
 			border: 1px solid var(--color-border-inverted);
 		}
+	}
+
+	.reader__card.card.is-x-post + .reader__card.card.is-x-post {
+		padding-top: 32px;
 	}
 }
 
