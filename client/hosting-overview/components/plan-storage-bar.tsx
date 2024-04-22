@@ -1,4 +1,3 @@
-import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
 import { ProgressBar } from '@automattic/components';
 import { SiteMediaStorage } from '@automattic/data-stores';
 import { Icon, cloud } from '@wordpress/icons';
@@ -8,23 +7,10 @@ import { FC, PropsWithChildren } from 'react';
 
 interface Props {
 	mediaStorage: SiteMediaStorage;
-	sitePlanSlug: string;
 }
 
-const PlanStorageBar: FC< PropsWithChildren< Props > > = ( {
-	children,
-	mediaStorage,
-	sitePlanSlug,
-} ) => {
+const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStorage } ) => {
 	const translate = useTranslate();
-
-	if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
-		return null;
-	}
-
-	if ( ! mediaStorage || mediaStorage.maxStorageBytes === -1 ) {
-		return null;
-	}
 
 	const percent = Math.min(
 		Math.round( ( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10 ),

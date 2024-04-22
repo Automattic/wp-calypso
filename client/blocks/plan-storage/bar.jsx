@@ -1,4 +1,3 @@
-import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
 import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import filesize from 'filesize';
@@ -14,19 +13,10 @@ export class PlanStorageBar extends Component {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
 		displayUpgradeLink: PropTypes.bool,
-		sitePlanSlug: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { className, displayUpgradeLink, mediaStorage, sitePlanSlug, translate } = this.props;
-
-		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
-			return null;
-		}
-
-		if ( ! mediaStorage || mediaStorage.maxStorageBytes === -1 ) {
-			return null;
-		}
+		const { className, displayUpgradeLink, mediaStorage, translate } = this.props;
 
 		const percent = Math.min(
 			Math.round(
