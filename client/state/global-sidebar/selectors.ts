@@ -14,14 +14,24 @@ export const getShouldShowGlobalSidebar = (
 	_: AppState,
 	siteId: number,
 	sectionGroup: string,
-	sectionName: string // eslint-disable-line @typescript-eslint/no-unused-vars
+	sectionName: string
 ) => {
-	return (
+	if (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
-		sectionGroup === 'sites-dashboard' ||
 		( sectionGroup === 'sites' && ! siteId )
-	);
+	) {
+		return true;
+	}
+	// Show the global sidebar for the sites dashboard
+	// If on hosting section, also check if the feature flag is enabled
+	if (
+		sectionGroup === 'sites-dashboard' &&
+		( sectionName !== 'hosting' || isEnabled( 'layout/dotcom-nav-redesign-v2' ) )
+	) {
+		return true;
+	}
+	return false;
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
