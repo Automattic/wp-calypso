@@ -370,7 +370,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		useSelector( ( state ) =>
 			getProductsByBillingSlug(
 				state,
-				getProductBillingSlugByThemeId( state, selectedDesignThemeId )
+				getProductBillingSlugByThemeId( state, selectedDesignThemeId ?? '' )
 			)
 		) || [];
 	const marketplaceProductSlug =
