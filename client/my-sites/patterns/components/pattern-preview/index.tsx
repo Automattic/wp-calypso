@@ -279,13 +279,13 @@ function PatternPreviewFragment( {
 			return;
 		}
 
-		const forms = Array.from( iframe.contentDocument.querySelectorAll( 'form' ) );
+		const forms = iframe.contentDocument.querySelectorAll( 'form' );
 
 		if ( ! forms.length ) {
 			return;
 		}
 
-		const onFormSubmit = ( event: { preventDefault: () => void } ) => event.preventDefault();
+		const onFormSubmit = ( event: SubmitEvent ) => event.preventDefault();
 
 		forms.forEach( ( form ) => form.addEventListener( 'submit', onFormSubmit ) );
 
