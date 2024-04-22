@@ -140,6 +140,7 @@ export const ScheduleForm = ( props: Props ) => {
 					setFieldTouched( { ...fieldTouched, timestamp: touched } );
 				} }
 			/>
+
 			<Text>{ translate( 'Step 2' ) }</Text>
 			<ScheduleFormPlugins
 				plugins={ plugins }
@@ -153,6 +154,7 @@ export const ScheduleForm = ( props: Props ) => {
 					setFieldTouched( { ...fieldTouched, plugins: touched } );
 				} }
 			/>
+
 			{ isEnabled( 'plugins/multisite-scheduled-updates' ) && (
 				<>
 					<Text>{ translate( 'Step 3' ) }</Text>

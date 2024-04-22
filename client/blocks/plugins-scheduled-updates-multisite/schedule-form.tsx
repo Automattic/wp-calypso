@@ -1,3 +1,5 @@
+import { __experimentalText as Text } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
@@ -7,6 +9,8 @@ import { validateSites, validatePlugins } from '../plugins-scheduled-updates/sch
 import { ScheduleFormSites } from './schedule-form-sites';
 
 export const ScheduleForm = () => {
+	const translate = useTranslate();
+
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( [] );
 	const [ validationErrors, setValidationErrors ] = useState< Record< string, string > >( {} );
@@ -58,6 +62,7 @@ export const ScheduleForm = () => {
 
 	return (
 		<div className="schedule-form">
+			<Text>{ translate( 'Step 1' ) }</Text>
 			<ScheduleFormSites
 				sites={ sites }
 				onChange={ setSelectedSites }
@@ -65,6 +70,8 @@ export const ScheduleForm = () => {
 				error={ validationErrors?.sites }
 				showError={ fieldTouched?.sites }
 			/>
+
+			<Text>{ translate( 'Step 2' ) }</Text>
 			<ScheduleFormPlugins
 				plugins={ getPlugins() }
 				selectedPlugins={ selectedPlugins }
@@ -75,9 +82,9 @@ export const ScheduleForm = () => {
 				error={ validationErrors?.plugins }
 				showError={ fieldTouched?.plugins }
 			/>
-			<div className="form-control-container">
-				<ScheduleFormFrequency initFrequency="daily" />
-			</div>
+
+			<Text>{ translate( 'Step 3' ) }</Text>
+			<ScheduleFormFrequency initFrequency="daily" />
 		</div>
 	);
 };
