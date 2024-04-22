@@ -50,11 +50,11 @@ export const getLogIcon = ( log: ScheduleLog ) => {
 		case 'PLUGIN_UPDATES_SUCCESS':
 		case 'PLUGIN_UPDATE_SUCCESS':
 		case 'PLUGIN_SITE_HEALTH_CHECK_SUCCESS':
+		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
 			return 'checkmark';
 		case 'PLUGIN_UPDATES_FAILURE':
 		case 'PLUGIN_UPDATE_FAILURE':
 		case 'PLUGIN_SITE_HEALTH_CHECK_FAILURE':
-		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK':
 		case 'PLUGIN_UPDATE_FAILURE_AND_ROLLBACK_FAIL':
 			return 'cross';
 	}
