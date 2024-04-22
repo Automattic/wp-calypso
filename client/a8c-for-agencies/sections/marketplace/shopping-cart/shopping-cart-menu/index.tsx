@@ -10,6 +10,7 @@ import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
 import './style.scss';
+
 type Props = {
 	onClose: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
