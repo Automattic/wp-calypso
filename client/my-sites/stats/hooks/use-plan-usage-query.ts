@@ -21,9 +21,10 @@ export interface PlanUsage {
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
-	const recent_usages = payload?.recent_usages
-		?.map( ( usage ) => usage?.views_count ?? 0 )
-		.filter( ( views ) => views > 0 );
+	const recent_usages =
+		payload?.recent_usages
+			?.map( ( usage ) => usage?.views_count ?? 0 )
+			.filter( ( views ) => views > 0 ) ?? [];
 
 	return {
 		...payload,
