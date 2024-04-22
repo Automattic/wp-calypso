@@ -242,8 +242,6 @@ module.exports = {
 						'./packages/i18n-calypso/package.json',
 						'./packages/i18n-utils/package.json',
 						'./packages/photon/package.json',
-						'./packages/spec-junit-reporter/package.json',
-						'./packages/spec-xunit-reporter/package.json',
 					],
 					rules: {
 						'@automattic/json/valid-values-name-scope': 'off',
