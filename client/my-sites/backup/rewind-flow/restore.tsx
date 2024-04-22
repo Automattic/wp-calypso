@@ -3,6 +3,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
+import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -253,10 +254,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const renderFinished = () => (
 		<>
 			<div className="rewind-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-restore-success.svg"
-					alt="jetpack cloud restore success"
-				/>
+				<img src={ restoreSuccessImage } alt="jetpack cloud restore success" />
 			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Your site has been successfully restored.' ) }
@@ -274,8 +272,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button primary href={ siteUrl } className="rewind-flow__primary-button">
-				{ translate( 'View your website' ) }
+			<Button primary href={ siteUrl } target="_blank" className="rewind-flow__primary-button">
+				{ translate( 'View your website {{externalIcon/}}', {
+					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
+				} ) }
 			</Button>
 		</>
 	);

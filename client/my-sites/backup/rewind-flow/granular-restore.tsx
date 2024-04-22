@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -496,10 +497,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const renderFinished = () => (
 		<>
 			<div className="rewind-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-restore-success.svg"
-					alt="jetpack cloud restore success"
-				/>
+				<img src={ restoreSuccessImage } alt="jetpack cloud restore success" />
 			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Your site has been successfully restored.' ) }
