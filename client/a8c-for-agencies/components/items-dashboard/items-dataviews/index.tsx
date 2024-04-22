@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
 // todo: Extract from style.scss not common styles (colors and specific to Jetpack Cloud components)
 import './style.scss';
+import './a4a-style.scss';
 
 const getIdByPath = ( item: object, path: string ) => {
 	const fields = path.split( '.' );
