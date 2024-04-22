@@ -34,7 +34,7 @@ const buildFilters = ( { issueTypes }: { issueTypes: string } ) => {
 		issueTypesArray?.map( ( issueType ) => {
 			return {
 				field: 'status',
-				operator: 'in',
+				operator: 'is',
 				value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
 			};
 		} ) || []

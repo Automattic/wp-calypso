@@ -93,7 +93,6 @@ export const JetpackSitesDataViews = ( {
 				getValue: ( { item }: { item: SiteInfo } ) =>
 					item.site.error || item.scan.status === 'critical',
 				render: () => null,
-				type: 'enumeration',
 				elements: [
 					{ value: 1, label: translate( 'Needs Attention' ) },
 					{ value: 2, label: translate( 'Backup Failed' ) },
@@ -104,7 +103,7 @@ export const JetpackSitesDataViews = ( {
 					{ value: 7, label: translate( 'Plugins Needing Updates' ) },
 				],
 				filterBy: {
-					operators: [ 'in' ],
+					operators: [ 'is' ],
 				},
 				enableHiding: false,
 				enableSorting: false,
