@@ -1,5 +1,6 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { useCorePluginsQuery, type CorePlugin } from 'calypso/data/plugins/use-core-plugins-query';
+import { useCorePluginsQuery } from 'calypso/data/plugins/use-core-plugins-query';
+import type { CorePlugin } from 'calypso/data/plugins/types';
 import type { SiteSlug } from 'calypso/types';
 
 export function usePreparePluginsTooltipInfo( siteSlug: SiteSlug ) {

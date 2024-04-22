@@ -7,9 +7,11 @@ import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import type { ShoppingCartItem } from '../../types';
 
+import './style.scss';
+
 type ItemProps = {
 	item: ShoppingCartItem;
-	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	onRemoveItem?: ( item: ShoppingCartItem ) => void;
 };
 
 export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps ) {
@@ -40,13 +42,15 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 					) }
 				</div>
 			</div>
-			<Button
-				className="shopping-cart__menu-item-remove-button"
-				variant="link"
-				onClick={ () => onRemoveItem( item ) }
-			>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ onRemoveItem && (
+				<Button
+					className="shopping-cart__menu-item-remove-button"
+					variant="link"
+					onClick={ () => onRemoveItem( item ) }
+				>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 		</li>
 	);
 }
