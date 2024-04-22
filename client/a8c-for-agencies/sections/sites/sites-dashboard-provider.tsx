@@ -1,10 +1,15 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
+import {
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { SitesDashboardContextInterface } from 'calypso/a8c-for-agencies/sections/sites/types';
 import {
 	DashboardSortInterface,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
-import { filtersMap, initialSitesViewState } from './constants';
+import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD, filtersMap } from './constants';
 import SitesDashboardContext from './sites-dashboard-context';
 
 interface Props {
@@ -76,8 +81,12 @@ export const SitesDashboardProvider = ( {
 		setCurrentLicenseInfo( null );
 	};
 
-	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
-		...initialSitesViewState,
+	initialDataViewsState.sort.field = DEFAULT_SORT_FIELD;
+	initialDataViewsState.sort.direction = DEFAULT_SORT_DIRECTION;
+	initialDataViewsState.hiddenFields = [ 'status' ];
+
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
 		page: currentPage,
 		search: searchQuery,
 		sort,
@@ -91,7 +100,7 @@ export const SitesDashboardProvider = ( {
 			setHideListing( false );
 		}
 
-		setSitesViewState( ( previousState ) => ( {
+		setDataViewsState( ( previousState ) => ( {
 			...previousState,
 			...( siteUrlInitialState
 				? {}
@@ -100,11 +109,11 @@ export const SitesDashboardProvider = ( {
 				  } ),
 			...( siteUrlInitialState ? {} : { search: searchQuery } ),
 			...( siteUrlInitialState ? {} : { sort } ),
-			...( siteUrlInitialState ? {} : { selectedSite: undefined } ),
-			...( siteUrlInitialState ? {} : { type: 'table' } ),
+			...( siteUrlInitialState ? {} : { selectedItem: undefined } ),
+			...( siteUrlInitialState ? {} : { type: DATAVIEWS_TABLE } ),
 		} ) );
 	}, [
-		setSitesViewState,
+		setDataViewsState,
 		showOnlyFavoritesInitialState,
 		searchQuery,
 		sort,
@@ -113,7 +122,7 @@ export const SitesDashboardProvider = ( {
 		setInitialSelectedSiteUrl,
 	] );
 
-	const sitesDashboardContextValue = {
+	const sitesDashboardContextValue: SitesDashboardContextInterface = {
 		selectedCategory: selectedCategory,
 		setSelectedCategory: setSelectedCategory,
 		selectedSiteFeature: selectedSiteFeature,
@@ -136,8 +145,8 @@ export const SitesDashboardProvider = ( {
 		setMostRecentConnectedSite,
 		isPopoverOpen,
 		setIsPopoverOpen,
-		sitesViewState,
-		setSitesViewState,
+		dataViewsState,
+		setDataViewsState,
 		featurePreview,
 	};
 	return (

@@ -92,7 +92,7 @@
 		{ "locale": "en", "post_ids": [ 19775, 80368, 9394, 134698, 2116 ], "blog_id": 9619154 }
 	],
 	"/settings/general/": [
-		{ "locale": "en", "post_ids": [ 1501, 119826, 1507, 134940, 240668 ], "blog_id": 9619154 }
+		{ "locale": "en", "post_ids": [ 185130, 119826, 1507, 134940, 240668 ], "blog_id": 9619154 }
 	],
 	"/settings/newsletter/": [
 		{ "locale": "en", "post_ids": [ 257112, 67810, 168381, 220199, 5444 ], "blog_id": 9619154 }
