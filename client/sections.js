@@ -548,8 +548,8 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/my-sites/hosting',
-		group: 'sites',
+		module: 'calypso/hosting-overview',
+		group: 'sites-dashboard',
 	},
 	{
 		name: 'backup',
