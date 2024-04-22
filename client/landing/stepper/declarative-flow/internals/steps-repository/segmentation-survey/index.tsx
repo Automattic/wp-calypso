@@ -14,7 +14,7 @@ import SegmentationSurveyProvider from './provider';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SURVEY_KEY = 'survey-1';
+const SURVEY_KEY = 'entrepreneur-trial';
 
 const SegmentationSurveyDocumentHead = () => {
 	const { currentQuestion } = useSurveyContext();
