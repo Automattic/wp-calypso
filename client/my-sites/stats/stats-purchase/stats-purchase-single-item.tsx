@@ -412,7 +412,7 @@ function StatsCommercialFlowOptOutForm( {
 		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
 	const isClassificationInProgress =
 		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
 
 	const isFormSubmissionDisabled =
 		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
@@ -508,7 +508,7 @@ function StatsCommercialFlowOptOutForm( {
 				{ ( ! supportsOnDemandCommercialClassification ||
 					! isCommercial ||
 					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
+					<Button variant="secondary" onClick={ formHandler }>
 						{ formButton }
 					</Button>
 				) }
@@ -520,17 +520,21 @@ function StatsCommercialFlowOptOutForm( {
 					) }
 					{ isClassificationInProgress && ! errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-							{ translate( 'We are verifying your site. Please come back later…' ) }
+							{ translate(
+								'We are working on verifying your site… Please come back in about 30 minutes. You will have an option to contact support when the process is finished.'
+							) }
 						</p>
 					) }
 					{ ! isClassificationInProgress &&
 						commercialClassificationLastRunAt > 0 &&
 						! errorMessage && (
-							<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-								{ translate(
-									'We have finished verify your site. If you still think this is an error, please contact our support.'
-								) }
-							</p>
+							<>
+								<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+									{ translate(
+										'We have finished verify your site. If you still think this is an error, please contact support clicking the button above. '
+									) }
+								</p>
+							</>
 						) }
 				</>
 			) }
