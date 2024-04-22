@@ -8,9 +8,9 @@ import DataType from './data-type';
 
 import './style.scss';
 
-const SVG_SIZE = 224;
+const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
-const TOOLTIP_OFFSET_X = -164; // SVG_SIZE - 2x tip offset (30px in CSS)
+const TOOLTIP_OFFSET_X = -207;
 const TOOLTIP_OFFSET_Y = 0;
 
 function transformData( data, { donut = false, startAngle = -Math.PI } ) {
