@@ -15,7 +15,8 @@ export default function useBannerSubtitle(
 	trialDaysLeftToDisplay: number,
 	trialExpiration: Moment | null,
 	selectedSiteId: number | null,
-	isEcommerceTrial?: boolean
+	isWooExpressTrial?: boolean,
+	isEntrepreneurTrial?: boolean
 ): string {
 	const locale = useLocale();
 	const translate = useTranslate();
@@ -36,7 +37,7 @@ export default function useBannerSubtitle(
 		// this may need updating for intro offers with singly counted units e.g. 1 month|year
 		let introOfferSubtitle;
 		if (
-			isEcommerceTrial &&
+			isWooExpressTrial &&
 			anyWooExpressIntroOffer &&
 			'month' === anyWooExpressIntroOffer.intervalUnit
 		) {
@@ -65,6 +66,29 @@ export default function useBannerSubtitle(
 							expirationdate: readableExpirationDate as string,
 							introOfferFormattedPrice: anyWooExpressIntroOffer.formattedPrice,
 							introOfferIntervalCount: anyWooExpressIntroOffer.intervalCount,
+						},
+					}
+				);
+			}
+		}
+		let entrepreneurTrialSubtitle;
+		if ( isEntrepreneurTrial ) {
+			if ( trialDaysLeftToDisplay < 1 ) {
+				entrepreneurTrialSubtitle = translate(
+					'Your free trial ends today. Add payment method by %(expirationdate)s to continue selling your products and access all the power.',
+					{
+						args: {
+							expirationdate: readableExpirationDate as string,
+						},
+					}
+				);
+			} else {
+				entrepreneurTrialSubtitle = translate(
+					'Your free trial will end in %(daysLeft)d day. Add payment method by %(expirationdate)s to continue selling your products and access all the power.',
+					{
+						args: {
+							daysLeft: trialDaysLeftToDisplay,
+							expirationdate: readableExpirationDate as string,
 						},
 					}
 				);
@@ -136,6 +160,8 @@ export default function useBannerSubtitle(
 					subtitle = translate(
 						'Your free trial has expired. Upgrade to a plan to unlock new features and start selling.'
 					);
+				} else if ( entrepreneurTrialSubtitle ) {
+					subtitle = entrepreneurTrialSubtitle;
 				} else if ( introOfferSubtitle ) {
 					subtitle = introOfferSubtitle;
 				} else if ( trialDaysLeftToDisplay < 1 ) {
@@ -170,7 +196,8 @@ export default function useBannerSubtitle(
 		trialDaysLeftToDisplay,
 		readableExpirationDate,
 		anyWooExpressIntroOffer,
-		isEcommerceTrial,
+		isWooExpressTrial,
+		isEntrepreneurTrial,
 		translate,
 	] );
 

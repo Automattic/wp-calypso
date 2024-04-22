@@ -1,26 +1,20 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-} from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
+import UpgradeButton from '../../components/upgrade-button/upgrade-button';
 import useOneDollarOfferTrack from '../../hooks/use-onedollar-offer-track';
 import TrialBanner from '../../trials/trial-banner';
 import BusinessTrialIncluded from './business-trial-included';
 import EcommerceTrialIncluded from './ecommerce-trial-included';
 import EcommerceTrialNotIncluded from './ecommerce-trial-not-included';
-
 import './trial-current-plan.scss';
+import useGoToCheckoutWithPlan from './use-go-to-checkout-with-plan';
 
 const TrialCurrentPlan = () => {
 	const selectedSite = useSelector( getSelectedSite );
@@ -44,43 +38,22 @@ const TrialCurrentPlan = () => {
 	const bodyClass = isEcommerceTrial ? [ 'is-ecommerce-trial-plan' ] : [ 'is-business-trial-plan' ];
 	const isWooExpressTrial = purchase?.isWooExpressTrial;
 
-	const targetPlan = isEcommerceTrial ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : PLAN_BUSINESS;
-	const trackEvent = isEcommerceTrial
-		? 'calypso_wooexpress_my_plan_cta'
-		: 'calypso_migration_my_plan_cta';
-
 	useOneDollarOfferTrack( selectedSite?.ID, 'plans' );
 
 	/**
 	 * Redirects to the checkout page with Plan on cart.
 	 * @param ctaPosition - The position of the CTA that triggered the redirect.
 	 */
-	const goToCheckoutWithPlan = ( ctaPosition: string ) => {
-		recordTracksEvent( trackEvent, {
-			cta_position: ctaPosition,
-		} );
-
-		const checkoutUrl = getTrialCheckoutUrl( {
-			productSlug: targetPlan,
-			siteSlug: selectedSite?.slug ?? '',
-		} );
-
-		page.redirect( checkoutUrl );
-	};
-
-	const bannerCallToAction = (
-		<Button
-			className="trial-current-plan__trial-card-cta"
-			primary
-			onClick={ () => goToCheckoutWithPlan( 'card' ) }
-		>
-			{ translate( 'Upgrade now' ) }
-		</Button>
-	);
+	const goToCheckoutWithPlan = useGoToCheckoutWithPlan();
 
 	const includedFeatures = () => {
 		if ( isEcommerceTrial ) {
-			return <EcommerceTrialIncluded displayAll={ displayAllIncluded } />;
+			return (
+				<EcommerceTrialIncluded
+					displayAll={ displayAllIncluded }
+					isWooExpressTrial={ isWooExpressTrial }
+				/>
+			);
 		}
 
 		return <BusinessTrialIncluded displayAll={ displayAllIncluded } tracksContext="current_plan" />;
@@ -91,7 +64,10 @@ const TrialCurrentPlan = () => {
 			<BodySectionCssClass bodyClass={ bodyClass } />
 
 			<div className="trial-current-plan__banner-wrapper">
-				<TrialBanner callToAction={ bannerCallToAction } isWooExpressTrial={ isWooExpressTrial } />
+				<TrialBanner
+					callToAction={ <UpgradeButton goToCheckoutWithPlan={ goToCheckoutWithPlan } /> }
+					isWooExpressTrial={ isWooExpressTrial }
+				/>
 			</div>
 
 			<h2 className="trial-current-plan__section-title">
