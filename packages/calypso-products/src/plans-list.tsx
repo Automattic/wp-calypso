@@ -445,6 +445,7 @@ import {
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
 } from './constants';
+import { getPlansListExperiment } from './experiments';
 import type {
 	BillingTerm,
 	Plan,
@@ -723,8 +724,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: () =>
-		// translators: Starter is a plan name
-		i18n.translate( 'Starter' ),
+		getPlansListExperiment( 'wpcom_plan_name_change_starter_to_beginner' ) === 'treatment'
+			? // translators: Beginner is a plan name
+			  i18n.translate( 'Beginner' )
+			: // translators: Starter is a plan name
+			  i18n.translate( 'Starter' ),
 	getAudience: () => i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
