@@ -32,13 +32,10 @@ const migrationSignup: Flow = {
 		return [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_CREATION_STEP,
-			//STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.BUNDLE_TRANSFER,
 			STEPS.SITE_MIGRATION_PLUGIN_INSTALL,
 			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			//STEPS.VERIFY_EMAIL,
-			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 		];
@@ -250,28 +247,7 @@ const migrationSignup: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug );
 				}
 
-				case STEPS.VERIFY_EMAIL.slug: {
-					return navigate( STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug );
-				}
-
-				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
-					if ( providedDependencies?.error ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					return navigate( STEPS.BUNDLE_TRANSFER.slug, {
-						siteId,
-						siteSlug,
-					} );
-				}
-
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					/*
-					if ( providedDependencies?.verifyEmail ) {
-						return navigate( STEPS.VERIFY_EMAIL.slug );
-					}
-					*/
-
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = addQueryArgs(
 							{
@@ -289,6 +265,7 @@ const migrationSignup: Flow = {
 						} );
 						return;
 					}
+
 					if ( providedDependencies?.freeTrialSelected ) {
 						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
 							siteId,
