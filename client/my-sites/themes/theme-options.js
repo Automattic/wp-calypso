@@ -3,6 +3,8 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	getPlan,
+	TERM_ANNUALLY,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
@@ -19,7 +21,12 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+	getSiteSlug,
+	getSitePlanSlug,
+} from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -77,7 +84,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 					? PLAN_PREMIUM
 					: tierMinimumUpsellPlan;
 
-			const mappedPlan = getPlan( minimumPlan );
+			const currentPlanSlug = getSitePlanSlug( state, siteId );
+			const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+			const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
+
+			const mappedPlan = getPlan( requiredPlanSlug );
 			const planPathSlug = mappedPlan?.getPathSlug();
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
