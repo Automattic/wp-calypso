@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .advanced-credentials {
+	scroll-margin: 40px;
+
 	.step-progress {
 		margin-top: 16px;
 		margin-bottom: 16px;
