@@ -10,8 +10,6 @@ import { PatternTypeFilter } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
 
-const FRAMER_LAYOUT_ID = 'pattern-type-switcher-shared-layout-id';
-
 type PatternTypeSwitcherOptionProps = React.PropsWithChildren< {
 	onChange?( value: PatternTypeFilter ): void;
 	toolTipText: string;
@@ -42,8 +40,8 @@ const PatternTypeSwitcherOption = ( {
 					<motion.div layout layoutRoot>
 						<motion.div
 							className="pattern-library__toggle-backdrop"
+							layoutId="pattern-type-switcher-shared-layout-id"
 							role="presentation"
-							layoutId={ FRAMER_LAYOUT_ID }
 						/>
 					</motion.div>
 				) }
