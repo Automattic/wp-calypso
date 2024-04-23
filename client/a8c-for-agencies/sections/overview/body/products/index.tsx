@@ -45,7 +45,7 @@ const OverviewBodyProducts = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'View all Jetpack products' ),
-		expanded: false,
+		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'jetpack' );
 			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#jetpack-plans` );
