@@ -71,5 +71,4 @@ export const getShouldShowUnifiedSiteSidebar = (
 		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
 		! getShouldShowGlobalSidebar( state, siteId, sectionGroup, sectionName )
 	);
-	//return true;
 };
