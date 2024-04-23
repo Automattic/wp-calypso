@@ -16,7 +16,7 @@ import './style.scss';
 
 export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } ) {
 	const isMobile = useMobileBreakpoint();
-	const { footer, ...allProps } = props;
+	const { className, footer, ...allProps } = props;
 
 	const state = useGenerateDomainsTableState( allProps );
 
@@ -31,7 +31,7 @@ export function DomainsTable( props: DomainsTableProps & { footer?: ReactNode } 
 
 	return (
 		<DomainsTableStateContext.Provider value={ state }>
-			<div className="domains-table">
+			<div className={ classnames( className, 'domains-table' ) }>
 				<DomainsTableBulkUpdateNotice />
 				{ showDomainsToolbar && <DomainsTableToolbar /> }
 				{ isMobile ? (

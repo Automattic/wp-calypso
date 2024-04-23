@@ -47,6 +47,7 @@ type OnDomainAction = (
 ) => DomainActionDescription | void;
 
 interface BaseDomainsTableProps {
+	className?: string;
 	domains: PartialDomainData[] | DomainData[] | undefined;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
