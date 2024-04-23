@@ -30,7 +30,7 @@ import './style.scss';
 export function PlanStorage( {
 	children,
 	className,
-	hideWhenNoStorageBar = false,
+	hideWhenNoStorage = false,
 	siteId,
 	StorageBarComponent = PlanStorageBar,
 } ) {
@@ -93,7 +93,7 @@ export function PlanStorage( {
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const hasMediaStorage = !! mediaStorage && mediaStorage.maxStorageBytes !== -1;
-	if ( hideWhenNoStorageBar && ! hasMediaStorage ) {
+	if ( hideWhenNoStorage && ! hasMediaStorage ) {
 		return null;
 	}
 
