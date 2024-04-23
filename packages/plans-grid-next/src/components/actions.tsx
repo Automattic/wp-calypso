@@ -93,8 +93,6 @@ const SignupFlowPlanFeatureActionButton = ( {
 		},
 	} );
 
-	const onClick = () => onCtaClick();
-
 	if ( isFreePlan( planSlug ) ) {
 		btnText = translate( 'Start with Free' );
 	} else if ( isStuck && ! isLargeCurrency ) {
@@ -127,7 +125,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 					{ translate( 'Try for free' ) }
 				</PlanButton>
 				{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
-					<PlanButton planSlug={ planSlug } onClick={ onClick } borderless>
+					<PlanButton planSlug={ planSlug } onClick={ onCtaClick } borderless>
 						{ btnText }
 					</PlanButton>
 				) }
@@ -137,7 +135,7 @@ const SignupFlowPlanFeatureActionButton = ( {
 
 	return (
 		<>
-			<PlanButton planSlug={ planSlug } onClick={ onClick } busy={ busy }>
+			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } busy={ busy }>
 				{ btnText }
 			</PlanButton>
 			{ postButtonText && (
@@ -192,7 +190,7 @@ const LaunchPagePlanFeatureActionButton = ( {
 	}
 
 	return (
-		<PlanButton planSlug={ planSlug } onClick={ () => onCtaClick() }>
+		<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
 			{ buttonText }
 		</PlanButton>
 	);
@@ -228,7 +226,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
 	const { gridPlansIndex, siteId } = usePlansGridContext();
-	const onClick = () => onCtaClick();
 
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
@@ -341,7 +338,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	) {
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</PlanButton>
 			);
@@ -349,7 +346,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</PlanButton>
 			);
@@ -357,7 +354,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
 			return (
-				<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
+				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
 					{ buttonText || translate( 'Upgrade to Yearly' ) }
 				</PlanButton>
 			);
@@ -392,7 +389,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 	if ( availableForPurchase ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ onClick } current={ current }>
+			<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
 				{ buttonTextFallback }
 			</PlanButton>
 		);
@@ -471,7 +468,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return (
-			<PlanButton planSlug={ planSlug } onClick={ () => onCtaClick }>
+			<PlanButton planSlug={ planSlug } onClick={ onCtaClick }>
 				{ translate( 'Learn more' ) }
 			</PlanButton>
 		);
