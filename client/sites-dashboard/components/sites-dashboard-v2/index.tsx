@@ -85,19 +85,35 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState.selectedItem ] );
 
+	const setQueryParams = useCallback(
+		( queryParams: SitesDashboardQueryParams ) => {
+			// There is a chance that the URL is not up to date when it mounts, so delay
+			// the onQueryParamChange call to avoid it getting the incorrect URL and then
+			// redirecting back to the previous path.
+			if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
+				onQueryParamChange( queryParams );
+			} else {
+				window.setTimeout( () => onQueryParamChange( queryParams ) );
+			}
+		},
+		[ onQueryParamChange, section?.group ]
+	);
+
 	// Update URL with search param on change
 	useEffect( () => {
-		const queryParams = { search: dataViewsState.search?.trim(), page: undefined };
+		const queryParams = { search: dataViewsState.search?.trim() };
 
-		// There is a chance that the URL is not up to date when it mounts, so delay
-		// the onQueryParamChange call to avoid it getting the incorrect URL and then
-		// redirecting back to the previous path.
-		if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
-			onQueryParamChange( queryParams );
-		} else {
-			window.setTimeout( () => onQueryParamChange( queryParams ) );
-		}
-	}, [ dataViewsState.search, onQueryParamChange, section?.group ] );
+		setQueryParams( queryParams );
+	}, [ dataViewsState.search, setQueryParams ] );
+
+	useEffect( () => {
+		const queryParams = {
+			page: dataViewsState.page === 1 ? undefined : dataViewsState.page,
+			// todo: get rid of magic number for default perPage value 96
+			perPage: dataViewsState.perPage === 96 ? undefined : dataViewsState.perPage,
+		};
+		setQueryParams( queryParams );
+	}, [ dataViewsState.page, dataViewsState.perPage, setQueryParams ] );
 
 	// Search, filtering, pagination and sorting sites:
 	useEffect( () => {
