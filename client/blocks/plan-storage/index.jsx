@@ -31,7 +31,6 @@ export function PlanStorage( {
 	children,
 	className,
 	hideWhenNoStorageBar = false,
-	shouldDisplayUpgradeLink = true,
 	siteId,
 	StorageBarComponent = PlanStorageBar,
 } ) {
@@ -90,8 +89,7 @@ export function PlanStorage( {
 		isProPlan( sitePlanSlug ) ||
 		isWooExpressMediumPlan( sitePlanSlug );
 
-	const displayUpgradeLink =
-		shouldDisplayUpgradeLink && canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const hasMediaStorage = !! mediaStorage && mediaStorage.maxStorageBytes !== -1;
