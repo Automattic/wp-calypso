@@ -794,7 +794,8 @@ export default connect(
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 			state,
 			currentSelectedSiteId,
-			sectionGroup
+			sectionGroup,
+			sectionName
 		);
 		const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
 			state,

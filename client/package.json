@@ -214,7 +214,7 @@
 		"uuid": "^9.0.1",
 		"valid-url": "^1.0.9",
 		"webpack": "^5.91.0",
-		"webpack-bundle-analyzer": "^4.10.1",
+		"webpack-bundle-analyzer": "^4.10.2",
 		"webpack-dev-middleware": "^5.3.4",
 		"webpack-hot-middleware": "^2.26.1",
 		"webpack-node-externals": "^3.0.0",

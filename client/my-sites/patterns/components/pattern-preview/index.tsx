@@ -36,7 +36,7 @@ export const ASPECT_RATIO = 7 / 4;
 // This style is injected into pattern preview iframes to prevent users from navigating away from
 // the pattern preview page and from submitting forms.
 const noClickStyle = {
-	css: 'a[href], button, input { pointer-events: none; }',
+	css: 'a[href], button, input, textarea { pointer-events: none; }',
 	isGlobalStyles: true,
 };
 
@@ -268,6 +268,29 @@ function PatternPreviewFragment( {
 		return () => {
 			window.removeEventListener( 'scroll', onWindowScroll );
 			iframe.contentWindow?.removeEventListener( 'blur', onIframeBlur );
+		};
+	} );
+
+	// This fetches forms and adds a listener that disables submission
+	useEffect( () => {
+		const iframe = ref.current?.querySelector( 'iframe' );
+
+		if ( ! iframe?.contentDocument ) {
+			return;
+		}
+
+		const forms = iframe.contentDocument.querySelectorAll( 'form' );
+
+		if ( ! forms.length ) {
+			return;
+		}
+
+		const onFormSubmit = ( event: SubmitEvent ) => event.preventDefault();
+
+		forms.forEach( ( form ) => form.addEventListener( 'submit', onFormSubmit ) );
+
+		return () => {
+			forms.forEach( ( form ) => form.removeEventListener( 'submit', onFormSubmit ) );
 		};
 	} );
 

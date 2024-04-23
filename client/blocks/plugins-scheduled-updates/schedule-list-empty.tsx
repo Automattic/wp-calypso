@@ -2,17 +2,16 @@ import { __experimentalText as Text, Button } from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSiteHasEligiblePlugins } from './hooks/use-site-has-eligible-plugins';
-import { useSiteSlug } from './hooks/use-site-slug';
 
 interface Props {
+	pluginsUrl: string;
 	canCreateSchedules: boolean;
 	onCreateNewSchedule?: () => void;
 }
 export const ScheduleListEmpty = ( props: Props ) => {
-	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 
-	const { onCreateNewSchedule, canCreateSchedules } = props;
+	const { pluginsUrl, onCreateNewSchedule, canCreateSchedules } = props;
 	const { siteHasEligiblePlugins } = useSiteHasEligiblePlugins();
 
 	return (
@@ -37,7 +36,7 @@ export const ScheduleListEmpty = ( props: Props ) => {
 						<Button
 							__next40pxDefaultSize
 							variant={ canCreateSchedules ? 'primary' : 'secondary' }
-							href={ `/plugins/${ siteSlug }` }
+							href={ pluginsUrl }
 						>
 							{ translate( 'Explore plugins' ) }
 						</Button>

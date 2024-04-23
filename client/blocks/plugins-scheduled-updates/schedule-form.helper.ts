@@ -133,3 +133,20 @@ export const validatePlugins = ( plugins: string[], existingPlugins: Array< stri
 export const validateSites = ( sites: number[] ): string => {
 	return sites.length === 0 ? translate( 'Please select at least one site.' ) : '';
 };
+
+/**
+ * Validate path
+ * check if path passes URL_PATH_REGEX
+ */
+export const validatePath = ( path: string ): string => {
+	const URL_PATH_REGEX = /^\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*$/;
+	let error = '';
+
+	if ( path.length === 0 ) {
+		error = translate( 'Please enter a path.' );
+	} else if ( ! URL_PATH_REGEX.test( path ) ) {
+		error = translate( 'Please enter a valid path.' );
+	}
+
+	return error;
+};

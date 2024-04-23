@@ -21,8 +21,7 @@
 .congrats-placeholder__title {
 	@include congrats-placeholder-title;
 	width: 70%;
-	margin: 0 auto;
-	margin-bottom: 20px;
+	margin: 60px auto 20px auto;
 }
 
 .congrats-placeholder__description {

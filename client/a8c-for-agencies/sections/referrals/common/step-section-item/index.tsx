@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Badge } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import React from 'react';
 
@@ -11,6 +11,7 @@ interface StepSectionItemProps {
 	heading: string;
 	description: string;
 	buttonProps?: React.ComponentProps< typeof Button >;
+	statusProps?: React.ComponentProps< typeof Badge >;
 }
 
 export default function StepSectionItem( {
@@ -18,6 +19,7 @@ export default function StepSectionItem( {
 	heading,
 	description,
 	buttonProps,
+	statusProps,
 }: StepSectionItemProps ) {
 	return (
 		<div className="step-section-item">
@@ -32,6 +34,7 @@ export default function StepSectionItem( {
 			<div className="step-section-item__content">
 				<div className="step-section-item__heading">{ heading }</div>
 				<div className="step-section-item__description">{ description }</div>
+				{ statusProps && <Badge className="step-section-item__status" { ...statusProps } /> }
 			</div>
 			{ buttonProps && (
 				<div className="step-section-item__button">

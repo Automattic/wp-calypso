@@ -385,6 +385,7 @@
 
 .reader-post-card__byline-secondary-item {
 	// Add extra margin to give space for the bullet that may exist between items.
+	white-space: nowrap;
 	margin-right: 12px;
 	&:last-of-type {
 		margin-right: 0;
