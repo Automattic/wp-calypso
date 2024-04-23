@@ -109,6 +109,7 @@ const DailyBackupStatus = ( {
 		} else if ( backup && lastBackup && backup.rewindId !== lastBackup.rewindId ) {
 			backupPreviouslyInProgress.current = null;
 			clearActivityLogInterval();
+			setLastBackup( backup );
 		}
 
 		// Manages the interval for fetching Activity Log based on backup completion.
