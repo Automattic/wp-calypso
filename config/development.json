@@ -139,6 +139,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"migration-flow/remove-processing-step": false,
+		"migration_assistance_modal": false,
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"oauth": false,
