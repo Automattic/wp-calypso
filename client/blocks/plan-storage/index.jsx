@@ -32,7 +32,7 @@ import './style.scss';
  * @property {ReactNode} children - The children to render inside the storage bar.
  * @property {string} [className] - Additional class names to apply to the component.
  * @property {boolean} [hideWhenNoStorage] - Whether to return null when there is no storage data.
- * @property {number} [siteId] - The site ID.
+ * @property {number|null} [siteId] - The site ID.
  * @property {ComponentType|FC<PropsWithChildren<any>>} [StorageBarComponent] - The component to use for the storage bar.
  */
 
