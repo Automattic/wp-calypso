@@ -201,7 +201,11 @@ const migrationSignup: Flow = {
 					}
 
 					return navigate(
-						addQueryArgs( { from: from, siteSlug, siteId }, STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug )
+						addQueryArgs(
+							{ from: from, siteSlug, siteId },
+							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+						),
+						{ hideFreeMigrationTrialForNonVerifiedEmail: true }
 					);
 				}
 
@@ -210,7 +214,8 @@ const migrationSignup: Flow = {
 						addQueryArgs(
 							{ from: fromQueryParam, siteSlug, siteId },
 							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-						)
+						),
+						{ hideFreeMigrationTrialForNonVerifiedEmail: true }
 					);
 				}
 
@@ -229,7 +234,8 @@ const migrationSignup: Flow = {
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-							)
+							),
+							{ hideFreeMigrationTrialForNonVerifiedEmail: true }
 						);
 					}
 
