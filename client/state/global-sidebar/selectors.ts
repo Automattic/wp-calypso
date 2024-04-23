@@ -9,29 +9,24 @@ import type { AppState } from 'calypso/types';
 // TODO: for now, we show all Calypso pages in nav unification,
 // as the Global Site View is still in development.
 const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [];
+const GLOBAL_SIDEBAR_SECTION_NAMES: string[] = [ 'hosting', 'hosting-overview' ];
 
 export const getShouldShowGlobalSidebar = (
 	_: AppState,
 	siteId: number,
 	sectionGroup: string,
-	sectionName: string
+	sectionName: string // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
-	if (
+	return (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
-		( sectionGroup === 'sites' && ! siteId )
-	) {
-		return true;
-	}
-	// Show the global sidebar for the sites dashboard
-	// If on hosting section, also check if the feature flag is enabled
-	if (
-		sectionGroup === 'sites-dashboard' &&
-		( sectionName !== 'hosting' || isEnabled( 'layout/dotcom-nav-redesign-v2' ) )
-	) {
-		return true;
-	}
-	return false;
+		sectionGroup === 'sites-dashboard' ||
+		( sectionGroup === 'sites' && ! siteId ) ||
+		( isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+			sectionGroup === 'sites' &&
+			!! siteId &&
+			GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName ) )
+	);
 };
 
 export const getShouldShowCollapsedGlobalSidebar = (
@@ -42,7 +37,10 @@ export const getShouldShowCollapsedGlobalSidebar = (
 ) => {
 	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
 	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && siteId
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		!! siteId &&
+		( sectionGroup === 'sites-dashboard' ||
+			( sectionGroup === 'sites' && GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName ) ) )
 	);
 };
 
@@ -56,6 +54,7 @@ export const getShouldShowGlobalSiteSidebar = (
 		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
+		! GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName ) &&
 		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
 	);
 };
@@ -70,6 +69,7 @@ export const getShouldShowUnifiedSiteSidebar = (
 		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
+		! GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName ) &&
 		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
 	);
 };
