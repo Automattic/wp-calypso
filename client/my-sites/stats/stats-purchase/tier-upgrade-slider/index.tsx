@@ -82,13 +82,15 @@ function TierUpgradeSlider( {
 		onSliderChange( value );
 	};
 
+	// Handle the first-tier info display.
+	const firstTierInfoRef = useRef( null );
+	const showFirstTierInfoIcon = currentPlanIndex === sliderMin && firstTierInfo !== undefined;
+	const [ showFirstTierInfo, setShowFirstTierInfo ] = useState( false );
+
 	// Info popup state.
 	// Only visible if the slider is at the max value and we have a string/node to display.
 	const infoReferenceElement = useRef( null );
 	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
-
-	const firstTierInfoRef = useRef( null );
-	const showFirstTierInfo = currentPlanIndex === 0 && firstTierInfo !== undefined;
 
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const originalPrice = steps[ currentPlanIndex ]?.rhValue;
@@ -103,7 +105,17 @@ function TierUpgradeSlider( {
 					<h2>{ uiStrings.limits }</h2>
 					<b ref={ firstTierInfoRef }>
 						{ lhValue }
-						{ showFirstTierInfo && <Icon icon={ info } /> }
+						{ showFirstTierInfoIcon && (
+							<Icon
+								icon={ info }
+								onMouseEnter={ () => {
+									setShowFirstTierInfo( true );
+								} }
+								onMouseLeave={ () => {
+									setShowFirstTierInfo( false );
+								} }
+							/>
+						) }
 					</b>
 				</div>
 				{ ! secondaryCalloutIsHidden && (
