@@ -67,7 +67,7 @@ const FontPairingVariationPreview = () => {
 	const ratio = width ? width / defaultWidth : 1;
 	const normalizedHeight = Math.ceil( defaultHeight * ratio );
 	const fontFamilies = useMemo(
-		() => [ ...defaultFontFamilies, themeFontFamilies ],
+		() => [ ...defaultFontFamilies, ...themeFontFamilies ],
 		[ defaultFontFamilies, themeFontFamilies ]
 	);
 
