@@ -29,8 +29,20 @@ p.product-listing__description {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
-	margin: 16px 0 32px;
 	justify-content: space-between;
+	padding-inline: 64px;
+	position: sticky;
+	top: 0;
+	background-color: #fff;
+	padding-block-start: 16px;
+	align-items: center;
+	padding-block-end: 16px;
+	margin-block-end: 32px;
+	border-block-end: 1px solid var(--color-neutral-5);
+}
+
+.product-listing__product-sections {
+	padding-inline: 64px;
 }
 
 .select-dropdown.is-compact.product-listing__product-filter-select {

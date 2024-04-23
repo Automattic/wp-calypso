@@ -14,6 +14,14 @@
 	}
 }
 
+.a4a-marketplace__products-body.a4a-layout__body {
+	padding-block-start: 0;
+
+	.a4a-layout__body-wrapper {
+		padding-inline: 0;
+	}
+}
+
 .products-overview .assign-license-step-progress {
 	margin-block-start: 16px;
 	margin-block-end: 32px;

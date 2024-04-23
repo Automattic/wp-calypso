@@ -66,7 +66,7 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
+			<LayoutBody className="a4a-marketplace__products-body">
 				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 					<ProductListing selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 				</ShoppingCartContext.Provider>
