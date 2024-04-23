@@ -20,6 +20,13 @@ function shouldShowGlobalSiteViewSection(
 	);
 }
 
+// Calypso pages listed here will show the global sidebar when on sites group.
+const GLOBAL_SIDEBAR_SECTION_NAMES: string[] = [
+	'hosting',
+	'hosting-overview',
+	'github-deployments',
+];
+
 export const getShouldShowGlobalSidebar = (
 	_: AppState,
 	siteId: number,
@@ -55,7 +62,9 @@ export const getShouldShowGlobalSiteSidebar = (
 ) => {
 	return (
 		isGlobalSiteViewEnabled( state, siteId ) &&
-		shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
+		sectionGroup === 'sites' &&
+		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
+		! GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName )
 	);
 };
 
@@ -67,6 +76,8 @@ export const getShouldShowUnifiedSiteSidebar = (
 ) => {
 	return (
 		isGlobalSiteViewEnabled( state, siteId ) &&
-		! shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
+		sectionGroup === 'sites' &&
+		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
+		! getShouldShowGlobalSidebar( state, siteId, sectionGroup, sectionName )
 	);
 };
