@@ -62,7 +62,9 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 			<SegmentationSurveyProvider
 				navigation={ navigation }
 				onSubmitQuestion={ onSubmitQuestion }
+				surveyKey={ SURVEY_KEY }
 				questions={ questions }
+				answers={ answers }
 			>
 				<SegmentationSurveyDocumentHead />
 
