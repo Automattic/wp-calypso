@@ -139,6 +139,19 @@ a.hosting-overview__link-button {
 }
 
 @media ( max-width: $break-xlarge ) {
+	.hosting-overview__plan-price {
+		margin-bottom: 4px;
+	}
+
+	.hosting-overview__plan-info {
+		margin-bottom: 2px;
+	}
+
+	.hosting-overview__plan-storage {
+		gap: 16px;
+		margin-top: 16px;
+	}
+
 	.hosting-overview__plan-storage-footer {
 		text-align: left;
 	}
