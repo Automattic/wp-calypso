@@ -31,63 +31,33 @@ type Props = {
 };
 
 const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
+	// todo: we are getting the sites list from the current SitesDashboard component, we have to get them here
+
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
-	/*
-		const dispatch = useDispatch();
-	useEffect( () => {
-		dispatch( setSelectedSiteId( selectedSiteId || null ) );
-	}, [ dispatch, selectedSiteId ] );
-	 */
-
-	/*
-	useEffect( () => {
-		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
-		if ( hideListing && ! dataViewsState.selectedItem ) {
-			return;
-		}
-
-		if ( dataViewsState.selectedItem ) {
-			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
-		}
-
-		const updatedUrl = updateSitesDashboardUrl( {
-			category: category,
-			setCategory: setCategory,
-			filters: dataViewsState.filters,
-			selectedSite: dataViewsState.selectedItem,
-			selectedSiteFeature: selectedSiteFeature,
-			search: dataViewsState.search,
-			currentPage: dataViewsState.page,
-			sort: dataViewsState.sort,
-			showOnlyFavorites,
-		} );
-		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
-			page.show( updatedUrl );
-		}
-	}, [
-		dataViewsState.selectedItem,
-		selectedSiteFeature,
-		category,
-		setCategory,
-		dispatch,
-		dataViewsState.filters,
-		dataViewsState.search,
-		dataViewsState.page,
-		showOnlyFavorites,
-		dataViewsState.sort,
-		hideListing,
-	] );
-	 */
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
+	// Site is selected:
 	useEffect( () => {
 		if ( dataViewsState.selectedItem ) {
+			// Set the selected site ID globally at Dotcom
 			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
 		}
 	}, [ dataViewsState.selectedItem ] );
 
+	// Search, filtering, pagination and sorting sites:
+	useEffect( () => {
+		// todo: Perform search, filter, pagination and sorting actions
+	}, [
+		dataViewsState.search,
+		dataViewsState.filters,
+		dataViewsState.sort,
+		dataViewsState.page,
+		dataViewsState.perPage,
+	] );
+
+	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
 			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
