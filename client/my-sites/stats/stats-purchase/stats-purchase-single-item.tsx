@@ -408,11 +408,11 @@ function StatsCommercialFlowOptOutForm( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ comemercialClassificationRunAt, siteId ]
 	);
-	const hasRunLessThan3DAgo =
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const canReverify = Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const hasClassificationStarted = commercialClassificationLastRunAt > 0;
 	const isClassificationInProgress =
-		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
+		hasClassificationStarted && Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
+	const isClassificationFinished = hasClassificationStarted && ! isClassificationInProgress;
 
 	const isFormSubmissionDisabled =
 		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
@@ -444,8 +444,6 @@ function StatsCommercialFlowOptOutForm( {
 				}
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
-	const formButton = isCommercial ? translate( 'Contact support' ) : translate( 'Continue' );
-	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
 
 	return (
 		<>
@@ -496,21 +494,32 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ supportsOnDemandCommercialClassification && isCommercial && (
+				{ ! isCommercial && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
-						onClick={ handleCommercialClassification }
+						disabled={ isFormSubmissionDisabled }
+						onClick={ handleSwitchToPersonalClick }
 					>
-						{ translate( 'Reverify' ) }
+						{ translate( 'Continue' ) }
 					</Button>
 				) }
-				{ ( ! supportsOnDemandCommercialClassification ||
-					! isCommercial ||
-					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button variant="secondary" onClick={ formHandler }>
-						{ formButton }
-					</Button>
+				{ isCommercial && (
+					<>
+						{ supportsOnDemandCommercialClassification && isCommercial && (
+							<Button
+								variant="secondary"
+								disabled={ canReverify || isFormSubmissionDisabled }
+								onClick={ handleCommercialClassification }
+							>
+								{ translate( 'Reverify' ) }
+							</Button>
+						) }
+						{ ( ! supportsOnDemandCommercialClassification || isClassificationFinished ) && (
+							<Button variant="secondary" onClick={ handleRequestUpdateClick }>
+								{ translate( 'Contact support' ) }
+							</Button>
+						) }
+					</>
 				) }
 			</div>
 			{ supportsOnDemandCommercialClassification && isCommercial && (
