@@ -2,6 +2,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	PLAN_BUSINESS,
 	getPlan,
 	TERM_ANNUALLY,
 	findFirstSimilarPlanKey,
@@ -177,7 +178,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
+			const currentPlanSlug = getSitePlanSlug( state, siteId );
+			const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+			const requiredPlanSlug = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } );
+
+			return `/checkout/${ slug }/${ requiredPlanSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
