@@ -294,8 +294,8 @@ const LoggedInPlansFeatureActionButton = ( {
 			return (
 				<PlanButton
 					planSlug={ planSlug }
-					disabled={ ! isFreePlan( planSlug ) }
-					onClick={ onClick }
+					disabled={ ! onCtaClick }
+					onClick={ onCtaClick }
 					current={ current }
 				>
 					{ text }
