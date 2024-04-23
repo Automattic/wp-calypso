@@ -190,6 +190,18 @@
 		}
 	}
 
+	.form-field--plugins {
+		.components-base-control__field {
+			display: flex;
+		}
+
+		.components-checkbox-control__label {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+	}
+
 	.form-field--paths {
 		.paths {
 			.components-input-control__backdrop {
