@@ -1,3 +1,4 @@
+import { useSitesListFiltering } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -63,6 +64,9 @@ const SitesDashboardV2 = ( {
 	initialDataViewsState.hiddenFields = [ 'status' ];
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
+	// Filter sites list state
+	const filteredSites = useSitesListFiltering( allSites, { search: dataViewsState.search } );
+
 	// Site is selected:
 	useEffect( () => {
 		if ( dataViewsState.selectedItem ) {
@@ -122,7 +126,7 @@ const SitesDashboardV2 = ( {
 
 					<DocumentHead title={ __( 'Sites' ) } />
 					<DotcomSitesDataViews
-						sites={ allSites }
+						sites={ filteredSites }
 						isLoading={ isLoading }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
