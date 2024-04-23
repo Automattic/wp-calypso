@@ -7,7 +7,9 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 
 import './style.scss';
 
@@ -16,7 +18,9 @@ export default function ReferralsBankDetails() {
 
 	const title = translate( 'Add bank details' );
 
-	const iFrameSrc = '';
+	const { data, isFetching } = useGetTipaltiIFrameURL();
+
+	const iFrameSrc = data?.iframe_url || '';
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -40,7 +44,11 @@ export default function ReferralsBankDetails() {
 
 			<LayoutBody>
 				<div className="bank-details__iframe-container">
-					<iframe width="100%" src={ iFrameSrc } title={ title }></iframe>
+					{ isFetching ? (
+						<TextPlaceholder />
+					) : (
+						<iframe width="100%" height="100%" src={ iFrameSrc } title={ title } />
+					) }
 				</div>
 			</LayoutBody>
 		</Layout>
