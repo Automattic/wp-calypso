@@ -12401,7 +12401,6 @@ __metadata:
     fast-json-stable-stringify: "npm:^2.1.0"
     filesize: "npm:^6.0.1"
     flag-icon-css: "npm:^3.4.5"
-    framer-motion: "npm:^10.13.0"
     fuse.js: "npm:^3.6.1"
     get-video-id: "npm:^3.1.4"
     hash.js: "npm:^1.1.7"
