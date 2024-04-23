@@ -12,7 +12,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
 
