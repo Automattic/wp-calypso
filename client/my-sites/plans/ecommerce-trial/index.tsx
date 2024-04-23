@@ -49,10 +49,10 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 					isWooExpressTrial={ isWooExpressTrial }
 					isEntrepreneurTrial={ isEntrepreneurTrial }
 					callToAction={
-						! isWooExpressTrial ? (
+						isEntrepreneurTrial ? (
 							<UpgradeButton
 								goToCheckoutWithPlan={ goToCheckoutWithPlan }
-								isEntrepreneurTrial={ ! isWooExpressTrial }
+								isEntrepreneurTrial={ isWooExpressTrial }
 							/>
 						) : null
 					}

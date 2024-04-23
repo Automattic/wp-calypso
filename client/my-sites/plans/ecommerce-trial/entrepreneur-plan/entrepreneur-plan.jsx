@@ -46,6 +46,10 @@ const useEntrepreneurPlanPrices = () => {
 			slug: PLAN_ECOMMERCE_MONTHLY,
 			price: baseMontlyPrice,
 			montlyPrice: baseMontlyPrice,
+			subText: translate( 'per month, excl. taxes', {
+				args: { rawPrice: baseMontlyPrice },
+				comment: 'Excl. Taxes is short for excluding taxes',
+			} ),
 		},
 	};
 
@@ -59,7 +63,7 @@ const useEntrepreneurPlanPrices = () => {
 		plan.discount = Math.floor( ( 1 - plan.montlyPrice / baseMontlyPrice ) * 100 );
 		plan.discountText = translate( '%(discount)d%% off', {
 			args: { discount: plan.discount },
-			comment: 'Discount percentage',
+			comment: '%discount is a number representing a discount percentage on a plan price',
 		} );
 		switch ( key ) {
 			case 'PLAN_ECOMMERCE':
@@ -142,7 +146,7 @@ export function EntrepreneurPlan() {
 						<h3 className="entrepreneur-trial-plan__plan-title">{ translate( 'Entrepreneur' ) }</h3>
 						<p className="card-text">
 							{ translate(
-								"Continue enjoying the full benefits of Entrepreneur plan, simply add your pay method and maximize your store's potential."
+								"Continue enjoying the full benefits of Entrepreneur plan, simply add your payment method and maximize your store's potential."
 							) }
 						</p>
 					</div>

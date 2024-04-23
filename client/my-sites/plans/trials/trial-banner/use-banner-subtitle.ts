@@ -90,6 +90,8 @@ export default function useBannerSubtitle(
 							daysLeft: trialDaysLeftToDisplay,
 							expirationdate: readableExpirationDate as string,
 						},
+						comment:
+							'%daysLeft is the number of days left in the trial, %expirationdate is the date the trial ends',
 					}
 				);
 			}
