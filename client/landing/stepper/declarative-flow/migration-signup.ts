@@ -131,14 +131,10 @@ const migrationSignup: Flow = {
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 
-		// Ensure we navigate to the site creation step if we have a logged-in user, we don't have the from parameter,
+		// Ensure we navigate to the site creation step if we have a logged-in user,
 		// we don't have a site defined, and we are not on the site creation, processing, or error steps.
 		useEffect( () => {
 			if ( ! userIsLoggedIn ) {
-				return;
-			}
-
-			if ( ! fromQueryParam ) {
 				return;
 			}
 
@@ -211,11 +207,7 @@ const migrationSignup: Flow = {
 
 				case STEPS.SITE_CREATION_STEP.slug: {
 					return navigate(
-						addQueryArgs(
-							{ from: fromQueryParam, siteSlug, siteId },
-							STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-						),
-						{ hideFreeMigrationTrialForNonVerifiedEmail: true }
+						addQueryArgs( { from: fromQueryParam, siteSlug, siteId }, STEPS.PROCESSING.slug )
 					);
 				}
 
@@ -273,10 +265,19 @@ const migrationSignup: Flow = {
 					}
 
 					if ( providedDependencies?.freeTrialSelected ) {
-						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
-							siteId,
-							siteSlug,
-						} );
+						return navigate(
+							addQueryArgs(
+								{
+									siteSlug,
+									from: fromQueryParam,
+								},
+								STEPS.BUNDLE_TRANSFER.slug
+							),
+							{
+								siteId,
+								siteSlug,
+							}
+						);
 					}
 				}
 
