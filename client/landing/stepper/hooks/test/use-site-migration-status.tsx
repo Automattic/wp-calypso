@@ -52,7 +52,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				activation: 'idle',
 				installation: 'idle',
-				provisionning: 'pending',
+				provisioning: 'pending',
 				error: null,
 				completed: false,
 			} );
@@ -77,7 +77,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				activation: 'idle',
 				installation: 'pending',
-				provisionning: 'success',
+				provisioning: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -102,7 +102,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				activation: 'pending',
 				installation: 'success',
-				provisionning: 'success',
+				provisioning: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -126,7 +126,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				activation: 'success',
 				installation: 'success',
-				provisionning: 'success',
+				provisioning: 'success',
 				error: null,
 				completed: true,
 			} );
@@ -146,7 +146,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				installation: 'skipped',
 				activation: 'pending',
-				provisionning: 'success',
+				provisioning: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -166,7 +166,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				installation: 'skipped',
 				activation: 'skipped',
-				provisionning: 'success',
+				provisioning: 'success',
 				error: null,
 				completed: true,
 			} );
@@ -186,7 +186,7 @@ describe( 'useSiteMigrationStatus', () => {
 			expect( result.current ).toEqual( {
 				installation: 'skipped',
 				activation: 'skipped',
-				provisionning: 'success',
+				provisioning: 'success',
 				error: null,
 				completed: true,
 			} );
