@@ -1,4 +1,3 @@
-import { useSitesListSorting } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -17,9 +16,8 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteInfo } from './interfaces';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import { getSitesPagination, mapFieldIdToSortKey } from './utils';
+import { getSitesPagination } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
-import type { SitesSortOptions } from '@automattic/sites/src/use-sites-list-sorting';
 
 type Props = {
 	sites: SiteExcerptData[];
@@ -41,21 +39,6 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 			} ) );
 		},
 		[ setDataViewsState ]
-	);
-
-	const { page: sitesViewPage, perPage: sitesViewPerPage, sort: sitesViewSort } = dataViewsState;
-
-	// Sort sites:
-	const sortedSites = useSitesListSorting( sites, {
-		sortKey: mapFieldIdToSortKey( sitesViewSort.field ),
-		sortOrder: sitesViewSort.direction,
-	} as SitesSortOptions ) as SiteExcerptData[];
-
-	// Paginate sites:
-	const { paginatedSites, totalItems, totalPages } = getSitesPagination(
-		sortedSites,
-		sitesViewPage,
-		sitesViewPerPage
 	);
 
 	// Generate DataViews table field-columns
@@ -117,13 +100,10 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 		[ __, openSitePreviewPane, userId ]
 	);
 
-	// Create the itemData packet
+	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
-		items: paginatedSites,
-		pagination: {
-			totalItems,
-			totalPages,
-		},
+		items: sites,
+		pagination: getSitesPagination( sites, dataViewsState.perPage ),
 		itemFieldId: 'ID',
 		searchLabel: __( 'Search for sites' ),
 		fields,
@@ -139,15 +119,12 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 			items: sites,
 			fields,
 			//actions: actions,
-			pagination: {
-				totalItems,
-				totalPages,
-			},
+			pagination: getSitesPagination( sites, dataViewsState.perPage ),
 			setDataViewsState,
 			dataViewsState,
 			selectedItem: dataViewsState.selectedItem,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, sites, totalItems, totalPages ] ); // add actions when implemented
+	}, [ fields, dataViewsState, setDataViewsState, sites ] ); // add actions when implemented
 
 	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } />;
 };
