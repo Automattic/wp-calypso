@@ -15,7 +15,7 @@ import { Site } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { ComponentType, FC, PropsWithChildren, ReactNode, useRef, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
 import { useSelector } from 'react-redux';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
@@ -27,6 +27,18 @@ import PlanStorageBar from './bar';
 
 import './style.scss';
 
+/**
+ * @typedef {Object} Props
+ * @property {ReactNode} children - The children to render inside the storage bar.
+ * @property {string} [className] - Additional class names to apply to the component.
+ * @property {boolean} [hideWhenNoStorage] - Whether to return null when there is no storage data.
+ * @property {number} [siteId] - The site ID.
+ * @property {ComponentType|FC<PropsWithChildren<any>>} [StorageBarComponent] - The component to use for the storage bar.
+ */
+
+/**
+ * @param {Props} props
+ */
 export function PlanStorage( {
 	children,
 	className,
