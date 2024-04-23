@@ -102,7 +102,7 @@ function StatsCommercialUpgradeSlider( {
 	if ( tiers[ 0 ].views && tiers[ 0 ].views > INITIAL_FIRST_TIER_VIEWS_LIMIT ) {
 		firstTierInfo = translate(
 			// TBD: This message should be updated with a more appropriate or detailed copy.
-			'The purchasable views limit starts from your purchased tier or current usage.'
+			'The minimum view limit is determined based on your current tier and usage.'
 		);
 	}
 
