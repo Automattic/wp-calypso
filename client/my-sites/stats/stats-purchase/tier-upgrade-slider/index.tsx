@@ -41,23 +41,32 @@ function TierUpgradeSlider( {
 
 	const handleRenderThumb = ( ( props ) => {
 		const thumbSVG = (
-			<svg
-				width="32"
-				height="32"
-				viewBox="0 0 32 32"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-				style={ { scale: '8' } }
-			>
-				<path
-					d="M11.8208 13.3594L9.54192 16.0181L11.8208 18.6768L12.5801 18.026L10.859 16.0181L12.5801 14.0102L11.8208 13.3594Z"
-					fill="white"
-				/>
-				<path
-					d="M20.3042 13.3594L22.5831 16.0181L20.3042 18.6768L19.5449 18.026L21.266 16.0181L19.5449 14.0102L20.3042 13.3594Z"
-					fill="white"
-				/>
-			</svg>
+			<div className="tier-upgrade-slider__thumb-icon">
+				<svg
+					width="9"
+					height="16"
+					viewBox="0 0 9 16"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M4.82079 5.35938L2.54192 8.01809L4.82079 10.6768L5.58008 10.026L3.85899 8.01809L5.58008 6.01017L4.82079 5.35938Z"
+						fill="white"
+					/>
+				</svg>
+				<svg
+					width="9"
+					height="16"
+					viewBox="0 0 9 16"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M3.30421 5.35938L5.58308 8.01809L3.30421 10.6768L2.54492 10.026L4.26601 8.01809L2.54492 6.01017L3.30421 5.35938Z"
+						fill="white"
+					/>
+				</svg>
+			</div>
 		);
 		return <div { ...props }>{ thumbSVG }</div>;
 	} ) as RenderThumbFunction;
