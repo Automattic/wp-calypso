@@ -2,6 +2,12 @@
 
 .item-preview__header {
 
+	.item-preview__header-content {
+		.item-preview__header-title-summary {
+			word-wrap: anywhere;
+		}
+	}
+
 	@media ( min-width: $break-large ) {
 		.item-preview__header-favicon {
 			margin-right: 24px;
@@ -60,7 +66,6 @@
 			display: flex;
 			justify-content: space-between;
 			.item-preview__header-title-summary {
-				word-wrap: anywhere;
 				flex-grow: 1;
 				display: flex;
 				flex-direction: column;
