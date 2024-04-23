@@ -212,9 +212,7 @@ export const PatternLibrary = ( {
 		return {
 			id: category.name,
 			label: category.label,
-			link:
-				getCategoryUrlPath( category.name, patternTypeFilterFallback, false ) +
-				( isGridView ? '?grid=1' : '' ),
+			link: getCategoryUrlPath( category.name, patternTypeFilterFallback, false, isGridView ),
 		};
 	} );
 
