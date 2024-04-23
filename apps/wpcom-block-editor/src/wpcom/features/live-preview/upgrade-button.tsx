@@ -1,44 +1,43 @@
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
-import tracksRecordEvent from '../../tracking/track-record-event';
-import { getUnlock } from '../utils';
-import { usePreviewingTheme } from './use-previewing-theme';
+import { FC, useEffect } from 'react';
+import tracksRecordEvent from '../tracking/track-record-event';
+import { usePreviewingTheme } from './hooks/use-previewing-theme';
+import { getUnlock } from './utils';
+
+import './upgrade-button.scss';
 
 const SAVE_HUB_SAVE_BUTTON_SELECTOR = '.edit-site-save-hub__button';
 const HEADER_SAVE_BUTTON_SELECTOR = '.edit-site-save-button__button';
 
 const unlock = getUnlock();
 
-/**
- * This overrides the `SaveButton` behavior by adding a listener and changing the copy.
- * Our objective is to open a custom modal ('ThemeUpgradeModal') instead of proceeding with the default behavior.
- * For more context, see the discussion on adding an official customization method: https://github.com/WordPress/gutenberg/pull/56807.
- */
-export const useOverrideSaveButton = ( {
-	setIsThemeUpgradeModalOpen,
-	previewingTheme,
-}: {
-	setIsThemeUpgradeModalOpen: ( isThemeUpgradeModalOpen: boolean ) => void;
+export const LivePreviewUpgradeButton: FC< {
 	previewingTheme: ReturnType< typeof usePreviewingTheme >;
-} ) => {
+	upgradePlan: () => void;
+} > = ( { previewingTheme, upgradePlan } ) => {
 	const canvasMode = useSelect(
 		( select ) =>
 			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
 		[]
 	);
 
+	/**
+	 * This overrides the `SaveButton` behavior by adding a listener and changing the copy.
+	 * Our objective is to open the Plans page instead of proceeding with the default behavior.
+	 * For more context, see the discussion on adding an official customization method: https://github.com/WordPress/gutenberg/pull/56807.
+	 */
 	useEffect( () => {
 		const saveButtonClickHandler: EventListener = ( e ) => {
 			e.preventDefault();
 			e.stopPropagation();
-			setIsThemeUpgradeModalOpen( true );
 			tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_open', {
 				canvas_mode: canvasMode,
 				opened_by: 'button_click',
 				theme_type: previewingTheme.type,
 				theme: previewingTheme.id,
 			} );
+			upgradePlan();
 		};
 		const saveButtonOriginalText: Record< string, string > = {};
 		const overrideSaveButtonClick = ( selector: string ) => {
@@ -46,6 +45,7 @@ export const useOverrideSaveButton = ( {
 			if ( button ) {
 				saveButtonOriginalText[ selector ] = button.textContent || '';
 				button.textContent = __( 'Upgrade now', 'wpcom-live-preview' );
+				button.classList.add( 'wpcom-live-preview__upgrade-button' );
 				button.addEventListener( 'click', saveButtonClickHandler );
 			}
 		};
@@ -54,6 +54,7 @@ export const useOverrideSaveButton = ( {
 				const button = document.querySelector( key );
 				if ( button && button.textContent !== '' ) {
 					button.textContent = value;
+					button.classList.remove( 'wpcom-live-preview__upgrade-button' );
 					button.removeEventListener( 'click', saveButtonClickHandler );
 				}
 			}
@@ -113,7 +114,7 @@ export const useOverrideSaveButton = ( {
 			resetSaveButton();
 			resetSaveButtonHover();
 		};
-	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
+	}, [ canvasMode, previewingTheme.id, previewingTheme.type, upgradePlan ] );
 
 	useEffect( () => {
 		// This overrides the keyboard shortcut (⌘S) for saving.
@@ -121,13 +122,13 @@ export const useOverrideSaveButton = ( {
 			if ( e.key === 's' && ( e.metaKey || e.ctrlKey ) ) {
 				e.preventDefault();
 				e.stopPropagation();
-				setIsThemeUpgradeModalOpen( true );
 				tracksRecordEvent( 'calypso_block_theme_live_preview_upgrade_modal_open', {
 					canvas_mode: canvasMode,
 					opened_by: 'shortcut',
 					theme_type: previewingTheme.type,
 					theme: previewingTheme.id,
 				} );
+				upgradePlan();
 			}
 		};
 		document.addEventListener( 'keydown', overrideSaveButtonKeyboardShortcut, { capture: true } );
@@ -136,5 +137,7 @@ export const useOverrideSaveButton = ( {
 				capture: true,
 			} );
 		};
-	}, [ canvasMode, previewingTheme.id, previewingTheme.type, setIsThemeUpgradeModalOpen ] );
+	}, [ canvasMode, previewingTheme.id, previewingTheme.type, upgradePlan ] );
+
+	return null;
 };

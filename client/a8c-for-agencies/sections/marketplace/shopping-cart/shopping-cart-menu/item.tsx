@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
@@ -17,6 +18,8 @@ type ItemProps = {
 export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
+
+	const siteId = getQueryArg( window.location.href, 'site_id' )?.toString();
 
 	const { actualCost, discountedCost } = getProductPricingInfo( userProducts, item, item.quantity );
 

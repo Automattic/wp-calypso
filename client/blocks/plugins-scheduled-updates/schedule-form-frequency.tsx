@@ -1,7 +1,6 @@
 import {
 	__experimentalText as Text,
 	Flex,
-	FlexBlock,
 	FlexItem,
 	RadioControl,
 	SelectControl,
@@ -18,16 +17,13 @@ import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedu
 import { prepareTimestamp } from './schedule-form.helper';
 
 type Frequency = 'daily' | 'weekly';
-type FlexDirection = 'column' | 'row';
 
 interface Props {
 	className?: string;
 	initTimestamp?: number;
 	initFrequency: Frequency;
-	optionsDirection?: FlexDirection[];
 	error?: string;
 	showError?: boolean;
-	showAllOptionControls?: boolean;
 	onTouch?: ( touched: boolean ) => void;
 	onChange?: ( frequency: Frequency, timestamp: number ) => void;
 }
@@ -39,10 +35,8 @@ export function ScheduleFormFrequency( props: Props ) {
 		className = '',
 		initTimestamp,
 		initFrequency = 'daily',
-		optionsDirection = [ 'column' ],
 		error,
 		showError,
-		showAllOptionControls,
 		onChange,
 		onTouch,
 	} = props;
@@ -70,44 +64,50 @@ export function ScheduleFormFrequency( props: Props ) {
 
 	return (
 		<div className={ `form-field form-field--frequency ${ className }` }>
-			<label htmlFor="frequency">{ translate( 'Update every' ) }</label>
-			<Flex direction={ optionsDirection }>
+			<label htmlFor="frequency">{ translate( 'Select frequency' ) }</label>
+			<Flex direction={ [ 'column', 'row' ] }>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'daily' } ) }>
-					<RadioControl
-						name="frequency"
-						options={ [ DAILY_OPTION ] }
-						selected={ frequency }
-						onChange={ ( f ) => setFrequency( f as 'daily' ) }
-						onBlur={ () => setFieldTouched( true ) }
-					></RadioControl>
-					{ ( showAllOptionControls || frequency === 'daily' ) && (
-						<Flex gap={ 6 }>
-							<FlexBlock>
-								<ScheduleFormTime
-									hour={ hour }
-									period={ period }
-									isAmPmFormat={ isAmPmFormat }
-									onChange={ ( hour, period ) => {
-										setHour( hour );
-										setPeriod( period );
-									} }
-								/>
-							</FlexBlock>
-						</Flex>
-					) }
+					<Flex className="form-field--frequency-container" gap={ 6 }>
+						<FlexItem>
+							<RadioControl
+								name="frequency"
+								options={ [ DAILY_OPTION ] }
+								selected={ frequency }
+								onChange={ ( f ) => setFrequency( f as 'daily' ) }
+								onBlur={ () => setFieldTouched( true ) }
+							></RadioControl>
+						</FlexItem>
+						<FlexItem>
+							<ScheduleFormTime
+								hour={ hour }
+								period={ period }
+								isAmPmFormat={ isAmPmFormat }
+								onChange={ ( hour, period ) => {
+									setHour( hour );
+									setPeriod( period );
+								} }
+							/>
+						</FlexItem>
+					</Flex>
 				</FlexItem>
 				<FlexItem className={ classnames( 'radio-option', { selected: frequency === 'weekly' } ) }>
-					<RadioControl
-						name="frequency"
-						options={ [ WEEKLY_OPTION ] }
-						selected={ frequency }
-						onChange={ ( f ) => setFrequency( f as 'weekly' ) }
-						onBlur={ () => setFieldTouched( true ) }
-					></RadioControl>
-					{ ( showAllOptionControls || frequency === 'weekly' ) && (
-						<Flex gap={ 6 } direction={ [ 'column', 'row' ] }>
-							<FlexItem>
-								<div className="form-field">
+					<Flex
+						className="form-field--frequency-container"
+						gap={ 6 }
+						direction={ [ 'column', 'row' ] }
+					>
+						<FlexItem>
+							<RadioControl
+								name="frequency"
+								options={ [ WEEKLY_OPTION ] }
+								selected={ frequency }
+								onChange={ ( f ) => setFrequency( f as 'weekly' ) }
+								onBlur={ () => setFieldTouched( true ) }
+							></RadioControl>
+						</FlexItem>
+						<FlexItem>
+							<Flex direction={ [ 'column', 'row' ] } gap={ 5 }>
+								<FlexItem>
 									<SelectControl
 										__next40pxDefaultSize
 										name="day"
@@ -115,21 +115,21 @@ export function ScheduleFormFrequency( props: Props ) {
 										options={ DAY_OPTIONS }
 										onChange={ setDay }
 									/>
-								</div>
-							</FlexItem>
-							<FlexBlock>
-								<ScheduleFormTime
-									hour={ hour }
-									period={ period }
-									isAmPmFormat={ isAmPmFormat }
-									onChange={ ( hour, period ) => {
-										setHour( hour );
-										setPeriod( period );
-									} }
-								/>
-							</FlexBlock>
-						</Flex>
-					) }
+								</FlexItem>
+								<FlexItem>
+									<ScheduleFormTime
+										hour={ hour }
+										period={ period }
+										isAmPmFormat={ isAmPmFormat }
+										onChange={ ( hour, period ) => {
+											setHour( hour );
+											setPeriod( period );
+										} }
+									/>
+								</FlexItem>
+							</Flex>
+						</FlexItem>
+					</Flex>
 				</FlexItem>
 			</Flex>
 			{ ( ( showError && error ) || ( fieldTouched && error ) ) && (

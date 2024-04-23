@@ -1,5 +1,9 @@
 import { forEach } from 'lodash';
-import { getFixedDomainSearch, getDomainSuggestionSearch } from 'calypso/lib/domains';
+import {
+	getFixedDomainSearch,
+	getDomainSuggestionSearch,
+	getDomainProductSlug,
+} from 'calypso/lib/domains';
 
 describe( 'index', () => {
 	describe( '#getFixedDomainSearch', () => {
@@ -53,6 +57,20 @@ describe( 'index', () => {
 		test( 'should return the original search string if it is long enough and is not one of the ignored strings', () => {
 			const search = 'hippos';
 			expect( getDomainSuggestionSearch( search ) ).toEqual( search );
+		} );
+	} );
+
+	describe( '#getDomainProductSlug', () => {
+		test( 'should return dotorg_domain for a .org domain', () => {
+			expect( getDomainProductSlug( 'test-domain.org' ) ).toEqual( 'dotorg_domain' );
+		} );
+
+		test( 'should return dotnet_domain for a .net domain', () => {
+			expect( getDomainProductSlug( 'test-domain.net' ) ).toEqual( 'dotnet_domain' );
+		} );
+
+		test( 'should return domain_reg for a .com domain', () => {
+			expect( getDomainProductSlug( 'test-domain.com' ) ).toEqual( 'domain_reg' );
 		} );
 	} );
 } );

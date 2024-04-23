@@ -30,13 +30,13 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@babel/runtime": "^7.24.0",
-		"@wordpress/base-styles": "^4.46.0",
-		"@wordpress/components": "^27.3.0",
-		"@wordpress/i18n": "^4.55.0",
-		"@wordpress/react-i18n": "^3.53.0"
+		"@wordpress/base-styles": "^4.47.0",
+		"@wordpress/components": "^27.4.0",
+		"@wordpress/i18n": "^4.56.0",
+		"@wordpress/react-i18n": "^3.54.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^9.25.0",
+		"@wordpress/data": "^9.26.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^4.2.1"
