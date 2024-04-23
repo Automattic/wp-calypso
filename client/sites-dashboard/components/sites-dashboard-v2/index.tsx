@@ -43,6 +43,9 @@ const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 		if ( dataViewsState.selectedItem ) {
 			// Set the selected site ID globally at Dotcom
 			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
+		} else {
+			// Reset the selected site ID globally at Dotcom
+			dispatch( setSelectedSiteId( null ) );
 		}
 	}, [ dataViewsState.selectedItem ] );
 
