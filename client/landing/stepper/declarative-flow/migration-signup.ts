@@ -154,7 +154,7 @@ const migrationSignup: Flow = {
 			}
 
 			if ( ! siteSlug && ! siteId ) {
-				navigate( STEPS.SITE_CREATION_STEP.slug );
+				navigate( addQueryArgs( { from: fromQueryParam }, STEPS.SITE_CREATION_STEP.slug ) );
 			}
 		}, [ fromQueryParam, siteSlug, siteId, userIsLoggedIn ] );
 	},
@@ -229,7 +229,10 @@ const migrationSignup: Flow = {
 					// If we just created the site, go to the upgrade plan step.
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
 						return navigate(
-							addQueryArgs( { siteId, siteSlug }, STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug )
+							addQueryArgs(
+								{ siteId, siteSlug, from: fromQueryParam },
+								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+							)
 						);
 					}
 
