@@ -478,7 +478,6 @@
 		}
 
 		.dataviews-wrapper {
-			padding-top: 2px;
 
 			.components-button:focus:not(:disabled) {
 				box-shadow: 0 0 0 2px var(--color-primary-light);
@@ -501,7 +500,7 @@
 			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
-				margin-top: 22px;
+				margin-top: 24px;
 
 				&.is-hiding-navigation {
 					margin-top: 48px; // If there is no navigation bar we need to add a bigger margin.
