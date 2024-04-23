@@ -60,6 +60,7 @@ const SitesDashboardV2 = ( {
 	initialDataViewsState.page = page;
 	initialDataViewsState.perPage = perPage;
 	initialDataViewsState.search = search ?? '';
+	initialDataViewsState.hiddenFields = [ 'status' ];
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	// Site is selected:
