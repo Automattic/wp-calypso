@@ -27,7 +27,7 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 
 	useEffect( () => {
 		recordLogRocketEvent( 'calypso_jetpack_backup_just_completed' );
-	} );
+	}, [] );
 
 	return (
 		<>

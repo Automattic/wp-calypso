@@ -30,7 +30,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 
 	useEffect( () => {
 		recordLogRocketEvent( 'calypso_jetpack_backup_in_progress' );
-	} );
+	}, [] );
 
 	return (
 		<>
