@@ -31,7 +31,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Headers" category page',
 		} ),
 		description: translate(
-			'Launch your website with a header that combines strong visual identity and functional navigation. Our header patterns draw the eye and establish your site’s character, all while ensuring your visitors can explore with ease from desktop and mobile devices.',
+			'Launch your website with a header that combines strong visual identity and functional navigation. Our header patterns establish your site’s character and ensure your visitors can easily explore from desktop and mobile devices.',
 			{ comment: 'Intro text on the Pattern Library "Headers" category page' }
 		),
 	},
@@ -55,7 +55,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "About" category page',
 		} ),
 		description: translate(
-			'Tell your brand’s story and success with patterns that resonate. Incorporating these patterns can transform your mission and values into compelling visual statements, building a deeper connection with your audience.',
+			'Tell your brand’s story and success with patterns that resonate. These patterns help communicate your mission and values through compelling visual statements, building a deeper connection with your audience.',
 			{ comment: 'Intro text on the Pattern Library "About" category page' }
 		),
 	},
@@ -67,7 +67,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Blog Posts" category page',
 		} ),
 		description: translate(
-			'Elevate your blog’s visual appeal and readability with patterns engineered to bring your content to life. These designs bolster reader retention and stimulate engagement by adding visual depth to your writing.',
+			'Keep readers engaged with patterns designed to bring your content to life. These designs automatically display your latest blog posts, adding depth and visual appeal to your site.',
 			{ comment: 'Intro text on the Pattern Library "Blog Posts" category page' }
 		),
 	},
@@ -103,7 +103,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Gallery" category page',
 		} ),
 		description: translate(
-			'Our gallery patterns offer an elegant framework for presenting your artwork and photographs. Choose from a curated selection to exhibit your media with a sophisticated touch, ensuring your visuals are as striking as they are organized.',
+			'Our gallery patterns offer an elegant framework for presenting your artwork and photos. Choose from a curated selection to exhibit your media in a stylish way, ensuring your visuals are both striking and organized.',
 			{ comment: 'Intro text on the Pattern Library "Gallery" category page' }
 		),
 	},
@@ -115,7 +115,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Intro" category page',
 		} ),
 		description: translate(
-			'Establish a warm welcome with patterns that make every first click count. Our intro patterns gracefully lead visitors through your site, ensuring an impactful first impression.',
+			'Make a great first impression on your visitors with patterns that establish a warm and welcoming introduction. Our intro patterns gracefully lead visitors through your site, maximizing your impact.',
 			{ comment: 'Intro text on the Pattern Library "Intro" category page' }
 		),
 	},
@@ -139,7 +139,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Newsletter" category page',
 		} ),
 		description: translate(
-			'Grow your subscriber base with patterns designed for conversion. Our newsletter patterns simplify email collection and amplify audience growth, providing a direct line to engage with your committed followers.',
+			'Grow your subscriber base with patterns designed for conversion. Our newsletter patterns simplify email collection and amplify audience growth, providing a direct line to engage with your followers.',
 			{ comment: 'Intro text on the Pattern Library "Newsletter" category page' }
 		),
 	},
@@ -163,7 +163,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Store" category page',
 		} ),
 		description: translate(
-			'Enhance your site with store patterns that simplify the display of your products. These patterns are designed to showcase products and entice visitors to browse and purchase with confidence from your affiliated online store.',
+			'Enhance your site with store patterns that simplify the display of your products. These patterns are designed to entice visitors to browse and purchase with confidence from your affiliated online store.',
 			{ comment: 'Intro text on the Pattern Library "Store" category page' }
 		),
 	},
@@ -175,7 +175,7 @@ const CONTENT: Record<
 			comment: 'Heading of the Pattern Library "Testimonials" category page',
 		} ),
 		description: translate(
-			'Build customer trust with patterns that spotlight satisfaction. Our patterns authentically present client testimonials to help you amplify credibility and reinforce brand loyalty.',
+			'Build customer trust with patterns that spotlight satisfaction. Our patterns present client testimonials to help you amplify credibility and reinforce brand loyalty.',
 			{ comment: 'Intro text on the Pattern Library "Testimonials" category page' }
 		),
 	},
