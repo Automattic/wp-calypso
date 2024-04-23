@@ -76,6 +76,7 @@ const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
+	paddingTop: '32px',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
