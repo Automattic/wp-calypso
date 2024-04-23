@@ -50,16 +50,16 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				activation: 'idle',
-				installation: 'idle',
-				provisioning: 'pending',
+				activatingPlugin: 'idle',
+				installingPlugin: 'idle',
+				waitingSite: 'pending',
 				error: null,
 				completed: false,
 			} );
 		} );
 	} );
 
-	it( 'returns the plugin installation status', async () => {
+	it( 'returns the plugin installingPlugin status', async () => {
 		const siteId = 456;
 
 		nock( 'https://public-api.wordpress.com:443' )
@@ -75,16 +75,16 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				activation: 'idle',
-				installation: 'pending',
-				provisioning: 'success',
+				activatingPlugin: 'idle',
+				installingPlugin: 'pending',
+				waitingSite: 'success',
 				error: null,
 				completed: false,
 			} );
 		} );
 	} );
 
-	it( 'returns the plugin activation status', async () => {
+	it( 'returns the plugin activatingPlugin status', async () => {
 		const siteId = 111;
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( siteId ) )
@@ -100,9 +100,9 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				activation: 'pending',
-				installation: 'success',
-				provisioning: 'success',
+				activatingPlugin: 'pending',
+				installingPlugin: 'success',
+				waitingSite: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -124,16 +124,16 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				activation: 'success',
-				installation: 'success',
-				provisioning: 'success',
+				activatingPlugin: 'success',
+				installingPlugin: 'success',
+				waitingSite: 'success',
 				error: null,
 				completed: true,
 			} );
 		} );
 	} );
 
-	it( 'returns installation skipped  when the installation is not necessary', async () => {
+	it( 'returns installingPlugin skipped  when the the plugin installation is not necessary', async () => {
 		const siteId = 111;
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( siteId ) )
@@ -144,16 +144,16 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				installation: 'skipped',
-				activation: 'pending',
-				provisioning: 'success',
+				installingPlugin: 'skipped',
+				activatingPlugin: 'pending',
+				waitingSite: 'success',
 				error: null,
 				completed: false,
 			} );
 		} );
 	} );
 
-	it( 'returns activation skipped when the activation is not necessary', async () => {
+	it( 'returns activatingPlugin skipped when the plugin activation is not necessary', async () => {
 		const siteId = 111;
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( getSitePluginsEndpoint( siteId ) )
@@ -164,9 +164,9 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				installation: 'skipped',
-				activation: 'skipped',
-				provisioning: 'success',
+				installingPlugin: 'skipped',
+				activatingPlugin: 'skipped',
+				waitingSite: 'success',
 				error: null,
 				completed: true,
 			} );
@@ -184,9 +184,9 @@ describe( 'useSiteMigrationStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current ).toEqual( {
-				installation: 'skipped',
-				activation: 'skipped',
-				provisioning: 'success',
+				installingPlugin: 'skipped',
+				activatingPlugin: 'skipped',
+				waitingSite: 'success',
 				error: null,
 				completed: true,
 			} );

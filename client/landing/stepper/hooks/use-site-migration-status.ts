@@ -13,6 +13,16 @@ interface SkipStatus {
 }
 type SitePluginParam = Pick< SitePlugin, 'slug' | 'name' >;
 
+type StatusVariation = 'idle' | 'loading' | 'success' | 'error' | 'pending' | 'skipped';
+
+interface SiteMigrationStatus {
+	waitingSite: StatusVariation;
+	activatingPlugin: StatusVariation;
+	installingPlugin: StatusVariation;
+	completed: boolean;
+	error: Error | null;
+}
+
 const fetchPluginsForSite = async ( siteIdOrSlug: string ): Promise< Response > =>
 	wpcom.req.get( `/sites/${ siteIdOrSlug }/plugins?http_envelope=1`, {
 		apiNamespace: 'rest/v1.2',
@@ -67,7 +77,10 @@ const usePluginActivation = ( pluginName: string, siteIdOrSlug: string ) => {
 	} );
 };
 
-export const useSiteMigrationStatus = ( plugin: SitePluginParam, siteIdOrSlug?: string ) => {
+export const useSiteMigrationStatus = (
+	plugin: SitePluginParam,
+	siteIdOrSlug?: string
+): SiteMigrationStatus => {
 	const {
 		data: status,
 		error: statusError,
@@ -129,9 +142,9 @@ export const useSiteMigrationStatus = ( plugin: SitePluginParam, siteIdOrSlug?: 
 	);
 
 	return {
-		provisioning: provisioningStatus,
-		installation: instalationStatus,
-		activation: activationStatus,
+		waitingSite: provisioningStatus,
+		installingPlugin: instalationStatus,
+		activatingPlugin: activationStatus,
 		completed,
 		error,
 	};
