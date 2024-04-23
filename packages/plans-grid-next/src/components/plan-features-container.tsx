@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useManageTooltipToggle } from '../hooks/use-manage-tooltip-toggle';
 import { DataResponse, GridPlan } from '../types';
 import PlanFeatures2023GridFeatures from './features';
+import { PlanFeaturesItem } from './item';
 import PlanDivOrTdContainer from './plan-div-td-container';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 
@@ -34,16 +35,16 @@ const PlanFeaturesContainer: React.FC< {
 				? false // TODO: this is a placeholder. obviously check here if there's a feature in that group
 				: true;
 
-			if ( ! shouldRenderFeatures ) {
-				// Render a placeholder to keep the grid aligned
-				return (
-					<PlanDivOrTdContainer
-						key={ `${ planSlug }-${ mapIndex }` }
-						isTableCell={ isTableCell }
-						className="plan-features-2023-grid__table-item"
-					/>
-				);
-			}
+			// if ( ! shouldRenderFeatures ) {
+			// 	// Render a placeholder to keep the grid aligned
+			// 	return (
+			// 		<PlanDivOrTdContainer
+			// 			key={ `${ planSlug }-${ mapIndex }` }
+			// 			isTableCell={ isTableCell }
+			// 			className="plan-features-2023-grid__table-item"
+			// 		/>
+			// 	);
+			// }
 
 			return (
 				<PlanDivOrTdContainer
@@ -52,7 +53,11 @@ const PlanFeaturesContainer: React.FC< {
 					className="plan-features-2023-grid__table-item"
 				>
 					{ featureGroup && (
-						<h2 className="plan-features-2023-grid__feature-group-title">{ featureGroup }</h2>
+						<PlanFeaturesItem>
+							<h2 className="plans-grid-next-features-grid__feature-group-title">
+								{ featureGroup }
+							</h2>
+						</PlanFeaturesItem>
 					) }
 					<PlanFeatures2023GridFeatures
 						features={ wpcomFeatures } // TODO: filter for the right feature group

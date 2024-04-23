@@ -75,7 +75,8 @@ const Table = ( {
 	);
 	const translate = useTranslate();
 
-	const featureGroups = [ null ];
+	const renderCategorizedFeatures = true;
+	const featureGroups = [ 'Foo' ];
 
 	return (
 		<table className={ tableClasses }>
@@ -134,12 +135,14 @@ const Table = ( {
 						/>
 					) }
 				</StickyContainer>
-				<tr>
-					<PreviousFeaturesIncludedTitle
-						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
-					/>
-				</tr>
+				{ ! renderCategorizedFeatures && (
+					<tr>
+						<PreviousFeaturesIncludedTitle
+							renderedGridPlans={ gridPlansWithoutSpotlight }
+							options={ { isTableCell: true } }
+						/>
+					</tr>
+				) }
 				{ featureGroups.map( ( featureGroup ) => (
 					<tr key={ featureGroup }>
 						<PlanFeaturesList
