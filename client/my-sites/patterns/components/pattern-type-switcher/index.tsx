@@ -67,7 +67,11 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 			<div className="pattern-library__toggle pattern-library__toggle--type">
 				<PatternTypeSwitcherOption
 					onChange={ onChange }
-					toolTipText={ translate( 'A collection of blocks that make up one section of a page' ) }
+					toolTipText={ translate( 'A collection of blocks that make up one section of a page', {
+						comment:
+							'Tooltip text for displaying regular patterns within a Pattern Library category',
+						textOnly: true,
+					} ) }
 					value={ PatternTypeFilter.REGULAR }
 				>
 					{ translate( 'Patterns', {
@@ -77,7 +81,10 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 
 				<PatternTypeSwitcherOption
 					onChange={ onChange }
-					toolTipText={ translate( 'A collection of patterns that form an entire page' ) }
+					toolTipText={ translate( 'A collection of patterns that form an entire page', {
+						comment: 'Tooltip text for displaying page patterns within a Pattern Library category',
+						textOnly: true,
+					} ) }
 					value={ PatternTypeFilter.PAGES }
 				>
 					{ translate( 'Page Layouts', {
