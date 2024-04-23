@@ -36,7 +36,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 	const statsPurchases = useMemo( () => {
 		const sitePurchases = planUsage?.purchases;
 
-		if ( isFetching || isPending || ! sitePurchases ) {
+		if ( isPending || ! sitePurchases ) {
 			return { isLoading: true };
 		}
 
@@ -76,7 +76,7 @@ export default function useStatsPurchases( siteId: number | null ) {
 			hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
 			isLoading: isPending,
 		};
-	}, [ isFetching ] );
+	}, [ isPending, planUsage ] );
 
 	return statsPurchases;
 }
