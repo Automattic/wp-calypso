@@ -180,8 +180,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							if ( feature === topFeature || isHighlightedFeature ) {
 								return;
 							}
-
-							if ( ! hasRedeemedDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
+							if ( hasRedeemedDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
 								return;
 							}
 
