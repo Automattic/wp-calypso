@@ -234,7 +234,9 @@ describe( 'Site Migration Flow', () => {
 			await waitFor( () => {
 				expect( getFlowLocation() ).toEqual( {
 					path: `/${ STEPS.VERIFY_EMAIL.slug }`,
-					state: null,
+					state: {
+						pollForEmailVerification: false,
+					},
 				} );
 			} );
 		} );
