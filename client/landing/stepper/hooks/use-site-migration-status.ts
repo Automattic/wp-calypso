@@ -24,7 +24,7 @@ const installPlugin = async ( siteIdOrSlug: string, pluginSlug: string ) =>
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const activePlugin = async ( siteIdOrSlug: string, pluginName: string ) =>
+const activatePlugin = async ( siteIdOrSlug: string, pluginName: string ) =>
 	wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/plugins/${ encodeURIComponent( pluginName ) }`,
 		apiNamespace: 'rest/v1.2',
@@ -61,7 +61,7 @@ const usePluginInstallation = ( pluginSlug: string, siteIdOrSlug: string ) => {
 const usePluginActivation = ( pluginName: string, siteIdOrSlug: string ) => {
 	return useMutation( {
 		mutationKey: [ 'onboarding-site-plugin-activation', siteIdOrSlug, pluginName ],
-		mutationFn: async () => activePlugin( siteIdOrSlug, pluginName ),
+		mutationFn: async () => activatePlugin( siteIdOrSlug, pluginName ),
 		retry: true,
 		retryDelay: 2000,
 	} );
@@ -81,7 +81,7 @@ export const useSiteMigrationStatus = ( plugin: SitePluginParam, siteIdOrSlug?: 
 	} = usePluginInstallation( plugin.slug, siteIdOrSlug! );
 
 	const {
-		mutateAsync: activatePlugin,
+		mutate: activatePlugin,
 		status: activationRequestStatus,
 		error: activationError,
 	} = usePluginActivation( plugin.name, siteIdOrSlug! );
@@ -129,7 +129,7 @@ export const useSiteMigrationStatus = ( plugin: SitePluginParam, siteIdOrSlug?: 
 	);
 
 	return {
-		provisionning: provisioningStatus,
+		provisioning: provisioningStatus,
 		installation: instalationStatus,
 		activation: activationStatus,
 		completed,
