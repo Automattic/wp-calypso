@@ -8,10 +8,12 @@ import {
 	hasFetchedAgency,
 	isFetchingAgency,
 } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SignupIntro from '../../intro';
 import SignupForm from '../../signup-form';
 
 export default function AgencySignup() {
+	const userLoggedIn = useSelector( isUserLoggedIn );
 	const agency = useSelector( getActiveAgency );
 	const hasFetched = useSelector( hasFetchedAgency );
 	const isFetching = useSelector( isFetchingAgency );
@@ -27,7 +29,7 @@ export default function AgencySignup() {
 	}, [ agency ] );
 
 	// Show nothing if we haven't fetched the agency record yet, or if we're in the process of fetching it.
-	if ( ! hasFetched || isFetching || agency ) {
+	if ( userLoggedIn && ( ! hasFetched || isFetching || agency ) ) {
 		return null;
 	}
 

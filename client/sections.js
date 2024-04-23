@@ -786,6 +786,7 @@ const sections = [
 		paths: [ '/signup' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
+		enableLoggedOut: true,
 	},
 ];
 
