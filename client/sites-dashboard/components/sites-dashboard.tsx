@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -30,7 +29,6 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
-import SitesDashboardV2 from './sites-dashboard-v2';
 import { SitesTable } from './sites-table';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -211,10 +209,6 @@ export function SitesDashboard( {
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
 
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		return <SitesDashboardV2 sites={ allSites } isLoading={ isLoading } />;
-	}
-
 	return (
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
@@ -376,7 +370,10 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
+export function useShowSiteCreationNotice(
+	allSites: SiteExcerptData[],
+	newSiteID: number | undefined
+) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
@@ -413,7 +410,7 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 	}, [ __, allSites, dispatch, newSiteID ] );
 }
 
-function useShowSiteTransferredNotice() {
+export function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	useEffect( () => {

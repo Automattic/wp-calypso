@@ -1,4 +1,3 @@
-import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -16,26 +15,51 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
+import {
+	useShowSiteCreationNotice,
+	useShowSiteTransferredNotice,
+} from 'calypso/sites-dashboard/components/sites-dashboard';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews from './sites-dataviews';
 
-// todo use this A4A styles until we extract them as common styles in the ItemsDashboard component
+// todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
 
-type Props = {
-	sites: SiteExcerptData[];
-	isLoading: boolean;
-};
+interface SitesDashboardProps {
+	queryParams: SitesDashboardQueryParams;
+}
 
-const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
-	// todo: we are getting the sites list from the current SitesDashboard component, we have to get them here
-
+const SitesDashboardV2 = ( {
+	queryParams: { page = 1, perPage = 96, search, newSiteID },
+}: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
+	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only
+	);
+
+	const { data: deletedSites = [] } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only,
+		'deleted'
+	);
+
+	const allSites = liveSites.concat( deletedSites );
+
+	useShowSiteCreationNotice( allSites, newSiteID );
+	useShowSiteTransferredNotice();
+
+	// Create the DataViews state based on initial values
+	initialDataViewsState.page = page;
+	initialDataViewsState.perPage = perPage;
+	initialDataViewsState.search = search ?? '';
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	// Site is selected:
@@ -97,7 +121,7 @@ const SitesDashboardV2 = ( { sites, isLoading }: Props ) => {
 
 					<DocumentHead title={ __( 'Sites' ) } />
 					<DotcomSitesDataViews
-						sites={ sites }
+						sites={ allSites }
 						isLoading={ isLoading }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
