@@ -84,7 +84,7 @@ export function ScheduleFormPlugins( props: Props ) {
 	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins ] );
 
 	return (
-		<div className="form-field">
+		<div className="form-field form-field--plugins">
 			<label htmlFor="plugins">{ translate( 'Select plugins' ) }</label>
 			<span className="plugin-select-stats">
 				{ selectedPlugins.length }/
