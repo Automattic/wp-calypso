@@ -1,15 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import * as calypsoProducts from '@automattic/calypso-products';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import nock from 'nock';
-import { Provider } from 'react-redux';
-import { PlanStorage } from '../index';
-
-const siteId = 123;
-const {
+import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
@@ -19,12 +11,14 @@ const {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
-} = calypsoProducts;
+} from '@automattic/calypso-products';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import nock from 'nock';
+import { Provider } from 'react-redux';
+import { PlanStorage } from '../index';
 
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
-	planHasFeature: jest.fn(),
-} ) );
+const siteId = 123;
 
 function renderComponent( component, additionalState = {}, planSlug = 'free_plan' ) {
 	const queryClient = new QueryClient();
@@ -65,10 +59,6 @@ describe( 'PlanStorage basic tests', () => {
 			.persist()
 			.get( '/rest/v1.1/sites/123/media-storage' )
 			.reply( 200 );
-	} );
-
-	beforeEach( () => {
-		jest.clearAllMocks();
 	} );
 
 	test( 'should not blow up and have class .plan-storage', () => {
@@ -245,17 +235,6 @@ describe( 'PlanStorage basic tests', () => {
 
 	test( 'should not render when site plan slug is empty', () => {
 		const { container } = renderComponent( <PlanStorage siteId={ siteId } />, {}, null );
-		expect( container.getElementsByClassName( '.plan-storage' ) ).toHaveLength( 0 );
-	} );
-
-	test( 'should not render when plan has unlimited storage', () => {
-		jest.spyOn( calypsoProducts, 'planHasFeature' ).mockImplementation( () => true );
-
-		const { container } = renderComponent(
-			<PlanStorage siteId={ siteId } />,
-			{},
-			'some_unlimited_storage_plan'
-		);
 		expect( container.getElementsByClassName( '.plan-storage' ) ).toHaveLength( 0 );
 	} );
 } );

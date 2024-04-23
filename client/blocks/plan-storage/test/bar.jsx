@@ -105,6 +105,26 @@ describe( 'PlanStorageBar basic tests', () => {
 		expect( storage50.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 1 );
 	} );
 
+	test( 'should not render when storage is falsey or -1', () => {
+		const { container: storage0 } = render( <PlanStorageBar { ...props } mediaStorage={ 0 } /> );
+		expect( storage0.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 0 );
+
+		const { container: storageFalse } = render(
+			<PlanStorageBar { ...props } mediaStorage={ false } />
+		);
+		expect( storageFalse.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 0 );
+
+		const { container: storageNull } = render(
+			<PlanStorageBar { ...props } mediaStorage={ null } />
+		);
+		expect( storageNull.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 0 );
+
+		const { container: storageUnlimited } = render(
+			<PlanStorageBar { ...props } mediaStorage={ { maxStorageBytes: -1 } } />
+		);
+		expect( storageUnlimited.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 0 );
+	} );
+
 	test( 'should include upgrade link when displayUpgradeLink is true', () => {
 		const { container } = render( <PlanStorageBar { ...props } displayUpgradeLink={ true } /> );
 		expect( container.getElementsByClassName( 'plan-storage__storage-link' ) ).toHaveLength( 1 );
