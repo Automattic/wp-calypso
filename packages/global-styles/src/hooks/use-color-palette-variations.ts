@@ -4,12 +4,13 @@ import type { GlobalStylesObject } from '../types';
 
 type Options = {
 	enabled?: boolean;
+	base_variation_stylesheet?: string;
 };
 
 const useColorPaletteVariations = (
 	siteId: number | string,
 	stylesheet: string,
-	{ enabled = true }: Options = {}
+	{ enabled = true, base_variation_stylesheet }: Options = {}
 ) => {
 	const { data } = useQuery< any, unknown, GlobalStylesObject[] >( {
 		queryKey: [ 'global-styles-color-palette', siteId, stylesheet ],
@@ -20,7 +21,7 @@ const useColorPaletteVariations = (
 				apiNamespace: 'wpcom/v2',
 				query: new URLSearchParams( {
 					stylesheet,
-					base_variation_stylesheet: 'pub/assembler',
+					...( base_variation_stylesheet ? { base_variation_stylesheet } : {} ),
 				} ).toString(),
 			} ),
 		refetchOnMount: 'always',

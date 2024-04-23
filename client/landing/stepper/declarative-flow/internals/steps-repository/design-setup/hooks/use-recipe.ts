@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isDefaultGlobalStylesVariationSlug,
 	isAssemblerDesign,
@@ -73,12 +74,18 @@ const useRecipe = (
 
 	const { stylesheet = '' } = selectedDesign?.recipe || {};
 
+	const base_variation_stylesheet = isEnabled( 'design-picker/use-assembler-styles' )
+		? 'pub/assembler'
+		: '';
+
 	const colorVariations = useColorPaletteVariations( siteId, stylesheet, {
 		enabled: !! preselectedColorVariationTitle,
+		base_variation_stylesheet,
 	} );
 
 	const fontVariations = useFontPairingVariations( siteId, stylesheet, {
 		enabled: !! preselectedFontVariationTitle,
+		base_variation_stylesheet,
 	} );
 
 	const handleSelectedDesignChange = ( design?: Design ) => {
