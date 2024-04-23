@@ -36,7 +36,7 @@ export function ScheduleFormPlugins( props: Props ) {
 	} = props;
 	const translate = useTranslate();
 	const plugins = useMemo( () => props.plugins || [], [ props.plugins ] );
-	const pluginsAvailable = props.plugins !== undefined;
+	const pluginsAvailable = props.plugins !== undefined || isPluginsFetching;
 
 	const [ pluginSearchTerm, setPluginSearchTerm ] = useState( '' );
 	const [ selectedPlugins, setSelectedPlugins ] = useState< string[] >( initSelectedPlugins );
