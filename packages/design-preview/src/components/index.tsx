@@ -87,11 +87,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 		[ selectedColorVariation, selectedFontVariation ]
 	);
 
-	const inlineCss = [
-		useInlineCss( variations, selectedVariation ),
-		selectedColorVariation?.inline_css ?? '',
-		selectedFontVariation?.inline_css ?? '',
-	].join( '' );
+	const inlineCss = useInlineCss( variations, selectedVariation );
 
 	const screens = useScreens( {
 		siteId,
