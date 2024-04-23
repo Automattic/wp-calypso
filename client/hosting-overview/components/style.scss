@@ -261,3 +261,8 @@ a.hosting-overview__link-button {
 	}
 }
 
+.hosting-overview__domains-table {
+	.components-dropdown-menu__toggle {
+		transform: rotate(90deg);
+	}
+}
