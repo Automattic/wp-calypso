@@ -48,7 +48,7 @@ const OverviewBodyProducts = () => {
 		expanded: false,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'jetpack' );
-			page( A4A_PRODUCTS_MARKETPLACE_LINK );
+			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#jetpack-plans` );
 		},
 	};
 
@@ -76,7 +76,7 @@ const OverviewBodyProducts = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'woocommerce' );
-			page( A4A_PRODUCTS_MARKETPLACE_LINK );
+			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#woocommerce-extensions` );
 		},
 	};
 
