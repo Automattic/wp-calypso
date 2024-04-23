@@ -262,6 +262,20 @@ a.hosting-overview__link-button {
 }
 
 .hosting-overview__domains-table {
+	.domains-table__primary-domain-label {
+		background-color: inherit;
+		color: var(--studio-green-40, #00a32a);
+		font-family: "SF Pro", $sans;
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: 20px;
+		padding: 0;
+
+		svg {
+			display: none;
+		}
+	}
+
 	.components-dropdown-menu__toggle {
 		transform: rotate(90deg);
 	}
