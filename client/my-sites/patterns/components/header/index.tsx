@@ -27,11 +27,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Header Patterns', {
 			comment: 'HTML title of the Pattern Library "Headers" category page',
 		} ),
-		heading: translate( 'Get a head start with patterns', {
+		heading: translate( 'Header Patterns', {
 			comment: 'Heading of the Pattern Library "Headers" category page',
 		} ),
 		description: translate(
-			"Use predefined and beautiful patterns to decorate the header of your site, and catch your visitors' attention.",
+			'Launch your website with a header that combines strong visual identity and functional navigation. Our header patterns draw the eye and establish your site’s character, all while ensuring your visitors can explore with ease from desktop and mobile devices.',
 			{ comment: 'Intro text on the Pattern Library "Headers" category page' }
 		),
 	},
@@ -39,11 +39,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Footer Patterns', {
 			comment: 'HTML title of the Pattern Library "Footers" category page',
 		} ),
-		heading: translate( 'Build a strong foundation with patterns', {
+		heading: translate( 'Footer Patterns', {
 			comment: 'Heading of the Pattern Library "Footers" category page',
 		} ),
 		description: translate(
-			'Choose from our collection of patterns to add essential information and navigation to the bottom of your site.',
+			'Build your website’s foundation with footer patterns designed to incorporate key information and straightforward navigation. Our patterns help enrich this often-overlooked area, enhancing usability and site architecture.',
 			{ comment: 'Intro text on the Pattern Library "Footers" category page' }
 		),
 	},
@@ -51,23 +51,23 @@ const CONTENT: Record<
 		title: translate( 'WordPress About Patterns', {
 			comment: 'HTML title of the Pattern Library "About" category page',
 		} ),
-		heading: translate( 'Tell your story with patterns', {
+		heading: translate( 'About Patterns', {
 			comment: 'Heading of the Pattern Library "About" category page',
 		} ),
 		description: translate(
-			'Add one of these patterns to your site to convey your mission and values compellingly.',
+			'Tell your brand’s story and success with patterns that resonate. Incorporating these patterns can transform your mission and values into compelling visual statements, building a deeper connection with your audience.',
 			{ comment: 'Intro text on the Pattern Library "About" category page' }
 		),
 	},
 	posts: {
-		title: translate( 'WordPress Blog Post Patterns', {
+		title: translate( 'WordPress Blog Posts Patterns', {
 			comment: 'HTML title of the Pattern Library "Blog Posts" category page',
 		} ),
-		heading: translate( 'Get more readers with patterns', {
+		heading: translate( 'Blog Posts Patterns', {
 			comment: 'Heading of the Pattern Library "Blog Posts" category page',
 		} ),
 		description: translate(
-			'Take advantage of this selection of patterns that make your writing pop and keep readers engaged.',
+			'Elevate your blog’s visual appeal and readability with patterns engineered to bring your content to life. These designs bolster reader retention and stimulate engagement by adding visual depth to your writing.',
 			{ comment: 'Intro text on the Pattern Library "Blog Posts" category page' }
 		),
 	},
@@ -75,11 +75,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Contact Patterns', {
 			comment: 'HTML title of the Pattern Library "Contact" category page',
 		} ),
-		heading: translate( 'Connect with your audience using patterns', {
+		heading: translate( 'Contact Patterns', {
 			comment: 'Heading of the Pattern Library "Contact" category page',
 		} ),
 		description: translate(
-			'Pick from this set of patterns to add a contact form and a map to your site.',
+			'Connect with your audience using patterns. Choose from designs that integrate a contact form and interactive map, facilitating communication and location finding for your visitors.',
 			{ comment: 'Intro text on the Pattern Library "Contact" category page' }
 		),
 	},
@@ -87,11 +87,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Events Patterns', {
 			comment: 'HTML title of the Pattern Library "Events" category page',
 		} ),
-		heading: translate( 'Promote events with patterns', {
+		heading: translate( 'Event Patterns', {
 			comment: 'Heading of the Pattern Library "Events" category page',
 		} ),
 		description: translate(
-			'Highlight upcoming events on your site with patterns that grab attention and inform.',
+			'Enhance your event promotion with dynamic patterns designed to spotlight your upcoming events. These patterns capture attention and effectively deliver essential event information.',
 			{ comment: 'Intro text on the Pattern Library "Events" category page' }
 		),
 	},
@@ -99,11 +99,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Gallery Patterns', {
 			comment: 'HTML title of the Pattern Library "Gallery" category page',
 		} ),
-		heading: translate( 'Stunning galleries with patterns', {
+		heading: translate( 'Gallery Patterns', {
 			comment: 'Heading of the Pattern Library "Gallery" category page',
 		} ),
 		description: translate(
-			'Pick from our set of patterns to showcase your visuals with elegance.',
+			'Our gallery patterns offer an elegant framework for presenting your artwork and photographs. Choose from a curated selection to exhibit your media with a sophisticated touch, ensuring your visuals are as striking as they are organized.',
 			{ comment: 'Intro text on the Pattern Library "Gallery" category page' }
 		),
 	},
@@ -111,11 +111,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Intro Patterns', {
 			comment: 'HTML title of the Pattern Library "Intro" category page',
 		} ),
-		heading: translate( 'Captivating introductions with patterns', {
+		heading: translate( 'Intro Patterns', {
 			comment: 'Heading of the Pattern Library "Intro" category page',
 		} ),
 		description: translate(
-			'Make a good first impression with patterns that welcome visitors and guide them through your site.',
+			'Establish a warm welcome with patterns that make every first click count. Our intro patterns gracefully lead visitors through your site, ensuring an impactful first impression.',
 			{ comment: 'Intro text on the Pattern Library "Intro" category page' }
 		),
 	},
@@ -123,11 +123,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Menu Patterns', {
 			comment: 'HTML title of the Pattern Library "Menu" (restaurant menus) category page',
 		} ),
-		heading: translate( 'Craft delightful menus with patterns', {
+		heading: translate( 'Restaurant Menu Patterns', {
 			comment: 'Heading of the Pattern Library "Menu" (restaurant menus) category page',
 		} ),
 		description: translate(
-			'Start your restaurant website with beautifully designed patterns that make your menus stand out.',
+			'Begin your restaurant’s online presence with bespoke menu patterns that entice and delight. These menu patterns elevate your offerings into a visual feast that complements your dishes.',
 			{ comment: 'Intro text on the Pattern Library "Menu" (restaurant menus) category page' }
 		),
 	},
@@ -135,11 +135,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Newsletter Patterns', {
 			comment: 'HTML title of the Pattern Library "Newsletter" category page',
 		} ),
-		heading: translate( 'Expand your audience with patterns', {
+		heading: translate( 'Newsletter Patterns', {
 			comment: 'Heading of the Pattern Library "Newsletter" category page',
 		} ),
 		description: translate(
-			'Collect emails on your site via one of those newsletter patterns, and build a subscribers list that you can reach to.',
+			'Grow your subscriber base with patterns designed for conversion. Our newsletter patterns simplify email collection and amplify audience growth, providing a direct line to engage with your committed followers.',
 			{ comment: 'Intro text on the Pattern Library "Newsletter" category page' }
 		),
 	},
@@ -147,11 +147,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Services Patterns', {
 			comment: 'HTML title of the Pattern Library "Services" category page',
 		} ),
-		heading: translate( 'Showcase services with patterns', {
+		heading: translate( 'Services Patterns', {
 			comment: 'Heading of the Pattern Library "Services" category page',
 		} ),
 		description: translate(
-			'Help potential clients understand and engage with your services by adding one of those patterns to your site.',
+			'Present your services with designs that engage. Each pattern is crafted to help potential clients grasp the essence of your offerings, encouraging interaction and interest in your services.',
 			{ comment: 'Intro text on the Pattern Library "Services" category page' }
 		),
 	},
@@ -159,11 +159,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Store Patterns', {
 			comment: 'HTML title of the Pattern Library "Store" category page',
 		} ),
-		heading: translate( 'Start selling with patterns', {
+		heading: translate( 'Store Patterns', {
 			comment: 'Heading of the Pattern Library "Store" category page',
 		} ),
 		description: translate(
-			'Convert your site to an online store with this set of patterns that can be used to showcase your products.',
+			'Enhance your site with store patterns that simplify the display of your products. These patterns are designed to showcase products and entice visitors to browse and purchase with confidence from your affiliated online store.',
 			{ comment: 'Intro text on the Pattern Library "Store" category page' }
 		),
 	},
@@ -171,11 +171,11 @@ const CONTENT: Record<
 		title: translate( 'WordPress Testimonial Patterns', {
 			comment: 'HTML title of the Pattern Library "Testimonials" category page',
 		} ),
-		heading: translate( 'Build trust with patterns', {
+		heading: translate( 'Testimonials Patterns', {
 			comment: 'Heading of the Pattern Library "Testimonials" category page',
 		} ),
 		description: translate(
-			'Leverage our set of patterns to showcase customer satisfaction on your site, and enhance trust in your brand or services.',
+			'Build customer trust with patterns that spotlight satisfaction. Our patterns authentically present client testimonials to help you amplify credibility and reinforce brand loyalty.',
 			{ comment: 'Intro text on the Pattern Library "Testimonials" category page' }
 		),
 	},
