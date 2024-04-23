@@ -514,7 +514,9 @@ function StatsCommercialFlowOptOutForm( {
 								{ translate( 'Reverify' ) }
 							</Button>
 						) }
-						{ ( ! supportsOnDemandCommercialClassification || isClassificationFinished ) && (
+						{ ( ! supportsOnDemandCommercialClassification ||
+							isClassificationFinished ||
+							errorMessage ) && (
 							<Button variant="secondary" onClick={ handleRequestUpdateClick }>
 								{ translate( 'Contact support' ) }
 							</Button>
