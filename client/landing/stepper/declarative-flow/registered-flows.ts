@@ -15,6 +15,7 @@ import {
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
+	SITE_MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
@@ -164,6 +165,10 @@ const siteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = 
 			[ SITE_MIGRATION_FLOW ]: () =>
 				import(
 					/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
+				),
+			[ SITE_MIGRATION_SIGNUP_FLOW ]: () =>
+				import(
+					/* webpackChunkName: "site-migration-signup" */ '../declarative-flow/site-migration-signup'
 				),
 	  }
 	: {};

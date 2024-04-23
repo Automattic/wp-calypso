@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
+import { isSiteMigrationSignupFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
@@ -28,7 +29,7 @@ const siteMigration: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		return [
+		const coreSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.BUNDLE_TRANSFER,
@@ -41,6 +42,12 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 		];
+
+		if ( ! isSiteMigrationSignupFlow( this.variantSlug ?? this.name ) ) {
+			return coreSteps;
+		}
+
+		return [ ...coreSteps, STEPS.SITE_CREATION_STEP ];
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
@@ -52,7 +59,8 @@ const siteMigration: Flow = {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 		const { isOwner } = useIsSiteOwner();
 
-		const flowName = this.name;
+		const flowName = this.variantSlug ?? this.name;
+		const isSignupFlow = isSiteMigrationSignupFlow( this.variantSlug ?? this.name );
 
 		// There is a race condition where useLocale is reporting english,
 		// despite there being a locale in the URL so we need to look it up manually.
@@ -87,7 +95,7 @@ const siteMigration: Flow = {
 			}
 
 			const redirectTarget =
-				`/setup/${ FLOW_NAME }` +
+				`/setup/${ flowName }` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 
 			let queryString = `redirect_to=${ redirectTarget }`;
@@ -112,10 +120,10 @@ const siteMigration: Flow = {
 		}, [] );
 
 		useEffect( () => {
-			if ( isOwner === false ) {
+			if ( isOwner === false && ! isSignupFlow ) {
 				window.location.assign( '/start' );
 			}
-		}, [ isOwner ] );
+		}, [ isOwner, isSignupFlow ] );
 
 		if ( ! userIsLoggedIn ) {
 			result = {
@@ -124,7 +132,7 @@ const siteMigration: Flow = {
 			};
 		}
 
-		if ( ! siteSlug && ! siteId ) {
+		if ( ! siteSlug && ! siteId && ! isSignupFlow ) {
 			window.location.assign( '/start' );
 			result = {
 				state: AssertConditionState.FAILURE,
@@ -137,6 +145,8 @@ const siteMigration: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
+		const variantSlug = this.variantSlug;
+		const flowPath = variantSlug ?? flowName;
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -148,6 +158,7 @@ const siteMigration: Flow = {
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
+		const isSignupFlow = isSiteMigrationSignupFlow( flowPath );
 
 		const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unknown > ) => {
 			return wpcom.req.post(
@@ -163,7 +174,7 @@ const siteMigration: Flow = {
 
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, currentStep, variantSlug );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
 
@@ -183,7 +194,7 @@ const siteMigration: Flow = {
 									siteSlug,
 									from,
 									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-									backToFlow: `/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 								},
 								'/setup/site-setup/importList'
 							)
@@ -205,7 +216,7 @@ const siteMigration: Flow = {
 								{
 									siteSlug,
 									siteId,
-									backToFlow: `/${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 								},
 								'/setup/site-setup/importList'
 							)
@@ -245,6 +256,10 @@ const siteMigration: Flow = {
 					// Any process errors go to the error step.
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
+					}
+
+					if ( providedDependencies?.createSite ) {
+						return navigate( addQueryArgs( { siteSlug }, STEPS.SITE_MIGRATION_IDENTIFY.slug ) );
 					}
 
 					// If the plugin was installed successfully, go to the migration instructions.
@@ -295,7 +310,7 @@ const siteMigration: Flow = {
 								siteSlug,
 								from: fromQueryParam,
 							},
-							`/setup/${ FLOW_NAME }/${ STEPS.BUNDLE_TRANSFER.slug }`
+							`/setup/${ flowPath }/${ STEPS.BUNDLE_TRANSFER.slug }`
 						);
 
 						urlQueryParams.delete( 'showModal' );
@@ -321,6 +336,10 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					return exitFlow( `/home/${ siteSlug }` );
 				}
+
+				case STEPS.SITE_CREATION_STEP.slug: {
+					return navigate( STEPS.PROCESSING.slug, { createSite: true } );
+				}
 			}
 		}
 
@@ -330,7 +349,9 @@ const siteMigration: Flow = {
 					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 				}
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
+					if ( ! isSignupFlow ) {
+						return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
+					}
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -350,6 +371,28 @@ const siteMigration: Flow = {
 		};
 
 		return { goBack, submit, exitFlow };
+	},
+
+	useSideEffect( currentStep, navigate ) {
+		const { siteId, siteSlug } = useSiteData();
+		const isSignupFlow = isSiteMigrationSignupFlow( this.variantSlug ?? this.name );
+		const isUserLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+
+		useEffect( () => {
+			if ( ! isSignupFlow || siteId || siteSlug || ! isUserLoggedIn ) {
+				return;
+			}
+
+			if ( [ STEPS.SITE_CREATION_STEP.slug, STEPS.PROCESSING.slug ].includes( currentStep ) ) {
+				return;
+			}
+
+			// We're in a signup flow with a valid user, but we don't have a site and we're not on a site creation step
+			navigate( STEPS.SITE_CREATION_STEP.slug );
+		}, [ isSignupFlow, siteId, siteSlug ] );
 	},
 };
 

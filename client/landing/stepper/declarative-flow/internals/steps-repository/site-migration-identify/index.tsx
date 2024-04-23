@@ -1,4 +1,4 @@
-import { StepContainer, Title, SubTitle } from '@automattic/onboarding';
+import { StepContainer, Title, SubTitle, isSiteMigrationSignupFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
@@ -78,7 +78,7 @@ const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unk
 	);
 };
 
-const SiteMigrationIdentify: Step = function ( { navigation } ) {
+const SiteMigrationIdentify: Step = function ( { flow, navigation, variantSlug } ) {
 	const siteSlug = useSiteSlug();
 
 	const handleSubmit = useCallback(
@@ -94,13 +94,16 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 		[ navigation, siteSlug ]
 	);
 
+	const hideBack = isSiteMigrationSignupFlow( variantSlug ?? flow );
+
 	return (
 		<>
 			<DocumentHead title="Site migration instructions" />
 			<StepContainer
 				stepName="site-migration-identify"
-				flowName="site-migration"
+				flowName={ flow }
 				className="import__onboarding-page"
+				hideBack={ hideBack }
 				hideSkip={ true }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }

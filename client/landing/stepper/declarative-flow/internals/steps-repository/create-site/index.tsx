@@ -23,6 +23,8 @@ import {
 	isSiteAssemblerFlow,
 	setThemeOnSite,
 	AI_ASSEMBLER_FLOW,
+	isNewSiteMigrationFlow,
+	isSiteMigrationSignupFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -64,7 +66,7 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
+const CreateSite: Step = function CreateSite( { navigation, flow, data, variantSlug } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation();
@@ -163,7 +165,9 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
-		! isMigrationSignupFlow( flow );
+		! isMigrationSignupFlow( flow ) &&
+		! isNewSiteMigrationFlow( flow ) &&
+		! ( variantSlug && isSiteMigrationSignupFlow( variantSlug ) );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
