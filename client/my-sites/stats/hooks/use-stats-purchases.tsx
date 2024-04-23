@@ -6,20 +6,16 @@ import {
 	PRODUCT_JETPACK_STATS_PWYW_YEARLY,
 	PRODUCT_JETPACK_STATS_YEARLY,
 } from '@automattic/calypso-products';
-import { createSelector } from '@automattic/state-utils';
 import { ComponentClass, useMemo } from 'react';
-import { useSelector } from 'calypso/state';
-import {
-	isFetchingSitePurchases,
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	getPurchases,
-} from 'calypso/state/purchases/selectors';
+import usePlanUsageQuery from './use-plan-usage-query';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
 
-const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {
+const filterPurchasesByProducts = (
+	ownedPurchases: Purchase[] | undefined,
+	productSlugs: string[]
+) => {
 	if ( ! ownedPurchases?.length ) {
 		return [];
 	}
@@ -30,69 +26,59 @@ const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: st
 	);
 };
 
-const isProductOwned = ( ownedPurchases: Purchase[], searchedProduct: string ) => {
+const isProductOwned = ( ownedPurchases: Purchase[] | undefined, searchedProduct: string ) => {
 	return filterPurchasesByProducts( ownedPurchases, [ searchedProduct ] ).length > 0;
 };
 
-const getPurchasesBySiteId = createSelector(
-	( state, siteId ) => getSitePurchases( state, siteId ),
-	getPurchases
-);
-
 export default function useStatsPurchases( siteId: number | null ) {
-	const sitePurchases = useSelector( ( state ) => getPurchasesBySiteId( state, siteId ) );
-	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
-	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
+	const { data: planUsage, isPending, isFetching } = usePlanUsageQuery( siteId );
 
-	// Determine whether a product is owned.
-	// TODO we need to do plan check as well, because Stats products would be built into other plans.
-	const isFreeOwned = useMemo( () => {
-		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
-	}, [ sitePurchases ] );
+	const statsPurchases = useMemo( () => {
+		const sitePurchases = planUsage?.purchases;
 
-	const isCommercialOwned = useMemo( () => {
-		return (
+		if ( isFetching || isPending || ! sitePurchases ) {
+			return { isLoading: true };
+		}
+
+		// Determine whether a product is owned.
+		// TODO we need to do plan check as well, because Stats products would be built into other plans.
+		const isFreeOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_FREE );
+
+		const isCommercialOwned =
 			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_MONTHLY ) ||
 			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_YEARLY ) ||
-			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_BI_YEARLY )
-		);
-	}, [ sitePurchases ] );
+			isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_BI_YEARLY );
 
-	const isPWYWOwned = useMemo( () => {
-		return isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
-	}, [ sitePurchases ] );
+		const isPWYWOwned = isProductOwned( sitePurchases, PRODUCT_JETPACK_STATS_PWYW_YEARLY );
 
-	const supportCommercialUse = useMemo(
-		() =>
+		const supportCommercialUse =
 			isCommercialOwned ||
-			JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) ),
-		[ sitePurchases, isCommercialOwned ]
-	);
+			JETPACK_COMPLETE_PLANS.some( ( plan ) => isProductOwned( sitePurchases, plan ) );
 
-	const isLegacyCommercialLicense = useMemo( () => {
-		const purchases = filterPurchasesByProducts( sitePurchases, [
+		const legacyPurchases = filterPurchasesByProducts( sitePurchases, [
 			PRODUCT_JETPACK_STATS_MONTHLY,
 			PRODUCT_JETPACK_STATS_YEARLY,
 			PRODUCT_JETPACK_STATS_BI_YEARLY,
 		] );
 
-		if ( purchases.length === 0 ) {
-			return false;
-		}
-		return purchases[ 0 ].subscribedDate < JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04;
-	}, [ sitePurchases ] );
+		const isLegacyCommercialLicense =
+			legacyPurchases.length > 0 &&
+			legacyPurchases[ 0 ].subscribedDate < JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04;
 
-	return {
-		isRequestingSitePurchases,
-		isFreeOwned,
-		isPWYWOwned,
-		isCommercialOwned,
-		supportCommercialUse,
-		isLegacyCommercialLicense,
-		hasLoadedSitePurchases,
-		hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
-		isLoading: ! hasLoadedSitePurchases || isRequestingSitePurchases,
-	};
+		return {
+			isRequestingSitePurchases: isFetching,
+			isFreeOwned,
+			isPWYWOwned,
+			isCommercialOwned,
+			supportCommercialUse,
+			isLegacyCommercialLicense,
+			hasLoadedSitePurchases: ! isPending,
+			hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
+			isLoading: isPending,
+		};
+	}, [ isFetching ] );
+
+	return statsPurchases;
 }
 
 export const withStatsPurchases =

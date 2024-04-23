@@ -1,4 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { Purchase } from 'calypso/lib/purchases/types';
 import wpcom from 'calypso/lib/wp';
 import { PriceTierListItemProps } from '../stats-purchase/types';
 import getDefaultQueryParams from './default-query-params';
@@ -18,6 +19,7 @@ export interface PlanUsage {
 	current_tier: PriceTierListItemProps;
 	is_internal: boolean;
 	billableMonthlyViews: number;
+	purchases: Purchase[];
 }
 
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
