@@ -77,7 +77,14 @@ class NavTabs extends Component {
 
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<div className="section-nav-group" ref={ this.navGroupRef }>
+			<div
+				className={ classNames( {
+					'section-nav-group': true,
+					'has-horizontal-scroll':
+						this.props.hasHorizontalScroll && innerWidth > MOBILE_PANEL_THRESHOLD,
+				} ) }
+				ref={ this.navGroupRef }
+			>
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 					<ul className="section-nav-tabs__list" role="menu" onKeyDown={ this.keyHandler }>
@@ -137,13 +144,9 @@ class NavTabs extends Component {
 			this.getTabWidths();
 
 			if (
-				( navGroupWidth <= this.tabsWidth &&
-					! this.state.isDropdown &&
-					this.props.hasHorizontalScroll &&
-					navGroupWidth < 480 ) ||
-				( navGroupWidth <= this.tabsWidth &&
-					! this.state.isDropdown &&
-					! this.props.hasHorizontalScroll )
+				navGroupWidth <= this.tabsWidth &&
+				! this.state.isDropdown &&
+				! this.props.hasHorizontalScroll
 			) {
 				this.setState( {
 					isDropdown: true,
