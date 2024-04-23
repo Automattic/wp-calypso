@@ -408,7 +408,7 @@ function StatsCommercialFlowOptOutForm( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ comemercialClassificationRunAt, siteId ]
 	);
-	const canReverify = Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const canReverify = Date.now() - commercialClassificationLastRunAt > 1000 * 60 * 60 * 24 * 1; // 1 day
 	const hasClassificationStarted = commercialClassificationLastRunAt > 0;
 	const isClassificationInProgress =
 		hasClassificationStarted && Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
@@ -505,10 +505,10 @@ function StatsCommercialFlowOptOutForm( {
 				) }
 				{ isCommercial && (
 					<>
-						{ supportsOnDemandCommercialClassification && isCommercial && (
+						{ supportsOnDemandCommercialClassification && (
 							<Button
 								variant="secondary"
-								disabled={ canReverify || isFormSubmissionDisabled }
+								disabled={ ! canReverify || isFormSubmissionDisabled }
 								onClick={ handleCommercialClassification }
 							>
 								{ translate( 'Reverify' ) }
