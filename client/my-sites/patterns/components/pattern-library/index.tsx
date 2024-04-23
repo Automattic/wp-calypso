@@ -361,7 +361,7 @@ export const PatternLibrary = ( {
 							category={ category }
 							displayPlaceholder={ isFetchingPatterns && ! patterns.length }
 							getPatternPermalink={ ( pattern ) =>
-								getPatternPermalink( pattern, category, patternTypeFilter, categories )
+								getPatternPermalink( pattern, category, categories )
 							}
 							isGridView={ isGridView }
 							key={ `pattern-gallery-${ patternGalleryKey }` }

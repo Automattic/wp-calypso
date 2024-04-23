@@ -777,7 +777,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-referrals',
-		paths: [ '/referrals' ],
+		paths: [ '/referrals', '/referrals/bank-details' ],
 		module: 'calypso/a8c-for-agencies/sections/referrals',
 		group: 'a8c-for-agencies',
 	},
