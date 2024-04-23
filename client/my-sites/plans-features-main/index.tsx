@@ -374,8 +374,8 @@ const PlansFeaturesMain = ( {
 			showDomainUpsellDialog();
 			return true;
 		}
-		// TODO: Figure out why this is being invoked on component mount
-		// setLastClickedPlan( planSlug );
+
+		setLastClickedPlan( planSlug );
 
 		const displayedModal = resolveModal( planSlug );
 		if ( displayedModal ) {
@@ -796,7 +796,7 @@ const PlansFeaturesMain = ( {
 							`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
 							{
 								components: {
-									link: <Button onClick={ () => onFreePlanCTAClick() } borderless />,
+									link: <Button onClick={ onFreePlanCTAClick } borderless />,
 								},
 							}
 						) }
