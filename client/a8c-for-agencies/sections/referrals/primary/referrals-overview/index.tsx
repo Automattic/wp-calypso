@@ -28,6 +28,9 @@ export default function ReferralsOverview() {
 	}, [ dispatch ] );
 
 	const hasPayeeAccount = false; // FIXME: Replace with actual check
+	const showStatus = true; // FIXME: Replace with actual check
+	const statusType = 'warning'; // FIXME: Replace with actual check
+	const status = 'Pending'; // FIXME: Replace with actual check
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -59,6 +62,14 @@ export default function ReferralsOverview() {
 								onClick: onAddBankDetailsClick,
 								primary: true,
 							} }
+							statusProps={
+								showStatus
+									? {
+											children: status,
+											type: statusType,
+									  }
+									: undefined
+							}
 						/>
 						<StepSectionItem
 							icon={ plugins }
