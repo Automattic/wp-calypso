@@ -37,13 +37,11 @@ const PatternTypeSwitcherOption = ( {
 				} }
 			>
 				{ patternTypeFilter === value && (
-					<motion.div layout layoutRoot>
-						<motion.div
-							className="pattern-library__toggle-backdrop"
-							layoutId="pattern-type-switcher-shared-layout-id"
-							role="presentation"
-						/>
-					</motion.div>
+					<motion.div
+						className="pattern-library__toggle-backdrop"
+						layoutId="pattern-type-switcher-shared-layout-id"
+						role="presentation"
+					/>
 				) }
 
 				<span>{ children }</span>
@@ -62,7 +60,11 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 
 	return (
 		<LayoutGroup id={ baseId }>
-			<div className="pattern-library__toggle pattern-library__toggle--type">
+			<motion.div
+				className="pattern-library__toggle pattern-library__toggle--type"
+				layout
+				layoutRoot
+			>
 				<PatternTypeSwitcherOption
 					onChange={ onChange }
 					toolTipText={ translate( 'A collection of blocks that make up one section of a page', {
@@ -89,7 +91,7 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 						comment: 'Refers to block patterns that contain entire page layouts',
 					} ) }
 				</PatternTypeSwitcherOption>
-			</div>
+			</motion.div>
 		</LayoutGroup>
 	);
 }
