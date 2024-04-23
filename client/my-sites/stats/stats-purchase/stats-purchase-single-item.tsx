@@ -534,17 +534,13 @@ function StatsCommercialFlowOptOutForm( {
 							) }
 						</p>
 					) }
-					{ ! isClassificationInProgress &&
-						commercialClassificationLastRunAt > 0 &&
-						! errorMessage && (
-							<>
-								<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-									{ translate(
-										'We have finished verifying your site. If you still think this is an error, please contact support by clicking the button above. '
-									) }
-								</p>
-							</>
-						) }
+					{ isClassificationFinished && ! errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+							{ translate(
+								'We have finished verifying your site. If you still think this is an error, please contact support by clicking the button above. '
+							) }
+						</p>
+					) }
 				</>
 			) }
 		</>
