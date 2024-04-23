@@ -214,7 +214,6 @@ const importHostedSiteFlow: Flow = {
 					}
 
 					if ( isEnabled( 'migration_assistance_modal' ) ) {
-						// remove the siteSlug in case they want to change the destination site
 						urlQueryParams.set( 'showModal', 'true' );
 					}
 
