@@ -135,15 +135,15 @@ export const useSiteMigrationStatus = (
 	] );
 
 	const error = statusError || installationError || activationError;
-	const instalationStatus = skipped?.installation ? 'skipped' : instalationRequestStatus;
+	const installationStatus = skipped?.installation ? 'skipped' : instalationRequestStatus;
 	const activationStatus = skipped?.activation ? 'skipped' : activationRequestStatus;
-	const completed = [ instalationStatus, activationStatus, provisioningStatus ].every(
+	const completed = [ installationStatus, activationStatus, provisioningStatus ].every(
 		( status ) => status === 'success' || status === 'skipped'
 	);
 
 	return {
 		waitingSite: provisioningStatus,
-		installingPlugin: instalationStatus,
+		installingPlugin: installationStatus,
 		activatingPlugin: activationStatus,
 		completed,
 		error,
