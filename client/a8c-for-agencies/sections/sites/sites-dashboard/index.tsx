@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useContext, useEffect, useCallback, useState } from 'react';
@@ -65,7 +64,6 @@ export default function SitesDashboard() {
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
-	const isNarrowView = useBreakpoint( '<660px' );
 	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
 	const { data: products } = useProductsQuery( true );
 
@@ -215,15 +213,15 @@ export default function SitesDashboard() {
 				! dataViewsState.selectedItem && 'preview-hidden'
 			) }
 			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>
 					<LayoutTop withNavigation={ navItems.length > 1 }>
 						<LayoutHeader>
-							{ ! isNarrowView && <Title>{ translate( 'Sites' ) }</Title> }
+							<Title>{ translate( 'Sites' ) }</Title>
 							<Actions>
+								<MobileSidebarNavigation />
 								<SitesHeaderActions />
 							</Actions>
 						</LayoutHeader>

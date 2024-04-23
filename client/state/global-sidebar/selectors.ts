@@ -10,7 +10,12 @@ import type { AppState } from 'calypso/types';
 // as the Global Site View is still in development.
 const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [];
 
-export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, sectionGroup: string ) => {
+export const getShouldShowGlobalSidebar = (
+	_: AppState,
+	siteId: number,
+	sectionGroup: string,
+	sectionName: string // eslint-disable-line @typescript-eslint/no-unused-vars
+) => {
 	return (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
@@ -22,7 +27,8 @@ export const getShouldShowGlobalSidebar = ( _: AppState, siteId: number, section
 export const getShouldShowCollapsedGlobalSidebar = (
 	state: AppState,
 	siteId: number,
-	sectionGroup: string
+	sectionGroup: string,
+	sectionName: string // eslint-disable-line @typescript-eslint/no-unused-vars
 ) => {
 	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
 	return (
