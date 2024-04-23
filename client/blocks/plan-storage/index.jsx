@@ -89,11 +89,7 @@ export function PlanStorage( { children, className, siteId } ) {
 	const hasMediaStorage = !! mediaStorage && mediaStorage.maxStorageBytes !== -1;
 
 	const planStorageComponents = hasMediaStorage && (
-		<PlanStorageBar
-			sitePlanSlug={ sitePlanSlug }
-			mediaStorage={ mediaStorage }
-			displayUpgradeLink={ displayUpgradeLink }
-		>
+		<PlanStorageBar mediaStorage={ mediaStorage } displayUpgradeLink={ displayUpgradeLink }>
 			{ children }
 		</PlanStorageBar>
 	);
