@@ -62,6 +62,8 @@ export const SignupHeaderOverlayBannerWithRefundPeriod = () => {
 						),
 						text: <span className="signup-header__overlay-banner-with-refund-period-text" />,
 					},
+					comment:
+						'Icon is a green checkmark that precedes the text. The text is about a refund period.',
 				} ) }
 			</div>
 		</SignupHeaderOverlayBanner>
