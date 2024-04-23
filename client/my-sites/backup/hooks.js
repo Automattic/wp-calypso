@@ -65,7 +65,11 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { data, isLoading } = useRewindableActivityLogQuery( siteId, filter, queryOptions );
+	const { data, isLoading, refetch } = useRewindableActivityLogQuery(
+		siteId,
+		filter,
+		queryOptions
+	);
 
 	let backupAttempt = undefined;
 	if ( data ) {
@@ -93,5 +97,5 @@ export const useFirstMatchingBackupAttempt = (
 		}
 	}
 
-	return { isLoading, backupAttempt };
+	return { isLoading, backupAttempt, refetch };
 };
