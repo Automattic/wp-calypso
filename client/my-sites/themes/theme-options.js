@@ -55,6 +55,21 @@ import {
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+/**
+ * Get the checkout path slug for the given site and minimum plan.
+ * @param {Object} state
+ * @param {number} siteId
+ * @param {string} minimumPlan
+ * @returns
+ */
+function getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan ) {
+	const currentPlanSlug = getSitePlanSlug( state, siteId );
+	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
+	const mappedPlan = getPlan( requiredPlanSlug );
+	return mappedPlan?.getPathSlug();
+}
+
 function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
 		label: translate( 'Purchase', {
@@ -85,12 +100,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 					? PLAN_PREMIUM
 					: tierMinimumUpsellPlan;
 
-			const currentPlanSlug = getSitePlanSlug( state, siteId );
-			const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
-			const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
-
-			const mappedPlan = getPlan( requiredPlanSlug );
-			const planPathSlug = mappedPlan?.getPathSlug();
+			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -178,11 +188,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			const currentPlanSlug = getSitePlanSlug( state, siteId );
-			const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
-			const requiredPlanSlug = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } );
+			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, PLAN_BUSINESS );
 
-			return `/checkout/${ slug }/${ requiredPlanSlug }?redirect_to=${ redirectTo }`;
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
