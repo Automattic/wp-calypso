@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -309,7 +310,17 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					return navigate( `${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }` );
+					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
+						urlQueryParams.delete( 'showModal' );
+						return navigate(
+							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
+						);
+					}
+					if ( isEnabled( 'migration_assistance_modal' ) ) {
+						urlQueryParams.set( 'showModal', 'true' );
+					}
+
+					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
 				}
 			}
 		};

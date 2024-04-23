@@ -8,6 +8,7 @@ import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-select
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { Step } from '../../types';
 
 const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
@@ -26,27 +27,36 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 		return;
 	}
 
+	const queryParams = new URLSearchParams( window.location.search );
+	const migratingTo = queryParams.get( 'from' );
+	const showMigrationModal = queryParams.get( 'showModal' );
+
 	const stepContent = (
-		<UpgradePlan
-			site={ siteItem }
-			ctaText={ translate( 'Upgrade and migrate' ) }
-			subTitleText=""
-			isBusy={ false }
-			hideTitleAndSubTitle
-			sendIntentWhenCreatingTrial
-			onCtaClick={ () => {
-				navigation.submit?.( {
-					goToCheckout: true,
-					plan: plan.getPathSlug ? plan.getPathSlug() : '',
-				} );
-			} }
-			onFreeTrialSelectionSuccess={ () => {
-				navigation.submit?.( { freeTrialSelected: true } );
-			} }
-			navigateToVerifyEmailStep={ () => {
-				navigation.submit?.( { verifyEmail: true } );
-			} }
-		/>
+		<>
+			{ showMigrationModal && (
+				<MigrationAssistanceModal migratingTo={ migratingTo } navigateBack={ navigation.goBack } />
+			) }
+			<UpgradePlan
+				site={ siteItem }
+				ctaText={ translate( 'Upgrade and migrate' ) }
+				subTitleText=""
+				isBusy={ false }
+				hideTitleAndSubTitle
+				sendIntentWhenCreatingTrial
+				onCtaClick={ () => {
+					navigation.submit?.( {
+						goToCheckout: true,
+						plan: plan.getPathSlug ? plan.getPathSlug() : '',
+					} );
+				} }
+				onFreeTrialSelectionSuccess={ () => {
+					navigation.submit?.( { freeTrialSelected: true } );
+				} }
+				navigateToVerifyEmailStep={ () => {
+					navigation.submit?.( { verifyEmail: true } );
+				} }
+			/>
+		</>
 	);
 
 	return (
