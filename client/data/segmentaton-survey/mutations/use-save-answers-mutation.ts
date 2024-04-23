@@ -17,7 +17,7 @@ const useSaveAnswersMutation = ( { surveyKey, blogId }: SaveAnswersMutationArgs 
 	return useMutation( {
 		mutationFn: async ( { answerKeys, questionKey }: SaveAnswersMutationFnArgs ) => {
 			return wpcom.req.post( {
-				path: `/segmentation-survey/answers`,
+				path: '/segmentation-survey/answer',
 				apiNamespace: 'wpcom/v2',
 				body: {
 					blog_id: blogId,

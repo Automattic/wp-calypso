@@ -9,6 +9,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),
 	createReduxStore: jest.fn(),
+	createSelector: jest.fn(),
 	register: jest.fn(),
 	useDispatch: jest.fn(),
 } ) );

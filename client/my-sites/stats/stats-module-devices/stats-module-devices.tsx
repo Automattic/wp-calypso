@@ -100,7 +100,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		},
 	};
 
-	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.BROWSER );
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SIZE );
 
 	const { isFetching, data } = useModuleDevicesQuery( siteId, selectedOption, query );
 
@@ -116,6 +116,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	const toggleControlComponent = (
 		<SimplifiedSegmentedControl
+			className="stats-module-devices__tabs"
 			options={ Object.entries( optionLabels ).map( ( entry ) => ( {
 				value: entry[ 0 ], // optionLabels key
 				label: entry[ 1 ].selectLabel, // optionLabels object value
@@ -137,6 +138,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				titleURL=""
 				metricLabel=""
 				splitHeader
+				isNew
 				mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 				toggleControl={ toggleControlComponent }
 				isEmpty={ ! showLoader && ( ! chartData || ! chartData.length ) }
@@ -146,7 +148,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 					<StatsModulePlaceholder isLoading={ showLoader } />
 				) : (
 					<div className="stats-card--body__chart">
-						<PieChart data={ chartData } donut hasTooltip />
+						<PieChart data={ chartData } startAngle={ 0 } svgSize={ 224 } donut hasTooltip />
 						<PieChartLegend
 							data={ chartData }
 							onlyPercent
