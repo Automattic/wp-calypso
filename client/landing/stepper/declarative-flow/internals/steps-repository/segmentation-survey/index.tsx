@@ -66,11 +66,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 			>
 				<SegmentationSurveyDocumentHead />
 
-				<SurveyContainer
-					answers={ answers }
-					onChange={ onChangeAnswer }
-					recordTracksEvent={ () => undefined }
-				/>
+				<SurveyContainer answers={ answers } onChange={ onChangeAnswer } />
 			</SegmentationSurveyProvider>
 		</Main>
 	);
