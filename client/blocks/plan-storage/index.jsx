@@ -94,13 +94,15 @@ export function PlanStorage( {
 		shouldDisplayUpgradeLink && canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
 	const isSharedQuota = isStagingSite || hasStagingSite;
 
-	const hasMediaStorage = !! mediaStorage && mediaStorage.maxStorageBytes !== -1;
+	const hasPlanUnlimitedStorage = planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE );
+	const noMediaStorage = ! mediaStorage || mediaStorage.maxStorageBytes === -1;
+	const shouldRenderStorageBar = ! hasPlanUnlimitedStorage && ! noMediaStorage;
 
-	if ( hideWhenNoStorageBar && ! hasMediaStorage ) {
+	if ( hideWhenNoStorageBar && ! shouldRenderStorageBar ) {
 		return null;
 	}
 
-	const planStorageComponents = hasMediaStorage && (
+	const planStorageComponents = shouldRenderStorageBar && (
 		<StorageBarComponent
 			sitePlanSlug={ sitePlanSlug }
 			mediaStorage={ mediaStorage }
