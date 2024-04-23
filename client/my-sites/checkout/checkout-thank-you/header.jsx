@@ -1,5 +1,4 @@
 import {
-	isChargeback,
 	isDelayedDomainTransfer,
 	isDomainMapping,
 	isDomainRegistration,
@@ -197,12 +196,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 						strong: <strong />,
 					},
 				}
-			);
-		}
-
-		if ( isChargeback( primaryPurchase ) ) {
-			return preventWidows(
-				translate( 'Your chargeback fee is paid. Your site is doing somersaults in excitement!' )
 			);
 		}
 
@@ -472,10 +465,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( primaryPurchase && isPlan( primaryPurchase ) ) {
 			return translate( 'Get the best out of your site' );
-		}
-
-		if ( primaryPurchase && isChargeback( primaryPurchase ) ) {
-			return translate( 'Thank you!' );
 		}
 
 		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
