@@ -1,6 +1,7 @@
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCreateMonitors } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-create-monitor';
 import { useCoreSitesPluginsQuery } from 'calypso/data/plugins/use-core-sites-plugins-query';
 import { useBatchCreateUpdateScheduleMutation } from 'calypso/data/plugins/use-update-schedules-mutation';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
@@ -71,6 +72,8 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 		? sites.filter( ( site ) => selectedSites.includes( site.ID ) ).map( ( site ) => site.slug )
 		: [];
 
+	const { createMonitors } = useCreateMonitors( selectedSiteSlugs );
+
 	const { mutateAsync: createUpdateScheduleAsync, isPending: createUpdateSchedulePending } =
 		useBatchCreateUpdateScheduleMutation( selectedSiteSlugs );
 
@@ -88,8 +91,10 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 		try {
 			await createUpdateScheduleAsync( params );
 			// Handle successful case
+			createMonitors();
 			onNavBack && onNavBack();
 		} catch ( error ) {
+			createMonitors();
 			// TODO: store errors in context?
 			onNavBack && onNavBack();
 		}
