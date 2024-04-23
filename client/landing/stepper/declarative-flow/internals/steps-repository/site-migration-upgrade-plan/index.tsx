@@ -28,13 +28,17 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 	}
 
 	const queryParams = new URLSearchParams( window.location.search );
-	const migratingTo = queryParams.get( 'from' );
+	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
 	const stepContent = (
 		<>
 			{ showMigrationModal && (
-				<MigrationAssistanceModal migratingTo={ migratingTo } navigateBack={ navigation.goBack } />
+				<MigrationAssistanceModal
+					onConfirm={ () => {} }
+					migrateFrom={ migrateFrom }
+					navigateBack={ navigation.goBack }
+				/>
 			) }
 			<UpgradePlan
 				site={ siteItem }

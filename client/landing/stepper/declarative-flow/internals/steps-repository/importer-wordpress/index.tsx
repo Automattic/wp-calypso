@@ -8,14 +8,15 @@ const Importer = withImporterWrapper( WordpressImporter );
 
 const ImporterWordpress: Step = function ( props ) {
 	const queryParams = new URLSearchParams( window.location.search );
-	const migratingTo = queryParams.get( 'from' );
+	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
 	return (
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					migratingTo={ migratingTo }
+					onConfirm={ () => {} }
+					migrateFrom={ migrateFrom }
 					navigateBack={ props.navigation.goBack }
 				/>
 			) }
