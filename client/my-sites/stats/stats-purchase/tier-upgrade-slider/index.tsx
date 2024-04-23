@@ -90,7 +90,8 @@ function TierUpgradeSlider( {
 	// Info popup state.
 	// Only visible if the slider is at the max value and we have a string/node to display.
 	const infoReferenceElement = useRef( null );
-	const showPopup = currentPlanIndex === sliderMax && popupInfoString !== undefined;
+	const showExtendedTierInfoIcon = currentPlanIndex === sliderMax && popupInfoString !== undefined;
+	const [ showExtendedTierInfo, setShowExtendedTierInfo ] = useState( false );
 
 	const lhValue = steps[ currentPlanIndex ]?.lhValue;
 	const originalPrice = steps[ currentPlanIndex ]?.rhValue;
@@ -130,7 +131,17 @@ function TierUpgradeSlider( {
 							) : (
 								<span>{ originalPrice }</span>
 							) }
-							{ showPopup && <Icon icon={ info } /> }
+							{ showExtendedTierInfoIcon && (
+								<Icon
+									icon={ info }
+									onMouseEnter={ () => {
+										setShowExtendedTierInfo( true );
+									} }
+									onMouseLeave={ () => {
+										setShowExtendedTierInfo( false );
+									} }
+								/>
+							) }
 						</b>
 					</div>
 				) }
@@ -159,7 +170,7 @@ function TierUpgradeSlider( {
 			<Popover
 				position="right"
 				context={ infoReferenceElement?.current }
-				isVisible={ showPopup }
+				isVisible={ showExtendedTierInfo }
 				focusOnShow={ false }
 				className="stats-purchase__info-popover"
 			>
