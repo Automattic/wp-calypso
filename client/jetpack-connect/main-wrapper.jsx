@@ -34,6 +34,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			isWooOnboarding,
 			isWooCoreProfiler,
 			isWpcomMigration,
+			isWooBlazeFlow,
 			isFromAutomatticForAgenciesPlugin,
 			className,
 			children,
@@ -54,7 +55,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
-		const width = isWooOnboarding || isWooDna ? 200 : undefined;
+		const width = isWooOnboarding || isWooDna || isWooBlazeFlow ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (
@@ -71,6 +72,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 							isWooOnboarding={ isWooOnboarding }
 							isWooCoreProfiler={ isWooCoreProfiler }
 							isWooDna={ isWooDna }
+							isWooBlazeFlow={ isWooBlazeFlow }
 							width={ width }
 							darkColorScheme={ darkColorScheme }
 						/>

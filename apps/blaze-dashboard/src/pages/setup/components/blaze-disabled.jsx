@@ -8,6 +8,10 @@ export default function BlazeDisabled() {
 
 	const translate = useTranslate();
 
+	const handleConnect = () => {
+		window.location.href = window.configData.connect_url;
+	};
+
 	return (
 		<>
 			<div className="promote-post-i2__inner-container">

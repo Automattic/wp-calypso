@@ -13,6 +13,7 @@ import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isQueryFromWooBlaze from 'calypso/state/selectors/is-from-woo-blaze';
 import { authQueryPropTypes } from './utils';
 
 export class AuthFormHeader extends Component {
@@ -55,6 +56,7 @@ export class AuthFormHeader extends Component {
 		const {
 			translate,
 			partnerSlug,
+			isWooBlazeFlow,
 			isWooOnboarding,
 			isWooCoreProfiler,
 			wooDnaConfig,
@@ -64,6 +66,10 @@ export class AuthFormHeader extends Component {
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
 			return wooDnaConfig.getServiceName();
+		}
+
+		if ( isWooBlazeFlow ) {
+			return translate( 'Woo Blaze' );
 		}
 
 		let host = '';
@@ -143,6 +149,7 @@ export class AuthFormHeader extends Component {
 	getSubHeaderText() {
 		const {
 			translate,
+			isWooBlazeFlow,
 			isWooOnboarding,
 			isWooCoreProfiler,
 			wooDnaConfig,
@@ -216,6 +223,19 @@ export class AuthFormHeader extends Component {
 						);
 					}
 					return translate( 'Approve your connection' );
+			}
+		}
+
+		if ( isWooBlazeFlow ) {
+			switch ( currentState ) {
+				case 'logged-in-success':
+					return translate( "You're all set!" );
+				case 'auth-in-progress':
+					return translate( 'Connecting your site' );
+				default:
+					return translate(
+						'Approve your connection. Your account will enable you to start using the features and benefits offered by Woo Blaze'
+					);
 			}
 		}
 
@@ -299,5 +319,6 @@ export default connect( ( state ) => {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
+		isWooBlazeFlow: isQueryFromWooBlaze( state ),
 	};
 } )( localize( AuthFormHeader ) );

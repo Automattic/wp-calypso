@@ -29,6 +29,7 @@ export class JetpackHeader extends PureComponent {
 			isWooOnboarding,
 			isWooCoreProfiler,
 			isWooDna,
+			isWooBlazeFlow,
 			translate,
 		} = this.props;
 
@@ -54,6 +55,23 @@ export class JetpackHeader extends PureComponent {
 		}
 
 		if ( isWooDna ) {
+			return (
+				<svg width={ width } viewBox="0 0 1270 170">
+					<title>{ translate( 'WooCommerce logo' ) }</title>
+					<g fill="none" fillRule="evenodd">
+						<g transform="translate(-120)">
+							<AsyncLoad
+								require="calypso/components/jetpack-header/woocommerce"
+								darkColorScheme={ darkColorScheme }
+								placeholder={ null }
+							/>
+						</g>
+					</g>
+				</svg>
+			);
+		}
+
+		if ( isWooBlazeFlow ) {
 			return (
 				<svg width={ width } viewBox="0 0 1270 170">
 					<title>{ translate( 'WooCommerce logo' ) }</title>
