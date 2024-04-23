@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { render } from '@testing-library/react';
 import { createElement, Children } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import SectionNav from '../';
+import NavItem from '../item';
+import NavTabs from '../tabs';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
@@ -86,6 +87,44 @@ describe( 'section-nav', () => {
 		} );
 	} );
 
+	describe( 'Nav Tabs', () => {
+		afterEach( () => {
+			Object.defineProperty( window, 'innerWidth', { value: 1024 } );
+		} );
+
+		test( 'should not contain has-horizontal-scroll class if window width < 480px and NavTabs hasHorizontalScroll true', () => {
+			Object.defineProperty( window, 'innerWidth', { value: 400 } );
+
+			render(
+				<NavTabs label="Status" hasHorizontalScroll={ true }>
+					<NavItem path="/demo" selected>
+						Demo
+					</NavItem>
+				</NavTabs>
+			);
+
+			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
+			expect( horizontalScrollClass ).toBeUndefined();
+		} );
+
+		test( 'should contain has-horizontal-scroll class if window width > 480px and NavTabs hasHorizontalScroll true', () => {
+			Object.defineProperty( window, 'innerWidth', { value: 800 } );
+
+			render(
+				<SectionNav selectedText="Test">
+					<NavTabs label="Status" hasHorizontalScroll={ true }>
+						<NavItem path="/demo" selected>
+							Demo
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+			);
+
+			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
+			expect( horizontalScrollClass ).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'interaction', () => {
 		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', () => {
 			return new Promise( ( done ) => {
@@ -146,62 +185,6 @@ describe( 'section-nav', () => {
 				expect( spy ).toHaveBeenCalledTimes( 2 );
 				done();
 			} );
-		} );
-	} );
-
-	describe( 'Nav Tabs', () => {
-		test( 'should render the mobile header if dropdown is enabled and NavTabs hasHorizontalScroll true', () => {
-			const children = createComponent(
-				NavTabs,
-				{
-					label: 'NavTabs',
-					hasHorizontalScroll: true,
-				},
-				<NavItem path="/demo" selected>
-					Demo
-				</NavItem>
-			);
-
-			const component = createComponent(
-				SectionNav,
-				{
-					selectedText: 'Test',
-					allowDropdown: true,
-				},
-				children
-			);
-
-			const header = component.props.children.find(
-				( child ) => child && child.props && child.props.className === 'section-nav__mobile-header'
-			);
-			expect( header ).toBeDefined();
-		} );
-
-		test( 'should not render the mobile header if dropdown is not enabled and NavTabs hasHorizontalScroll true', () => {
-			const children = createComponent(
-				NavTabs,
-				{
-					label: 'NavTabs',
-					hasHorizontalScroll: true,
-				},
-				<NavItem path="/demo" selected>
-					Demo
-				</NavItem>
-			);
-
-			const component = createComponent(
-				SectionNav,
-				{
-					selectedText: 'Test',
-					allowDropdown: false,
-				},
-				children
-			);
-
-			const header = component.props.children.find(
-				( child ) => child && child.props && child.props.className === 'section-nav__mobile-header'
-			);
-			expect( header ).toBeUndefined();
 		} );
 	} );
 } );
