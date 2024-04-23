@@ -10,6 +10,13 @@ import type { AppState } from 'calypso/types';
 // as the Global Site View is still in development.
 const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [];
 
+// Calypso pages listed here will show the global sidebar when on sites group.
+const GLOBAL_SIDEBAR_SECTION_NAMES: string[] = [
+	'hosting',
+	'hosting-overview',
+	'github-deployments',
+];
+
 export const getShouldShowGlobalSidebar = (
 	_: AppState,
 	siteId: number,
@@ -20,7 +27,11 @@ export const getShouldShowGlobalSidebar = (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
 		sectionGroup === 'sites-dashboard' ||
-		( sectionGroup === 'sites' && ! siteId )
+		( sectionGroup === 'sites' &&
+			( ! siteId ||
+				( !! siteId &&
+					isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+					GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName ) ) ) )
 	);
 };
 
@@ -46,7 +57,8 @@ export const getShouldShowGlobalSiteSidebar = (
 		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
-		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
+		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
+		! GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName )
 	);
 };
 
@@ -60,6 +72,7 @@ export const getShouldShowUnifiedSiteSidebar = (
 		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
-		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
+		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
+		! getShouldShowGlobalSidebar( state, siteId, sectionGroup, sectionName )
 	);
 };
