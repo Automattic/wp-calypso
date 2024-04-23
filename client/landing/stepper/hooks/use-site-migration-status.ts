@@ -86,7 +86,6 @@ export const useSiteMigrationStatus = ( plugin: SitePluginParam, siteIdOrSlug?: 
 		error: activationError,
 	} = usePluginActivation( plugin.name, siteIdOrSlug! );
 
-	// const [ skipped, setSkipped ] = useState< SkipStatus | null >( null );
 	const skipped: SkipStatus = {
 		installation: status?.isInstalled,
 		activation: status?.isActive,
