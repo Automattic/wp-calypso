@@ -43,7 +43,6 @@ const fetchArticlesAPI = async (
 	let queryString;
 	let articlesResponse: SearchResult[] = [];
 	let searchResultResponse: SearchResult[] = [];
-	let searchResult: SearchResult[] = [];
 
 	if ( articles ) {
 		const { post_ids, blog_id } = articles;
@@ -63,10 +62,6 @@ const fetchArticlesAPI = async (
 				path: `/help-center/articles?${ queryString }`,
 			} as APIFetchOptions ) ) as SearchResult[];
 		}
-
-		if ( articlesResponse?.length >= 0 ) {
-			searchResult = articlesResponse;
-		}
 	}
 
 	// If less than 5 tailored articles are returned, fetch search results.
@@ -85,11 +80,11 @@ const fetchArticlesAPI = async (
 			} as APIFetchOptions ) ) as SearchResult[];
 		}
 		// Remove articles that are already in the tailored articles.
-		searchResult = filterOutDuplicatedItems( articlesResponse, searchResultResponse );
+		searchResultResponse = filterOutDuplicatedItems( articlesResponse, searchResultResponse );
 	}
 
 	//Add tailored results first then add search results.
-	const combinedResults = [ ...articlesResponse, ...searchResult ];
+	const combinedResults = [ ...articlesResponse, ...searchResultResponse ];
 	return combinedResults.slice( 0, 5 );
 };
 
