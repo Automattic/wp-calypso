@@ -123,6 +123,23 @@ describe( 'section-nav', () => {
 			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
 			expect( horizontalScrollClass ).toBeInTheDocument();
 		} );
+
+		test( 'should not contain has-horizontal-scroll class if window width > 480px and NavTabs hasHorizontalScroll false', () => {
+			Object.defineProperty( window, 'innerWidth', { value: 800 } );
+
+			render(
+				<SectionNav selectedText="Test">
+					<NavTabs label="Status" hasHorizontalScroll={ false }>
+						<NavItem path="/demo" selected>
+							Demo
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
+			);
+
+			const horizontalScrollClass = document.getElementsByClassName( 'has-horizontal-scroll' )[ 0 ];
+			expect( horizontalScrollClass ).toBeUndefined();
+		} );
 	} );
 
 	describe( 'interaction', () => {
