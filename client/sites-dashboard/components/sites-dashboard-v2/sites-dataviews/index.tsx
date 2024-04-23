@@ -9,9 +9,8 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { SitePlan } from '../../sites-site-plan';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
@@ -32,22 +31,16 @@ type Props = {
 const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsState }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
-	const dispatch = useDispatch();
-
-	//const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	const openSitePreviewPane = useCallback(
 		( site: SiteExcerptData ) => {
-			// Dispatch Site selection
-			dispatch( setSelectedSiteId( site.ID || null ) );
-
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,
 				selectedItem: site,
 				type: 'list',
 			} ) );
 		},
-		[ setDataViewsState, dataViewsState ]
+		[ setDataViewsState ]
 	);
 
 	const { page: sitesViewPage, perPage: sitesViewPerPage, sort: sitesViewSort } = dataViewsState;
