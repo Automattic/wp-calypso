@@ -161,21 +161,19 @@ function useGenerateActionCallback( {
 			}
 
 			/* 3. Handle plan upgrade and plan upgrade tracks events */
-			switch ( ! isFreePlan( planSlug ) ) {
-				case true:
-					recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
-						current_plan: sitePlanSlug,
-						upgrading_to: planSlug,
-						saw_free_trial_offer: !! freeTrialPlanSlug,
-					} );
-				case false:
-					recordTracksEvent( 'calypso_signup_free_plan_click' );
-				default:
-					handleUpgrade( {
-						cartItemForPlan,
-						selectedStorageAddOn,
-					} );
+			if ( ! isFreePlan( planSlug ) ) {
+				recordTracksEvent?.( 'calypso_plan_features_upgrade_click', {
+					current_plan: sitePlanSlug,
+					upgrading_to: planSlug,
+					saw_free_trial_offer: !! freeTrialPlanSlug,
+				} );
+			} else {
+				recordTracksEvent( 'calypso_signup_free_plan_click' );
 			}
+			handleUpgrade( {
+				cartItemForPlan,
+				selectedStorageAddOn,
+			} );
 			return;
 		};
 	};
