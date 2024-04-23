@@ -1,49 +1,78 @@
-import { Button } from '@wordpress/components';
+import config from '@automattic/calypso-config';
+import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SurveyContainer from 'calypso/components/survey-container';
+import { useSurveyContext } from 'calypso/components/survey-container/context';
+import { Question } from 'calypso/components/survey-container/types';
+import {
+	useCachedAnswers,
+	useSaveAnswersMutation,
+	useSurveyStructureQuery,
+} from 'calypso/data/segmentaton-survey';
+import SegmentationSurveyProvider from './provider';
 import type { Step } from '../../types';
 import './style.scss';
 
+const SURVEY_KEY = 'entrepreneur-trial';
+
+const SegmentationSurveyDocumentHead = () => {
+	const { currentQuestion } = useSurveyContext();
+
+	if ( ! currentQuestion ) {
+		return null;
+	}
+
+	return <DocumentHead title={ currentQuestion.headerText } />;
+};
+
 const SegmentationSurveyStep: Step = ( { navigation } ) => {
-	const docTitle = 'Segmentation Survey';
+	const { data: questions } = useSurveyStructureQuery( { surveyKey: SURVEY_KEY } );
+	const { mutate } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
+	const { answers, setAnswers, clearAnswers } = useCachedAnswers( SURVEY_KEY );
 
-	const handleNext = () => {
-		alert(
-			`Do not use navigation.goNext() here. Instead, update URL params (not route fragments).`
-		);
-	};
+	const onChangeAnswer = useCallback(
+		( questionKey: string, value: string[] ) => {
+			const newAnswers = { ...answers, [ questionKey ]: value };
+			setAnswers( newAnswers );
+		},
+		[ answers, setAnswers ]
+	);
 
-	const handleBack = () => {
-		alert(
-			`Do not use navigation.goBack()() here. Instead, update URL params (not route fragments).`
-		);
-	};
+	const onSubmitQuestion = useCallback(
+		( currentQuestion: Question ) => {
+			mutate( {
+				questionKey: currentQuestion.key,
+				answerKeys: answers[ currentQuestion.key ] || [],
+			} );
 
-	const handleSubmit = () => {
-		navigation.submit?.();
-	};
+			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+				clearAnswers();
+			}
+		},
+		[ answers, clearAnswers, mutate, questions ]
+	);
+
+	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {
+		return null;
+	}
 
 	return (
-		<>
-			<DocumentHead title={ docTitle } />
-			<div className="segmentation-survey">
-				<p>Back & Next button can modify URL params, but not the route itself.</p>
-				<Button onClick={ handleBack } variant="secondary">
-					Back
-				</Button>
-				<Button onClick={ handleNext } variant="secondary">
-					Next
-				</Button>
-				<hr />
-				<p>Insert segmentation survey component here.</p>
-				<p>
-					Submit button goes to Login/Signup/SiteCreation step. Call this when segmentation survey
-					is completed (or skipped).
-				</p>
-				<Button onClick={ handleSubmit } variant="primary">
-					Submit
-				</Button>
-			</div>
-		</>
+		<Main className="segmentation-survey-step">
+			<SegmentationSurveyProvider
+				navigation={ navigation }
+				onSubmitQuestion={ onSubmitQuestion }
+				questions={ questions }
+			>
+				<SegmentationSurveyDocumentHead />
+
+				<SurveyContainer
+					answers={ answers }
+					onChange={ onChangeAnswer }
+					recordTracksEvent={ () => undefined }
+				/>
+			</SegmentationSurveyProvider>
+		</Main>
 	);
 };
 

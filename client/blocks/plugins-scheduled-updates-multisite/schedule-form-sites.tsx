@@ -58,7 +58,7 @@ export const ScheduleFormSites = ( props: Props ) => {
 				<SearchControl
 					id="sites"
 					onChange={ ( s ) => setSearchTerm( s.trim() ) }
-					placeholder={ translate( 'Search site' ) }
+					placeholder={ translate( 'Search sites' ) }
 				/>
 				{ ! sites.length && (
 					<Text className="info-msg">

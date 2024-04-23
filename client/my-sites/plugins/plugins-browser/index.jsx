@@ -133,7 +133,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
 	return (
-		<MainComponent fullWidthLayout isLoggedOut={ ! isLoggedIn }>
+		<MainComponent wideLayout isLoggedOut={ ! isLoggedIn }>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />

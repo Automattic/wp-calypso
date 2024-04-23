@@ -4,6 +4,7 @@
 	width: fit-content;
 	min-width: 275px;
 	background-color: var(--studio-white);
+	z-index: 2;
 }
 
 .is-sticky-plan-type-selector {
@@ -109,7 +110,6 @@
 		}
 
 		.components-flex {
-			overflow: hidden;
 			width: 100%;
 			.components-input-control__container {
 				.components-custom-select-control__button {

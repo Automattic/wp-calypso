@@ -17,7 +17,12 @@ export const SidebarSearch = ( { tooltip, onClick } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { currentSection } = useCurrentRoute();
 	const shouldShowCollapsedGlobalSidebar = useSelector( ( state ) => {
-		return getShouldShowCollapsedGlobalSidebar( state, selectedSiteId, currentSection?.group );
+		return getShouldShowCollapsedGlobalSidebar(
+			state,
+			selectedSiteId,
+			currentSection?.group,
+			currentSection?.name
+		);
 	} );
 	return (
 		<>

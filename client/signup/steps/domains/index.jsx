@@ -1409,7 +1409,7 @@ export class RenderDomainsStep extends Component {
 				shouldHideNavButtons={ this.shouldHideNavButtons() }
 				stepContent={
 					<div>
-						<QueryProductsList />
+						<QueryProductsList type="domains" />
 						{ this.renderContent() }
 					</div>
 				}

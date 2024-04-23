@@ -17,7 +17,7 @@
 .is-reader-page .search-stream__with-sites.main {
 	margin: 0 auto;
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 30px;
+		margin: 16px;
 	}
 }
 
@@ -68,7 +68,7 @@
 
 .reader__post-title {
 	clear: none;
-	font-family: $serif;
+	font-family: $sans;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-weight: 700;

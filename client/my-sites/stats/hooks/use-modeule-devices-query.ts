@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from './default-query-params';
-
-export interface QueryStatsDevicesParams {
-	date?: string;
-	days?: number;
-	max?: number;
-}
+import { processQueryParams, QueryStatsParams } from './utils';
 
 export interface StatsDevicesData {
 	key: string;
@@ -14,7 +9,7 @@ export interface StatsDevicesData {
 	value: number;
 }
 
-function queryStatsDevices( siteId: number, deviceParam: string, query: QueryStatsDevicesParams ) {
+function queryStatsDevices( siteId: number, deviceParam: string, query: QueryStatsParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/devices/${ deviceParam }`, query );
 }
 
@@ -47,15 +42,11 @@ const parseDevicesData = ( data: {
 	} );
 };
 
-const useModuleDevicesQuery = (
-	siteId: number,
-	deviceParam: string,
-	query: QueryStatsDevicesParams
-) => {
+const useModuleDevicesQuery = ( siteId: number, deviceParam: string, query: QueryStatsParams ) => {
 	return useQuery( {
 		...getDefaultQueryParams(),
 		queryKey: [ 'stats', 'devices', siteId, deviceParam, query ],
-		queryFn: () => queryStatsDevices( siteId, deviceParam, query ),
+		queryFn: () => queryStatsDevices( siteId, deviceParam, processQueryParams( query ) ),
 		select: ( data ) => parseDevicesData( data as { top_values: { [ key: string ]: number } } ),
 		staleTime: 1000 * 60 * 5,
 	} );

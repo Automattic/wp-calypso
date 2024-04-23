@@ -55,6 +55,7 @@ import {
 	planItem as getCartItemForPlan,
 	getPlanCartItem,
 } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
@@ -458,31 +459,36 @@ const PlansFeaturesMain = ( {
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
-	const gridPlansForFeaturesGrid =
-		useGridPlansForFeaturesGrid( {
-			allFeaturesList: getFeaturesList(),
-			coupon,
-			eligibleForFreeHostingTrial,
-			hiddenPlans,
-			intent,
-			isDisplayingPlansNeededForFeature,
-			isInSignup,
-			isSubdomainNotGenerated: ! resolvedSubdomainName.result,
-			selectedFeature,
-			selectedPlan,
-			showLegacyStorageFeature,
-			siteId,
-			storageAddOns,
-			term,
-			useCheckPlanAvailabilityForPurchase,
-			useFreeTrialPlanSlugs,
-		} )?.filter( ( { planSlug } ) => {
-			// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
-			if ( deemphasizeFreePlan ) {
-				return planSlug !== PLAN_FREE;
-			}
-			return true;
-		} ) ?? null; // optional chaining can result in `undefined`; we don't want to introduce it here.
+	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
+		allFeaturesList: getFeaturesList(),
+		coupon,
+		eligibleForFreeHostingTrial,
+		hiddenPlans,
+		intent,
+		isDisplayingPlansNeededForFeature,
+		isInSignup,
+		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
+		selectedFeature,
+		selectedPlan,
+		showLegacyStorageFeature,
+		siteId,
+		storageAddOns,
+		term,
+		useCheckPlanAvailabilityForPurchase,
+		useFreeTrialPlanSlugs,
+	} );
+
+	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+	const gridPlansForFeaturesGrid = useMemo(
+		() =>
+			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
+				if ( deemphasizeFreePlan ) {
+					return planSlug !== PLAN_FREE;
+				}
+				return true;
+			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
+		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
+	);
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -736,14 +742,17 @@ const PlansFeaturesMain = ( {
 			'is-hidden': ! showPlansComparisonGrid,
 		}
 	);
-
+	const [ isExperimentLoading ] = useExperiment(
+		'calypso_signup_onboarding_plans_paid_domain_free_plan_modal_optimization'
+	);
 	const isLoadingGridPlans = Boolean(
-		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid
+		! intent || ! gridPlansForFeaturesGrid || ! gridPlansForComparisonGrid || isExperimentLoading
 	);
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! resolvedDeemphasizeFreePlan.isLoading;
+
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
 	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
