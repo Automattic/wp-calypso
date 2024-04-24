@@ -521,7 +521,7 @@
 			font-size: rem(24px);
 		}
 
-		.site-preview__pane {
+		.item-preview__pane {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -541,7 +541,7 @@
 				transition: flex-grow 0.2s;
 			}
 
-			.site-preview__pane {
+			.item-preview__pane {
 				max-width: 0;
 				padding: 0;
 			}
