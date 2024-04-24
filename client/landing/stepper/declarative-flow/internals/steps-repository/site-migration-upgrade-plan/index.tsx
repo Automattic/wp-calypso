@@ -5,6 +5,7 @@ import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -15,6 +16,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const queryParams = useQuery();
 	const hideFreeMigrationTrialForNonVerifiedEmail =
 		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? false;
 
@@ -28,8 +30,6 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	if ( ! siteItem || ! siteSlug || ! plan ) {
 		return;
 	}
-
-	const queryParams = new URLSearchParams( window.location.search );
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
