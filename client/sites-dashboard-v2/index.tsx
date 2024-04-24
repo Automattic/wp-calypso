@@ -35,6 +35,9 @@ import DotcomSitesDataViews, { statuses } from './sites-dataviews';
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
 
+// Add Dotcom specific styles
+import './dotcom-style.scss';
+
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
@@ -101,6 +104,9 @@ const SitesDashboardV2 = ( {
 		search: dataViewsState.search,
 	} );
 	// todo: Perform pagination and sorting actions
+
+	// Filter sites list on search query
+	const filteredSites = useSitesListFiltering( allSites, { search: dataViewsState.search } );
 
 	// Site is selected:
 	useEffect( () => {
