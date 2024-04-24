@@ -1,4 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
@@ -16,7 +17,7 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const FLOW_NAME = 'migration-signup';
+const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 
 const migrationSignup: Flow = {
 	name: FLOW_NAME,
