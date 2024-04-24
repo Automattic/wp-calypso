@@ -72,7 +72,7 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 		? sites.filter( ( site ) => selectedSites.includes( site.ID ) ).map( ( site ) => site.slug )
 		: [];
 
-	const { createMonitors } = useCreateMonitors( selectedSiteSlugs );
+	const { createMonitors } = useCreateMonitors();
 
 	const { mutateAsync: createUpdateScheduleAsync, isPending: createUpdateSchedulePending } =
 		useBatchCreateUpdateScheduleMutation( selectedSiteSlugs );
@@ -88,16 +88,13 @@ export const ScheduleForm = ( { onNavBack }: Props ) => {
 			},
 		};
 
-		try {
-			await createUpdateScheduleAsync( params );
-			// Handle successful case
-			createMonitors();
-			onNavBack && onNavBack();
-		} catch ( error ) {
-			createMonitors();
-			// TODO: store errors in context?
-			onNavBack && onNavBack();
-		}
+		const createResults = await createUpdateScheduleAsync( params );
+		const successfulSiteSlugs = createResults
+			.filter( ( result ) => ! result.error )
+			.map( ( result ) => result.siteSlug );
+		// Create monitors for sites that have been successfully scheduled
+		createMonitors( successfulSiteSlugs );
+		onNavBack && onNavBack();
 	};
 
 	return (

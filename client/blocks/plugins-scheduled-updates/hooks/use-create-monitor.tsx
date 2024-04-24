@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
 	useBatchCreateMonitorSettingsMutation,
 	useCreateMonitorSettingsMutation,
@@ -59,25 +60,28 @@ export function useCreateMonitor( siteSlug: SiteSlug ) {
 	};
 }
 
-export function useCreateMonitors( siteSlugs: SiteSlug[] ) {
-	const siteIds = useSelector( ( state ) => siteSlugs.map( ( slug ) => getSiteId( state, slug ) ) );
-	const siteUrls = useSelector( ( state ) =>
-		siteIds.map( ( siteId ) => getSiteUrl( state, siteId as number ) )
-	);
-	const { createMonitorSettings } = useBatchCreateMonitorSettingsMutation( siteSlugs );
+export function useCreateMonitors() {
+	const { createMonitorSettings } = useBatchCreateMonitorSettingsMutation();
+	const state = useSelector( ( state ) => state );
 
-	const createMonitors = () => {
-		siteIds.forEach( ( siteId, index ) => {
-			const siteUrl = siteUrls[ index ];
-			activateMonitorModule( siteId!, () => {
-				createMonitorSettings( {
-					[ siteSlugs[ index ] ]: {
-						urls: createMonitorUrls( siteUrl! ),
-					},
+	const createMonitors = useCallback(
+		( siteSlugs: SiteSlug[] ) => {
+			const siteIds = siteSlugs.map( ( slug ) => getSiteId( state, slug ) );
+			const siteUrls = siteIds.map( ( siteId ) => getSiteUrl( state, siteId as number ) );
+
+			siteIds.forEach( ( siteId, index ) => {
+				const siteUrl = siteUrls[ index ];
+				activateMonitorModule( siteId!, () => {
+					createMonitorSettings( {
+						[ siteSlugs[ index ] ]: {
+							urls: createMonitorUrls( siteUrl! ),
+						},
+					} );
 				} );
 			} );
-		} );
-	};
+		},
+		[ createMonitorSettings, state ]
+	);
 
 	return {
 		createMonitors,
