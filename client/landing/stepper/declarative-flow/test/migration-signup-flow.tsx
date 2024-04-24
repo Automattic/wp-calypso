@@ -117,5 +117,81 @@ describe( 'Migration Signup Flow', () => {
 				state: null,
 			} );
 		} );
+
+		it( 'redirects the user to instructions step if the plugin was installed successfully', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					pluginInstalled: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to error step if there was an error during the process', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					error: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.ERROR.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the plugin install step from the processing step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					bundleTransfer: true,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the processing step from the migration plugin install step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.SITE_MIGRATION_PLUGIN_INSTALL.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.PROCESSING.slug }`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the processing step from the bundle transfer step', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.BUNDLE_TRANSFER.slug,
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.PROCESSING.slug }`,
+				state: {
+					bundleProcessing: true,
+				},
+			} );
+		} );
 	} );
 } );
