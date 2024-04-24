@@ -201,6 +201,7 @@ export class ImportEverything extends SectionMigrate {
 					startImport={ this.startMigration }
 					navigateToVerifyEmailStep={ () => stepNavigator.goToVerifyEmailPage?.() }
 					onContentOnlyClick={ onContentOnlySelection }
+					stepNavigator={ this.props.stepNavigator }
 				/>
 			</>
 		);

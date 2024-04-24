@@ -1,16 +1,20 @@
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-credentials-info';
+import { StepNavigator } from 'calypso/blocks/importer/types';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { MigrationReady } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-ready';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useAddHostingTrialMutation, {
+	HOSTING_INTENT_MIGRATE,
+} from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,6 +36,7 @@ interface PreMigrationProps {
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onContentOnlyClick: () => void;
+	stepNavigator: StepNavigator;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -44,6 +49,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isTargetSitePlanCompatible,
 		isMigrateFromWp,
 		isTrial,
+		stepNavigator,
 		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
@@ -240,6 +246,13 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
+						onFreeTrialClick={ async () => {
+							stepNavigator.goToCheckoutPage( 'everything', {
+								siteSlug: targetSite.slug,
+								plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+								hosting_intent: HOSTING_INTENT_MIGRATE,
+							} );
+						} }
 						ctaText={ translate( 'Upgrade and migrate' ) }
 						onCtaClick={ onUpgradeAndMigrateClick }
 						onContentOnlyClick={ onContentOnlyClick }

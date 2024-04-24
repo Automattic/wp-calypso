@@ -99,7 +99,9 @@ export function useStepNavigator(
 	}
 
 	function getCheckoutUrl( importOption: WPImportOption, extraArgs = {} ) {
-		const path = buildCheckoutUrl( siteSlug, selectedPlan );
+		const plan = extraArgs.plan ?? selectedPlan;
+		const slug = extraArgs.slug ?? siteSlug;
+		const path = buildCheckoutUrl( slug, plan );
 		let redirectTo = '';
 		let cancelTo = '';
 
