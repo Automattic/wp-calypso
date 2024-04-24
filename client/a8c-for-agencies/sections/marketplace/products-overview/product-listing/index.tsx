@@ -1,4 +1,3 @@
-// FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
 import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -295,6 +294,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 
 			{ wooExtensions.length > 0 && (
 				<ListingSection
+					id="woocommerce-extensions"
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -307,6 +307,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 
 			{ plans.length > 0 && (
 				<ListingSection
+					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(

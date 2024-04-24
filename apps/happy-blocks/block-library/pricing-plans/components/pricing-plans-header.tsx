@@ -1,4 +1,3 @@
-import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
@@ -11,8 +10,7 @@ interface Props {
 }
 
 const PricingPlansHeader: FunctionComponent< Props > = ( { currentPlan, attributes } ) => {
-	const localizeUrl = useLocalizeUrl();
-	let learnMoreLink = localizeUrl( 'https://wordpress.com/pricing/' );
+	let learnMoreLink = 'https://wordpress.com/pricing/';
 
 	if ( attributes.domain ) {
 		learnMoreLink = `https://wordpress.com/plans/${ attributes.domain }`;

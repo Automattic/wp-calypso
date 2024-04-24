@@ -11,7 +11,12 @@ export function notifications( context, next ) {
 	const basePath = sectionify( context.path );
 	const mcKey = 'notifications';
 	const state = context.store.getState();
-	const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, null, 'reader' );
+	const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+		state,
+		null,
+		'reader',
+		'notifications'
+	);
 
 	trackPageLoad( basePath, 'Reader > Notifications', mcKey );
 	recordTrack(

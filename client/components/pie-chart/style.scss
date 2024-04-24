@@ -4,11 +4,6 @@
 .pie-chart__chart-container {
 	position: relative;
 
-	& > svg {
-		width: 100%;
-		height: auto;
-	}
-
 	.pie-chart__chart-drawing {
 		max-width: unset;
 	}

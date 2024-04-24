@@ -195,5 +195,6 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
+		refetch: activityLog.refetch,
 	};
 };

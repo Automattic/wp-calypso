@@ -22,6 +22,7 @@ export class AuthFormHeader extends Component {
 		isWooCoreProfiler: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
+		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
@@ -58,6 +59,7 @@ export class AuthFormHeader extends Component {
 			isWooCoreProfiler,
 			wooDnaConfig,
 			isWpcomMigration,
+			isFromAutomatticForAgenciesPlugin,
 		} = this.props;
 
 		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
@@ -112,6 +114,21 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
+		if ( isFromAutomatticForAgenciesPlugin ) {
+			switch ( currentState ) {
+				case 'logged-out':
+					/** @todo redirect to landing page when user is not signed up for A4A. */
+					return translate( 'Create an account to set up Automattic for Agencies' );
+				case 'logged-in-success':
+					return translate( "You're all set!" );
+				case 'auth-in-progress':
+					return translate( 'Connecting your site' );
+				case 'logged-in':
+				default:
+					return translate( 'Finish connecting your site' );
+			}
+		}
+
 		switch ( currentState ) {
 			case 'logged-out':
 				return translate( 'Create an account to set up Jetpack' );
@@ -124,8 +141,14 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWooOnboarding, isWooCoreProfiler, wooDnaConfig, isWpcomMigration } =
-			this.props;
+		const {
+			translate,
+			isWooOnboarding,
+			isWooCoreProfiler,
+			wooDnaConfig,
+			isWpcomMigration,
+			isFromAutomatticForAgenciesPlugin,
+		} = this.props;
 		const currentState = this.getState();
 
 		if ( isWooOnboarding ) {
@@ -201,6 +224,10 @@ export class AuthFormHeader extends Component {
 				case 'logged-in':
 					return translate( 'Connect your site with your WordPress.com account' );
 			}
+		}
+
+		if ( isFromAutomatticForAgenciesPlugin ) {
+			return undefined;
 		}
 
 		switch ( currentState ) {

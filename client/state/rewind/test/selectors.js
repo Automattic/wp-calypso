@@ -1,3 +1,4 @@
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from '../retention/constants';
 import {
 	getRewindStorageUsageLevel,
@@ -12,6 +13,7 @@ import {
 	getBackupStagingSiteInfo,
 	getBackupStagingSites,
 	getBackupStagingUpdateRequestStatus,
+	getFinishedBackupForSiteById,
 } from '../selectors';
 import { BACKUP_STAGING_UPDATE_REQUEST } from '../staging/constants';
 import { stagingSites } from '../staging/test/fixtures';
@@ -383,5 +385,53 @@ describe( 'Backup staging site info', () => {
 				staging: true,
 			} );
 		} );
+	} );
+} );
+
+jest.mock( 'calypso/state/selectors/get-rewind-backups' );
+
+describe( 'getFinishedBackupForSiteById()', () => {
+	const TEST_SITE_ID = 123;
+	const TEST_BACKUP_ID_1 = 1;
+	const TEST_BACKUP_ID_2 = 2;
+	const state = {};
+
+	beforeEach( () => {
+		getRewindBackups.mockReset();
+	} );
+
+	test( 'Should receive the finished backup.', () => {
+		getRewindBackups.mockReturnValue( [
+			{ id: TEST_BACKUP_ID_1, status: 'finished' },
+			{ id: TEST_BACKUP_ID_2, status: 'started' },
+		] );
+
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
+
+		expect( finishedBackup.id ).toEqual( TEST_BACKUP_ID_1 );
+	} );
+
+	test( 'Shouldnt receive backup since it is in progress.', () => {
+		getRewindBackups.mockReturnValue( [ { id: TEST_BACKUP_ID_1, status: 'started' } ] );
+
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
+
+		expect( finishedBackup ).toBeNull;
+	} );
+
+	test( 'Shouldnt receive backup since it failed.', () => {
+		getRewindBackups.mockReturnValue( [ { id: TEST_BACKUP_ID_1, status: 'not-accessible' } ] );
+
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
+
+		expect( finishedBackup ).toBeNull;
+	} );
+
+	test( 'Shouldnt receive backup if id doesnt match.', () => {
+		getRewindBackups.mockReturnValue( [ { id: TEST_BACKUP_ID_2, status: 'finished' } ] );
+
+		const finishedBackup = getFinishedBackupForSiteById( state, TEST_SITE_ID, TEST_BACKUP_ID_1 );
+
+		expect( finishedBackup ).toBeNull;
 	} );
 } );

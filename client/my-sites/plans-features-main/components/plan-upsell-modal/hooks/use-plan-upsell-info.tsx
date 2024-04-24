@@ -17,7 +17,7 @@ export const usePlanUpsellInfo = ( { planSlug }: { planSlug: PlanSlug } ): PlanU
 	const siteId = useSelector( getSelectedSiteId );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ planSlug ],
-		selectedSiteId: siteId,
+		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,

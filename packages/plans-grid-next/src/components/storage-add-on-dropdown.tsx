@@ -81,7 +81,7 @@ export const StorageAddOnDropdown = ( {
 	priceOnSeparateLine = false,
 }: StorageAddOnDropdownProps ) => {
 	const translate = useTranslate();
-	const { gridPlansIndex, selectedSiteId } = usePlansGridContext();
+	const { gridPlansIndex, siteId } = usePlansGridContext();
 	const {
 		pricing: { currencyCode },
 		storageAddOnsForPlan,
@@ -97,8 +97,7 @@ export const StorageAddOnDropdown = ( {
 		currencyCode: currencyCode || 'USD',
 	} );
 	const selectedStorageOptionForPlan = useSelect(
-		( select ) =>
-			select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, selectedSiteId ),
+		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug ]
 	);
 	const defaultStorageOption = useDefaultStorageOption( {
@@ -111,7 +110,7 @@ export const StorageAddOnDropdown = ( {
 			setSelectedStorageOptionForPlan( {
 				addOnSlug: defaultStorageOption,
 				planSlug,
-				siteId: selectedSiteId,
+				siteId,
 			} );
 		}
 	}, [] );
@@ -151,10 +150,10 @@ export const StorageAddOnDropdown = ( {
 
 			if ( addOnSlug ) {
 				onStorageAddOnClick && onStorageAddOnClick( addOnSlug );
-				setSelectedStorageOptionForPlan( { addOnSlug, planSlug, siteId: selectedSiteId } );
+				setSelectedStorageOptionForPlan( { addOnSlug, planSlug, siteId } );
 			}
 		},
-		[ onStorageAddOnClick, planSlug, setSelectedStorageOptionForPlan ]
+		[ onStorageAddOnClick, planSlug, setSelectedStorageOptionForPlan, siteId ]
 	);
 
 	return (

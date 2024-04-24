@@ -1,4 +1,5 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { CATEGORY_FEATURED, CATEGORY_PAGE } from 'calypso/my-sites/patterns/constants';
 import { Pattern, PatternTypeFilter } from 'calypso/my-sites/patterns/types';
@@ -12,13 +13,17 @@ interface PatternCounts {
 	[ PatternTypeFilter.REGULAR ]: PatternCount;
 }
 
+function getQueryKey( locale: string, category: string ) {
+	return [ 'pattern-library', 'patterns', locale, category ];
+}
+
 export function getPatternsQueryOptions(
 	locale: string,
 	category: string,
-	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' > = {}
-) {
+	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' | 'select' > = {}
+): UseQueryOptions< Pattern[] > {
 	return {
-		queryKey: [ 'pattern-library', 'patterns', locale, category ],
+		queryKey: getQueryKey( locale, category ),
 		queryFn() {
 			return wpcom.req.get( `/ptk/patterns/${ locale }`, {
 				categories: category,
@@ -27,7 +32,7 @@ export function getPatternsQueryOptions(
 		},
 		staleTime: 5 * 60 * 1000,
 		...queryOptions,
-		select( patterns: Pattern[] ) {
+		select( patterns ) {
 			const patternCounts: PatternCounts = {
 				[ PatternTypeFilter.PAGES ]: {},
 				[ PatternTypeFilter.REGULAR ]: {},
@@ -54,10 +59,6 @@ export function getPatternsQueryOptions(
 				}
 			}
 
-			if ( queryOptions.select ) {
-				return queryOptions.select( patterns );
-			}
-
 			return patterns;
 		},
 	};
@@ -66,7 +67,42 @@ export function getPatternsQueryOptions(
 export function usePatterns(
 	locale: string,
 	category: string,
-	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' > = {}
+	queryOptions: Omit< UseQueryOptions< Pattern[] >, 'queryKey' | 'select' > = {}
 ) {
-	return useQuery< Pattern[] >( getPatternsQueryOptions( locale, category, queryOptions ) );
+	const queryClient = useQueryClient();
+	const queryResult = useQuery< Pattern[] >(
+		getPatternsQueryOptions( locale, category, queryOptions )
+	);
+
+	// When users submit a search, we fetch *all* patterns. This callback groups the returned
+	// patterns by category and populates the react-query cache for each category.
+	useEffect( () => {
+		if ( category === '' && queryResult.data?.length ) {
+			const patternsByCategory: Record< string, Pattern[] > = {};
+
+			for ( const pattern of queryResult.data ) {
+				for ( const categoryName of Object.keys( pattern.categories ) ) {
+					if ( ! patternsByCategory[ categoryName ] ) {
+						patternsByCategory[ categoryName ] = [ pattern ];
+					} else {
+						patternsByCategory[ categoryName ].push( pattern );
+					}
+				}
+			}
+
+			for ( const [ categoryName, patterns ] of Object.entries( patternsByCategory ) ) {
+				const queryKey = getQueryKey( locale, categoryName );
+				const queryData = queryClient.getQueryData( queryKey );
+
+				if ( ! queryData ) {
+					queryClient.setQueryData( queryKey, patterns );
+					// We immediately invalidate the pre-populated query data to make react-query
+					// refetch it when users navigate to that category
+					queryClient.invalidateQueries( { queryKey } );
+				}
+			}
+		}
+	}, [ category, locale, queryResult.dataUpdatedAt ] );
+
+	return queryResult;
 }

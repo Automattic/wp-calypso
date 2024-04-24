@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "../modernized-mixins";
 
 .stats-module-devices {
@@ -16,7 +17,6 @@
 	.pie-chart__legend {
 		flex-direction: row;
 		align-items: center;
-		justify-content: space-between;
 		padding: 0 20px;
 
 		.legend-item {
@@ -73,5 +73,15 @@
 		// Prevent blur elements from being interactable.
 		pointer-events: none;
 		user-select: none;
+	}
+}
+
+.stats-module-devices__tabs {
+	.segmented-control__item {
+		min-width: 80px;
+
+		@media (max-width: $break-small ) {
+			min-width: auto;
+		}
 	}
 }

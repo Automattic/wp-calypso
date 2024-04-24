@@ -24,6 +24,16 @@ interface APIFetchOptions {
 	path: string;
 }
 
+const filterOutDuplicatedItems = (
+	articlesResponse: SearchResult[],
+	searchResultResponse: SearchResult[]
+) => {
+	const articlesIds = articlesResponse.map( ( result ) => result.post_id );
+	return searchResultResponse.filter(
+		( searchResult ) => ! articlesIds.includes( searchResult.post_id )
+	);
+};
+
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
@@ -53,19 +63,26 @@ const fetchArticlesAPI = async (
 			} as APIFetchOptions ) ) as SearchResult[];
 		}
 	}
-	queryString = buildQueryString( { query: search, locale, section: sectionName } );
-	if ( canAccessWpcomApis() ) {
-		searchResultResponse = ( await wpcomRequest( {
-			path: `help/search/wpcom?${ queryString }`,
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
-		} ) ) as SearchResult[];
-	} else {
-		searchResultResponse = ( await apiFetch( {
-			global: true,
-			path: `/help-center/search?${ queryString }`,
-		} as APIFetchOptions ) ) as SearchResult[];
+
+	// If less than 5 tailored articles are returned, fetch search results.
+	if ( articlesResponse?.length < 5 ) {
+		queryString = buildQueryString( { query: search, locale, section: sectionName } );
+		if ( canAccessWpcomApis() ) {
+			searchResultResponse = ( await wpcomRequest( {
+				path: `help/search/wpcom?${ queryString }`,
+				apiNamespace: 'wpcom/v2/',
+				apiVersion: '2',
+			} ) ) as SearchResult[];
+		} else {
+			searchResultResponse = ( await apiFetch( {
+				global: true,
+				path: `/help-center/search?${ queryString }`,
+			} as APIFetchOptions ) ) as SearchResult[];
+		}
+		// Remove articles that are already in the tailored articles.
+		searchResultResponse = filterOutDuplicatedItems( articlesResponse, searchResultResponse );
 	}
+
 	//Add tailored results first then add search results.
 	const combinedResults = [ ...articlesResponse, ...searchResultResponse ];
 	return combinedResults.slice( 0, 5 );

@@ -10,7 +10,7 @@
 	margin: 10px 0 0;
 
 	&.space-items-apart {
-		justify-content: space-between;
+		justify-content: flex-start;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {

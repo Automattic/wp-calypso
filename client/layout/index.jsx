@@ -41,8 +41,8 @@ import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
-	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
+	getShouldShowGlobalSiteSidebar,
 	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
@@ -294,6 +294,7 @@ class Layout extends Component {
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
+			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooCoreProfilerFlow,
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
@@ -447,11 +448,17 @@ export default withCurrentRoute(
 			const isWooCoreProfilerFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 				isWooCommerceCoreProfilerFlow( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
+			);
+			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
 			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
@@ -468,6 +475,8 @@ export default withCurrentRoute(
 				// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 				! sectionName ||
 				( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			const isFromAutomatticForAgenciesPlugin =
+				'automattic-for-agencies-client' === currentQuery?.from;
 			const masterbarIsHidden =
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
@@ -511,6 +520,7 @@ export default withCurrentRoute(
 				isJetpackWooDnaFlow,
 				isJetpackMobileFlow,
 				isWooCoreProfilerFlow,
+				isFromAutomatticForAgenciesPlugin,
 				isEligibleForJITM,
 				oauth2Client,
 				wccomFrom,
@@ -533,7 +543,7 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter,
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
+				isGlobalSidebarCollapsed: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
