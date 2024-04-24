@@ -113,6 +113,11 @@ export function ScheduleFormPaths( props: Props ) {
 				) }
 			</div>
 			{ newPathError && <Text className="validation-msg">{ newPathError }</Text> }
+			{ MAX_SELECTABLE_PATHS === paths.length && (
+				<Text className="info-msg">
+					{ translate( 'You reached the maximum number of paths.' ) }
+				</Text>
+			) }
 		</div>
 	);
 }
