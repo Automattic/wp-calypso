@@ -1,5 +1,5 @@
 import { useSitesListFiltering, useSitesListGrouping } from '@automattic/sites';
-import { SitesGroupingOptions } from '@automattic/sites/src/use-sites-list-grouping';
+import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -41,7 +41,7 @@ interface SitesDashboardProps {
 }
 
 const SitesDashboardV2 = ( {
-	queryParams: { page = 1, perPage = 96, search, newSiteID },
+	queryParams: { page = 1, perPage = 96, search, newSiteID, status = 'all' },
 	updateQueryParams = handleQueryParamChange,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
@@ -67,20 +67,31 @@ const SitesDashboardV2 = ( {
 	initialDataViewsState.page = page;
 	initialDataViewsState.perPage = perPage;
 	initialDataViewsState.search = search ?? '';
+	initialDataViewsState.filters =
+		status === 'all'
+			? []
+			: [
+					{
+						field: 'status',
+						operator: 'in',
+						value: statuses.find( ( item ) => item.slug === status )?.value || 1,
+					},
+			  ];
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
 		const statusFilter = dataViewsState.filters.find( ( filter ) => filter.field === 'status' );
 		const statusNumber = statusFilter?.value || 1;
-		return statuses.find( ( status ) => status.value === statusNumber )?.slug || 'all';
+		return ( statuses.find( ( status ) => status.value === statusNumber )?.slug ||
+			'all' ) as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters ] );
 
 	// Filter sites list by status group.
 	const { currentStatusGroup } = useSitesListGrouping( allSites, {
 		status: statusSlug,
 		showHidden: true,
-	} as SitesGroupingOptions );
+	} );
 
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( currentStatusGroup, {
@@ -100,13 +111,16 @@ const SitesDashboardV2 = ( {
 
 	// Update URL with search param on change
 	useEffect( () => {
-		const queryParams = { search: dataViewsState.search?.trim() };
+		const queryParams = {
+			search: dataViewsState.search?.trim(),
+			status: statusSlug === 'all' ? undefined : statusSlug,
+		};
 
 		// There is a chance that the URL is not up to date when it mounts, so bump the
 		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.search, updateQueryParams ] );
+	}, [ dataViewsState.search, statusSlug, updateQueryParams ] );
 
 	// Search, filtering, pagination and sorting sites:
 	useEffect( () => {
