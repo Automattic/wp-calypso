@@ -25,7 +25,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 		title: translate( 'WordPress Patterns', {
 			comment: 'HTML title of the Pattern Library home page',
 		} ),
-		patternsHeading: translate( "It's easier with patterns", {
+		patternsHeading: translate( "It's Easier With Patterns", {
 			comment: 'Heading of the Pattern Library home page',
 		} ),
 		patternsDescription: translate(
@@ -72,7 +72,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "About" category page',
 		} ),
 		layoutsDescription: translate(
-			'Share your brand’s narrative with layouts that tell a story. These layouts are designed to articulate your brand ethos and values, crafting a compelling brand identity that resonates with visitors.',
+			'Share your brand’s narrative with layouts that tell a story. These full-page patterns are designed to articulate your brand ethos and values, crafting a compelling brand identity that resonates with visitors.',
 			{ comment: 'Intro text on the Pattern Library "Headers" category page' }
 		),
 	},
@@ -91,7 +91,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Blog Posts" category page',
 		} ),
 		layoutsDescription: translate(
-			'Enhance your blog’s appeal with visual layouts that bring your site’s content to the forefront. Designed to keep readers hooked, our layouts add an extra layer of professionalism and engagement to your posts.',
+			'Enhance your blog’s appeal with visual layouts that bring your site’s content to the forefront. Designed to keep readers hooked, our full-page patterns add an extra layer of professionalism and engagement to your posts.',
 			{ comment: 'Intro text on the Pattern Library "Blog Posts" category page' }
 		),
 	},
@@ -110,7 +110,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Contact" category page',
 		} ),
 		layoutsDescription: translate(
-			'Craft a user-friendly interface with our contact layouts. With thoughtfully integrated contact forms and maps, these layouts are designed to make it effortless for users to contact you.',
+			'Craft a user-friendly interface with our contact layouts. With thoughtfully integrated contact forms and maps, these full-page patterns are designed to make it effortless for users to contact you.',
 			{ comment: 'Intro text on the Pattern Library "Contact" category page' }
 		),
 	},
@@ -141,7 +141,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Gallery" category page',
 		} ),
 		layoutsDescription: translate(
-			'Display your visuals with grace using our gallery layouts. Carefully selected for their aesthetic appeal, they provide an organized yet striking showcase for your photos or artwork.',
+			'Display your visuals with grace using our gallery layouts. Carefully selected for their aesthetic appeal, these full-page patterns provide an organized yet striking showcase for your photos or artwork.',
 			{ comment: 'Intro text on the Pattern Library "Gallery" category page' }
 		),
 	},
@@ -172,7 +172,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Menu" (restaurant menus) category page',
 		} ),
 		layoutsDescription: translate(
-			'Introduce your restaurant’s menu with layouts that tantalize the senses. Crafted for distinction, our designs complement your cuisine and set the stage for a memorable dining experience, even online.',
+			'Introduce your restaurant’s menu with layouts that tantalize the senses. Our full-page pattern designs complement your cuisine and set the stage for a memorable dining experience, even online.',
 			{ comment: 'Intro text on the Pattern Library "Menu" (restaurant menus) category page' }
 		),
 	},
@@ -203,7 +203,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Services" category page',
 		} ),
 		layoutsDescription: translate(
-			'Communicate the value of your services with layouts that clarify and captivate. These layouts enhance potential clients’ perception and interaction with your offerings.',
+			'Communicate the value of your services with layouts that clarify and captivate. These full-page patterns enhance potential clients’ perception and interaction with your offerings.',
 			{ comment: 'Intro text on the Pattern Library "Services" category page' }
 		),
 	},
@@ -222,7 +222,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Store" category page',
 		} ),
 		layoutsDescription: translate(
-			'Our store layouts are designed to streamline the online shopping experience. These layouts display your products in an inviting manner, simplifying the path from discovery to purchase.',
+			'Our store layouts are designed to streamline the online shopping experience. These full-page patterns display your products in an inviting manner, simplifying the path from discovery to purchase.',
 			{ comment: 'Intro text on the Pattern Library "Store" category page' }
 		),
 	},
