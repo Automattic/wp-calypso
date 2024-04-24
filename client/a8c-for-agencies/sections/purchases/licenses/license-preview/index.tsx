@@ -237,11 +237,7 @@ export default function LicensePreview( {
 				) }
 
 				<div className="license-preview__badge-container">
-					{ isParentLicense
-						? bundleCountContent
-						: LicenseType.Standard === licenseType && (
-								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
-						  ) }
+					{ isParentLicense && bundleCountContent }
 				</div>
 
 				<div>
