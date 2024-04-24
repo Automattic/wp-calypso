@@ -262,6 +262,8 @@ a.hosting-overview__link-button {
 }
 
 .hosting-overview__domains-table {
+	padding: 0;
+
 	.domains-table__primary-domain-label {
 		background-color: inherit;
 		color: var(--studio-green-40, #00a32a);
