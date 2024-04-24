@@ -89,7 +89,7 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'navigation', () => {
-		it( 'redirects the user to the migrate or import page when the platform is wordpress', () => {
+		it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -101,13 +101,15 @@ describe( 'Site Migration Flow', () => {
 				},
 			} );
 
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
-				state: null,
+			await waitFor( () => {
+				expect( getFlowLocation() ).toEqual( {
+					path: `/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?from=https%3A%2F%2Fsite-to-be-migrated.com&siteSlug=example.wordpress.com`,
+					state: null,
+				} );
 			} );
 		} );
 
-		it( 'redirects the user to the import content flow when was not possible to indentify the platform', () => {
+		it( 'redirects the user to the import content flow when was not possible to indentify the platform', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
@@ -118,20 +120,22 @@ describe( 'Site Migration Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				addQueryArgs(
-					{
-						siteSlug: 'example.wordpress.com',
-						from: 'https://example-to-be-migrated.com',
-						origin: 'site-migration-identify',
-						backToFlow: '/site-migration/site-migration-identify',
-					},
-					'/setup/site-setup/importList'
-				)
-			);
+			await waitFor( () => {
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					addQueryArgs(
+						{
+							siteSlug: 'example.wordpress.com',
+							from: 'https://example-to-be-migrated.com',
+							origin: 'site-migration-identify',
+							backToFlow: '/site-migration/site-migration-identify',
+						},
+						'/setup/site-setup/importList'
+					)
+				);
+			} );
 		} );
 
-		it( 'redirects the user to the import content flow when the user skip the plaform identification', () => {
+		it( 'redirects the user to the import content flow when the user skip the plaform identification', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
@@ -140,16 +144,18 @@ describe( 'Site Migration Flow', () => {
 				},
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				addQueryArgs(
-					{
-						siteSlug: 'example.wordpress.com',
-						origin: 'site-migration-identify',
-						backToFlow: '/site-migration/site-migration-identify',
-					},
-					'/setup/site-setup/importList'
-				)
-			);
+			await waitFor( () => {
+				expect( window.location.assign ).toHaveBeenCalledWith(
+					addQueryArgs(
+						{
+							siteSlug: 'example.wordpress.com',
+							origin: 'site-migration-identify',
+							backToFlow: '/site-migration/site-migration-identify',
+						},
+						'/setup/site-setup/importList'
+					)
+				);
+			} );
 		} );
 
 		it( 'migrate redirects from the import-from page to bundleTransfer step', () => {
