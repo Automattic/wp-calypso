@@ -1,4 +1,6 @@
-.pattern-library__toggle--type {
+@import "@wordpress/base-styles/breakpoints";
+
+.pattern-library__type-switcher {
 	border: 1px solid var(--wp-components-color-gray-600, #949494);
 	border-radius: 2px;
 	display: flex;
@@ -14,14 +16,16 @@
 	}
 }
 
-a.pattern-library__toggle-option--type {
+a.pattern-library__type-switcher-option {
 	align-items: center;
 	border-radius: 2px;
 	box-sizing: border-box;
 	color: inherit;
 	font-size: rem(13px);
 	display: flex;
+	height: 34px;
 	justify-content: center;
+	min-width: 118px;
 	padding: 0 12px;
 	position: relative;
 	transition: background 160ms linear, color 160ms linear;
@@ -34,9 +38,13 @@ a.pattern-library__toggle-option--type {
 	span {
 		position: relative;
 	}
+
+	@media ( max-width: $break-medium ) {
+		height: 36px;
+	}
 }
 
-.pattern-library__toggle-backdrop {
+.pattern-library__type-switcher-backdrop {
 	background: #000;
 	border-radius: 2px;
 	position: absolute;

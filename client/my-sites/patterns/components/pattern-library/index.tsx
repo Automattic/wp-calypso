@@ -336,7 +336,7 @@ export const PatternLibrary = ( {
 							) }
 
 							<ToggleGroupControl
-								className="pattern-library__toggle pattern-library__toggle--view"
+								className="pattern-library__view-switcher"
 								label=""
 								isBlock
 								value={ isGridView ? 'grid' : 'list' }
@@ -346,7 +346,7 @@ export const PatternLibrary = ( {
 										comment: 'Toggle label for view switcher in the Pattern Library',
 										textOnly: true,
 									} ) }
-									className="pattern-library__toggle-option pattern-library__toggle-option--view"
+									className="pattern-library__view-switcher-option"
 									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
 									onClick={ () => handleViewChange( 'list' ) }
 									value="list"
@@ -357,7 +357,7 @@ export const PatternLibrary = ( {
 										comment: 'Toggle label for view switcher in the Pattern Library',
 										textOnly: true,
 									} ) }
-									className="pattern-library__toggle-option pattern-library__toggle-option--view"
+									className="pattern-library__view-switcher-option"
 									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
 									onClick={ () => handleViewChange( 'grid' ) }
 									value="grid"

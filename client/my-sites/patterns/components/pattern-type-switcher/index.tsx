@@ -27,10 +27,9 @@ const PatternTypeSwitcherOption = ( {
 	return (
 		<Tooltip text={ toolTipText } { ...{ style: { maxWidth: '200px', top: '3px' } } }>
 			<LocalizedLink
-				className={ classNames(
-					'pattern-library__toggle-option pattern-library__toggle-option--type',
-					{ 'is-active': patternTypeFilter === value }
-				) }
+				className={ classNames( 'pattern-library__type-switcher-option', {
+					'is-active': patternTypeFilter === value,
+				} ) }
 				href={ getCategoryUrlPath( category, value, false, isGridView ) }
 				onClick={ () => {
 					onChange?.( PatternTypeFilter.REGULAR );
@@ -39,7 +38,7 @@ const PatternTypeSwitcherOption = ( {
 			>
 				{ patternTypeFilter === value && (
 					<motion.div
-						className="pattern-library__toggle-backdrop"
+						className="pattern-library__type-switcher-backdrop"
 						layoutId="pattern-type-switcher-shared-layout-id"
 						role="presentation"
 					/>
@@ -71,7 +70,7 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 
 		function onFocus() {
 			const link = element.querySelector< HTMLAnchorElement >(
-				'.pattern-library__toggle-option.is-active'
+				'.pattern-library__type-switcher-option.is-active'
 			);
 			link?.focus();
 		}
@@ -85,7 +84,7 @@ export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 
 	return (
 		<motion.div
-			className="pattern-library__toggle pattern-library__toggle--type"
+			className="pattern-library__type-switcher"
 			layout
 			layoutRoot
 			// Replicate the keyboard navigation behavior of `ToggleGroupControl`, where the options
