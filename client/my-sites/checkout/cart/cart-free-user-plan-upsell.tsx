@@ -49,11 +49,10 @@ function UpgradeText( {
 	const firstDomain = cart.products.find( isRegistrationOrTransfer );
 	const planName = upsellPlan?.getTitle() ?? '';
 
-	if ( planPrice && firstDomain && planPrice > firstDomain.cost ) {
+	if ( firstDomain && planPrice > firstDomain.cost ) {
 		const extraToPay = planPrice - firstDomain.cost;
 		return translate(
-			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its ' +
-				'features, plus the first year of your domain for free.',
+			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
 			{
 				args: {
 					extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
@@ -64,11 +63,12 @@ function UpgradeText( {
 				},
 			}
 		);
-	} else if ( planPrice && firstDomain && planPrice < firstDomain.cost ) {
+	}
+
+	if ( firstDomain && planPrice < firstDomain.cost ) {
 		const savings = firstDomain.cost - planPrice;
 		return translate(
-			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan ' +
-				'instead — your domain comes free for a year.',
+			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan instead — your domain comes free for a year.',
 			{
 				args: {
 					planName,
@@ -82,8 +82,7 @@ function UpgradeText( {
 	}
 
 	return translate(
-		'Purchase our %(planName)s plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
-			'features, plus the first year of your domain for free.',
+		'Purchase our %(planName)s plan at {{strong}}no extra cost{{/strong}}, and get access to all its features, plus the first year of your domain for free.',
 		{
 			args: { planName },
 			components: {
@@ -103,7 +102,6 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const selectedSite = useSelector( getSelectedSite );
 	const isRegisteringOrTransferringDomain =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const showPlanUpsell = !! selectedSite?.ID;
 	const hasPaidPlan = siteHasPaidPlan( selectedSite );
 	const hasPlanInCart = hasPlan( responseCart );
 	const dispatch = useDispatch();
@@ -112,21 +110,23 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const translate = useTranslate();
 
 	// FIXME
-	const planPrice = 0;
+	const planPrice: number | undefined = undefined;
 
-	const shouldRender = ( () => {
-		if ( isCartPendingUpdate || isLoadingCart ) {
-			return false;
-		}
-
-		return (
-			isRegisteringOrTransferringDomain &&
-			showPlanUpsell &&
-			selectedSite &&
-			! hasPaidPlan &&
-			! hasPlanInCart
-		);
-	} )();
+	if ( ! selectedSite?.ID ) {
+		return null;
+	}
+	if ( isCartPendingUpdate || isLoadingCart ) {
+		return null;
+	}
+	if ( ! planPrice ) {
+		return null;
+	}
+	if ( hasPaidPlan || hasPlanInCart ) {
+		return null;
+	}
+	if ( ! isRegisteringOrTransferringDomain ) {
+		return null;
+	}
 
 	const addPlanToCart = () => {
 		const planCartItem = planItem( PLAN_PERSONAL );
@@ -136,10 +136,6 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) );
 		}
 	};
-
-	if ( ! shouldRender ) {
-		return null;
-	}
 
 	return (
 		<div className="cart__upsell-wrapper">
