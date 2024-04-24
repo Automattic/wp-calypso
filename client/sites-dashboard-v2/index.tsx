@@ -37,7 +37,7 @@ import './style.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
-	updateQueryParams: ( params: SitesDashboardQueryParams ) => void;
+	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
 }
 
 const SitesDashboardV2 = ( {
