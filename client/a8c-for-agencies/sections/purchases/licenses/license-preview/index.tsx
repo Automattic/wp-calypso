@@ -164,7 +164,7 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ product }</div>
 							{ domain }
-							{ isPressableLicense && (
+							{ isPressableLicense && ! revokedAt && (
 								<a
 									className="license-preview__product-pressable-link"
 									target="_blank"
@@ -241,7 +241,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ isParentLicense && (
+					{ isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
 							product={ product }
 							licenseKey={ licenseKey }
