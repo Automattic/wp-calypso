@@ -4,10 +4,9 @@ import { hasTouch } from '../lib/touch-detect';
 export function useManageTooltipToggle(): [ string, Dispatch< SetStateAction< string > > ] {
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 	const isTouch = hasTouch();
-	const renderFeatureTooltips = false;
 
 	useEffect( () => {
-		if ( ! isTouch || ! renderFeatureTooltips ) {
+		if ( ! isTouch ) {
 			return;
 		}
 
@@ -25,7 +24,7 @@ export function useManageTooltipToggle(): [ string, Dispatch< SetStateAction< st
 		return () => {
 			document.removeEventListener( 'touchstart', closeAllTooltips );
 		};
-	}, [ isTouch, renderFeatureTooltips ] );
+	}, [ isTouch ] );
 
 	return [ activeTooltipId, setActiveTooltipId ];
 }
