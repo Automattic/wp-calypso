@@ -2,6 +2,13 @@
 
 .site-preview__header {
 
+	.site-preview__header-content {
+		.site-preview__header-title-summary {
+			word-wrap: anywhere;
+		}
+
+	}
+
 	@media ( min-width: $break-large ) {
 		.site-preview__header-favicon {
 			margin-right: 24px;
@@ -60,7 +67,6 @@
 			display: flex;
 			justify-content: space-between;
 			.site-preview__header-title-summary {
-				word-wrap: anywhere;
 				flex-grow: 1;
 				display: flex;
 				flex-direction: column;

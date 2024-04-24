@@ -8,6 +8,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
+import SitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
@@ -81,22 +82,25 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	`;
 	context.secondary = <MySitesNavigation path={ context.path } />;
 
+	const queryParams = {
+		page: context.query.page ? parseInt( context.query.page ) : undefined,
+		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
+		search: context.query.search,
+		status: context.query.status,
+		newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
+	};
+
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboard
-				queryParams={ {
-					page: context.query.page ? parseInt( context.query.page ) : undefined,
-					perPage: context.query[ 'per-page' ]
-						? parseInt( context.query[ 'per-page' ] )
-						: undefined,
-					search: context.query.search,
-					status: context.query.status,
-					newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
-				} }
-			/>
+			{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
+				// Sites Dashboard V2 - Dotcom Nav Redesign V2
+				<SitesDashboardV2 queryParams={ queryParams } />
+			) : (
+				<SitesDashboard queryParams={ queryParams } />
+			) }
 		</>
 	);
 

@@ -136,6 +136,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ REBLOGGING_FLOW ]: () =>
 		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
+
+	'migration-signup': () =>
+		import( /* webpackChunkName: "migration-signup" */ '../declarative-flow/migration-signup' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(

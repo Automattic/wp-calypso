@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
@@ -32,6 +34,11 @@ describe( 'Site Migration Flow', () => {
 		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
 			isOwner: true,
 		} );
+
+		const apiBaseUrl = 'https://public-api.wordpress.com';
+		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
+		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
+		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
 	} );
 
 	describe( 'useAssertConditions', () => {
@@ -214,7 +221,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', () => {
+		it( 'redirects from upgrade-plan to verifyEmail if user is unverified', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
@@ -224,9 +231,11 @@ describe( 'Site Migration Flow', () => {
 				},
 			} );
 
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.VERIFY_EMAIL.slug }`,
-				state: null,
+			await waitFor( () => {
+				expect( getFlowLocation() ).toEqual( {
+					path: `/${ STEPS.VERIFY_EMAIL.slug }`,
+					state: null,
+				} );
 			} );
 		} );
 

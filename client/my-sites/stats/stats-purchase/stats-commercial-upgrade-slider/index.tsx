@@ -14,6 +14,8 @@ import { StatsPlanTierUI } from '../types';
 
 import './styles.scss';
 
+const INITIAL_FIRST_TIER_VIEWS_LIMIT = 10000;
+
 function useTranslatedStrings() {
 	const translate = useTranslate();
 	const limits = translate( 'Monthly views limit', {
@@ -94,6 +96,16 @@ function StatsCommercialUpgradeSlider( {
 	const tiers = useAvailableUpgradeTiers( siteId );
 	const uiStrings = useTranslatedStrings();
 
+	// Show a message with a tooltip for the first tier when it's over 10k views,
+	// which means the user is extending the limit based on the purchased tier or current usage.
+	let firstTierInfo;
+	if ( tiers[ 0 ].views && tiers[ 0 ].views > INITIAL_FIRST_TIER_VIEWS_LIMIT ) {
+		firstTierInfo = translate(
+			// TBD: This message should be updated with a more appropriate or detailed copy.
+			'The minimum view limit is determined based on your current tier and usage.'
+		);
+	}
+
 	// Special case for per-unit fees.
 	// Determine this based on last tier in the list.
 	// The translate() call returns a node so we need to set the type correctly.
@@ -143,6 +155,7 @@ function StatsCommercialUpgradeSlider( {
 		<TierUpgradeSlider
 			className="stats-commercial-upgrade-slider"
 			uiStrings={ uiStrings }
+			firstTierInfo={ firstTierInfo }
 			popupInfoString={ perUnitFeeMessaging }
 			steps={ steps }
 			onSliderChange={ handleSliderChanged }

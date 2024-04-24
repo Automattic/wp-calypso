@@ -294,6 +294,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 
 			{ wooExtensions.length > 0 && (
 				<ListingSection
+					id="woocommerce-extensions"
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -306,6 +307,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 
 			{ plans.length > 0 && (
 				<ListingSection
+					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(
