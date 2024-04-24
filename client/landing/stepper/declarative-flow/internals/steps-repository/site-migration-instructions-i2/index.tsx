@@ -1,6 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -12,7 +13,6 @@ import { MaybeLink } from './maybe-link';
 import { PendingActions } from './pending-actions';
 import { ShowHideInput } from './show-hide-input';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 const removeDuplicatedSlashes = ( url: string ) => url.replace( /(https?:\/\/)|(\/)+/g, '$1$2' );
@@ -55,6 +55,26 @@ const SiteMigrationInstructions: Step = function () {
 		isFetching,
 		isFetched,
 	} = useSiteMigrationKey( siteId );
+
+	const [ isWaitingForSite, setIsWaitingForSite ] = useState( true );
+	const [ isWaitingForPlugins, setIsWaitingForPlugins ] = useState( true );
+	const isSiteSetupComplete = ! isWaitingForSite && ! isWaitingForPlugins;
+
+	useEffect( () => {
+		const timer = setTimeout( () => {
+			setIsWaitingForSite( false );
+			setIsWaitingForPlugins( true );
+		}, 2000 );
+
+		return () => clearTimeout( timer );
+	}, [] );
+	useEffect( () => {
+		const timer = setTimeout( () => {
+			setIsWaitingForPlugins( false );
+		}, 4000 );
+
+		return () => clearTimeout( timer );
+	}, [] );
 
 	useEffect( () => {
 		if ( isError && fromUrl ) {
@@ -116,10 +136,18 @@ const SiteMigrationInstructions: Step = function () {
 					) }
 				</li>
 				<li>
-					<PendingActions />
+					<PendingActions
+						isWaitingForSite={ isWaitingForSite }
+						isWaitingForPlugins={ isWaitingForPlugins }
+					/>
 				</li>
+
 				{ isSuccess && migrationKey && (
-					<li>
+					<li
+						className={ classNames( 'fade-in', {
+							active: isSiteSetupComplete,
+						} ) }
+					>
 						{ translate(
 							'Copy and paste the migration key below in the {{em}}{{ migrationKeyField /}}{{/em}} field and click {{strong}}{{migrateButton /}}{{/strong}}.',
 							{
@@ -135,7 +163,11 @@ const SiteMigrationInstructions: Step = function () {
 					</li>
 				) }
 				{ isError && (
-					<li>
+					<li
+						className={ classNames( 'fade-in', {
+							active: isSiteSetupComplete,
+						} ) }
+					>
 						{ translate(
 							'Go to the {{a}}Migrate Guru page on the new WordPress.com site{{/a}} and copy the migration key. Then paste it on the {{em}}{{migrationKeyField /}}{{/em}} field of your existing site and click {{strong}}{{migrateButton /}}{{/strong}}.',
 							{
@@ -157,7 +189,11 @@ const SiteMigrationInstructions: Step = function () {
 					</li>
 				) }
 			</ol>
-			<p>
+			<p
+				className={ classNames( 'fade-in', {
+					active: isSiteSetupComplete,
+				} ) }
+			>
 				{ translate(
 					'And you are done! When the migration finishes, Migrate Guru will send you an email.'
 				) }

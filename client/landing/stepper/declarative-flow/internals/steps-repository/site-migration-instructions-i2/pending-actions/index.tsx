@@ -1,4 +1,5 @@
 import { Spinner } from '@wordpress/components';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
 import './style.scss';
@@ -26,40 +27,40 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 	}
 	return (
 		<>
-			<span className="visual-state-indicator">{ icon }</span>
 			{ state === 'pending' && <i>{ text }</i> }
 			{ state !== 'pending' && text }
+			<span className="visual-state-indicator">{ icon }</span>
 		</>
 	);
 };
 
 interface Props {
-	// value: string;
-	// className?: string;
+	isWaitingForSite: boolean;
+	isWaitingForPlugins: boolean;
 }
 
-export const PendingActions: FC< Props > = () => {
-	const isWaitingForSomething = true;
+export const PendingActions: FC< Props > = ( { isWaitingForSite, isWaitingForPlugins }: Props ) => {
 	return (
 		<div className="pending-actions">
-			{ ! isWaitingForSomething && translate( 'Your new site is ready!' ) }
-
-			{ isWaitingForSomething && (
-				<>
-					{ translate( "We are setting up your site, please wait until it's ready" ) }
-					<ol>
-						<li>
-							<VisualStateIndicator state="success" text={ translate( 'Creating your site' ) } />
-						</li>
-						<li>
-							<VisualStateIndicator
-								state="pending"
-								text={ translate( 'Installing required plugins' ) }
-							/>
-						</li>
-					</ol>
-				</>
-			) }
+			{ translate( 'Wait until we finish setting up your site to continue' ) }
+			<ul>
+				<li>
+					<VisualStateIndicator
+						state={ isWaitingForSite ? 'pending' : 'success' }
+						text={ translate( 'Creating your site' ) }
+					/>
+				</li>
+				<li
+					className={ classNames( 'fade-in', {
+						active: ! isWaitingForSite,
+					} ) }
+				>
+					<VisualStateIndicator
+						state={ isWaitingForPlugins ? 'pending' : 'success' }
+						text={ translate( 'Installing the required plugins' ) }
+					/>
+				</li>
+			</ul>
 		</div>
 	);
 };
