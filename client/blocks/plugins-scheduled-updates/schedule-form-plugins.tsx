@@ -148,9 +148,7 @@ export function ScheduleFormPlugins( props: Props ) {
 				) }
 				{ ! pluginsAvailable && (
 					<p className="placeholder-info">
-						{ translate(
-							'Once you select the sites that you want to include in your schedule, we will show you the plugins included in the selection.'
-						) }
+						{ translate( 'Please select a site to view available plugins.' ) }
 					</p>
 				) }
 			</div>
