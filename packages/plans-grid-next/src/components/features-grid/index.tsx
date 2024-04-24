@@ -3,10 +3,12 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	WPComStorageAddOnSlug,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import useUpgradeClickHandler from '../../hooks/use-upgrade-click-handler';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
 import PlanFeaturesList from './plan-features-list';
@@ -31,6 +33,7 @@ type MobileViewProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -50,6 +53,7 @@ const MobileView = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
+	onUpgradeClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
@@ -112,6 +116,7 @@ const MobileView = ( {
 						isLaunchPage={ isLaunchPage }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						planActionOverrides={ planActionOverrides }
+						onUpgradeClick={ onUpgradeClick }
 					/>
 					<CardContainer
 						header={ translate( 'Show all features' ) }
@@ -151,6 +156,7 @@ type TabletViewProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean | null;
 	onStorageAddOnClick?: ( addOnSlug: WPComStorageAddOnSlug ) => void;
+	onUpgradeClick: ( planSlug: PlanSlug ) => void;
 	paidDomainName?: string;
 	planActionOverrides?: PlanActionOverrides;
 	planUpgradeCreditsApplicable?: number | null;
@@ -171,6 +177,7 @@ const TabletView = ( {
 	isInSignup,
 	isLaunchPage,
 	onStorageAddOnClick,
+	onUpgradeClick,
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
@@ -194,6 +201,7 @@ const TabletView = ( {
 		isInSignup,
 		isLaunchPage,
 		onStorageAddOnClick,
+		onUpgradeClick,
 		paidDomainName,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
@@ -225,16 +233,24 @@ const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	isLaunchPage,
 	planActionOverrides,
+	onUpgradeClick,
 	intervalType,
 	onStorageAddOnClick,
 	showUpgradeableStorage,
 	paidDomainName,
 	hideUnavailableFeatures,
 	selectedFeature,
+	siteId,
 	generatedWPComSubdomain,
 	isCustomDomainAllowedOnFreePlan,
 	gridSize,
 }: FeaturesGridProps ) => {
+	const handleUpgradeClick = useUpgradeClickHandler( {
+		gridPlans,
+		onUpgradeClick,
+		selectedSiteId: siteId,
+	} );
+
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
 		gridPlanForSpotlight,
@@ -242,6 +258,7 @@ const FeaturesGrid = ( {
 		isInSignup,
 		isLaunchPage,
 		onStorageAddOnClick,
+		onUpgradeClick: handleUpgradeClick,
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
 		selectedFeature,
