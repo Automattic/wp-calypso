@@ -1,7 +1,7 @@
-import { useMultisiteUpdateSchedulesQuery } from 'calypso/data/plugins/use-update-schedules-query';
+import { useMultisiteUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
 
 export const ScheduleList = () => {
-	const { data } = useMultisiteUpdateSchedulesQuery( true );
+	const { data } = useMultisiteUpdateScheduleQuery( true );
 
 	return (
 		<div className="plugins-update-manager plugins-update-manager-multisite">

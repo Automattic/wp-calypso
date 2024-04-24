@@ -77,7 +77,7 @@ export const useUpdateScheduleQuery = (
 	} );
 };
 
-export const useMultisiteUpdateSchedulesQuery = (
+export const useMultisiteUpdateScheduleQuery = (
 	isEligibleForFeature: boolean,
 	queryOptions = {}
 ): UseQueryResult< MultisiteSchedulesUpdates[] > => {
@@ -91,7 +91,7 @@ export const useMultisiteUpdateSchedulesQuery = (
 	);
 
 	return useQuery< MultisiteSchedulesUpdatesResponse, Error, MultisiteSchedulesUpdates[] >( {
-		queryKey: [ 'schedules-updates' ],
+		queryKey: [ 'multisite-schedules-update' ],
 		queryFn: () =>
 			wpcomRequest< MultisiteSchedulesUpdatesResponse >( {
 				path: `/hosting/update-schedules`,
