@@ -105,9 +105,6 @@ const SitesDashboardV2 = ( {
 	} );
 	// todo: Perform pagination and sorting actions
 
-	// Filter sites list on search query
-	const filteredSites = useSitesListFiltering( allSites, { search: dataViewsState.search } );
-
 	// Site is selected:
 	useEffect( () => {
 		if ( dataViewsState.selectedItem ) {
