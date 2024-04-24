@@ -35,6 +35,7 @@ export default function ItemPreviewPane( {
 	closeItemPreviewPane,
 	className,
 	itemData,
+	addTourDetails,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -85,11 +86,13 @@ export default function ItemPreviewPane( {
 					) : null }
 				</SectionNav>
 			</div>
-			<GuidedTourStep
-				id="sites-walkthrough-site-preview-tabs"
-				tourId="sitesWalkthrough"
-				context={ navRef }
-			/>
+			{ addTourDetails && (
+				<GuidedTourStep
+					id={ addTourDetails.id }
+					tourId={ addTourDetails.tourId }
+					context={ navRef }
+				/>
+			) }
 			{ selectedFeature.preview }
 		</div>
 	);

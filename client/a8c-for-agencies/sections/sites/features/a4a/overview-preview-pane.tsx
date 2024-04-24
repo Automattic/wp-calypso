@@ -167,6 +167,7 @@ export function OverviewPreviewPane( {
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
 			className={ className }
+			addTourDetails={ { id: 'sites-walkthrough-site-preview-tabs', tourID: 'sites-walkthrough' } }
 		/>
 	);
 }
