@@ -7,7 +7,6 @@ import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	isPlan,
 	isSiteRedirect,
 	isTitanMail,
 } from '@automattic/calypso-products';
@@ -76,18 +75,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			}
 
 			return translate( 'You will receive an email confirmation shortly.' );
-		}
-
-		if ( isPlan( primaryPurchase ) ) {
-			return preventWidows(
-				translate(
-					'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
-					{
-						args: { productName: primaryPurchase.productName },
-						components: { strong: <strong /> },
-					}
-				)
-			);
 		}
 
 		if ( isDomainRegistration( primaryPurchase ) ) {
@@ -316,10 +303,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Register domain' );
 		}
 
-		if ( isPlan( primaryPurchase ) ) {
-			return translate( 'Let’s work on the site' );
-		}
-
 		if (
 			isDomainRegistration( primaryPurchase ) ||
 			isDomainTransfer( primaryPurchase ) ||
@@ -463,10 +446,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return preventWidows( translate( 'Almost done!' ) );
 		}
 
-		if ( primaryPurchase && isPlan( primaryPurchase ) ) {
-			return translate( 'Get the best out of your site' );
-		}
-
 		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			return preventWidows( translate( 'Almost done!' ) );
 		}
@@ -501,7 +480,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 						<h1 className="checkout-thank-you__header-heading">
 							{ preventWidows( this.getHeaderText() ) }
 						</h1>
-						{ primaryPurchase && isPlan( primaryPurchase ) && isSimplified ? (
+						{ primaryPurchase && isSimplified ? (
 							this.renderSimplifiedContent()
 						) : (
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
