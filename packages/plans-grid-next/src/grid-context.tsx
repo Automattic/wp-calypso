@@ -16,6 +16,7 @@ interface PlansGridContext {
 	};
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
+	renderCategorisedFeatures?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -31,6 +32,7 @@ const PlansGridContextProvider = ( {
 	children,
 	coupon,
 	enableFeatureTooltips,
+	renderCategorisedFeatures,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -51,6 +53,7 @@ const PlansGridContextProvider = ( {
 				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
 				coupon,
 				enableFeatureTooltips,
+				renderCategorisedFeatures,
 			} }
 		>
 			{ children }

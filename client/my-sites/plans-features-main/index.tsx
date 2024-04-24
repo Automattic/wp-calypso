@@ -861,6 +861,7 @@ const PlansFeaturesMain = ( {
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
 										enableFeatureTooltips={ ! trailMapExperiment.result }
+										renderCategorisedFeatures={ trailMapExperiment.result }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (

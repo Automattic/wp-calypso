@@ -157,10 +157,24 @@ export type GridContextProps = {
 	children: React.ReactNode;
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
+	/**
+	 * `renderCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
+	 * for rendering features with categories based on available/associated feature group map.
+	 */
+	renderCategorisedFeatures?: boolean;
 };
 
-export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	ComparisonGridProps & { className?: string };
+export type ComparisonGridExternalProps = Omit<
+	GridContextProps,
+	'children' | 'renderCategorisedFeatures'
+> &
+	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
+		className?: string;
+		onUpgradeClick?: (
+			cartItems?: MinimalRequestCartProduct[] | null,
+			clickedPlanSlug?: PlanSlug
+		) => void;
+	};
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' > & { className?: string };

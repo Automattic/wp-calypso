@@ -1,6 +1,7 @@
 import { WPComStorageAddOnSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import { DataResponse, GridPlan, PlanActionOverrides } from '../../types';
 import { StickyContainer } from '../sticky-container';
 import BillingTimeframes from './billing-timeframes';
@@ -74,9 +75,9 @@ const Table = ( {
 		}
 	);
 	const translate = useTranslate();
+	const { renderCategorisedFeatures } = usePlansGridContext();
 
-	const renderCategorizedFeatures = true;
-	const featureGroups = [ 'Foo' ];
+	const featureGroups = [ renderCategorisedFeatures ? 'Foo' : null ];
 
 	return (
 		<table className={ tableClasses }>
@@ -135,7 +136,7 @@ const Table = ( {
 						/>
 					) }
 				</StickyContainer>
-				{ ! renderCategorizedFeatures && (
+				{ ! renderCategorisedFeatures && (
 					<tr>
 						<PreviousFeaturesIncludedTitle
 							renderedGridPlans={ gridPlansWithoutSpotlight }

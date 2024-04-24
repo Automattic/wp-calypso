@@ -105,6 +105,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		isInAdmin,
 		className,
 		enableFeatureTooltips,
+		renderCategorisedFeatures,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement | null >( null );
@@ -135,6 +136,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				enableFeatureTooltips={ enableFeatureTooltips }
+				renderCategorisedFeatures={ renderCategorisedFeatures }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>
