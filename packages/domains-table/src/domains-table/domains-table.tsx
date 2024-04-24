@@ -54,6 +54,7 @@ interface BaseDomainsTableProps {
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
 	isLoadingDomains?: boolean;
+	useMobileCards?: boolean;
 
 	// These props allow table users to provide their own fetching functions. This is used for
 	// testing and for Calypso to provide functions that handle authentication in a special way.
