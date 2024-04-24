@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
@@ -41,7 +41,6 @@ const siteMigration: Flow = {
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
-		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -63,20 +62,8 @@ const siteMigration: Flow = {
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const queryParams = new URLSearchParams( window.location.search );
-		const profilerData = queryParams.get( 'profilerdata' );
 		const aff = queryParams.get( 'aff' );
 		const vendorId = queryParams.get( 'vid' );
-
-		if ( profilerData ) {
-			try {
-				const decodedProfilerData = JSON.parse(
-					decodeURIComponent( escape( window.atob( profilerData ) ) )
-				);
-
-				setProfilerData( decodedProfilerData );
-				// Ignore any bad/invalid data and prevent it from causing downstream issues.
-			} catch {}
-		}
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;
