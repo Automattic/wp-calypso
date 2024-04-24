@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { MAX_SELECTABLE_PATHS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
-import { validatePath } from './schedule-form.helper';
+import { prepareRelativePath, validatePath } from './schedule-form.helper';
 
 interface Props {
 	paths?: string[];
@@ -96,6 +96,14 @@ export function ScheduleFormPaths( props: Props ) {
 											// Prevent form submission on Enter key press
 											e.preventDefault();
 											onNewPathSubmit();
+										}
+									} }
+									onPaste={ ( e ) => {
+										if ( ! newPath ) {
+											e.preventDefault();
+
+											const value = e.clipboardData.getData( 'text' );
+											setNewPath( prepareRelativePath( value ) );
 										}
 									} }
 								/>

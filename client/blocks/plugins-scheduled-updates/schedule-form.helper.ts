@@ -60,6 +60,24 @@ export const convertHourTo12 = ( hour: string ): string => {
 	return _hour > 12 ? ( _hour - 12 ).toString() : _hour.toString();
 };
 
+/**
+ * Prepare relative path
+ * based on URL or relative path
+ */
+export const prepareRelativePath = ( url: string ): string => {
+	const value = url.trim();
+
+	// Check if the value is a URL without a protocol
+	const urlRegex = /^(?!https?:\/\/)[\w.]+(?:\.[\w]+)+[\w\-._~:/?#[\]@!$&'()*+,;=%]*$/i;
+	const withoutProtocol = urlRegex.test( value );
+
+	try {
+		return new URL( withoutProtocol ? `http://${ value }` : value ).pathname;
+	} catch ( e ) {
+		return value.startsWith( '/' ) ? value : `/${ value }`;
+	}
+};
+
 type TimeSlot = {
 	frequency: string;
 	timestamp: number;
