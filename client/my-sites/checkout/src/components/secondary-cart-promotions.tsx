@@ -70,10 +70,9 @@ const UpsellWrapper = styled.div< DivProps >`
 const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	responseCart,
 	addItemToCart,
-	isCartPendingUpdate,
 	isPurchaseRenewal,
 } ) => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	if (
 		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
@@ -89,11 +88,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 
 	return (
 		<UpsellWrapper>
-			<CartFreeUserPlanUpsell
-				cart={ responseCart }
-				addItemToCart={ addItemToCart }
-				isCartPendingUpdate={ isCartPendingUpdate }
-			/>
+			<CartFreeUserPlanUpsell addItemToCart={ addItemToCart } />
 		</UpsellWrapper>
 	);
 };
