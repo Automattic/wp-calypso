@@ -342,17 +342,25 @@ export const PatternLibrary = ( {
 								value={ isGridView ? 'grid' : 'list' }
 							>
 								<ToggleGroupControlOption
+									aria-label={ translate( 'List view', {
+										comment: 'Toggle label for view switcher in the Pattern Library',
+										textOnly: true,
+									} ) }
 									className="pattern-library__toggle-option pattern-library__toggle-option--view"
 									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
-									value="list"
 									onClick={ () => handleViewChange( 'list' ) }
+									value="list"
 								/>
 
 								<ToggleGroupControlOption
+									aria-label={ translate( 'Grid view', {
+										comment: 'Toggle label for view switcher in the Pattern Library',
+										textOnly: true,
+									} ) }
 									className="pattern-library__toggle-option pattern-library__toggle-option--view"
 									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
-									value="grid"
 									onClick={ () => handleViewChange( 'grid' ) }
+									value="grid"
 								/>
 							</ToggleGroupControl>
 						</div>
