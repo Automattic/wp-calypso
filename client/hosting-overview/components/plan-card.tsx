@@ -1,5 +1,5 @@
 import { PlanSlug } from '@automattic/calypso-products';
-import { Button, Card, PlanPrice } from '@automattic/components';
+import { Button, Card, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -31,6 +31,8 @@ const PlanCard: FC = () => {
 	} );
 	const translate = useTranslate();
 
+	const isLoading = ! pricing || ! planData;
+
 	return (
 		<>
 			<QuerySitePlans siteId={ site?.ID } />
@@ -51,35 +53,59 @@ const PlanCard: FC = () => {
 				</div>
 				{ isPaidPlan && (
 					<>
-						<PlanPrice
-							className="hosting-overview__plan-price"
-							currencyCode={ planData?.currencyCode }
-							displayPerMonthNotation
-							isSmallestUnit
-							rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
-						/>
-						<div className="hosting-overview__plan-info">
-							{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.', {
-								args: {
-									rawPrice: formatCurrency(
-										pricing?.[ planSlug ].originalPrice.full ?? 0,
-										planData?.currencyCode ?? '',
-										{
-											stripZeros: true,
-											isSmallestUnit: true,
-										}
-									),
-								},
-								components: {
-									span: <span />,
-								},
-							} ) }
-						</div>
-						<div className="hosting-overview__plan-info">
-							{ translate( 'Expires on %s.', {
-								args: moment( planData?.expiryDate ).format( 'LL' ),
-							} ) }
-						</div>
+						{ isLoading ? (
+							<LoadingPlaceholder
+								className="hosting-overview__plan-price-loading-placeholder"
+								width="100px"
+								height="32px"
+							/>
+						) : (
+							<PlanPrice
+								className="hosting-overview__plan-price"
+								currencyCode={ planData?.currencyCode }
+								displayPerMonthNotation
+								isSmallestUnit
+								rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
+							/>
+						) }
+						{ isLoading ? (
+							<LoadingPlaceholder
+								className="hosting-overview__plan-info-loading-placeholder"
+								width="200px"
+								height="16px"
+							/>
+						) : (
+							<div className="hosting-overview__plan-info">
+								{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.', {
+									args: {
+										rawPrice: formatCurrency(
+											pricing?.[ planSlug ].originalPrice.full ?? 0,
+											planData?.currencyCode ?? '',
+											{
+												stripZeros: true,
+												isSmallestUnit: true,
+											}
+										),
+									},
+									components: {
+										span: <span />,
+									},
+								} ) }
+							</div>
+						) }
+						{ isLoading ? (
+							<LoadingPlaceholder
+								className="hosting-overview__plan-info-loading-placeholder"
+								width="200px"
+								height="16px"
+							/>
+						) : (
+							<div className="hosting-overview__plan-info">
+								{ translate( 'Expires on %s.', {
+									args: moment( planData?.expiryDate ).format( 'LL' ),
+								} ) }
+							</div>
+						) }
 					</>
 				) }
 				<PlanStorage
