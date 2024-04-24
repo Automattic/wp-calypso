@@ -73,6 +73,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 				.layout__primary main {
 					background: var( --color-surface );
 					border-radius: 8px;
+					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
 					height: calc( 100vh - 32px );
 					overflow: auto;
 				}
