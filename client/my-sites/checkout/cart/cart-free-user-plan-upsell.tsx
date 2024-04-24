@@ -40,15 +40,14 @@ const isRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 function UpgradeText( {
 	cart,
 	planPrice,
-	upsellPlan,
+	planName,
 }: {
 	cart: ResponseCart;
 	planPrice: number;
-	upsellPlan: ReturnType< typeof getPlan >;
+	planName: string;
 } ) {
 	const translate = useTranslate();
 	const firstDomain = cart.products.find( isRegistrationOrTransfer );
-	const planName = upsellPlan?.getTitle() ?? '';
 
 	if ( firstDomain && planPrice > firstDomain.item_subtotal_integer ) {
 		const extraToPay = planPrice - firstDomain.item_subtotal_integer;
@@ -130,6 +129,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const translate = useTranslate();
 
 	const planPrice = useGetPriceForProduct( upsellProductSlug );
+	const planName = upsellPlan?.getTitle();
 
 	if ( ! selectedSite?.ID ) {
 		return null;
@@ -137,7 +137,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	if ( isCartPendingUpdate || isLoadingCart ) {
 		return null;
 	}
-	if ( ! planPrice ) {
+	if ( ! planPrice || ! planName ) {
 		return null;
 	}
 	if ( hasPaidPlan || hasPlanInCart ) {
@@ -164,7 +164,11 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 			/>
 			<div className="cart__upsell-body">
 				<p>
-					<UpgradeText cart={ responseCart } planPrice={ planPrice } upsellPlan={ upsellPlan } />
+					<UpgradeText
+						cart={ responseCart }
+						planPrice={ planPrice }
+						planName={ String( planName ) }
+					/>
 				</p>
 				<Button onClick={ addPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
 			</div>
