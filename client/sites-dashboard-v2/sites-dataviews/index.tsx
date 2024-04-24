@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -25,6 +26,15 @@ type Props = {
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 };
+
+export const siteStatusGroups = [
+	{ value: 1, label: __( 'All sites' ), slug: 'all' },
+	{ value: 2, label: __( 'Public' ), slug: 'public' },
+	{ value: 3, label: __( 'Private' ), slug: 'private' },
+	{ value: 4, label: __( 'Coming soon' ), slug: 'coming-soon' },
+	{ value: 5, label: __( 'Redirect' ), slug: 'redirect' },
+	{ value: 6, label: __( 'Deleted' ), slug: 'deleted' },
+];
 
 const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsState }: Props ) => {
 	const { __ } = useI18n();
@@ -66,14 +76,7 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				type: 'enumeration',
-				elements: [
-					{ value: 1, label: __( 'All sites' ) },
-					{ value: 2, label: __( 'Public' ) },
-					{ value: 3, label: __( 'Private' ) },
-					{ value: 4, label: __( 'Coming soon' ) },
-					{ value: 5, label: __( 'Redirect' ) },
-					{ value: 6, label: __( 'Deleted' ) },
-				],
+				elements: siteStatusGroups,
 				filterBy: {
 					operators: [ 'in' ],
 				},
