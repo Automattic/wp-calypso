@@ -34,7 +34,7 @@ interface UpsellProductWpcomPlanCardProps {
 	onCtaButtonClick: () => void;
 }
 
-const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardProps > = ( {
+export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardProps > = ( {
 	nonManageProductSlug,
 	WPcomPlanSlug,
 	siteId,
@@ -167,34 +167,3 @@ const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardProps > = 
 };
 
 export default UpsellProductWpcomPlanCard;
-
-export const UpsellProductWPcomPlanCardPlaceholder: React.FC = () => {
-	return (
-		<JetpackRnaActionCard
-			headerText="Placeholder title"
-			subHeaderText={ `This is placeholder text for the product description. The description text is
-					approximately 18 words and 126 characters.` }
-			ctaButtonLabel="Button label"
-			isPlaceholder
-		>
-			<div className="upsell-product-card__price-container">
-				<DisplayPrice
-					pricesAreFetching={ true }
-					billingTerm={ TERM_ANNUALLY }
-					productName="Placeholder product"
-				/>
-			</div>
-			<ul className="upsell-product-card__features">
-				<li className="upsell-product-card__features-item" key={ 1 }>
-					<span>Placeholder feature text 1</span>
-				</li>
-				<li className="upsell-product-card__features-item" key={ 2 }>
-					<span>Placeholder feature text 2</span>
-				</li>
-				<li className="upsell-product-card__features-item" key={ 3 }>
-					<span>Placeholder feature text 3</span>
-				</li>
-			</ul>
-		</JetpackRnaActionCard>
-	);
-};
