@@ -15,7 +15,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Upsell from 'calypso/components/jetpack/upsell';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
-import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card ';
+import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
 import Main from 'calypso/components/main';
