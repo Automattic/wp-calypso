@@ -9,6 +9,7 @@ const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
 	'hosting',
 	'hosting-overview',
 	'github-deployments',
+	'site-monitoring',
 ];
 
 function shouldShowGlobalSiteViewSection(
