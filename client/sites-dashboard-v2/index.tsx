@@ -97,6 +97,7 @@ const SitesDashboardV2 = ( {
 	const filteredSites = useSitesListFiltering( currentStatusGroup, {
 		search: dataViewsState.search,
 	} );
+	// todo: Perform pagination and sorting actions
 
 	// Site is selected:
 	useEffect( () => {
@@ -121,17 +122,6 @@ const SitesDashboardV2 = ( {
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
 	}, [ dataViewsState.search, statusSlug, updateQueryParams ] );
-
-	// Search, filtering, pagination and sorting sites:
-	useEffect( () => {
-		// todo: Perform search, filter, pagination and sorting actions
-	}, [
-		dataViewsState.search,
-		dataViewsState.filters,
-		dataViewsState.sort,
-		dataViewsState.page,
-		dataViewsState.perPage,
-	] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
