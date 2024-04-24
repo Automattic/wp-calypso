@@ -370,7 +370,10 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
+export function useShowSiteCreationNotice(
+	allSites: SiteExcerptData[],
+	newSiteID: number | undefined
+) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
@@ -407,7 +410,7 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 	}, [ __, allSites, dispatch, newSiteID ] );
 }
 
-function useShowSiteTransferredNotice() {
+export function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	useEffect( () => {
