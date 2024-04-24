@@ -9,5 +9,5 @@ type Props = {
 };
 
 export default function ItemPreviewPaneContent( { children, className }: Props ) {
-	return <div className={ classNames( 'site-preview__content', className ) }>{ children }</div>;
+	return <div className={ classNames( 'item-preview__content', className ) }>{ children }</div>;
 }

@@ -51,7 +51,7 @@ export default function ItemPreviewPaneHeader( {
 				</div>
 				<Button
 					onClick={ closeItemPreviewPane }
-					className="site-preview__close-preview"
+					className="item-preview__close-preview"
 					aria-label={ translate( 'Close Preview' ) }
 				>
 					<Gridicon icon="cross" size={ ICON_SIZE } />
