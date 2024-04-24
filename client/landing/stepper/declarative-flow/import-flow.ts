@@ -306,7 +306,6 @@ const importFlow: Flow = {
 						urlQueryParams.set( 'showModal', 'true' );
 						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 					}
-
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'importerWix':

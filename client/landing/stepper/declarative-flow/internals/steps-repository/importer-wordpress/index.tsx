@@ -7,7 +7,7 @@ import './style.scss';
 const Importer = withImporterWrapper( WordpressImporter );
 
 const ImporterWordpress: Step = function ( props ) {
-	const queryParams = new URLSearchParams( window.location.search );
+	const queryParams = new URLSearchParams( props?.data?.path || window.location.search );
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 

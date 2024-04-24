@@ -1,13 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import './style.scss';
-interface Props {
+interface MigrationAssistanceModalProps {
 	navigateBack: ( () => void ) | undefined;
 	migrateFrom: string | null;
 	onConfirm: ( () => void ) | undefined;
 }
-export const MigrationAssistanceModal: React.FunctionComponent< Props > = ( props: Props ) => {
+export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssistanceModalProps > = (
+	props: MigrationAssistanceModalProps
+) => {
 	const translate = useTranslate();
 	const importSiteHostName = props.migrateFrom || translate( 'your site' );
 
