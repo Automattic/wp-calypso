@@ -34,32 +34,10 @@ describe( 'CheckoutThankYouHeader', () => {
 			render( <CheckoutThankYouHeader isDataLoaded={ false } { ...defaultProps } /> );
 			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent( 'Loading…' );
 		} );
-
-		test( 'Should display getText()-based success message when isSimplified=false (default)', () => {
-			render( <CheckoutThankYouHeader isDataLoaded={ true } { ...defaultProps } /> );
-			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Get the best out of your site'
-			);
-			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent(
-				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan'
-			);
-		} );
-		test( 'Should display an alternative success message when isSimplified=true', () => {
-			render(
-				<CheckoutThankYouHeader isDataLoaded={ true } isSimplified={ true } { ...defaultProps } />
-			);
-			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Get the best out of your site'
-			);
-			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent(
-				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan'
-			);
-		} );
 		test( 'Should display a list of success messages when siteUnlaunchedBeforeUpgrade=true', () => {
 			render(
 				<CheckoutThankYouHeader
 					isDataLoaded={ true }
-					isSimplified={ true }
 					siteUnlaunchedBeforeUpgrade={ true }
 					{ ...defaultProps }
 				/>

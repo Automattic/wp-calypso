@@ -1,6 +1,6 @@
 import { isDelayedDomainTransfer } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { withI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -25,14 +25,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		hasFailedPurchases: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isDataLoaded: PropTypes.bool.isRequired,
-		isSimplified: PropTypes.bool,
 		primaryCta: PropTypes.func,
 		primaryPurchase: PropTypes.object,
 		purchases: PropTypes.array,
 		recordTracksEvent: PropTypes.func.isRequired,
 		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
-		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		_n: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
@@ -256,7 +254,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
+		const { isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
@@ -275,53 +273,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 						<h1 className="checkout-thank-you__header-heading">
 							{ preventWidows( this.getHeaderText() ) }
 						</h1>
-						{ primaryPurchase && isSimplified ? (
-							this.renderSimplifiedContent()
-						) : (
-							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
-						) }
-
+						<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						{ this.props.children }
 						{ this.getButtons() }
 					</div>
 				</div>
 			</div>
-		);
-	}
-
-	renderSimplifiedContent() {
-		const { translate, primaryPurchase } = this.props;
-		const messages = [
-			translate(
-				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan',
-				{
-					args: { productName: primaryPurchase.productName },
-					components: { strong: <strong /> },
-				}
-			),
-		];
-		if ( this.props.siteUnlaunchedBeforeUpgrade ) {
-			messages.push(
-				translate(
-					"Your site has been launched. You can share it with the world whenever you're ready."
-				)
-			);
-		}
-
-		if ( messages.length === 1 ) {
-			return <h2 className="checkout-thank-you__header-text">{ messages[ 0 ] }</h2>;
-		}
-
-		const CHECKMARK_SIZE = 24;
-		return (
-			<ul className="checkout-thank-you__success-messages">
-				{ messages.map( ( message, i ) => (
-					<li key={ i } className="checkout-thank-you__success-message-item">
-						<Gridicon icon="checkmark-circle" size={ CHECKMARK_SIZE } />
-						<div>{ preventWidows( message ) }</div>
-					</li>
-				) ) }
-			</ul>
 		);
 	}
 }
