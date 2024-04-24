@@ -64,20 +64,23 @@ const SitesDashboardV2 = ( {
 	useShowSiteTransferredNotice();
 
 	// Create the DataViews state based on initial values
-	initialDataViewsState.page = page;
-	initialDataViewsState.perPage = perPage;
-	initialDataViewsState.search = search ?? '';
-	initialDataViewsState.filters =
-		status === 'all'
-			? []
-			: [
-					{
-						field: 'status',
-						operator: 'in',
-						value: statuses.find( ( item ) => item.slug === status )?.value || 1,
-					},
-			  ];
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
+	const defaultDataViewsState = {
+		...initialDataViewsState,
+		page,
+		perPage,
+		search: search ?? '',
+		filters:
+			status === 'all'
+				? []
+				: [
+						{
+							field: 'status',
+							operator: 'in',
+							value: statuses.find( ( item ) => item.slug === status )?.value || 1,
+						},
+				  ],
+	};
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
