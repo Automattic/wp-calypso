@@ -219,7 +219,7 @@ const sections = [
 		name: 'hosting-overview',
 		paths: [ '/hosting-overview' ],
 		module: 'calypso/hosting-overview',
-		group: 'sites-dashboard',
+		group: 'sites',
 	},
 	{
 		name: 'jetpack-connect',
@@ -548,7 +548,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/my-sites/hosting',
+		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
 	{
