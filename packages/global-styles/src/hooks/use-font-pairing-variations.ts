@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { GlobalStylesObject } from '../types';
@@ -10,7 +11,7 @@ type Options = {
 const useFontPairingVariations = (
 	siteId: number | string,
 	stylesheet: string,
-	{ enabled = true, base_variation_stylesheet }: Options = {}
+	{ enabled = true }: Options = {}
 ) => {
 	const { data } = useQuery< any, unknown, GlobalStylesObject[] >( {
 		queryKey: [ 'global-styles-font-pairings', siteId, stylesheet ],
@@ -21,7 +22,9 @@ const useFontPairingVariations = (
 				apiNamespace: 'wpcom/v2',
 				query: new URLSearchParams( {
 					stylesheet,
-					...( base_variation_stylesheet ? { base_variation_stylesheet } : {} ),
+					...( isEnabled( 'design-picker/use-assembler-styles' )
+						? { base_variation_stylesheet: 'pub/assembler' }
+						: {} ),
 				} ).toString(),
 			} ),
 		refetchOnMount: 'always',
