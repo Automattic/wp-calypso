@@ -1,6 +1,6 @@
 import WordpressImporter from 'calypso/blocks/importer/wordpress';
+import { MigrationAssistanceModal } from 'calypso/landing/stepper/declarative-flow/internals/components/migration-assistance-modal';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 
