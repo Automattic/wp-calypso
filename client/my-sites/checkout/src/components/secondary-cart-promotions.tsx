@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import styled from '@emotion/styled';
+import { styled } from '@automattic/wpcom-checkout';
 import { FunctionComponent } from 'react';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
@@ -15,10 +15,7 @@ interface Props {
 	isPurchaseRenewal?: boolean;
 }
 
-type DivProps = {
-	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-};
-const UpsellWrapper = styled.div< DivProps >`
+const UpsellWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 
 	.cart__upsell-wrapper {
