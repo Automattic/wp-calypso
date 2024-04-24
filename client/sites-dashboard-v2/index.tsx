@@ -84,26 +84,19 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState.selectedItem ] );
 
-	const setQueryParams = useCallback(
-		( queryParams: SitesDashboardQueryParams ) => {
-			// There is a chance that the URL is not up to date when it mounts, so delay
-			// the updateQueryParams call to avoid it getting the incorrect URL and then
-			// redirecting back to the previous path.
-			if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
-				updateQueryParams( queryParams );
-			} else {
-				window.setTimeout( () => updateQueryParams( queryParams ) );
-			}
-		},
-		[ updateQueryParams, section?.group ]
-	);
-
 	// Update URL with search param on change
 	useEffect( () => {
 		const queryParams = { search: dataViewsState.search?.trim() };
 
-		setQueryParams( queryParams );
-	}, [ dataViewsState.search, setQueryParams ] );
+		// There is a chance that the URL is not up to date when it mounts, so delay
+		// the updateQueryParams call to avoid it getting the incorrect URL and then
+		// redirecting back to the previous path.
+		if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
+			updateQueryParams( queryParams );
+		} else {
+			window.setTimeout( () => updateQueryParams( queryParams ) );
+		}
+	}, [ dataViewsState.search, updateQueryParams, section?.group ] );
 
 	// Search, filtering, pagination and sorting sites:
 	useEffect( () => {
