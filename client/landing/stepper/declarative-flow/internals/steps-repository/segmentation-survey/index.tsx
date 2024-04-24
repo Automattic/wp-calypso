@@ -41,14 +41,19 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 
 	const onSubmitQuestion = useCallback(
 		( currentQuestion: Question ) => {
-			mutate( {
-				questionKey: currentQuestion.key,
-				answerKeys: answers[ currentQuestion.key ] || [],
-			} );
-
-			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
-				clearAnswers();
-			}
+			mutate(
+				{
+					questionKey: currentQuestion.key,
+					answerKeys: answers[ currentQuestion.key ] || [],
+				},
+				{
+					onSuccess: () => {
+						if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+							clearAnswers();
+						}
+					},
+				}
+			);
 		},
 		[ answers, clearAnswers, mutate, questions ]
 	);
