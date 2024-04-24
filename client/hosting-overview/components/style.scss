@@ -279,4 +279,8 @@ a.hosting-overview__link-button {
 	.components-dropdown-menu__toggle {
 		transform: rotate(90deg);
 	}
+
+	.domains-table-mobile-card > div:not(:first-child) {
+		display: none;
+	}
 }
