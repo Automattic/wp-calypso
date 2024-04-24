@@ -14,7 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import FormattedHeader from 'calypso/components/formatted-header';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
-import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card ';
+import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
