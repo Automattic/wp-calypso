@@ -200,6 +200,10 @@ const siteMigration: Flow = {
 						);
 					}
 
+					await saveSiteSettings( siteSlug, {
+						migration_source_site_domain: from,
+					} );
+
 					return navigate(
 						addQueryArgs(
 							{ from: from, siteSlug, siteId },
