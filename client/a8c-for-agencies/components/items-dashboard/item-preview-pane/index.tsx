@@ -90,7 +90,7 @@ export default function ItemPreviewPane( {
 				tourId="sitesWalkthrough"
 				context={ navRef }
 			/>
-			<div className="preview-pane__content">{ selectedFeature.preview }</div>
+			{ selectedFeature.preview }
 		</div>
 	);
 }
