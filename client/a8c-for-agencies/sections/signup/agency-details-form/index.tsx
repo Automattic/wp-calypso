@@ -170,9 +170,33 @@ export default function AgencyDetailsForm( {
 		setProductsOffered( products.value );
 	};
 
+	const shouldShowEmail = true;
+	const isDisabledEmail = userLoggedIn;
+
 	return (
 		<div className="agency-details-form">
 			<form onSubmit={ handleSubmit }>
+				{ shouldShowEmail && (
+					<FormFieldset>
+						<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+						<FormTextInput
+							id="email"
+							name="email"
+							value={ email || '' }
+							disabled={ isDisabledEmail }
+							isError={ !! validationError?.email }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setEmail( event.target.value );
+								setValidationError( { email: '' } );
+							} }
+						/>
+						{ validationError?.email && (
+							<div className="agency-details-form__footer-error" role="alert">
+								{ validationError.email }
+							</div>
+						) }
+					</FormFieldset>
+				) }
 				<div className="agency-details-form__fullname-container">
 					<FormFieldset>
 						<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>
