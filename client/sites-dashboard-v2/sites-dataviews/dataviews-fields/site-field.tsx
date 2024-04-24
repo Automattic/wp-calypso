@@ -23,6 +23,11 @@ type Props = {
 
 const SiteListTile = styled( ListTile )`
 	margin-inline-end: 0;
+	max-width: 340px;
+
+	.preview-hidden & {
+		max-width: 500px;
+	}
 
 	${ MEDIA_QUERIES.hideTableRows } {
 		margin-inline-end: 12px;
@@ -92,7 +97,9 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 				}
 				title={
 					<ListTileTitle>
-						<SiteName title={ title }>{ site.title }</SiteName>
+						<SiteName title={ title }>
+							<Truncated>{ site.title }</Truncated>
+						</SiteName>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						{ isTrialSitePlan && (
