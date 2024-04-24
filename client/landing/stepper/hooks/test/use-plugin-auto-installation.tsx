@@ -52,7 +52,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				activatingPlugin: 'idle',
 				installingPlugin: 'idle',
-				waitingSite: 'pending',
+				waitingPluginList: 'pending',
 				error: null,
 				completed: false,
 			} );
@@ -77,7 +77,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				activatingPlugin: 'idle',
 				installingPlugin: 'pending',
-				waitingSite: 'success',
+				waitingPluginList: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -102,7 +102,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				activatingPlugin: 'pending',
 				installingPlugin: 'success',
-				waitingSite: 'success',
+				waitingPluginList: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -126,7 +126,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				activatingPlugin: 'success',
 				installingPlugin: 'success',
-				waitingSite: 'success',
+				waitingPluginList: 'success',
 				error: null,
 				completed: true,
 			} );
@@ -146,7 +146,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				installingPlugin: 'skipped',
 				activatingPlugin: 'pending',
-				waitingSite: 'success',
+				waitingPluginList: 'success',
 				error: null,
 				completed: false,
 			} );
@@ -166,7 +166,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				installingPlugin: 'skipped',
 				activatingPlugin: 'skipped',
-				waitingSite: 'success',
+				waitingPluginList: 'success',
 				error: null,
 				completed: true,
 			} );
@@ -186,7 +186,7 @@ describe( 'usePluginAutoInstallation', () => {
 			expect( result.current ).toEqual( {
 				installingPlugin: 'skipped',
 				activatingPlugin: 'skipped',
-				waitingSite: 'success',
+				waitingPluginList: 'success',
 				error: null,
 				completed: true,
 			} );

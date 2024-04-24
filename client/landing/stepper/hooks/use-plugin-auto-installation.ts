@@ -16,7 +16,7 @@ type SitePluginParam = Pick< SitePlugin, 'slug' | 'name' >;
 type StatusVariation = 'idle' | 'loading' | 'success' | 'error' | 'pending' | 'skipped';
 
 interface SiteMigrationStatus {
-	waitingSite: StatusVariation;
+	waitingPluginList: StatusVariation;
 	activatingPlugin: StatusVariation;
 	installingPlugin: StatusVariation;
 	completed: boolean;
@@ -142,7 +142,7 @@ export const usePluginAutoInstallation = (
 	);
 
 	return {
-		waitingSite: provisioningStatus,
+		waitingPluginList: provisioningStatus,
 		installingPlugin: installationStatus,
 		activatingPlugin: activationStatus,
 		completed,
