@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import useHostingProviderName from 'calypso/site-profiler/hooks/use-hosting-provider-name';
-import { UpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
+import { useUpgradePlanHostingDetailsList, UpgradePlanHostingTestimonials } from './constants';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
 
 export const UpgradePlanHostingDetails = () => {
@@ -25,6 +25,7 @@ export const UpgradePlanHostingDetails = () => {
 		hasTranslation( 'Why should you host with us?' ) || isEnglishLocale
 			? translate( 'Why should you host with us?' )
 			: translate( 'Why you should host with us?' );
+	const upgradePlanHostingDetailsList = useUpgradePlanHostingDetailsList();
 
 	const { data: urlData } = useAnalyzeUrlQuery( importSiteQueryParam, true );
 
@@ -50,7 +51,7 @@ export const UpgradePlanHostingDetails = () => {
 				</div>
 				<div className="import__upgrade-plan-hosting-details-list">
 					<ul>
-						{ UpgradePlanHostingDetailsList.map( ( { title, description, icon }, i ) => (
+						{ upgradePlanHostingDetailsList.map( ( { title, description, icon }, i ) => (
 							<li key={ i }>
 								<Icon
 									className="import__upgrade-plan-hosting-details-list-icon"
