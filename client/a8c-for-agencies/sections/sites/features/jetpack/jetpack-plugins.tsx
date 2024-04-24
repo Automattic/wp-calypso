@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import ItemPreviewPaneContent from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-content';
+import ItemPreviewPaneFooter from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-footer';
 import DocumentHead from 'calypso/components/data/document-head';
-import SitePreviewPaneContent from '../../site-preview-pane/site-preview-pane-content';
-import SitePreviewPaneFooter from '../../site-preview-pane/site-preview-pane-footer';
 
 type Props = {
 	featureText: string | React.ReactNode;
@@ -17,7 +17,7 @@ export function JetpackPluginsPreview( { featureText, link, linkLabel, captionTe
 	return (
 		<>
 			<DocumentHead title={ translate( 'Plugins' ) } />
-			<SitePreviewPaneContent>
+			<ItemPreviewPaneContent>
 				<div className="site-preview-pane__plugins-content">
 					<h3>{ featureText }</h3>
 					<p className="site-preview-pane__plugins-caption">{ captionText }</p>
@@ -33,8 +33,8 @@ export function JetpackPluginsPreview( { featureText, link, linkLabel, captionTe
 						</Button>
 					</div>
 				</div>
-			</SitePreviewPaneContent>
-			<SitePreviewPaneFooter />
+			</ItemPreviewPaneContent>
+			<ItemPreviewPaneFooter />
 		</>
 	);
 }
