@@ -28,15 +28,13 @@ export default function ItemPreviewPaneHeader( {
 	return (
 		<div className={ classNames( 'item-preview__header', className ) }>
 			<div className="item-preview__header-content">
-				<div className={ classNames( 'site-favicon', className ) }>
-					<SiteFavicon
-						blogId={ itemData.blogId }
-						isDotcomSite={ itemData.isDotcomSite }
-						color={ itemData.color }
-						className="item-preview__header-favicon"
-						size={ size }
-					/>
-				</div>
+				<SiteFavicon
+					blogId={ itemData.blogId }
+					isDotcomSite={ itemData.isDotcomSite }
+					color={ itemData.color }
+					className="item-preview__header-favicon"
+					size={ size }
+				/>
 				<div className="item-preview__header-title-summary">
 					<div className="item-preview__header-title">{ itemData.title }</div>
 					<div className="item-preview__header-summary">
