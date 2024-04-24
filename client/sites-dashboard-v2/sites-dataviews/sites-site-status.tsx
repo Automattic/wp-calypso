@@ -10,14 +10,14 @@ import { Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
+import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
+import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
+import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
 import useRestoreSiteMutation from 'calypso/sites-dashboard/hooks/use-restore-site-mutation';
+import { MEDIA_QUERIES } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
-import { MEDIA_QUERIES } from '../../../utils';
-import { SiteLaunchNag } from '../../sites-site-launch-nag';
-import TransferNoticeWrapper from '../../sites-transfer-notice-wrapper';
-import { WithAtomicTransfer } from '../../with-atomic-transfer';
 import type { SiteExcerptData } from '@automattic/sites';
 
 const BadgeDIFM = styled.span`

@@ -8,7 +8,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
-import SitesDashboardV2 from 'calypso/sites-dashboard/components/sites-dashboard-v2';
+import SitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';

@@ -1,5 +1,5 @@
 import { useInView } from 'react-intersection-observer';
-import { SitesEllipsisMenu } from '../../sites-ellipsis-menu';
+import { SitesEllipsisMenu } from 'calypso/sites-dashboard/components/sites-ellipsis-menu';
 import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteActionsProps {

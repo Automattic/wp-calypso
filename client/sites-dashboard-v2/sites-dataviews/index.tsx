@@ -8,9 +8,9 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
+import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { SitePlan } from '../../sites-site-plan';
 import ActionsField from './dataviews-fields/actions-field';
 import SiteField from './dataviews-fields/site-field';
 import { SiteInfo } from './interfaces';
