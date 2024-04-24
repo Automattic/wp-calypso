@@ -50,9 +50,15 @@ export function ScheduleFormPaths( props: Props ) {
 			<label htmlFor="paths">{ translate( 'Test URL paths' ) }</label>
 
 			<Text className="info-msg">
-				{ translate(
-					'Your schedule will test your front page for errors. Do you want to add additional paths?'
-				) }
+				{
+					/* translators: maxPaths is a number, e.g. 5  */
+					translate(
+						'Your schedule will test your front page for errors. Add up to %(maxPaths)s additional paths to test:',
+						{
+							args: { maxPaths: MAX_SELECTABLE_PATHS },
+						}
+					)
+				}
 			</Text>
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<Text className="info-msg">Website URL paths</Text>
