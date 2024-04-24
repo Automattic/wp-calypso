@@ -54,6 +54,7 @@ export const getShouldShowGlobalSiteSidebar = (
 	sectionName: string
 ) => {
 	return (
+		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
 	);
@@ -66,6 +67,7 @@ export const getShouldShowUnifiedSiteSidebar = (
 	sectionName: string
 ) => {
 	return (
+		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		! shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
 	);
