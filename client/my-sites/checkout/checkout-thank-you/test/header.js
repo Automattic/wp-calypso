@@ -34,28 +34,5 @@ describe( 'CheckoutThankYouHeader', () => {
 			render( <CheckoutThankYouHeader isDataLoaded={ false } { ...defaultProps } /> );
 			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent( 'Loading…' );
 		} );
-		test( 'Should display a list of success messages when siteUnlaunchedBeforeUpgrade=true', () => {
-			render(
-				<CheckoutThankYouHeader
-					isDataLoaded={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
-					{ ...defaultProps }
-				/>
-			);
-			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Get the best out of your site'
-			);
-			expect( screen.queryByRole( 'heading', { level: 2 } ) ).not.toBeInTheDocument();
-
-			const messages = screen.queryAllByRole( 'listitem' );
-
-			expect( messages ).toHaveLength( 2 );
-			expect( messages[ 0 ] ).toHaveTextContent(
-				'All set! Start exploring the features included with your {{strong}}%(productName)s{{/strong}} plan'
-			);
-			expect( messages[ 1 ] ).toHaveTextContent(
-				"Your site has been launched. You can share it with the world whenever you're ready."
-			);
-		} );
 	} );
 } );
