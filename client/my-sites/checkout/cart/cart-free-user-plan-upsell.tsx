@@ -56,7 +56,10 @@ function UpgradeText( {
 			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
 			{
 				args: {
-					extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
+					extraToPay: formatCurrency( extraToPay, firstDomain.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 					planName,
 				},
 				components: {
@@ -73,7 +76,10 @@ function UpgradeText( {
 			{
 				args: {
 					planName,
-					savings: formatCurrency( savings, firstDomain.currency ),
+					savings: formatCurrency( savings, firstDomain.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 				},
 				components: {
 					strong: <strong />,
