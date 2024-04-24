@@ -34,9 +34,6 @@ import DotcomSitesDataViews from './sites-dataviews';
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
 
-// Add Dotcom specific styles
-import './dotcom-style.scss';
-
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
