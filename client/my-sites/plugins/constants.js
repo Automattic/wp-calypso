@@ -79,3 +79,49 @@ export const ECOMMERCE_BUNDLED_PLUGINS = [
 ];
 
 export const UNLISTED_PLUGINS = [ 'automated-db-schenker-shipping' ];
+
+export const FREE_NON_ORG_PLUGINS = {
+	bazaar: {
+		name: 'Bazaar',
+		slug: 'bazaar',
+		software_slug: 'bazaar',
+		org_slug: null,
+		isMarketplaceProduct: false,
+		isSaasProduct: false,
+		wporg: false,
+		short_description:
+			'Maximize opportunities for both sellers and publishers. Sellers easily list their goods, while publishers effortlessly expand their offerings.',
+		description:
+			'Maximize opportunities for both sellers and publishers. Sellers easily list their goods, while publishers effortlessly expand their offerings.',
+		requirements: { required_primary_domain: null, plugins: [ 'woocommerce' ], themes: [] },
+		variations: null,
+		icon: 'https://ps.w.org/woocommerce/assets/icon-256x256.gif?rev=2869506',
+		banners: {
+			high: 'https://ps.w.org/woocommerce/assets/banner-1544x500.png?rev=3000842',
+		},
+		tags: {
+			plugins: 'Plugins',
+			ecommerce: 'eCommerce',
+			'store-management': 'Store Management',
+		},
+		sections: {
+			description:
+				'Maximize opportunities for both sellers and publishers. Sellers easily list their goods, while publishers effortlessly expand their offerings.',
+			changelog: 'changelog',
+			faq: 'faq',
+			installation: 'installation',
+		},
+		rating: '80',
+		reviews_link: null,
+		author_name: 'Automattic',
+		demo_url: null,
+		documentation_url: null,
+		version: '1.0.0',
+		tested: '6.5.2',
+		last_updated: '2024-04-24',
+		product_video: null,
+		setup_url: null,
+		is_hidden: false,
+		saas_landing_page: null,
+	},
+};
