@@ -10,7 +10,6 @@ import page from '@automattic/calypso-router';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
-import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -103,15 +102,10 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 		}
 
 		dispatch( isLoadingCart( true ) );
-		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
-		cartManagerClient
-			.forCartKey( cartKey )
-			.actions.addProductsToCart( cartItems )
-			.then( () => {
-				page( `/checkout/${ siteSlug }` );
-			} )
-			.finally( () => {
-				dispatch( isLoadingCart( false ) );
-			} );
+		return page(
+			`/checkout/${ siteSlug }/${ cartItems
+				.map( ( item ) => item.product_slug ?? '' )
+				.join( ',' ) }`
+		);
 	};
 }
