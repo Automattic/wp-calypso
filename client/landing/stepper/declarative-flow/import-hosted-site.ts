@@ -15,6 +15,7 @@ import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import ImportVerifyEmail from './internals/steps-repository/import-verify-email';
+import ImporterMigrateMessage from './internals/steps-repository/importer-migrate-message';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SitePickerStep from './internals/steps-repository/site-picker';
@@ -47,6 +48,7 @@ const importHostedSiteFlow: Flow = {
 			{ slug: 'verifyEmail', component: ImportVerifyEmail },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'error', component: MigrationError },
+			{ slug: 'migrateMessage', component: ImporterMigrateMessage },
 		];
 	},
 
