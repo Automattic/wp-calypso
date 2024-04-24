@@ -1,7 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import * as React from 'react';
+import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
@@ -22,6 +24,10 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
 	const justCompletedDisplayDate = getDisplayDate( justCompletedBackupDate, false );
 	const lastBackupDisplayDate = getDisplayDate( lastBackupDate, false );
+
+	useEffect( () => {
+		recordLogRocketEvent( 'calypso_jetpack_backup_just_completed' );
+	}, [] );
 
 	return (
 		<>

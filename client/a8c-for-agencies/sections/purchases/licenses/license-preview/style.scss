@@ -167,61 +167,14 @@
 	background-color: #fafafa;
 }
 
-.button.is-borderless.license-bundle-dropdown__button {
+button.button.is-borderless.license-bundle-dropdown__button {
 	text-overflow: clip;
 	padding: 4px;
 	max-height: 24px;
 	&:hover,
 	&:focus {
-		background: var(--color-sidebar-text-alternative);
-		color: var(--color-text);
-		fill: var(--color-text);
-	}
-}
-
-.license-actions__menu {
-	font-size: rem(14px);
-	font-weight: 400;
-	border-radius: 2px;
-
-	.popover__arrow {
-		display: none;
-	}
-
-	.popover__menu {
-		padding: 8px 4px;
-	}
-
-	.popover__menu-item {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		border: none;
-		outline: none;
-		margin-block: 5px;
-		min-height: 40px;
-		box-sizing: border-box;
-	}
-
-	.popover__menu-item .gridicon {
-		margin: 0;
-	}
-
-	.popover__menu-item:hover,
-	.popover__menu-item:focus {
-		background: var(--color-sidebar-text-alternative);
-		color: var(--color-text);
-		fill: var(--color-text);
-
-		.gridicon {
-			fill: var(--color-text);
-		}
-	}
-
-	.popover__menu-item.is-destructive {
-		color: var(--color-scary-50);
-		.gridicon {
-			fill: var(--color-error-50);
-		}
+		background: var(--wp-components-color-accent);
+		color: var(--color-text-inverted);
+		fill: var(--color-text-inverted);
 	}
 }

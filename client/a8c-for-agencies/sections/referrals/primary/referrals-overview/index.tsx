@@ -1,5 +1,6 @@
 import { pages, plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -7,7 +8,10 @@ import LayoutHeader, {
 } from 'calypso/a8c-for-agencies/components/layout/header';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_REFERRALS_BANK_DETAILS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
 
@@ -15,8 +19,18 @@ import './style.scss';
 
 export default function ReferralsOverview() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const title = translate( 'Referrals' );
+
+	const onAddBankDetailsClick = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
+	}, [ dispatch ] );
+
+	const hasPayeeAccount = false; // FIXME: Replace with actual check
+	const showStatus = true; // FIXME: Replace with actual check
+	const statusType = 'warning'; // FIXME: Replace with actual check
+	const status = 'Pending'; // FIXME: Replace with actual check
 
 	return (
 		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
@@ -40,7 +54,22 @@ export default function ReferralsOverview() {
 							description={ translate(
 								'Once confirmed, we’ll be able to send you a commission payment at the end of each month.'
 							) }
-							buttonProps={ { children: translate( 'Add bank details' ), primary: true } }
+							buttonProps={ {
+								children: hasPayeeAccount
+									? translate( 'Edit bank details' )
+									: translate( 'Add bank details' ),
+								href: A4A_REFERRALS_BANK_DETAILS_LINK,
+								onClick: onAddBankDetailsClick,
+								primary: true,
+							} }
+							statusProps={
+								showStatus
+									? {
+											children: status,
+											type: statusType,
+									  }
+									: undefined
+							}
 						/>
 						<StepSectionItem
 							icon={ plugins }

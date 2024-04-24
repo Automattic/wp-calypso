@@ -203,25 +203,9 @@ export const useCanPreviewButNeedUpgrade = (
 		} );
 
 		const generateCheckoutUrl = ( plan: string ) => {
-			const locationHref = window.location.href;
-			let url = locationHref;
-			try {
-				/**
-				 * If the site has a custom domain, change the hostname to a custom domain.
-				 * This allows the checkout to redirect back to the custom domain.
-				 * @see `client/my-sites/checkout/src/hooks/use-valid-checkout-back-url.ts`
-				 */
-				if ( siteSlug ) {
-					const parsedUrl = new URL( locationHref );
-					parsedUrl.hostname = siteSlug;
-					url = parsedUrl.toString();
-				}
-			} catch ( error ) {
-				// Do nothing.
-			}
-			return `${ getCalypsoUrl() }/checkout/${
-				window._currentSiteId
-			}/${ plan }?checkoutBackUrl=${ encodeURIComponent( url ) }`;
+			return `${ getCalypsoUrl() }/plans/${
+				siteSlug ?? window._currentSiteId
+			}?plan=${ plan }&feature=style-customization`;
 		};
 
 		const link = generateCheckoutUrl( requiredPlanSlug );
@@ -281,6 +265,5 @@ export const useCanPreviewButNeedUpgrade = (
 	return {
 		canPreviewButNeedUpgrade,
 		upgradePlan,
-		requiredPlanSlug,
 	};
 };

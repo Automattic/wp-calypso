@@ -248,7 +248,7 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			array(
-				'templates'    => array_merge( $default_templates, $page_templates, $registered_page_templates ),
+				'templates'    => array_merge( $default_templates, $registered_page_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
 			)

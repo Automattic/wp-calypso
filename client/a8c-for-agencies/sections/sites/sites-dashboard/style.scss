@@ -16,6 +16,17 @@
 		margin-right: 10px;
 	}
 
+	.a4a-layout__top-wrapper:not(.preview-hidden) {
+		padding-block-start: 24px;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-block-start: 0;
+		}
+	}
+
+	.components-input-base {
+		border-radius: 4px;
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -278,7 +289,7 @@
 			fill: var(--color-text-inverted);
 		}
 		100% {
-			fill: unset;
+			fill: none;
 		}
 	}
 

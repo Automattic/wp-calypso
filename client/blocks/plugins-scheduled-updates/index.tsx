@@ -71,6 +71,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 		list: {
 			component: (
 				<ScheduleList
+					siteId={ siteId }
 					onNavBack={ onNavBack }
 					onCreateNewSchedule={ onCreateNewSchedule }
 					onEditSchedule={ onEditSchedule }
