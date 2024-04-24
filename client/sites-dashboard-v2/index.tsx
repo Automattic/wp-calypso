@@ -1,8 +1,9 @@
-import { useSitesListFiltering } from '@automattic/sites';
+import { useSitesListFiltering, useSitesListGrouping } from '@automattic/sites';
+import { SitesGroupingOptions } from '@automattic/sites/src/use-sites-list-grouping';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -29,7 +30,7 @@ import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews from './sites-dataviews';
+import DotcomSitesDataViews, { statuses } from './sites-dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -68,8 +69,23 @@ const SitesDashboardV2 = ( {
 	initialDataViewsState.search = search ?? '';
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
-	// Filter sites list on search query
-	const filteredSites = useSitesListFiltering( allSites, { search: dataViewsState.search } );
+	// Get the status group slug.
+	const statusSlug = useMemo( () => {
+		const statusFilter = dataViewsState.filters.find( ( filter ) => filter.field === 'status' );
+		const statusNumber = statusFilter?.value || 1;
+		return statuses.find( ( status ) => status.value === statusNumber )?.slug || 'all';
+	}, [ dataViewsState.filters ] );
+
+	// Filter sites list by status group.
+	const { currentStatusGroup } = useSitesListGrouping( allSites, {
+		status: statusSlug,
+		showHidden: true,
+	} as SitesGroupingOptions );
+
+	// Filter sites list by search query.
+	const filteredSites = useSitesListFiltering( currentStatusGroup, {
+		search: dataViewsState.search,
+	} );
 
 	// Site is selected:
 	useEffect( () => {
