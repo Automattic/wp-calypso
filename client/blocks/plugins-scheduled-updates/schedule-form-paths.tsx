@@ -34,7 +34,7 @@ export function ScheduleFormPaths( props: Props ) {
 	);
 
 	const onNewPathSubmit = useCallback( () => {
-		const pathError = validatePath( newPath );
+		const pathError = validatePath( newPath, paths );
 		setNewPathError( pathError );
 
 		if ( pathError ) {

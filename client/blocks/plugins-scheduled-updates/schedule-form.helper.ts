@@ -138,14 +138,17 @@ export const validateSites = ( sites: number[] ): string => {
  * Validate path
  * check if path passes URL_PATH_REGEX
  */
-export const validatePath = ( path: string ): string => {
+export const validatePath = ( path: string, paths: string[] ): string => {
 	const URL_PATH_REGEX = /^\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*$/;
 	let error = '';
 
-	if ( path.length === 0 ) {
+	// leading slash is required
+	if ( path.length <= 1 ) {
 		error = translate( 'Please enter a path.' );
 	} else if ( ! URL_PATH_REGEX.test( path ) ) {
 		error = translate( 'Please enter a valid path.' );
+	} else if ( paths.includes( path ) ) {
+		error = translate( 'This path is already added.' );
 	}
 
 	return error;
