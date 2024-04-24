@@ -34,5 +34,5 @@ export interface PreviewPaneProps {
 	className?: string;
 	isSmallScreen?: boolean;
 	hasError?: boolean;
-	addTourDetails?: { id: string; tourID: string };
+	addTourDetails?: { id: string; tourId: string };
 }
