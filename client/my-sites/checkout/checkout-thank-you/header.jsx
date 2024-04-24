@@ -3,12 +3,7 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleWorkspaceExtraLicence,
-	isGSuiteExtraLicenseProductSlug,
-	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGSuiteOrGoogleWorkspaceProductSlug,
 	isSiteRedirect,
-	isTitanMail,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
@@ -19,17 +14,13 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
-import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getJetpackSearchCustomizeUrl,
 	getJetpackSearchDashboardUrl,
@@ -51,7 +42,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
-		titanAppsUrlPrefix: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		_n: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
@@ -112,38 +102,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 					args: { domainName: primaryPurchase.meta },
 					components: { strong: <strong /> },
 				}
-			);
-		}
-
-		if (
-			isGoogleWorkspaceExtraLicence( primaryPurchase ) ||
-			isGSuiteExtraLicenseProductSlug( primaryPurchase.productSlug )
-		) {
-			return preventWidows(
-				translate( 'You will receive an email confirmation shortly for your purchase.' )
-			);
-		}
-
-		if ( isGSuiteOrGoogleWorkspaceProductSlug( primaryPurchase.productSlug ) ) {
-			return preventWidows(
-				translate(
-					'Your domain {{strong}}%(domainName)s{{/strong}} will be using %(productName)s very soon.',
-					{
-						args: {
-							domainName: primaryPurchase.meta,
-							productName: primaryPurchase.productName,
-						},
-						components: { strong: <strong /> },
-						comment:
-							'%(productName)s can be either "G Suite" or "Google Workspace Business Starter"',
-					}
-				)
-			);
-		}
-
-		if ( isTitanMail( primaryPurchase ) ) {
-			return preventWidows(
-				translate( 'You will receive an email confirmation shortly for your purchase.' )
 			);
 		}
 
@@ -256,14 +214,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/quickstart/' + selectedSite.slug + '/book';
 	};
 
-	visitTitanWebmail = ( event ) => {
-		event.preventDefault();
-
-		this.props.recordTracksEvent( 'calypso_thank_you_titan_webmail_click' );
-
-		window.open( getTitanEmailUrl( this.props.titanAppsUrlPrefix, '' ) );
-	};
-
 	startTransfer = ( event ) => {
 		event.preventDefault();
 
@@ -275,14 +225,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButtonText = () => {
-		const {
-			displayMode,
-			hasFailedPurchases,
-			primaryPurchase,
-			selectedSite,
-			translate,
-			upgradeIntent,
-		} = this.props;
+		const { displayMode, hasFailedPurchases, selectedSite, translate, upgradeIntent } = this.props;
 
 		switch ( upgradeIntent ) {
 			case 'browse_plugins':
@@ -313,37 +256,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 				: translate( 'Manage domains' );
 		}
 
-		if ( isTitanMail( primaryPurchase ) ) {
-			return (
-				<>
-					{ translate( 'Log in to my email' ) }
-					<Gridicon icon="external" />
-				</>
-			);
-		}
-
-		if ( isGSuiteOrExtraLicenseOrGoogleWorkspace( primaryPurchase ) ) {
-			return translate( 'Manage email' );
-		}
-
 		return translate( 'Go to My Site' );
 	};
 
 	maybeGetSecondaryButton() {
-		const { primaryPurchase, selectedSite, translate, upgradeIntent } = this.props;
+		const { translate, upgradeIntent } = this.props;
 
 		if ( upgradeIntent === 'hosting' ) {
 			return (
 				<Button onClick={ this.visitSiteHostingSettings }>
 					{ translate( 'Return to Hosting' ) }
-				</Button>
-			);
-		}
-
-		if ( primaryPurchase && isTitanMail( primaryPurchase ) ) {
-			return (
-				<Button href={ getEmailManagementPath( selectedSite.slug, primaryPurchase.meta ) }>
-					{ translate( 'Manage email' ) }
 				</Button>
 			);
 		}
@@ -413,8 +335,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			clickHandler = this.visitScheduler;
 		} else if ( this.isSingleDomainPurchase() ) {
 			clickHandler = this.visitDomain;
-		} else if ( isTitanMail( primaryPurchase ) ) {
-			clickHandler = this.visitTitanWebmail;
 		}
 
 		return (
@@ -536,9 +456,6 @@ export default connect(
 		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
 		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
 		jetpackSearchDashboardUrl: getJetpackSearchDashboardUrl( state, ownProps.selectedSite?.ID ),
-		titanAppsUrlPrefix: getTitanAppsUrlPrefix(
-			getDomainsBySiteId( state, ownProps.selectedSite?.ID ).find( hasTitanMailWithUs )
-		),
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 	} ),
 	{
