@@ -392,16 +392,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 							<Button
 								borderless
 								className="advanced-credentials__connected"
-								onClick={ () => {
-									page( `${ settingsPath( siteSlug ) }?action=edit` );
-
-									setTimeout( () => {
-										const element = document.getElementById( 'advanced-server-credentials' );
-										if ( element ) {
-											element.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-										}
-									}, 100 );
-								} }
+								href={ `${ settingsPath( siteSlug ) }?action=edit` }
 							>
 								{ translate(
 									'The remote server credentials for %(siteSlug)s are present and correct, allowing Jetpack to perform restores and security fixes when required.',
@@ -426,10 +417,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	}, [ dispatch ] );
 
 	return (
-		<div
-			id="advanced-server-credentials"
-			className={ `advanced-credentials ${ isAlternate ? 'alternate' : '' }` }
-		>
+		<div className={ `advanced-credentials ${ isAlternate ? 'alternate' : '' }` }>
 			<QuerySiteCredentials siteId={ siteId } />
 			<PageViewTracker
 				path={ settingsPath( ':site' ) }
