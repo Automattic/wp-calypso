@@ -42,7 +42,6 @@ import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/c
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
 	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
@@ -454,12 +453,6 @@ export default withCurrentRoute(
 				sectionGroup,
 				sectionName
 			);
-			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
-				state,
-				siteId,
-				sectionGroup,
-				sectionName
-			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
@@ -543,7 +536,7 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter,
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSidebarCollapsed: shouldShowGlobalSiteSidebar && ! sidebarIsHidden,
+				isGlobalSidebarCollapsed: shouldShowGlobalSidebar && siteId && ! sidebarIsHidden,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
