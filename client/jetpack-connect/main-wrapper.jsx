@@ -49,13 +49,14 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const wrapperClassName = classNames( 'jetpack-connect__main', {
 			'is-wide': isWide,
 			'is-woocommerce': isWooOnboarding || isWooDna || isWooCoreProfiler,
+			'is-jetpack-woo-blaze-flow': isWooBlazeFlow,
 			'is-woocommerce-core-profiler-flow': isWooCoreProfiler,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
-		const width = isWooOnboarding || isWooDna || isWooBlazeFlow ? 200 : undefined;
+		const width = isWooOnboarding || isWooDna ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (

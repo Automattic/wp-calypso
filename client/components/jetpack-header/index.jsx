@@ -73,17 +73,13 @@ export class JetpackHeader extends PureComponent {
 
 		if ( isWooBlazeFlow ) {
 			return (
-				<svg width={ width } viewBox="0 0 1270 170">
-					<title>{ translate( 'WooCommerce logo' ) }</title>
-					<g fill="none" fillRule="evenodd">
-						<g transform="translate(-120)">
-							<AsyncLoad
-								require="calypso/components/jetpack-header/woocommerce"
-								darkColorScheme={ darkColorScheme }
-								placeholder={ null }
-							/>
-						</g>
-					</g>
+				<svg width={ width || 42 } height={ width || 42 } viewBox="0 0 42 42" fill="none">
+					<title>{ translate( 'Woo Blaze logo' ) }</title>
+					<AsyncLoad
+						require="calypso/components/jetpack-header/woo-blaze"
+						darkColorScheme={ darkColorScheme }
+						placeholder={ null }
+					/>
 				</svg>
 			);
 		}
