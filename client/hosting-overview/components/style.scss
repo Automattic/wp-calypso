@@ -268,10 +268,21 @@ a.hosting-overview__link-button {
 	table {
 		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 		margin-top: 0;
+
+		th:first-child,
+		td:first-child {
+			padding-left: 16px;
+		}
+
+		th:last-child,
+		td:last-child {
+			padding-right: 16px;
+		}
 	}
 
 	button {
 		font-family: "SF Pro Text", $sans;
+		font-weight: 400;
 	}
 
 	.domains-table__primary-domain-label {
