@@ -1,10 +1,4 @@
-import {
-	isDelayedDomainTransfer,
-	isDomainMapping,
-	isDomainRegistration,
-	isDomainTransfer,
-	isSiteRedirect,
-} from '@automattic/calypso-products';
+import { isDelayedDomainTransfer } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { withI18n } from '@wordpress/react-i18n';
@@ -14,10 +8,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	domainManagementEdit,
-	domainManagementTransferInPrecheck,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -67,79 +58,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'You will receive an email confirmation shortly.' );
 		}
 
-		if ( isDomainRegistration( primaryPurchase ) ) {
-			return preventWidows(
-				translate(
-					'Your new domain {{strong}}%(domainName)s{{/strong}} is ' +
-						'being set up. Your site is doing somersaults in excitement!',
-					{
-						args: { domainName: primaryPurchase.meta },
-						components: { strong: <strong /> },
-					}
-				)
-			);
-		}
-
-		if ( isDomainMapping( primaryPurchase ) ) {
-			if ( primaryPurchase.isRootDomainWithUs ) {
-				return translate(
-					'Your domain {{strong}}%(domain)s{{/strong}} was added to your site. ' +
-						'We have set everything up for you, but it may take a little while to start working.',
-					{
-						args: {
-							domain: primaryPurchase.meta,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
-			}
-
+		if ( isDelayedDomainTransfer( primaryPurchase ) ) {
 			return translate(
-				'Follow the instructions below to finish setting up your domain {{strong}}%(domainName)s{{/strong}}.',
+				'Your new site is now live, with a temporary domain. Start the transfer to get your domain ' +
+					'{{strong}}%(domainName)s{{/strong}} moved to WordPress.com.',
 				{
 					args: { domainName: primaryPurchase.meta },
 					components: { strong: <strong /> },
-				}
-			);
-		}
-
-		if ( isSiteRedirect( primaryPurchase ) ) {
-			return preventWidows(
-				translate(
-					'Your site is now redirecting to {{strong}}%(domainName)s{{/strong}}. ' +
-						"It's doing somersaults in excitement!",
-					{
-						args: { domainName: primaryPurchase.meta },
-						components: { strong: <strong /> },
-					}
-				)
-			);
-		}
-
-		if ( isDomainTransfer( primaryPurchase ) ) {
-			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
-				return translate(
-					'Your new site is now live, with a temporary domain. Start the transfer to get your domain ' +
-						'{{strong}}%(domainName)s{{/strong}} moved to WordPress.com.',
-					{
-						args: { domainName: primaryPurchase.meta },
-						components: { strong: <strong /> },
-					}
-				);
-			}
-
-			return translate(
-				'Your domain {{strong}}%(domain)s{{/strong}} was added to your site, but ' +
-					'the transfer process can take up to 5 days to complete.',
-				{
-					args: {
-						domain: primaryPurchase.meta,
-					},
-					components: {
-						strong: <strong />,
-					},
 				}
 			);
 		}
@@ -164,19 +89,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
 
 		page( selectedSite?.slug ? `/home/${ selectedSite.slug }` : '/' );
-	};
-
-	visitDomain = ( event ) => {
-		event.preventDefault();
-
-		const { primaryPurchase, selectedSite } = this.props;
-
-		this.props.recordTracksEvent( 'calypso_thank_you_view_site', {
-			product: primaryPurchase.productName,
-			single_domain: true,
-		} );
-
-		page( domainManagementEdit( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
 	visitSite = ( event ) => {
@@ -246,16 +158,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Register domain' );
 		}
 
-		if (
-			isDomainRegistration( primaryPurchase ) ||
-			isDomainTransfer( primaryPurchase ) ||
-			isSiteRedirect( primaryPurchase )
-		) {
-			return this.isSingleDomainPurchase()
-				? translate( 'Manage domain' )
-				: translate( 'Manage domains' );
-		}
-
 		return translate( 'Go to My Site' );
 	};
 
@@ -271,16 +173,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		return null;
-	}
-
-	isSingleDomainPurchase() {
-		const { primaryPurchase, purchases } = this.props;
-
-		return (
-			primaryPurchase &&
-			isDomainRegistration( primaryPurchase ) &&
-			purchases?.filter( isDomainRegistration ).length === 1
-		);
 	}
 
 	getButtons() {
@@ -333,8 +225,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( isConciergePurchase ) {
 			clickHandler = this.visitScheduler;
-		} else if ( this.isSingleDomainPurchase() ) {
-			clickHandler = this.visitDomain;
 		}
 
 		return (
@@ -358,14 +248,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some items failed.' );
 		}
 
-		if (
-			primaryPurchase &&
-			isDomainMapping( primaryPurchase ) &&
-			! primaryPurchase.isRootDomainWithUs
-		) {
-			return preventWidows( translate( 'Almost done!' ) );
-		}
-
 		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			return preventWidows( translate( 'Almost done!' ) );
 		}
@@ -380,16 +262,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
-		} else if (
-			primaryPurchase &&
-			( ( isDomainMapping( primaryPurchase ) && ! primaryPurchase.isRootDomainWithUs ) ||
-				isDelayedDomainTransfer( primaryPurchase ) )
-		) {
+		} else if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			svg = 'publish-button.svg';
-		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
-			svg = 'check-emails-desktop.svg';
 		}
-
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
 				<div className="checkout-thank-you__header-icon">
