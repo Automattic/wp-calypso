@@ -45,24 +45,6 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 	const fields = useMemo< DataViewsColumn[] >(
 		() => [
 			{
-				id: 'status',
-				header: __( 'Status' ),
-				type: 'enumeration',
-				elements: [
-					{ value: 1, label: __( 'All sites' ) },
-					{ value: 2, label: __( 'Public' ) },
-					{ value: 3, label: __( 'Private' ) },
-					{ value: 4, label: __( 'Coming soon' ) },
-					{ value: 5, label: __( 'Redirect' ) },
-					{ value: 6, label: __( 'Deleted' ) },
-				],
-				filterBy: {
-					operators: [ 'in' ],
-				},
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
 				id: 'site',
 				header: __( 'Site' ),
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
@@ -83,6 +65,18 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 				id: 'status',
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
+				type: 'enumeration',
+				elements: [
+					{ value: 1, label: __( 'All sites' ) },
+					{ value: 2, label: __( 'Public' ) },
+					{ value: 3, label: __( 'Private' ) },
+					{ value: 4, label: __( 'Coming soon' ) },
+					{ value: 5, label: __( 'Redirect' ) },
+					{ value: 6, label: __( 'Deleted' ) },
+				],
+				filterBy: {
+					operators: [ 'in' ],
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},
