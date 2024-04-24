@@ -36,6 +36,7 @@ const siteMigration: Flow = {
 			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 		];
 	},
@@ -246,7 +247,7 @@ const siteMigration: Flow = {
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
 					if ( isEnabled( 'migration-flow/remove-processing-step' ) ) {
-						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug );
 					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
 				}

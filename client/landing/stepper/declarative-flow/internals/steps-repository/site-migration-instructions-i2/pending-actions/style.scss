@@ -1,0 +1,8 @@
+.pending-actions {
+	.visual-state-indicator .components-spinner {
+		margin: 5px 11px -3px;
+	}
+	.visual-state-indicator:not(:has(.components-spinner)) {
+		margin: 5px 11px -3px;
+	}
+}
