@@ -1,4 +1,8 @@
-import { FEATURE_TYPE_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
+import {
+	FEATURE_TYPE_JETPACK_SEARCH,
+	PLAN_BUSINESS,
+	PRODUCT_JETPACK_SEARCH,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -10,6 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import FormattedHeader from 'calypso/components/formatted-header';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card ';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -25,7 +30,6 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackSearchFooter from '../footer';
-import WPCOMSearchUpsell from '../wpcom-search-upsell';
 
 import './style.scss';
 
@@ -50,11 +54,6 @@ export default function JetpackSearchUpsell() {
 
 	const isSimple = useSelector( isSimpleSite );
 
-	// If in Jetpack Cloud and the site is a Simple site, we show the WPCOM upsell instead
-	if ( isJetpackCloud() && isSimple ) {
-		return <WPCOMSearchUpsell />;
-	}
-
 	return (
 		<Main className="jetpack-search-upsell" wideLayout={ isJetpackCloud() }>
 			<DocumentHead title="Jetpack Search" />
@@ -64,15 +63,26 @@ export default function JetpackSearchUpsell() {
 			{ isJetpackCloud() ? (
 				<div className="jetpack-search-upsell__content">
 					<QueryJetpackSaleCoupon />
-					<QueryProductsList type="jetpack" />
+					{ isSimple && <QueryProductsList /> }
+					{ ! isSimple && <QueryProductsList type="jetpack" /> }
 					{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 					{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-					<UpsellProductCard
-						featureType={ FEATURE_TYPE_JETPACK_SEARCH }
-						nonManageProductSlug={ PRODUCT_JETPACK_SEARCH }
-						siteId={ siteId }
-						onCtaButtonClick={ onClick }
-					/>
+					{ isSimple && (
+						<UpsellProductWpcomPlanCard
+							WPcomPlanSlug={ PLAN_BUSINESS }
+							nonManageProductSlug={ PRODUCT_JETPACK_SEARCH }
+							siteId={ siteId }
+							onCtaButtonClick={ onClick }
+						/>
+					) }
+					{ ! isSimple && (
+						<UpsellProductCard
+							featureType={ FEATURE_TYPE_JETPACK_SEARCH }
+							nonManageProductSlug={ PRODUCT_JETPACK_SEARCH }
+							siteId={ siteId }
+							onCtaButtonClick={ onClick }
+						/>
+					) }
 				</div>
 			) : (
 				<>

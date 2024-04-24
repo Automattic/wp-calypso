@@ -1,5 +1,6 @@
 import {
 	FEATURE_TYPE_JETPACK_BACKUP,
+	PLAN_BUSINESS,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
@@ -14,6 +15,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Upsell from 'calypso/components/jetpack/upsell';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
+import UpsellProductWpcomPlanCard from 'calypso/components/jetpack/upsell-product-wpcom-plan-card ';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
 import Main from 'calypso/components/main';
@@ -24,7 +26,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import WPCOMBackupUpsell from '../wpcom-backup-upsell';
 
 import './style.scss';
 
@@ -74,6 +75,7 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 const BackupsUpsellBody: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const dispatch = useDispatch();
+	const isSimple = useSelector( isSimpleSite );
 
 	const onClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) );
@@ -83,22 +85,32 @@ const BackupsUpsellBody: FunctionComponent = () => {
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
-			<QueryProductsList type="jetpack" />
+			{ isSimple && <QueryProductsList /> }
+			{ ! isSimple && <QueryProductsList type="jetpack" /> }
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			<UpsellProductCard
-				featureType={ FEATURE_TYPE_JETPACK_BACKUP }
-				nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
-				siteId={ siteId }
-				onCtaButtonClick={ onClick }
-			/>
+			{ isSimple && (
+				<UpsellProductWpcomPlanCard
+					WPcomPlanSlug={ PLAN_BUSINESS }
+					nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+					siteId={ siteId }
+					onCtaButtonClick={ onClick }
+				/>
+			) }
+			{ ! isSimple && (
+				<UpsellProductCard
+					featureType={ FEATURE_TYPE_JETPACK_BACKUP }
+					nonManageProductSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+					siteId={ siteId }
+					onCtaButtonClick={ onClick }
+				/>
+			) }
 		</>
 	);
 };
 
 const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
-	const isSimple = useSelector( isSimpleSite );
 	const canTransfer = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
 	);
@@ -109,10 +121,6 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 		return <WPCOMBusinessAT />;
 	}
 
-	// If the site is simple, show the WPcom upsell.
-	if ( isSimple ) {
-		return <WPCOMBackupUpsell reason={ reason || 'wpcom_site' } />;
-	}
 	let body;
 	switch ( reason ) {
 		case 'vp_active_on_site':
