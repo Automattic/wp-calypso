@@ -29,6 +29,11 @@ jest.mock( 'calypso/data/hosting/use-add-hosting-trial-mutation' );
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
+interface TrialEligibilityResponse {
+	eligible: boolean;
+	error_code: string;
+}
+
 const API_RESPONSE_EMAIL_VERIFIED = {
 	eligible: true,
 	error_code: 'email-verified',
@@ -39,7 +44,7 @@ const API_RESPONSE_EMAIL_UNVERIFIED = {
 	error_code: 'email-unverified',
 };
 
-const mockTrialEligibilityAPI = ( payload: any ) => {
+const mockTrialEligibilityAPI = ( payload: TrialEligibilityResponse ) => {
 	mockApi()
 		.get( `/wpcom/v2/sites/site-id/hosting/trial/check-eligibility/${ planSlug }` )
 		.reply( 200, payload );
