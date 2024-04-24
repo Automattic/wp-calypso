@@ -5,103 +5,114 @@ import {
 	setTrailMapExperiment,
 } from '@automattic/calypso-products';
 import { Meta, StoryObj } from '@storybook/react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { FeaturesGrid, FeaturesGridExternalProps, useGridPlansForFeaturesGrid } from '../..';
-import { defaultArgs } from '../../storybook-mocks';
-import * as mockGridPlans from '../../storybook-mocks/grid-plans';
+import {
+	FeaturesGrid,
+	FeaturesGridExternalProps,
+	useGridPlanForSpotlight,
+	useGridPlansForFeaturesGrid,
+} from '../..';
 
-const queryClient = new QueryClient();
-
-const RenderFeaturesGrid = (
-	props: FeaturesGridExternalProps & { includePreviousPlanFeatures: boolean }
+const ComponentWrapper = (
+	props: FeaturesGridExternalProps & {
+		includePreviousPlanFeatures: boolean;
+		trailMapVariant: TrailMapVariantType;
+	}
 ) => {
-	const useGridPlans = () => props.gridPlans;
+	const gridPlans = useGridPlansForFeaturesGrid( {
+		eligibleForFreeHostingTrial: true,
+		hasRedeemedDomainCredit: undefined,
+		hiddenPlans: undefined,
+		isDisplayingPlansNeededForFeature: false,
+		isSubdomainNotGenerated: false,
+		selectedFeature: undefined,
+		selectedPlan: undefined,
+		storageAddOns: [],
+		term: 'TERM_ANNUALLY',
+		useFreeTrialPlanSlugs: undefined,
 
-	const gridPlans = useGridPlansForFeaturesGrid(
-		{
-			allFeaturesList: getFeaturesList(),
-			useCheckPlanAvailabilityForPurchase: () => ( { value_bundle: true } ),
-			storageAddOns: [],
-			includePreviousPlanFeatures: props.includePreviousPlanFeatures,
-			intent: props.intent,
-		},
-		useGridPlans
-	);
+		// Mirror values from props
+		siteId: props.siteId,
+		includePreviousPlanFeatures: props.includePreviousPlanFeatures,
+		intent: props.intent,
+		coupon: props.coupon,
+		allFeaturesList: props.allFeaturesList,
+		isInSignup: props.isInSignup,
+		showLegacyStorageFeature: props.showLegacyStorageFeature,
+		useCheckPlanAvailabilityForPurchase: props.useCheckPlanAvailabilityForPurchase,
+	} );
+
+	const gridPlanForSpotlight = useGridPlanForSpotlight( {
+		gridPlans,
+		siteId: props.siteId,
+		intent: props.intent,
+		isSpotlightOnCurrentPlan: true,
+	} );
 
 	return (
-		<FeaturesGrid
-			{ ...props }
-			gridPlans={ gridPlans || [] }
-			featureGroupMap={ props.enableCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
-		/>
+		gridPlans && (
+			<FeaturesGrid
+				{ ...props }
+				gridPlans={ gridPlans }
+				gridPlanForSpotlight={
+					'gridPlanForSpotlight' in props ? props.gridPlanForSpotlight : gridPlanForSpotlight
+				}
+				featureGroupMap={ props.enableCategorisedFeatures ? getPlanFeaturesGrouped() : undefined }
+			/>
+		)
 	);
 };
 
-const meta: Meta<
-	FeaturesGridExternalProps & {
-		includePreviousPlanFeatures: boolean;
-		trailMapVariant: TrailMapVariantType;
-	}
-> = {
-	title: 'FeaturesGrid',
-	component: RenderFeaturesGrid,
-	decorators: [
-		( Story, storyContext ) => {
-			setTrailMapExperiment( storyContext.args.trailMapVariant );
-			return (
-				<QueryClientProvider client={ queryClient }>
-					<Story />
-				</QueryClientProvider>
-			);
-		},
-	],
-	parameters: {
-		viewport: {
-			defaultViewport: 'LARGE',
-		},
+const defaultProps: Omit< FeaturesGridExternalProps, 'gridPlans' > = {
+	allFeaturesList: getFeaturesList(),
+	coupon: undefined,
+	currentSitePlanSlug: undefined,
+	generatedWPComSubdomain: {
+		isLoading: false,
+		result: { domain_name: 'zzz.wordpress.com' },
 	},
+	hideUnavailableFeatures: false,
+	intervalType: 'yearly',
+	isCustomDomainAllowedOnFreePlan: false,
+	isInAdmin: false,
+	isInSignup: true,
+	isLaunchPage: false,
+	onStorageAddOnClick: () => {},
+	planActionOverrides: undefined,
+	planUpgradeCreditsApplicable: undefined,
+	recordTracksEvent: () => {},
+	showLegacyStorageFeature: false,
+	showRefundPeriod: false,
+	showUpgradeableStorage: true,
+	siteId: undefined,
+	stickyRowOffset: 0,
+	useCheckPlanAvailabilityForPurchase: () => ( {} ),
+	useActionCallback: () => () => {},
 };
 
-export default meta;
+type Story = StoryObj< typeof ComponentWrapper >;
 
-type Story = StoryObj<
-	FeaturesGridExternalProps & {
-		includePreviousPlanFeatures: boolean;
-		trailMapVariant: TrailMapVariantType;
-	}
->;
-
-export const PlansFlow: Story = {
+export const Plans: Story = {
+	name: '/plans',
 	args: {
-		...defaultArgs,
+		...defaultProps,
 		intent: 'plans-default-wpcom',
-		gridPlans: [
-			mockGridPlans.free,
-			mockGridPlans.personal,
-			mockGridPlans.value,
-			mockGridPlans.business,
-			mockGridPlans.ecommerce,
-			mockGridPlans.enterprise,
-		],
-		gridPlanForSpotlight: mockGridPlans.spotlight,
+		siteId: 222597060,
+		isInAdmin: true,
+		isInSignup: false,
 	},
 };
 
-PlansFlow.storyName = '/plans';
-
-export const NewsletterFlow: Story = {
+export const Newsletter: Story = {
+	name: '/setup/newsletter',
 	args: {
-		...defaultArgs,
+		...defaultProps,
 		intent: 'plans-newsletter',
-		gridPlans: [ mockGridPlans.free, mockGridPlans.personal, mockGridPlans.value ],
 	},
 };
-
-NewsletterFlow.storyName = '/setup/newsletter';
 
 export const TrailMapControl: Story = {
 	args: {
-		...PlansFlow.args,
+		...Plans.args,
 		trailMapVariant: 'control',
 		gridPlanForSpotlight: undefined,
 	},
@@ -112,7 +123,6 @@ export const TrailMapStructure: Story = {
 		...TrailMapControl.args,
 		trailMapVariant: 'treatment_structure',
 		enableCategorisedFeatures: true,
-		includePreviousPlanFeatures: true,
 	},
 };
 
@@ -129,3 +139,16 @@ export const TrailMapCopyAndStructure: Story = {
 		enableCategorisedFeatures: true,
 	},
 };
+
+const meta: Meta< typeof ComponentWrapper > = {
+	title: 'FeaturesGrid',
+	component: ComponentWrapper,
+	decorators: [
+		( Story, storyContext ) => {
+			setTrailMapExperiment( storyContext.args.trailMapVariant );
+			return <Story />;
+		},
+	],
+};
+
+export default meta;
