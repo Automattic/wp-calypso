@@ -21,47 +21,47 @@ type Props = {
 	openSitePreviewPane?: ( site: SiteExcerptData ) => void;
 };
 
+const SiteListTile = styled( ListTile )`
+	margin-inline-end: 0;
+
+	${ MEDIA_QUERIES.hideTableRows } {
+		margin-inline-end: 12px;
+	}
+`;
+
+const ListTileLeading = styled( ThumbnailLink )`
+	${ MEDIA_QUERIES.hideTableRows } {
+		margin-inline-end: 12px;
+	}
+`;
+
+const ListTileTitle = styled.div`
+	display: flex;
+	align-items: center;
+	margin-block-end: 8px;
+`;
+
+const ListTileSubtitle = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	font-size: 14px;
+	color: var( --studio-gray-60 ) !important;
+	svg {
+		flex-shrink: 0;
+	}
+
+	&:not( :last-child ) {
+		margin-block-end: 2px;
+	}
+`;
+
 const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
 	// todo: This hook is used by the SiteItemThumbnail component below, in a prop showPlaceholder={ ! inView }. It does not work as expected. Fix it.
 	//const { inView } = useInView( { triggerOnce: true } );
-
-	const SiteListTile = styled( ListTile )`
-		margin-inline-end: 0;
-
-		${ MEDIA_QUERIES.hideTableRows } {
-			margin-inline-end: 12px;
-		}
-	`;
-
-	const ListTileLeading = styled( ThumbnailLink )`
-		${ MEDIA_QUERIES.hideTableRows } {
-			margin-inline-end: 12px;
-		}
-	`;
-
-	const ListTileTitle = styled.div`
-		display: flex;
-		align-items: center;
-		margin-block-end: 8px;
-	`;
-
-	const ListTileSubtitle = styled.div`
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		font-size: 14px;
-		color: var( --studio-gray-60 ) !important;
-		svg {
-			flex-shrink: 0;
-		}
-
-		&:not( :last-child ) {
-			margin-block-end: 2px;
-		}
-	`;
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
