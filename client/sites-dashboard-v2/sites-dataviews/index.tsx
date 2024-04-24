@@ -27,7 +27,7 @@ type Props = {
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 };
 
-export const statuses = [
+export const siteStatusGroups = [
 	{ value: 1, label: __( 'All sites' ), slug: 'all' },
 	{ value: 2, label: __( 'Public' ), slug: 'public' },
 	{ value: 3, label: __( 'Private' ), slug: 'private' },
@@ -76,7 +76,7 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				type: 'enumeration',
-				elements: statuses,
+				elements: siteStatusGroups,
 				filterBy: {
 					operators: [ 'in' ],
 				},

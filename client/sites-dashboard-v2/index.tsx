@@ -30,7 +30,7 @@ import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews, { statuses } from './sites-dataviews';
+import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -79,7 +79,7 @@ const SitesDashboardV2 = ( {
 						{
 							field: 'status',
 							operator: 'in',
-							value: statuses.find( ( item ) => item.slug === status )?.value || 1,
+							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
 	};
@@ -89,7 +89,7 @@ const SitesDashboardV2 = ( {
 	const statusSlug = useMemo( () => {
 		const statusFilter = dataViewsState.filters.find( ( filter ) => filter.field === 'status' );
 		const statusNumber = statusFilter?.value || 1;
-		return ( statuses.find( ( status ) => status.value === statusNumber )?.slug ||
+		return ( siteStatusGroups.find( ( status ) => status.value === statusNumber )?.slug ||
 			'all' ) as GroupableSiteLaunchStatuses;
 	}, [ dataViewsState.filters ] );
 
