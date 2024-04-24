@@ -22,6 +22,8 @@ export interface ItemData {
 	url?: string;
 	icon?: string;
 	color?: string;
+	blogId?: number;
+	isDotcomSite?: boolean;
 }
 
 export interface PreviewPaneProps {
