@@ -150,8 +150,13 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			/* 2. Send user to either manage add-ons or plan in case of current plan selection */
-			if ( sitePlanSlug && currentPlan?.productSlug === planSlug && intent !== 'plans-p2' ) {
+			/* 2. Send user to either manage add-ons or manage plan in case of current plan selection */
+			if (
+				sitePlanSlug &&
+				currentPlan?.productSlug === planSlug &&
+				intent !== 'plans-p2' &&
+				intent !== 'plans-blog-onboarding'
+			) {
 				if ( isFreePlan( planSlug ) ) {
 					page.redirect( `/add-ons/${ siteSlug }` );
 				} else {
