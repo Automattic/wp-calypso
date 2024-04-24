@@ -25,16 +25,19 @@ export type ScheduleUpdates = {
 	last_run_timestamp: number | null;
 };
 
-type SiteStatus = SiteDetails & {
+type MultisiteSiteDetails = SiteDetails & {
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
 };
 
-export type SchedulesUpdates = Omit< ScheduleUpdates, 'last_run_status' | 'last_run_timestamp' > & {
-	sites: SiteStatus[];
+export type MultisiteSchedulesUpdates = Omit<
+	ScheduleUpdates,
+	'last_run_status' | 'last_run_timestamp'
+> & {
+	sites: MultisiteSiteDetails[];
 };
 
-type SchedulesUpdatesResponse = {
+type MultisiteSchedulesUpdatesResponse = {
 	sites: { [ site_id: string ]: { [ scheduleId: string ]: ScheduleUpdates } };
 };
 
@@ -74,10 +77,10 @@ export const useUpdateScheduleQuery = (
 	} );
 };
 
-export const useUpdateSchedulesQuery = (
+export const useMultisiteUpdateSchedulesQuery = (
 	isEligibleForFeature: boolean,
 	queryOptions = {}
-): UseQueryResult< SchedulesUpdates[] > => {
+): UseQueryResult< MultisiteSchedulesUpdates[] > => {
 	const state = useSelector( ( state ) => state );
 
 	const retrieveSite = useCallback(
@@ -87,10 +90,10 @@ export const useUpdateSchedulesQuery = (
 		[ state ]
 	);
 
-	return useQuery< SchedulesUpdatesResponse, Error, SchedulesUpdates[] >( {
+	return useQuery< MultisiteSchedulesUpdatesResponse, Error, MultisiteSchedulesUpdates[] >( {
 		queryKey: [ 'schedules-updates' ],
 		queryFn: () =>
-			wpcomRequest< SchedulesUpdatesResponse >( {
+			wpcomRequest< MultisiteSchedulesUpdatesResponse >( {
 				path: `/hosting/update-schedules`,
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
@@ -98,7 +101,7 @@ export const useUpdateSchedulesQuery = (
 		enabled: isEligibleForFeature,
 		retry: false,
 		select: ( data ) => {
-			const result: SchedulesUpdates[] = [];
+			const result: MultisiteSchedulesUpdates[] = [];
 
 			for ( const site_id in data.sites ) {
 				for ( const scheduleId in data.sites[ site_id ] ) {
