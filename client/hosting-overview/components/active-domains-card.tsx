@@ -1,6 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable } from '@automattic/domains-table';
+import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -9,6 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const ActiveDomainsCard: FC = () => {
+	const forceMobile = useBreakpoint( '<660px' );
 	const site = useSelector( getSelectedSite );
 	const { data, isLoading } = useSiteDomainsQuery( site?.ID, {
 		queryFn: () => fetchSiteDomains( site?.ID ),
@@ -44,6 +46,7 @@ const ActiveDomainsCard: FC = () => {
 				isLoadingDomains={ isLoading }
 				domains={ data?.domains }
 				isAllSitesView={ false }
+				useMobileCards={ forceMobile }
 				siteSlug={ site?.slug ?? null }
 			/>
 		</Card>
