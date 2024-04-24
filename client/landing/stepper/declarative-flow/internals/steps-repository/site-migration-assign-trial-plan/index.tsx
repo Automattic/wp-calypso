@@ -27,7 +27,7 @@ const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
 	} );
 
 	useEffect( () => {
-		if ( site && ! isAddingTrial ) {
+		if ( site && ! site?.plan && ! isAddingTrial ) {
 			setIsAddingTrial( true );
 			const assignMigrationTrialPlan = () => {
 				site.ID && addHostingTrial( site.ID, PLAN_MIGRATION_TRIAL_MONTHLY, HOSTING_INTENT_MIGRATE );
