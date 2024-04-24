@@ -52,7 +52,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 						isEntrepreneurTrial ? (
 							<UpgradeButton
 								goToCheckoutWithPlan={ goToCheckoutWithPlan }
-								isEntrepreneurTrial={ isWooExpressTrial }
+								isEntrepreneurTrial={ isEntrepreneurTrial }
 							/>
 						) : null
 					}

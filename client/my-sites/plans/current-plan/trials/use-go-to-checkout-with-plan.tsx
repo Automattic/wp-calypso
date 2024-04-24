@@ -37,7 +37,7 @@ const useGoToCheckoutWithPlan = () => {
 	useOneDollarOfferTrack( selectedSite?.ID, 'plans' );
 
 	/**
-	 * Redirects to the checkout page with Plan on cart.
+	 * Redirects to the checkout page with Plan in cart.
 	 * @param ctaPosition - The position of the CTA that triggered the redirect.
 	 */
 	const goToCheckoutWithPlan = ( ctaPosition: string ) => {
