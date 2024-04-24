@@ -2,6 +2,7 @@ import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
@@ -34,6 +35,7 @@ const PatternTypeSwitcherOption = ( {
 				onClick={ () => {
 					onChange?.( PatternTypeFilter.REGULAR );
 				} }
+				tabIndex={ -1 }
 			>
 				{ patternTypeFilter === value && (
 					<motion.div
@@ -55,9 +57,57 @@ type PatternTypeSwitcherProps = {
 
 export function PatternTypeSwitcher( { onChange }: PatternTypeSwitcherProps ) {
 	const translate = useTranslate();
+	const ref = useRef< HTMLDivElement >( null );
+
+	// React's built-in `onFocus` event handler captures bubbling focus events (i.e., it listens to
+	// the `focusin` event). We don't want that, which is why we register a native `focus` event
+	// listener
+	useEffect( () => {
+		if ( ! ref.current ) {
+			return;
+		}
+
+		const element = ref.current;
+
+		function onFocus() {
+			const link = element.querySelector< HTMLAnchorElement >(
+				'.pattern-library__toggle-option.is-active'
+			);
+			link?.focus();
+		}
+
+		element.addEventListener( 'focus', onFocus );
+
+		return () => {
+			element.removeEventListener( 'focus', onFocus );
+		};
+	} );
 
 	return (
-		<motion.div className="pattern-library__toggle pattern-library__toggle--type" layout layoutRoot>
+		<motion.div
+			className="pattern-library__toggle pattern-library__toggle--type"
+			layout
+			layoutRoot
+			// Replicate the keyboard navigation behavior of `ToggleGroupControl`, where the options
+			// within the control are focusable with the arrow keys
+			onKeyDown={ ( event ) => {
+				if ( ref.current?.contains( document.activeElement ) ) {
+					let elementToFocus: Element | null = null;
+
+					if ( event.key === 'ArrowLeft' ) {
+						elementToFocus = document.activeElement?.previousElementSibling ?? null;
+					} else if ( event.key === 'ArrowRight' ) {
+						elementToFocus = document.activeElement?.nextElementSibling ?? null;
+					}
+
+					if ( elementToFocus instanceof HTMLElement ) {
+						elementToFocus.focus();
+					}
+				}
+			} }
+			ref={ ref }
+			tabIndex={ 0 }
+		>
 			<PatternTypeSwitcherOption
 				onChange={ onChange }
 				toolTipText={ translate( 'A collection of blocks that make up one section of a page', {

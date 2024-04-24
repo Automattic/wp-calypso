@@ -5,6 +5,13 @@
 	min-width: 0;
 	padding: 2px;
 	position: relative;
+
+	&:focus-within {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		box-shadow: 0 0 0 0.5px var(--wp-admin-theme-color, #3858e9);
+		outline-offset: -2px;
+		outline: 2px solid transparent;
+	}
 }
 
 a.pattern-library__toggle-option--type {
