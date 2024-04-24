@@ -282,7 +282,19 @@ a.hosting-overview__link-button {
 		transform: rotate(90deg);
 	}
 
-	.domains-table-mobile-card > div:not(:first-child) {
-		display: none;
+	.domains-table-mobile-card {
+		padding: 12px 16px;
+
+		> div:not(:first-child) {
+			display: none;
+		}
+
+		.domains-table__primary-domain-label {
+			margin: 0;
+		}
+
+		&:last-child {
+			border: 0;
+		}
 	}
 }
