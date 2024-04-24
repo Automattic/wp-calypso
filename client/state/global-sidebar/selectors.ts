@@ -11,15 +11,10 @@ const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
 	'github-deployments',
 ];
 
-function shouldShowGlobalSiteViewSection(
-	siteId: number,
-	sectionGroup: string,
-	sectionName: string
-) {
+function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) {
 	return (
 		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
 		!! siteId &&
-		sectionGroup === 'sites' &&
 		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
 	);
 }
@@ -34,8 +29,8 @@ export const getShouldShowGlobalSidebar = (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
 		sectionGroup === 'sites-dashboard' ||
-		( sectionGroup === 'sites' && ! siteId ) ||
-		shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
+		( sectionGroup === 'sites' &&
+			( ! siteId || shouldShowGlobalSiteViewSection( siteId, sectionName ) ) )
 	);
 };
 
@@ -58,9 +53,9 @@ export const getShouldShowGlobalSiteSidebar = (
 	sectionName: string
 ) => {
 	return (
-		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
-		shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
+		sectionGroup === 'sites' &&
+		shouldShowGlobalSiteViewSection( siteId, sectionName )
 	);
 };
 
@@ -71,8 +66,8 @@ export const getShouldShowUnifiedSiteSidebar = (
 	sectionName: string
 ) => {
 	return (
-		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
-		! shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
+		sectionGroup === 'sites' &&
+		! shouldShowGlobalSiteViewSection( siteId, sectionName )
 	);
 };
