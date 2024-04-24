@@ -25,9 +25,8 @@ import {
 	useShowSiteCreationNotice,
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSection } from 'calypso/state/ui/selectors';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews from './sites-dataviews';
@@ -46,7 +45,6 @@ const SitesDashboardV2 = ( {
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const section = useSelector( getSection );
 
 	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
@@ -88,15 +86,11 @@ const SitesDashboardV2 = ( {
 	useEffect( () => {
 		const queryParams = { search: dataViewsState.search?.trim() };
 
-		// There is a chance that the URL is not up to date when it mounts, so delay
-		// the updateQueryParams call to avoid it getting the incorrect URL and then
-		// redirecting back to the previous path.
-		if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
-			updateQueryParams( queryParams );
-		} else {
-			window.setTimeout( () => updateQueryParams( queryParams ) );
-		}
-	}, [ dataViewsState.search, updateQueryParams, section?.group ] );
+		// There is a chance that the URL is not up to date when it mounts, so bump the
+		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
+		// then redirecting back to the previous path.
+		window.setTimeout( () => updateQueryParams( queryParams ) );
+	}, [ dataViewsState.search, updateQueryParams ] );
 
 	// Search, filtering, pagination and sorting sites:
 	useEffect( () => {
