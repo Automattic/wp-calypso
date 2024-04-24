@@ -5,6 +5,7 @@ import {
 	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { StoreProductSlug, useProducts } from '@automattic/data-stores/src/products-list';
 import formatCurrency from '@automattic/format-currency';
 import {
 	type ResponseCart,
@@ -49,8 +50,8 @@ function UpgradeText( {
 	const firstDomain = cart.products.find( isRegistrationOrTransfer );
 	const planName = upsellPlan?.getTitle() ?? '';
 
-	if ( firstDomain && planPrice > firstDomain.cost ) {
-		const extraToPay = planPrice - firstDomain.cost;
+	if ( firstDomain && planPrice > firstDomain.item_subtotal_integer ) {
+		const extraToPay = planPrice - firstDomain.item_subtotal_integer;
 		return translate(
 			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
 			{
@@ -65,8 +66,8 @@ function UpgradeText( {
 		);
 	}
 
-	if ( firstDomain && planPrice < firstDomain.cost ) {
-		const savings = firstDomain.cost - planPrice;
+	if ( firstDomain && planPrice < firstDomain.item_subtotal_integer ) {
+		const savings = firstDomain.item_subtotal_integer - planPrice;
 		return translate(
 			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan instead — your domain comes free for a year.',
 			{
@@ -92,6 +93,18 @@ function UpgradeText( {
 	);
 }
 
+function useGetPriceForProduct( productSlug: string ): number | undefined {
+	const { data } = useProducts( [ productSlug as StoreProductSlug ] );
+	if ( ! data ) {
+		return undefined;
+	}
+	const productData = data[ productSlug as keyof typeof data ];
+	if ( ! productData ) {
+		return undefined;
+	}
+	return productData.costSmallestUnit;
+}
+
 export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserPlanUpsellProps ) {
 	const cartKey = useCartKey();
 	const {
@@ -105,12 +118,12 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const hasPaidPlan = siteHasPaidPlan( selectedSite );
 	const hasPlanInCart = hasPlan( responseCart );
 	const dispatch = useDispatch();
-	const upsellPlan = getPlan( PLAN_PERSONAL );
+	const upsellProductSlug = PLAN_PERSONAL;
+	const upsellPlan = getPlan( upsellProductSlug );
 
 	const translate = useTranslate();
 
-	// FIXME
-	const planPrice: number | undefined = undefined;
+	const planPrice = useGetPriceForProduct( upsellProductSlug );
 
 	if ( ! selectedSite?.ID ) {
 		return null;
