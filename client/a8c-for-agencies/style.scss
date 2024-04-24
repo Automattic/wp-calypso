@@ -226,6 +226,14 @@
 		color: var(--color-primary-60);
 	}
 
+	.search {
+		&,
+		& > *,
+		input[type="search"] {
+			border-radius: 4px;
+		}
+	}
+
 	// Masterbar
 	@media only screen and ( min-width: 782px ) {
 		--masterbar-height: 46px;

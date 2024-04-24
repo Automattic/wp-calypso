@@ -41,6 +41,20 @@ export default function ProductsOverview( { siteId, suggestedProduct }: AssignLi
 		}
 	}, [ siteId, sites ] );
 
+	useEffect( () => {
+		if ( window.location.hash ) {
+			const target = window.location.hash.replace( '#', '' );
+			const element = document.getElementById( target );
+
+			if ( element ) {
+				element.scrollIntoView( {
+					behavior: 'smooth',
+					block: 'start',
+				} );
+			}
+		}
+	}, [] );
+
 	return (
 		<Layout
 			className={ classNames( 'products-overview' ) }

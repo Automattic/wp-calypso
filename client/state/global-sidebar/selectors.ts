@@ -5,29 +5,38 @@ import type { AppState } from 'calypso/types';
 // Calypso pages for which we show the Global Site View.
 // Calypso pages not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-//
-// TODO: for now, we show all Calypso pages in nav unification,
-// as the Global Site View is still in development.
-const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [];
+const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
+	'hosting',
+	'hosting-overview',
+	'github-deployments',
+	'site-monitoring',
+];
 
-// Calypso pages listed here will show the global sidebar when on sites group.
-const GLOBAL_SIDEBAR_SECTION_NAMES: string[] = [ 'hosting', 'hosting-overview', 'site-monitoring' ];
+function shouldShowGlobalSiteViewSection(
+	siteId: number,
+	sectionGroup: string,
+	sectionName: string
+) {
+	return (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		!! siteId &&
+		sectionGroup === 'sites' &&
+		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName )
+	);
+}
 
 export const getShouldShowGlobalSidebar = (
 	_: AppState,
 	siteId: number,
 	sectionGroup: string,
-	sectionName: string // eslint-disable-line @typescript-eslint/no-unused-vars
+	sectionName: string
 ) => {
 	return (
 		sectionGroup === 'me' ||
 		sectionGroup === 'reader' ||
 		sectionGroup === 'sites-dashboard' ||
-		( sectionGroup === 'sites' &&
-			( ! siteId ||
-				( !! siteId &&
-					isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
-					GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName ) ) ) )
+		( sectionGroup === 'sites' && ! siteId ) ||
+		shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
 	);
 };
 
@@ -52,9 +61,7 @@ export const getShouldShowGlobalSiteSidebar = (
 	return (
 		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
-		sectionGroup === 'sites' &&
-		GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
-		! GLOBAL_SIDEBAR_SECTION_NAMES.includes( sectionName )
+		shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
 	);
 };
 
@@ -67,8 +74,6 @@ export const getShouldShowUnifiedSiteSidebar = (
 	return (
 		!! siteId &&
 		isGlobalSiteViewEnabled( state, siteId ) &&
-		sectionGroup === 'sites' &&
-		! GLOBAL_SITE_VIEW_SECTION_NAMES.includes( sectionName ) &&
-		! getShouldShowGlobalSidebar( state, siteId, sectionGroup, sectionName )
+		! shouldShowGlobalSiteViewSection( siteId, sectionGroup, sectionName )
 	);
 };
