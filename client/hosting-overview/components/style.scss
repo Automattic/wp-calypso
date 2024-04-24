@@ -265,6 +265,11 @@ a.hosting-overview__link-button {
 	font-family: "SF Pro Text", $sans;
 	padding: 0;
 
+	table {
+		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+		margin-top: 0;
+	}
+
 	button {
 		font-family: "SF Pro Text", $sans;
 	}
