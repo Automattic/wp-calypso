@@ -14,9 +14,6 @@ import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils'
 
 const MAX_PAGE_WIDTH = '1224px';
 const pagePadding = {
-	paddingInlineStart: '32px',
-	paddingInlineEnd: '32px',
-
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingInlineStart: '16px',
 		paddingInlineEnd: '16px',
@@ -27,8 +24,6 @@ const PageHeader = styled.div( {
 	...pagePadding,
 
 	backgroundColor: 'var( --studio-white )',
-
-	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px',
@@ -42,6 +37,7 @@ const HeaderControls = styled.div( {
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
+	fontWeight: 500,
 } );
 
 export const PageBodyBottomContainer = styled.div( {
