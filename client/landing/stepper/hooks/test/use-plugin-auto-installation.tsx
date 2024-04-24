@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { useSiteMigrationStatus } from '../use-site-migration-status';
+import { usePluginAutoInstallation } from '../use-plugin-auto-installation';
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -26,7 +26,7 @@ const getPluginActivationEndpoint = ( siteId: number ) =>
 const render = ( { siteId } ) => {
 	const queryClient = new QueryClient();
 
-	const renderResult = renderHook( () => useSiteMigrationStatus( PLUGIN, siteId ), {
+	const renderResult = renderHook( () => usePluginAutoInstallation( PLUGIN, siteId ), {
 		wrapper: Wrapper( queryClient ),
 	} );
 
@@ -36,7 +36,7 @@ const render = ( { siteId } ) => {
 	};
 };
 
-describe( 'useSiteMigrationStatus', () => {
+describe( 'usePluginAutoInstallation', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	it( 'returns the initial status', async () => {

@@ -77,7 +77,7 @@ const usePluginActivation = ( pluginName: string, siteIdOrSlug: string ) => {
 	} );
 };
 
-export const useSiteMigrationStatus = (
+export const usePluginAutoInstallation = (
 	plugin: SitePluginParam,
 	siteIdOrSlug?: string
 ): SiteMigrationStatus => {
