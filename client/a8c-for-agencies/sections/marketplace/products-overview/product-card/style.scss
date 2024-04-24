@@ -11,6 +11,11 @@
 			cursor: not-allowed;
 		}
 	}
+
+	// Override discount text color with success color
+	.product-price-with-discount__price .product-price-with-discount__price-discount {
+		color: var(--color-success);
+	}
 }
 
 .product-card__inner {
