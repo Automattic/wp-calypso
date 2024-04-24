@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon, FormLabel } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
@@ -67,6 +68,7 @@ export default function AgencyDetailsForm( {
 	const showCountryFields = countryOptions.length > 0;
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const currentUserEmail = useSelector( getCurrentUserEmail );
+	const isA4ALoggedOutSignup = config.isEnabled( 'a4a-logged-out-signup' );
 
 	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
 	const [ city, setCity ] = useState( initialValues.city ?? '' );
@@ -142,15 +144,17 @@ export default function AgencyDetailsForm( {
 				return;
 			}
 
-			if ( ! email || ! emailValidator.validate( email ) ) {
-				return setValidationError( {
-					email: translate( 'Please enter a valid email address.' ),
-				} );
+			if ( isA4ALoggedOutSignup ) {
+				if ( ! email || ! emailValidator.validate( email ) ) {
+					return setValidationError( {
+						email: translate( 'Please enter a valid email address.' ),
+					} );
+				}
 			}
 
 			onSubmit( payload );
 		},
-		[ showCountryFields, isLoading, email, onSubmit, payload, translate ]
+		[ showCountryFields, isLoading, isA4ALoggedOutSignup, onSubmit, payload, email, translate ]
 	);
 
 	const getServicesOfferedOptions = () => {
@@ -189,7 +193,7 @@ export default function AgencyDetailsForm( {
 		setProductsOffered( products.value );
 	};
 
-	const shouldShowEmail = true;
+	const shouldShowEmail = isA4ALoggedOutSignup;
 	const isDisabledEmail = userLoggedIn;
 
 	return (
