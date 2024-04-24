@@ -282,9 +282,15 @@ a.hosting-overview__link-button {
 		transform: rotate(90deg);
 	}
 
+	.domains-table__bulk-action-container {
+		display: none;
+
+	}
+
 	.domains-table-mobile-card {
 		padding: 12px 16px;
 
+		.components-checkbox-control,
 		> div:not(:first-child) {
 			display: none;
 		}
