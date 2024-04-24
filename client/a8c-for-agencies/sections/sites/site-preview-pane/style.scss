@@ -17,8 +17,7 @@
 		}
 
 		.section-nav-tabs__list {
-			padding: 0 0 0 32px;
-			width: unset;
+			padding: 0 32px;
 		}
 
 		.section-nav-tab__text {
@@ -61,9 +60,6 @@
 				}
 			}
 
-			.section-nav-tabs {
-				width: unset;
-			}
 		}
 
 		@media (max-width: 480px) {

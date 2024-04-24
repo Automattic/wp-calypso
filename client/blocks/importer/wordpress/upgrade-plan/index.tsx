@@ -29,6 +29,7 @@ interface Props {
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
 	trackingEventsProps?: Record< string, unknown >;
+	hideFreeMigrationTrialForNonVerifiedEmail?: boolean;
 }
 
 export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) => {
@@ -48,11 +49,16 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		onCtaClick,
 		isBusy,
 		trackingEventsProps,
+		hideFreeMigrationTrialForNonVerifiedEmail = false,
 	} = props;
 	const { data: migrationTrialEligibility } = useCheckEligibilityMigrationTrialPlan( site.ID );
 	const isEligibleForTrialPlan =
 		migrationTrialEligibility?.eligible ||
 		// If the user's email is unverified, we still want to show the trial plan option
+		migrationTrialEligibility?.error_code === 'email-unverified';
+
+	const hideFreeMigrationTrial =
+		hideFreeMigrationTrialForNonVerifiedEmail &&
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
 	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
@@ -83,7 +89,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
 		const trialText = translate( 'Try 7 days for free' );
 
-		if ( ! isEnabled( 'plans/migration-trial' ) ) {
+		if ( ! isEnabled( 'plans/migration-trial' ) || hideFreeMigrationTrial ) {
 			return (
 				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
 					{ cta }

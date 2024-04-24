@@ -11,10 +11,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { Step } from '../../types';
 
-const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
+const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
+	const hideFreeMigrationTrialForNonVerifiedEmail =
+		( data?.hideFreeMigrationTrialForNonVerifiedEmail as boolean | undefined ) ?? false;
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;
@@ -59,13 +61,14 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation } ) {
 				navigateToVerifyEmailStep={ () => {
 					navigation.submit?.( { verifyEmail: true } );
 				} }
+				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
 			/>
 		</>
 	);
 
 	return (
 		<>
-			<DocumentHead title="Upgrade your plan" />
+			<DocumentHead title={ translate( 'Upgrade your plan', { textOnly: true } ) } />
 			<StepContainer
 				stepName="site-migration-upgrade-plan"
 				shouldHideNavButtons={ false }

@@ -3,6 +3,7 @@ import { Tooltip } from '@wordpress/components';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -40,6 +41,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 	const trackedRequestBackupSite = useTrackCallback( requestBackupSite, trackEventName );
 	const enqueueBackup = () => {
 		trackedRequestBackupSite();
+		recordLogRocketEvent( trackEventName );
 		setDisabled( true );
 		setEnqueued( true );
 	};

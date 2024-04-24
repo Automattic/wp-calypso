@@ -2,6 +2,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Question, QuestionType } from '../types';
 import SurveyCheckboxControl from './survey-checkbox-control';
 import SurveyRadioControl from './survey-radio-control';
@@ -23,7 +24,6 @@ type QuestionStepType = {
 	previousPage: () => void;
 	nextPage: () => void;
 	skip: () => void;
-	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 } & QuestionSelectionType;
 
 const QuestionStep = ( {
@@ -34,7 +34,6 @@ const QuestionStep = ( {
 	question,
 	value,
 	onChange,
-	recordTracksEvent,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
 	const SelectionComponent = questionTypeComponentMap[ question.type ];

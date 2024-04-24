@@ -4,8 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
-// todo: Extract from style.scss not common styles (colors and specific to Jetpack Cloud components)
+// todo: Move the `a4a-style.scss` file to its context
 import './style.scss';
+import './a4a-style.scss';
 
 const getIdByPath = ( item: object, path: string ) => {
 	const fields = path.split( '.' );

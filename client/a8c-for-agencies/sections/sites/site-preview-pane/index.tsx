@@ -8,6 +8,7 @@ import SitePreviewPaneHeader from './site-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
 
 import './style.scss';
+import './a4a-style.scss';
 
 export const createFeaturePreview = (
 	id: string,
