@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { ReactNode } from 'react';
 
 import './style.scss';
-import './a4a-style.scss';
 
 type Props = {
 	children?: ReactNode;
