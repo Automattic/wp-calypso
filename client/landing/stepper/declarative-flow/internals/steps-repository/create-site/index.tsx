@@ -14,7 +14,7 @@ import {
 	isFreeFlow,
 	isLinkInBioFlow,
 	isMigrationFlow,
-	isSiteMigrationSignupFlow,
+	isMigrationSignupFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
 	isEntrepreneurFlow,
@@ -166,7 +166,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
-		! isSiteMigrationSignupFlow( flow );
+		! isMigrationSignupFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {

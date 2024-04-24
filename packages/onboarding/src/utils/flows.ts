@@ -129,7 +129,7 @@ export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
 };
 
-export const isSiteMigrationSignupFlow = ( flowName: string | null ) => {
+export const isMigrationSignupFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ MIGRATION_SIGNUP_FLOW ].includes( flowName ) );
 };
 
