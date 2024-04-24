@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { Modal } from '@wordpress/components';
@@ -9,6 +10,9 @@ import { LoadingBar } from 'calypso/components/loading-bar';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import './style.scss';
+import { useSelector } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { AppState } from 'calypso/types';
 
 type AddSubscribersModalProps = {
 	site: SiteDetails;
@@ -18,6 +22,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
+	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
+		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
+	);
 
 	useEffect( () => {
 		const handleHashChange = () => {
@@ -56,7 +63,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
-	const hasSubscriberLimit = isFreeSite || isBusinessTrial;
+	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 	const isWPCOMSite = ! site?.jetpack || site?.is_wpcom_atomic;
 
 	return (

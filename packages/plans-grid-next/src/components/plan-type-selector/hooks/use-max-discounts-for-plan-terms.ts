@@ -21,7 +21,7 @@ export default function useMaxDiscountsForPlanTerms(
 	plans: PlanSlug[],
 	urlFriendlyTerms: UrlFriendlyTermType[] = [],
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase,
-	selectedSiteId?: number | null
+	siteId?: number | null
 ): Record< UrlFriendlyTermType, number > {
 	const termDefinitionsMapping = urlFriendlyTerms.map( ( urlFriendlyTerm ) => ( {
 		urlFriendlyTerm,
@@ -49,7 +49,7 @@ export default function useMaxDiscountsForPlanTerms(
 
 	const plansPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: allRelatedPlanSlugs,
-		selectedSiteId,
+		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,

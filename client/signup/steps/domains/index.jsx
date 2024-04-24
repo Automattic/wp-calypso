@@ -98,6 +98,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
+		useAlternateDomainMessaging: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -1045,6 +1046,7 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
+				useAlternateDomainMessaging={ this.props.useAlternateDomainMessaging }
 			/>
 		);
 	};
@@ -1104,7 +1106,14 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
+		const {
+			flowName,
+			isAllDomains,
+			useAlternateDomainMessaging,
+			isReskinned,
+			stepSectionName,
+			translate,
+		} = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1150,6 +1159,12 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( useAlternateDomainMessaging ) {
+				return translate(
+					"Find a unique web address that's easy to remember and even easier to share."
+				);
+			}
+
 			return (
 				! stepSectionName &&
 				'domain-transfer' !== flowName &&
@@ -1163,8 +1178,15 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName } =
-			this.props;
+		const {
+			flowName,
+			headerText,
+			isAllDomains,
+			useAlternateDomainMessaging,
+			isReskinned,
+			stepSectionName,
+			translate,
+		} = this.props;
 
 		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
@@ -1182,6 +1204,11 @@ export class RenderDomainsStep extends Component {
 			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
 				return ! stepSectionName && translate( 'Choose your domains' );
 			}
+
+			if ( useAlternateDomainMessaging ) {
+				return translate( 'Claim your domain name' );
+			}
+
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
@@ -1382,7 +1409,7 @@ export class RenderDomainsStep extends Component {
 				shouldHideNavButtons={ this.shouldHideNavButtons() }
 				stepContent={
 					<div>
-						<QueryProductsList />
+						<QueryProductsList type="domains" />
 						{ this.renderContent() }
 					</div>
 				}

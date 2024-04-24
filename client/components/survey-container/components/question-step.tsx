@@ -3,13 +3,13 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { Question, QuestionType } from '../types';
-import QuestionMultipleOptions from './question-multiple-selection';
-import QuestionSingleOption from './question-single-selection';
+import SurveyCheckboxControl from './survey-checkbox-control';
+import SurveyRadioControl from './survey-radio-control';
 import './style.scss';
 
 const questionTypeComponentMap = {
-	[ QuestionType.SINGLE_CHOICE ]: QuestionSingleOption,
-	[ QuestionType.MULTIPLE_CHOICE ]: QuestionMultipleOptions,
+	[ QuestionType.SINGLE_CHOICE ]: SurveyRadioControl,
+	[ QuestionType.MULTIPLE_CHOICE ]: SurveyCheckboxControl,
 };
 
 export type QuestionSelectionType = {
@@ -19,6 +19,7 @@ export type QuestionSelectionType = {
 };
 
 type QuestionStepType = {
+	hideBack: boolean;
 	previousPage: () => void;
 	nextPage: () => void;
 	skip: () => void;
@@ -26,6 +27,7 @@ type QuestionStepType = {
 } & QuestionSelectionType;
 
 const QuestionStep = ( {
+	hideBack,
 	previousPage,
 	nextPage,
 	skip,
@@ -40,6 +42,7 @@ const QuestionStep = ( {
 	return (
 		<StepContainer
 			className="question-step"
+			hideBack={ hideBack }
 			goBack={ previousPage }
 			goNext={ skip }
 			formattedHeader={
@@ -49,7 +52,6 @@ const QuestionStep = ( {
 					subHeaderText={ question.subHeaderText }
 				/>
 			}
-			shouldStickyNavButtons={ true }
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">

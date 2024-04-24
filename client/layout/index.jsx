@@ -294,6 +294,7 @@ class Layout extends Component {
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooCoreProfilerFlow,
+			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
 			woo: this.props.isWooCoreProfilerFlow,
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
@@ -447,11 +448,17 @@ export default withCurrentRoute(
 			const isWooCoreProfilerFlow =
 				[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 				isWooCommerceCoreProfilerFlow( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 				state,
 				siteId,
-				sectionGroup
+				sectionGroup,
+				sectionName
 			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
@@ -468,6 +475,8 @@ export default withCurrentRoute(
 				// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 				! sectionName ||
 				( ! isWooCoreProfilerFlow && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			const isFromAutomatticForAgenciesPlugin =
+				'automattic-for-agencies-client' === currentQuery?.from;
 			const masterbarIsHidden =
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
@@ -511,6 +520,7 @@ export default withCurrentRoute(
 				isJetpackWooDnaFlow,
 				isJetpackMobileFlow,
 				isWooCoreProfilerFlow,
+				isFromAutomatticForAgenciesPlugin,
 				isEligibleForJITM,
 				oauth2Client,
 				wccomFrom,

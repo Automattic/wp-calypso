@@ -158,11 +158,13 @@ class SidebarNotifications extends Component {
 
 const mapStateToProps = ( state, { currentSection } ) => {
 	const sectionGroup = currentSection?.group ?? null;
+	const sectionName = currentSection?.name ?? null;
 	const siteId = getSelectedSiteId( state );
 	const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 		state,
 		siteId,
-		sectionGroup
+		sectionGroup,
+		sectionName
 	);
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),

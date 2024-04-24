@@ -43,6 +43,7 @@ export interface SitePlanData {
 	formattedPrice: string;
 	freeTrial?: boolean;
 	hasDomainCredit?: boolean;
+	hasRedeemedDomainCredit?: boolean;
 	id: number;
 	interval: number;
 	introductoryOfferFormattedPrice?: string;

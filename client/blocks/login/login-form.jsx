@@ -436,7 +436,9 @@ export class LoginForm extends Component {
 		const { currentQuery } = this.props;
 		const isFromMigrationPlugin = currentQuery?.redirect_to?.includes( 'wpcom-migration' );
 		return (
-			( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && ! isFromMigrationPlugin
+			( currentQuery?.skip_user || currentQuery?.allow_site_connection ) &&
+			! isFromMigrationPlugin &&
+			! this.props.isFromAutomatticForAgenciesPlugin
 		);
 	};
 
@@ -1045,6 +1047,8 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
+			isFromAutomatticForAgenciesPlugin:
+				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),

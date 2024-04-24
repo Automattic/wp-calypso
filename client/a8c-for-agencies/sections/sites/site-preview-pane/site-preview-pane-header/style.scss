@@ -2,6 +2,13 @@
 
 .site-preview__header {
 
+	.site-preview__header-content {
+		.site-preview__header-title-summary {
+			word-wrap: anywhere;
+		}
+
+	}
+
 	@media ( min-width: $break-large ) {
 		.site-preview__header-favicon {
 			margin-right: 24px;
@@ -23,7 +30,7 @@
 					font-weight: 500;
 					font-size: rem(32px);
 					line-height: 32px;
-					color: var(--studio-black);
+					color: var(--color-text-black);
 					margin-bottom: 4px;
 				}
 
@@ -34,7 +41,7 @@
 						align-items: center;
 						font-size: rem(18px);
 						font-weight: 400;
-						color: var(--studio-gray-70);
+						color: var(--color-accent-70);
 						line-height: 26px;
 						width: fit-content;
 
@@ -60,7 +67,6 @@
 			display: flex;
 			justify-content: space-between;
 			.site-preview__header-title-summary {
-				word-wrap: anywhere;
 				flex-grow: 1;
 				display: flex;
 				flex-direction: column;
@@ -70,7 +76,7 @@
 					font-weight: 500;
 					font-size: rem(16px);
 					line-height: 16px;
-					color: var(--studio-black);
+					color: var(--color-text-black);
 					margin-bottom: 4px;
 				}
 
@@ -81,7 +87,7 @@
 						align-items: center;
 						font-size: rem(13px);
 						font-weight: 400;
-						color: var(--studio-gray-70);
+						color: var(--color-accent-70);
 						line-height: 13px;
 						width: fit-content;
 						text-decoration: none;

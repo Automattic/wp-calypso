@@ -1,19 +1,17 @@
-import config from '@automattic/calypso-config';
 import { memo } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-
+import useIsRunningInWpAdmin from '../../hooks/use-is-running-in-wpadmin';
 interface Props {
 	balance?: string;
 }
 
 const CreditBalance = ( { balance = '0.00' }: Props ) => {
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	// Hide the section if balance is invalid or is 0
 	if ( ! balance || balance === '0.00' ) {
 		return null;
 	}
-
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	return (
 		<div className="promote-post-i2__aux-wrapper">
@@ -28,7 +26,7 @@ const CreditBalance = ( { balance = '0.00' }: Props ) => {
 									<InlineSupportLink
 										supportContext="blaze_credits"
 										showIcon={ false }
-										showSupportModal={ ! isRunningInJetpack }
+										showSupportModal={ ! isRunningInWpAdmin }
 									/>
 								),
 							},

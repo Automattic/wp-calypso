@@ -87,7 +87,11 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 							) : (
 								<LoadingEllipsis />
 							) }
-							<p className="processing-step__subtitle">{ getSubTitle() }</p>
+							{ isWooExpressFlow( flow ) ? (
+								<p className="processing-step__subtitle">{ getSubTitle() }</p>
+							) : (
+								<></>
+							) }
 						</div>
 					</>
 				}

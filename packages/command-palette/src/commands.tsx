@@ -330,7 +330,7 @@ export const COMMANDS: { [ key: string ]: Command } = {
 	},
 	openReader: {
 		name: 'openReader',
-		label: __( 'Open reader', __i18n_text_domain__ ),
+		label: __( 'Open Reader', __i18n_text_domain__ ),
 		callback: commandNavigation( '/read' ),
 		icon: (
 			<svg height="24" viewBox="4 4 24 24" width="24" xmlns="http://www.w3.org/2000/svg">

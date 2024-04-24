@@ -72,6 +72,7 @@ const withAIAssemblerFlow: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.FREE_POST_SETUP,
 			STEPS.PROCESSING,
+			STEPS.LAUNCHPAD,
 			STEPS.ERROR,
 			STEPS.PLANS,
 			STEPS.DOMAINS,
@@ -84,6 +85,10 @@ const withAIAssemblerFlow: Flow = {
 		const flowName = this.name;
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
+		const siteId = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSite(),
 			[]
 		);
 
@@ -130,7 +135,9 @@ const withAIAssemblerFlow: Flow = {
 						const homePagePostId = results[ 1 ].id;
 						// This will redirect and we will never resolve.
 						setStaticHomepageOnSite( selectedSiteId, homePagePostId ).then( () =>
-							window.location.assign( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` )
+							window.location.assign(
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&postType=page&postId=${ homePagePostId }`
+							)
 						);
 						return Promise.resolve();
 					} );
@@ -282,10 +289,7 @@ const withAIAssemblerFlow: Flow = {
 			}
 		};
 
-		const goNext = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const selectedSiteSlug = providedDependencies?.siteSlug as string;
-			const selectedSiteId = providedDependencies?.siteId as string;
-
+		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'site-prompt': {
 					return navigate( 'pattern-assembler' );
@@ -294,8 +298,8 @@ const withAIAssemblerFlow: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: AI_ASSEMBLER_FLOW,
-						siteId: selectedSiteId,
-						siteSlug: selectedSiteSlug,
+						siteId: siteId || null,
+						siteSlug: null,
 					} );
 					return;
 			}

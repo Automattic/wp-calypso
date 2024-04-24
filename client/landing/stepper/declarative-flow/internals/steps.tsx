@@ -211,6 +211,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
 	},
 
+	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
+		slug: 'site-migration-assign-trial-plan',
+		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
+	},
+
 	SITE_MIGRATION_INSTRUCTIONS: {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
@@ -234,5 +239,10 @@ export const STEPS = {
 	SITE_MIGRATION_PLUGIN_INSTALL: {
 		slug: 'site-migration-plugin-install',
 		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
+	},
+
+	SEGMENTATION_SURVEY: {
+		slug: 'segmentation-survey',
+		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
 	},
 };

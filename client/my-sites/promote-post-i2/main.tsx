@@ -38,6 +38,7 @@ import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import WooBanner from './components/woo-banner';
+import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
@@ -78,9 +79,9 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 };
 
 export default function PromotedPosts( { tab }: Props ) {
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
@@ -248,7 +249,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInJetpack }
+						showSupportModal={ ! isRunningInWpAdmin }
 					/>
 					<Button
 						variant="primary"

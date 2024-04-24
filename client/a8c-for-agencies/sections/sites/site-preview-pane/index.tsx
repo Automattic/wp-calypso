@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -8,6 +8,7 @@ import SitePreviewPaneHeader from './site-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
 
 import './style.scss';
+import './a4a-style.scss';
 
 export const createFeaturePreview = (
 	id: string,
@@ -36,17 +37,7 @@ export default function SitePreviewPane( {
 	closeSitePreviewPane,
 	className,
 }: PreviewPaneProps ) {
-	const [ canDisplayNavTabs, setCanDisplayNavTabs ] = useState( false );
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
-
-	// For future iterations lets consider something other than SectionNav due to the
-	// manipulation we need to make so that the navigation shows correctly on some smaller
-	// screens within the PreviewPane (hence the timeout).
-	useEffect( () => {
-		setTimeout( () => {
-			setCanDisplayNavTabs( true );
-		}, 200 );
-	}, [] );
 
 	// Ensure we have features
 	if ( ! features || ! features.length ) {
@@ -90,8 +81,8 @@ export default function SitePreviewPane( {
 			<SitePreviewPaneHeader site={ site } closeSitePreviewPane={ closeSitePreviewPane } />
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
-					{ navItems && navItems.length > 0 && canDisplayNavTabs ? (
-						<NavTabs>{ navItems }</NavTabs>
+					{ navItems && navItems.length > 0 ? (
+						<NavTabs hasHorizontalScroll={ true }>{ navItems }</NavTabs>
 					) : null }
 				</SectionNav>
 			</div>

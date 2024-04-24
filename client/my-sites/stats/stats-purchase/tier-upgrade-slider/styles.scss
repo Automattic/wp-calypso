@@ -21,7 +21,6 @@ $track-height: 4px;
 
 .tier-upgrade-slider {
 	--jp-white: #fff;
-	--jp-green-50: #008710;
 	--gray-gray-5: #dcdcde;
 
 	margin-top: 42px;
@@ -31,6 +30,19 @@ $track-height: 4px;
 	border: 1px solid var(--gray-gray-5);
 	border-radius: 5px; // stylelint-disable-line scales/radii
 	padding: 16px;
+
+	// Make sure the icon size is not affected by the slider thumb size.
+	.tier-upgrade-slider__thumb-icon {
+		position: absolute;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		padding: 0 4px;
+		left: 3px;
+		box-sizing: border-box;
+	}
 
 	// Remove the box shadow on the slider thumb when not holding.
 	.tier-upgrade-slider__slider:not(.jp-components-pricing-slider--is-holding) {
@@ -43,7 +55,7 @@ $track-height: 4px;
 		width: $thumb-width;
 		height: $slider-height;
 		border-radius: 50%;
-		background-color: var(--jp-green-50);
+		background-color: var(--jp-green-40);
 		color: var(--jp-white);
 	}
 
@@ -124,7 +136,7 @@ $track-height: 4px;
 		}
 	}
 
-	p {
+	b {
 		font-size: $font-headline-small;
 		font-weight: bold;
 		margin: 0;

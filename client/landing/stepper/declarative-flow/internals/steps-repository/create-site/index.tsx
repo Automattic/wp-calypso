@@ -3,6 +3,7 @@ import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	ECOMMERCE_FLOW,
+	ENTREPRENEUR_FLOW,
 	StepContainer,
 	WOOEXPRESS_FLOW,
 	addPlanToCart,
@@ -15,6 +16,7 @@ import {
 	isMigrationFlow,
 	isStartWritingFlow,
 	isWooExpressFlow,
+	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
@@ -29,6 +31,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
@@ -51,6 +54,7 @@ import './styles.scss';
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
+const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 const DEFAULT_START_WRITING_THEME = 'pub/hey';
 
@@ -65,6 +69,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const { mutateAsync: addHostingTrial } = useAddHostingTrialMutation();
+	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation();
 
 	const urlData = useSelector( getUrlData );
 
@@ -90,6 +95,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
+	} else if ( isEntrepreneurFlow( flow ) ) {
+		theme = DEFAULT_ENTREPRENEUR_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
 	} else if ( isLinkInBioFlow( flow ) ) {
@@ -127,7 +134,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
-	const wooFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
+	const wooFlows = [ ECOMMERCE_FLOW, ENTREPRENEUR_FLOW, WOOEXPRESS_FLOW ];
 
 	// These flows default to "Coming Soon"
 	if (
@@ -192,6 +199,16 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		if ( planCartItem?.product_slug === PLAN_HOSTING_TRIAL_MONTHLY && site ) {
 			await addHostingTrial( { siteId: site.siteId, planSlug: PLAN_HOSTING_TRIAL_MONTHLY } );
+
+			return {
+				siteId: site.siteId,
+				siteSlug: site.siteSlug,
+				goToCheckout: false,
+			};
+		}
+
+		if ( isEntrepreneurFlow( flow ) && site ) {
+			await addEcommerceTrial( { siteId: site.siteId } );
 
 			return {
 				siteId: site.siteId,

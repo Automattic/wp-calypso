@@ -445,6 +445,12 @@ import {
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
 } from './constants';
+import {
+	getPlanBusinessTitle,
+	getPlanEcommerceTitle,
+	getPlanPersonalTitle,
+	getPlanPremiumTitle,
+} from './plans';
 import type {
 	BillingTerm,
 	Plan,
@@ -722,9 +728,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
-	getTitle: () =>
-		// translators: Starter is a plan name
-		i18n.translate( 'Starter' ),
+	getTitle: getPlanPersonalTitle,
 	getAudience: () => i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
@@ -873,9 +877,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () =>
-		// translators: Entrepreneur is a plan name
-		i18n.translate( 'Entrepreneur' ),
+	getTitle: getPlanEcommerceTitle,
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -1227,9 +1229,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
-	getTitle: () =>
-		// translators: Explorer is a plan name
-		i18n.translate( 'Explorer' ),
+	getTitle: getPlanPremiumTitle,
 	getAudience: () => i18n.translate( 'Best for freelancers' ),
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
@@ -1425,9 +1425,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
-	getTitle: () =>
-		// translators: Creator is a plan name
-		i18n.translate( 'Creator' ),
+	getTitle: getPlanBusinessTitle,
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),

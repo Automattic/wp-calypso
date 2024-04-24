@@ -19,7 +19,7 @@ const SITE_COLUMN_KEY_MAP: { [ key: string ]: string } = {
 	site: 'url',
 };
 
-export default function A4ASiteSort( {
+export default function SiteSort( {
 	columnKey,
 	isLargeScreen,
 	children,
@@ -30,14 +30,14 @@ export default function A4ASiteSort( {
 	children?: React.ReactNode;
 	isSortable?: boolean;
 } ) {
-	const { sitesViewState, setSitesViewState } = useContext( SitesDashboardContext );
+	const { dataViewsState, setDataViewsState } = useContext( SitesDashboardContext );
 
-	const { field, direction } = sitesViewState.sort;
+	const { field, direction } = dataViewsState.sort;
 
 	const isDefault = field !== SITE_COLUMN_KEY_MAP?.[ columnKey ] || ! field || ! direction;
 
 	const setSort = () => {
-		const updatedSort = { ...sitesViewState.sort };
+		const updatedSort = { ...dataViewsState.sort };
 		if ( isDefault ) {
 			updatedSort.field = SITE_COLUMN_KEY_MAP?.[ columnKey ];
 			updatedSort.direction = SORT_DIRECTION_ASC;
@@ -48,7 +48,7 @@ export default function A4ASiteSort( {
 			updatedSort.direction = '';
 		}
 
-		setSitesViewState( ( sitesViewState ) => ( {
+		setDataViewsState( ( sitesViewState ) => ( {
 			...sitesViewState,
 			sort: updatedSort,
 		} ) );

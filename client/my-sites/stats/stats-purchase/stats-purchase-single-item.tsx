@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
@@ -27,7 +28,6 @@ import {
 	UI_EMOJI_HEART_TIER_THRESHOLD,
 	UI_IMAGE_CELEBRATION_TIER_THRESHOLD,
 } from './stats-purchase-wizard';
-import useAvailableUpgradeTiers from './use-available-upgrade-tiers';
 import './styles.scss';
 
 interface StatsCommercialPurchaseProps {
@@ -346,7 +346,7 @@ function StatsCommercialFlowOptOutForm( {
 		exoclick: 'ExoClick',
 		'live-chat': translate( 'Live Chat' ),
 		'commercial-dext': translate( 'Commercial Domain Extension' ),
-		'contact-details': translate( 'Contact Details' ),
+		'contact-details': translate( 'Business Contact Details' ),
 		'manual-override': translate( 'Manual Override' ),
 		ecommerce: translate( 'Ecommerce' ),
 	};
@@ -408,11 +408,11 @@ function StatsCommercialFlowOptOutForm( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ comemercialClassificationRunAt, siteId ]
 	);
-	const hasRunLessThan3DAgo =
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60 * 24 * 1; // 1 day
+	const canReverify = Date.now() - commercialClassificationLastRunAt > 1000 * 60 * 60 * 24 * 1; // 1 day
+	const hasClassificationStarted = commercialClassificationLastRunAt > 0;
 	const isClassificationInProgress =
-		commercialClassificationLastRunAt > 0 &&
-		Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 60; // 1 hour
+		hasClassificationStarted && Date.now() - commercialClassificationLastRunAt < 1000 * 60 * 30; // half an hour
+	const isClassificationFinished = hasClassificationStarted && ! isClassificationInProgress;
 
 	const isFormSubmissionDisabled =
 		! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked;
@@ -420,7 +420,7 @@ function StatsCommercialFlowOptOutForm( {
 	// Message, button text, and handler differ based on isCommercial flag.
 	const formMessage = isCommercial
 		? translate(
-				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define as site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
+				'Your site is identified as commercial, reasons being ’%(reasons)s’, which means it isn’t eligible for a non-commercial license. You can read more about {{link}}how we define a site as commercial{{/link}}. {{br/}}{{br/}} If you think this determination was made in error or you’ve made changes to comply with the non-commercial terms, you can request a reverification (this can be done once every 24 hours).',
 				{
 					args: {
 						reasons:
@@ -444,8 +444,6 @@ function StatsCommercialFlowOptOutForm( {
 				}
 		  )
 		: translate( 'To use a non-commercial license you must agree to the following:' );
-	const formButton = isCommercial ? translate( 'Contact support' ) : translate( 'Continue' );
-	const formHandler = isCommercial ? handleRequestUpdateClick : handleSwitchToPersonalClick;
 
 	return (
 		<>
@@ -496,21 +494,34 @@ function StatsCommercialFlowOptOutForm( {
 				</ul>
 			</div>
 			<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist-button` }>
-				{ supportsOnDemandCommercialClassification && isCommercial && (
+				{ ! isCommercial && (
 					<Button
 						variant="secondary"
-						disabled={ hasRunLessThan3DAgo || isFormSubmissionDisabled }
-						onClick={ handleCommercialClassification }
+						disabled={ isFormSubmissionDisabled }
+						onClick={ handleSwitchToPersonalClick }
 					>
-						{ translate( 'Reverify' ) }
+						{ translate( 'Continue' ) }
 					</Button>
 				) }
-				{ ( ! supportsOnDemandCommercialClassification ||
-					! isCommercial ||
-					( ! isClassificationInProgress && commercialClassificationLastRunAt > 0 ) ) && (
-					<Button variant="secondary" disabled={ isFormSubmissionDisabled } onClick={ formHandler }>
-						{ formButton }
-					</Button>
+				{ isCommercial && (
+					<>
+						{ supportsOnDemandCommercialClassification && (
+							<Button
+								variant="secondary"
+								disabled={ ! canReverify || isFormSubmissionDisabled }
+								onClick={ handleCommercialClassification }
+							>
+								{ translate( 'Reverify' ) }
+							</Button>
+						) }
+						{ ( ! supportsOnDemandCommercialClassification ||
+							isClassificationFinished ||
+							errorMessage ) && (
+							<Button variant="secondary" onClick={ handleRequestUpdateClick }>
+								{ translate( 'Contact support' ) }
+							</Button>
+						) }
+					</>
 				) }
 			</div>
 			{ supportsOnDemandCommercialClassification && isCommercial && (
@@ -520,18 +531,18 @@ function StatsCommercialFlowOptOutForm( {
 					) }
 					{ isClassificationInProgress && ! errorMessage && (
 						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-							{ translate( 'We are verifying your site. Please come back later…' ) }
+							{ translate(
+								'We are working on verifying your site… Please come back in about 30 minutes. You will have an option to contact support when the process is finished.'
+							) }
 						</p>
 					) }
-					{ ! isClassificationInProgress &&
-						commercialClassificationLastRunAt > 0 &&
-						! errorMessage && (
-							<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
-								{ translate(
-									'We have finished verify your site. If you still think this is an error, please contact our support.'
-								) }
-							</p>
-						) }
+					{ isClassificationFinished && ! errorMessage && (
+						<p className={ `${ COMPONENT_CLASS_NAME }__error-msg` }>
+							{ translate(
+								'We have finished verifying your site. If you still think this is an error, please contact support by clicking the button above.'
+							) }
+						</p>
+					) }
 				</>
 			) }
 		</>

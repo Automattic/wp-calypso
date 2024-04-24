@@ -92,7 +92,7 @@ const useSubmitForm = ( { selectedSite, suggestedProductSlugs, onSuccessCallback
 
 			maybeTrackUnsuggestedSelection( licensesToIssue );
 
-			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'sitesdashboard';
 
 			// If we need a payment method, redirect now to have the user enter one
 			if ( paymentMethodRequired ) {
@@ -100,7 +100,7 @@ const useSubmitForm = ( { selectedSite, suggestedProductSlugs, onSuccessCallback
 					{
 						products: serializedLicenses,
 						...( selectedSite?.ID && { site_id: selectedSite?.ID } ),
-						...( fromDashboard && { source: 'dashboard' } ),
+						...( fromDashboard && { source: 'sitesdashboard' } ),
 					},
 					A4A_PAYMENT_METHODS_ADD_LINK
 				);
