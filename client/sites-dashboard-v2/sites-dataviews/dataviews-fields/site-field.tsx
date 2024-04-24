@@ -23,6 +23,7 @@ type Props = {
 
 const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
+	// todo: This hook is used by the SiteItemThumbnail component below, in a prop showPlaceholder={ ! inView }. It does not work as expected. Fix it.
 	//const { inView } = useInView( { triggerOnce: true } );
 
 	const SiteListTile = styled( ListTile )`

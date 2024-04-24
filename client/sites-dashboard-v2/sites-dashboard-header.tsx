@@ -74,7 +74,6 @@ const popoverHoverStyles = css`
 `;
 
 const SitesDashboardHeader = () => {
-	//const SitesDashboardSitesList = createSitesListComponent();
 	const { __ } = useI18n();
 	const isMobile = useMobileBreakpoint();
 
