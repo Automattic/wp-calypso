@@ -6,13 +6,15 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
+import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
+import Hosting from 'calypso/my-sites/hosting/main';
+import SiteMonitoringOverview from 'calypso/site-monitoring/components/site-monitoring-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
-import PreviewPaneSample from './preview-pane-sample';
 
 import './style.scss';
 
@@ -54,7 +56,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Monitoring" />
+				<SiteMonitoringOverview />
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
@@ -62,7 +64,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="GitHub Deployments" />
+				<GitHubDeployments />
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
@@ -70,7 +72,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Hosting Config" />
+				<Hosting />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site ]
