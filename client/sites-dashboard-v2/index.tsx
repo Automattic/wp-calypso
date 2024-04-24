@@ -1,3 +1,4 @@
+import { useSitesListFiltering } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -16,13 +17,17 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
+import {
+	SitesDashboardQueryParams,
+	handleQueryParamChange,
+} from 'calypso/sites-dashboard/components/sites-content-controls';
 import {
 	useShowSiteCreationNotice,
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSection } from 'calypso/state/ui/selectors';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews from './sites-dataviews';
@@ -32,13 +37,16 @@ import './style.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
+	updateQueryParams: ( params: SitesDashboardQueryParams ) => void;
 }
 
 const SitesDashboardV2 = ( {
 	queryParams: { page = 1, perPage = 96, search, newSiteID },
+	updateQueryParams = handleQueryParamChange,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+	const section = useSelector( getSection );
 
 	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
@@ -62,6 +70,9 @@ const SitesDashboardV2 = ( {
 	initialDataViewsState.search = search ?? '';
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( initialDataViewsState );
 
+	// Filter sites list on search query
+	const filteredSites = useSitesListFiltering( allSites, { search: dataViewsState.search } );
+
 	// Site is selected:
 	useEffect( () => {
 		if ( dataViewsState.selectedItem ) {
@@ -72,6 +83,27 @@ const SitesDashboardV2 = ( {
 			dispatch( setSelectedSiteId( null ) );
 		}
 	}, [ dataViewsState.selectedItem ] );
+
+	const setQueryParams = useCallback(
+		( queryParams: SitesDashboardQueryParams ) => {
+			// There is a chance that the URL is not up to date when it mounts, so delay
+			// the updateQueryParams call to avoid it getting the incorrect URL and then
+			// redirecting back to the previous path.
+			if ( window.location.pathname.startsWith( `/${ section?.group }` ) ) {
+				updateQueryParams( queryParams );
+			} else {
+				window.setTimeout( () => updateQueryParams( queryParams ) );
+			}
+		},
+		[ updateQueryParams, section?.group ]
+	);
+
+	// Update URL with search param on change
+	useEffect( () => {
+		const queryParams = { search: dataViewsState.search?.trim() };
+
+		setQueryParams( queryParams );
+	}, [ dataViewsState.search, setQueryParams ] );
 
 	// Search, filtering, pagination and sorting sites:
 	useEffect( () => {
@@ -121,7 +153,7 @@ const SitesDashboardV2 = ( {
 
 					<DocumentHead title={ __( 'Sites' ) } />
 					<DotcomSitesDataViews
-						sites={ allSites }
+						sites={ filteredSites }
 						isLoading={ isLoading }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
