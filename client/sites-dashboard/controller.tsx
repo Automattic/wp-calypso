@@ -63,6 +63,10 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			}
 		}
 
+		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+			height: calc( 100vh - 32px );
+		}
+
 		// Update body margin to account for the sidebar width
 		@media only screen and ( min-width: 782px ) {
 			div.layout.is-global-sidebar-visible {
