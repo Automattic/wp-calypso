@@ -5,6 +5,7 @@ import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/loc
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -152,14 +153,25 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
-
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
 
+		const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unknown > ) => {
+			return wpcom.req.post(
+				`/sites/${ siteSlug }/settings`,
+				{
+					apiVersion: '1.4',
+				},
+				{
+					...settings,
+				}
+			);
+		};
+
 		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
@@ -241,6 +253,13 @@ const siteMigration: Flow = {
 
 					// If the plugin was installed successfully, go to the migration instructions.
 					if ( providedDependencies?.pluginInstall ) {
+						if ( siteSlug ) {
+							// Remove the in_site_migration_flow option at the end of the flow.
+							await saveSiteSettings( siteSlug, {
+								in_site_migration_flow: false,
+							} );
+						}
+
 						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
 					}
 
@@ -265,6 +284,12 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.verifyEmail ) {
+						if ( siteSlug ) {
+							// Set the in_site_migration_flow option if the user needs to be verified.
+							await saveSiteSettings( siteSlug, {
+								in_site_migration_flow: true,
+							} );
+						}
 						return navigate( STEPS.VERIFY_EMAIL.slug );
 					}
 

@@ -84,37 +84,16 @@ export function ScheduleFormPlugins( props: Props ) {
 	useEffect( () => removeUnlistedSelectedPlugins(), [ plugins ] );
 
 	return (
-		<div className="form-field">
+		<div className="form-field form-field--plugins">
 			<label htmlFor="plugins">{ translate( 'Select plugins' ) }</label>
 			<span className="plugin-select-stats">
 				{ selectedPlugins.length }/
 				{ plugins.length < MAX_SELECTABLE_PLUGINS ? plugins.length : MAX_SELECTABLE_PLUGINS }
 			</span>
 
-			{ ( () => {
-				if ( ( showError && error ) || ( fieldTouched && error ) ) {
-					return (
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							{ error }
-						</Text>
-					);
-				} else if ( isPluginsFetched && plugins.length === 0 ) {
-					return (
-						<Text className="validation-msg">
-							<Icon className="icon-info" icon={ info } size={ 16 } />
-							{ translate(
-								'The current site selection does not have any plugins that can be scheduled for updates.'
-							) }
-						</Text>
-					);
-				}
-				return (
-					<Text className="info-msg">
-						{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
-					</Text>
-				);
-			} )() }
+			<Text className="info-msg">
+				{ translate( 'Plugins not listed below are automatically updated by WordPress.com.' ) }
+			</Text>
 
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<SearchControl
@@ -159,6 +138,25 @@ export function ScheduleFormPlugins( props: Props ) {
 						) ) }
 				</div>
 			</div>
+			{ ( () => {
+				if ( ( showError && error ) || ( fieldTouched && error ) ) {
+					return (
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ error }
+						</Text>
+					);
+				} else if ( isPluginsFetched && plugins.length === 0 ) {
+					return (
+						<Text className="validation-msg">
+							<Icon className="icon-info" icon={ info } size={ 16 } />
+							{ translate(
+								'The current site selection does not have any plugins that can be scheduled for updates.'
+							) }
+						</Text>
+					);
+				}
+			} )() }
 		</div>
 	);
 }

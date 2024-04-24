@@ -49,15 +49,11 @@ export function ScheduleFormPaths( props: Props ) {
 		<div className="form-field form-field--paths">
 			<label htmlFor="paths">{ translate( 'Test URL paths' ) }</label>
 
-			{ newPathError ? (
-				<Text className="validation-msg">{ newPathError }</Text>
-			) : (
-				<Text className="info-msg">
-					{ translate(
-						'Your schedule will test your front page for errors. Do you want to add additional paths?'
-					) }
-				</Text>
-			) }
+			<Text className="info-msg">
+				{ translate(
+					'Your schedule will test your front page for errors. Do you want to add additional paths?'
+				) }
+			</Text>
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<Text className="info-msg">Website URL paths</Text>
 
@@ -87,7 +83,7 @@ export function ScheduleFormPaths( props: Props ) {
 				</div>
 				{ paths.length < MAX_SELECTABLE_PATHS && (
 					<div className="new-path">
-						<Flex className="path" gap={ 2 }>
+						<Flex gap={ 2 }>
 							<FlexItem isBlock={ true }>
 								<InputControl
 									value={ newPath }
@@ -116,6 +112,7 @@ export function ScheduleFormPaths( props: Props ) {
 					</div>
 				) }
 			</div>
+			{ newPathError && <Text className="validation-msg">{ newPathError }</Text> }
 		</div>
 	);
 }

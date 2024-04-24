@@ -18,6 +18,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns } from '@automattic/data-stores';
+import { useCurrentPlan } from '@automattic/data-stores/src/plans';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -67,7 +68,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlanSlug, getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
@@ -265,7 +266,7 @@ const PlansFeaturesMain = ( {
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
 	const translate = useTranslate();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const currentPlan = useSelector( ( state: IAppState ) => getCurrentPlan( state, siteId ) );
+	const currentPlan = useCurrentPlan( { siteId } );
 	const eligibleForWpcomMonthlyPlans = useSelector( ( state: IAppState ) =>
 		isEligibleForWpComMonthlyPlan( state, siteId )
 	);
@@ -444,6 +445,7 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,
@@ -463,6 +465,7 @@ const PlansFeaturesMain = ( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
+		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
 		intent,
 		isDisplayingPlansNeededForFeature,

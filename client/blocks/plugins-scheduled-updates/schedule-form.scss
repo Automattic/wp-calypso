@@ -13,6 +13,10 @@
 		border-radius: 2px;
 	}
 
+	.validation-msg {
+		margin: 0.5rem 0;
+	}
+
 	.components-text-control__input {
 		border-color: var(--studio-gray-10);
 	}
@@ -129,7 +133,6 @@
 	.radio-option {
 		padding: 1.5rem;
 		flex-basis: 100%;
-		margin-bottom: 0.5rem !important;
 
 		.form-field--frequency-container {
 			flex-direction: column;
@@ -190,6 +193,18 @@
 		}
 	}
 
+	.form-field--plugins {
+		.components-base-control__field {
+			display: flex;
+		}
+
+		.components-checkbox-control__label {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+	}
+
 	.form-field--paths {
 		.paths {
 			.components-input-control__backdrop {
@@ -198,6 +213,8 @@
 		}
 
 		.new-path {
+			margin-bottom: 0.75rem;
+
 			.components-input-control__backdrop {
 				border-color: var(--studio-gray-10);
 			}

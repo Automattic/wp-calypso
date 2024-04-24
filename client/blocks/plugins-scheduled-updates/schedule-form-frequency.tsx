@@ -82,6 +82,7 @@ export function ScheduleFormFrequency( props: Props ) {
 								hour={ hour }
 								period={ period }
 								isAmPmFormat={ isAmPmFormat }
+								onTouch={ ( touched ) => setFieldTouched( touched ) }
 								onChange={ ( hour, period ) => {
 									setHour( hour );
 									setPeriod( period );
@@ -121,6 +122,7 @@ export function ScheduleFormFrequency( props: Props ) {
 										hour={ hour }
 										period={ period }
 										isAmPmFormat={ isAmPmFormat }
+										onTouch={ ( touched ) => setFieldTouched( touched ) }
 										onChange={ ( hour, period ) => {
 											setHour( hour );
 											setPeriod( period );

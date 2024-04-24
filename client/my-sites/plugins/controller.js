@@ -180,9 +180,12 @@ export function scheduledUpdates( context, next ) {
 }
 
 export function scheduledUpdatesMultisite( context, next ) {
+	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
 	switch ( context.params.action ) {
 		case 'create':
-			context.primary = createElement( PluginsScheduledUpdatesMultisite );
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+			} );
 			break;
 
 		case 'edit':

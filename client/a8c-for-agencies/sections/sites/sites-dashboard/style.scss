@@ -38,6 +38,10 @@
 		}
 	}
 
+	.components-input-base {
+		border-radius: 4px;
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 

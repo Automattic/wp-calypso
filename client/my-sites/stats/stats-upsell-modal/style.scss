@@ -2,12 +2,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.stats-upsell-modal {
+.components-modal__frame.stats-upsell-modal {
 	max-width: 375px;
 	margin: auto;
 	background: var(--studio-gray-0);
 	@include break-medium {
-		max-width: calc(100% - 32px);
+		max-width: 700px;
 	}
 	.components-modal__content {
 		padding: 0;
@@ -43,7 +43,7 @@
 		background: var(--studio-white);
 		gap: 24px;
 		@include break-medium {
-			width: 294px;
+			flex: 1;
 		}
 	}
 
@@ -51,7 +51,7 @@
 
 		gap: 8px;
 		@include break-medium {
-			width: 245px;
+			flex: 1;
 		}
 	}
 

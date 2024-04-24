@@ -853,7 +853,7 @@ export const chooseDefaultCustomerType = ( {
 }: {
 	currentCustomerType: string;
 	selectedPlan?: string;
-	currentPlan: { productSlug: PlanSlug };
+	currentPlan: { productSlug: PlanSlug | undefined };
 } ): string => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;

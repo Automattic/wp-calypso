@@ -12,9 +12,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
-jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
