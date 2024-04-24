@@ -185,7 +185,7 @@ const siteMigration: Flow = {
 						action: SiteMigrationIdentifyAction;
 					};
 
-					saveSiteSettings( siteSlug, {
+					await saveSiteSettings( siteSlug, {
 						migration_source_site_domain: from,
 					} );
 
