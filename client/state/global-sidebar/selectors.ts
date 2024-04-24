@@ -5,7 +5,11 @@ import type { AppState } from 'calypso/types';
 // Calypso pages for which we show the Global Site View.
 // Calypso pages not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [ 'hosting', 'hosting-overview' ];
+const GLOBAL_SITE_VIEW_SECTION_NAMES: string[] = [
+	'hosting',
+	'hosting-overview',
+	'github-deployments',
+];
 
 function shouldShowGlobalSiteViewSection(
 	siteId: number,
