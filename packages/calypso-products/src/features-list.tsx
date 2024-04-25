@@ -319,6 +319,21 @@ import {
 	FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
 	FEATURE_WOOCOMMERCE_HOSTING,
+	FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS,
+	FEATURE_20_PREMIUM_THEMES,
+	FEATURE_48_PREMIUM_THEMES,
+	FEATURE_AD_SUPPORTED_EXPERIENCE,
+	FEATURE_REAL_TIME_STATS,
+	FEATURE_AUTOMATED_BURST_SCALING,
+	FEATURE_DATABASE_ACCESS,
+	FEATURE_DEVELOPER_TOOLS,
+	FEATURE_FREE_MIGRATIONS,
+	FEATURE_FULL_DATA_CENTER_REDUNDANCIES,
+	FEATURE_GITHUB_DEPLOYMENTS,
+	FEATURE_LIMITED_STATS,
+	FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT,
+	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
+	FEATURE_WEB_SERVER_SETTINGS,
 } from './constants';
 import {
 	isPersonalPlan,
@@ -328,7 +343,7 @@ import {
 	isFreePlan,
 	isWooExpressPlan,
 } from './main';
-import type { FeatureList } from './types';
+import type { FeatureList, FeatureObject } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
@@ -366,7 +381,7 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	}
 };
 
-export const FEATURES_LIST: FeatureList = {
+export const FEATURES_LIST_DEFAULT: FeatureList = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
 		getTitle: () => '',
@@ -2768,3 +2783,148 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Sensei Features */
 };
+
+const FEATURE_LIST_PTM: Record< string, Partial< FeatureObject > > = {
+	[ FEATURE_PRE_INSTALLED_ECOMMERCE_PLUGINS ]: {
+		getPTMTitle: () => i18n.translate( '25+ pre-installed ecommerce plugins ($1,500/year value)' ),
+	},
+	[ FEATURE_20_PREMIUM_THEMES ]: {
+		getPTMTitle: () => i18n.translate( '20 premium themes' ),
+	},
+	[ FEATURE_48_PREMIUM_THEMES ]: {
+		getPTMTitle: () => i18n.translate( '48 premium themes' ),
+	},
+	[ FEATURE_INSTALL_PLUGINS ]: {
+		getPTMTitle: () => i18n.translate( '50,000+ plugins and themes' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
+		getPTMTitle: () => i18n.translate( 'Accept payments (0% fee)(+ standard processing fee)' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
+		getPTMTitle: () => i18n.translate( 'Asccept payments (10% fee)(+ standard processing fee)' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
+		getPTMTitle: () => i18n.translate( 'Accept payments (2% fee)(+ standard processing fee)' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
+		getPTMTitle: () => i18n.translate( 'Accept payments (4% fee)(+ standard processing fee)' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
+		getPTMTitle: () => i18n.translate( 'Accept payments (8% fee)(+ standard processing fee)' ),
+	},
+	[ FEATURE_AD_SUPPORTED_EXPERIENCE ]: {
+		getPTMTitle: () => i18n.translate( 'Ad-supported experience' ),
+	},
+	[ FEATURE_REAL_TIME_STATS ]: {
+		getPTMTitle: () => i18n.translate( 'Advanced Real Time stats' ),
+	},
+	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
+		getPTMTitle: () => i18n.translate( 'All free themes' ),
+	},
+	[ FEATURE_AUTOMATED_BURST_SCALING ]: {
+		getPTMTitle: () => i18n.translate( 'Automated burst scaling' ),
+	},
+	[ FEATURE_STOCK_NOTIFS ]: {
+		getPTMTitle: () => i18n.translate( 'Back-in-stock notifications' ),
+	},
+	[ FEATURE_BULK_DISCOUNTS ]: {
+		getPTMTitle: () => i18n.translate( 'Bulk discounts' ),
+	},
+	// FEATURE_STYLE_CUSTOMIZATION ---> No Change
+	[ FEATURE_DATABASE_ACCESS ]: {
+		getPTMTitle: () => i18n.translate( 'Database Access' ),
+	},
+	[ FEATURE_SECURITY_DDOS ]: {
+		getPTMTitle: () => i18n.translate( 'DDoS protection' ),
+	},
+	[ FEATURE_DEVELOPER_TOOLS ]: {
+		getPTMTitle: () => i18n.translate( 'Developer tools' ),
+	},
+	[ FEATURE_DYNAMIC_UPSELLS ]: {
+		getPTMTitle: () => i18n.translate( 'Dynamic product upsells' ),
+	},
+	[ FEATURE_EMAIL_SUPPORT ]: {
+		getPTMTitle: () => i18n.translate( 'Email support' ),
+	},
+	// FEATURE_FREE_DOMAIN ---> No Change
+	[ FEATURE_FREE_MIGRATIONS ]: {
+		getPTMTitle: () => i18n.translate( 'Free migrations' ),
+	},
+	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
+		getPTMTitle: () => i18n.translate( 'Free SSL' ),
+	},
+	[ FEATURE_FULL_DATA_CENTER_REDUNDANCIES ]: {
+		getPTMTitle: () => i18n.translate( 'Full data center redundancies' ),
+	},
+	[ FEATURE_GITHUB_DEPLOYMENTS ]: {
+		getPTMTitle: () => i18n.translate( 'GitHub deployments' ),
+	},
+	[ FEATURE_CDN ]: {
+		getPTMTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+	},
+	[ FEATURE_COMMUNITY_SUPPORT ]: {
+		getPTMTitle: () => i18n.translate( 'Help center support' ),
+	},
+	// FEATURE_INVENTORY ---> No Change
+	[ FEATURE_LIMITED_STATS ]: {
+		getPTMTitle: () => i18n.translate( 'Limited stats' ),
+	},
+	[ FEATURE_LIVE_CHAT_SUPPORT ]: {
+		getPTMTitle: () => i18n.translate( 'Live chat and email support' ),
+	},
+	[ FEATURE_LOCAL_DEVELOPMENT_ENVIRONMENT ]: {
+		getPTMTitle: () => i18n.translate( 'Local development environment' ),
+	},
+	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
+		getPTMTitle: () => i18n.translate( 'Min/max order quantities' ),
+	},
+	// FEATURE_STORE_DESIGN ---> No Change
+	[ FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS ]: {
+		getPTMTitle: () => i18n.translate( 'Pre-installed plugins for security and performance' ),
+	},
+	// FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ---> No Change
+	// FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING ---> No Change
+	// FEATURE_DEV_TOOLS ---> No Change
+	[ FEATURE_SITE_STAGING_SITES ]: {
+		getPTMTitle: () => i18n.translate( 'Staging site' ),
+	},
+	[ FEATURE_UNLIMITED_USERS ]: {
+		getPTMTitle: () => i18n.translate( 'Unlimited collaborators' ),
+	},
+	// FEATURE_UNLIMITED_PRODUCTS ---> No Change
+	[ FEATURE_BANDWIDTH ]: {
+		getPTMTitle: () => i18n.translate( 'Unmetered bandwidth' ),
+	},
+	[ FEATURE_UNLIMITED_TRAFFIC ]: {
+		getPTMTitle: () => i18n.translate( 'Unlimited traffic' ),
+	},
+	[ FEATURE_VIDEO_UPLOADS ]: {
+		getPTMTitle: () => i18n.translate( 'Upload 4K video with VideoPress' ),
+	},
+	[ FEATURE_POST_EDITS_HISTORY ]: {
+		getPTMTitle: () => i18n.translate( 'Version history and restore' ),
+	},
+	[ FEATURE_WAF_V2 ]: {
+		getPTMTitle: () => i18n.translate( 'Web application firewall' ),
+	},
+	[ FEATURE_WEB_SERVER_SETTINGS ]: {
+		getPTMTitle: () => i18n.translate( 'Web server settings' ),
+	},
+	// FEATURE_WP_SUBDOMAIN_SIGNUP ---> No Change
+};
+
+const FEATURE_LIST = {} as FeatureList;
+
+Object.values( FEATURES_LIST_DEFAULT ).forEach( ( f ) => {
+	const featureSlug = f.getSlug();
+	const initialFeature = FEATURES_LIST_DEFAULT[ featureSlug ];
+	const ptmFeature = FEATURE_LIST_PTM[ featureSlug ];
+	FEATURE_LIST[ featureSlug ] = { ...initialFeature, ...ptmFeature };
+
+	/* If no PTM title is defined we default to the title */
+	if ( typeof FEATURE_LIST[ featureSlug ].getPTMTitle !== 'function' ) {
+		FEATURE_LIST[ featureSlug ].getPTMTitle = FEATURE_LIST[ featureSlug ].getTitle;
+	}
+} );
+
+export { FEATURE_LIST };

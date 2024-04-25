@@ -42,6 +42,11 @@ export type Feature = string;
 export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
+	/**
+	 * Project trail map feature updates
+	 * pau2Xa-5Nw-p2
+	 */
+	getPTMTitle?: ( params?: { domainName?: string; planSlug?: string } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
 	getHeader?: () => TranslateResult;
