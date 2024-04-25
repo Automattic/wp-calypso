@@ -18,11 +18,11 @@ import {
 	type ScheduleUpdates,
 	useUpdateScheduleQuery,
 } from 'calypso/data/plugins/use-update-schedules-query';
+import { useDateTimeFormat } from '../plugin-scheduled-updates-common/hooks/use-date-time-format';
+import { usePreparePluginsTooltipInfo } from '../plugin-scheduled-updates-common/hooks/use-prepare-plugins-tooltip-info';
+import { usePrepareScheduleName } from '../plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
-import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
-import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
 import { useSiteAdminUrl } from './hooks/use-site-admin-url';
-import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 import {
 	getLogDetails,
@@ -46,7 +46,7 @@ export const ScheduleLogs = ( props: Props ) => {
 		dateFormat: phpDateFormat,
 		timeFormat: phpTimeFormat,
 		convertPhpToMomentFormat,
-	} = useSiteDateTimeFormat( siteSlug );
+	} = useDateTimeFormat( siteSlug );
 	const dateFormat = convertPhpToMomentFormat( phpDateFormat );
 	const timeFormat = addSecondsToFormat( convertPhpToMomentFormat( phpTimeFormat ) );
 	const { prepareScheduleName } = usePrepareScheduleName();

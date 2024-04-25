@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
+import { useDateTimeFormat } from '../plugin-scheduled-updates-common/hooks/use-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ScheduleFormTime } from './schedule-form-time';
 import { DAILY_OPTION, DAY_OPTIONS, DEFAULT_HOUR, WEEKLY_OPTION } from './schedule-form.const';
@@ -40,7 +40,7 @@ export function ScheduleFormFrequency( props: Props ) {
 		onChange,
 		onTouch,
 	} = props;
-	const { isAmPmPhpTimeFormat } = useSiteDateTimeFormat( siteSlug );
+	const { isAmPmPhpTimeFormat } = useDateTimeFormat( siteSlug );
 	const isAmPmFormat = isAmPmPhpTimeFormat();
 
 	const initDate = initTimestamp
