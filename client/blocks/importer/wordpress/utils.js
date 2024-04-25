@@ -1,6 +1,10 @@
 export const SESSION_STORAGE_IS_MIGRATE_FROM_WP = 'is_migrate_from_wp';
 export const SESSION_STORAGE_MIGRATION_STATUS = 'migration_status';
 
+/**
+ * Ignore fatals when trying to access window.sessionStorage so that we do not
+ * see them logged in Sentry. Please don't use this for anything else.
+ */
 function ignoreFatalsForSessionStorage( callback ) {
 	try {
 		return callback();
