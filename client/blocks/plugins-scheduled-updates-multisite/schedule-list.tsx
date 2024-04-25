@@ -23,6 +23,7 @@ export const ScheduleList = ( props: Props ) => {
 	const [ removeDialogOpen, setRemoveDialogOpen ] = useState( false );
 	const [ selectedScheduleId, setSelectedScheduleId ] = useState< string | undefined >();
 	const [ selectedSiteSlugs, setSelectedSiteSlugs ] = useState< string[] >( [] );
+
 	useEffect( () => {
 		const schedule = schedules?.find( ( schedule ) => schedule.schedule_id === selectedScheduleId );
 		setSelectedSiteSlugs( schedule?.sites?.map( ( site ) => site.slug ) || [] );
@@ -35,8 +36,6 @@ export const ScheduleList = ( props: Props ) => {
 		setSelectedScheduleId( id );
 	};
 
-export const ScheduleList = () => {
-	const { data } = useMultisiteUpdateScheduleQuery( true );
 	const closeRemoveConfirm = () => {
 		setRemoveDialogOpen( false );
 		setSelectedScheduleId( undefined );
