@@ -55,6 +55,12 @@
 	margin-bottom: 8px;
 }
 
+@media ( max-width: $break-xlarge ) {
+	.hosting-overview__plan-card-header {
+		margin-bottom: 4px;
+	}
+}
+
 .hosting-overview .hosting-overview__plan-price {
 	align-items: center;
 }
@@ -80,12 +86,16 @@
 }
 
 @media ( max-width: $break-xlarge ) {
-	.hosting-overview__plan-card-title,
+	.hosting-overview__plan-card-title {
+		font-size: $font-size-header-small;
+		font-weight: 500;
+		line-height: 26px;
+	}
+
 	.hosting-overview__plan-price,
 	.hosting-overview__plan-price .plan-price__currency-symbol,
 	.hosting-overview__plan-price .plan-price__integer,
 	.hosting-overview__plan-price .plan-price__fraction {
-		font-family: "SF Pro", $sans;
 		font-size: rem(18px); //typography-exception
 		line-height: 26px;
 	}
