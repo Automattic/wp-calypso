@@ -58,8 +58,9 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		migrationTrialEligibility?.error_code === 'email-unverified';
 
 	const hideFreeMigrationTrial =
-		hideFreeMigrationTrialForNonVerifiedEmail &&
-		migrationTrialEligibility?.error_code === 'email-unverified';
+		( hideFreeMigrationTrialForNonVerifiedEmail &&
+			migrationTrialEligibility?.error_code === 'email-unverified' ) ||
+		! isEnabled( 'plans/migration-trial' );
 
 	const { addHostingTrial, isPending: isAddingTrial } = useAddHostingTrialMutation( {
 		onSuccess: () => {
@@ -80,16 +81,24 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 	};
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', trackingEventsProps )
-		);
-	}, [] );
+		// Wait for the eligibility to return before triggering the Tracks event
+		if ( ! migrationTrialEligibility ) {
+			return;
+		}
+
+		const allEventProps = {
+			...trackingEventsProps,
+			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
+		};
+
+		dispatch( recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', allEventProps ) );
+	}, [ migrationTrialEligibility, hideFreeMigrationTrial ] );
 
 	const renderCTAs = () => {
 		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
 		const trialText = translate( 'Try 7 days for free' );
 
-		if ( ! isEnabled( 'plans/migration-trial' ) || hideFreeMigrationTrial ) {
+		if ( hideFreeMigrationTrial ) {
 			return (
 				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
 					{ cta }
