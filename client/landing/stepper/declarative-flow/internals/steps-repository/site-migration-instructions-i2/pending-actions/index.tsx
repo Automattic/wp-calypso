@@ -1,4 +1,5 @@
 import { Spinner } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -16,7 +17,7 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 			icon = <Spinner />;
 			break;
 		case 'success':
-			icon = '✅';
+			icon = <Icon icon={ check } width={ 20 } />;
 			break;
 		case 'error':
 			icon = '❌';
@@ -26,11 +27,11 @@ const VisualStateIndicator = ( { state, text }: VisualStateIndicatorProps ) => {
 			break;
 	}
 	return (
-		<>
+		<span className="pending-actions__action">
 			{ state === 'pending' && <i>{ text }</i> }
 			{ state !== 'pending' && text }
-			<span className="visual-state-indicator">{ icon }</span>
-		</>
+			<span className="pending-actions__action--icon">{ icon }</span>
+		</span>
 	);
 };
 

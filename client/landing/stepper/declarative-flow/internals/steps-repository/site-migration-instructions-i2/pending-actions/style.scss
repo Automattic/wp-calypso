@@ -1,10 +1,4 @@
 .pending-actions {
-	.visual-state-indicator .components-spinner {
-		margin: 5px 11px -3px;
-	}
-	.visual-state-indicator:not(:has(.components-spinner)) {
-		margin: 5px 11px -3px;
-	}
 	.fade-in {
 		opacity: 0;
 		transition: opacity 0.3s ease-in-out;
@@ -12,5 +6,24 @@
 
 	.fade-in.active {
 		opacity: 1;
+	}
+
+	ul {
+		margin-top: 5px;
+	}
+	li {
+		margin-bottom: 0;
+	}
+
+	&__action {
+		display: inline-flex;
+
+		&--icon {
+			fill: #008a20;
+		}
+
+		.components-spinner {
+			margin: 5px 11px -3px;
+		}
 	}
 }
