@@ -8,7 +8,7 @@ import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-lis
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -73,6 +73,7 @@ const SitesDashboardV2 = ( {
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+	const initialSortApplied = useRef( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
@@ -109,18 +110,30 @@ const SitesDashboardV2 = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
-		sort: hasSitesSortingPreferenceLoaded
-			? {
-					field:
-						siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '',
-					direction: sitesSorting.sortOrder,
-			  }
-			: {
-					field: '',
-					direction: 'asc' as const,
-			  },
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+
+	// Ensure site sort preference is applied when it loads in. This isn't always available on
+	// initial mount.
+	useEffect( () => {
+		// Ensure we set and check initialSortApplied to prevent infinite loops when changing sort
+		// values after initial sort.
+		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied.current ) {
+			const newSortField =
+				siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '';
+			const newSortDirection = sitesSorting.sortOrder;
+
+			setDataViewsState( ( prevState ) => ( {
+				...prevState,
+				sort: {
+					field: newSortField,
+					direction: newSortDirection,
+				},
+			} ) );
+
+			initialSortApplied.current = true;
+		}
+	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort ] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
