@@ -11,12 +11,19 @@ const ImporterWordpress: Step = function ( props ) {
 	const queryParams = useQuery();
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
+	const siteSlug = queryParams.get( 'siteSlug' );
 
 	return (
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ () => {} }
+					onConfirm={ () => {
+						props.navigation?.submit?.( {
+							providedDependencies: {
+								url: `/checkout/${ siteSlug }/business`,
+							},
+						} );
+					} }
 					migrateFrom={ migrateFrom }
 					navigateBack={ props.navigation.goBack }
 				/>

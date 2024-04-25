@@ -12,6 +12,9 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 	const translate = useTranslate();
 	const importSiteHostName = props.migrateFrom || translate( 'your site' );
 
+	const acceptMigrationAssistance = () => {
+		props.onConfirm?.();
+	};
 	return (
 		<ConfirmModal
 			compact={ false }
@@ -19,7 +22,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 			confirmText={ translate( 'Take the deal' ) }
 			cancelText={ translate( 'No, thanks' ) }
 			onClose={ props.navigateBack }
-			onConfirm={ () => {} }
+			onConfirm={ () => acceptMigrationAssistance() }
 		>
 			<p>
 				{ translate(

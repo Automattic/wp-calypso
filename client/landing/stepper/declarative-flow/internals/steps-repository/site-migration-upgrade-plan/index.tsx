@@ -37,7 +37,12 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ () => {} }
+					onConfirm={ () => {
+						navigation.submit?.( {
+							goToCheckout: true,
+							plan: plan.getPathSlug ? plan.getPathSlug() : '',
+						} );
+					} }
 					migrateFrom={ migrateFrom }
 					navigateBack={ navigation.goBack }
 				/>
