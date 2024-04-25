@@ -9,9 +9,9 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migraiton-key';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MaybeLink } from './maybe-link';
+import { MaybeLink } from '../site-migration-instructions/maybe-link';
+import { ShowHideInput } from '../site-migration-instructions/show-hide-input';
 import { PendingActions } from './pending-actions';
-import { ShowHideInput } from './show-hide-input';
 import type { Step } from '../../types';
 import './style.scss';
 
