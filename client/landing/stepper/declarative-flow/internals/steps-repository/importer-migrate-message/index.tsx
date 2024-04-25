@@ -21,8 +21,8 @@ const ImporterMigrateMessage: Step = () => {
 
 	const { data: supportActivity, isLoading: isLoadingTickets } =
 		useMigrationSupportActivity( siteSlug );
-	const { isIdle, sendTicket } = useSubmitMigrationTicket();
-	const showLoading = isLoadingTickets || isIdle;
+	const { isPending, sendTicket } = useSubmitMigrationTicket();
+	const showLoading = isLoadingTickets || isPending;
 
 	const locale = useLocale();
 
