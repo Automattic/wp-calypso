@@ -30,13 +30,13 @@ export function ScheduleFormPaths( props: Props ) {
 	const [ newPath, setNewPath ] = useState( '' );
 	const [ newPathError, setNewPathError ] = useState( '' );
 	const [ newPathSubmitted, setNewPathSubmitted ] = useState( false );
-	const { data: verificationData, isFetching: isVerifying } = useScheduledUpdatesVerifyPathQuery(
-		siteId as number,
-		newPath,
-		{
-			enabled: newPathSubmitted && !! newPath && !! siteId,
-		}
-	);
+	const {
+		data: verificationData,
+		isFetching: isVerifying,
+		isFetched: isVerified,
+	} = useScheduledUpdatesVerifyPathQuery( siteId as number, newPath, {
+		enabled: newPathSubmitted && !! newPath && !! siteId,
+	} );
 	const pathAvailable = verificationData?.available;
 
 	/**
@@ -62,6 +62,12 @@ export function ScheduleFormPaths( props: Props ) {
 		[ paths ]
 	);
 
+	const handleAsyncValidationError = useCallback( () => {
+		if ( newPathSubmitted && isVerified && ! pathAvailable ) {
+			setNewPathError( translate( 'This path is not available.' ) );
+		}
+	}, [ newPathSubmitted, isVerified, pathAvailable ] );
+
 	const onNewPathSubmit = useCallback( () => {
 		const validationErrors = validatePath( newPath, paths );
 		! validationErrors && setNewPathSubmitted( true );
@@ -72,6 +78,7 @@ export function ScheduleFormPaths( props: Props ) {
 	 * Effects
 	 */
 	useEffect( addPath, [ addPath ] );
+	useEffect( handleAsyncValidationError, [ handleAsyncValidationError ] );
 	useEffect( () => setNewPathSubmitted( false ), [ newPath ] );
 
 	return (
