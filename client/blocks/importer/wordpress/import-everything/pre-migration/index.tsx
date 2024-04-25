@@ -1,11 +1,9 @@
-import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSiteMigrateInfo } from 'calypso/blocks/importer/hooks/use-site-can-migrate';
 import { useSiteCredentialsInfo } from 'calypso/blocks/importer/hooks/use-site-credentials-info';
-import { StepNavigator } from 'calypso/blocks/importer/types';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { MigrationReady } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/migration-ready';
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
@@ -34,7 +32,7 @@ interface PreMigrationProps {
 	startImport: ( props?: StartImportTrackingProps ) => void;
 	navigateToVerifyEmailStep: () => void;
 	onContentOnlyClick: () => void;
-	stepNavigator: StepNavigator;
+	onFreeTrialClick: () => void;
 }
 
 export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = (
@@ -47,10 +45,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		isTargetSitePlanCompatible,
 		isMigrateFromWp,
 		isTrial,
-		stepNavigator,
 		startImport,
 		navigateToVerifyEmailStep,
 		onContentOnlyClick,
+		onFreeTrialClick,
 	} = props;
 
 	const translate = useTranslate();
@@ -244,12 +242,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
-						onFreeTrialClick={ () => {
-							stepNavigator.goToCheckoutPage( 'everything', {
-								siteSlug: targetSite.slug,
-								plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-							} );
-						} }
+						onFreeTrialClick={ onFreeTrialClick }
 						ctaText={ translate( 'Upgrade and migrate' ) }
 						onCtaClick={ onUpgradeAndMigrateClick }
 						onContentOnlyClick={ onContentOnlyClick }
