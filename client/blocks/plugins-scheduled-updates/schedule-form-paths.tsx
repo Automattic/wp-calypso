@@ -5,10 +5,13 @@ import {
 	Flex,
 	FlexItem,
 } from '@wordpress/components';
-import { check, plus, closeSmall } from '@wordpress/icons';
+import { check, plus, closeSmall, rotateRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useScheduledUpdatesVerifyPathQuery } from 'calypso/data/plugins/use-scheduled-updates-verify-path-query';
+import { useSelector } from 'calypso/state';
+import getSiteId from '../../state/sites/selectors/get-site-id';
 import { MAX_SELECTABLE_PATHS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { prepareRelativePath, validatePath } from './schedule-form.helper';
@@ -20,11 +23,37 @@ interface Props {
 export function ScheduleFormPaths( props: Props ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlug();
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
 	const { paths: initPaths = [], borderWrapper = true } = props;
 
 	const [ paths, setPaths ] = useState( initPaths );
 	const [ newPath, setNewPath ] = useState( '' );
 	const [ newPathError, setNewPathError ] = useState( '' );
+	const [ newPathSubmitted, setNewPathSubmitted ] = useState( false );
+	const { data: verificationData, isFetching: isVerifying } = useScheduledUpdatesVerifyPathQuery(
+		siteId as number,
+		newPath,
+		{
+			enabled: newPathSubmitted && !! newPath && !! siteId,
+		}
+	);
+	const pathAvailable = verificationData?.available;
+
+	/**
+	 * Callbacks
+	 */
+	const resetFormState = useCallback( () => {
+		setNewPath( '' );
+		setNewPathError( '' );
+		setNewPathSubmitted( false );
+	}, [] );
+
+	const addPath = useCallback( () => {
+		if ( newPathSubmitted && ! newPathError && pathAvailable ) {
+			setPaths( [ ...paths, newPath ] );
+			resetFormState();
+		}
+	}, [ newPath, paths, newPathSubmitted, newPathError, pathAvailable ] );
 
 	const removePath = useCallback(
 		( index: number ) => {
@@ -34,16 +63,16 @@ export function ScheduleFormPaths( props: Props ) {
 	);
 
 	const onNewPathSubmit = useCallback( () => {
-		const pathError = validatePath( newPath, paths );
-		setNewPathError( pathError );
+		const validationErrors = validatePath( newPath, paths );
+		! validationErrors && setNewPathSubmitted( true );
+		setNewPathError( validationErrors );
+	}, [ newPath, paths, newPathError ] );
 
-		if ( pathError ) {
-			return;
-		}
-
-		setPaths( [ ...paths, newPath ] );
-		setNewPath( '' );
-	}, [ newPath, paths ] );
+	/**
+	 * Effects
+	 */
+	useEffect( addPath, [ addPath ] );
+	useEffect( () => setNewPathSubmitted( false ), [ newPath ] );
 
 	return (
 		<div className="form-field form-field--paths">
@@ -116,7 +145,9 @@ export function ScheduleFormPaths( props: Props ) {
 							</FlexItem>
 							<FlexItem>
 								<Button
-									icon={ plus }
+									className={ classnames( { 'is-verifying': isVerifying } ) }
+									icon={ isVerifying ? rotateRight : plus }
+									disabled={ isVerifying }
 									variant="secondary"
 									onClick={ onNewPathSubmit }
 									__next40pxDefaultSize
