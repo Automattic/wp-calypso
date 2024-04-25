@@ -1,5 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { loadScript } from '@automattic/load-script';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
@@ -7,6 +8,7 @@ import AgencyDetailsForm from 'calypso/a8c-for-agencies/sections/signup/agency-d
 import useCreateAgencyMutation from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-create-agency-mutation';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import CardHeading from 'calypso/components/card-heading';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -18,6 +20,51 @@ import type { APIError } from 'calypso/state/a8c-for-agencies/types';
 
 import './style.scss';
 
+async function handleWPCOMRedirect( payload: AgencyDetailsPayload, userLocale: string ) {
+	try {
+		const userValidationResponse = await wpcom.req.post( '/signups/validation/user', {
+			email: payload.email,
+		} );
+
+		const isNewUser = userValidationResponse && userValidationResponse.success;
+		const returnUri = new URL( '/signup/resume', window.location.origin );
+		const authUrl = new URL( config( 'wpcom_authorize_endpoint' ) );
+		authUrl.search = new URLSearchParams( {
+			response_type: 'token',
+			client_id: config( 'oauth_client_id' ),
+			redirect_uri: returnUri.toString(),
+			scope: 'global',
+		} ).toString();
+
+		let wpcomRedirectUrl = undefined;
+
+		if ( isNewUser ) {
+			wpcomRedirectUrl = new URL(
+				localizeUrl( config( 'wpcom_signup_url' ), userLocale ) + 'wpcc'
+			);
+			wpcomRedirectUrl.search = new URLSearchParams( {
+				response_type: 'token',
+				oauth2_client_id: config( 'oauth_client_id' ),
+				oauth2_redirect: authUrl.toString(),
+				email_address: payload.email ?? '',
+			} ).toString();
+		} else {
+			wpcomRedirectUrl = new URL( localizeUrl( config( 'wpcom_login_url' ), userLocale ) );
+			wpcomRedirectUrl.search = new URLSearchParams( {
+				client_id: config( 'oauth_client_id' ),
+				redirect_to: authUrl.toString(),
+				email_address: payload.email ?? '',
+			} ).toString();
+		}
+
+		window.location.href = wpcomRedirectUrl.toString();
+	} catch ( e ) {
+		// TODO: Handle error.
+		// eslint-disable-next-line no-console
+		console.log( e );
+	}
+}
+
 export default function SignupForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -28,6 +75,7 @@ export default function SignupForm() {
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const isA4ALoggedOutSignup = isEnabled( 'a4a-logged-out-signup' );
 	const shouldRedirectToWPCOM = ! userLoggedIn && isA4ALoggedOutSignup;
+	const userLocale = useLocale();
 
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
@@ -39,12 +87,12 @@ export default function SignupForm() {
 	} );
 
 	const onSubmit = useCallback(
-		( payload: AgencyDetailsPayload ) => {
+		async ( payload: AgencyDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
 
 			if ( shouldRedirectToWPCOM ) {
 				saveSignupDataToLocalStorage( payload );
-				//TODO: add logic and redirect to wpcom
+				await handleWPCOMRedirect( payload, userLocale );
 				return;
 			}
 
@@ -69,7 +117,7 @@ export default function SignupForm() {
 				} )
 			);
 		},
-		[ notificationId, createAgency, dispatch, shouldRedirectToWPCOM ]
+		[ dispatch, shouldRedirectToWPCOM, createAgency, userLocale, notificationId ]
 	);
 
 	useEffect( () => {
