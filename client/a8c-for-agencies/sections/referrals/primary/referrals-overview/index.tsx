@@ -1,6 +1,7 @@
+import NoticeBanner from '@automattic/components/src/notice-banner';
 import { plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -27,6 +28,8 @@ export default function ReferralsOverview() {
 	const dispatch = useDispatch();
 
 	const title = translate( 'Referrals' );
+
+	const [ successNoticeDismissed, setSuccessNoticeDismissed ] = useState( false );
 
 	const onAddBankDetailsClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
@@ -58,6 +61,15 @@ export default function ReferralsOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
+				{ status === 'Pending' && ! successNoticeDismissed && (
+					<div className="referrals-overview__section-notice">
+						<NoticeBanner level="success" onClose={ () => setSuccessNoticeDismissed( true ) }>
+							{ translate(
+								'Thanks for entering your bank and tax information. Our team will confirm and review your submission.'
+							) }
+						</NoticeBanner>
+					</div>
+				) }
 				<div className="referrals-overview__section-heading">
 					{ translate( 'Receive up to 50% revenue share on Automattic product referrals.' ) }
 				</div>
