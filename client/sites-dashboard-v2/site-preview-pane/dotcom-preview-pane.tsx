@@ -8,11 +8,15 @@ import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/it
 import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
 import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
 import Hosting from 'calypso/my-sites/hosting/main';
+import SiteMonitoringPhpLogs from 'calypso/site-monitoring/components/php-logs';
+import SiteMonitoringServerLogs from 'calypso/site-monitoring/components/server-logs';
 import SiteMonitoringOverview from 'calypso/site-monitoring/components/site-monitoring-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_PHP_LOGS,
+	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
 
@@ -57,6 +61,22 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<SiteMonitoringOverview />
+			),
+			createFeaturePreview(
+				DOTCOM_PHP_LOGS,
+				__( 'PHP Logs' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteMonitoringPhpLogs />
+			),
+			createFeaturePreview(
+				DOTCOM_SERVER_LOGS,
+				__( 'Server Logs' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteMonitoringServerLogs />
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
