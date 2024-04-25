@@ -126,7 +126,7 @@ const DotcomSitesDataViews = ( {
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
 		items: sites,
 		itemFieldId: 'ID',
-		searchLabel: __( 'Search for sites' ),
+		searchLabel: __( 'Search by name or domain…' ),
 		fields,
 		actions: [],
 		setDataViewsState: setDataViewsState,
