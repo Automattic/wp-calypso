@@ -60,13 +60,20 @@ const PlanCard: FC = () => {
 								height="32px"
 							/>
 						) : (
-							<PlanPrice
-								className="hosting-overview__plan-price"
-								currencyCode={ planData?.currencyCode }
-								displayPerMonthNotation
-								isSmallestUnit
-								rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
-							/>
+							<div className="hosting-overview__plan-price-wrapper">
+								<PlanPrice
+									className="hosting-overview__plan-price"
+									currencyCode={ planData?.currencyCode }
+									isSmallestUnit
+									rawPrice={ pricing?.[ planSlug ].originalPrice.monthly }
+								/>
+								<span className="hosting-overview__plan-price-term">
+									{ translate( '/mo', {
+										comment:
+											'/mo is short for per month, referring to the monthly price of a site plan',
+									} ) }
+								</span>
+							</div>
 						) }
 						{ isLoading ? (
 							<LoadingPlaceholder
@@ -76,21 +83,24 @@ const PlanCard: FC = () => {
 							/>
 						) : (
 							<div className="hosting-overview__plan-info">
-								{ translate( '{{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.', {
-									args: {
-										rawPrice: formatCurrency(
-											pricing?.[ planSlug ].originalPrice.full ?? 0,
-											planData?.currencyCode ?? '',
-											{
-												stripZeros: true,
-												isSmallestUnit: true,
-											}
-										),
-									},
-									components: {
-										span: <span />,
-									},
-								} ) }
+								{ translate(
+									'per month, {{span}}%(rawPrice)s{{/span}} billed annually, excludes taxes.',
+									{
+										args: {
+											rawPrice: formatCurrency(
+												pricing?.[ planSlug ].originalPrice.full ?? 0,
+												planData?.currencyCode ?? '',
+												{
+													stripZeros: true,
+													isSmallestUnit: true,
+												}
+											),
+										},
+										components: {
+											span: <span />,
+										},
+									}
+								) }
 							</div>
 						) }
 						{ isLoading ? (
