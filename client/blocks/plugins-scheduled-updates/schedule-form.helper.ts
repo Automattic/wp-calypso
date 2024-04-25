@@ -72,7 +72,8 @@ export const prepareRelativePath = ( url: string ): string => {
 	const withoutProtocol = urlRegex.test( value );
 
 	try {
-		return new URL( withoutProtocol ? `http://${ value }` : value ).pathname;
+		const _url = new URL( withoutProtocol ? `http://${ value }` : value );
+		return `${ _url.pathname }${ _url.search }${ _url.hash }`;
 	} catch ( e ) {
 		return value.startsWith( '/' ) ? value : `/${ value }`;
 	}
