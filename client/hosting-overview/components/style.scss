@@ -80,9 +80,19 @@
 	line-height: 32px;
 }
 
+.hosting-overview__plan-price .plan-price__integer {
+	margin-right: 0;
+}
+
+.hosting-overview__plan-price .plan-price__fraction {
+	font-weight: 400;
+}
+
 .hosting-overview__plan-price .plan-price__term {
 	color: var(--studio-gray-100);
 	font-family: "SF Pro", $sans;
+	font-size: $font-body-extra-small;
+	line-height: 12px;
 }
 
 @media ( max-width: $break-xlarge ) {
