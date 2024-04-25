@@ -63,7 +63,7 @@ const DotcomSitesDataViews = ( {
 		() => [
 			{
 				id: 'site',
-				header: __( 'Site' ),
+				header: <span>{ __( 'Site' ) }</span>,
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
@@ -73,7 +73,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'plan',
-				header: __( 'Plan' ),
+				header: <span>{ __( 'Plan' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
 				enableHiding: false,
 				enableSorting: false,
@@ -92,7 +92,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				header: __( 'Last Publish' ),
+				header: <span>{ __( 'Last Publish' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
@@ -102,7 +102,8 @@ const DotcomSitesDataViews = ( {
 				id: 'stats',
 				header: (
 					<>
-						<JetpackLogo size={ 16 } /> { __( 'Stats' ) }
+						<JetpackLogo size={ 16 } />
+						<span>{ __( 'Stats' ) }</span>
 					</>
 				),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
@@ -111,7 +112,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'actions',
-				header: __( 'Actions' ),
+				header: <span>{ __( 'Actions' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => (
 					<ActionsField site={ item } openSitePreviewPane={ openSitePreviewPane } />
 				),

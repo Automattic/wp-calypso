@@ -1,8 +1,8 @@
 import { Spinner } from '@automattic/components';
-import { DataViews } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
+import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
 // todo: Move the `a4a-style.scss` file to its context
 import './style.scss';

@@ -85,10 +85,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	return (
-		<Button onClick={ onSiteClick } borderless={ true }>
+		<Button className="sites-dataviews__site" onClick={ onSiteClick } borderless={ true }>
 			<SiteListTile
 				contentClassName={ css`
 					min-width: 0;
+					text-align: start;
 				` }
 				leading={
 					<ListTileLeading title={ title }>
@@ -96,7 +97,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					</ListTileLeading>
 				}
 				title={
-					<ListTileTitle>
+					<ListTileTitle className="sites-dataviews__site-name">
 						<SiteName title={ title }>
 							<Truncated>{ site.title }</Truncated>
 						</SiteName>
@@ -114,7 +115,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<ListTileSubtitle>
+							<ListTileSubtitle className="sites-dataviews__site-url">
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</ListTileSubtitle>
 						</>
