@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 
 const Subheader = styled.p`
@@ -40,18 +39,47 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 	);
 };
 
+const PlanBenefitHeader = () => {
+	const Container = styled.div`
+		margin: -32px 0 40px 0;
+		text-align: center;
+
+		@media ( max-width: 960px ) {
+			margin-top: -16px;
+		}
+	`;
+
+	const translate = useTranslate();
+
+	return (
+		<Container>
+			<p>{ translate( 'All plans includes:' ) }</p>
+			<p>
+				{ translate(
+					'{{Checkmark}}{{/Checkmark}}Website Building {{Checkmark}}{{/Checkmark}}Hosting {{Checkmark}}{{/Checkmark}}eCommerce',
+					{
+						components: {
+							Checkmark: <Gridicon icon="checkmark" size={ 24 } />,
+						},
+					}
+				) }
+			</p>
+		</Container>
+	);
+};
+
 const PlansPageSubheader = ( {
 	siteSlug,
 	isDisplayingPlansNeededForFeature,
 	deemphasizeFreePlan,
+	showPlanBenefits,
 	onClickFreePlanCTA,
-	content,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
+	showPlanBenefits?: boolean;
 	onClickFreePlanCTA: () => void;
-	content?: ReactNode;
 } ) => {
 	const translate = useTranslate();
 
@@ -69,7 +97,7 @@ const PlansPageSubheader = ( {
 					) }
 				</Subheader>
 			) }
-			{ ! deemphasizeFreePlan && content && <Subheader>{ content }</Subheader> }
+			{ ! deemphasizeFreePlan && showPlanBenefits && <PlanBenefitHeader /> }
 			{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 		</>
 	);

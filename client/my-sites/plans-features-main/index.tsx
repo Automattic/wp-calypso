@@ -786,10 +786,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onClickFreePlanCTA={ () => handleUpgradeClick() }
-					content={
-						trailMapExperiment.result &&
-						translate( 'All plans included: Website Building Hosting eCommerce' )
-					}
+					showPlanBenefits={ true }
 				/>
 
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
