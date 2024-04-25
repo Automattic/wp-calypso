@@ -55,6 +55,14 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				<HostingOverview />
 			),
 			createFeaturePreview(
+				DOTCOM_HOSTING_CONFIG,
+				__( 'Hosting Config' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<Hosting />
+			),
+			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
 				true,
@@ -85,14 +93,6 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<GitHubDeployments />
-			),
-			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				__( 'Hosting Config' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<Hosting />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site ]
