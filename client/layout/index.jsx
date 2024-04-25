@@ -43,6 +43,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowGlobalSidebar,
 	getShouldShowUnifiedSiteSidebar,
+	getShouldShowCollapsedGlobalSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -453,6 +454,10 @@ export default withCurrentRoute(
 				sectionGroup,
 				sectionName
 			);
+			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+				siteId,
+				sectionGroup
+			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
 				siteId,
@@ -536,7 +541,7 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter,
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSidebarCollapsed: shouldShowGlobalSidebar && siteId && ! sidebarIsHidden,
+				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
