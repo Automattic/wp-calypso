@@ -1,3 +1,4 @@
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
 .hosting-overview {
@@ -54,6 +55,10 @@
 	margin-bottom: 8px;
 }
 
+.hosting-overview .hosting-overview__plan-price {
+	align-items: center;
+}
+
 .hosting-overview__plan-card-title {
 	flex: 1;
 }
@@ -72,6 +77,23 @@
 .hosting-overview__plan-price .plan-price__term {
 	color: var(--studio-gray-100);
 	font-family: "SF Pro", $sans;
+}
+
+@media ( max-width: $break-xlarge ) {
+	.hosting-overview__plan-card-title,
+	.hosting-overview__plan-price,
+	.hosting-overview__plan-price .plan-price__currency-symbol,
+	.hosting-overview__plan-price .plan-price__integer,
+	.hosting-overview__plan-price .plan-price__fraction {
+		font-family: "SF Pro", $sans;
+		font-size: rem(18px); //typography-exception
+		line-height: 26px;
+	}
+
+	.hosting-overview__plan-price .plan-price__term {
+		font-size: rem(9px);
+		line-height: 9px;
+	}
 }
 
 a.hosting-overview__link-button {
