@@ -110,7 +110,7 @@ function getHoldMessages(
 		IS_STAGING_SITE: {
 			title: translate( 'Create a new staging site' ),
 			description: translate(
-				'Hosting features cannot be activated for a staging site. Delete this site, and create a new staging site to continue.'
+				'Hosting features cannot be activated for a staging site. Create a new staging site to continue.'
 			),
 			supportUrl: null,
 		},
