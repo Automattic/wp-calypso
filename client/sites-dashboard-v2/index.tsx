@@ -178,6 +178,17 @@ const SitesDashboardV2 = ( {
 		window.setTimeout( () => updateQueryParams( queryParams ) );
 	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug, updateQueryParams ] );
 
+	// Update site sorting preference on change
+	useEffect( () => {
+		if ( dataViewsState.sort.field ) {
+			onSitesSortingChange( {
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+					?.sortKey as SitesSortKey,
+				sortOrder: dataViewsState.sort.direction || 'asc',
+			} );
+		}
+	}, [ dataViewsState.sort, onSitesSortingChange ] );
+
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
 		if ( dataViewsState.selectedItem ) {
