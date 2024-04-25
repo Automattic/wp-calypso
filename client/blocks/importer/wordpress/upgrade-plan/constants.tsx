@@ -1,6 +1,7 @@
 import { shield, trendingUp, chartBar } from '@wordpress/icons';
 import { translate, useTranslate } from 'i18n-calypso';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
+import customerImageAntonyAgnel from 'calypso/assets/images/migrations/customer-testimonials/antony-agnel.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
 import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/customer-testimonials/emma-lucas-copley.jpg';
 
@@ -28,6 +29,14 @@ export const UpgradePlanHostingTestimonials = [
 			`"7 years ago I decided to FINALLY begin my book blog, and I opened my Wordpress account after reading so many great reviews. I've never looked back. With their easy to use website features, fantastic support team and great collection of themes to choose from, my website was simple to build, update and maintain."`
 		),
 		customerInfo: 'papyrusandpeppermint.com',
+	},
+	{
+		customerImage: customerImageAntonyAgnel,
+		customerName: 'Antony Agnel',
+		customerTestimonial: translate(
+			`"After moving my website to WordPress.com, my site never crashed due to WordPress upgrades. Thanks to their rigorous testing and quality assurance – I could proudly say that my site never went down due to any WordPress upgrade."`
+		),
+		customerInfo: 'AntonyAgnel.com',
 	},
 ];
 
