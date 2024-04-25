@@ -46,7 +46,7 @@ export default function ( router ) {
 
 	if ( isEnabled( 'plugins/ssr-details' ) ) {
 		router(
-			`/${ langParam }/plugins/:plugin(^((scheduled-updates)?)*$)`,
+			`/${ langParam }/plugins/:plugin`,
 			skipIfLoggedIn,
 			validatePlugin,
 			ssrSetupLocale,

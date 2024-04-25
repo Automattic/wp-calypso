@@ -63,6 +63,10 @@
 			border: solid 1px var(--studio-gray-10);
 			background-color: var(--studio-white);
 		}
+
+		.components-base-control__field {
+			display: block !important;
+		}
 	}
 
 	.checkbox-options-container {

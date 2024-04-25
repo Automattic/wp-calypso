@@ -999,6 +999,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"

@@ -20,33 +20,6 @@ function shouldShowGlobalSiteViewSection( siteId: number, sectionName: string ) 
 	);
 }
 
-export const getShouldShowGlobalSidebar = (
-	_: AppState,
-	siteId: number,
-	sectionGroup: string,
-	sectionName: string
-) => {
-	return (
-		sectionGroup === 'me' ||
-		sectionGroup === 'reader' ||
-		sectionGroup === 'sites-dashboard' ||
-		( sectionGroup === 'sites' &&
-			( ! siteId || shouldShowGlobalSiteViewSection( siteId, sectionName ) ) )
-	);
-};
-
-export const getShouldShowCollapsedGlobalSidebar = (
-	state: AppState,
-	siteId: number,
-	sectionGroup: string,
-	sectionName: string // eslint-disable-line @typescript-eslint/no-unused-vars
-) => {
-	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
-	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && siteId
-	);
-};
-
 export const getShouldShowGlobalSiteSidebar = (
 	state: AppState,
 	siteId: number,
@@ -57,6 +30,21 @@ export const getShouldShowGlobalSiteSidebar = (
 		isGlobalSiteViewEnabled( state, siteId ) &&
 		sectionGroup === 'sites' &&
 		shouldShowGlobalSiteViewSection( siteId, sectionName )
+	);
+};
+
+export const getShouldShowGlobalSidebar = (
+	state: AppState,
+	siteId: number,
+	sectionGroup: string,
+	sectionName: string
+) => {
+	return (
+		sectionGroup === 'me' ||
+		sectionGroup === 'reader' ||
+		sectionGroup === 'sites-dashboard' ||
+		( sectionGroup === 'sites' && ! siteId ) ||
+		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName )
 	);
 };
 

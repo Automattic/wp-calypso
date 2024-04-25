@@ -98,7 +98,7 @@
 }
 
 .main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
-	height: calc(100vh - 70px) !important;
+	height: calc(100vh - 70px);
 }
 
 .dataviews-pagination {

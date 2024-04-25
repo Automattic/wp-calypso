@@ -45,6 +45,15 @@
 		margin-bottom: 0.5rem;
 	}
 
+	.placeholder-info {
+		max-width: 510px;
+		margin: 3rem auto;
+		color: var(--studio-gray-100);
+		text-align: center;
+		font-weight: 500;
+		font-size: 1rem;
+	}
+
 	.components-spinner {
 		display: block;
 		margin: 3rem auto;

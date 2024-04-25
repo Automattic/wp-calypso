@@ -14,6 +14,8 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 describe( 'CaptureInput', () => {
+	beforeEach( () => jest.resetAllMocks() );
+
 	it( 'captures the site url', async () => {
 		const onInputEnter = jest.fn();
 		render(
@@ -30,6 +32,18 @@ describe( 'CaptureInput', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
 		expect( onInputEnter ).toHaveBeenCalledWith( 'https://example.wordpress.com' );
+	} );
+
+	it( 'shows an custom input label', async () => {
+		render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ jest.fn() } label="A custom label text" />
+			</MemoryRouter>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( screen.getByLabelText( /A custom label text/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'only records invalid urls once', async () => {

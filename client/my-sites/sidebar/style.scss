@@ -535,6 +535,89 @@ $font-size: rem(14px);
 		fill: var(--color-text);
 	}
 
+	/* stylelint-disable-next-line no-duplicate-selectors */
+	.is-unified-site-sidebar-visible {
+		.current-site__notices {
+			max-width: 220px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.upsell-nudge.banner.card.is-compact {
+			margin-top: 0;
+			padding: 8px;
+			display: flex;
+			flex-direction: column-reverse;
+
+			.banner__content {
+				padding: 0;
+				flex-direction: column;
+				gap: 6px;
+			}
+
+			.banner__info {
+				margin: 0;
+				font-size: 0.75rem;
+				line-height: 16px;
+			}
+
+			.banner__action {
+				width: 100%;
+				margin-top: 0;
+				margin-right: 0;
+
+				.button {
+					width: 100%;
+					/* stylelint-disable-next-line scales/font-sizes */
+					font-size: 0.8125rem;
+					line-height: 20px;
+					cursor: pointer;
+					min-height: 32px;
+					margin-bottom: 0;
+					padding-top: 0;
+					padding-bottom: 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					border-radius: 3px;
+				}
+			}
+
+			.dismissible-card__close-button {
+				position: relative;
+				width: 100%;
+				height: auto;
+				top: auto;
+				right: auto;
+				margin-top: 4px;
+				margin-right: 0;
+				font-size: 0.75rem;
+				line-height: 16px;
+				color: var(--studio-black);
+
+				&::before {
+					content: attr(aria-label);
+					text-decoration: underline;
+				}
+
+				svg {
+					display: none;
+				}
+			}
+		}
+	}
+
+	&.is-classic-bright,
+	&.is-contrast {
+		.is-unified-site-sidebar-visible {
+			.dismissible-card__close-button {
+				&::before {
+					color: var(--color-text-inverted);
+				}
+			}
+		}
+	}
+
 	// client/my-sites/current-site/style.scss
 	.current-site__switch-sites:hover .button.is-borderless:hover {
 		background-color: var(--color-sidebar-menu-hover-background);
@@ -653,6 +736,21 @@ $font-size: rem(14px);
 		.upsell-nudge.banner.card.is-compact {
 			margin: 8px 3px 7px;
 			padding: 2px 12px 2px 4px;
+		}
+
+		.is-unified-site-sidebar-visible {
+			.upsell-nudge.banner.card.is-compact {
+				margin: 0 4px 4px;
+				padding: 4px;
+
+				&::before {
+					margin: 0;
+				}
+
+				.dismissible-card__close-button {
+					display: none;
+				}
+			}
 		}
 
 		.current-site__notices > .banner {
@@ -966,6 +1064,12 @@ $font-size: rem(14px);
 		.sidebar {
 			position: absolute;
 			padding-bottom: 120px;
+		}
+
+		.is-unified-site-sidebar-visible {
+			.upsell-nudge.banner.card.is-compact {
+				margin-top: 8px;
+			}
 		}
 	}
 }

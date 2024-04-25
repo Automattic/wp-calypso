@@ -1,7 +1,9 @@
 .bank-details__iframe-container {
 	margin-block-start: 24px;
+	height: calc(100vh - 182px); // Take the full height & hide the scrollbar on the main page
 
-	iframe {
-		height: calc(100vh - 182px); // Take the full height & hide the scrollbar on the main page
+	.a4a-text-placeholder {
+		display: block;
+		height: 100%;
 	}
 }
