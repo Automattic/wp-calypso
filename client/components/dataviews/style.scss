@@ -2,7 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .dataviews-wrapper {
-	// client/a8c-for-agencies/components/items-dashboard/items-dataviews/style.scss
 	tr.dataviews-view-table__row {
 		background: var(--studio-white);
 
@@ -79,7 +78,6 @@
 		}
 	}
 
-	// client/a8c-for-agencies/components/items-dashboard/items-dataviews/a4a-style.scss
 	.components-checkbox-control__input[type="checkbox"]:focus {
 		box-shadow: 0 0 0 var(--studio-jetpack-green-50) #fff, 0 0 0 calc(2* var(--studio-jetpack-green-50)) var(--studio-jetpack-green-50);
 		outline: 2px solid transparent;
