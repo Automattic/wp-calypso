@@ -12,9 +12,7 @@ import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-every
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import useAddHostingTrialMutation, {
-	HOSTING_INTENT_MIGRATE,
-} from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import useAddHostingTrialMutation from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -246,11 +244,10 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 						isBusy={
 							isFetchingMigrationData || isAddingTrial || queryTargetSitePlanStatus === 'fetched'
 						}
-						onFreeTrialClick={ async () => {
+						onFreeTrialClick={ () => {
 							stepNavigator.goToCheckoutPage( 'everything', {
 								siteSlug: targetSite.slug,
 								plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-								hosting_intent: HOSTING_INTENT_MIGRATE,
 							} );
 						} }
 						ctaText={ translate( 'Upgrade and migrate' ) }
