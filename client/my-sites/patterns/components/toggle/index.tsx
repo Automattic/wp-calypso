@@ -5,8 +5,8 @@ import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-li
 
 import './style.scss';
 
-type PatternLibraryToggleOptionProps = Omit< JSX.IntrinsicElements[ 'a' ], 'onChange' > & {
-	onChange?( value: string ): void;
+type PatternLibraryToggleOptionProps = Omit< JSX.IntrinsicElements[ 'a' ], 'onClick' > & {
+	onClick?( value: string ): void;
 	tooltipText: string;
 	value: string;
 };
@@ -14,7 +14,7 @@ type PatternLibraryToggleOptionProps = Omit< JSX.IntrinsicElements[ 'a' ], 'onCh
 export const PatternLibraryToggleOption = forwardRef<
 	HTMLAnchorElement,
 	PatternLibraryToggleOptionProps
->( ( { className, children, href, onChange, tooltipText, value, ...props }, ref ) => {
+>( ( { className, children, href, onClick, tooltipText, value, ...props }, ref ) => {
 	return (
 		<Tooltip text={ tooltipText } { ...{ style: { maxWidth: '200px', top: '3px' } } }>
 			<LocalizedLink
@@ -22,7 +22,7 @@ export const PatternLibraryToggleOption = forwardRef<
 				className={ classNames( 'pattern-library__toggle-option', className ) }
 				href={ href }
 				onClick={ () => {
-					onChange?.( value );
+					onClick?.( value );
 				} }
 				ref={ ref }
 			>
@@ -34,7 +34,7 @@ export const PatternLibraryToggleOption = forwardRef<
 
 type PatternLibraryToggleProps = Omit< JSX.IntrinsicElements[ 'div' ], 'onChange' > & {
 	children: React.ReactElement< PatternLibraryToggleOptionProps >[];
-	onChange: PatternLibraryToggleOptionProps[ 'onChange' ];
+	onChange: PatternLibraryToggleOptionProps[ 'onClick' ];
 	selected: string;
 };
 
@@ -50,12 +50,6 @@ export function PatternLibraryToggle( {
 
 	const options = Children.map( children, ( child ) => child.props.value );
 	const refs = Children.map( children, () => createRef< HTMLAnchorElement >() );
-
-	const onChangeGuarded: PatternLibraryToggleProps[ 'onChange' ] = ( value ) => {
-		if ( value !== selected ) {
-			onChange?.( value );
-		}
-	};
 
 	// Animate the backdrop element to move from the previously selected option to the new one using
 	// the FLIP principle
@@ -88,7 +82,7 @@ export function PatternLibraryToggle( {
 	return (
 		<div { ...props } className={ classNames( 'pattern-library__toggle', className ) } ref={ ref }>
 			{ Children.map( children, ( child, index ) =>
-				cloneElement( child, {
+				cloneElement< PatternLibraryToggleOptionProps >( child, {
 					children: (
 						<>
 							{ child.props.value === selected && (
@@ -100,7 +94,11 @@ export function PatternLibraryToggle( {
 					className: classNames( child.props.className, {
 						'is-active': child.props.value === selected,
 					} ),
-					onChange: onChangeGuarded,
+					onClick( value ) {
+						if ( value !== selected ) {
+							onChange?.( value );
+						}
+					},
 					ref: refs[ index ],
 				} )
 			) }

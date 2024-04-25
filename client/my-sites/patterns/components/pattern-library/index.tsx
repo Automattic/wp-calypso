@@ -181,7 +181,7 @@ export const PatternLibrary = ( {
 	}, [ locale, isLoggedIn ] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
-	const shouldDisplayPatternLibraryToggle =
+	const shouldDisplayPatternTypeToggle =
 		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
@@ -306,7 +306,7 @@ export const PatternLibrary = ( {
 								{ mainHeading }
 							</h1>
 
-							{ shouldDisplayPatternLibraryToggle && (
+							{ shouldDisplayPatternTypeToggle && (
 								<TypeToggle
 									onChange={ ( type ) => {
 										recordClickEvent( 'calypso_pattern_library_type_switch', currentView, type );
