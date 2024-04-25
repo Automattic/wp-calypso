@@ -18,13 +18,14 @@ import { prepareRelativePath, validatePath } from './schedule-form.helper';
 
 interface Props {
 	paths?: string[];
+	onChange?: ( value: string[] ) => void;
 	borderWrapper?: boolean;
 }
 export function ScheduleFormPaths( props: Props ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlug();
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
-	const { paths: initPaths = [], borderWrapper = true } = props;
+	const { paths: initPaths = [], onChange, borderWrapper = true } = props;
 
 	const [ paths, setPaths ] = useState( initPaths );
 	const [ newPath, setNewPath ] = useState( '' );
@@ -80,6 +81,7 @@ export function ScheduleFormPaths( props: Props ) {
 	useEffect( addPath, [ addPath ] );
 	useEffect( handleAsyncValidationError, [ handleAsyncValidationError ] );
 	useEffect( () => setNewPathSubmitted( false ), [ newPath ] );
+	useEffect( () => onChange?.( paths ), [ paths ] );
 
 	return (
 		<div className="form-field form-field--paths">
