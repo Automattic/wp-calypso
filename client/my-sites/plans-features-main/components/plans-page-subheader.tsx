@@ -1,9 +1,10 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 
-const FreePlanSubHeader = styled.p`
+const Subheader = styled.p`
 	margin: -32px 0 40px 0;
 	color: var( --studio-gray-60 );
 	font-size: 1rem;
@@ -44,18 +45,20 @@ const PlansPageSubheader = ( {
 	isDisplayingPlansNeededForFeature,
 	deemphasizeFreePlan,
 	onClickFreePlanCTA,
+	content,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
 	onClickFreePlanCTA: () => void;
+	content?: ReactNode;
 } ) => {
 	const translate = useTranslate();
 
 	return (
 		<>
 			{ deemphasizeFreePlan && (
-				<FreePlanSubHeader>
+				<Subheader>
 					{ translate(
 						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
 						{
@@ -64,8 +67,9 @@ const PlansPageSubheader = ( {
 							},
 						}
 					) }
-				</FreePlanSubHeader>
+				</Subheader>
 			) }
+			{ ! deemphasizeFreePlan && content && <Subheader>{ content }</Subheader> }
 			{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
 		</>
 	);
