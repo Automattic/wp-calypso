@@ -1,6 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .hosting-overview {
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	max-height: calc(100vh - 300px);
+
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: auto auto;
