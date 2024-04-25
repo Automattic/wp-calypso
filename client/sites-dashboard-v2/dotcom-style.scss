@@ -10,6 +10,19 @@
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
 	background: var(--studio-white);
+
+	.a4a-layout__top-wrapper {
+		border-block-end: 0;
+
+		@media (min-width: $break-medium) {
+			border-block-end: 1px solid var(--studio-gray-0);
+			margin-bottom: 24px;
+		}
+	}
+
+	.dataviews-filters__view-actions {
+		border-bottom: 0;
+	}
 }
 
 /*
@@ -19,7 +32,7 @@
 	align-items: center;
 
 	.components-search-control {
-		@media (min-width: 1014px) {
+		@media (min-width: $break-large) {
 			min-width: 390px;
 		}
 	}
