@@ -1,1 +1,23 @@
-// Add new Dotcom specific fly-out panel styles to this file
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// Add new Dotcom specific styles to this file.
+.wpcom-site .main.sites-dashboard__layout {
+	.a4a-layout__header {
+		margin: auto;
+
+		@include break-medium {
+			margin: 0 auto 16px auto;
+		}
+
+		@include break-large {
+			margin: 0 auto 24px auto;
+		}
+	}
+}
+
+.wpcom-site .main.sites-dashboard__layout.preview-hidden {
+	.a4a-layout__top-wrapper {
+		padding-block-start: 0;
+	}
+}
