@@ -86,7 +86,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	return (
-		<Button css={ { gap: 'none' } } onClick={ onSiteClick } borderless={ true }>
+		<Button onClick={ onSiteClick } borderless={ true }>
 			<SiteListTile
 				contentClassName={ css`
 					min-width: 0;
