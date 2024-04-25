@@ -139,7 +139,6 @@ const SitesDashboardV2 = ( {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
 			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
-			page: dataViewsState.page === 1 ? undefined : dataViewsState.page,
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
@@ -147,13 +146,7 @@ const SitesDashboardV2 = ( {
 		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [
-		dataViewsState.search,
-		dataViewsState.page,
-		dataViewsState.perPage,
-		statusSlug,
-		updateQueryParams,
-	] );
+	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug, updateQueryParams ] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
