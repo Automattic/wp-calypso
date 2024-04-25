@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { CompactCard as Card, FormLabel } from '@automattic/components';
+import { SITE_REDIRECT } from '@automattic/urls';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -13,7 +14,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import { withoutHttp } from 'calypso/lib/url';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementSiteRedirect,

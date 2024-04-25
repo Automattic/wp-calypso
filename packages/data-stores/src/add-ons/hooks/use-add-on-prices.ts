@@ -3,7 +3,7 @@ import { useMemo } from '@wordpress/element';
 import * as ProductsList from '../../products-list';
 
 const useAddOnPrices = ( productSlug: ProductsList.StoreProductSlug, quantity?: number ) => {
-	const productsList = ProductsList.useProducts();
+	const productsList = ProductsList.useProducts( [ productSlug ] );
 	const product = productsList.data?.[ productSlug ];
 
 	return useMemo( () => {

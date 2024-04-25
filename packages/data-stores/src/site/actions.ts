@@ -527,16 +527,26 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
-	const atomicTransferStart = ( siteId: number, softwareSet: string | undefined ) => ( {
+	const atomicTransferStart = (
+		siteId: number,
+		softwareSet: string | undefined,
+		transferIntent: string | undefined
+	) => ( {
 		type: 'ATOMIC_TRANSFER_START' as const,
 		siteId,
 		softwareSet,
+		transferIntent,
 	} );
 
-	const atomicTransferSuccess = ( siteId: number, softwareSet: string | undefined ) => ( {
+	const atomicTransferSuccess = (
+		siteId: number,
+		softwareSet: string | undefined,
+		transferIntent: string | undefined
+	) => ( {
 		type: 'ATOMIC_TRANSFER_SUCCESS' as const,
 		siteId,
 		softwareSet,
+		transferIntent,
 	} );
 
 	const atomicTransferFailure = (
@@ -550,27 +560,26 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		error,
 	} );
 
-	function* initiateAtomicTransfer( siteId: number, softwareSet: string | undefined ) {
-		yield atomicTransferStart( siteId, softwareSet );
+	function* initiateAtomicTransfer(
+		siteId: number,
+		softwareSet: string | undefined,
+		transferIntent: string | undefined
+	) {
+		yield atomicTransferStart( siteId, softwareSet, transferIntent );
 		try {
+			const body = {
+				context: softwareSet || 'unknown',
+				software_set: softwareSet ? encodeURIComponent( softwareSet ) : undefined,
+				transfer_intent: transferIntent ? encodeURIComponent( transferIntent ) : undefined,
+			};
+
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers`,
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
-				...( softwareSet
-					? {
-							body: {
-								software_set: encodeURIComponent( softwareSet ),
-								context: softwareSet,
-							},
-					  }
-					: {
-							body: {
-								context: 'unknown',
-							},
-					  } ),
+				body,
 			} );
-			yield atomicTransferSuccess( siteId, softwareSet );
+			yield atomicTransferSuccess( siteId, softwareSet, transferIntent );
 		} catch ( _ ) {
 			yield atomicTransferFailure( siteId, softwareSet, AtomicTransferError.INTERNAL );
 		}

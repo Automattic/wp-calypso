@@ -1,7 +1,7 @@
 import { Badge, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import usePayInvoiceMutation from '../hooks/use-pay-invoice-mutation';
@@ -16,11 +16,6 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 	const moment = useLocalizedMoment();
 	const dueDateMoment = moment( dueDate );
 	const payInvoice = usePayInvoiceMutation();
-
-	const pay = useCallback(
-		() => payInvoice.mutate( { invoiceId: id } ),
-		[ id, payInvoice.mutate ]
-	);
 
 	let badgeType: BadgeType = 'info';
 	let badgeLabel = translate( 'Draft' );
@@ -69,7 +64,12 @@ function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUr
 
 			<div className="invoices-list-card__actions">
 				{ status === 'open' && (
-					<Button compact primary busy={ payInvoice.isPending } onClick={ pay }>
+					<Button
+						compact
+						primary
+						busy={ payInvoice.isPending }
+						onClick={ () => payInvoice.mutate( { invoiceId: id } ) }
+					>
 						{ translate( 'Pay' ) }
 					</Button>
 				) }

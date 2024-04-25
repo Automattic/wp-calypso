@@ -54,3 +54,22 @@ export const siteProfilerContext: Callback = ( context, next ) => {
 
 	next();
 };
+
+export const siteProfilerReportContext: Callback = ( context, next ) => {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const pathName = context.pathname || '';
+	const routerParams = pathName.split( '/site-profiler/report/' )[ 1 ]?.trim() || '';
+	const routerDomain = routerParams.split( '/' ).slice( 1 ).join( '/' );
+
+	context.primary = (
+		<>
+			<Main fullWidthLayout>
+				<SiteProfiler routerDomain={ routerDomain } hash={ context.params.hash } />
+			</Main>
+
+			<UniversalNavbarFooter isLoggedIn={ isLoggedIn } />
+		</>
+	);
+
+	next();
+};

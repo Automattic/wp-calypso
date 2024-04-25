@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect, useState, useMemo, CSSProperties, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { DEFAULT_VIEWPORT_WIDTH } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { injectTitlesToPageListBlock } from './html-transformers';
 import PatternActionBar from './pattern-action-bar';
@@ -168,7 +167,6 @@ const PatternLargePreview = ( {
 						key={ device }
 						patternId={ encodePatternId( pattern.ID ) }
 						viewportHeight={ viewportHeight }
-						viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
 						// Disable default max-height
 						maxHeight="none"
 						transformHtml={ transformPatternHtml }

@@ -59,7 +59,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { BuiltByUpsell } from './built-by-upsell-banner';
+import { DIFMUpsell } from './difm-upsell-banner';
 import Masterbar from './masterbar';
 import SiteAdminInterface from './site-admin-interface';
 import SiteIconSetting from './site-icon-setting';
@@ -584,7 +584,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
-				{ ! ( isEnabled( 'layout/dotcom-nav-redesign' ) && isClassicView ) && (
+				{ ! isClassicView && (
 					<>
 						<SettingsSectionHeader
 							data-tip-target="settings-site-profile-save"
@@ -614,7 +614,7 @@ export class SiteSettingsFormGeneral extends Component {
 					this.privacySettings()
 				) }
 				{ this.enhancedOwnershipSettings() }
-				<BuiltByUpsell
+				<DIFMUpsell
 					site={ site }
 					isUnlaunchedSite={ propsisUnlaunchedSite }
 					urlRef="unlaunched-settings"

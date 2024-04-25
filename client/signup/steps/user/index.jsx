@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { WPCC } from '@automattic/urls';
 import { isMobile } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -24,7 +25,6 @@ import {
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
 import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';

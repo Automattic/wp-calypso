@@ -8,6 +8,36 @@ const noop = () => {};
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
 
+const getP2Flows = () => {
+	return isEnabled( 'p2-enabled' )
+		? [
+				{
+					name: 'p2v1',
+					steps: [ 'p2-site', 'p2-details', 'user' ],
+					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+					description: 'P2 signup flow',
+					lastModified: '2020-09-01',
+					showRecaptcha: true,
+				},
+				{
+					// When adding steps, make sure that signup campaign ref's continue to work.
+					name: 'p2',
+					steps: [
+						'user',
+						'p2-confirm-email',
+						'p2-complete-profile',
+						'p2-join-workspace',
+						'p2-site',
+					],
+					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+					description: 'New P2 signup flow',
+					lastModified: '2021-12-27',
+					showRecaptcha: true,
+				},
+		  ]
+		: [];
+};
+
 export function generateFlows( {
 	getSiteDestination = noop,
 	getRedirectDestination = noop,
@@ -24,14 +54,26 @@ export function generateFlows( {
 	getHostingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
+	const p2Flows = getP2Flows();
 
 	const flows = [
 		{
+			name: 'hosting', // This flow is to be removed once the Landpack changes are completed.
+			steps: [ userSocialStep, 'hosting-decider' ],
+			destination: getHostingFlowDestination,
+			description: 'To be deleted.',
+			lastModified: '2024-03-22',
+			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'toStepper' ],
+			optionalDependenciesInQuery: [ 'toStepper' ],
+			hideProgressIndicator: true,
+		},
+		{
 			name: HOSTING_LP_FLOW,
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'hosting-decider' ],
 			destination: getHostingFlowDestination,
 			description: 'Create an account and redirect the user to the hosted site flow forking step.',
-			lastModified: '2023-07-18',
+			lastModified: '2024-03-22',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
@@ -189,14 +231,12 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			props: {
+				domains: {
+					useAlternateDomainMessaging: true,
+				},
 				plans: {
-					/**
-					 * This intent is geared towards customizations related to the paid media flow
-					 * Current customizations are as follows
-					 * - Show only Personal, Premium, Business, and eCommerce plans (Hide free, enterprise)
-					 */
-					intent: 'plans-paid-media',
 					isCustomDomainAllowedOnFreePlan: true,
+					deemphasizeFreePlan: true,
 				},
 			},
 		},
@@ -330,14 +370,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'p2v1',
-			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'P2 signup flow',
-			lastModified: '2020-09-01',
-			showRecaptcha: true,
-		},
-		{
 			name: 'videopress-account',
 			steps: [ 'user' ],
 			destination: getRedirectDestination,
@@ -348,15 +380,7 @@ export function generateFlows( {
 			},
 			showRecaptcha: true,
 		},
-		{
-			// When adding steps, make sure that signup campaign ref's continue to work.
-			name: 'p2',
-			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-join-workspace', 'p2-site' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'New P2 signup flow',
-			lastModified: '2021-12-27',
-			showRecaptcha: true,
-		},
+		...p2Flows,
 		{
 			name: 'domain',
 			steps: [
@@ -564,6 +588,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
+		{
+			name: 'ecommerce-3y',
+			steps: [ userSocialStep, 'domains', 'plans-ecommerce-3y' ],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2024-04-17',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
 
 		{
 			name: 'business-2y',
@@ -572,6 +605,16 @@ export function generateFlows( {
 			description:
 				'Create an account and a blog and then add the business 2y plan to the users cart.',
 			lastModified: '2023-10-11',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'business-3y',
+			steps: [ userSocialStep, 'domains', 'plans-business-3y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the business 3y plan to the users cart.',
+			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -587,12 +630,32 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
+			name: 'premium-3y',
+			steps: [ userSocialStep, 'domains', 'plans-premium-3y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the premium 3y plan to the users cart.',
+			lastModified: '2024-04-17',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
 			name: 'personal-2y',
 			steps: [ userSocialStep, 'domains', 'plans-personal-2y' ],
 			destination: getSignupDestination,
 			description:
 				'Create an account and a blog and then add the personal 2y plan to the users cart.',
 			lastModified: '2023-10-11',
+			showRecaptcha: true,
+			hideProgressIndicator: true,
+		},
+		{
+			name: 'personal-3y',
+			steps: [ userSocialStep, 'domains', 'plans-personal-3y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the personal 3y plan to the users cart.',
+			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

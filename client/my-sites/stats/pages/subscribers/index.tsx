@@ -48,6 +48,8 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
+		'stats__module-list',
+		'stats__flexible-grid-container',
 		{
 			'is-email-stats-unavailable': ! supportsEmailStats,
 			'is-jetpack': isJetpack,
@@ -112,9 +114,25 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 								</>
 							) }
 							<div className={ statsModuleListClass }>
-								<Followers path="followers" />
+								<Followers
+									path="followers"
+									className={ classNames(
+										{
+											'stats__flexible-grid-item--half': supportsEmailStats,
+											'stats__flexible-grid-item--full': ! supportsEmailStats,
+										},
+										'stats__flexible-grid-item--full--large'
+									) }
+								/>
 								{ supportsEmailStats && period && (
-									<StatsModuleEmails period={ period } query={ { period, date: today } } />
+									<StatsModuleEmails
+										period={ period }
+										query={ { period, date: today } }
+										className={ classNames(
+											'stats__flexible-grid-item--half',
+											'stats__flexible-grid-item--full--large'
+										) }
+									/>
 								) }
 							</div>
 						</>

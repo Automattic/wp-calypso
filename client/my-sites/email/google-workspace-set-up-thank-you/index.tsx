@@ -2,10 +2,10 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteExtraLicenseProductSlug,
 } from '@automattic/calypso-products';
+import { CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import ThankYouV2 from 'calypso/components/thank-you-v2';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import { CONTACT } from 'calypso/lib/url/support';
 import { ThankYouGoogleWorkspaceProduct } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/products/google-workspace-product';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';

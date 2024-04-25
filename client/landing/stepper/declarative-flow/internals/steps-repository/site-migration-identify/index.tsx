@@ -1,6 +1,6 @@
-import { StepContainer, Title } from '@automattic/onboarding';
+import { StepContainer, Title, SubTitle } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,11 +14,11 @@ import './style.scss';
 interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
+	onSkip: () => void;
 }
 
-export const Analyzer: FC< Props > = ( props ) => {
+export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 	const translate = useTranslate();
-	const { onComplete } = props;
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 
 	const {
@@ -41,7 +41,8 @@ export const Analyzer: FC< Props > = ( props ) => {
 	return (
 		<div>
 			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Where will you import from?' ) }</Title>
+				<Title>{ translate( 'Let’s import your content' ) }</Title>
+				<SubTitle>{ translate( 'Drop your current site address below to get started.' ) }</SubTitle>
 			</div>
 			<div className="import__capture-container">
 				<CaptureInput
@@ -49,13 +50,28 @@ export const Analyzer: FC< Props > = ( props ) => {
 					onInputChange={ () => setSiteURL( '' ) }
 					hasError={ hasError }
 					skipInitialChecking
+					onDontHaveSiteAddressClick={ onSkip }
+					placeholder={ translate( 'mygreatnewblog.com' ) }
+					label={ translate( 'Enter your site address:' ) }
+					dontHaveSiteAddressLabel={ translate(
+						'Or <button>pick your current platform from a list</button>'
+					) }
 				/>
 			</div>
 		</div>
 	);
 };
 
+export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
+
 const SiteMigrationIdentify: Step = function ( { navigation } ) {
+	const handleSubmit = useCallback(
+		( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+			navigation?.submit?.( { action: action, ...data } );
+		},
+		[ navigation ]
+	);
+
 	return (
 		<>
 			<DocumentHead title="Site migration instructions" />
@@ -71,8 +87,11 @@ const SiteMigrationIdentify: Step = function ( { navigation } ) {
 				stepContent={
 					<Analyzer
 						onComplete={ ( { platform, url } ) =>
-							navigation?.submit?.( { platform: platform, from: url } )
+							handleSubmit( 'continue', { platform, from: url } )
 						}
+						onSkip={ () => {
+							handleSubmit( 'skip_platform_identification' );
+						} }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

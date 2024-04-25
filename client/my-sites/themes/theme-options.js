@@ -2,7 +2,10 @@ import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	PLAN_BUSINESS,
 	getPlan,
+	TERM_ANNUALLY,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { isDefaultGlobalStylesVariationSlug } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
@@ -19,7 +22,12 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+	getSiteSlug,
+	getSitePlanSlug,
+} from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -46,6 +54,21 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+/**
+ * Get the checkout path slug for the given site and minimum plan.
+ * @param {Object} state
+ * @param {number} siteId
+ * @param {string} minimumPlan
+ * @returns
+ */
+function getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan ) {
+	const currentPlanSlug = getSitePlanSlug( state, siteId );
+	const requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+	const requiredPlanSlug = findFirstSimilarPlanKey( minimumPlan, { term: requiredTerm } );
+	const mappedPlan = getPlan( requiredPlanSlug );
+	return mappedPlan?.getPathSlug();
+}
 
 function getAllThemeOptions( { translate, isFSEActive } ) {
 	const purchase = {
@@ -77,8 +100,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 					? PLAN_PREMIUM
 					: tierMinimumUpsellPlan;
 
-			const mappedPlan = getPlan( minimumPlan );
-			const planPathSlug = mappedPlan?.getPathSlug();
+			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, minimumPlan );
 
 			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
@@ -166,7 +188,9 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				} )
 			);
 
-			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
+			const planPathSlug = getPlanPathSlugForFirstPartyThemes( state, siteId, PLAN_BUSINESS );
+
+			return `/checkout/${ slug }/${ planPathSlug }?redirect_to=${ redirectTo }`;
 		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||

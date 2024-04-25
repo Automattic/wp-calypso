@@ -7,6 +7,13 @@ body.is-focus-sites {
 	overflow: hidden;
 }
 
+html.command-palette-modal-open {
+	overflow: visible;
+}
+body.command-palette-modal-open {
+	overflow: hidden;
+}
+
 /**
  * /*
  * 	Layout Elements
@@ -68,12 +75,16 @@ body.is-focus-sites {
 
 	// Themes sets it own padding/margin
 	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
+	.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-theme &,
+	.theme-default .layout.is-section-themes.has-no-sidebar &,
+	.theme-default .layout.is-section-themes:not(.is-logged-in) & {
 		padding: 0;
 		margin: 0;
 	}
 
-	.is-section-themes.has-no-sidebar.is-logged-in & {
+	.is-section-themes.has-no-sidebar.is-logged-in &,
+	.theme-default .is-section-themes.has-no-sidebar.is-logged-in & {
 		padding: 79px 32px 32px;
 	}
 
@@ -370,7 +381,6 @@ body.is-mobile-app-view {
 // This is done since most has-no-masterbar section have their own padding set already that we don't want to overwrite
 .layout.has-no-masterbar.is-group-me,
 .layout.has-no-masterbar.is-group-sites,
-.layout.has-no-masterbar.is-group-sites-dashboard,
 .layout.has-no-masterbar.is-section-reader {
 	--masterbar-height: 0;
 
@@ -391,9 +401,9 @@ body.is-mobile-app-view {
 
 // Ensure reader streams have the neutral background.
 .layout.is-section-reader {
-	background: var(--color-neutral-0);
+	background: var(--studio-white);
 	min-height: 100vh;
 	.layout__content {
-		background: var(--color-neutral-0);
+		background: var(--studio-white);
 	}
 }

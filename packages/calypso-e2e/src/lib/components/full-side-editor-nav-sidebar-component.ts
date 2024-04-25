@@ -104,7 +104,7 @@ export class FullSiteEditorNavSidebarComponent {
 	 */
 	async setStyleVariation( styleVariationName: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const locator = editorParent.locator( selectors.styleVariation( styleVariationName ) );
+		const locator = editorParent.locator( selectors.styleVariation( styleVariationName ) ).first();
 		await locator.click();
 	}
 }

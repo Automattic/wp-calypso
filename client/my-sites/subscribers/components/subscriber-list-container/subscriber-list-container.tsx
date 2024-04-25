@@ -76,12 +76,12 @@ const SubscriberListContainer = ( {
 						</span>
 					</div>
 
-					{ ( total > 3 || searchTerm ) && <SubscriberListActionsBar /> }
+					<SubscriberListActionsBar />
 				</>
 			) }
 			{ isLoading &&
 				new Array( 10 ).fill( null ).map( ( _, index ) => (
-					<div key={ index } data-ignored={ _ }>
+					<div className="subscriber-list__loading" key={ index } data-ignored={ _ }>
 						<div className="loading-placeholder big"></div>
 						<div className="loading-placeholder small"></div>
 						<div className="loading-placeholder small"></div>

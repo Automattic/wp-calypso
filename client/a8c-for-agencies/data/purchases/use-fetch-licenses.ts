@@ -10,6 +10,17 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import formatLicenses from './lib/format-licenses';
 
+export const getFetchLicensesQueryKey = (
+	filter: LicenseFilter,
+	search: string,
+	sortField: LicenseSortField,
+	sortDirection: LicenseSortDirection,
+	page: number,
+	agencyId?: number
+) => {
+	return [ 'a4a-licenses', filter, search, sortField, sortDirection, page, agencyId ];
+};
+
 export default function useFetchLicenses(
 	filter: LicenseFilter,
 	search: string,
@@ -20,7 +31,7 @@ export default function useFetchLicenses(
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		queryKey: [ 'a4a-licenses', filter, search, sortField, sortDirection, page, agencyId ],
+		queryKey: getFetchLicensesQueryKey( filter, search, sortField, sortDirection, page, agencyId ),
 		queryFn: () =>
 			wpcom.req.get(
 				{

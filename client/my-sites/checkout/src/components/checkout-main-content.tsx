@@ -23,13 +23,12 @@ import {
 	usePaymentMethod,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, joinClasses } from '@automattic/wpcom-checkout';
+import { styled, joinClasses, hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -61,7 +60,6 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -245,7 +243,7 @@ function CheckoutSidebarNudge( {
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -347,7 +345,6 @@ export default function CheckoutMainContent( {
 	customizedPreviousPath?: string;
 	loadingHeader?: ReactNode;
 } ) {
-	const locale = useLocale();
 	const cartKey = useCartKey();
 	const {
 		responseCart,
@@ -382,7 +379,7 @@ export default function CheckoutMainContent( {
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
 
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -519,10 +516,7 @@ export default function CheckoutMainContent( {
 		);
 	}
 
-	const nextStepButtonText =
-		locale.startsWith( 'en' ) || i18n.hasTranslation( 'Continue to payment' )
-			? translate( 'Continue to payment', { textOnly: true } )
-			: translate( 'Continue', { textOnly: true } );
+	const nextStepButtonText = translate( 'Continue to payment', { textOnly: true } );
 
 	return (
 		<WPCheckoutWrapper>
@@ -1097,8 +1091,11 @@ const JetpackCheckoutSealsWrapper = styled.div< React.HTMLAttributes< HTMLDivEle
 	flex-direction: column;
 	align-items: center;
 	gap: 0.5rem;
+	padding: 1.5rem 4rem 0 1.5rem;
 
-	padding: 1.5rem 1.5rem 0;
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 1.5rem 1.5rem 0;
+	}
 
 	img {
 		margin-right: 0.75rem;
@@ -1172,6 +1169,10 @@ const WPCheckoutWrapper = styled.div`
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			min-height: 100vh;
 		}
+	}
+
+	& *:focus {
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 `;
 

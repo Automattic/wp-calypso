@@ -8,13 +8,13 @@
 	color: #101517;
 	background: var(--studio-white);
 
-	&.body-full-width {
+	&.patterns-section--full-width-body {
 		.patterns-section__body {
 			padding: 0;
 		}
 	}
 
-	&.dark-theme {
+	&.patterns-section--dark {
 		background: #1d2327;
 		color: var(--studio-white);
 
@@ -44,7 +44,6 @@
 		font-size: rem(18px);
 		line-height: 1.4;
 		max-width: 520px;
-		text-wrap: pretty;
 	}
 }
 
@@ -59,10 +58,6 @@
 	}
 
 	.patterns-section__header {
-		padding: 0 24px 32px;
-	}
-
-	.patterns-section__body {
-		padding: 0 24px;
+		padding-bottom: 32px;
 	}
 }

@@ -1,4 +1,3 @@
-// FIXME: Lets decide later if we need to move the calypso/jetpack-cloud imports to a shared common folder.
 import { JetpackLogo, WooLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -11,14 +10,14 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/incompatible-products';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FilterSearch from '../../../../components/filter-search';
 import { ShoppingCartContext } from '../../context';
+import useProductAndPlans from '../../hooks/use-product-and-plans';
+import ListingSection from '../../listing-section';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
-import useProductAndPlans from './hooks/use-product-and-plans';
 import { getSupportedBundleSizes, useProductBundleSize } from './hooks/use-product-bundle-size';
 import useSubmitForm from './hooks/use-submit-form';
-import ProductFilterSearch from './product-filter-search';
-import ProductListingSection from './sections';
 import VolumePriceSelector from './volume-price-selector';
 import type { ShoppingCartItem } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -184,7 +183,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 		[ dispatch, handleSelectBundleLicense, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const { isReady } = useSubmitForm( selectedSite, suggestedProductSlugs );
+	const { isReady } = useSubmitForm( { selectedSite, suggestedProductSlugs } );
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
@@ -278,8 +277,9 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 			<QueryProductsList currency="USD" />
 
 			<div className="product-listing__actions">
-				<ProductFilterSearch
-					onProductSearch={ onProductSearch }
+				<FilterSearch
+					label={ translate( 'Search plans, products, add-ons, and extensions' ) }
+					onSearch={ onProductSearch }
 					onClick={ trackClickCallback( 'search' ) }
 				/>
 
@@ -292,8 +292,22 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 				) }
 			</div>
 
+			{ wooExtensions.length > 0 && (
+				<ListingSection
+					id="woocommerce-extensions"
+					icon={ <WooLogo width={ 45 } height={ 28 } /> }
+					title={ translate( 'WooCommerce Extensions' ) }
+					description={ translate(
+						'You must have WooCommerce installed to utilize these paid extensions.'
+					) }
+				>
+					{ getProductCards( wooExtensions ) }
+				</ListingSection>
+			) }
+
 			{ plans.length > 0 && (
-				<ProductListingSection
+				<ListingSection
+					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(
@@ -302,11 +316,11 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 					isTwoColumns
 				>
 					{ getProductCards( plans ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 
 			{ products.length > 0 && (
-				<ProductListingSection
+				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Products' ) }
 					description={ translate(
@@ -314,23 +328,11 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 					) }
 				>
 					{ getProductCards( products ) }
-				</ProductListingSection>
-			) }
-
-			{ wooExtensions.length > 0 && (
-				<ProductListingSection
-					icon={ <WooLogo width={ 45 } height={ 28 } /> }
-					title={ translate( 'WooCommerce Extensions' ) }
-					description={ translate(
-						'You must have WooCommerce installed to utilize these paid extensions.'
-					) }
-				>
-					{ getProductCards( wooExtensions ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 
 			{ backupAddons.length > 0 && (
-				<ProductListingSection
+				<ListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
 					description={ translate(
@@ -338,7 +340,7 @@ export default function ProductListing( { selectedSite, suggestedProduct }: Prod
 					) }
 				>
 					{ getProductCards( backupAddons ) }
-				</ProductListingSection>
+				</ListingSection>
 			) }
 		</div>
 	);

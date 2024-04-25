@@ -18,7 +18,6 @@ const FAKE_SITE: Site = {
 	has_paid_agency_monitor: true,
 	latest_scan_threats_found: [],
 	latest_backup_status: '',
-	is_connected: true,
 	is_connection_healthy: true,
 	awaiting_plugin_updates: [ 'plugin1', 'plugin2' ],
 	is_favorite: true,
@@ -57,7 +56,16 @@ const FAKE_SITE: Site = {
 		desktop: 10,
 	},
 	php_version_num: 7.4,
+	php_version: '0',
 	is_atomic: false,
+	sticker: [],
+	blogname: '',
+	wordpress_version: '',
+	has_pending_boost_one_time_score: false,
+	has_vulnerable_plugins: false,
+	latest_scan_has_threats_found: false,
+	active_paid_subscription_slugs: [],
+	hosting_provider_guess: 'automattic',
 };
 
 const scanThreats = 4;

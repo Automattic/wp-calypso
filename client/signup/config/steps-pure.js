@@ -11,6 +11,10 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
+	PLAN_PREMIUM_3_YEARS,
+	PLAN_BUSINESS_3_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
 	PLAN_ECOMMERCE,
@@ -266,7 +270,10 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
-
+		'hosting-decider': {
+			stepName: 'hosting-decider',
+			providesDependencies: [ 'stepperHostingFlow' ],
+		},
 		'plans-hosting': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -869,6 +876,53 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE_2_YEARS,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
+		},
+		'plans-personal-3y': {
+			stepName: 'plans-personal-3y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_3_YEARS,
+			},
+		},
+
+		'plans-premium-3y': {
+			stepName: 'plans-premium-3y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_3_YEARS,
+			},
+		},
+
+		'plans-business-3y': {
+			stepName: 'plans-business-3y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_3_YEARS,
+			},
+		},
+
+		'plans-ecommerce-3y': {
+			stepName: 'plans-ecommerce-3y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_3_YEARS,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},

@@ -5,7 +5,7 @@ import { NOTICE_ID } from './constants';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
-import { LivePreviewUpgradeModal } from './upgrade-modal';
+import { LivePreviewUpgradeButton } from './upgrade-button';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
 import { getUnlock } from './utils';
 
@@ -72,7 +72,7 @@ const LivePreviewNoticePlugin = () => {
 	if ( canPreviewButNeedUpgrade ) {
 		return (
 			<>
-				<LivePreviewUpgradeModal { ...{ previewingTheme, upgradePlan } } />
+				<LivePreviewUpgradeButton { ...{ previewingTheme, upgradePlan } } />
 				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);

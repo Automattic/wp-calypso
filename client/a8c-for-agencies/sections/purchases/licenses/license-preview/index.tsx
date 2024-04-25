@@ -5,6 +5,7 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import FormattedDate from 'calypso/components/formatted-date';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -18,6 +19,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
+import usePaymentMethod from '../../payment-methods/hooks/use-payment-method';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
@@ -59,6 +61,8 @@ export default function LicensePreview( {
 	const dispatch = useDispatch();
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const { filter } = useContext( LicensesOverviewContext );
 
@@ -76,9 +80,9 @@ export default function LicensePreview( {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
 
-	const paymentMethodRequired = false; // FIXME: Fix this with actual data
+	const { paymentMethodRequired } = usePaymentMethod();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
-	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
+	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
 	const assign = useCallback( () => {
 		const redirectUrl = addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
@@ -160,6 +164,16 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ product }</div>
 							{ domain }
+							{ isPressableLicense && ! revokedAt && (
+								<a
+									className="license-preview__product-pressable-link"
+									target="_blank"
+									rel="norefferer noopener noreferrer"
+									href={ pressableManageUrl }
+								>
+									{ translate( 'Manage in Pressable' ) }
+								</a>
+							) }
 							{ ! domain && licenseState === LicenseState.Detached && (
 								<span>
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
@@ -223,15 +237,11 @@ export default function LicensePreview( {
 				) }
 
 				<div className="license-preview__badge-container">
-					{ isParentLicense
-						? bundleCountContent
-						: LicenseType.Standard === licenseType && (
-								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
-						  ) }
+					{ isParentLicense && bundleCountContent }
 				</div>
 
 				<div>
-					{ isParentLicense && (
+					{ isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
 							product={ product }
 							licenseKey={ licenseKey }

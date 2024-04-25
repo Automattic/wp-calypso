@@ -2,11 +2,11 @@
 
 import { Button } from '@automattic/components';
 import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES } from '@automattic/urls';
 import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { transferStatus } from 'calypso/lib/domains/constants';
-import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import type { DetailsCardProps } from './types';
 

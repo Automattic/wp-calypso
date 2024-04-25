@@ -285,6 +285,7 @@ export default function DIFMLanding( {
 	siteId?: number | null;
 	isStoreFlow: boolean;
 } ) {
+	const requiredProductSlugs = [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ];
 	const translate = useTranslate();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
@@ -396,7 +397,9 @@ export default function DIFMLanding( {
 
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
+			{ ! hasPriceDataLoaded && (
+				<QueryProductsList productSlugList={ requiredProductSlugs } type="partial" />
+			) }
 			<Wrapper>
 				<ContentSection>
 					{ /* @ts-expect-error FormattedHeader is not typed and it's causing issues with the styled component */ }
@@ -494,7 +497,9 @@ export default function DIFMLanding( {
 						<FoldableFAQ
 							id="faq-1"
 							expanded={ true }
-							question={ translate( 'What is Built By WordPress.com Express, and who is it for?' ) }
+							question={ translate(
+								'What is the Express Website Design Service, and who is it for?'
+							) }
 						>
 							<p>
 								{ translate(

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { SiteDetails } from '@automattic/data-stores';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
@@ -99,8 +100,8 @@ export const getCampaignStatus = ( status?: string ) => {
 };
 
 const calculateDurationDays = ( start: Date, end: Date ) => {
-	const diffTime = Math.abs( end.getTime() - start.getTime() );
-	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+	const diffTime = end.getTime() - start.getTime();
+	return diffTime < 0 ? 0 : Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
 };
 
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
@@ -136,7 +137,7 @@ export const getCampaignDurationFormatted = (
 			return `${ dateStartFormatted } - ${ todayFormatted }`;
 		}
 
-		if ( status === 'scheduled' ) {
+		if ( status === 'scheduled' || status === 'created' ) {
 			return '-';
 		}
 	}
@@ -165,9 +166,15 @@ export const getCampaignBudgetData = (
 	budget_cents: number,
 	start_date: string,
 	end_date: string,
-	spent_budget_cents: number
+	spent_budget_cents: number,
+	is_evergreen = 0
 ) => {
-	const campaignDays = getCampaignDurationDays( start_date, end_date );
+	let campaignDays;
+	if ( is_evergreen ) {
+		campaignDays = 7;
+	} else {
+		campaignDays = getCampaignDurationDays( start_date, end_date );
+	}
 
 	const spentBudgetCents =
 		spent_budget_cents > budget_cents * campaignDays
@@ -177,6 +184,7 @@ export const getCampaignBudgetData = (
 	const totalBudget = ( budget_cents * campaignDays ) / 100;
 	const totalBudgetUsed = spentBudgetCents / 100;
 	const totalBudgetLeft = totalBudget - totalBudgetUsed;
+
 	return {
 		totalBudget,
 		totalBudgetUsed,
@@ -312,4 +320,13 @@ export const formatAmount = ( amount: number, currencyCode: string ) => {
 	}
 	const money = getCurrencyObject( amount, currencyCode, { stripZeros: false } );
 	return `${ money.symbol }${ money.integer }${ money.fraction }`;
+};
+
+export const isRunningInWpAdmin = ( site: SiteDetails | null | undefined ): boolean => {
+	if ( ! site ) {
+		return false;
+	}
+	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isRunningInClassicSimple = site?.options?.is_wpcom_simple;
+	return isRunningInClassicSimple || isRunningInJetpack;
 };

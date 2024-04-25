@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import { useDispatch } from 'calypso/state';
 
 type Props = {
 	storedCards: PaymentMethod[];
 	enabled: boolean;
 	hasMoreStoredCards: boolean;
+	setPaging: ( paging: { startingAfter: string; endingBefore: string } ) => void;
 };
 
 /**
@@ -38,11 +38,8 @@ export default function useStoredCardsPagination( {
 	storedCards,
 	enabled,
 	hasMoreStoredCards,
+	setPaging,
 }: Props ) {
-	const dispatch = useDispatch();
-
-	const [ paging, setPaging ] = useState( { startingAfter: '', endingBefore: '' } );
-
 	const onPageClickCallback = useCallback(
 		( page: number, direction: 'next' | 'prev' ) => {
 			// Set a cursor for use in pagination.
@@ -56,10 +53,6 @@ export default function useStoredCardsPagination( {
 		hasMoreStoredCards,
 		onPageClickCallback
 	);
-
-	useEffect( () => {
-		// FIXME: Dispatch an action to fetch the next page of stored cards.
-	}, [ dispatch, paging ] );
 
 	return {
 		page,

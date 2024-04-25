@@ -106,6 +106,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Promotions' );
 		} else if ( 'reports' === category ) {
 			return this.props.translate( 'Reports' );
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Scheduled Updates' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate( 'Learn Faster to Grow Faster' );
 		} else if ( 'jetpack_marketing' === category ) {
@@ -157,6 +159,8 @@ class MainComponent extends Component {
 			return this.props.translate(
 				'Complimentary reports and updates regarding site performance and traffic.'
 			);
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Complimentary reports regarding scheduled plugin updates.' );
 		} else if ( 'learn' === category ) {
 			return this.props.translate(
 				'Take your WordPress.com site to new heights with expert webinars, courses, and community forums.'
@@ -252,6 +256,7 @@ class MainComponent extends Component {
 		const messageLabel = this.state.isSubscribed
 			? translate( "We'll send you updates for this mailing list." )
 			: translate( 'You will no longer receive updates for this mailing list.' );
+		const categoryName = this.getCategoryName();
 
 		return (
 			<div className="mailing-lists">
@@ -262,34 +267,40 @@ class MainComponent extends Component {
 					<p>{ preventWidows( messageLabel, 2 ) }</p>
 				</div>
 
-				<Card className="mailing-lists__details">
-					<h4>{ this.getCategoryName() }</h4>
-					<p>{ this.getCategoryDescription() }</p>
-					{ this.state.isSubscribed ? (
-						<button
-							className="mailing-lists__unsubscribe-button button is-primary"
-							onClick={ this.onUnsubscribeClick }
-						>
-							{ translate( 'Unsubscribe' ) }
-						</button>
-					) : (
-						<button
-							className="mailing-lists__resubscribe-button button"
-							onClick={ this.onResubscribeClick }
-						>
-							{ translate( 'Resubscribe' ) }
-						</button>
-					) }
-				</Card>
-
-				<p className="mailing-lists__manage-link">
-					<button
-						className="mailing-lists__manage-button button is-link"
-						onClick={ this.onManageUpdatesClick }
-					>
-						{ translate( 'Manage all your email subscriptions' ) }
-					</button>
-				</p>
+				{
+					// Don't show the unsubscribe / resubscribe button and the manage link for Gravatar-related categories.
+					! categoryName?.startsWith( 'gravatar_' ) && (
+						<>
+							<Card className="mailing-lists__details">
+								<h4>{ categoryName }</h4>
+								<p>{ this.getCategoryDescription() }</p>
+								{ this.state.isSubscribed ? (
+									<button
+										className="mailing-lists__unsubscribe-button button is-primary"
+										onClick={ this.onUnsubscribeClick }
+									>
+										{ translate( 'Unsubscribe' ) }
+									</button>
+								) : (
+									<button
+										className="mailing-lists__resubscribe-button button"
+										onClick={ this.onResubscribeClick }
+									>
+										{ translate( 'Resubscribe' ) }
+									</button>
+								) }
+							</Card>
+							<p className="mailing-lists__manage-link">
+								<button
+									className="mailing-lists__manage-button button is-link"
+									onClick={ this.onManageUpdatesClick }
+								>
+									{ translate( 'Manage all your email subscriptions' ) }
+								</button>
+							</p>
+						</>
+					)
+				}
 			</div>
 		);
 	}

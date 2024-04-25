@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import {
 	LicenseRole,
 	LicenseState,
@@ -36,8 +37,10 @@ export default function LicenseDetailsActions( {
 	const translate = useTranslate();
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
+	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
-	const debugUrl = ''; // FIXME: Fix the debugUrl
+	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
@@ -50,17 +53,20 @@ export default function LicenseDetailsActions( {
 		dispatch( recordTracksEvent( 'calypso_a4a_license_details_revoke_dialog_close' ) );
 	}, [ dispatch ] );
 
+	const { mutate, status, error, data } = downloadUrl;
+
+	useEffect( () => {
+		if ( status === 'success' ) {
+			window.location.replace( data.download_url );
+		} else if ( status === 'error' ) {
+			dispatch( errorNotice( error.message ) );
+		}
+	}, [ status, error, dispatch, data ] );
+
 	const download = useCallback( () => {
-		downloadUrl.mutate( null, {
-			onSuccess: ( data ) => {
-				window.location.replace( data.download_url );
-			},
-			onError: ( error: Error ) => {
-				dispatch( errorNotice( error.message ) );
-			},
-		} );
+		mutate( null );
 		dispatch( recordTracksEvent( 'calypso_a4a_license_details_download' ) );
-	}, [ dispatch, downloadUrl ] );
+	}, [ dispatch, mutate ] );
 
 	return (
 		<div className="license-details__actions">
@@ -69,22 +75,34 @@ export default function LicenseDetailsActions( {
 				licenseType === LicenseType.Partner && (
 					<Button
 						compact
-						{ ...( downloadUrl.isPending ? { busy: true } : {} ) }
+						{ ...( status === 'pending' ? { busy: true } : {} ) }
 						onClick={ download }
 					>
 						{ translate( 'Download' ) }
 					</Button>
 				) }
 
-			{ licenseState === LicenseState.Attached && siteUrl && (
+			{ ! isPressableLicense && licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'View site' ) }
 				</Button>
 			) }
 
-			{ licenseState === LicenseState.Attached && debugUrl && (
+			{ ! isPressableLicense && licenseState === LicenseState.Attached && debugUrl && (
 				<Button compact href={ debugUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'Debug site' ) }
+				</Button>
+			) }
+
+			{ isPressableLicense && licenseState === LicenseState.Attached && (
+				<Button
+					primary
+					compact
+					href={ pressableManageUrl }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ translate( 'Manage in Pressable' ) }
 				</Button>
 			) }
 

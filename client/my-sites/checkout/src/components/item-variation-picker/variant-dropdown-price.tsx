@@ -1,9 +1,10 @@
+import { isMultiYearDomainProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import {
 	Discount,
 	DoNotPayThis,
@@ -16,6 +17,7 @@ import {
 } from './styles';
 import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
 	const translate = useTranslate();
@@ -33,7 +35,8 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 export const ItemVariantDropDownPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
-} > = ( { variant, compareTo } ) => {
+	product: ResponseCartProduct;
+} > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
@@ -61,7 +64,8 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
+	const isMultiYearDomain = isMultiYearDomainProduct( product );
 
 	const translatedIntroOfferDetails = () => {
 		const args = {
@@ -183,9 +187,11 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				) }
 				<IntroPricing>
-					<IntroPricingText>
-						{ isIntroductoryOffer && translatedIntroOfferDetails() }
-					</IntroPricingText>
+					{ ! isMultiYearDomain && (
+						<IntroPricingText>
+							{ isIntroductoryOffer && translatedIntroOfferDetails() }
+						</IntroPricingText>
+					) }
 				</IntroPricing>
 			</PriceTextContainer>
 		</Variant>

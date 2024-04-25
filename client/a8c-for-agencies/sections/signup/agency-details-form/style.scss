@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .agency-details-form {
 
 	.agency-details-form__controls {
@@ -21,4 +24,29 @@
 	select {
 		width: 100%;
 	}
+
+	.agency-details-form__fullname-container {
+		@include break-small {
+			display: flex;
+			flex-direction: row;
+			gap: 16px;
+
+			> * {
+				flex-grow: 1;
+			}
+		}
+	}
+
+	.agency-details-form__footer-error {
+		margin: 8px 0 0;
+		color: var(--color-scary-40);
+		font-style: italic;
+		font-size: 0.9rem; /* stylelint-disable-line scales/font-sizes */
+		line-height: 14px;
+	}
+
+	.company-details-form__tos p {
+		font-size: 1rem;
+	}
+
 }

@@ -5,6 +5,7 @@ import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ScanNavigation from '../navigation';
@@ -29,7 +30,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			<DocumentHead title={ translate( 'Scan' ) } />
 			{ isJetpackPlatform && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
-			{ ! isJetpackPlatform && (
+			{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
 				<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 			) }
 

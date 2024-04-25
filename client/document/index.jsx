@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { Component } from 'react';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
@@ -17,6 +18,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData } from 'calypso/state/oauth2-clients/reducer';
@@ -292,6 +294,10 @@ function chooseLoadingLogo( { useLoadingEllipsis }, isWpMobileApp, isWcMobileApp
 
 	if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp ) {
 		return JetpackLogo;
+	}
+
+	if ( isA8CForAgencies() ) {
+		return A4ALogo;
 	}
 
 	return WordPressLogo;

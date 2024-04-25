@@ -10,6 +10,7 @@ import {
 	featureFlagFirewall,
 	handleDomainQueryParam,
 	redirectToBaseSiteProfilerRoute,
+	siteProfilerReportContext,
 } from 'calypso/site-profiler/controller';
 
 export default function ( router: typeof clientRouter ) {
@@ -27,6 +28,16 @@ export default function ( router: typeof clientRouter ) {
 		makeLayout,
 		clientRender,
 	];
+
+	const siteProfilerReportMiddleware = [
+		featureFlagFirewall,
+		siteProfilerReportContext,
+		makeLayout,
+		clientRender,
+	];
+
+	router( '/site-profiler/report/:hash/:domain', ...siteProfilerReportMiddleware );
+	router( '/site-profiler/report/:hash/:domain/*', ...siteProfilerReportMiddleware );
 
 	router( `/site-profiler/${ lang }/:domain?`, ...langSiteProfilerMiddleware );
 	router( `/${ lang }/site-profiler/:domain?`, ...langSiteProfilerMiddleware );

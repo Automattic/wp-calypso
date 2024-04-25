@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -5,9 +6,11 @@ import {
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
@@ -64,6 +67,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
+	const isA4AEnabled = isEnabled( 'a8c-for-agencies' );
 
 	let aboveButtonText: TranslateResult | null;
 	let billingTerm: Duration;
@@ -101,8 +105,14 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			currencyCode = manageProduct.currency;
 			originalPrice = parseFloat( manageProduct.amount );
 			onCtaButtonClickInternal = () => {
-				setShowLightbox( true );
 				onCtaButtonClick();
+				if ( isA4AEnabled ) {
+					page.redirect(
+						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
+					);
+					return;
+				}
+				setShowLightbox( true );
 			};
 		}
 	} else {
@@ -189,7 +199,13 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 							</li>
 						) ) }
 				</ul>
-				{ hasJetpackPartnerAccess && <b>{ translate( 'Price per Jetpack Manage license:' ) }</b> }
+				{ hasJetpackPartnerAccess && (
+					<b>
+						{ isA4AEnabled
+							? translate( 'Price per license:' )
+							: translate( 'Price per Jetpack Manage license:' ) }
+					</b>
+				) }
 				<div className="upsell-product-card__price-container">
 					<DisplayPrice
 						isFree={ ! isFetchingPrices && originalPrice === 0 }

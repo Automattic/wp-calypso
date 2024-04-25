@@ -17,7 +17,8 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 
 	.gridicon {
 		fill: #a7aaad;
-		margin-left: 14px;
+		${ ( props ) =>
+			props.shouldUseCheckoutV2 ? `margin-inline-start: 0;` : `margin-inline-start: 14px;` };
 	}
 
 	${ ( props ) =>
@@ -69,8 +70,9 @@ export const Dropdown = styled.div< { shouldUseCheckoutV2: boolean } >`
 export const OptionList = styled.ul`
 	position: absolute;
 	width: 100%;
-	z-index: 1;
+	z-index: 4;
 	margin: 0;
+	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
 	${ Option } {
 		margin-top: -1px;
@@ -152,7 +154,10 @@ export const Label = styled.span< { shouldUseCheckoutV2: boolean } >`
 	display: flex;
 	white-space: nowrap;
 
-	${ ( props ) => ( props.shouldUseCheckoutV2 ? 'font-size: 14px' : 'font-size: inherit' ) };
+	${ ( props ) =>
+		props.shouldUseCheckoutV2
+			? 'font-size: 14px; white-space: normal; text-align: start'
+			: 'font-size: inherit' };
 
 	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
 	@media ( max-width: 480px ) {

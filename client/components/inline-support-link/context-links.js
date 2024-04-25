@@ -51,6 +51,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/dashboard/',
 		post_id: 137,
 	},
+	delete_site: {
+		link: 'https://wordpress.com/support/delete-site/',
+		post_id: 14411,
+	},
 	discussion: {
 		link: 'https://wordpress.com/support/settings/discussion-settings/',
 		post_id: 1504,
@@ -231,6 +235,10 @@ const contextLinks = {
 	'privacy-preview-link': {
 		link: 'https://wordpress.com/support/settings/privacy-settings/#preview-link',
 		post_id: 1507,
+	},
+	'primary-site-address': {
+		link: 'https://wordpress.com/support/domains/set-a-primary-address/',
+		post_id: 197437,
 	},
 	publicize: {
 		link: 'https://wordpress.com/support/post-automatically-to-social-media/',

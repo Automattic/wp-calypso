@@ -20,7 +20,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
@@ -30,8 +29,6 @@ jest.mock( 'calypso/components/happiness-support', () => () => (
 	<div data-testid="happiness-support" />
 ) );
 jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wordpress-logo" /> );
-jest.mock( '../premium-plan-details', () => () => 'premium-plan-details' );
-jest.mock( '../business-plan-details', () => () => <div data-testid="business-plan-details" /> );
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
 jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 	<div data-testid="component--plan-only-thank-you" />

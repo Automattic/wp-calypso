@@ -97,9 +97,8 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -138,9 +137,8 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutPlanUpgradeCredits: false,
 			storageAddOns: null,
-			selectedSiteId: 100,
+			siteId: 100,
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} );
@@ -165,49 +163,7 @@ describe( 'usePricingMetaForGridPlans', () => {
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
-	it( 'should return the original price and discounted price (prorated) when withoutPlanUpgradeCredits is false', () => {
-		Plans.useCurrentPlan.mockImplementation( () => ( {
-			productSlug: PLAN_PERSONAL,
-			planSlug: PLAN_PERSONAL,
-		} ) );
-
-		const useCheckPlanAvailabilityForPurchase = () => {
-			return {
-				[ PLAN_PERSONAL ]: true,
-				[ PLAN_PREMIUM ]: true,
-			};
-		};
-
-		const pricingMeta = usePricingMetaForGridPlans( {
-			planSlugs: [ PLAN_PREMIUM ],
-			withoutPlanUpgradeCredits: false,
-			storageAddOns: null,
-			selectedSiteId: 100,
-			coupon: undefined,
-			useCheckPlanAvailabilityForPurchase,
-		} );
-
-		const expectedPricingMeta = {
-			[ PLAN_PREMIUM ]: {
-				originalPrice: {
-					full: 500,
-					monthly: 500,
-				},
-				discountedPrice: {
-					full: 250,
-					monthly: 250,
-				},
-				billingPeriod: 365,
-				currencyCode: 'USD',
-				expiry: null,
-				introOffer: null,
-			},
-		};
-
-		expect( pricingMeta ).toEqual( expectedPricingMeta );
-	} );
-
-	it( 'should return the original price and discounted price (not prorated) when withoutPlanUpgradeCredits is true', () => {
+	it( 'should return the original price and discounted price', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_PERSONAL,
 			planSlug: PLAN_PERSONAL,
@@ -222,7 +178,6 @@ describe( 'usePricingMetaForGridPlans', () => {
 
 		const pricingMeta = usePricingMetaForGridPlans( {
 			planSlugs: [ PLAN_PREMIUM ],
-			withoutPlanUpgradeCredits: true,
 			storageAddOns: null,
 			selectedSiteId: 100,
 			coupon: undefined,

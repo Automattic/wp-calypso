@@ -9,12 +9,13 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 
 interface Props {
 	plan: Plan | JetpackPlan | WPComPlan | undefined;
+	showFeatures: boolean;
+	setShowFeatures: ( showFeatures: boolean ) => void;
 }
 
 export const UpgradePlanFeatureList = ( props: Props ) => {
 	const { __ } = useI18n();
-	const { plan } = props;
-	const [ showFeatures, setShowFeatures ] = useState( false );
+	const { plan, showFeatures, setShowFeatures } = props;
 	const [ activeTooltipId, setActiveTooltipId ] = useState( '' );
 
 	const wpcomFeatures = plan
@@ -39,7 +40,7 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 				<li className={ classnames( 'import__upgrade-plan-feature-more' ) }>
 					<button onClick={ () => setShowFeatures( true ) }>
 						{ __( 'Show all features' ) }
-						<Icon icon={ chevronDown } />
+						<Icon size={ 18 } icon={ chevronDown } />
 					</button>
 				</li>
 			) }
@@ -75,7 +76,6 @@ export const UpgradePlanFeatureList = ( props: Props ) => {
 							</Plans2023Tooltip>
 						</li>
 					) ) }
-
 					<li className={ classnames( 'import__upgrade-plan-feature logo' ) }>
 						<strong>{ __( 'Storage' ) }</strong>
 					</li>

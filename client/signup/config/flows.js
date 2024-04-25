@@ -236,18 +236,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHostingFlowDestination() {
-	const { flow, ...queryArgs } = getQueryArgs();
-
-	if ( flow === 'new-hosted-site' ) {
-		return addQueryArgs( queryArgs, '/setup/new-hosted-site' );
-	}
-
-	if ( flow === 'import-hosted-site' ) {
-		return '/setup/import-hosted-site';
-	}
-
-	return '/sites?hosting-flow=true';
+function getHostingFlowDestination( { stepperHostingFlow } ) {
+	return `/setup/${ stepperHostingFlow }`;
 }
 
 const flows = generateFlows( {

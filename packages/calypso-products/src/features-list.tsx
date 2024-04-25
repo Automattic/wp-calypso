@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
 import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import SupportIcon from './assets/images/support.svg';
 import Theme2Image from './assets/images/theme-2.jpg';
@@ -312,6 +313,12 @@ import {
 	FEATURE_SENSEI_JETPACK,
 	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+	EXPERT_SUPPORT_ALL_DAYS,
+	FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
+	FEATURE_REAL_TIME_SECURITY_SCANS,
+	FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+	FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
+	FEATURE_WOOCOMMERCE_HOSTING,
 } from './constants';
 import {
 	isPersonalPlan,
@@ -323,17 +330,11 @@ import {
 } from './main';
 import type { FeatureList } from './types';
 
-/**
- * Hardcoded URL temporary until @automattic/urls is cretated
- */
-export const DOMAIN_PRICING_AND_AVAILABLE_TLDS =
-	'https://wordpress.com/support/domains/domain-pricing-and-available-tlds/';
-
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
 		case 'woo':
 			return i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for standard WooCommerce payment features',
+				'%(commission)d%% transaction fee for standard WooCommerce payments (+ standard processing fee)',
 				{
 					args: { commission },
 				}
@@ -341,7 +342,7 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 
 		case 'all':
 			return i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for all payment features',
+				'%(commission)d%% transaction fee for all payment features (+ standard processing fee)',
 				{
 					args: { commission },
 				}
@@ -349,7 +350,7 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 
 		case 'regular':
 			return i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for standard payment features',
+				'%(commission)d%% transaction fee for standard payments (+ standard processing fee)',
 				{
 					args: { commission },
 				}
@@ -357,7 +358,7 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 
 		default:
 			return i18n.translate(
-				'%(commission)d%% commission fee (plus standard processing fee) for payments',
+				'%(commission)d%% transaction fee for payments (+ standard processing fee)',
 				{
 					args: { commission },
 				}
@@ -545,7 +546,7 @@ export const FEATURES_LIST: FeatureList = {
 			if ( planSlug && isWooExpressPlan( planSlug ) ) {
 				return i18n.translate( 'Beautiful themes' );
 			}
-			return i18n.translate( 'Unlimited premium themes' );
+			return i18n.translate( 'Access to all premium themes' );
 		},
 		getDescription: ( { planSlug = undefined } = {} ) => {
 			if ( planSlug && isWooExpressPlan( planSlug ) ) {
@@ -556,7 +557,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ]: {
 		getSlug: () => WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-		getTitle: () => i18n.translate( 'Dozens of premium themes' ),
+		getTitle: () => i18n.translate( 'Access to dozens of premium themes ' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
 
@@ -1561,25 +1562,21 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const hasTranslation =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation(
-					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
-				);
-
-			return hasTranslation
-				? i18n.translate(
-						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
-				  )
-				: '';
-		},
+		getDescription: () =>
+			i18n.translate(
+				'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+			),
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
 		getSlug: () => PREMIUM_DESIGN_FOR_STORES,
 		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
+	},
+
+	[ EXPERT_SUPPORT_ALL_DAYS ]: {
+		getSlug: () => EXPERT_SUPPORT_ALL_DAYS,
+		getTitle: () => i18n.translate( '24/7 expert support' ),
+		getDescription: () => i18n.translate( '24/7 expert support' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
@@ -1865,11 +1862,15 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
-		getTitle: () => i18n.translate( 'Unlimited traffic' ),
+		getTitle: () => i18n.translate( 'No limitations on site visitors' ),
 		getDescription: () =>
-			i18n.translate(
-				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
-			),
+			i18n.translate( 'Grow your site traffic without worrying about limitations.' ),
+	},
+	[ FEATURE_TIERED_STORAGE_PLANS_AVAILABLE ]: {
+		getSlug: () => FEATURE_TIERED_STORAGE_PLANS_AVAILABLE,
+		getTitle: () => i18n.translate( 'Tiered storage plans available' ),
+		getDescription: () =>
+			i18n.translate( 'Find the storage plan that works for your site’s needs.' ),
 	},
 	[ FEATURE_MANAGED_HOSTING ]: {
 		getSlug: () => FEATURE_MANAGED_HOSTING,
@@ -1945,7 +1946,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STYLE_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Style customization' ),
+		getTitle: () => i18n.translate( 'Customize fonts and colors' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 		getDescription: () =>
@@ -1982,7 +1983,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STATS_PAID ]: {
 		getSlug: () => FEATURE_STATS_PAID,
-		getTitle: () => i18n.translate( 'Advanced stats' ),
+		getTitle: () => i18n.translate( 'In-depth site analytics dashboard' ),
 		getDescription: () =>
 			i18n.translate(
 				'Deep-dive analytics and conversion data to help you make decisions to grow your site.'
@@ -2042,15 +2043,40 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Managed malware protection' ),
 		getDescription: () => i18n.translate( 'Stay safe with automated malware scanning.' ),
 	},
+	[ FEATURE_REAL_TIME_SECURITY_SCANS ]: {
+		getSlug: () => FEATURE_REAL_TIME_SECURITY_SCANS,
+		getTitle: () => i18n.translate( 'Real-time security scans' ),
+		getDescription: () =>
+			i18n.translate(
+				"Our dedicated security team works round-the-clock to identify and combat vulnerabilities so that you don't have to."
+			),
+	},
+	[ FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS ]: {
+		getSlug: () => FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS,
+		getTitle: () => i18n.translate( 'Vulnerability notifications for core and plugins' ),
+		getDescription: () =>
+			i18n.translate(
+				'Stress less knowing there’s a dedicated team identifying potential vulnerabilities for WordPress and plugins, ensuring early detection and preventing future attacks.'
+			),
+	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
-		getTitle: () => i18n.translate( 'DDOS mitigation' ),
+		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
 	},
 	[ FEATURE_DEV_TOOLS ]: {
 		getSlug: () => FEATURE_DEV_TOOLS,
-		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' ),
+		getTitle: () => {
+			const localeSlug = i18n.getLocaleSlug();
+			const shouldShowNewString =
+				( localeSlug && englishLocales.includes( localeSlug ) ) ||
+				i18n.hasTranslation( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' );
+
+			return shouldShowNewString
+				? i18n.translate( 'SFTP/SSH, WP-CLI, Git commands and GitHub Deployments' )
+				: i18n.translate( 'SFTP/SSH, WP-CLI, Git tools' );
+		},
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
@@ -2058,6 +2084,15 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () => i18n.translate( 'Free staging site' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
+	},
+
+	[ FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING ]: {
+		getSlug: () => FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
+		getTitle: () => i18n.translate( 'Seamless staging and production syncing' ),
+		getDescription: () =>
+			i18n.translate(
+				'Iterate faster and deploy confidently by synchronizing staging and production environments in a few short steps.'
+			),
 	},
 	[ FEATURE_WP_UPDATES ]: {
 		getSlug: () => FEATURE_WP_UPDATES,
@@ -2254,7 +2289,9 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SPAM_JP,
 		getTitle: () => i18n.translate( 'Spam protection with Akismet' ),
 		getDescription: () =>
-			i18n.translate( 'Kill spam comments with fire, without lifting a finger.' ),
+			i18n.translate(
+				'Never worry about spam with Akismet, which is included at no additional cost.'
+			),
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
@@ -2300,21 +2337,12 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_PREMIUM_CONTENT_JP ]: {
 		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
-		getTitle: () => {
-			const localeSlug = i18n.getLocaleSlug();
-			const shouldShowNewString =
-				( localeSlug && englishLocales.includes( localeSlug ) ) ||
-				i18n.hasTranslation( 'Paid content gating' );
-
-			return shouldShowNewString
-				? i18n.translate( 'Paid content gating' )
-				: i18n.translate( 'Gated content' );
-		},
+		getTitle: () => i18n.translate( 'Paid content gating' ),
 		getDescription: () => i18n.translate( 'Sell access to premium content, right from your site.' ),
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
 		getSlug: () => FEATURE_VIDEOPRESS_JP,
-		getTitle: () => i18n.translate( '4K Videos with VideoPress' ),
+		getTitle: () => i18n.translate( 'Upload 4K videos with VideoPress' ),
 		getDescription: () =>
 			i18n.translate( 'Showcase your videos beautifully with the 4K VideoPress player.' ),
 	},
@@ -2326,7 +2354,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SEO_JP ]: {
 		getSlug: () => FEATURE_SEO_JP,
-		getTitle: () => i18n.translate( 'Tools for SEO' ),
+		getTitle: () => i18n.translate( 'SEO and analytics tools' ),
 		getDescription: () =>
 			i18n.translate( 'Rank well in search with built-in search engine optimization tools.' ),
 	},
@@ -2395,6 +2423,14 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate(
 				'Collect payments from credit/debit cards securely from anywhere with Stripe.'
+			),
+	},
+	[ FEATURE_WOOCOMMERCE_HOSTING ]: {
+		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
+		getTitle: () => i18n.translate( 'Optimized WooCommerce hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'Enjoy a hosting solution tailored to enhance the performance and security of sites running WooCommerce.'
 			),
 	},
 	[ FEATURE_PREMIUM_STORE_THEMES ]: {
@@ -2529,7 +2565,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STREAMLINED_CHECKOUT ]: {
 		getSlug: () => FEATURE_STREAMLINED_CHECKOUT,
-		getTitle: () => i18n.translate( 'Streamlined checkout' ),
+		getTitle: () => i18n.translate( 'Streamlined, extendable checkout' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -2720,13 +2756,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SENSEI_STORAGE ]: {
 		getSlug: () => FEATURE_SENSEI_STORAGE,
-		getTitle: () => {
-			// If we have the new CTA translated or the locale is EN, return the new string, otherwise use the simpler already translated one.
-			return i18n.hasTranslation( '50GB file and video storage' ) ||
-				[ 'en', 'en-gb' ].includes( i18n.getLocaleSlug() || '' )
-				? i18n.translate( '50 GB file and video storage' )
-				: i18n.translate( '50 GB Storage' );
-		},
+		getTitle: () => i18n.translate( '50 GB file and video storage' ),
 	},
 	[ FEATURE_SENSEI_HOSTING ]: {
 		getSlug: () => FEATURE_SENSEI_HOSTING,

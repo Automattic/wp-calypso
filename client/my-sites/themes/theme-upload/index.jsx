@@ -46,7 +46,6 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -487,8 +486,9 @@ const mapStateToProps = ( state ) => {
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 
-	const isEligibleForHostingTrial =
-		isUserEligibleForFreeHostingTrial( state ) && site?.plan?.is_free;
+	// This value is hardcoded to 'false' to disable the free trial banner
+	// see https://github.com/Automattic/wp-calypso/pull/88490
+	const isEligibleForHostingTrial = false;
 
 	const showEligibility =
 		canUploadThemesOrPlugins && ! isAtomic && ( hasEligibilityMessages || ! isEligible );

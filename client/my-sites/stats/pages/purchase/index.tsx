@@ -9,17 +9,20 @@ import { ProductsList } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -38,6 +41,7 @@ import StatsPurchaseWizard, {
 	TYPE_PERSONAL,
 } from '../../stats-purchase/stats-purchase-wizard';
 import StatsLoader from '../../stats-redirect/stats-loader';
+import './style.scss';
 
 const StatsPurchasePage = ( {
 	query,
@@ -50,10 +54,13 @@ const StatsPurchasePage = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
-	);
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	// `is_vip` option is not set in Odyssey, so we need to check `options.is_vip` as well.
+	const isVip = useSelector(
+		( state ) =>
+			!! isVipSite( state as object, siteId as number ) ||
+			!! getSiteOption( state, siteId, 'is_vip' )
+	);
 
 	const isCommercial = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'is_commercial' )
@@ -67,22 +74,21 @@ const StatsPurchasePage = ( {
 		supportCommercialUse,
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
+		hasAnyPlan,
 	} = useStatsPurchases( siteId );
 
 	useEffect( () => {
 		if ( ! siteSlug ) {
 			return;
 		}
-		const trafficPageUrl = `/stats/day/${ siteSlug }`;
-		// Redirect to Calypso Stats if:
-		// - the site is not Jetpack.
-		// TODO: remove this check once we have Stats in Calypso for all sites.
-		if ( ! isSiteJetpackNotAtomic && ! config.isEnabled( 'stats/paid-wpcom-stats' ) ) {
-			page.redirect( trafficPageUrl );
+		if ( isVip ) {
+			page.redirect( `/stats/day/${ siteSlug }` ); // Redirect to the stats page for VIP sites
 		}
-	}, [ siteSlug, isSiteJetpackNotAtomic ] );
+	}, [ siteSlug, isVip ] );
 
 	useEffect( () => {
+		// Scroll to top on page load
+		window.scrollTo( 0, 0 );
 		// track different upgrade sources
 		let triggeredEvent;
 
@@ -158,7 +164,9 @@ const StatsPurchasePage = ( {
 	const noPlanOwned = ! supportCommercialUse && ! isFreeOwned && ! isPWYWOwned;
 	const allowCommercialTierUpgrade =
 		isTierUpgradeSliderEnabled && isCommercialOwned && ! isLegacyCommercialLicense;
+
 	// We show purchase page if there is no plan owned or if we are forcing a product redirect
+	// VIP sites are exempt from being shown this page.
 	const showPurchasePage = noPlanOwned || isForceProductRedirect || allowCommercialTierUpgrade;
 
 	const variant = useMemo( () => {
@@ -199,6 +207,33 @@ const StatsPurchasePage = ( {
 					'stats-purchase-page--is-wpcom': isTypeDetectionEnabled && isWPCOMSite,
 				} ) }
 			>
+				{ /** Only show the navigation header on force redirections and site has no plans */ }
+				{ ! isLoading && ! hasAnyPlan && query.from?.startsWith( 'cmp-red' ) && (
+					<>
+						<NavigationHeader
+							className="stats__section-header modernized-header"
+							title={ translate( 'Jetpack Stats' ) }
+							subtitle={ translate(
+								"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+								{
+									components: {
+										learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+									},
+								}
+							) }
+							navigationItems={ [] }
+						></NavigationHeader>
+						<StatsNavigation
+							selectedItem="traffic"
+							interval="day"
+							siteId={ siteId }
+							slug={ siteSlug }
+							showLock={ true }
+							hideModuleSettings
+						/>
+					</>
+				) }
+
 				{ /* Only query site purchases on Calypso via existing data component */ }
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryProductsList type="jetpack" />

@@ -9,7 +9,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SiteUrl, Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
@@ -64,7 +63,6 @@ const SitePreview = ( {
 		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
 	);
 	const isMobile = useMobileBreakpoint();
-	const wpcomDomain = useSelector( ( state ) => getWpComDomainBySiteId( state, selectedSite?.ID ) );
 
 	if ( isMobile ) {
 		return <></>;
@@ -80,8 +78,8 @@ const SitePreview = ( {
 		: '#';
 
 	// We use an iframe rather than mShot to not cache changes.
-	const iframeSrcKeepHomepage = wpcomDomain
-		? `//${ wpcomDomain.domain }/?hide_banners=true&preview_overlay=true&preview=true`
+	const iframeSrcKeepHomepage = selectedSite
+		? `//${ selectedSite.slug }/?hide_banners=true&preview_overlay=true&preview=true`
 		: '#';
 
 	const selectedSiteURL = selectedSite ? selectedSite.URL : '#';
@@ -97,12 +95,13 @@ const SitePreview = ( {
 					</Button>
 				) }
 				<div className="home-site-preview__thumbnail">
-					{ wpcomDomain ? (
+					{ selectedSite ? (
 						<iframe
 							scrolling="no"
 							loading="lazy"
 							title={ __( 'Site Preview' ) }
 							src={ iframeSrcKeepHomepage }
+							tabIndex={ -1 }
 						/>
 					) : (
 						<div className="home-site-preview__thumbnail-placeholder" />

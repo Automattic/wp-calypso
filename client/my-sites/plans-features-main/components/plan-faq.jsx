@@ -209,9 +209,8 @@ const PlanFAQ = ( { titanMonthlyRenewalCost = 0 } ) => {
 				onToggle={ onFaqToggle }
 			>
 				{ translate(
-					'We sure can! If you need a hand launching your website, take a look at Built By ' +
-						'WordPress.com Express, our white glove site setup service. Our in-house experts will create ' +
-						'your site, and you’ll be ready to go live in four business days or less. ' +
+					'We sure can! If you need a hand launching your website, take a look at our express site setup service. ' +
+						'Our in-house experts will create your site, and you’ll be ready to go live in four business days or less. ' +
 						'To learn more, {{ExternalLinkWithTracking}}click here{{/ExternalLinkWithTracking}}.',
 					{
 						components: {

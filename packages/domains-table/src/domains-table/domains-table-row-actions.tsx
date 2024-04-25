@@ -67,8 +67,7 @@ export const DomainsTableRowActions = ( {
 				isSiteOnFreePlan,
 			} )
 		) &&
-		! isRecentlyRegistered( domain.registrationDate ) &&
-		domain.pointsToWpcom;
+		! isRecentlyRegistered( domain.registrationDate );
 	const canTransferToWPCOM =
 		domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer;
 	const canChangeSiteAddress =

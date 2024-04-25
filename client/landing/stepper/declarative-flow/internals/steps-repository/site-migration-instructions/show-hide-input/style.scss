@@ -1,0 +1,58 @@
+.show-hide-input {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	outline: solid 1px var(--studio-gray-10);
+	padding: 8px;
+	border-radius: 4px;
+	gap: 10px;
+	height: 28px;
+	max-width: 456px;
+	transition: all 0.2s;
+
+	&--hidden {
+		overflow: hidden;
+		user-select: none;
+
+		input {
+			background-color: transparent;
+		}
+	}
+
+	&__value {
+		overflow-x: scroll;
+		font-size: 0.875rem;
+		border: none;
+		outline: none;
+		width: 100%;
+	}
+
+	&:has(:focus),
+	&:hover {
+		outline-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+	}
+
+	&__visibility-button {
+		width: 20px;
+		fill: #a7aaad;
+		transition: all 0.2s;
+		&:hover {
+			fill: #787c82;
+		}
+	}
+
+	&__copy-button {
+		padding: 0 8px;
+		height: 28px;
+		border-radius: 4px;
+	}
+}

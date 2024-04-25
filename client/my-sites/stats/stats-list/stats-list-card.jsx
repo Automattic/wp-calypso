@@ -135,7 +135,7 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			isNew={ [ 'utm' ].includes( moduleType ) }
+			isNew={ [ 'utm', 'devices' ].includes( moduleType ) }
 			className={ classNames( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }
@@ -153,7 +153,7 @@ const StatsListCard = ( {
 					{ data?.map( ( item, index ) => {
 						const leftSideItem = generateLeftItem( item );
 						const isInteractive = item?.link || item?.page || item?.children;
-						const key = item?.id || index; // not every item has an id
+						const key = item?.id ?? index; // not every item has an id
 
 						return (
 							<HorizontalBarListItem

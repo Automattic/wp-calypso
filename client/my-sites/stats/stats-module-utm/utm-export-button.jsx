@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 function UTMExportButton( { data, fileName } ) {
 	// Button set up.
@@ -44,6 +45,7 @@ function UTMExportButton( { data, fileName } ) {
 
 	const initiateDownload = ( event ) => {
 		event.preventDefault();
+		recordGoogleEvent( 'Stats', 'CSV Download UTM' );
 
 		const flattenedData = flattenDataForExport( data );
 		const csvData = prepareDataForDownload( flattenedData );

@@ -4,7 +4,10 @@ import { Card, CardBody, Icon } from '@wordpress/components';
 import { chartBar, chevronRight, people, trendingUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useSelector } from 'react-redux';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
 type EmptyListCTALinkProps = {
@@ -46,11 +49,15 @@ const EmptyListView = () => {
 		recordTracksEvent( 'calypso_subscribers_empty_view_displayed' );
 	}, [] );
 
-	const subscribeBlockUrl = isJetpackCloud()
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = selectedSite?.ID || null;
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+
+	const subscribeBlockUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
 		: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/';
 
-	const importSubscribersUrl = isJetpackCloud()
+	const importSubscribersUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/newsletter/import-subscribers/'
 		: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
 
@@ -74,7 +81,7 @@ const EmptyListView = () => {
 				url={ localizeUrl( importSubscribersUrl ) }
 				eventName="calypso_subscribers_empty_view_import_subscribers_clicked"
 			/>
-			{ ! isJetpackCloud() && (
+			{ ! isWPCOMSite && (
 				<EmptyListCTALink
 					icon={ trendingUp }
 					text={ translate( 'Grow your audience' ) }

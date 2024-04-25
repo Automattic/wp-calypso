@@ -21,7 +21,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		useCheckPlanAvailabilityForPurchase,
 		title,
 		coupon,
-		selectedSiteId,
+		siteId,
 		onPlanIntervalUpdate,
 	} = props;
 	const showBiennialToggle = displayedIntervals.includes( '2yearly' );
@@ -30,16 +30,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && props.plans.length );
-	const maxDiscount = useMaxDiscount(
-		props.plans,
-		useCheckPlanAvailabilityForPurchase,
-		selectedSiteId
-	);
+	const maxDiscount = useMaxDiscount( props.plans, useCheckPlanAvailabilityForPurchase, siteId );
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: currentSitePlanSlug ? [ currentSitePlanSlug ] : [],
-		withoutPlanUpgradeCredits: true,
 		coupon,
-		selectedSiteId,
+		siteId,
 		useCheckPlanAvailabilityForPurchase,
 		storageAddOns: null,
 	} );

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -123,7 +122,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 		return ! isJetpackSite;
 	} );
 
-	const isSubscriptionSiteEnabled = config.isEnabled( 'jetpack/subscription-site' );
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
 	const savedSubscriptionOptions = settings?.subscription_options;
 
@@ -149,13 +147,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				title={ translate( 'Subscriptions' ) }
 			/>
 			<Card className="site-settings__card">
-				{ isSubscriptionSiteEnabled && (
-					<SubscribePostEndSetting
-						disabled={ disabled }
-						handleToggle={ handleToggle }
-						value={ jetpack_subscriptions_subscribe_post_end_enabled }
-					/>
-				) }
+				<SubscribePostEndSetting
+					disabled={ disabled }
+					handleToggle={ handleToggle }
+					value={ jetpack_subscriptions_subscribe_post_end_enabled }
+				/>
 				<SubscribeModalSetting
 					disabled={ disabled }
 					handleToggle={ handleToggle }

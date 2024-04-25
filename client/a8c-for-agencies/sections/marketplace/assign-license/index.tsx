@@ -14,7 +14,7 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
-	A4A_DOWNLOAD_PRODUCTS_LINK,
+	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -144,7 +144,7 @@ export default function AssignLicense( { sites, currentPage, search }: Props ) {
 			return page.redirect(
 				addQueryArgs(
 					{ products: licenseKeysArray.join( ',' ), attachedSiteId: selectedSite?.ID },
-					A4A_DOWNLOAD_PRODUCTS_LINK
+					A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK
 				)
 			);
 		}

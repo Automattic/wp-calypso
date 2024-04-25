@@ -18,6 +18,7 @@ import {
 	getPartnerCoupon,
 	filterAndGroupCostOverridesForDisplay,
 	filterCostOverridesForLineItem,
+	hasCheckoutVersion,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -28,7 +29,6 @@ import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/produ
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useCheckoutV2 } from '../hooks/use-checkout-v2';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { CostOverridesList, LineItemCostOverrides } from './cost-overrides-list';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -101,7 +101,7 @@ export function WPOrderReviewLineItems( {
 	const hasPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const [ initialProducts ] = useState( () => responseCart.products );
 	const [ forceShowAkQuantityDropdown, setForceShowAkQuantityDropdown ] = useState( false );
 
@@ -290,7 +290,7 @@ function LineItemWrapper( {
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	const signupFlowName = getSignupCompleteFlowName();
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {

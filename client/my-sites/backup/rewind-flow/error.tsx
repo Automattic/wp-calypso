@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import downloadFailureImage from 'calypso/assets/images/illustrations/jetpack-cloud-download-failure.svg';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
 interface Props {
@@ -15,7 +16,7 @@ const RewindFlowError: FunctionComponent< Props > = ( {
 	errorText,
 	siteUrl,
 	children,
-	imgSrc = '/calypso/images/illustrations/jetpack-cloud-download-failure.svg',
+	imgSrc = downloadFailureImage,
 	imgAlt = 'jetpack cloud error',
 } ) => {
 	const translate = useTranslate();

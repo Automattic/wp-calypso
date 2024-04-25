@@ -22,7 +22,7 @@ import { withEnhancers } from 'calypso/state/utils';
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
 const noop = () => {};
 
-export class PageViewTracker extends Component {
+export class UnconnectedPageViewTracker extends Component {
 	static displayName = 'PageViewTracker';
 
 	static propTypes = {
@@ -124,4 +124,4 @@ const mapDispatchToProps = {
 	] ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( UnconnectedPageViewTracker );
