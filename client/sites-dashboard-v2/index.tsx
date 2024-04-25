@@ -1,4 +1,8 @@
-import { useSitesListFiltering, useSitesListGrouping } from '@automattic/sites';
+import {
+	useSitesListFiltering,
+	useSitesListGrouping,
+	useSitesListSorting,
+} from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -84,6 +88,7 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
+		hiddenFields: [ 'magic' ],
 		filters:
 			status === 'all'
 				? []
@@ -117,8 +122,22 @@ const SitesDashboardV2 = ( {
 	} );
 
 	// todo: Perform sorting actions
+	const sortKeyMap = {
+		site: 'alphabetically',
+		magic: 'lastInteractedWith',
+		'last-publish': 'updatedAt',
+	};
 
-	const paginatedSites = filteredSites.slice(
+	const sortedSites = useSitesListSorting( filteredSites, {
+		sortKey: ( sortKeyMap[ dataViewsState.sort.field as keyof typeof sortKeyMap ] || '' ) as
+			| 'alphabetically'
+			| 'lastInteractedWith'
+			| 'updatedAt'
+			| undefined,
+		sortOrder: dataViewsState.sort.direction || undefined,
+	} );
+
+	const paginatedSites = sortedSites.slice(
 		( dataViewsState.page - 1 ) * dataViewsState.perPage,
 		dataViewsState.page * dataViewsState.perPage
 	);
