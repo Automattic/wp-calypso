@@ -44,8 +44,19 @@ interface SitesDashboardProps {
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
 }
 
+const DEFAULT_PER_PAGE = 96;
+const DEFAULT_STATUS_GROUP = 'all';
+
 const SitesDashboardV2 = ( {
-	queryParams: { page = 1, perPage = 96, search, newSiteID, status = 'all' },
+	// Note - control params (eg. search, page, perPage, status...) are currently meant for
+	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
+	queryParams: {
+		page = 1,
+		perPage = DEFAULT_PER_PAGE,
+		search,
+		newSiteID,
+		status = DEFAULT_STATUS_GROUP,
+	},
 	updateQueryParams = handleQueryParamChange,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
@@ -107,7 +118,10 @@ const SitesDashboardV2 = ( {
 
 	// todo: Perform sorting actions
 
-	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
+	const paginatedSites = filteredSites.slice(
+		( dataViewsState.page - 1 ) * dataViewsState.perPage,
+		dataViewsState.page * dataViewsState.perPage
+	);
 
 	// Site is selected:
 	useEffect( () => {
@@ -120,24 +134,19 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState.selectedItem ] );
 
-	// Update URL with search param on change
+	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
-			status: statusSlug === 'all' ? undefined : statusSlug,
+			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
+			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
 		// There is a chance that the URL is not up to date when it mounts, so bump the
 		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.search, statusSlug, updateQueryParams ] );
-
-	// Update URL with page param on change.
-	useEffect( () => {
-		const queryParams = { page: dataViewsState.page };
-		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.page, updateQueryParams ] );
+	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug, updateQueryParams ] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
