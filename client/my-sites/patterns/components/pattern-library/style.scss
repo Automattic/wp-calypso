@@ -145,40 +145,13 @@
 		letter-spacing: 0.185px;
 	}
 
-	.components-base-control {
-		flex: none;
-		white-space: nowrap;
-	}
-
-	.components-base-control__field,
-	.components-base-control__label {
-		margin-bottom: 0;
-	}
-
-	.pattern-library__view-switcher {
-		background: none;
-	}
-
-	.pattern-library__view-switcher-option {
-		height: 34px;
-		padding: 0 10px;
-
-		&[aria-checked="false"] {
-			color: inherit;
-		}
-	}
-
 	@media ( max-width: $break-medium ) {
 		.pattern-library__title:not(.pattern-library__title--search) {
 			display: none;
 		}
 
-		.components-base-control:has(.pattern-library__view-switcher) {
+		.pattern-library__view-toggle {
 			display: none;
-		}
-
-		.pattern-library__view-switcher-option {
-			height: 36px;
 		}
 	}
 }

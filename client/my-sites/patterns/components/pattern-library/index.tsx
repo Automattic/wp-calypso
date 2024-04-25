@@ -2,11 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useLocale, addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import {
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-} from '@wordpress/components';
-import { Icon, category as iconCategory, menu as iconMenu } from '@wordpress/icons';
+import { Icon, category as iconCategory } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Substitution, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
@@ -16,9 +12,10 @@ import { PatternsCopyPasteInfo } from 'calypso/my-sites/patterns/components/copy
 import { PatternsGetStarted } from 'calypso/my-sites/patterns/components/get-started';
 import { PatternsHeader } from 'calypso/my-sites/patterns/components/header';
 import { PatternsPageViewTracker } from 'calypso/my-sites/patterns/components/page-view-tracker';
-import { PatternTypeSwitcher } from 'calypso/my-sites/patterns/components/pattern-type-switcher';
 import { PatternsDocumentHead } from 'calypso/my-sites/patterns/components/patterns-document-head';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
+import { TypeToggle } from 'calypso/my-sites/patterns/components/type-toggle';
+import { ViewToggle } from 'calypso/my-sites/patterns/components/view-toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { usePatternCategories } from 'calypso/my-sites/patterns/hooks/use-pattern-categories';
 import { usePatterns } from 'calypso/my-sites/patterns/hooks/use-patterns';
@@ -124,24 +121,6 @@ export const PatternLibrary = ( {
 
 	const currentView = isGridView ? 'grid' : 'list';
 
-	const handleViewChange = ( view: PatternView ) => {
-		if ( currentView === view ) {
-			return;
-		}
-
-		recordClickEvent( 'calypso_pattern_library_view_switch', view, patternTypeFilter );
-
-		const url = new URL( window.location.href );
-		url.searchParams.delete( 'grid' );
-
-		if ( view === 'grid' ) {
-			url.searchParams.set( 'grid', '1' );
-		}
-
-		// Removing the origin ensures that a full refresh is not attempted
-		page( url.href.replace( url.origin, '' ) );
-	};
-
 	// If the user has scrolled below the anchoring position of the category pill navigation then we
 	// scroll back up when the category changes
 	useEffect( () => {
@@ -202,7 +181,7 @@ export const PatternLibrary = ( {
 	}, [ locale, isLoggedIn ] );
 
 	const categoryObject = categories?.find( ( { name } ) => name === category );
-	const shouldDisplayPatternTypeSwitcher =
+	const shouldDisplayPatternLibraryToggle =
 		category && ! searchTerm && !! categoryObject?.pagePatternCount;
 
 	const categoryNavList = categories.map( ( category ) => {
@@ -327,42 +306,23 @@ export const PatternLibrary = ( {
 								{ mainHeading }
 							</h1>
 
-							{ shouldDisplayPatternTypeSwitcher && (
-								<PatternTypeSwitcher
-									onChange={ ( value ) => {
-										recordClickEvent( 'calypso_pattern_library_type_switch', currentView, value );
+							{ shouldDisplayPatternLibraryToggle && (
+								<TypeToggle
+									onChange={ ( type ) => {
+										recordClickEvent( 'calypso_pattern_library_type_switch', currentView, type );
 									} }
 								/>
 							) }
 
-							<ToggleGroupControl
-								className="pattern-library__view-switcher"
-								label=""
-								isBlock
-								value={ isGridView ? 'grid' : 'list' }
-							>
-								<ToggleGroupControlOption
-									aria-label={ translate( 'List view', {
-										comment: 'Toggle label for view switcher in the Pattern Library',
-										textOnly: true,
-									} ) }
-									className="pattern-library__view-switcher-option"
-									label={ ( <Icon icon={ iconMenu } size={ 20 } /> ) as unknown as string }
-									onClick={ () => handleViewChange( 'list' ) }
-									value="list"
-								/>
-
-								<ToggleGroupControlOption
-									aria-label={ translate( 'Grid view', {
-										comment: 'Toggle label for view switcher in the Pattern Library',
-										textOnly: true,
-									} ) }
-									className="pattern-library__view-switcher-option"
-									label={ ( <Icon icon={ iconCategory } size={ 20 } /> ) as unknown as string }
-									onClick={ () => handleViewChange( 'grid' ) }
-									value="grid"
-								/>
-							</ToggleGroupControl>
+							<ViewToggle
+								onChange={ ( view ) => {
+									recordClickEvent(
+										'calypso_pattern_library_view_switch',
+										view,
+										patternTypeFilter
+									);
+								} }
+							/>
 						</div>
 
 						<PatternGallery
