@@ -111,7 +111,7 @@ export const useMultisiteUpdateScheduleQuery = (
 
 					const existingSchedule = result.find(
 						( item ) =>
-							item.id === scheduleId &&
+							item.schedule_id === scheduleId &&
 							item.timestamp === timestamp &&
 							item.schedule === schedule &&
 							item.interval === interval
