@@ -21,12 +21,11 @@
 		justify-content: center;
 		padding: 0 10px;
 		position: relative;
-		transition: background 250ms linear, color 250ms linear;
+		transition: color 200ms linear;
 		white-space: nowrap;
 		width: 100%;
 
 		&.is-active {
-			background: #000;
 			color: #fff;
 		}
 
@@ -46,7 +45,8 @@
 	.pattern-library__toggle-backdrop {
 		background: #000;
 		border-radius: 2px;
-		position: absolute;
 		inset: 0;
+		position: absolute;
+		z-index: -1;
 	}
 }
