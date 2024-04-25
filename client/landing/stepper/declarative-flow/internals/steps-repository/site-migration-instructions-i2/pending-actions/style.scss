@@ -8,11 +8,11 @@
 		opacity: 1;
 	}
 
-	ul {
+	ul.pending-actions__list {
 		margin-top: 5px;
-	}
-	li {
-		margin-bottom: 0;
+		li {
+			margin-bottom: 0;
+		}
 	}
 
 	&__action {

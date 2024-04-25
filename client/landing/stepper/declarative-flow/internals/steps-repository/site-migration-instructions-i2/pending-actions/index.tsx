@@ -44,7 +44,7 @@ export const PendingActions: FC< Props > = ( { isWaitingForSite, isWaitingForPlu
 	return (
 		<div className="pending-actions">
 			{ translate( 'Wait until we finish setting up your site to continue' ) }
-			<ul>
+			<ul className="pending-actions__list">
 				<li>
 					<VisualStateIndicator
 						state={ isWaitingForSite ? 'pending' : 'success' }
