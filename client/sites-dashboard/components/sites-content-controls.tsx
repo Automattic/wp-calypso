@@ -13,7 +13,7 @@ import { SitesSearch } from './sites-search';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
 export interface SitesDashboardQueryParams {
-	page?: number;
+	listPage?: number;
 	perPage?: number;
 	search?: string;
 	showHidden?: boolean;
@@ -189,7 +189,7 @@ export const SitesContentControls = ( {
 							onClick={ () =>
 								onQueryParamChange( {
 									status: 'all' !== name ? name : undefined,
-									page: undefined,
+									listPage: undefined,
 								} )
 							}
 						>

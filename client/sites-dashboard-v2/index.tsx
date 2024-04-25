@@ -3,8 +3,9 @@ import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-lis
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
+	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -38,6 +39,10 @@ import './style.scss';
 
 // Add Dotcom specific styles
 import './dotcom-style.scss';
+import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
+import { updateSitesDashboardUrl } from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/update-sites-dashboard-url';
+import page from '@automattic/calypso-router';
+import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -45,11 +50,23 @@ interface SitesDashboardProps {
 }
 
 const SitesDashboardV2 = ( {
-	queryParams: { page = 1, perPage = 96, search, newSiteID, status = 'all' },
+	queryParams: { listPage = 1, perPage = 96, search, newSiteID, status = 'all' },
 	updateQueryParams = handleQueryParamChange,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+
+	const {
+		dataViewsState,
+		setDataViewsState,
+		initialSelectedSiteUrl,
+		selectedSiteFeature,
+		selectedCategory: category,
+		setSelectedCategory: setCategory,
+		showOnlyFavorites,
+		hideListing,
+		setHideListing,
+	} = useContext( SitesDashboardContext );
 
 	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
@@ -68,23 +85,90 @@ const SitesDashboardV2 = ( {
 	useShowSiteTransferredNotice();
 
 	// Create the DataViews state based on initial values
-	const defaultDataViewsState = {
-		...initialDataViewsState,
-		page,
-		perPage,
-		search: search ?? '',
-		filters:
-			status === 'all'
-				? []
-				: [
-						{
-							field: 'status',
-							operator: 'in',
-							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
-						},
-				  ],
-	};
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+	// const defaultDataViewsState = {
+	// 	...initialDataViewsState,
+	// 	page,
+	// 	perPage,
+	// 	search: search ?? '',
+	// 	filters:
+	// 		status === 'all'
+	// 			? []
+	// 			: [
+	// 					{
+	// 						field: 'status',
+	// 						operator: 'in',
+	// 						value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
+	// 					},
+	// 			  ],
+	// };
+	// const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+
+	useEffect( () => {
+		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
+			setHideListing( false );
+			return;
+		}
+
+		if (
+			dataViewsState.selectedItem &&
+			dataViewsState.selectedItem.url === initialSelectedSiteUrl
+		) {
+			return;
+		}
+
+		console.log( initialSelectedSiteUrl );
+
+		// 	if ( ! isLoading && allSites && initialSelectedSiteUrl ) {
+		// 		const site = liveSites.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
+		//
+		// 		setDataViewsState( ( prevState: DataViewsState ) => ( {
+		// 			...prevState,
+		// 			selectedItem: site,
+		// 			type: DATAVIEWS_LIST,
+		// 		} ) );
+		// 	}
+		// 	// Omitting sitesViewState to prevent infinite loop
+		// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ allSites, isLoading, initialSelectedSiteUrl, setDataViewsState, setHideListing ] );
+
+	useEffect( () => {
+		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
+		if ( hideListing && ! dataViewsState.selectedItem ) {
+			return;
+		}
+
+		if ( dataViewsState.selectedItem ) {
+			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
+		}
+
+		const updatedUrl = updateSitesDashboardUrl( {
+			category: category,
+			setCategory: setCategory,
+			filters: dataViewsState.filters,
+			selectedSite: dataViewsState.selectedItem,
+			selectedSiteFeature: selectedSiteFeature,
+			search: dataViewsState.search,
+			currentPage: dataViewsState.page,
+			sort: dataViewsState.sort,
+			showOnlyFavorites,
+		} );
+		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+			page.show( updatedUrl );
+		}
+	}, [
+		dataViewsState.selectedItem,
+		selectedSiteFeature,
+		category,
+		setCategory,
+		dispatch,
+		dataViewsState.filters,
+		dataViewsState.search,
+		dataViewsState.page,
+		showOnlyFavorites,
+		dataViewsState.sort,
+		hideListing,
+	] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
@@ -107,7 +191,7 @@ const SitesDashboardV2 = ( {
 
 	// todo: Perform sorting actions
 
-	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
+	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, listPage * perPage );
 
 	// Site is selected:
 	useEffect( () => {
@@ -121,23 +205,23 @@ const SitesDashboardV2 = ( {
 	}, [ dataViewsState.selectedItem ] );
 
 	// Update URL with search param on change
-	useEffect( () => {
-		const queryParams = {
-			search: dataViewsState.search?.trim(),
-			status: statusSlug === 'all' ? undefined : statusSlug,
-		};
-
-		// There is a chance that the URL is not up to date when it mounts, so bump the
-		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
-		// then redirecting back to the previous path.
-		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.search, statusSlug, updateQueryParams ] );
+	// useEffect( () => {
+	// 	const queryParams = {
+	// 		search: dataViewsState.search?.trim(),
+	// 		status: statusSlug === 'all' ? undefined : statusSlug,
+	// 	};
+	//
+	// 	// There is a chance that the URL is not up to date when it mounts, so bump the
+	// 	// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
+	// 	// then redirecting back to the previous path.
+	// 	window.setTimeout( () => updateQueryParams( queryParams ) );
+	// }, [ dataViewsState.search, statusSlug, updateQueryParams ] );
 
 	// Update URL with page param on change.
-	useEffect( () => {
-		const queryParams = { page: dataViewsState.page };
-		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.page, updateQueryParams ] );
+	// useEffect( () => {
+	// 	const queryParams = { page: dataViewsState.page };
+	// 	window.setTimeout( () => updateQueryParams( queryParams ) );
+	// }, [ dataViewsState.page, updateQueryParams ] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
@@ -148,7 +232,7 @@ const SitesDashboardV2 = ( {
 	}, [ dataViewsState, setDataViewsState ] );
 
 	// todo: temporary mock data
-	const hideListing = false;
+	//const hideListing = false;
 	const isNarrowView = false;
 
 	return (
