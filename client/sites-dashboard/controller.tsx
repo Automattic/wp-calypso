@@ -49,25 +49,33 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
-			background: #ffffff;
+			background: var( --studio-gray-0 );
 
 			.layout__content {
-				// The page header background extends all the way to the edge of the screen
-				@media only screen and ( min-width: 782px ) {
-					padding-inline: 0;
-				}
-
-				// Prevents the status dropdown from being clipped when the page content
-				// isn't tall enough
-				overflow: inherit;
+				// Add border around everything
+				overflow: hidden;
+				min-height: 100vh;
+				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
 			}
+
+			.layout__secondary .global-sidebar {
+				border: none;
+			}
+		}
+
+		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+			height: calc( 100vh - 32px );
 		}
 
 		// Update body margin to account for the sidebar width
 		@media only screen and ( min-width: 782px ) {
 			div.layout.is-global-sidebar-visible {
-				.layout__primary {
-					margin-inline-start: var( --sidebar-width-max );
+				.layout__primary main {
+					background: var( --color-surface );
+					border-radius: 8px;
+					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
+					height: calc( 100vh - 32px );
+					overflow: auto;
 				}
 			}
 		}

@@ -20,4 +20,11 @@
 	.a4a-layout__top-wrapper {
 		padding-block-start: 0;
 	}
+
+.wpcom-site .a4a-layout-with-columns__container {
+	background: var(--color-sidebar-background);
+}
+
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+	background: var(--studio-white);
 }
