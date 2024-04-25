@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -8,4 +10,41 @@
 
 .wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
 	background: var(--studio-white);
+}
+
+/*
+	Styles for actions (search, filters)
+*/
+.dataviews-filters__view-actions {
+	align-items: center;
+
+	.components-search-control {
+		@media (min-width: 1014px) {
+			min-width: 390px;
+		}
+	}
+
+	.components-search-control .components-input-control__container {
+		width: 100%;
+		height: 44px;
+		flex: 1 1 auto;
+		flex-direction: row-reverse;
+		align-items: center;
+		// places search above filters
+		z-index: 1;
+		border-radius: 2px;
+		border: 1px solid var(--studio-gray-10);
+		background-color: var(--color-surface, $white);
+
+		.components-input-control__input {
+			padding-left: 0;
+			font-size: $font-body;
+		}
+
+		// search icon
+		.components-input-control__suffix {
+			padding-inline-start: 11px;
+			color: var(--studio-gray-30);
+		}
+	}
 }
