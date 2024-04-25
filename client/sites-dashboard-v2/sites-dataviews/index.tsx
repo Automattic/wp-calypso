@@ -2,11 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import {
-	DataViewsColumn,
-	DataViewsState,
-	ItemsDataViewsType,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -17,12 +12,18 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteInfo } from './interfaces';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import { getSitesPagination } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
+import type {
+	DataViewsColumn,
+	DataViewsPaginationInfo,
+	DataViewsState,
+	ItemsDataViewsType,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
+	paginationInfo: DataViewsPaginationInfo;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 };
@@ -36,7 +37,13 @@ export const siteStatusGroups = [
 	{ value: 6, label: __( 'Deleted' ), slug: 'deleted' },
 ];
 
-const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsState }: Props ) => {
+const DotcomSitesDataViews = ( {
+	sites,
+	isLoading,
+	paginationInfo,
+	dataViewsState,
+	setDataViewsState,
+}: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
@@ -118,13 +125,13 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
 		items: sites,
-		pagination: getSitesPagination( sites, dataViewsState.perPage ),
 		itemFieldId: 'ID',
 		searchLabel: __( 'Search for sites' ),
 		fields,
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
+		pagination: paginationInfo,
 	} );
 
 	// Update the itemData packet
@@ -133,13 +140,13 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 			...prevState,
 			items: sites,
 			fields,
-			//actions: actions,
-			pagination: getSitesPagination( sites, dataViewsState.perPage ),
+			// actions: actions,
 			setDataViewsState,
 			dataViewsState,
 			selectedItem: dataViewsState.selectedItem,
+			pagination: paginationInfo,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, sites ] ); // add actions when implemented
+	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites ] ); // add actions when implemented
 
 	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } />;
 };

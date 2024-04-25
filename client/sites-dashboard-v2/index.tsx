@@ -31,6 +31,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
+import { getSitesPagination } from './sites-dataviews/utils';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -103,7 +104,10 @@ const SitesDashboardV2 = ( {
 	const filteredSites = useSitesListFiltering( currentStatusGroup, {
 		search: dataViewsState.search,
 	} );
-	// todo: Perform pagination and sorting actions
+
+	// todo: Perform sorting actions
+
+	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
 
 	// Site is selected:
 	useEffect( () => {
@@ -128,6 +132,12 @@ const SitesDashboardV2 = ( {
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
 	}, [ dataViewsState.search, statusSlug, updateQueryParams ] );
+
+	// Update URL with page param on change.
+	useEffect( () => {
+		const queryParams = { page: dataViewsState.page };
+		window.setTimeout( () => updateQueryParams( queryParams ) );
+	}, [ dataViewsState.page, updateQueryParams ] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
@@ -166,8 +176,9 @@ const SitesDashboardV2 = ( {
 
 					<DocumentHead title={ __( 'Sites' ) } />
 					<DotcomSitesDataViews
-						sites={ filteredSites }
+						sites={ paginatedSites }
 						isLoading={ isLoading }
+						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
 					/>
