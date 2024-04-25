@@ -35,13 +35,13 @@ export const getAccountStatus = (
 				statusType: 'success',
 				status: translate( 'Confirmed' ),
 			};
-		case 'SUSPENDED':
+		case 'Suspended':
 			return {
 				statusType: 'error',
 				status: translate( 'Suspended' ),
 			};
 		case 'BLOCKED_BY_TIPALTI':
-		case 'BLOCKED':
+		case 'Blocked':
 			return {
 				statusType: 'error',
 				status: translate( 'Blocked' ),
