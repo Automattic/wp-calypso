@@ -14,9 +14,6 @@ import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils'
 
 const MAX_PAGE_WIDTH = '1224px';
 const pagePadding = {
-	paddingInlineStart: '32px',
-	paddingInlineEnd: '32px',
-
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingInlineStart: '16px',
 		paddingInlineEnd: '16px',
@@ -27,8 +24,6 @@ const PageHeader = styled.div( {
 	...pagePadding,
 
 	backgroundColor: 'var( --studio-white )',
-
-	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px',
@@ -42,6 +37,7 @@ const HeaderControls = styled.div( {
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
+	fontWeight: 500,
 } );
 
 export const PageBodyBottomContainer = styled.div( {
@@ -56,9 +52,47 @@ export const PageBodyBottomContainer = styled.div( {
 	},
 } );
 
+const responsiveButtonStyles = {
+	alignItems: 'center',
+	fontSize: '12px',
+	display: 'inline-flex',
+	height: '28px',
+	lineHeight: '14px',
+	padding: '0 12px',
+};
+
 const ManageAllDomainsButton = styled( Button )`
+	border-color: var( --color-neutral-5 );
+	border-radius: 4px;
 	margin-inline-end: 1rem;
 	white-space: nowrap;
+
+	.sites-dashboard__layout:not(.preview-hidden) & {
+		${ responsiveButtonStyles }
+		margin-inline-end: 0.5rem;
+	},
+`;
+
+const AddNewSiteSplitButton = styled( SplitButton )< { isMobile: boolean } >`
+	.split-button__main {
+		border-radius: 4px 0 0 4px;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	.split-button__toggle {
+		border-radius: ${ ( { isMobile } ) => ( isMobile ? '4px' : '0 4px 4px 0' ) };
+	}
+
+	.sites-dashboard__layout:not( .preview-hidden ) & {
+		.split-button__main,
+		.split-button__toggle {
+			${ responsiveButtonStyles }
+		}
+
+		.split-button__toggle .gridicon {
+			top: 2px;
+		}
+	}
 `;
 
 const DownloadIcon = styled( Icon )`
@@ -92,7 +126,7 @@ const SitesDashboardHeader = () => {
 				<ManageAllDomainsButton href="/domains/manage">
 					{ __( 'Manage all domains' ) }
 				</ManageAllDomainsButton>
-				<SplitButton
+				<AddNewSiteSplitButton
 					primary
 					whiteSeparator
 					label={ isMobile ? undefined : __( 'Add new site' ) }
@@ -101,6 +135,7 @@ const SitesDashboardHeader = () => {
 					} }
 					href={ createSiteUrl }
 					toggleIcon={ isMobile ? 'plus' : undefined }
+					isMobile={ isMobile }
 				>
 					<PopoverMenuItem
 						onClick={ () => {
@@ -124,7 +159,7 @@ const SitesDashboardHeader = () => {
 						<DownloadIcon icon={ download } size={ 18 } />
 						<span>{ __( 'Import an existing site' ) }</span>
 					</PopoverMenuItem>
-				</SplitButton>
+				</AddNewSiteSplitButton>
 			</HeaderControls>
 		</PageHeader>
 	);
