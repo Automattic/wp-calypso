@@ -8,6 +8,7 @@ import type { NavigationControls } from '../../types';
 type SegmentationSurveyProviderType = {
 	children: React.ReactNode;
 	navigation: NavigationControls;
+	onSkipQuestion: ( currentQuestion: Question ) => void;
 	onSubmitQuestion: ( currentQuestion: Question ) => void;
 	surveyKey: string;
 	questions?: Question[];
@@ -17,6 +18,7 @@ type SegmentationSurveyProviderType = {
 const SegmentationSurveyProvider = ( {
 	children,
 	navigation,
+	onSkipQuestion,
 	onSubmitQuestion,
 	surveyKey,
 	questions,
@@ -75,13 +77,17 @@ const SegmentationSurveyProvider = ( {
 	}, [ answers, currentQuestion, nextPage, onSubmitQuestion, surveyKey ] );
 
 	const skip = useCallback( () => {
-		nextPage();
+		if ( currentQuestion ) {
+			onSkipQuestion( currentQuestion );
 
-		recordTracksEvent( 'calypso_segmentation_survey_skip', {
-			survey_key: surveyKey,
-			question_key: currentQuestion?.key,
-		} );
-	}, [ currentQuestion?.key, nextPage, surveyKey ] );
+			recordTracksEvent( 'calypso_segmentation_survey_skip', {
+				survey_key: surveyKey,
+				question_key: currentQuestion.key,
+			} );
+		}
+
+		nextPage();
+	}, [ currentQuestion, nextPage, onSkipQuestion, surveyKey ] );
 
 	return (
 		<SurveyContext.Provider

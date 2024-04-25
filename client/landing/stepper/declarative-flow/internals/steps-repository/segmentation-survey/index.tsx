@@ -39,6 +39,29 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 		[ answers, setAnswers ]
 	);
 
+	const clearAnswersOnComplete = useCallback(
+		( currentQuestion: Question ) => {
+			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+				clearAnswers();
+			}
+		},
+		[ clearAnswers, questions ]
+	);
+
+	const onSkipQuestion = useCallback(
+		( currentQuestion: Question ) => {
+			setAnswers( { ...answers, [ currentQuestion.key ]: [] } );
+
+			mutate( {
+				questionKey: currentQuestion.key,
+				answerKeys: [ 'skip' ],
+			} );
+
+			clearAnswersOnComplete( currentQuestion );
+		},
+		[ answers, clearAnswersOnComplete, mutate, setAnswers ]
+	);
+
 	const onSubmitQuestion = useCallback(
 		( currentQuestion: Question ) => {
 			if ( isPending ) {
@@ -52,14 +75,12 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 				},
 				{
 					onSuccess: () => {
-						if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
-							clearAnswers();
-						}
+						clearAnswersOnComplete( currentQuestion );
 					},
 				}
 			);
 		},
-		[ answers, clearAnswers, isPending, mutate, questions ]
+		[ answers, clearAnswersOnComplete, isPending, mutate ]
 	);
 
 	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {
@@ -70,6 +91,7 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 		<Main className="segmentation-survey-step">
 			<SegmentationSurveyProvider
 				navigation={ navigation }
+				onSkipQuestion={ onSkipQuestion }
 				onSubmitQuestion={ onSubmitQuestion }
 				surveyKey={ SURVEY_KEY }
 				questions={ questions }
