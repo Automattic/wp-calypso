@@ -1,6 +1,5 @@
 import { useContext, useEffect, ReactNode } from 'react';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
-import SitePreviewPaneContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-preview-pane/site-preview-pane-content';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,5 +21,5 @@ export function JetpackFeaturePreview( { site, children }: Props ) {
 		}
 	}, [ siteId ] );
 
-	return siteId && <SitePreviewPaneContent>{ children || featurePreview }</SitePreviewPaneContent>;
+	return siteId && <div>{ children || featurePreview }</div>;
 }

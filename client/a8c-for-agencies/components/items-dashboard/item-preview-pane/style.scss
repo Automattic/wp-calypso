@@ -17,8 +17,7 @@
 		}
 
 		.section-nav-tabs__list {
-			padding: 0 0 0 32px;
-			width: unset;
+			padding: 0 32px;
 		}
 
 		.section-nav-tab__text {
@@ -55,16 +54,12 @@
 
 		@media (min-width: 481px) {
 			.section-nav-group {
-				overflow-x: auto;
 
 				.is-dropdown {
 					width: 100%;
 				}
 			}
 
-			.section-nav-tabs {
-				width: unset;
-			}
 		}
 
 		@media (max-width: 480px) {

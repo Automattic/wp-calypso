@@ -81,7 +81,9 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 	const itemData: ItemData = {
 		title: site.title,
 		subtitle: site.slug,
-		icon: site.icon?.img,
+		url: site.URL,
+		blogId: site.ID,
+		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
 	};
 
 	return (
