@@ -34,6 +34,7 @@ export type MultisiteSchedulesUpdates = Omit<
 	ScheduleUpdates,
 	'last_run_status' | 'last_run_timestamp'
 > & {
+	schedule_id: string;
 	sites: MultisiteSiteDetails[];
 };
 
@@ -108,7 +109,13 @@ export const useMultisiteUpdateScheduleQuery = (
 					const { timestamp, schedule, args, interval, last_run_timestamp, last_run_status } =
 						data.sites[ site_id ][ scheduleId ];
 
-					const existingSchedule = result.find( ( item ) => item.id === scheduleId );
+					const existingSchedule = result.find(
+						( item ) =>
+							item.id === scheduleId &&
+							item.timestamp === timestamp &&
+							item.schedule === schedule &&
+							item.interval === interval
+					);
 
 					const site = retrieveSite( parseInt( site_id, 10 ) ) as SiteDetails;
 					if ( existingSchedule ) {
@@ -119,7 +126,8 @@ export const useMultisiteUpdateScheduleQuery = (
 						} );
 					} else {
 						result.push( {
-							id: scheduleId,
+							id: `${ scheduleId }-${ schedule }-${ interval }-${ timestamp }`,
+							schedule_id: scheduleId,
 							timestamp,
 							schedule,
 							args,
