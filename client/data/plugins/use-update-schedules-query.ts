@@ -23,6 +23,7 @@ export type ScheduleUpdates = {
 	args: string[];
 	last_run_status: LastRunStatus;
 	last_run_timestamp: number | null;
+	health_check_paths?: string[];
 };
 
 type MultisiteSiteDetails = SiteDetails & {

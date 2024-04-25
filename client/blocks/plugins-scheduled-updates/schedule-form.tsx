@@ -46,6 +46,10 @@ export const ScheduleForm = ( props: Props ) => {
 	const [ timestamp, setTimestamp ] = useState< number >(
 		scheduleForEdit ? scheduleForEdit?.timestamp * 1000 : Date.now()
 	);
+	const [ healthCheckPaths, setHealthCheckPaths ] = useState< string[] >(
+		scheduleForEdit?.health_check_paths || []
+	);
+
 	const scheduledTimeSlots = schedules.map( ( schedule ) => ( {
 		timestamp: schedule.timestamp,
 		frequency: schedule.schedule,
@@ -90,6 +94,7 @@ export const ScheduleForm = ( props: Props ) => {
 				timestamp,
 				interval: frequency,
 			},
+			health_check_paths: healthCheckPaths,
 		};
 
 		if ( formValid ) {
@@ -161,7 +166,11 @@ export const ScheduleForm = ( props: Props ) => {
 			{ isEnabled( 'plugins/multisite-scheduled-updates' ) && (
 				<>
 					<Text>{ translate( 'Step 3' ) }</Text>
-					<ScheduleFormPaths borderWrapper={ false } />
+					<ScheduleFormPaths
+						paths={ healthCheckPaths }
+						borderWrapper={ false }
+						onChange={ setHealthCheckPaths }
+					/>
 				</>
 			) }
 		</form>
