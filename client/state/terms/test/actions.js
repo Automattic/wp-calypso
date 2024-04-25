@@ -86,7 +86,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should not dispatch a TERMS_RECEIVE on failure', () => {
+		test( 'should not dispatch a TERMS_RECEIVE event on failure', () => {
 			const spy = jest.fn();
 			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
 
