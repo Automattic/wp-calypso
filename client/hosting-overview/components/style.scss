@@ -54,15 +54,24 @@
 	margin-bottom: 8px;
 }
 
-.hosting-overview__plan-card-title,
-.hosting-overview__plan-price {
-	color: var(--studio-gray-100);
+.hosting-overview__plan-card-title {
 	flex: 1;
-	font-feature-settings: "clig" off, "liga" off;
+}
+
+.hosting-overview__plan-card-title,
+.hosting-overview__plan-price,
+.hosting-overview__plan-price .plan-price__currency-symbol,
+.hosting-overview__plan-price .plan-price__integer,
+.hosting-overview__plan-price .plan-price__fraction {
+	color: var(--studio-gray-100);
 	font-family: "SF Pro", $sans;
 	font-size: rem(28px); //typography-exception
-	font-style: normal;
 	line-height: 32px;
+}
+
+.hosting-overview__plan-price .plan-price__term {
+	color: var(--studio-gray-100);
+	font-family: "SF Pro", $sans;
 }
 
 a.hosting-overview__link-button {
@@ -97,7 +106,6 @@ a.hosting-overview__link-button {
 	line-height: 26px;
 	letter-spacing: 0.38px;
 }
-
 
 .hosting-overview__plan-info {
 	color: var(--studio-gray-80);
