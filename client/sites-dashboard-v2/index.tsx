@@ -45,6 +45,8 @@ interface SitesDashboardProps {
 }
 
 const SitesDashboardV2 = ( {
+	// Note - control params (eg. search, page, perPage, status...) are currently meant for
+	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
 	queryParams: { page = 1, perPage = 96, search, newSiteID, status = 'all' },
 	updateQueryParams = handleQueryParamChange,
 }: SitesDashboardProps ) => {
@@ -107,7 +109,10 @@ const SitesDashboardV2 = ( {
 
 	// todo: Perform sorting actions
 
-	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
+	const paginatedSites = filteredSites.slice(
+		( dataViewsState.page - 1 ) * dataViewsState.perPage,
+		dataViewsState.page * dataViewsState.perPage
+	);
 
 	// Site is selected:
 	useEffect( () => {
@@ -120,24 +125,26 @@ const SitesDashboardV2 = ( {
 		}
 	}, [ dataViewsState.selectedItem ] );
 
-	// Update URL with search param on change
+	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
 			status: statusSlug === 'all' ? undefined : statusSlug,
+			page: dataViewsState.page === 1 ? undefined : dataViewsState.page,
+			'per-page': dataViewsState.perPage === 96 ? undefined : dataViewsState.perPage,
 		};
 
 		// There is a chance that the URL is not up to date when it mounts, so bump the
 		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.search, statusSlug, updateQueryParams ] );
-
-	// Update URL with page param on change.
-	useEffect( () => {
-		const queryParams = { page: dataViewsState.page };
-		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.page, updateQueryParams ] );
+	}, [
+		dataViewsState.search,
+		dataViewsState.page,
+		dataViewsState.perPage,
+		statusSlug,
+		updateQueryParams,
+	] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {
