@@ -1,8 +1,8 @@
 export const getAccountStatus = (
 	data: {
-		status: string;
-		isPayable: boolean;
-		statusReason: string;
+		Status: string;
+		IsPayable: boolean;
+		PayableReason: string[];
 	} | null,
 	translate: ( key: string ) => string
 ): {
@@ -13,14 +13,22 @@ export const getAccountStatus = (
 	if ( ! data ) {
 		return null;
 	}
-	const { status, isPayable, statusReason } = data;
-	switch ( status ) {
-		case 'ACTIVE':
-			if ( ! isPayable ) {
+	const { Status, IsPayable, PayableReason } = data;
+	switch ( Status ) {
+		case 'Active':
+			if ( ! IsPayable ) {
 				return {
 					statusType: 'warning',
 					status: translate( 'Not Payable' ),
-					statusReason,
+					statusReason: PayableReason?.map( ( reason ) => {
+						if ( reason === 'No PM' ) {
+							return translate( 'Bank details are missing' );
+						}
+						if ( reason === 'Tax' ) {
+							return translate( 'Tax form is missing' );
+						}
+						return reason;
+					} ).join( ', ' ),
 				};
 			}
 			return {

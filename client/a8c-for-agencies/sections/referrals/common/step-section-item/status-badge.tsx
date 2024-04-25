@@ -15,7 +15,11 @@ export default function StatusBadge( {
 	const { tooltip, ...badgeProps } = statusProps || {};
 
 	if ( ! tooltip ) {
-		return <Badge className="step-section-item__status" { ...badgeProps } />;
+		return (
+			<span className="step-section-item__status-wrapper">
+				<Badge className="step-section-item__status" { ...badgeProps } />
+			</span>
+		);
 	}
 
 	return (
