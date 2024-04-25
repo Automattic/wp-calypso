@@ -34,11 +34,15 @@ export default function StepSectionItem( {
 			<div className="step-section-item__content">
 				<div className="step-section-item__heading">{ heading }</div>
 				<div className="step-section-item__description">{ description }</div>
-				{ statusProps && <Badge className="step-section-item__status" { ...statusProps } /> }
+				{ buttonProps && (
+					<div className="step-section-item__button">
+						<Button { ...buttonProps } />
+					</div>
+				) }
 			</div>
-			{ buttonProps && (
-				<div className="step-section-item__button">
-					<Button { ...buttonProps } />
+			{ statusProps && (
+				<div className="step-section-item__status">
+					<Badge { ...statusProps } />
 				</div>
 			) }
 		</div>
