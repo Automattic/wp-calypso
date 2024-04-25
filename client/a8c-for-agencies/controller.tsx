@@ -26,5 +26,5 @@ export const requireAccessContext: Callback = ( context, next ) => {
 	}
 
 	const args = getQueryArgs( window.location.href );
-	page.redirect( addQueryArgs( A4A_LANDING_LINK, { ...args, return: pathname + hash + search } ) );
+	page.redirect( addQueryArgs( A4A_LANDING_LINK, { ...args, return: pathname + search + hash } ) );
 };
