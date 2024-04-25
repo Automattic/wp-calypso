@@ -39,3 +39,11 @@ export const getAcceptedAssistedFreeMigration = () => {
 		sessionStorage?.getItem( 'wpcom_import_migration_assistance_accepted' )
 	);
 };
+export const setMigrationAssistanceAccepted = () =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.setItem( 'wpcom_import_migration_assistance_accepted', true )
+	);
+export const clearMigrationAssistanceAccepted = () =>
+	ignoreFatalsForSessionStorage( () =>
+		sessionStorage?.removeItem( 'wpcom_import_migration_assistance_accepted' )
+	);
