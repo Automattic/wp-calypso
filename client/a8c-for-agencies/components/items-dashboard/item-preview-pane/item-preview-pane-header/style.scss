@@ -35,7 +35,7 @@
 
 				.item-preview__header-summary {
 
-					.site-preview__header-summary-link {
+					.item-preview__header-summary-link {
 						display: flex;
 						align-items: center;
 						font-size: rem(18px);
@@ -81,7 +81,7 @@
 
 				.item-preview__header-summary {
 
-					.site-preview__header-summary-link {
+					.item-preview__header-summary-link {
 						display: flex;
 						align-items: center;
 						font-size: rem(13px);
@@ -97,26 +97,6 @@
 					}
 				}
 
-			}
-		}
-	}
-	.site-favicon {
-		margin-right: 16px;
-
-		.site-icon {
-			border-radius: 4px;
-
-			&.is-blank {
-				background: transparent;
-				.wpcom-favicon {
-					fill: var(--color-primary-50);
-				}
-
-				.no-favicon {
-					width: 100%;
-					height: 100%;
-					background: linear-gradient(45deg, #ff0056, #ff8a78, #57b7ff, #9c00d4);
-				}
 			}
 		}
 	}
