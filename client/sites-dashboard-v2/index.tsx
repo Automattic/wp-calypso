@@ -32,6 +32,7 @@ import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
+import type { SiteExcerptData } from '@automattic/sites';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -41,6 +42,8 @@ import './dotcom-style.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
+	selectedSite?: SiteExcerptData | null | undefined;
+	selectedFeature?: string;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
 }
 
@@ -58,6 +61,8 @@ const SitesDashboardV2 = ( {
 		status = DEFAULT_STATUS_GROUP,
 	},
 	updateQueryParams = handleQueryParamChange,
+	selectedSite,
+	selectedFeature,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -84,6 +89,7 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
+		selectedItem: selectedSite,
 		filters:
 			status === 'all'
 				? []
@@ -199,6 +205,7 @@ const SitesDashboardV2 = ( {
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
 						closeSitePreviewPane={ closeSitePreviewPane }
+						selectedFeature={ selectedFeature }
 					/>
 				</LayoutColumn>
 			) }
