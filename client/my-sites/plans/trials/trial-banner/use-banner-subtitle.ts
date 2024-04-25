@@ -80,12 +80,13 @@ export default function useBannerSubtitle(
 						args: {
 							expirationdate: readableExpirationDate as string,
 						},
+						comment: '%expirationdate is the date the trial ends',
 					}
 				);
 			} else {
 				entrepreneurTrialSubtitle = translate(
-					'Your free trial ends in %(daysLeft)d day. Complete the plan purchase by %(expirationdate)s o keep selling and unlock all features!',
-					'Your free trial ends in %(daysLeft)d days. Complete the plan purchase by %(expirationdate)s o keep selling and unlock all features!',
+					'Your free trial ends in %(daysLeft)d day. Complete the plan purchase by %(expirationdate)s to keep selling and unlock all features!',
+					'Your free trial ends in %(daysLeft)d days. Complete the plan purchase by %(expirationdate)s to keep selling and unlock all features!',
 					{
 						args: {
 							daysLeft: trialDaysLeftToDisplay,
