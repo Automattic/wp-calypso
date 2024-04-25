@@ -28,7 +28,7 @@ export default function ReferralsOverview() {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' ) );
 	}, [ dispatch ] );
 
-	const hasPayeeAccount = true; // FIXME: Replace with actual check
+	const hasPayeeAccount = false; // FIXME: Replace with actual check
 	const showStatus = true; // FIXME: Replace with actual check
 	const statusType = 'warning'; // FIXME: Replace with actual check
 	const status = 'Pending'; // FIXME: Replace with actual check

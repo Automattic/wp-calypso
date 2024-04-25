@@ -21,6 +21,8 @@ export default function StepSectionItem( {
 	buttonProps,
 	statusProps,
 }: StepSectionItemProps ) {
+	const status = <Badge { ...statusProps } />;
+
 	return (
 		<div className="step-section-item">
 			<div className="step-section-item__icon">
@@ -32,6 +34,9 @@ export default function StepSectionItem( {
 				/>
 			</div>
 			<div className="step-section-item__content">
+				{ statusProps && (
+					<div className="step-section-item__status is-small-screen">{ status }</div>
+				) }
 				<div className="step-section-item__heading">{ heading }</div>
 				<div className="step-section-item__description">{ description }</div>
 				{ buttonProps && (
@@ -40,11 +45,7 @@ export default function StepSectionItem( {
 					</div>
 				) }
 			</div>
-			{ statusProps && (
-				<div className="step-section-item__status">
-					<Badge { ...statusProps } />
-				</div>
-			) }
+			{ statusProps && <div className="step-section-item__status is-large-screen">{ status }</div> }
 		</div>
 	);
 }
