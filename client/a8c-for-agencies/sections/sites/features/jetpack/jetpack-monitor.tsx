@@ -1,4 +1,3 @@
-import ItemPreviewPaneContent from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-content';
 import ItemPreviewPaneFooter from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-footer';
 import DocumentHead from 'calypso/components/data/document-head';
 import MonitorActivity from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-expanded-content/monitor-activity';
@@ -14,14 +13,14 @@ export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: P
 	return (
 		<>
 			<DocumentHead title="Monitor" />
-			<ItemPreviewPaneContent className="site-preview-pane__monitor-content">
+			<div className="site-preview-pane__monitor-content">
 				<MonitorActivity
 					hasMonitor={ site.monitor_settings.monitor_active }
 					site={ site }
 					trackEvent={ trackEvent }
 					hasError={ hasError }
 				/>
-			</ItemPreviewPaneContent>
+			</div>
 			<ItemPreviewPaneFooter />
 		</>
 	);

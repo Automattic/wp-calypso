@@ -1,5 +1,4 @@
 import { useContext, useEffect, ReactNode } from 'react';
-import ItemPreviewPaneContent from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/item-preview-pane-content';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { useDispatch, useSelector } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -22,5 +21,5 @@ export function JetpackFeaturePreview( { site, children }: Props ) {
 		}
 	}, [ siteId ] );
 
-	return siteId && <ItemPreviewPaneContent>{ children || featurePreview }</ItemPreviewPaneContent>;
+	return siteId && <div>{ children || featurePreview }</div>;
 }
