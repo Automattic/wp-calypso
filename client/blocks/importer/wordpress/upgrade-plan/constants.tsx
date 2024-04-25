@@ -1,5 +1,5 @@
 import { shield, trendingUp, chartBar } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import customerImageAjitBohra from 'calypso/assets/images/migrations/customer-testimonials/ajit-bohra.jpg';
 import customerImageChrisCoyier from 'calypso/assets/images/migrations/customer-testimonials/chris-coyier.jpg';
 import customerImageEmmaLucasCopley from 'calypso/assets/images/migrations/customer-testimonials/emma-lucas-copley.jpg';
@@ -31,20 +31,24 @@ export const UpgradePlanHostingTestimonials = [
 	},
 ];
 
-export const UpgradePlanHostingDetailsList = [
-	{
-		title: translate( 'Reduced error rate' ),
-		description: translate( '16% fewer errors' ),
-		icon: shield,
-	},
-	{
-		title: translate( 'Increased speed' ),
-		description: translate( '30% faster' ),
-		icon: trendingUp,
-	},
-	{
-		title: translate( 'Higher availability' ),
-		description: translate( '3% better uptime' ),
-		icon: chartBar,
-	},
-];
+export function useUpgradePlanHostingDetailsList() {
+	const translate = useTranslate();
+
+	return [
+		{
+			title: translate( 'Reduced error rate' ),
+			description: translate( '16% fewer errors' ),
+			icon: shield,
+		},
+		{
+			title: translate( 'Increased speed' ),
+			description: translate( '30% faster' ),
+			icon: trendingUp,
+		},
+		{
+			title: translate( 'Higher availability' ),
+			description: translate( '3% better uptime' ),
+			icon: chartBar,
+		},
+	];
+}
