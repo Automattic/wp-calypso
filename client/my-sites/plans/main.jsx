@@ -300,15 +300,21 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const { selectedSite } = this.props;
+		const { selectedSite, purchase } = this.props;
 
-		if ( ! selectedSite ) {
+		if ( ! selectedSite || ! purchase ) {
 			return this.renderPlaceholder();
 		}
 
 		const interval = this.getIntervalForWooExpressPlans();
 
-		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
+		return (
+			<ECommerceTrialPlansPage
+				isWooExpressTrial={ !! purchase?.isWooExpressTrial }
+				interval={ interval }
+				site={ selectedSite }
+			/>
+		);
 	}
 
 	renderBusinessTrialPage() {
@@ -369,6 +375,7 @@ class Plans extends Component {
 			currentPlanIntervalType,
 			domainFromHomeUpsellFlow,
 			jetpackAppPlans,
+			purchase,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -389,8 +396,17 @@ class Plans extends Component {
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
+		const entrepreneurTrialSubHeaderText = translate(
+			"Discover what's available in your Entrepreneur plan"
+		);
+
+		const isWooExpressTrial = purchase?.isWooExpressTrial;
+
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
-		const subHeaderText = isWooExpressPlan || isEcommerceTrial ? wooExpressSubHeaderText : null;
+		let subHeaderText = null;
+		if ( isWooExpressPlan || isEcommerceTrial ) {
+			subHeaderText = isWooExpressTrial ? wooExpressSubHeaderText : entrepreneurTrialSubHeaderText;
+		}
 
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
@@ -409,8 +425,9 @@ class Plans extends Component {
 				? translate( 'Get your domain’s first year for free' )
 				: translate( 'Choose the perfect plan' );
 
-		// Hide for WooExpress plans
-		const showPlansNavigation = ! isWooExpressPlan;
+		// Hide for WooExpress plans and Entrepreneur trials that are not WooExpress trials
+		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
+		const showPlansNavigation = ! ( isWooExpressPlan || isEntrepreneurTrial );
 
 		return (
 			<div>
@@ -451,7 +468,7 @@ class Plans extends Component {
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
-							<Main fullWidthLayout={ ! isEcommerceTrial } wideLayout={ isEcommerceTrial }>
+							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }

@@ -7,6 +7,7 @@ export interface UseGridPlansParams {
 	allFeaturesList: FeatureList; // Temporary until feature definitions are ported to calypso-products package
 	coupon?: string;
 	eligibleForFreeHostingTrial?: boolean;
+	hasRedeemedDomainCredit?: boolean;
 	hiddenPlans?: HiddenPlans;
 	intent?: PlansIntent;
 	isDisplayingPlansNeededForFeature?: boolean;

@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon, FormLabel } from '@automattic/components';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo, ChangeEvent, useEffect } from 'react';
 import SearchableDropdown from 'calypso/a8c-for-agencies/components/searchable-dropdown';
@@ -7,6 +9,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox, { ChangeList } from 'calypso/components/forms/multi-checkbox';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import { AgencyDetailsPayload } from './types';
 import type { FormEventHandler } from 'react';
@@ -33,6 +37,7 @@ interface Props {
 	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 	referer?: string | null;
 	initialValues?: {
+		email?: string;
 		firstName?: string;
 		lastName?: string;
 		agencyName?: string;
@@ -61,6 +66,8 @@ export default function AgencyDetailsForm( {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
+	const userLoggedIn = useSelector( isUserLoggedIn );
+	const isA4ALoggedOutSignup = config.isEnabled( 'a4a-logged-out-signup' );
 
 	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
 	const [ city, setCity ] = useState( initialValues.city ?? '' );
@@ -69,6 +76,7 @@ export default function AgencyDetailsForm( {
 	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 	const [ agencyName, setAgencyName ] = useState( initialValues.agencyName ?? '' );
+	const [ email, setEmail ] = useState( initialValues.email ?? '' );
 	const [ firstName, setFirstName ] = useState( initialValues.firstName ?? '' );
 	const [ lastName, setLastName ] = useState( initialValues.lastName ?? '' );
 	const [ agencyUrl, setAgencyUrl ] = useState( initialValues.agencyUrl ?? '' );
@@ -79,6 +87,8 @@ export default function AgencyDetailsForm( {
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap[ country ];
 
+	const [ validationError, setValidationError ] = useState< { email?: string } | undefined >( {} );
+
 	useEffect( () => {
 		// Reset the value of state since our options have changed.
 		setAddressState( stateOptions?.length ? stateOptions[ 0 ].value : '' );
@@ -86,6 +96,7 @@ export default function AgencyDetailsForm( {
 
 	const payload: AgencyDetailsPayload = useMemo(
 		() => ( {
+			email,
 			firstName,
 			lastName,
 			agencyName,
@@ -103,6 +114,7 @@ export default function AgencyDetailsForm( {
 			...( includeTermsOfService ? { tos: 'consented' } : {} ),
 		} ),
 		[
+			email,
 			firstName,
 			lastName,
 			agencyName,
@@ -125,13 +137,32 @@ export default function AgencyDetailsForm( {
 		( e: React.SyntheticEvent ) => {
 			e.preventDefault();
 
+			setValidationError( undefined );
+
 			if ( ! showCountryFields || isLoading ) {
 				return;
 			}
 
+			if ( isA4ALoggedOutSignup && ! userLoggedIn ) {
+				if ( ! email || ! emailValidator.validate( email ) ) {
+					return setValidationError( {
+						email: translate( 'Please enter a valid email address.' ),
+					} );
+				}
+			}
+
 			onSubmit( payload );
 		},
-		[ showCountryFields, isLoading, onSubmit, payload ]
+		[
+			showCountryFields,
+			isLoading,
+			isA4ALoggedOutSignup,
+			userLoggedIn,
+			onSubmit,
+			payload,
+			email,
+			translate,
+		]
 	);
 
 	const getServicesOfferedOptions = () => {
@@ -173,6 +204,26 @@ export default function AgencyDetailsForm( {
 	return (
 		<div className="agency-details-form">
 			<form onSubmit={ handleSubmit }>
+				{ isA4ALoggedOutSignup && ! userLoggedIn && (
+					<FormFieldset>
+						<FormLabel htmlFor="email">{ translate( 'Email' ) }</FormLabel>
+						<FormTextInput
+							id="email"
+							name="email"
+							value={ email || '' }
+							isError={ !! validationError?.email }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								setEmail( event.target.value );
+								setValidationError( { email: undefined } );
+							} }
+						/>
+						{ validationError?.email && (
+							<div className="agency-details-form__footer-error" role="alert">
+								{ validationError.email }
+							</div>
+						) }
+					</FormFieldset>
+				) }
 				<div className="agency-details-form__fullname-container">
 					<FormFieldset>
 						<FormLabel htmlFor="firstName">{ translate( 'First name' ) }</FormLabel>

@@ -10,6 +10,10 @@
 	--line-width: 9px;
 	--main-color: var(--color-accent-rgb);
 
+	&.blue {
+		--main-color: var(--studio-blue-60-rgb);
+	}
+
 	background-color: var(--color-surface);
 	width: var(--width);
 	aspect-ratio: 1;

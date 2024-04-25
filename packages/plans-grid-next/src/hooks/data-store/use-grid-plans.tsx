@@ -314,10 +314,11 @@ const useGridPlans: UseGridPlansType = ( {
 			hiddenPlans,
 			isDisplayingPlansNeededForFeature,
 		} );
+		const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
 
 		return {
 			planSlug,
-			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
+			freeTrialPlanSlug,
 			isVisible,
 			tagline,
 			availableForPurchase,

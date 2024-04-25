@@ -9,6 +9,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	combineReducers: jest.fn(),
 	createReduxStore: jest.fn(),
+	createSelector: jest.fn(),
 	register: jest.fn(),
 	useDispatch: jest.fn(),
 } ) );
@@ -98,6 +99,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						},
 					},
 				},
+				helpers: { useActionCallback: () => {} },
 			} ) );
 
 			render(
@@ -132,6 +134,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						},
 					},
 				},
+				helpers: { useActionCallback: () => {} },
 			} ) );
 
 			render(
@@ -166,6 +169,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -191,6 +195,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				usePlansGridContext.mockImplementation( () => ( {
 					gridPlansIndex: {
@@ -202,6 +207,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 
 				render(
@@ -235,6 +241,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -260,6 +267,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -288,6 +296,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions

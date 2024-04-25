@@ -2,14 +2,15 @@ import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Question, QuestionType } from '../types';
-import QuestionMultipleOptions from './question-multiple-selection';
+import SurveyCheckboxControl from './survey-checkbox-control';
 import SurveyRadioControl from './survey-radio-control';
 import './style.scss';
 
 const questionTypeComponentMap = {
 	[ QuestionType.SINGLE_CHOICE ]: SurveyRadioControl,
-	[ QuestionType.MULTIPLE_CHOICE ]: QuestionMultipleOptions,
+	[ QuestionType.MULTIPLE_CHOICE ]: SurveyCheckboxControl,
 };
 
 export type QuestionSelectionType = {
@@ -19,20 +20,20 @@ export type QuestionSelectionType = {
 };
 
 type QuestionStepType = {
+	hideBack: boolean;
 	previousPage: () => void;
 	nextPage: () => void;
 	skip: () => void;
-	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 } & QuestionSelectionType;
 
 const QuestionStep = ( {
+	hideBack,
 	previousPage,
 	nextPage,
 	skip,
 	question,
 	value,
 	onChange,
-	recordTracksEvent,
 }: QuestionStepType ) => {
 	const translate = useTranslate();
 	const SelectionComponent = questionTypeComponentMap[ question.type ];
@@ -40,6 +41,7 @@ const QuestionStep = ( {
 	return (
 		<StepContainer
 			className="question-step"
+			hideBack={ hideBack }
 			goBack={ previousPage }
 			goNext={ skip }
 			formattedHeader={
@@ -49,7 +51,6 @@ const QuestionStep = ( {
 					subHeaderText={ question.subHeaderText }
 				/>
 			}
-			shouldStickyNavButtons={ true }
 			stepName={ question.key }
 			stepContent={
 				<div className="question-step__content">

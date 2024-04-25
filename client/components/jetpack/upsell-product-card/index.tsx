@@ -6,11 +6,11 @@ import {
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
-import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { CART_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/sections/marketplace/shopping-cart';
+import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 import ScanImage from 'calypso/assets/images/jetpack/rna-image-scan.png';
@@ -96,20 +96,23 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 
 	if ( hasJetpackPartnerAccess ) {
 		const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
-		const productPurchaseLink = isA4AEnabled
-			? `${ A4A_MARKETPLACE_PRODUCTS_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }${ CART_URL_HASH_FRAGMENT }`
-			: '#';
 		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
 			aboveButtonText = null;
 			billingTerm = TERM_MONTHLY;
-			ctaButtonURL = productPurchaseLink;
+			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
 			originalPrice = parseFloat( manageProduct.amount );
 			onCtaButtonClickInternal = () => {
-				setShowLightbox( true );
 				onCtaButtonClick();
+				if ( isA4AEnabled ) {
+					page.redirect(
+						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
+					);
+					return;
+				}
+				setShowLightbox( true );
 			};
 		}
 	} else {

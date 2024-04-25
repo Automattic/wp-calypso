@@ -32,10 +32,6 @@ function LicenseStateFilter( { data }: { data: Record< LicenseFilter, number > }
 			key: LicenseFilter.Revoked,
 			label: translate( 'Revoked' ),
 		},
-		{
-			key: LicenseFilter.Standard,
-			label: translate( 'Standard licenses' ),
-		},
 	].map( ( navItem ) => ( {
 		...navItem,
 		count: data?.[ navItem.key ] || 0,

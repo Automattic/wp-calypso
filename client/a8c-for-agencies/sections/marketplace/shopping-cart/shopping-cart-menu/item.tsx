@@ -1,20 +1,25 @@
 import { formatCurrency } from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { getProductPricingInfo } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import type { ShoppingCartItem } from '../../types';
 
+import './style.scss';
+
 type ItemProps = {
 	item: ShoppingCartItem;
-	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	onRemoveItem?: ( item: ShoppingCartItem ) => void;
 };
 
 export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps ) {
 	const translate = useTranslate();
 	const userProducts = useSelector( getProductsList );
+
+	const siteId = getQueryArg( window.location.href, 'site_id' )?.toString();
 
 	const { actualCost, discountedCost } = getProductPricingInfo( userProducts, item, item.quantity );
 
@@ -40,13 +45,15 @@ export default function ShoppingCartMenuItem( { item, onRemoveItem }: ItemProps 
 					) }
 				</div>
 			</div>
-			<Button
-				className="shopping-cart__menu-item-remove-button"
-				variant="link"
-				onClick={ () => onRemoveItem( item ) }
-			>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ onRemoveItem && (
+				<Button
+					className="shopping-cart__menu-item-remove-button"
+					variant="link"
+					onClick={ () => onRemoveItem( item ) }
+				>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 		</li>
 	);
 }
