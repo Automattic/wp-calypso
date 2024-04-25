@@ -507,9 +507,7 @@ class PurchaseItem extends Component {
 			}
 
 			if ( purchase.payment.type === 'upi' ) {
-				return (
-					<img src={ upiImage } alt={ purchase.payment.type } className="purchase-item__upi" />
-				);
+				return <img src={ upiImage } alt={ purchase.payment.type } />;
 			}
 
 			return null;
