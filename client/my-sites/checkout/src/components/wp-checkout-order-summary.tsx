@@ -45,6 +45,7 @@ import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
+import { getAcceptedAssistedFreeMigration } from 'calypso/blocks/importer/wordpress/utils';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -484,8 +485,16 @@ export function CheckoutSummaryFeaturesList( props: {
 		isDomainTransfer( product )
 	);
 
+	const hasFreeMigrationAssistance = getAcceptedAssistedFreeMigration();
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
+			{ hasFreeMigrationAssistance && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-free-migration-assistance" />
+					{ translate( 'Assisted free site migration' ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
