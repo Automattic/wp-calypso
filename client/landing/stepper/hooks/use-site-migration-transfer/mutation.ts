@@ -28,10 +28,9 @@ export const useSiteTransferMutation = ( siteId?: number ) => {
 	const mutation = () =>
 		siteId ? startTransfer( siteId ) : Promise.reject( new Error( 'siteId is required' ) );
 
-	const refreshSiteStatus = () => {
-		query.setQueryData( getSiteTransferStatusQueryKey( siteId! ), { status: 'active' } );
-		// query.refetchQueries( { queryKey: getSiteTransferStatusQueryKey( siteId! ), exact: true } );
-		query.invalidateQueries( { queryKey: getSiteTransferStatusQueryKey( siteId! ) } );
+	const refreshSiteStatus = ( data: InitiateAtomicTransferResponse ) => {
+		query.setQueryData( getSiteTransferStatusQueryKey( siteId! ), data );
+		query.refetchQueries( { queryKey: getSiteTransferStatusQueryKey( siteId! ), exact: true } );
 	};
 
 	return useMutation( {

@@ -1,40 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSiteTransferMutation } from './mutation';
 import { useSiteTransferStatusQuery } from './query';
 
 /**
  * Hook to to initiate a site transfer and monitor its progress
- * @param siteId
  */
 export const useSiteMigrationTransfer = ( siteId?: number ) => {
-	const [ shouldStartPooling, setShouldStartPooling ] = useState( true );
 	const {
 		mutate: startTransfer,
 		status: startTransferStatus,
 		error: startTransferError,
 	} = useSiteTransferMutation( siteId );
 
-	const { data, error: statusError } = useSiteTransferStatusQuery( siteId, {
-		pooling: shouldStartPooling,
-	} );
-	const { isStarted, status: transferStatus, isTransferring } = data || {};
+	const { data, error: statusError } = useSiteTransferStatusQuery( siteId );
+	const { status: transferStatus, isReadyToTransfer, completed, isTransferring } = data || {};
+	const isNotStarting = startTransferStatus === 'idle';
+	const shouldStartTransfer = isReadyToTransfer && isNotStarting;
 
 	useEffect( () => {
-		if ( ! data ) {
-			return;
-		}
-
-		if ( ! isStarted && startTransferStatus === 'idle' ) {
-			setShouldStartPooling( false );
+		if ( shouldStartTransfer ) {
 			startTransfer();
 		}
-	}, [ data, isStarted, startTransfer, startTransferStatus ] );
-
-	useEffect( () => {
-		setShouldStartPooling( !! isTransferring );
-	}, [ isTransferring ] );
+	}, [ shouldStartTransfer, startTransfer ] );
 
 	return {
+		completed,
+		isTransferring,
 		status: transferStatus,
 		error: statusError || startTransferError || null,
 	};
