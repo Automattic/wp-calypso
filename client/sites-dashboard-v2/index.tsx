@@ -1,4 +1,5 @@
 import {
+	SitesSortKey,
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
@@ -31,6 +32,7 @@ import {
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { useDispatch } from 'calypso/state';
+import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
@@ -47,6 +49,12 @@ interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
 }
+
+const siteSortingKeys = [
+	{ dataView: 'site', sortKey: 'alphabetically' },
+	{ dataView: 'magic', sortKey: 'lastInteractedWith' },
+	{ dataView: 'last-publish', sortKey: 'updatedAt' },
+];
 
 const DEFAULT_PER_PAGE = 96;
 const DEFAULT_STATUS_GROUP = 'all';
@@ -65,6 +73,8 @@ const SitesDashboardV2 = ( {
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+
+	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
 	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
@@ -99,6 +109,16 @@ const SitesDashboardV2 = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
+		sort: hasSitesSortingPreferenceLoaded
+			? {
+					field:
+						siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '',
+					direction: sitesSorting.sortOrder,
+			  }
+			: {
+					field: '',
+					direction: 'asc' as const,
+			  },
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
@@ -121,19 +141,10 @@ const SitesDashboardV2 = ( {
 		search: dataViewsState.search,
 	} );
 
-	// todo: Perform sorting actions
-	const sortKeyMap = {
-		site: 'alphabetically',
-		magic: 'lastInteractedWith',
-		'last-publish': 'updatedAt',
-	};
-
+	// Perform sorting actions
 	const sortedSites = useSitesListSorting( filteredSites, {
-		sortKey: ( sortKeyMap[ dataViewsState.sort.field as keyof typeof sortKeyMap ] || '' ) as
-			| 'alphabetically'
-			| 'lastInteractedWith'
-			| 'updatedAt'
-			| undefined,
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort.direction || undefined,
 	} );
 
