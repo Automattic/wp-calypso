@@ -44,10 +44,19 @@ interface SitesDashboardProps {
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
 }
 
+const DEFAULT_PER_PAGE = 96;
+const DEFAULT_STATUS_GROUP = 'all';
+
 const SitesDashboardV2 = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
 	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
-	queryParams: { page = 1, perPage = 96, search, newSiteID, status = 'all' },
+	queryParams: {
+		page = 1,
+		perPage = DEFAULT_PER_PAGE,
+		search,
+		newSiteID,
+		status = DEFAULT_STATUS_GROUP,
+	},
 	updateQueryParams = handleQueryParamChange,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
@@ -129,9 +138,9 @@ const SitesDashboardV2 = ( {
 	useEffect( () => {
 		const queryParams = {
 			search: dataViewsState.search?.trim(),
-			status: statusSlug === 'all' ? undefined : statusSlug,
+			status: statusSlug === DEFAULT_STATUS_GROUP ? undefined : statusSlug,
 			page: dataViewsState.page === 1 ? undefined : dataViewsState.page,
-			'per-page': dataViewsState.perPage === 96 ? undefined : dataViewsState.perPage,
+			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
 		// There is a chance that the URL is not up to date when it mounts, so bump the
