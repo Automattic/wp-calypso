@@ -1,8 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -305,14 +305,13 @@ const siteMigration: Flow = {
 							siteSlug: siteSlug,
 							destination: destination,
 							plan: providedDependencies.plan as string,
+							extraQueryParams:
+								providedDependencies?.sendIntentWhenCreatingTrial &&
+								providedDependencies?.plan === PLAN_MIGRATION_TRIAL_MONTHLY
+									? { hosting_intent: HOSTING_INTENT_MIGRATE }
+									: {},
 						} );
 						return;
-					}
-					if ( providedDependencies?.freeTrialSelected ) {
-						return navigate( STEPS.BUNDLE_TRANSFER.slug, {
-							siteId,
-							siteSlug,
-						} );
 					}
 				}
 

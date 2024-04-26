@@ -15,6 +15,7 @@ interface GoToCheckoutProps {
 	cancelDestination?: string;
 	extraProducts?: string[];
 	forceRedirection?: boolean;
+	extraQueryParams?: Record< string, string >;
 }
 
 export const goToCheckout = ( {
@@ -26,12 +27,14 @@ export const goToCheckout = ( {
 	cancelDestination,
 	extraProducts = [],
 	forceRedirection = false,
+	extraQueryParams: extraParams = {},
 }: GoToCheckoutProps ) => {
 	const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
 	const params = new URLSearchParams( {
 		redirect_to: destination,
 		cancel_to: cancelDestination || relativeCurrentPath,
 		signup: '1',
+		...extraParams,
 	} );
 
 	persistSignupDestination( destination );
