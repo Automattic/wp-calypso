@@ -58,7 +58,11 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
 
-function syncURL( siteSlug?: string, feature?: string, queryParams?: SitesDashboardQueryParams ) {
+function syncURL(
+	siteSlug: string | null,
+	feature: string,
+	queryParams: SitesDashboardQueryParams
+) {
 	let url = siteSlug ? `/${ feature.replace( ':site', siteSlug ) }` : '/sites';
 
 	const searchParams = new URLSearchParams();
