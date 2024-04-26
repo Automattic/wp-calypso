@@ -74,7 +74,9 @@ function syncURL( siteSlug?: string, feature: string, queryParams: SitesDashboar
 		url += '?' + searchParams.toString();
 	}
 
-	pageRouter.replace( url );
+	if ( pageRouter.current !== url ) {
+		pageRouter.show( url );
+	}
 }
 
 const SitesDashboardV2 = ( {
