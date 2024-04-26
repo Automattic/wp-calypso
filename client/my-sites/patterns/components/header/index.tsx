@@ -1,6 +1,7 @@
 import { Substitution, translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { preventWidows } from 'calypso/lib/formatting';
+import ogImage from 'calypso/my-sites/patterns/components/header/images/og-image.png';
 import { PatternsSearchField } from 'calypso/my-sites/patterns/components/search-field';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { PatternTypeFilter, type Category } from 'calypso/my-sites/patterns/types';
@@ -391,7 +392,10 @@ export const PatternsHeader = () => {
 		}
 	}
 
-	const metas = [ { name: 'description', content: metaDescription } ];
+	const metas = [
+		{ name: 'description', content: metaDescription },
+		{ property: 'og:image', content: `https://wordpress.com${ ogImage }` },
+	];
 
 	return (
 		<>
