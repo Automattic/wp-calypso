@@ -1,3 +1,5 @@
+import i18n, { TranslateResult } from 'i18n-calypso';
+
 type Experiment = { [ key: string ]: string };
 type Experiments = { [ key: string ]: Experiment };
 
@@ -21,4 +23,12 @@ export const setPlansListExperiment = ( experimentName: string, variation: strin
 
 export const getPlansListExperiment = ( experimentName: string ): string | undefined => {
 	return getExperiment( PLANS_LIST_NAMESPACE, experimentName );
+};
+
+export const setTrailMapExperiment = ( variation: string ): void => {
+	setExperiment( PLANS_LIST_NAMESPACE, 'wpcom_trail_map_feature_structure_experiment', variation );
+};
+export const getTrailMapExperiment = (): 'control' | 'variant' => {
+	return ( getExperiment( PLANS_LIST_NAMESPACE, 'wpcom_trail_map_feature_structure_experiment' ) ??
+		'control' ) as 'control' | 'variant';
 };

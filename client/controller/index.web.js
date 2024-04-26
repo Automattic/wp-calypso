@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { setPlansListExperiment, setTrailMapExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
 	getLanguage,
@@ -7,6 +8,7 @@ import {
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
@@ -14,6 +16,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { useExperiment } from 'calypso/lib/explat/index.js';
 import { login, createAccountUrl } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -46,6 +49,16 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+	const [ isLoading, experimentAssignment ] = useExperiment(
+		'wpcom_trail_map_feature_structure_experiment'
+	);
+
+	useEffect( () => {
+		if ( ! isLoading ) {
+			// setTrailMapExperiment( experimentAssignment?.variationName );
+			setTrailMapExperiment( 'treatment' );
+		}
+	}, [ experimentAssignment?.variationName, isLoading ] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
@@ -82,7 +95,6 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * For logged in users with bootstrap (production), ReactDOM.hydrate().
  * Otherwise (development), ReactDOM.render().
  * See: https://wp.me/pd2qbF-P#comment-20
- *
  * @param context - Middleware context
  */
 function smartHydrate( context ) {
@@ -96,7 +108,6 @@ function smartHydrate( context ) {
 
 /**
  * Isomorphic routing helper, client side
- *
  * @param { string } route - A route path
  * @param {...Function} middlewares - Middleware to be invoked for route
  *
@@ -170,7 +181,6 @@ export function redirectLoggedOut( context, next ) {
 /**
  * Middleware to redirect logged out users to create an account.
  * Designed for use in situations where no site is selected, such as the reader.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -187,7 +197,6 @@ export function redirectLoggedOutToSignup( context, next ) {
 
 /**
  * Middleware to redirect a user if they don't have the appropriate capability.
- *
  * @param   {string}   capability Capability to check
  * @returns {Function}            Middleware function
  */
@@ -207,7 +216,6 @@ export function redirectIfCurrentUserCannot( capability ) {
 
 /**
  * Removes the locale parameter from the path, and redirects logged-in users to it.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -226,7 +234,6 @@ export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
 
 /**
  * Removes the locale parameter from the beginning of the path, and redirects logged-in users to it.
- *
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
