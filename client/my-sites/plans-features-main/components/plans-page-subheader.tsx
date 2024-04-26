@@ -51,18 +51,20 @@ const PlanBenefitHeader = () => {
 
 		@media ( max-width: 960px ) {
 			margin-top: -16px;
+		}
+
+		@media ( max-width: 740px ) {
 			flex-direction: column;
 		}
 	`;
 
 	const PrefixSection = styled.p`
-		line-height: 20px;
-		margin-bottom: 4px;
+		@media ( max-width: 740px ) {
+			margin-bottom: 4px;
+		}
 	`;
 
 	const FeatureSection = styled.p`
-		line-height: 24px;
-
 		.gridicons-checkmark {
 			color: var( --studio-green-50 );
 			vertical-align: middle;
