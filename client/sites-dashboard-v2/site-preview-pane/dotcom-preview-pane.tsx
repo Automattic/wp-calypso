@@ -104,6 +104,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		url: site.URL,
 		blogId: site.ID,
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
+		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 	};
 
 	return (
@@ -111,6 +112,9 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			itemPreviewPaneHeaderExtraProps={ {
+				externalIconSize: 16,
+			} }
 		/>
 	);
 };

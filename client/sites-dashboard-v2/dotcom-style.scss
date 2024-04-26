@@ -117,4 +117,24 @@
 		box-sizing: border-box;
 		overflow-x: auto;
 	}
+	.item-preview__header {
+		.site-favicon .site-icon {
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+		}
+		.item-preview__header-title {
+			font-family: Recoleta, sans-serif;
+		}
+		.item-preview__header-content .item-preview__header-title-summary .item-preview__header-summary {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			.item-preview__header-summary-link {
+				color: var(--studio-gray-70, #3c434a);
+				text-decoration: none;
+				&:hover {
+					color: var(--color-accent, #3858e9);
+				}
+			}
+		}
+	}
 }
