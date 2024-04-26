@@ -105,7 +105,7 @@ const API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL = {
 describe( 'UpgradePlan', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
-	it( 'should render the default Continue CTA and trigger onCtaClick when no CTA is supplied', async () => {
+	it( 'should call onCtaClick when the user clicks on the Continue button', async () => {
 		const mockOnCtaClick = jest.fn();
 
 		renderUpgradePlanComponent( getUpgradePlanProps( { onCtaClick: mockOnCtaClick } ) );
@@ -115,7 +115,7 @@ describe( 'UpgradePlan', () => {
 		await waitFor( () => expect( mockOnCtaClick ).toHaveBeenCalled() );
 	} );
 
-	it( 'should render a custom CTA admd triggerOnCtaClick when ctaText is supplied', async () => {
+	it( 'should render a custom CTA and call OnCtaClick when ctaText is supplied', async () => {
 		const mockOnCtaClick = jest.fn();
 
 		renderUpgradePlanComponent(
@@ -167,7 +167,7 @@ describe( 'UpgradePlan', () => {
 		} );
 	} );
 
-	it( 'should trigger a Tracks event that flags the trial as hidden', async () => {
+	it( 'should only show the main CTA when hideFreeMigrationTrialForNonVerifiedEmail is true and the user has an unverified email', async () => {
 		nock.cleanAll();
 		mockApi()
 			.get(
@@ -182,6 +182,22 @@ describe( 'UpgradePlan', () => {
 		await waitFor( () => {
 			expect( screen.queryByRole( 'button', { name: /Try 7 days for free/ } ) ).toBeNull();
 			expect( screen.getByRole( 'button', { name: /Continue/ } ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should trigger a Tracks event that flags the trial as hidden', async () => {
+		nock.cleanAll();
+		mockApi()
+			.get(
+				`/wpcom/v2/sites/${ DEFAULT_SITE_ID }/hosting/trial/check-eligibility/${ PLAN_MIGRATION_TRIAL_MONTHLY }`
+			)
+			.reply( 200, API_RESPONSE_INELIGIBLE_UNVERIFIED_EMAIL );
+
+		renderUpgradePlanComponent(
+			getUpgradePlanProps( { hideFreeMigrationTrialForNonVerifiedEmail: true } )
+		);
+
+		await waitFor( () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_site_migration_upgrade_plan_screen',
 				{ migration_trial_hidden: 'true' }
