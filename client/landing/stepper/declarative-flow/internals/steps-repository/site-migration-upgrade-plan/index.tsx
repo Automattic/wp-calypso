@@ -33,7 +33,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
-	const goToCheckout = () => {
+	const goToCheckoutMigrationCheckout = () => {
 		navigation?.submit?.( {
 			acceptMigrationAssistanceOffer: true,
 		} );
@@ -42,7 +42,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ goToCheckout }
+					onConfirm={ goToCheckoutMigrationCheckout }
 					migrateFrom={ migrateFrom }
 					navigateBack={ navigation.goBack }
 				/>
@@ -54,7 +54,12 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				isBusy={ false }
 				hideTitleAndSubTitle
 				sendIntentWhenCreatingTrial
-				onCtaClick={ goToCheckout }
+				onCtaClick={ () => {
+					navigation.submit?.( {
+						goToCheckout: true,
+						plan: plan.getPathSlug ? plan.getPathSlug() : '',
+					} );
+				} }
 				onFreeTrialSelectionSuccess={ () => {
 					navigation.submit?.( { freeTrialSelected: true } );
 				} }
