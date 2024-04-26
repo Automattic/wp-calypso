@@ -2,6 +2,7 @@ import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
 import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
@@ -86,11 +87,15 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	return (
-		<Button onClick={ onSiteClick } borderless={ true }>
+		<Button className="sites-dataviews__site" onClick={ onSiteClick } borderless={ true }>
 			<SiteListTile
-				contentClassName={ css`
-					min-width: 0;
-				` }
+				contentClassName={ classnames(
+					'sites-dataviews__site-name',
+					css`
+						min-width: 0;
+						text-align: start;
+					`
+				) }
 				leading={
 					<ListTileLeading title={ title }>
 						<SiteItemThumbnail
@@ -125,7 +130,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<ListTileSubtitle>
+							<ListTileSubtitle className="sites-dataviews__site-url">
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</ListTileSubtitle>
 						</>
