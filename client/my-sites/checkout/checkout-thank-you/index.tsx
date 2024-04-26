@@ -103,7 +103,6 @@ export interface CheckoutThankYouProps {
 	gsuiteReceiptId: number;
 	selectedFeature: string;
 	selectedSite: null | SiteDetails;
-	siteUnlaunchedBeforeUpgrade: boolean;
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
@@ -633,7 +632,19 @@ export class CheckoutThankYou extends Component<
 		return (
 			<Main className="checkout-thank-you">
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
-				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
+				<Card className="checkout-thank-you__content">
+					<div>
+						<CheckoutThankYouHeader
+							isDataLoaded={ this.isDataLoaded() }
+							selectedSite={ this.props.selectedSite }
+							upgradeIntent={ this.props.upgradeIntent }
+							primaryCta={ this.primaryCta }
+							displayMode={ this.props.displayMode }
+							purchases={ purchases }
+							currency={ this.props.receipt.data?.currency }
+						/>
+					</div>
+				</Card>
 				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
@@ -660,36 +671,6 @@ export class CheckoutThankYou extends Component<
 				selectedSite?.slug ?? '',
 				delayedTransferPurchase?.meta ?? ''
 			)
-		);
-	};
-
-	productRelatedMessages = () => {
-		const {
-			selectedSite,
-			siteUnlaunchedBeforeUpgrade,
-			upgradeIntent,
-			isSimplified,
-			displayMode,
-			receipt,
-		} = this.props;
-		const purchases = getPurchases( this.props );
-
-		return (
-			<div>
-				<CheckoutThankYouHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isSimplified={ isSimplified }
-					primaryPurchase={ primaryPurchase }
-					selectedSite={ selectedSite }
-					hasFailedPurchases={ hasFailedPurchases }
-					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
-					upgradeIntent={ upgradeIntent }
-					primaryCta={ this.primaryCta }
-					displayMode={ displayMode }
-					purchases={ purchases }
-					currency={ receipt.data?.currency }
-				/>
-			</div>
 		);
 	};
 }

@@ -20,9 +20,6 @@ const translate = ( x ) => x;
 describe( 'CheckoutThankYouHeader', () => {
 	const defaultProps = {
 		translate,
-		primaryPurchase: {
-			product_slug: 'business-bundle',
-		},
 		recordTracksEvent: () => {},
 		recordStartTransferClickInThankYou: () => {},
 		titanAppsUrlPrefix: '',
