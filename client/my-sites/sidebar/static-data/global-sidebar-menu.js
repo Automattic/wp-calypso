@@ -22,6 +22,7 @@ export default function globalSidebarMenu() {
 			type: 'menu-item',
 			url: '/domains/manage',
 		},
+		{ type: 'separator' },
 		{
 			icon: (
 				<svg
