@@ -29,6 +29,16 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 						patternTypeFilter === PatternTypeFilter.PAGES
 							? category.pagePatternCount
 							: category.regularPatternCount;
+					const patternCountText =
+						patternTypeFilter === PatternTypeFilter.REGULAR
+							? translate( '%(count)d pattern', '%(count)d patterns', {
+									count: patternCount,
+									args: { count: patternCount },
+							  } )
+							: translate( '%(count)d layout', '%(count)d layouts', {
+									count: patternCount,
+									args: { count: patternCount },
+							  } );
 
 					return (
 						<LocalizedLink
@@ -57,12 +67,7 @@ export const CategoryGalleryServer: CategoryGalleryFC = ( {
 							</div>
 
 							<div className="patterns-category-gallery__item-name">{ category.label }</div>
-							<div className="patterns-category-gallery__item-count">
-								{ translate( '%(count)d pattern', '%(count)d patterns', {
-									count: patternCount,
-									args: { count: patternCount },
-								} ) }
-							</div>
+							<div className="patterns-category-gallery__item-count">{ patternCountText }</div>
 						</LocalizedLink>
 					);
 				} ) }
