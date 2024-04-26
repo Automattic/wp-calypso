@@ -1,10 +1,10 @@
-import { SiteDetails } from '@automattic/data-stores';
 import { useQuery, UseQueryResult, type QueryObserverOptions } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteSlug } from 'calypso/types';
 
 type LastRunStatus =

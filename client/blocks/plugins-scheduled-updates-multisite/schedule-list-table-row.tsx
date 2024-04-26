@@ -6,6 +6,7 @@ import { useDateTimeFormat } from 'calypso/blocks/plugin-scheduled-updates-commo
 import { usePrepareMultisitePluginsTooltipInfo } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-plugins-tooltip-info';
 import { usePrepareScheduleName } from 'calypso/blocks/plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { ellipsis } from 'calypso/blocks/plugins-scheduled-updates/icons';
+import { usePrepareSitesTooltipInfo } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-prepare-sites-tooltip-info';
 import { ScheduleListLastRunStatus } from 'calypso/blocks/plugins-scheduled-updates-multisite/schedule-list-last-run-status';
 import { SiteSlug } from 'calypso/types';
 import type {
@@ -62,15 +63,11 @@ const ScheduleListTableRowMenu = ( {
 export const ScheduleListTableRow = ( props: Props ) => {
 	const { schedule, onEditClick, onLogsClick } = props;
 
-	const prepareSitesTooltipInfo = ( sites: MultisiteSchedulesUpdates[ 'sites' ] ) => {
-		return sites.map( ( site ) => site.title ).join( '\n' );
-	};
-
+	const { prepareSitesTooltipInfo } = usePrepareSitesTooltipInfo();
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat();
-	const { prepareMultiSitePluginsTooltipInfo } = usePrepareMultisitePluginsTooltipInfo(
-		schedule.sites.map( ( site ) => site.ID )
-	);
+	const { preparePluginsTooltipInfo, countInstalledPlugins } =
+		usePrepareMultisitePluginsTooltipInfo( schedule.sites.map( ( site ) => site.ID ) );
 	const translate = useTranslate();
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -116,9 +113,9 @@ export const ScheduleListTableRow = ( props: Props ) => {
 					}
 				</td>
 				<td className="plugins">
-					{ schedule.args.length }{ ' ' }
+					{ countInstalledPlugins( schedule.args ) }{ ' ' }
 					<Tooltip
-						text={ prepareMultiSitePluginsTooltipInfo( schedule.args ) as unknown as string }
+						text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
 						position="middle right"
 						delay={ 0 }
 						hideOnClick={ false }

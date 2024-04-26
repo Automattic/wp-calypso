@@ -21,7 +21,8 @@ export const ScheduleListCards = ( props: Props ) => {
 	const translate = useTranslate();
 	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
-	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { countInstalledPlugins, preparePluginsTooltipInfo } =
+		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat( siteSlug );
 
@@ -98,7 +99,7 @@ export const ScheduleListCards = ( props: Props ) => {
 					<div className="schedule-list--card-label">
 						<label htmlFor="plugins">{ translate( 'Plugins' ) }</label>
 						<span id="plugins">
-							{ schedule?.args?.length }
+							{ countInstalledPlugins( schedule.args ) }
 							<Tooltip
 								text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
 								position="middle right"

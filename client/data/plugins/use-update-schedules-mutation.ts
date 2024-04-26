@@ -108,8 +108,6 @@ export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 
 				queryClient.setQueryData( [ 'schedule-updates', siteSlug ], newSchedules );
 			} );
-			// TODO optimistic update for 'multisite-schedules-update'
-
 			return { prevSchedulesMap };
 		},
 		onError: ( err, params, context ) => {
@@ -118,6 +116,9 @@ export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 			} );
 		},
 		onSettled: () => {
+			// TODO optimistic update for 'multisite-schedules-update'
+			// in onSettled we know which sites were successful and which failed
+
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
 			} );
@@ -261,6 +262,9 @@ export function useBatchEditUpdateScheduleMutation( siteSlugs: SiteSlug[], query
 			} );
 		},
 		onSettled: () => {
+			// TODO optimistic update for 'multisite-schedules-update'
+			// in onSettled we know which sites were successful and which failed
+
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
 			} );
@@ -342,7 +346,6 @@ export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 				prevSchedulesMap.set( siteSlug, prevSchedules );
 				queryClient.setQueryData( [ 'schedule-updates', siteSlug ], schedules );
 			} );
-			// TODO: optimistic update for 'multisite-schedules-update'
 
 			return { prevSchedulesMap };
 		},
@@ -352,6 +355,9 @@ export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 			} );
 		},
 		onSettled: () => {
+			// TODO optimistic update for 'multisite-schedules-update'
+			// in onSettled we know which sites were successful and which failed
+
 			queryClient.invalidateQueries( { queryKey: [ 'multisite-schedules-update' ] } );
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );

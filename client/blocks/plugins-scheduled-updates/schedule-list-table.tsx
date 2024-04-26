@@ -22,7 +22,8 @@ export const ScheduleListTable = ( props: Props ) => {
 
 	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
-	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { countInstalledPlugins, preparePluginsTooltipInfo } =
+		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
 	const { prepareDateTime } = useDateTimeFormat( siteSlug );
 
@@ -86,7 +87,7 @@ export const ScheduleListTable = ( props: Props ) => {
 							}
 						</td>
 						<td>
-							{ schedule?.args?.length }
+							{ countInstalledPlugins( schedule.args ) }
 							{ schedule?.args && (
 								<Tooltip
 									text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }
