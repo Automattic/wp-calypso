@@ -44,7 +44,8 @@ export const PatternLibraryToggleOption = forwardRef<
 	);
 } );
 
-type PatternLibraryToggleProps = Omit< JSX.IntrinsicElements[ 'div' ], 'onChange' > & {
+type PatternLibraryToggleProps = {
+	className?: string;
 	children: React.ReactElement< PatternLibraryToggleOptionProps >[];
 	onChange: PatternLibraryToggleOptionProps[ 'onClick' ];
 	selected: string;
@@ -55,7 +56,6 @@ export function PatternLibraryToggle( {
 	children,
 	onChange,
 	selected,
-	...props
 }: PatternLibraryToggleProps ) {
 	const wrapperRef = useRef< HTMLDivElement >( null );
 	const prevSelectionRef = useRef< string >( selected );
@@ -66,6 +66,10 @@ export function PatternLibraryToggle( {
 	// Animate the backdrop element to move from the previously selected option to the new one using
 	// the FLIP principle
 	useIsomorphicLayoutEffect( () => {
+		if ( selected === prevSelectionRef.current ) {
+			return;
+		}
+
 		const activeOptionIndex = options.indexOf( selected );
 		const activeOptionRef = optionRefs[ activeOptionIndex ];
 
@@ -90,11 +94,7 @@ export function PatternLibraryToggle( {
 	}, [ selected ] );
 
 	return (
-		<div
-			{ ...props }
-			className={ classNames( 'pattern-library__toggle', className ) }
-			ref={ wrapperRef }
-		>
+		<div className={ classNames( 'pattern-library__toggle', className ) } ref={ wrapperRef }>
 			{ Children.map( children, ( child, index ) =>
 				cloneElement< PatternLibraryToggleOptionProps >( child, {
 					children: (

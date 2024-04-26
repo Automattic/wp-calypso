@@ -8,6 +8,8 @@ import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
 import { PatternView } from 'calypso/my-sites/patterns/types';
 
+import './style.scss';
+
 type ViewToggleProps = {
 	onChange?( value: PatternView ): void;
 };
