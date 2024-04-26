@@ -4,11 +4,7 @@ import {
 	redirectIfCurrentUserCannot,
 	render as clientRender,
 } from 'calypso/controller';
-import { globalSiteLayout, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import {
-	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_HOSTING_CONFIG_ACTIVATE,
-} from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { handleHostingPanelRedirect, layout, activationLayout } from './controller';
 
 export default function () {
@@ -20,7 +16,6 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		layout,
-		globalSiteLayout( DOTCOM_HOSTING_CONFIG ),
 		makeLayout,
 		clientRender
 	);
@@ -32,7 +27,6 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		activationLayout,
-		globalSiteLayout( DOTCOM_HOSTING_CONFIG, DOTCOM_HOSTING_CONFIG_ACTIVATE ),
 		makeLayout,
 		clientRender
 	);

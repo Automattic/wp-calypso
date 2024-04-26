@@ -216,7 +216,7 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'hosting',
+		name: 'hosting-overview',
 		paths: [ '/hosting' ],
 		module: 'calypso/hosting-overview',
 		group: 'sites',
@@ -548,7 +548,7 @@ const sections = [
 	{
 		name: 'hosting',
 		paths: [ '/hosting-config' ],
-		module: 'calypso/my-sites/hosting',
+		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
 	{
@@ -706,7 +706,7 @@ const sections = [
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/my-sites/github-deployments',
+		module: 'calypso/github-deployments',
 		group: 'sites',
 	},
 	{

@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { siteSelection, sites, navigation, globalSiteLayout } from 'calypso/my-sites/controller';
+import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { redirectHomeIfIneligible, siteMetrics } from 'calypso/my-sites/site-monitoring/controller';
+import globalSiteLayout from 'calypso/sites-dashboard-v2/global-site-layout';
 import {
 	DOTCOM_MONITORING,
 	DOTCOM_PHP_LOGS,
