@@ -63,7 +63,7 @@ const PrefixSection = styled.p`
 `;
 
 const FeatureSection = styled.p`
-	.gridicons-checkmark {
+	.gridicon.gridicons-checkmark {
 		color: var( --studio-green-50 );
 		vertical-align: middle;
 		margin-left: 12px;
