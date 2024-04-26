@@ -21,6 +21,8 @@ import type {
 	ItemsDataViewsType,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 
+import './style.scss';
+
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;

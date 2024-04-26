@@ -4,9 +4,8 @@ import { ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType, DataViewsColumn } from './interfaces';
-// todo: Move the `a4a-style.scss` file to its context
+
 import './style.scss';
-import './a4a-style.scss';
 
 const getIdByPath = ( item: object, path: string ) => {
 	const fields = path.split( '.' );
