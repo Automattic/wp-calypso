@@ -5,7 +5,9 @@ import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
@@ -64,12 +66,32 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip } ) => {
 
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
-const SiteMigrationIdentify: Step = function ( { navigation } ) {
-	const handleSubmit = useCallback(
-		( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
-			navigation?.submit?.( { action: action, ...data } );
+const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unknown > ) => {
+	return wpcom.req.post(
+		`/sites/${ siteSlug }/settings`,
+		{
+			apiVersion: '1.4',
 		},
-		[ navigation ]
+		{
+			...settings,
+		}
+	);
+};
+
+const SiteMigrationIdentify: Step = function ( { navigation } ) {
+	const siteSlug = useSiteSlug();
+
+	const handleSubmit = useCallback(
+		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+			// If we have a site and URL, and we're coming from a WordPress site,
+			// record the migration source domain.
+			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
+				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
+			}
+
+			navigation?.submit?.( { action, ...data } );
+		},
+		[ navigation, siteSlug ]
 	);
 
 	return (

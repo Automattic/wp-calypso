@@ -221,8 +221,14 @@ const migrationSignup: Flow = {
 				}
 
 				case STEPS.PROCESSING.slug: {
-					// If we just created the site, go to the upgrade plan step.
+					// If we just created the site, either go to the upgrade plan step, or the site identification step.
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
+						if ( ! fromQueryParam ) {
+							return navigate(
+								addQueryArgs( { siteId, siteSlug }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
+							);
+						}
+
 						return navigate(
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },
