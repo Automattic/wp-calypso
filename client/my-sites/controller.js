@@ -54,6 +54,7 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
+import SitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import {
 	getCurrentUser,
 	isUserLoggedIn,
@@ -929,4 +930,23 @@ export function redirectToLoginIfSiteRequested( context, next ) {
 	}
 
 	next();
+}
+
+export function globalSiteLayout( feature ) {
+	return ( context, next ) => {
+		if ( config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+			const state = context.store.getState();
+			const site = getSelectedSite( state );
+
+			context.primary = (
+				<SitesDashboardV2
+					queryParams={ {} } // TODO: sync table search params here
+					selectedSite={ site }
+					initialSiteFeature={ feature }
+				/>
+			);
+			context.secondary = <NavigationComponent path={ context.path } />;
+			next();
+		}
+	};
 }

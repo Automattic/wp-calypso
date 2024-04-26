@@ -1,3 +1,4 @@
+import pageRouter from '@automattic/calypso-router';
 import {
 	SitesSortKey,
 	useSitesListFiltering,
@@ -10,6 +11,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -23,17 +25,13 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import {
-	SitesDashboardQueryParams,
-	handleQueryParamChange,
-} from 'calypso/sites-dashboard/components/sites-content-controls';
+import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
 import {
 	useShowSiteCreationNotice,
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { useDispatch } from 'calypso/state';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { DOTCOM_OVERVIEW } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
@@ -59,6 +57,26 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
 
+function syncURL( siteSlug?: string, feature: string, queryParams: SitesDashboardQueryParams ) {
+	let url = siteSlug ? `/${ feature.replace( ':site', siteSlug ) }` : '/sites';
+
+	const searchParams = new URLSearchParams();
+	Object.keys( queryParams ).forEach( ( key ) => {
+		const value = queryParams[ key as keyof SitesDashboardQueryParams ];
+		if ( value ) {
+			searchParams.set( key, value.toString() );
+		} else {
+			searchParams.delete( key );
+		}
+	} );
+
+	if ( searchParams.size > 0 ) {
+		url += '?' + searchParams.toString();
+	}
+
+	pageRouter.replace( url );
+}
+
 const SitesDashboardV2 = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
 	// initializing the dataViewsState. Further calculations should reference the dataViewsState.
@@ -69,10 +87,10 @@ const SitesDashboardV2 = ( {
 		newSiteID,
 		status = DEFAULT_STATUS_GROUP,
 	},
-	updateQueryParams = handleQueryParamChange,
+	selectedSite,
+	initialSiteFeature = DOTCOM_OVERVIEW,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
 	const initialSortApplied = useRef( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -110,8 +128,11 @@ const SitesDashboardV2 = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
+		selectedItem: selectedSite,
+		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( initialSiteFeature );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -166,17 +187,6 @@ const SitesDashboardV2 = ( {
 		dataViewsState.page * dataViewsState.perPage
 	);
 
-	// Site is selected:
-	useEffect( () => {
-		if ( dataViewsState.selectedItem ) {
-			// Set the selected site ID globally at Dotcom
-			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
-		} else {
-			// Reset the selected site ID globally at Dotcom
-			dispatch( setSelectedSiteId( null ) );
-		}
-	}, [ dataViewsState.selectedItem ] );
-
 	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
@@ -186,10 +196,18 @@ const SitesDashboardV2 = ( {
 		};
 
 		// There is a chance that the URL is not up to date when it mounts, so bump the
-		// updateQueryParams call to the back of the stack to avoid it getting the incorrect URL and
+		// syncURL call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
-		window.setTimeout( () => updateQueryParams( queryParams ) );
-	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug, updateQueryParams ] );
+		window.setTimeout( () =>
+			syncURL( dataViewsState.selectedItem?.slug, selectedSiteFeature, queryParams )
+		);
+	}, [
+		dataViewsState.selectedItem?.slug,
+		selectedSiteFeature,
+		dataViewsState.search,
+		dataViewsState.perPage,
+		statusSlug,
+	] );
 
 	// Update site sorting preference on change
 	useEffect( () => {
@@ -252,6 +270,8 @@ const SitesDashboardV2 = ( {
 				<LayoutColumn className="site-preview-pane" wide>
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
+						selectedSiteFeature={ selectedSiteFeature }
+						setSelectedSiteFeature={ setSelectedSiteFeature }
 						closeSitePreviewPane={ closeSitePreviewPane }
 					/>
 				</LayoutColumn>

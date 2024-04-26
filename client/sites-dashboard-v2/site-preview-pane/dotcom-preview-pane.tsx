@@ -1,6 +1,6 @@
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
@@ -24,24 +24,18 @@ import './style.scss';
 
 type Props = {
 	site: SiteExcerptData;
+	selectedSiteFeature: string;
+	setSelectedSiteFeature: ( feature: string ) => void;
 	closeSitePreviewPane: () => void;
 };
 
-const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
+const DotcomPreviewPane = ( {
+	site,
+	selectedSiteFeature,
+	setSelectedSiteFeature,
+	closeSitePreviewPane,
+}: Props ) => {
 	const { __ } = useI18n();
-
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState< string | undefined >(
-		'dotcom-overview'
-	);
-
-	useEffect( () => {
-		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( DOTCOM_OVERVIEW );
-		}
-		return () => {
-			setSelectedSiteFeature( undefined );
-		};
-	}, [] );
 
 	const isDotcomSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 
