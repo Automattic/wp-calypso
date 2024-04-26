@@ -1,3 +1,4 @@
+import { getCurrentUser, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
@@ -40,6 +41,11 @@ export function buildCheckoutURL(
 		// user is in Jetpack Cloud.
 		if ( ! urlQueryArgs.source ) {
 			urlQueryArgs.source = 'jetpack-plans';
+		}
+
+		if ( ! urlQueryArgs._tkl && ! getCurrentUser() && getTracksAnonymousUserId() ) {
+			// If the user is not logged in, going to the checkout page will override current tk_ai - we need to pass it through URL to link it to the new one.
+			urlQueryArgs._tkl = getTracksAnonymousUserId();
 		}
 
 		// This URL is used when clicking the back button in the checkout screen to redirect users

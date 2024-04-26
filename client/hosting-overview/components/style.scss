@@ -261,3 +261,77 @@ a.hosting-overview__link-button {
 	}
 }
 
+.domains-table.hosting-overview__domains-table {
+	font-family: "SF Pro Text", $sans;
+	padding: 0;
+
+	table {
+		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+		margin-top: 0;
+
+		th:not(.domains-table-checkbox-th):first-child,
+		th.domains-table-checkbox-th + th,
+		td:not(.domains-table-checkbox-td):first-child,
+		td.domains-table-checkbox-td + td {
+			padding-left: 16px;
+		}
+
+		th:last-child,
+		td:last-child {
+			padding-right: 16px;
+		}
+	}
+
+	button {
+		font-family: "SF Pro Text", $sans;
+		font-weight: 400;
+	}
+
+	.domains-table__primary-domain-label {
+		background-color: inherit;
+		color: var(--studio-green-40, #00a32a);
+		font-family: "SF Pro", $sans;
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+		line-height: 20px;
+		margin: 0;
+		padding: 0;
+
+		svg {
+			display: none;
+		}
+	}
+
+	.domains-table__domain-name {
+		font-size: $font-body-small;
+		font-style: normal;
+		line-height: 20px;
+	}
+
+	.components-dropdown-menu__toggle {
+		transform: rotate(90deg);
+	}
+
+	.domains-table__bulk-action-container,
+	.domains-table-checkbox-td,
+	.domains-table-checkbox-th {
+		display: none;
+	}
+
+	.domains-table-mobile-card {
+		padding: 12px 16px;
+
+		.components-checkbox-control,
+		> div:not(:first-child) {
+			display: none;
+		}
+
+		&:last-child {
+			border: 0;
+		}
+	}
+}
+
+.domains-table-row__actions-group {
+	font-family: "SF Pro Text", $sans;
+}
