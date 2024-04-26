@@ -1,5 +1,9 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { __experimentalConfirmDialog as ConfirmDialog, Button } from '@wordpress/components';
+import {
+	__experimentalConfirmDialog as ConfirmDialog,
+	Button,
+	Spinner,
+} from '@wordpress/components';
 import { plus } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -16,7 +20,11 @@ type Props = {
 
 export const ScheduleList = ( props: Props ) => {
 	const { onEditSchedule, onShowLogs, onCreateNewSchedule } = props;
-	const { data: schedules } = useMultisiteUpdateScheduleQuery( true );
+	const {
+		data: schedules = [],
+		isLoading: isLoadingSchedules,
+		isFetched,
+	} = useMultisiteUpdateScheduleQuery( true );
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 	const [ search ] = useState( '' );
@@ -61,7 +69,7 @@ export const ScheduleList = ( props: Props ) => {
 				.length > 0
 		);
 	} );
-
+	const isLoading = isLoadingSchedules;
 	const ScheduleListComponent = isMobile ? null : ScheduleListTable;
 
 	return (
@@ -77,7 +85,9 @@ export const ScheduleList = ( props: Props ) => {
 				{ translate( 'Add new schedule' ) }
 			</Button>
 
-			{ filteredSchedules && ScheduleListComponent ? (
+			{ schedules.length === 0 && isLoading && <Spinner /> }
+
+			{ isFetched && filteredSchedules && ScheduleListComponent ? (
 				<ScheduleListComponent
 					schedules={ filteredSchedules }
 					onRemoveClick={ openRemoveDialog }
