@@ -10,7 +10,7 @@ import { PlanPrice } from '@automattic/components';
 import Card from '@automattic/components/src/card';
 import { CustomSelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import './style.scss';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { useSelector } from 'calypso/state';
@@ -19,6 +19,25 @@ import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UpgradeButton from '../../components/upgrade-button/upgrade-button';
 import EcommerceTrialIncluded from '../../current-plan/trials/ecommerce-trial-included';
+
+interface EntrepreneurPlanProps {
+	hideTrialIncluded?: boolean;
+}
+
+interface PlanPriceType {
+	term: string;
+	slug: string;
+	price?: number;
+	montlyPrice?: number;
+	subText: ReactNode;
+	discount?: number;
+	discountText?: ReactNode;
+}
+type PlanKeys =
+	| 'PLAN_ECOMMERCE'
+	| 'PLAN_ECOMMERCE_2_YEARS'
+	| 'PLAN_ECOMMERCE_3_YEARS'
+	| 'PLAN_ECOMMERCE_MONTHLY';
 
 const useEntrepreneurPlanPrices = () => {
 	const translate = useTranslate();
@@ -32,15 +51,15 @@ const useEntrepreneurPlanPrices = () => {
 		PLAN_ECOMMERCE: {
 			term: translate( 'Pay yearly' ),
 			slug: PLAN_ECOMMERCE,
-		},
+		} as PlanPriceType,
 		PLAN_ECOMMERCE_2_YEARS: {
 			term: translate( 'Pay every 2 years' ),
 			slug: PLAN_ECOMMERCE_2_YEARS,
-		},
+		} as PlanPriceType,
 		PLAN_ECOMMERCE_3_YEARS: {
 			term: translate( 'Pay every 3 years' ),
 			slug: PLAN_ECOMMERCE_3_YEARS,
-		},
+		} as PlanPriceType,
 		PLAN_ECOMMERCE_MONTHLY: {
 			term: translate( 'Pay monthly' ),
 			slug: PLAN_ECOMMERCE_MONTHLY,
@@ -50,10 +69,10 @@ const useEntrepreneurPlanPrices = () => {
 				args: { rawPrice: baseMontlyPrice },
 				comment: 'Excl. Taxes is short for excluding taxes',
 			} ),
-		},
+		} as PlanPriceType,
 	};
-
-	Object.keys( planPrices ).forEach( ( key ) => {
+	const keys = Object.keys( planPrices ) as PlanKeys[];
+	keys.forEach( ( key ) => {
 		if ( key === 'PLAN_ECOMMERCE_MONTHLY' ) {
 			return;
 		}
@@ -90,43 +109,55 @@ const useEntrepreneurPlanPrices = () => {
 	return planPrices;
 };
 
-export function EntrepreneurPlan() {
+export function EntrepreneurPlan( props: EntrepreneurPlanProps ) {
+	const { hideTrialIncluded } = props;
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const plans = useEntrepreneurPlanPrices();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const [ selectedInterval, setSelectedInterval ] = useState( 'PLAN_ECOMMERCE' );
+	const [ selectedInterval, setSelectedInterval ] = useState< PlanKeys >( 'PLAN_ECOMMERCE' );
 	const selectedPlan = plans[ selectedInterval ];
 
-	const selectControlOptions = Object.keys( plans ).map( ( key ) => {
+	const keys = Object.keys( plans ) as PlanKeys[];
+	const selectControlOptions = keys.map( ( key ) => {
 		const plan = plans[ key ];
 		return {
 			key,
 			name: (
 				<div>
-					{ plan.term } <span>{ plan.discountText }</span>
+					{ plan.term } { plan.discountText && <span>{ plan.discountText }</span> }
 				</div>
 			),
 		};
 	} );
 
 	const upgradeClick = () => {
-		const checkoutUrl = getTrialCheckoutUrl( {
-			productSlug: selectedPlan.slug,
-			siteSlug: selectedSite.slug,
-		} );
+		if ( selectedSite?.slug ) {
+			const checkoutUrl = getTrialCheckoutUrl( {
+				productSlug: selectedPlan.slug,
+				siteSlug: selectedSite.slug,
+			} );
 
-		page.redirect( checkoutUrl );
+			page.redirect( checkoutUrl );
+		}
+	};
+
+	const onSelectChange = ( { selectedItem: { key } }: { selectedItem: { key: PlanKeys } } ) => {
+		setSelectedInterval( key );
 	};
 
 	return (
 		<>
-			<h2 className="entrepreneur-trial-plan__section-title">
-				{ translate( "What's included in your free trial" ) }
-			</h2>
-			<div className="entrepreneur-trial-plan__included-wrapper">
-				<EcommerceTrialIncluded displayAll={ true } />
-			</div>
+			{ ! hideTrialIncluded && (
+				<>
+					<h2 className="entrepreneur-trial-plan__section-title">
+						{ translate( "What's included in your free trial" ) }
+					</h2>
+					<div className="entrepreneur-trial-plan__included-wrapper">
+						<EcommerceTrialIncluded displayAll={ true } />
+					</div>
+				</>
+			) }
 			<div className="plan-heading">
 				<h2 className="entrepreneur-trial-plan__section-title">
 					{ translate( 'Keep all the features for your site' ) }
@@ -135,9 +166,7 @@ export function EntrepreneurPlan() {
 					options={ selectControlOptions }
 					className="period-select"
 					hideLabelFromVision
-					onChange={ ( { selectedItem: { key } } ) => {
-						setSelectedInterval( key );
-					} }
+					onChange={ onSelectChange }
 				/>
 			</div>
 			<Card>
