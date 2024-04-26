@@ -45,7 +45,8 @@ import './dotcom-style.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
-	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
+	initialSiteFeature?: string;
+	selectedSite?: any;
 }
 
 const siteSortingKeys = [
@@ -57,7 +58,7 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
 
-function syncURL( siteSlug?: string, feature: string, queryParams: SitesDashboardQueryParams ) {
+function syncURL( siteSlug?: string, feature?: string, queryParams?: SitesDashboardQueryParams ) {
 	let url = siteSlug ? `/${ feature.replace( ':site', siteSlug ) }` : '/sites';
 
 	const searchParams = new URLSearchParams();
@@ -132,7 +133,7 @@ const SitesDashboardV2 = ( {
 				  ],
 		selectedItem: selectedSite,
 		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
-	};
+	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( initialSiteFeature );
 
