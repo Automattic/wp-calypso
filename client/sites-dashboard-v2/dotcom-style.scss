@@ -56,17 +56,19 @@
 			color: var(--studio-gray-30);
 		}
 	}
-
-	// Sort action icon
-	> .components-button {
-		// Since we changed the original height of the search input, we need to adjust the position of this icon.
-		margin-top: 5px;
-	}
 }
 
 // Styles collapsed site list
 .wpcom-site {
 	.sites-dashboard.preview-hidden {
+		.dataviews-filters__view-actions {
+			// Sort action icon
+			> .components-button:has(.preview-hidden) {
+				// Since we changed the original height of the search input, we need to adjust the position of this icon.
+				margin-top: 5px;
+			}
+		}
+
 		.sites-site-thumbnail {
 			display: flex;
 		}
