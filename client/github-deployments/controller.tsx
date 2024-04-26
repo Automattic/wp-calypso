@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { GitHubDeploymentCreation } from 'calypso/my-sites/github-deployments/deployment-creation';
 import { GitHubDeploymentManagement } from 'calypso/my-sites/github-deployments/deployment-management';
@@ -5,12 +6,40 @@ import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployme
 import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
 import { indexPage } from 'calypso/my-sites/github-deployments/routes';
 import MySitesNavigation from 'calypso/my-sites/navigation';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { Callback } from '@automattic/calypso-router';
+import SitesDashboardV2 from 'calypso/sites-dashboard-v2';
+import { DOTCOM_GITHUB_DEPLOYMENTS } from 'calypso/sites-dashboard-v2/site-preview-pane/constants';
+import { isGlobalSiteViewEnabled } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import type { Callback, Context as PageJSContext } from '@automattic/calypso-router';
+
+function shouldShowInSitesFlyoutPanel( context: PageJSContext, feature: string ) {
+	const state = context.store.getState();
+	const selectedSiteId = getSelectedSiteId( state );
+
+	// Show the hosting configuration page in the preview pane from the sites dashboard.
+	if (
+		isEnabled( 'layout/dotcom-nav-redesign-v2' ) &&
+		isGlobalSiteViewEnabled( state, selectedSiteId )
+	) {
+		const selectedSite = getSelectedSite( state );
+		return (
+			// Sites Dashboard V2 - Dotcom Nav Redesign V2
+			<SitesDashboardV2
+				queryParams={ {} }
+				selectedSite={ selectedSite }
+				selectedFeature={ feature }
+			/>
+		);
+	}
+}
 
 export const deploymentsList: Callback = ( context, next ) => {
 	context.secondary = <MySitesNavigation path={ context.path } />;
-	context.primary = (
+	context.primary = shouldShowInSitesFlyoutPanel( context, DOTCOM_GITHUB_DEPLOYMENTS ) ?? (
 		<div className="deployment-list">
 			<PageViewTracker path="/github-deployments/:site" title="GitHub Deployments" delay={ 500 } />
 			<GitHubDeployments />
