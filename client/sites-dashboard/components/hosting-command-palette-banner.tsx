@@ -18,6 +18,7 @@ import DismissibleCard from 'calypso/blocks/dismissible-card';
 const HostingCommandPaletteBannerRoot = styled.div( {
 	'&:not(:empty)': {
 		marginBottom: 25,
+		marginTop: 25,
 	},
 	'.hosting-command-palette-banner': {
 		background: 'linear-gradient(270deg, #E9EFF5 12.03%, rgba(233, 239, 245, 0) 40.39%)',
