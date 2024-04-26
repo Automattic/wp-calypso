@@ -77,10 +77,6 @@
 	}
 	.is-global-sidebar-collapsed {
 		.global-sidebar {
-			.sidebar__header,
-			.sidebar__footer {
-				align-items: flex-start;
-			}
 			.sidebar__body {
 				.sidebar__menu-link-text {
 					transition: all 0.1s ease-in-out;
