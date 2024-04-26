@@ -33,13 +33,6 @@ export const getShouldShowGlobalSiteSidebar = (
 	);
 };
 
-export const getShouldShowCollapsedGlobalSidebar = ( siteId: number, sectionGroup: string ) => {
-	// Global sidebar should be collapsed when in sites dashboard and a site is selected.
-	return (
-		isEnabled( 'layout/dotcom-nav-redesign-v2' ) && sectionGroup === 'sites-dashboard' && siteId
-	);
-};
-
 export const getShouldShowGlobalSidebar = (
 	state: AppState,
 	siteId: number,
@@ -53,6 +46,18 @@ export const getShouldShowGlobalSidebar = (
 		( sectionGroup === 'sites' && ! siteId ) ||
 		getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName )
 	);
+};
+
+export const getShouldShowCollapsedGlobalSidebar = (
+	state: AppState,
+	siteId: number,
+	sectionGroup: string,
+	sectionName: string
+) => {
+	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
+	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
+
+	return isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ( siteSelected || siteLoaded );
 };
 
 export const getShouldShowUnifiedSiteSidebar = (

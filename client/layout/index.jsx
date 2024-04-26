@@ -41,10 +41,9 @@ import { closeCommandPalette } from 'calypso/state/command-palette/actions';
 import { isCommandPaletteOpen as getIsCommandPaletteOpen } from 'calypso/state/command-palette/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
-	getShouldShowGlobalSidebar,
-	getShouldShowGlobalSiteSidebar,
-	getShouldShowUnifiedSiteSidebar,
 	getShouldShowCollapsedGlobalSidebar,
+	getShouldShowGlobalSidebar,
+	getShouldShowUnifiedSiteSidebar,
 } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -455,15 +454,11 @@ export default withCurrentRoute(
 				sectionGroup,
 				sectionName
 			);
-			const shouldShowGlobalSiteSidebar = getShouldShowGlobalSiteSidebar(
+			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
 				state,
 				siteId,
 				sectionGroup,
 				sectionName
-			);
-			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
-				siteId,
-				sectionGroup
 			);
 			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
 				state,
@@ -548,8 +543,7 @@ export default withCurrentRoute(
 				userAllowedToHelpCenter,
 				currentRoute,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar && ! sidebarIsHidden,
-				isGlobalSidebarCollapsed:
-					( shouldShowGlobalSiteSidebar || shouldShowCollapsedGlobalSidebar ) && ! sidebarIsHidden,
+				isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 				isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 				currentRoutePattern: getCurrentRoutePattern( state ) ?? '',
 				userCapabilities: state.currentUser.capabilities,
