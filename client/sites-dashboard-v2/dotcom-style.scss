@@ -4,6 +4,10 @@
 @import "@wordpress/base-styles/mixins";
 
 // Add new Dotcom specific styles to this file.
+.wpcom-site .layout__primary .main {
+	padding-bottom: 0;
+}
+
 .wpcom-site .a4a-layout-with-columns__container {
 	background: var(--color-sidebar-background);
 }
@@ -14,7 +18,7 @@
 	.a4a-layout__top-wrapper {
 		border-block-end: 0;
 
-		@media (min-width: $break-medium) {
+		@include break-medium {
 			border-block-end: 1px solid var(--studio-gray-0);
 			margin-bottom: 24px;
 		}
@@ -25,14 +29,10 @@
 	}
 }
 
-/*
-	Styles for actions (search, filters)
-*/
+// Styles for actions (search, filters).
 .dataviews-filters__view-actions {
-	align-items: center;
-
 	.components-search-control {
-		@media (min-width: $break-large) {
+		@include break-large {
 			min-width: 390px;
 		}
 	}
@@ -43,7 +43,7 @@
 		flex: 1 1 auto;
 		flex-direction: row-reverse;
 		align-items: center;
-		// places search above filters
+		// Places search above filters
 		z-index: 1;
 		border-radius: 2px;
 		border: 1px solid var(--studio-gray-10);
@@ -54,10 +54,124 @@
 			font-size: $font-body;
 		}
 
-		// search icon
+		// Search icon
 		.components-input-control__suffix {
 			padding-inline-start: 11px;
 			color: var(--studio-gray-30);
+		}
+	}
+}
+
+// Styles collapsed site list.
+.wpcom-site {
+	.sites-dashboard.preview-hidden {
+		.dataviews-filters__view-actions {
+			// Sort action icon
+			> .components-button:has(.preview-hidden) {
+				// Since we changed the original height of the search input, we need to adjust the position of this icon.
+				margin-top: 5px;
+			}
+		}
+
+		.sites-site-thumbnail {
+			display: flex;
+		}
+
+		.sites-site-favicon {
+			display: none;
+		}
+	}
+
+	.sites-dashboard:not(.preview-hidden) {
+		.sites-site-favicon {
+			display: flex;
+			margin-right: 0;
+		}
+
+		.sites-site-thumbnail {
+			display: none;
+		}
+
+		.list-tile__leading {
+			margin-right: 12px;
+		}
+
+		.dataviews-filters__view-actions {
+			align-items: center;
+			display: flex;
+
+			.components-search-control {
+				min-width: initial;
+			}
+		}
+
+		ul.dataviews-view-list {
+			.components-h-stack {
+				gap: 0;
+			}
+
+			li {
+				border-bottom: 1px solid #f1f1f1 !important;
+			}
+
+			li.is-selected {
+				background-color: #f7faff;
+			}
+		}
+	}
+}
+
+// Styles for site preview pane.
+.wpcom-site .site-preview-pane {
+	.section-nav-tabs__list {
+		box-sizing: border-box;
+		overflow-x: auto;
+	}
+}
+
+// Use flexbox to structure of fly-out panel.
+.wpcom-site .main.a4a-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	.a4a-layout-column__container {
+		display: flex;
+		flex-direction: column;
+		height: calc(100vh - 32px);
+
+		.a4a-layout__top-wrapper {
+			display: flex;
+			margin-bottom: 0;
+			padding: 0;
+
+			.a4a-layout__viewport {
+				display: flex;
+				margin: 0;
+				padding: 16px;
+			}
+
+			.a4a-layout__header {
+				margin: 0;
+			}
+		}
+
+		.sites-overview__content {
+			flex-grow: 1;
+			margin-top: 0;
+			overflow: hidden;
+			padding-bottom: 0 !important;
+		}
+
+		.dataviews-wrapper {
+			display: flex;
+			height: 100%;
+
+			.dataviews-view-list {
+				flex: 1;
+				max-height: none;
+			}
+
+			.dataviews-pagination {
+				margin: 0;
+				position: relative;
+			}
 		}
 	}
 }

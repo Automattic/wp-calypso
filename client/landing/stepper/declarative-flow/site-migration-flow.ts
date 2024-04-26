@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
@@ -37,12 +37,12 @@ const siteMigration: Flow = {
 			STEPS.VERIFY_EMAIL,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
+			STEPS.SITE_MIGRATION_INSTRUCTIONS_I2,
 			STEPS.ERROR,
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
 		const { siteSlug, siteId } = useSiteData();
-		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -64,20 +64,8 @@ const siteMigration: Flow = {
 		const locale = queryLocaleSlug || pathLocaleSlug || useLocaleSlug;
 
 		const queryParams = new URLSearchParams( window.location.search );
-		const profilerData = queryParams.get( 'profilerdata' );
 		const aff = queryParams.get( 'aff' );
 		const vendorId = queryParams.get( 'vid' );
-
-		if ( profilerData ) {
-			try {
-				const decodedProfilerData = JSON.parse(
-					decodeURIComponent( escape( window.atob( profilerData ) ) )
-				);
-
-				setProfilerData( decodedProfilerData );
-				// Ignore any bad/invalid data and prevent it from causing downstream issues.
-			} catch {}
-		}
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;
@@ -247,7 +235,7 @@ const siteMigration: Flow = {
 
 				case STEPS.BUNDLE_TRANSFER.slug: {
 					if ( isEnabled( 'migration-flow/remove-processing-step' ) ) {
-						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug );
+						return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS_I2.slug );
 					}
 					return navigate( STEPS.PROCESSING.slug, { bundleProcessing: true } );
 				}
