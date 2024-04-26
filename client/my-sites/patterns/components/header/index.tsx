@@ -31,7 +31,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			'Dive into hundreds of expertly designed, fully responsive layouts, and bring any kind of site to life, faster.',
 			{ comment: 'Intro text on the Pattern Library home page' }
 		),
-		patternsHeading: translate( "It's Easier With Patterns", {
+		patternsHeading: translate( 'Build Faster with Patterns', {
 			comment: 'Heading of the Pattern Library home page',
 		} ),
 		patternsDescription: translate(
@@ -344,7 +344,7 @@ const CONTENT: Record< Category[ 'name' ], ContentEntry > = {
 			comment: 'Heading of the Pattern Library "Store" category page for full-page patterns',
 		} ),
 		layoutsDescription: translate(
-			'Our store layouts are designed to streamline the online shopping experience. These full-page patterns display your products in an inviting way, simplifying the path from discovery to purchase.',
+			'Our store layouts are designed to give your site the look and feel of an online store. These full-page patterns display your products in an inviting way, simplifying the path from discovery to purchase.',
 			{ comment: 'Intro text on the Pattern Library "Store" category page for full-page patterns' }
 		),
 	},
