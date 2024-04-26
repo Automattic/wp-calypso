@@ -1,64 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.sites-overview__content {
-
-	.components-checkbox-control__input[type="checkbox"]:focus {
-		box-shadow: 0 0 0 var(--studio-jetpack-green-50) #fff, 0 0 0 calc(2* var(--studio-jetpack-green-50)) var(--studio-jetpack-green-50);
-		outline: 2px solid transparent;
-		outline-offset: 2px;
-	}
-
-	.components-checkbox-control__input[type="checkbox"]:checked,
-	.components-checkbox-control__input[type="checkbox"]:indeterminate {
-		background: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-		border-color: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
-	}
-
-	.dataviews-bulk-edit-button.components-button.is-tertiary:active:not(:disabled),
-	.dataviews-bulk-edit-button.components-button.is-tertiary:hover:not(:disabled) {
-		box-shadow: none;
-		background-color: transparent;
-		color: var(--studio-jetpack-green-50);
-	}
-
-	.dataviews-view-table__actions-column {
-		display: none;
-	}
-
-	thead {
-		th.sites-dataviews__site {
-			background: var(--studio-white);
-			td {
-				padding: 16px 0;
-				border-bottom: 1px solid var(--color-neutral-5);
-			}
-		}
-	}
-
-	tr.dataviews-view-table__row {
-
-		&:hover {
-
-			.site-set-favorite__favorite-icon,
-			.components-checkbox-control__input {
-				opacity: 1;
-			}
-		}
-
-		td:has(.sites-dataviews__site) {
-			padding: 8px 16px 8px 4px;
-			width: 20%;
-		}
-
-		.site-sort__clickable {
-			cursor: pointer;
-		}
-
-	}
-
-}
-
 .sites-dataviews__site {
 	display: flex;
 	flex-direction: row;
@@ -114,4 +56,25 @@
 			border-radius: 4px;
 		}
 	}
+}
+
+.sites-dashboard__layout:not(.preview-hidden) {
+
+	.dataviews-pagination {
+		line-height: 1;
+		width: 368px;
+
+		.components-base-control {
+			width: unset !important;
+			margin-right: 0 !important;
+		}
+	}
+}
+
+.sites-overview__content:has(.dataviews-pagination) {
+	padding-bottom: 32px !important;
+}
+
+.main.sites-dashboard.sites-dashboard__layout:has(.dataviews-pagination) {
+	height: calc(100vh - 70px);
 }

@@ -90,6 +90,11 @@
 		border-color: var(--wp-components-color-accent, var(--studio-jetpack-green-50));
 	}
 
+	.components-search-control input[type="search"].components-search-control__input {
+		background: var(--studio-white);
+		border: 1px solid var(--color-neutral-5);
+	}
+
 	.dataviews-bulk-edit-button.components-button.is-tertiary:active:not(:disabled),
 	.dataviews-bulk-edit-button.components-button.is-tertiary:hover:not(:disabled) {
 		box-shadow: none;
@@ -149,5 +154,34 @@
 				height: 18px;
 			}
 		}
+	}
+
+	.dataviews-no-results,
+	.dataviews-loading {
+		padding-top: 1rem;
+		text-align: center;
+	}
+
+	.spinner-wrapper {
+		display: none;
+	}
+}
+
+.dataviews-wrapper:has(.dataviews-loading) {
+	.spinner-wrapper {
+		display: block;
+	}
+	.dataviews-loading p {
+		display: none;
+	}
+
+	.dataviews-view-table-wrapper {
+		height: 0 !important;
+	}
+}
+
+.dataviews-wrapper:has(.dataviews-no-results) {
+	.spinner-wrapper {
+		display: none;
 	}
 }
