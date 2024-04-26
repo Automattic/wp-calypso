@@ -700,7 +700,14 @@ export class CheckoutThankYou extends Component<
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, upgradeIntent, isSimplified, displayMode, receipt } = this.props;
+		const {
+			selectedSite,
+			siteUnlaunchedBeforeUpgrade,
+			upgradeIntent,
+			isSimplified,
+			displayMode,
+			receipt,
+		} = this.props;
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
@@ -711,9 +718,11 @@ export class CheckoutThankYou extends Component<
 			<div>
 				<CheckoutThankYouHeader
 					isDataLoaded={ this.isDataLoaded() }
+					isSimplified={ isSimplified }
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ selectedSite }
 					hasFailedPurchases={ hasFailedPurchases }
+					siteUnlaunchedBeforeUpgrade={ siteUnlaunchedBeforeUpgrade }
 					upgradeIntent={ upgradeIntent }
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
