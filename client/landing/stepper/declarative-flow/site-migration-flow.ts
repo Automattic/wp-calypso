@@ -279,7 +279,7 @@ const siteMigration: Flow = {
 						if ( siteSlug ) {
 							// Set the in_site_migration_flow option if the user needs to be verified.
 							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: true,
+								in_site_migration_flow: flowName,
 							} );
 						}
 						return navigate( STEPS.VERIFY_EMAIL.slug );
