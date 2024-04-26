@@ -93,8 +93,8 @@ export const ScheduleForm = ( props: Props ) => {
 			schedule: {
 				timestamp,
 				interval: frequency,
+				health_check_paths: healthCheckPaths,
 			},
-			health_check_paths: healthCheckPaths,
 		};
 
 		if ( formValid ) {
