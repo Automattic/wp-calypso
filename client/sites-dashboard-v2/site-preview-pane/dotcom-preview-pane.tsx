@@ -108,10 +108,11 @@ const DotcomPreviewPane = ( {
 					if ( selectedSiteSubfeature === DOTCOM_GITHUB_DEPLOYMENTS_CREATE ) {
 						return <GitHubDeploymentCreation />;
 					} else if ( selectedSiteSubfeature === DOTCOM_GITHUB_DEPLOYMENTS_MANAGE ) {
-						return <GitHubDeploymentManagement />;
+						const { deploymentId } = selectedSiteParams;
+						return <GitHubDeploymentManagement codeDeploymentId={ deploymentId } />;
 					} else if ( selectedSiteSubfeature === DOTCOM_GITHUB_DEPLOYMENTS_LOGS ) {
-						const { codeDeploymentId } = selectedSiteParams;
-						return <DeploymentRunsLogs codeDeploymentId={ codeDeploymentId } />;
+						const { deploymentId } = selectedSiteParams;
+						return <DeploymentRunsLogs codeDeploymentId={ deploymentId } />;
 					}
 					return <GitHubDeployments />;
 				} )()

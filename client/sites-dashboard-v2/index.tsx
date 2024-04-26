@@ -48,6 +48,7 @@ interface SitesDashboardProps {
 	initialSiteFeature?: string;
 	initialSiteSubfeature?: string;
 	selectedSite?: any;
+	selectedSiteParams?: any;
 }
 
 const siteSortingKeys = [
@@ -65,7 +66,7 @@ function syncURL(
 	feature: string,
 	queryParams: SitesDashboardQueryParams
 ) {
-	let url;
+	let url: string;
 	if ( siteSlug ) {
 		url = '/' + feature.replace( ':site', siteSlug );
 		Object.keys( siteParams ).forEach( ( key ) => {
