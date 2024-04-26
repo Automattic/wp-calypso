@@ -28,6 +28,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	shouldOpenExternalLinksInCurrentTab,
 	forceExternalLink = false,
 	forceShowExternalIcon = false,
+	forceChevronIcon = false,
 	trackClickEvent,
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -53,6 +54,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
+			forceChevronIcon={ forceChevronIcon }
 			className={ classnames(
 				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
 				className
@@ -66,7 +68,7 @@ export const MySitesSidebarUnifiedItem = ( {
 MySitesSidebarUnifiedItem.propTypes = {
 	badge: PropTypes.string,
 	count: PropTypes.number,
-	icon: PropTypes.string,
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,
@@ -74,6 +76,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
 	forceExternalLink: PropTypes.bool,
 	forceShowExternalIcon: PropTypes.bool,
+	forceChevronIcon: PropTypes.bool,
 	trackClickEvent: PropTypes.func,
 };
 

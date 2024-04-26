@@ -238,5 +238,11 @@
 			color: var(--studio-gray-50);
 			background: var(--studio-gray-0);
 		}
+
+		button.is-verifying {
+			svg {
+				animation: scheduled-updates-rotate 2s linear infinite;
+			}
+		}
 	}
 }

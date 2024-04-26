@@ -376,6 +376,7 @@ $font-size: rem(14px);
 
 	.global-sidebar .sidebar {
 		background-color: var(--color-sidebar-background);
+		padding-bottom: 0;
 
 		.sidebar__menu-link {
 			line-height: 15px;

@@ -11,12 +11,12 @@ interface UpgradeButtonProps {
 const UpgradeButton = ( { goToCheckoutWithPlan, isEntrepreneurTrial }: UpgradeButtonProps ) => {
 	const translate = useTranslate();
 	const label = isEntrepreneurTrial
-		? translate( 'Add payment method' )
+		? translate( 'Complete your plan purchase' )
 		: translate( 'Upgrade now' );
 
 	return (
 		<Button
-			className={ classNames( 'trial-current-plan__trial-card-cta', {
+			className={ classNames( 'plans-upgrade-button__button', {
 				[ 'blue' ]: isEntrepreneurTrial,
 			} ) }
 			primary

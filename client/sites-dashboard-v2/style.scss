@@ -1,6 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+:root {
+	--color-light-backdrop: var(--studio-white);
+}
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
@@ -32,6 +35,15 @@
 
 	.a4a-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
+	}
+
+	.item-preview__content {
+		.hosting-overview,
+		.site-monitoring-overview {
+			overflow-y: initial;
+			max-height: initial;
+			padding-bottom: 88px;
+		}
 	}
 
 	@media (min-width: $break-large) {
@@ -168,7 +180,7 @@
 			display: none;
 		}
 
-		td:nth-child(n+2):nth-child(-n+8) {
+		td:nth-child(n+2):nth-child(-n+5) {
 			display: none;
 		}
 
@@ -199,14 +211,16 @@
 				max-width: 100vw;
 			}
 
-			th[data-field-id="stats"],
-			th[data-field-id="boost"],
-			th[data-field-id="backup"],
-			th[data-field-id="monitor"],
-			th[data-field-id="scan"],
-			th[data-field-id="plugins"],
-			th[data-field-id="favorite"] {
+			th[data-field-id="plan"],
+			th[data-field-id="status"],
+			th[data-field-id="last-publish"],
+			th[data-field-id="stats"] {
 				display: none;
+			}
+
+			th[data-field-id="actions"] {
+				padding-inline-end: 12px;
+				text-align: end;
 			}
 		}
 	}

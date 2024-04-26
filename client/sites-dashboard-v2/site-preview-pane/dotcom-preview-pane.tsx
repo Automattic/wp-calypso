@@ -8,11 +8,15 @@ import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/it
 import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
 import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
 import Hosting from 'calypso/my-sites/hosting/main';
+import SiteMonitoringPhpLogs from 'calypso/site-monitoring/components/php-logs';
+import SiteMonitoringServerLogs from 'calypso/site-monitoring/components/server-logs';
 import SiteMonitoringOverview from 'calypso/site-monitoring/components/site-monitoring-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_PHP_LOGS,
+	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
 
@@ -39,6 +43,8 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		};
 	}, [] );
 
+	const isDotcomSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
+
 	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
 		() => [
@@ -51,12 +57,36 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				<HostingOverview />
 			),
 			createFeaturePreview(
-				DOTCOM_MONITORING,
-				__( 'Monitoring' ),
+				DOTCOM_HOSTING_CONFIG,
+				__( 'Hosting Config' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
+				<Hosting />
+			),
+			createFeaturePreview(
+				DOTCOM_MONITORING,
+				__( 'Monitoring' ),
+				isDotcomSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
 				<SiteMonitoringOverview />
+			),
+			createFeaturePreview(
+				DOTCOM_PHP_LOGS,
+				__( 'PHP Logs' ),
+				isDotcomSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteMonitoringPhpLogs />
+			),
+			createFeaturePreview(
+				DOTCOM_SERVER_LOGS,
+				__( 'Server Logs' ),
+				isDotcomSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteMonitoringServerLogs />
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
@@ -65,14 +95,6 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<GitHubDeployments />
-			),
-			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				__( 'Hosting Config' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<Hosting />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site ]
@@ -84,6 +106,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		url: site.URL,
 		blogId: site.ID,
 		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
+		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 	};
 
 	return (
@@ -91,6 +114,9 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			itemPreviewPaneHeaderExtraProps={ {
+				externalIconSize: 16,
+			} }
 		/>
 	);
 };

@@ -35,7 +35,7 @@ interface ProcessingStepProps extends StepProps {
 
 const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const { submit } = props.navigation;
-	const { flow, data } = props;
+	const { flow } = props;
 
 	const { __ } = useI18n();
 	const loadingMessages = useProcessingLoadingMessages( flow );

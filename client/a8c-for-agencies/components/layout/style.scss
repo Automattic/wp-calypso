@@ -124,16 +124,11 @@ html,
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: wrap;
+		row-gap: 16px;
 
 		> * + * {
 			margin-inline-start: 0;
 		}
-	}
-}
-
-.a4a-layout__header.has-actions > .a4a-layout__header-main {
-	@include breakpoint-deprecated( "<1280px" ) {
-		margin-block-end: 16px;
 	}
 }
 

@@ -2,8 +2,10 @@ import { ListTile, Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import * as React from 'react';
 //import { useInView } from 'react-intersection-observer';
+import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteItemThumbnail } from 'calypso/sites-dashboard/components/sites-site-item-thumbnail';
@@ -23,10 +25,11 @@ type Props = {
 
 const SiteListTile = styled( ListTile )`
 	margin-inline-end: 0;
-	max-width: 340px;
+	width: 295px;
 
 	.preview-hidden & {
 		max-width: 500px;
+		width: 100%;
 	}
 
 	${ MEDIA_QUERIES.hideTableRows } {
@@ -43,7 +46,6 @@ const ListTileLeading = styled( ThumbnailLink )`
 const ListTileTitle = styled.div`
 	display: flex;
 	align-items: center;
-	margin-block-end: 8px;
 `;
 
 const ListTileSubtitle = styled.div`
@@ -85,14 +87,28 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	};
 
 	return (
-		<Button onClick={ onSiteClick } borderless={ true }>
+		<Button className="sites-dataviews__site" onClick={ onSiteClick } borderless={ true }>
 			<SiteListTile
-				contentClassName={ css`
-					min-width: 0;
-				` }
+				contentClassName={ classnames(
+					'sites-dataviews__site-name',
+					css`
+						min-width: 0;
+						text-align: start;
+					`
+				) }
 				leading={
 					<ListTileLeading title={ title }>
-						<SiteItemThumbnail displayMode="list" showPlaceholder={ false } site={ site } />
+						<SiteItemThumbnail
+							className="sites-site-thumbnail"
+							displayMode="list"
+							showPlaceholder={ false }
+							site={ site }
+						/>
+						<SiteFavicon
+							className="sites-site-favicon"
+							blogId={ site.ID }
+							isDotcomSite={ site.is_wpcom_atomic }
+						/>
 					</ListTileLeading>
 				}
 				title={
@@ -114,7 +130,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 						</>
 					) : (
 						<>
-							<ListTileSubtitle>
+							<ListTileSubtitle className="sites-dataviews__site-url">
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</ListTileSubtitle>
 						</>

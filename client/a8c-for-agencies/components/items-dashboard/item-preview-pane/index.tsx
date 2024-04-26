@@ -37,6 +37,7 @@ export default function ItemPreviewPane( {
 	className,
 	itemData,
 	addTourDetails,
+	itemPreviewPaneHeaderExtraProps,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -79,7 +80,11 @@ export default function ItemPreviewPane( {
 
 	return (
 		<div className={ classNames( 'item-preview__pane', className ) }>
-			<ItemPreviewPaneHeader closeItemPreviewPane={ closeItemPreviewPane } itemData={ itemData } />
+			<ItemPreviewPaneHeader
+				closeItemPreviewPane={ closeItemPreviewPane }
+				itemData={ itemData }
+				extraProps={ itemPreviewPaneHeaderExtraProps }
+			/>
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
 					{ navItems && navItems.length > 0 ? (
