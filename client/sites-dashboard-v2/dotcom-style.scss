@@ -25,9 +25,7 @@
 	}
 }
 
-/*
-	Styles for actions (search, filters)
-*/
+// Styles for actions (search, filters)
 .dataviews-filters__view-actions {
 	align-items: center;
 
@@ -43,7 +41,7 @@
 		flex: 1 1 auto;
 		flex-direction: row-reverse;
 		align-items: center;
-		// places search above filters
+		// Places search above filters
 		z-index: 1;
 		border-radius: 2px;
 		border: 1px solid var(--studio-gray-10);
@@ -54,7 +52,7 @@
 			font-size: $font-body;
 		}
 
-		// search icon
+		// Search icon
 		.components-input-control__suffix {
 			padding-inline-start: 11px;
 			color: var(--studio-gray-30);
@@ -62,14 +60,13 @@
 	}
 }
 
-/*
-	Styles collapsed site list
-*/
+// Styles collapsed site list
 .wpcom-site {
 	.sites-dashboard.preview-hidden {
 		.sites-site-thumbnail {
 			display: flex;
 		}
+
 		.sites-site-favicon {
 			display: none;
 		}
@@ -80,22 +77,33 @@
 			display: flex;
 			margin-right: 0;
 		}
+
 		.sites-site-thumbnail {
 			display: none;
 		}
+
 		.list-tile__leading {
 			margin-right: 12px;
 		}
-		.dataviews-filters__view-actions .components-search-control {
-			min-width: initial;
+
+		.dataviews-filters__view-actions {
+			align-items: center;
+			display: flex;
+
+			.components-search-control {
+				min-width: initial;
+			}
 		}
+
 		ul.dataviews-view-list {
 			.components-h-stack {
 				gap: 0;
 			}
+
 			li {
 				border-bottom: 1px solid #f1f1f1 !important;
 			}
+
 			li.is-selected {
 				background-color: #f7faff;
 			}
