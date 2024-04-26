@@ -83,7 +83,7 @@ describe( 'Migration Signup Flow', () => {
 			} );
 		} );
 
-		it( 'redirects the user to the site-migration-upgrade-plan step from the processing step', () => {
+		it( 'redirects the user to the site-migration-identify step from the processing step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
 
 			runUseStepNavigationSubmit( {
@@ -96,7 +96,25 @@ describe( 'Migration Signup Flow', () => {
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com`,
+				path: `/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=example.wordpress.com`,
+				state: null,
+			} );
+		} );
+
+		it( 'redirects the user to the site-migration-upgrade-plan step from the processing step when we have a from', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( migrationSignupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				currentURL: `/setup/${ STEPS.PROCESSING.slug }?siteSlug=&from=https%3A%2F%2Fexample.com%2F`,
+				dependencies: {
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fexample.com%2F`,
 				state: {
 					hideFreeMigrationTrialForNonVerifiedEmail: true,
 				},
