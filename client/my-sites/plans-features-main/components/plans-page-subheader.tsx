@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 
 const Subheader = styled.p`
-	margin: -32px 0 40px 0;
+	margin: -32px 0 0 0;
 	color: var( --studio-gray-60 );
 	font-size: 1rem;
 	text-align: center;
@@ -39,41 +39,34 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 	);
 };
 
+const HeaderContainer = styled( Subheader )`
+	display: flex;
+	justify-content: center;
+	font-size: 16px;
+	font-weight: 500;
+
+	@media ( max-width: 740px ) {
+		flex-direction: column;
+	}
+`;
+
+const PrefixSection = styled.p`
+	@media ( max-width: 740px ) {
+		margin-bottom: 4px;
+	}
+`;
+
+const FeatureSection = styled.p`
+	.gridicons-checkmark {
+		color: var( --studio-green-50 );
+		vertical-align: middle;
+		margin-left: 12px;
+		margin-right: 4px;
+		padding-bottom: 4px;
+	}
+`;
+
 const PlanBenefitHeader = () => {
-	const HeaderContainer = styled.div`
-		display: flex;
-		justify-content: center;
-		margin: -32px 0 0 0;
-		text-align: center;
-		color: var( --studio-gray-60 );
-		font-size: 16px;
-		font-weight: 500;
-
-		@media ( max-width: 960px ) {
-			margin-top: -16px;
-		}
-
-		@media ( max-width: 740px ) {
-			flex-direction: column;
-		}
-	`;
-
-	const PrefixSection = styled.p`
-		@media ( max-width: 740px ) {
-			margin-bottom: 4px;
-		}
-	`;
-
-	const FeatureSection = styled.p`
-		.gridicons-checkmark {
-			color: var( --studio-green-50 );
-			vertical-align: middle;
-			margin-left: 12px;
-			margin-right: 4px;
-			padding-bottom: 4px;
-		}
-	`;
-
 	const translate = useTranslate();
 
 	return (
