@@ -78,6 +78,7 @@ $brand-text: "SF Pro Text", $sans;
 		span.dotcom,
 		button.sidebar__item-search,
 		a.sidebar__item-notifications {
+			transition: all 0.3s ease-in-out;
 			display: flex;
 			width: 28px;
 			height: 28px;
