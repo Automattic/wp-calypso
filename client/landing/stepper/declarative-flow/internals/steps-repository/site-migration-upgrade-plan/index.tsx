@@ -60,10 +60,9 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 					} );
 				} }
 				onFreeTrialClick={ () => {
-					// navigation.submit?.( { freeTrialSelected: true } );
 					navigation.submit?.( {
 						goToCheckout: true,
-						plan: PLAN_MIGRATION_TRIAL_MONTHLY, // plan.getPathSlug ? plan.getPathSlug() : '',
+						plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 						sendIntentWhenCreatingTrial: true,
 					} );
 				} }
