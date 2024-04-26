@@ -217,7 +217,7 @@ const sections = [
 	},
 	{
 		name: 'hosting-overview',
-		paths: [ '/hosting' ],
+		paths: [ '/hosting-overview' ],
 		module: 'calypso/hosting-overview',
 		group: 'sites',
 	},
