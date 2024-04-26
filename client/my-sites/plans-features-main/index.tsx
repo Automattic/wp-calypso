@@ -27,6 +27,7 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 } from '@automattic/plans-grid-next';
+import { isDesktop } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
@@ -60,7 +61,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getCurrentUserName, getCurrentUserMeta } from 'calypso/state/current-user/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -724,7 +725,13 @@ const PlansFeaturesMain = ( {
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
 
-	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+	const trailMapExperiment = useExperimentForTrailMap( {
+		flowName,
+		isDesktop: isDesktop(),
+	} );
+
+	const isTrailMap =
+		useSelector( getCurrentUserMeta )[ 'use_trail_map_features_grid' ] || trailMapExperiment.result;
 
 	return (
 		<>
@@ -785,7 +792,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onClickFreePlanCTA={ () => handleUpgradeClick() }
-					showPlanBenefits={ isInSignup && trailMapExperiment.result }
+					showPlanBenefits={ isInSignup && isTrailMap }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -830,7 +837,7 @@ const PlansFeaturesMain = ( {
 										isLaunchPage={ isLaunchPage }
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										onUpgradeClick={ handleUpgradeClick }
-										paidDomainName={ trailMapExperiment.result ? undefined : paidDomainName }
+										paidDomainName={ isTrailMap ? undefined : paidDomainName }
 										planActionOverrides={ planActionOverrides }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }
