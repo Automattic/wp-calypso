@@ -1,9 +1,14 @@
-import { useSitesListFiltering, useSitesListGrouping } from '@automattic/sites';
+import {
+	SitesSortKey,
+	useSitesListFiltering,
+	useSitesListGrouping,
+	useSitesListSorting,
+} from '@automattic/sites';
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -27,6 +32,7 @@ import {
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
 import { useDispatch } from 'calypso/state';
+import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
@@ -43,6 +49,12 @@ interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
 }
+
+const siteSortingKeys = [
+	{ dataView: 'site', sortKey: 'alphabetically' },
+	{ dataView: 'magic', sortKey: 'lastInteractedWith' },
+	{ dataView: 'last-publish', sortKey: 'updatedAt' },
+];
 
 const DEFAULT_PER_PAGE = 96;
 const DEFAULT_STATUS_GROUP = 'all';
@@ -61,6 +73,9 @@ const SitesDashboardV2 = ( {
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+	const initialSortApplied = useRef( false );
+
+	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 
 	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
@@ -84,6 +99,7 @@ const SitesDashboardV2 = ( {
 		page,
 		perPage,
 		search: search ?? '',
+		hiddenFields: [ 'magic' ],
 		filters:
 			status === 'all'
 				? []
@@ -96,6 +112,28 @@ const SitesDashboardV2 = ( {
 				  ],
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+
+	// Ensure site sort preference is applied when it loads in. This isn't always available on
+	// initial mount.
+	useEffect( () => {
+		// Ensure we set and check initialSortApplied to prevent infinite loops when changing sort
+		// values after initial sort.
+		if ( hasSitesSortingPreferenceLoaded && ! initialSortApplied.current ) {
+			const newSortField =
+				siteSortingKeys.find( ( key ) => key.sortKey === sitesSorting.sortKey )?.dataView || '';
+			const newSortDirection = sitesSorting.sortOrder;
+
+			setDataViewsState( ( prevState ) => ( {
+				...prevState,
+				sort: {
+					field: newSortField,
+					direction: newSortDirection,
+				},
+			} ) );
+
+			initialSortApplied.current = true;
+		}
+	}, [ hasSitesSortingPreferenceLoaded, sitesSorting, dataViewsState.sort ] );
 
 	// Get the status group slug.
 	const statusSlug = useMemo( () => {
@@ -116,9 +154,14 @@ const SitesDashboardV2 = ( {
 		search: dataViewsState.search,
 	} );
 
-	// todo: Perform sorting actions
+	// Perform sorting actions
+	const sortedSites = useSitesListSorting( filteredSites, {
+		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+			?.sortKey as SitesSortKey,
+		sortOrder: dataViewsState.sort.direction || undefined,
+	} );
 
-	const paginatedSites = filteredSites.slice(
+	const paginatedSites = sortedSites.slice(
 		( dataViewsState.page - 1 ) * dataViewsState.perPage,
 		dataViewsState.page * dataViewsState.perPage
 	);
@@ -147,6 +190,17 @@ const SitesDashboardV2 = ( {
 		// then redirecting back to the previous path.
 		window.setTimeout( () => updateQueryParams( queryParams ) );
 	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug, updateQueryParams ] );
+
+	// Update site sorting preference on change
+	useEffect( () => {
+		if ( dataViewsState.sort.field ) {
+			onSitesSortingChange( {
+				sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort.field )
+					?.sortKey as SitesSortKey,
+				sortOrder: dataViewsState.sort.direction || 'asc',
+			} );
+		}
+	}, [ dataViewsState.sort, onSitesSortingChange ] );
 
 	// Manage the closing of the preview pane
 	const closeSitePreviewPane = useCallback( () => {

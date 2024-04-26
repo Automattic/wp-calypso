@@ -72,7 +72,7 @@ const DotcomSitesDataViews = ( {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'plan',
@@ -99,7 +99,7 @@ const DotcomSitesDataViews = ( {
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'stats',
@@ -121,6 +121,13 @@ const DotcomSitesDataViews = ( {
 				),
 				enableHiding: false,
 				enableSorting: false,
+			},
+			{
+				id: 'magic',
+				header: __( 'Magic' ),
+				render: () => <></>,
+				enableHiding: false,
+				enableSorting: true,
 			},
 		],
 		[ __, openSitePreviewPane, userId ]
