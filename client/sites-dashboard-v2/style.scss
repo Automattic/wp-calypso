@@ -37,6 +37,15 @@
 		padding-block-start: 24px;
 	}
 
+	.item-preview__content {
+		.hosting-overview,
+		.site-monitoring-overview {
+			overflow-y: initial;
+			max-height: initial;
+			padding-bottom: 88px;
+		}
+	}
+
 	@media (min-width: $break-large) {
 		background: inherit;
 

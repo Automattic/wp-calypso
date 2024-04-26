@@ -55,6 +55,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 				// Add border around everything
 				overflow: hidden;
 				min-height: 100vh;
+				height: 100vh;
 				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
 			}
 
@@ -65,6 +66,8 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
 			height: calc( 100vh - 32px );
+			padding-bottom: 0;
+			box-shadow: none;
 		}
 
 		// Update body margin to account for the sidebar width
