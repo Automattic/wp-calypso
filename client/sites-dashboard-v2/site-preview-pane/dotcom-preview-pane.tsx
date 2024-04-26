@@ -43,6 +43,8 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 		};
 	}, [] );
 
+	const isDotcomSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
+
 	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
 		() => [
@@ -65,7 +67,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
-				true,
+				isDotcomSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<SiteMonitoringOverview />
@@ -73,7 +75,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			createFeaturePreview(
 				DOTCOM_PHP_LOGS,
 				__( 'PHP Logs' ),
-				true,
+				isDotcomSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<SiteMonitoringPhpLogs />
@@ -81,7 +83,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			createFeaturePreview(
 				DOTCOM_SERVER_LOGS,
 				__( 'Server Logs' ),
-				true,
+				isDotcomSite,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
 				<SiteMonitoringServerLogs />
