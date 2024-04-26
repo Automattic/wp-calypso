@@ -64,6 +64,33 @@
 
 // Styles collapsed site list.
 .wpcom-site {
+	.layout__secondary {
+		transition: all 0.3s ease-in-out;
+
+		.sidebar__header {
+			span.dotcom,
+			button.sidebar__item-search,
+			a.sidebar__item-notifications {
+				transition: all 0.3s ease-in-out;
+			}
+		}
+	}
+	.is-global-sidebar-collapsed {
+		.global-sidebar {
+			.sidebar__header,
+			.sidebar__footer {
+				align-items: flex-start;
+			}
+			.sidebar__body {
+				.sidebar__menu-link-text {
+					transition: all 0.1s ease-in-out;
+					transition-delay: 0.2s;
+					opacity: 0;
+					display: block !important;
+				}
+			}
+		}
+	}
 	.sites-dashboard.preview-hidden {
 		.dataviews-filters__view-actions {
 			// Sort action icon
