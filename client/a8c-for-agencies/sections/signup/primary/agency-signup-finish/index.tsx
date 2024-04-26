@@ -15,7 +15,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateAgencyMutation from '../../agency-details-form/hooks/use-create-agency-mutation';
-import { getSignupDataFromLocalStorage } from '../../lib/signup-data-to-local-storage';
+import {
+	clearSignupDataFromLocalStorage,
+	getSignupDataFromLocalStorage,
+} from '../../lib/signup-data-to-local-storage';
 import './style.scss';
 
 export default function AgencySignupFinish() {
@@ -29,6 +32,7 @@ export default function AgencySignupFinish() {
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
 			dispatch( fetchAgencies() );
+			clearSignupDataFromLocalStorage();
 		},
 		onError: ( error: APIError ) => {
 			page( A4A_SIGNUP_LINK );
