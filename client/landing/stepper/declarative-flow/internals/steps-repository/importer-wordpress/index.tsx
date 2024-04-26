@@ -21,7 +21,6 @@ const ImporterWordpress: Step = function ( props ) {
 			props.stepName,
 			queryParams
 		);
-
 		props.navigation?.submit?.( { action: 'checkout', checkoutUrl: preparedCheckoutUrl } );
 	}
 

@@ -35,7 +35,8 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 
 	const goToMigrationAssistanceCheckout = () => {
 		navigation?.submit?.( {
-			acceptMigrationAssistanceOffer: true,
+			goToCheckout: true,
+			plan: plan.getPathSlug ? plan.getPathSlug() : '',
 		} );
 	};
 
@@ -55,12 +56,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 				isBusy={ false }
 				hideTitleAndSubTitle
 				sendIntentWhenCreatingTrial
-				onCtaClick={ () => {
-					navigation.submit?.( {
-						goToCheckout: true,
-						plan: plan.getPathSlug ? plan.getPathSlug() : '',
-					} );
-				} }
+				onCtaClick={ goToMigrationAssistanceCheckout }
 				onFreeTrialSelectionSuccess={ () => {
 					navigation.submit?.( { freeTrialSelected: true } );
 				} }
