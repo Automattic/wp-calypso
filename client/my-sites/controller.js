@@ -940,7 +940,9 @@ export function globalSiteLayout( feature ) {
 
 			context.primary = (
 				<SitesDashboardV2
-					queryParams={ {} } // TODO: sync table search params here
+					queryParams={ {
+						search: context.query?.search,
+					} }
 					selectedSite={ site }
 					initialSiteFeature={ feature }
 				/>
