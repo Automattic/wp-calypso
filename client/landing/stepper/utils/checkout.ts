@@ -41,9 +41,11 @@ export const goToCheckout = ( {
 
 	const products = [ ...( plan ? [ plan ] : [] ), ...extraProducts ];
 	const hasProducts = products.length > 0;
-
 	if ( hasProducts && ! forceRedirection ) {
-		openCheckoutModal( products, { redirect_to: destination } );
+		openCheckoutModal( products, {
+			redirect_to: destination,
+			cancel_to: cancelDestination || relativeCurrentPath,
+		} );
 	} else {
 		// If no products are provided, we might have added plan to the cart so we just go to the checkout page directly.
 		// If the flag forceRedirection is true, we also go to the checkout page via redirection.
