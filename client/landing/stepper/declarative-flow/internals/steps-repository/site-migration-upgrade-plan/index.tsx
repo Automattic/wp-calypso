@@ -33,7 +33,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 	const migrateFrom = queryParams.get( 'from' );
 	const showMigrationModal = queryParams.get( 'showModal' );
 
-	const goToCheckoutMigrationCheckout = () => {
+	const goToMigrationAssistanceCheckout = () => {
 		navigation?.submit?.( {
 			acceptMigrationAssistanceOffer: true,
 		} );
@@ -42,7 +42,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 		<>
 			{ showMigrationModal && (
 				<MigrationAssistanceModal
-					onConfirm={ goToCheckoutMigrationCheckout }
+					onConfirm={ goToMigrationAssistanceCheckout }
 					migrateFrom={ migrateFrom }
 					navigateBack={ navigation.goBack }
 				/>
