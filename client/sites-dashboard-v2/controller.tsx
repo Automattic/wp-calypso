@@ -100,13 +100,18 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	};
 
 	const selectedFeature = context.params.feature;
+	const selectedUrl = context.params.siteUrl;
 
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboardV2 queryParams={ queryParams } selectedFeature={ selectedFeature } />
+			<SitesDashboardV2
+				queryParams={ queryParams }
+				selectedFeature={ selectedFeature }
+				selectedUrl={ selectedUrl }
+			/>
 		</>
 	);
 

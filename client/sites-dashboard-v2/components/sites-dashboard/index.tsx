@@ -48,6 +48,7 @@ import './dotcom-style.scss';
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
+	selectedUrl?: string;
 	selectedFeature?: string;
 }
 
@@ -72,6 +73,7 @@ const SitesDashboardV2 = ( {
 	},
 	updateQueryParams = handleQueryParamChange,
 	selectedFeature,
+	selectedUrl,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -112,6 +114,7 @@ const SitesDashboardV2 = ( {
 							value: siteStatusGroups.find( ( item ) => item.slug === status )?.value || 1,
 						},
 				  ],
+		selectedItem: selectedUrl,
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 

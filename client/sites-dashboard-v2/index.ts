@@ -17,6 +17,15 @@ export default function () {
 	);
 
 	page(
+		'/sites/:siteUrl/:feature',
+		maybeRemoveCheckoutSuccessNotice,
+		sanitizeQueryParameters,
+		sitesDashboard,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/sites/:siteUrl',
 		maybeRemoveCheckoutSuccessNotice,
 		sanitizeQueryParameters,
