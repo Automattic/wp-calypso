@@ -38,6 +38,7 @@ const SiteMigrationUpgradePlan: Step = function ( { navigation, data } ) {
 			acceptMigrationAssistanceOffer: true,
 		} );
 	};
+
 	const stepContent = (
 		<>
 			{ showMigrationModal && (
