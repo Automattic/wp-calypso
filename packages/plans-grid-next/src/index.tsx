@@ -36,6 +36,7 @@ const WrappedComparisonGrid = ( {
 	stickyRowOffset,
 	coupon,
 	className,
+	hideUnsupportedFeatures,
 	enableFeatureTooltips,
 	featureGroupMap,
 	...otherProps
@@ -72,6 +73,7 @@ const WrappedComparisonGrid = ( {
 				recordTracksEvent={ recordTracksEvent }
 				allFeaturesList={ allFeaturesList }
 				coupon={ coupon }
+				hideUnsupportedFeatures={ hideUnsupportedFeatures }
 				enableFeatureTooltips={ enableFeatureTooltips }
 				featureGroupMap={ featureGroupMap }
 			>

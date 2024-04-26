@@ -15,6 +15,7 @@ interface PlansGridContext {
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
+	hideUnsupportedFeatures?: boolean;
 	enableFeatureTooltips?: boolean;
 	/**
 	 * `enableCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
@@ -40,6 +41,7 @@ const PlansGridContextProvider = ( {
 	siteId,
 	children,
 	coupon,
+	hideUnsupportedFeatures,
 	enableFeatureTooltips,
 	enableCategorisedFeatures,
 	featureGroupMap,
@@ -62,6 +64,7 @@ const PlansGridContextProvider = ( {
 				allFeaturesList,
 				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
 				coupon,
+				hideUnsupportedFeatures,
 				enableFeatureTooltips,
 				enableCategorisedFeatures,
 				featureGroupMap,

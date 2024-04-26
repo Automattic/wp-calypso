@@ -577,7 +577,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId,
 	onStorageAddOnClick,
 } ) => {
-	const { gridPlansIndex, enableFeatureTooltips } = usePlansGridContext();
+	const { gridPlansIndex, enableFeatureTooltips, hideUnsupportedFeatures } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -681,16 +681,22 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 									{ feature.getIcon() as React.ReactNode }
 								</span>
 							) }
+
 							<Plans2023Tooltip
 								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-${ featureSlug }` }
 							>
-								<span className="plan-comparison-grid__plan-title">
-									{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
-								</span>
+								{ hideUnsupportedFeatures && ! hasFeature && ! hasConditionalFeature ? (
+									<></>
+								) : (
+									<span className="plan-comparison-grid__plan-title">
+										{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+									</span>
+								) }
 							</Plans2023Tooltip>
+
 							{ feature?.getCompareTitle && (
 								<span className="plan-comparison-grid__plan-subtitle">
 									{ feature.getCompareTitle() }

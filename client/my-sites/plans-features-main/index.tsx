@@ -716,6 +716,7 @@ const PlansFeaturesMain = ( {
 		siteId,
 		gridPlansForFeaturesGrid?.map( ( gridPlan ) => gridPlan.planSlug )
 	);
+	const hideUnsupportedFeatures = !! trailMapExperiment.result;
 
 	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
 
@@ -924,6 +925,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
+													hideUnsupportedFeatures={ hideUnsupportedFeatures }
 													enableFeatureTooltips={ ! isTrailMapCopy }
 													featureGroupMap={ featureGroupMap }
 												/>

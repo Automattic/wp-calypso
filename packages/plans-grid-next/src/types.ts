@@ -157,6 +157,7 @@ export type GridContextProps = {
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
+	hideUnsupportedFeatures?: boolean;
 	enableFeatureTooltips?: boolean;
 	/**
 	 * `enableCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
