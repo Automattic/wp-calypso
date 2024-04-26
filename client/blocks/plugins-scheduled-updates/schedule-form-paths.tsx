@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect } from 'react';
 import { useScheduledUpdatesVerifyPathQuery } from 'calypso/data/plugins/use-scheduled-updates-verify-path-query';
 import { useSelector } from 'calypso/state';
-import getSiteId from '../../state/sites/selectors/get-site-id';
+import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import { MAX_SELECTABLE_PATHS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { prepareRelativePath, validatePath } from './schedule-form.helper';
