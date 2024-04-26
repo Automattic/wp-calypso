@@ -25,7 +25,7 @@
 	}
 }
 
-// Styles for actions (search, filters)
+// Styles for actions (search, filters).
 .dataviews-filters__view-actions {
 	align-items: center;
 
@@ -60,7 +60,7 @@
 	}
 }
 
-// Styles collapsed site list
+// Styles collapsed site list.
 .wpcom-site {
 	.sites-dashboard.preview-hidden {
 		.sites-site-thumbnail {
@@ -108,5 +108,13 @@
 				background-color: #f7faff;
 			}
 		}
+	}
+}
+
+// Styles for site preview pane.
+.wpcom-site .site-preview-pane {
+	.section-nav-tabs__list {
+		box-sizing: border-box;
+		overflow-x: auto;
 	}
 }
