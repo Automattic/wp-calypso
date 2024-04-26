@@ -20,7 +20,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )

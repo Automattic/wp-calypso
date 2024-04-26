@@ -49,7 +49,7 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 	return (
 		<>
 			<DocumentHead title={ translate( 'Hosting' ) } />
-			<div className="site-preview__content hosting__wrapper">
+			<div className="hosting__wrapper">
 				<div className="card hosting__card">
 					<div className="hosting__header">
 						<div className="hosting__title">{ translate( 'Site Information' ) } </div>

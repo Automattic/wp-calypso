@@ -35,6 +35,8 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 	},
 };
 
+const getInput = () => screen.getByLabelText( /Enter your site address/ );
+
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
@@ -47,10 +49,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://example.com' } )
 			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
 
-		await userEvent.type(
-			screen.getByLabelText( /Enter the URL of the site/ ),
-			'https://example.com'
-		);
+		await userEvent.type( getInput(), 'https://example.com' );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
@@ -68,10 +67,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://example.com' } )
 			.reply( 200, API_RESPONSE_WITH_OTHER_PLATFORM );
 
-		await userEvent.type(
-			screen.getByLabelText( /Enter the URL of the site/ ),
-			'https://example.com'
-		);
+		await userEvent.type( getInput(), 'https://example.com' );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
@@ -84,7 +80,9 @@ describe( 'SiteMigrationIdentify', () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: /choose a content platform/ } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: /pick your current platform from a list/ } )
+		);
 
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith(
@@ -102,10 +100,7 @@ describe( 'SiteMigrationIdentify', () => {
 			.query( { site_url: 'https://example.com' } )
 			.reply( 500, new Error( 'Internal Server Error' ) );
 
-		await userEvent.type(
-			screen.getByLabelText( /Enter the URL of the site/ ),
-			'https://example.com'
-		);
+		await userEvent.type( getInput(), 'https://example.com' );
 
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 

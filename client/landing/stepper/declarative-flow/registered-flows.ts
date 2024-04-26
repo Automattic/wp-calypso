@@ -14,6 +14,7 @@ import {
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
@@ -136,6 +137,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ REBLOGGING_FLOW ]: () =>
 		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
+
+	[ MIGRATION_SIGNUP_FLOW ]: () =>
+		import( /* webpackChunkName: "migration-signup" */ '../declarative-flow/migration-signup' ),
 };
 
 const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
