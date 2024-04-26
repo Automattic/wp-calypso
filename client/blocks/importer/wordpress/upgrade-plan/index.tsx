@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -7,7 +8,6 @@ import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
 
 import './style.scss';
@@ -80,7 +80,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		const cta = ctaText === '' ? translate( 'Continue' ) : ctaText;
 		const trialText = translate( 'Try 7 days for free' );
 
-		if ( ! isEnabled( 'plans/migration-trial' ) ) {
+		if ( hideFreeMigrationTrial ) {
 			return (
 				<NextButton isBusy={ isBusy } onClick={ onCtaClick }>
 					{ cta }

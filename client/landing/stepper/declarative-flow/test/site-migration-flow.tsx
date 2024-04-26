@@ -1,9 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { addQueryArgs } from '../../../../lib/url';
 import { goToCheckout } from '../../utils/checkout';
@@ -184,14 +186,18 @@ describe( 'Site Migration Flow', () => {
 				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 				dependencies: {
 					goToCheckout: true,
+					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					sendIntentWhenCreatingTrial: true,
 				},
 			} );
 
 			expect( goToCheckout ).toHaveBeenCalledWith( {
 				destination: `/setup/site-migration/${ STEPS.BUNDLE_TRANSFER.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 				flowName: 'site-migration',
 				siteSlug: 'example.wordpress.com',
 				stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+				plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 			} );
 		} );
 
@@ -207,22 +213,6 @@ describe( 'Site Migration Flow', () => {
 
 			expect( getFlowLocation() ).toEqual( {
 				path: '/site-migration-upgrade-plan',
-				state: { siteSlug: 'example.wordpress.com' },
-			} );
-		} );
-
-		it( 'redirects from upgrade-plan to bundleTransfer step after selecting a free trial', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-				dependencies: {
-					freeTrialSelected: true,
-				},
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: '/bundleTransfer',
 				state: { siteSlug: 'example.wordpress.com' },
 			} );
 		} );

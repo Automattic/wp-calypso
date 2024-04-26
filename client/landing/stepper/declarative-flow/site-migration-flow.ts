@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
