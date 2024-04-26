@@ -17,6 +17,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 		setMigrationAssistanceAccepted();
 		props.onConfirm?.();
 	};
+
 	return (
 		<ConfirmModal
 			compact={ false }
