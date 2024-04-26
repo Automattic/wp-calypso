@@ -4,6 +4,7 @@ import type { FeatureList, FeatureGroupMap } from '@automattic/calypso-products'
 import type { Plans } from '@automattic/data-stores';
 
 interface PlansGridContext {
+	actions: { useActionCallback: UseActionCallback };
 	intent?: PlansIntent;
 	siteId?: number | null;
 	gridPlans: GridPlan[];
@@ -32,6 +33,7 @@ interface PlansGridContext {
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
 
 const PlansGridContextProvider = ( {
+	actions,
 	intent,
 	gridPlans,
 	useCheckPlanAvailabilityForPurchase,
@@ -57,6 +59,7 @@ const PlansGridContextProvider = ( {
 	return (
 		<PlansGridContext.Provider
 			value={ {
+				actions,
 				intent,
 				siteId,
 				gridPlans,

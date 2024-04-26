@@ -69,7 +69,6 @@ const SignupFlowPlanFeatureActionButton = ( {
 	hasFreeTrialPlan,
 	onCtaClick,
 	onFreeTrialCtaClick,
-	planActionOverrides,
 }: {
 	planSlug: PlanSlug;
 	planTitle: TranslateResult;
@@ -79,13 +78,11 @@ const SignupFlowPlanFeatureActionButton = ( {
 	hasFreeTrialPlan: boolean;
 	onCtaClick: () => void;
 	onFreeTrialCtaClick: () => void;
-	planActionOverrides?: PlanActionOverrides;
 } ) => {
+	const { actions } = usePlansGridContext();
 	const translate = useTranslate();
-	const busy =
-		isFreePlan( planSlug ) && planActionOverrides?.loggedInFreePlan?.status === 'blocked';
-	const postButtonText =
-		isBusinessPlan( planSlug ) && planActionOverrides?.trialAlreadyUsed?.postButtonText;
+	const busy = isFreePlan( planSlug ) && actions?.loggedInFreePlan?.status === 'blocked';
+	const postButtonText = isBusinessPlan( planSlug ) && actions?.trialAlreadyUsed?.postButtonText;
 
 	let btnText = translate( 'Get %(plan)s', {
 		args: {
@@ -207,7 +204,6 @@ const LoggedInPlansFeatureActionButton = ( {
 	planSlug,
 	currentSitePlanSlug,
 	buttonText,
-	planActionOverrides,
 	storageOptions,
 }: {
 	availableForPurchase?: boolean;
@@ -220,12 +216,11 @@ const LoggedInPlansFeatureActionButton = ( {
 	planSlug: PlanSlug;
 	currentSitePlanSlug?: string | null;
 	buttonText?: string;
-	planActionOverrides?: PlanActionOverrides;
 	storageOptions?: StorageOption[];
 } ) => {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const translate = useTranslate();
-	const { gridPlansIndex, siteId } = usePlansGridContext();
+	const { actions, gridPlansIndex, siteId } = usePlansGridContext();
 
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
@@ -256,10 +251,10 @@ const LoggedInPlansFeatureActionButton = ( {
 		isFreePlan( planSlug ) ||
 		( storageAddOnsForPlan && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected )
 	) {
-		if ( planActionOverrides?.loggedInFreePlan ) {
+		if ( actions?.loggedInFreePlan ) {
 			return (
 				<PlanButton planSlug={ planSlug } onClick={ onCtaClick } current={ current }>
-					{ planActionOverrides.loggedInFreePlan.text }
+					{ actions.loggedInFreePlan.text }
 				</PlanButton>
 			);
 		}
@@ -286,8 +281,8 @@ const LoggedInPlansFeatureActionButton = ( {
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
 			);
-		} else if ( planActionOverrides?.currentPlan ) {
-			const { text } = planActionOverrides.currentPlan;
+		} else if ( actions?.currentPlan ) {
+			const { text } = actions.currentPlan;
 			return (
 				<PlanButton
 					planSlug={ planSlug }
@@ -431,11 +426,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	visibleGridPlans,
 } ) => {
 	const translate = useTranslate();
-	const {
-		gridPlansIndex,
-		helpers: { useActionCallback },
-		siteId,
-	} = usePlansGridContext();
+	const { actions, gridPlansIndex, siteId } = usePlansGridContext();
 	const {
 		planTitle,
 		pricing: { currencyCode, originalPrice, discountedPrice },
@@ -454,14 +445,14 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		storageAddOnsForPlan,
 	} );
 
-	const onCtaClick = useActionCallback( {
+	const onCtaClick = actions.useActionCallback( {
 		planSlug,
 		cartItemForPlan,
 		selectedStorageAddOn,
 	} );
 
 	// TODO: Unsure about using free plan as a fallback. We should revisit.
-	const onFreeTrialCtaClick = useActionCallback( {
+	const onFreeTrialCtaClick = actions.useActionCallback( {
 		planSlug: freeTrialPlanSlug ?? PLAN_FREE,
 		cartItemForPlan: { product_slug: freeTrialPlanSlug ?? PLAN_FREE },
 	} );

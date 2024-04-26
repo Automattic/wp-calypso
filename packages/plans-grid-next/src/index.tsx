@@ -98,6 +98,7 @@ const WrappedComparisonGrid = ( {
 
 const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	const {
+		actions,
 		siteId,
 		intent,
 		gridPlans,
@@ -132,6 +133,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	return (
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
+				actions={ actions }
 				intent={ intent }
 				siteId={ siteId }
 				gridPlans={ gridPlans }

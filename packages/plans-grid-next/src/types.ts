@@ -148,6 +148,7 @@ export type UseActionCallback = ( {
 }: UseActionCallbackParams ) => () => void;
 
 export type GridContextProps = {
+	actions: { useActionCallback: UseActionCallback };
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
