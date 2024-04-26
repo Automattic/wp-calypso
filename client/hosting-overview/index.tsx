@@ -31,6 +31,8 @@ export default function () {
 		'/hosting-config/:site_id',
 		siteSelection,
 		navigation,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		hostingConfiguration,
@@ -43,6 +45,8 @@ export default function () {
 		'/hosting-config/activate/:site_id',
 		siteSelection,
 		navigation,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		hostingActivate,

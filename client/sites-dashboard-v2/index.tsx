@@ -61,10 +61,20 @@ const DEFAULT_STATUS_GROUP = 'all';
 
 function syncURL(
 	siteSlug: string | null,
+	siteParams: any,
 	feature: string,
 	queryParams: SitesDashboardQueryParams
 ) {
-	let url = siteSlug ? `/${ feature.replace( ':site', siteSlug ) }` : '/sites';
+	let url;
+	if ( siteSlug ) {
+		url = '/' + feature.replace( ':site', siteSlug );
+		Object.keys( siteParams ).forEach( ( key ) => {
+			const value = siteParams[ key ];
+			url = url.replace( ':' + key, value );
+		} );
+	} else {
+		url = '/sites';
+	}
 
 	const searchParams = new URLSearchParams();
 	Object.keys( queryParams ).forEach( ( key ) => {
@@ -94,6 +104,7 @@ const SitesDashboardV2 = ( {
 		status = DEFAULT_STATUS_GROUP,
 	},
 	selectedSite,
+	selectedSiteParams = {},
 	initialSiteFeature = DOTCOM_OVERVIEW,
 	initialSiteSubfeature = initialSiteFeature,
 }: SitesDashboardProps ) => {
@@ -221,7 +232,12 @@ const SitesDashboardV2 = ( {
 		// syncURL call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
 		window.setTimeout( () =>
-			syncURL( dataViewsState.selectedItem?.slug, selectedSiteSubfeature, queryParams )
+			syncURL(
+				dataViewsState.selectedItem?.slug,
+				selectedSiteParams,
+				selectedSiteSubfeature,
+				queryParams
+			)
 		);
 	}, [
 		dataViewsState.selectedItem?.slug,
@@ -292,6 +308,7 @@ const SitesDashboardV2 = ( {
 				<LayoutColumn className="site-preview-pane" wide>
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
+						selectedSiteParams={ selectedSiteParams }
 						selectedSiteFeature={ selectedSiteFeature }
 						selectedSiteSubfeature={ selectedSiteSubfeature }
 						setSelectedSiteFeature={ setSelectedSiteFeature }

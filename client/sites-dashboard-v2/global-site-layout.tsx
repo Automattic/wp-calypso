@@ -2,9 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SitesDashboardV2 from '.';
+import type { Context } from '@automattic/calypso-router';
 
-export default function globalSiteLayout( feature, subfeature = feature ) {
-	return ( context, next ) => {
+export default function globalSiteLayout( feature: string, subfeature: string = feature ) {
+	return ( context: Context, next: () => void ) => {
 		if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 			const state = context.store.getState();
 			const site = getSelectedSite( state );
@@ -15,6 +16,7 @@ export default function globalSiteLayout( feature, subfeature = feature ) {
 						search: context.query?.search,
 					} }
 					selectedSite={ site }
+					selectedSiteParams={ context.params }
 					initialSiteFeature={ feature }
 					initialSiteSubfeature={ subfeature }
 				/>
