@@ -53,6 +53,7 @@ interface BaseDomainsTableProps {
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
 	userCanSetPrimaryDomains?: boolean;
+	hideCheckbox?: boolean;
 	isLoadingDomains?: boolean;
 	useMobileCards?: boolean;
 
@@ -304,10 +305,11 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 	const hasSelectedDomains = selectedDomains.size > 0;
 	const selectableDomains = ( domains ?? [] ).filter( canBulkUpdate );
-	const canSelectAnyDomains = isAllSitesView
-		? selectableDomains.length > 0
-		: ( ( domains as unknown as DomainData[] ) ?? [] ).filter( ( domain ) => ! domain.is_subdomain )
-				.length > 1;
+	const canSelectAnyDomains = true;
+	// const canSelectAnyDomains = isAllSitesView
+	// 	? selectableDomains.length > 0
+	// 	: ( ( domains as unknown as DomainData[] ) ?? [] ).filter( ( domain ) => ! domain.is_subdomain )
+	// 			.length > 1;
 	const areAllDomainsSelected = selectableDomains.length === selectedDomains.size;
 
 	const getBulkSelectionStatus = () => {
