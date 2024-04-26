@@ -1,6 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+:root {
+	--color-light-backdrop: var(--studio-white);
+}
 .main.a4a-layout.sites-dashboard {
 	padding-block-start: 0;
 
