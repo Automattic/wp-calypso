@@ -79,6 +79,7 @@ const PlanBenefitHeader = () => {
 						components: {
 							Checkmark: <Gridicon icon="checkmark" size={ 18 } />,
 						},
+						comment: 'Checkmark is an icon showing a green check mark.',
 					}
 				) }
 			</FeatureSection>
