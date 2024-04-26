@@ -7,6 +7,7 @@ import ItemPreviewPane, {
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
 import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
+import HostingActivate from 'calypso/my-sites/hosting/hosting-activate';
 import Hosting from 'calypso/my-sites/hosting/main';
 import SiteMonitoringPhpLogs from 'calypso/site-monitoring/components/php-logs';
 import SiteMonitoringServerLogs from 'calypso/site-monitoring/components/server-logs';
@@ -18,6 +19,7 @@ import {
 	DOTCOM_PHP_LOGS,
 	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
+	DOTCOM_HOSTING_CONFIG_ACTIVATE,
 } from './constants';
 
 import './style.scss';
@@ -25,6 +27,7 @@ import './style.scss';
 type Props = {
 	site: SiteExcerptData;
 	selectedSiteFeature: string;
+	selectedSiteSubfeature: string;
 	setSelectedSiteFeature: ( feature: string ) => void;
 	closeSitePreviewPane: () => void;
 };
@@ -32,6 +35,7 @@ type Props = {
 const DotcomPreviewPane = ( {
 	site,
 	selectedSiteFeature,
+	selectedSiteSubfeature,
 	setSelectedSiteFeature,
 	closeSitePreviewPane,
 }: Props ) => {
@@ -56,7 +60,11 @@ const DotcomPreviewPane = ( {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<Hosting />
+				selectedSiteSubfeature === DOTCOM_HOSTING_CONFIG_ACTIVATE ? (
+					<HostingActivate />
+				) : (
+					<Hosting />
+				)
 			),
 			createFeaturePreview(
 				DOTCOM_MONITORING,
@@ -91,7 +99,7 @@ const DotcomPreviewPane = ( {
 				<GitHubDeployments />
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site ]
+		[ selectedSiteFeature, selectedSiteSubfeature, setSelectedSiteFeature, site ]
 	);
 
 	const itemData: ItemData = {

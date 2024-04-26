@@ -46,6 +46,7 @@ import './dotcom-style.scss';
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	initialSiteFeature?: string;
+	initialSiteSubfeature?: string;
 	selectedSite?: any;
 }
 
@@ -70,8 +71,6 @@ function syncURL(
 		const value = queryParams[ key as keyof SitesDashboardQueryParams ];
 		if ( value ) {
 			searchParams.set( key, value.toString() );
-		} else {
-			searchParams.delete( key );
 		}
 	} );
 
@@ -96,6 +95,7 @@ const SitesDashboardV2 = ( {
 	},
 	selectedSite,
 	initialSiteFeature = DOTCOM_OVERVIEW,
+	initialSiteSubfeature = initialSiteFeature,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const initialSortApplied = useRef( false );
@@ -139,7 +139,9 @@ const SitesDashboardV2 = ( {
 		type: selectedSite ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
+
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( initialSiteFeature );
+	const [ selectedSiteSubfeature, setSelectedSiteSubfeature ] = useState( initialSiteSubfeature );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -194,6 +196,19 @@ const SitesDashboardV2 = ( {
 		dataViewsState.page * dataViewsState.perPage
 	);
 
+	// Reset selected feature when the component is re-mounted with different initial path.
+	useEffect( () => {
+		setSelectedSiteFeature( initialSiteFeature );
+		setSelectedSiteSubfeature( initialSiteSubfeature );
+	}, [ initialSiteFeature, initialSiteSubfeature ] );
+
+	// Reset selected subfeature when feature changes.
+	useEffect( () => {
+		if ( selectedSiteFeature !== initialSiteFeature ) {
+			setSelectedSiteSubfeature( selectedSiteFeature );
+		}
+	}, [ initialSiteFeature, selectedSiteFeature ] );
+
 	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
@@ -206,11 +221,11 @@ const SitesDashboardV2 = ( {
 		// syncURL call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
 		window.setTimeout( () =>
-			syncURL( dataViewsState.selectedItem?.slug, selectedSiteFeature, queryParams )
+			syncURL( dataViewsState.selectedItem?.slug, selectedSiteSubfeature, queryParams )
 		);
 	}, [
 		dataViewsState.selectedItem?.slug,
-		selectedSiteFeature,
+		selectedSiteSubfeature,
 		dataViewsState.search,
 		dataViewsState.perPage,
 		statusSlug,
@@ -278,6 +293,7 @@ const SitesDashboardV2 = ( {
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
 						selectedSiteFeature={ selectedSiteFeature }
+						selectedSiteSubfeature={ selectedSiteSubfeature }
 						setSelectedSiteFeature={ setSelectedSiteFeature }
 						closeSitePreviewPane={ closeSitePreviewPane }
 					/>

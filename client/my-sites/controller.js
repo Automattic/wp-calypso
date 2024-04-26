@@ -932,7 +932,7 @@ export function redirectToLoginIfSiteRequested( context, next ) {
 	next();
 }
 
-export function globalSiteLayout( feature ) {
+export function globalSiteLayout( feature, subfeature = feature ) {
 	return ( context, next ) => {
 		if ( config.isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
 			const state = context.store.getState();
@@ -945,6 +945,7 @@ export function globalSiteLayout( feature ) {
 					} }
 					selectedSite={ site }
 					initialSiteFeature={ feature }
+					initialSiteSubfeature={ subfeature }
 				/>
 			);
 			context.secondary = <NavigationComponent path={ context.path } />;
