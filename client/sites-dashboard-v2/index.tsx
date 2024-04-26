@@ -56,7 +56,7 @@ const siteSortingKeys = [
 	{ dataView: 'last-publish', sortKey: 'updatedAt' },
 ];
 
-const DEFAULT_PER_PAGE = 96;
+const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
 
 const SitesDashboardV2 = ( {
