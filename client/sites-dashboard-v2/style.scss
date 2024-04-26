@@ -209,7 +209,7 @@
 		.dataviews-view-table-wrapper {
 			overflow-y: auto;
 			// Without masterbar
-			max-height: calc(100vh - 261px); /* 261px is the size of all the height above and below the dataviews-view-table-wrapper */
+			max-height: calc(100vh - 285px); /* 285px is the size of all the height above and below the dataviews-view-table-wrapper */
 
 			div.is-group-sites-dashboard:not(.has-no-masterbar) & {
 				// With masterbar
