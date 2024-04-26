@@ -41,6 +41,7 @@ export const goToCheckout = ( {
 
 	const products = [ ...( plan ? [ plan ] : [] ), ...extraProducts ];
 	const hasProducts = products.length > 0;
+
 	if ( hasProducts && ! forceRedirection ) {
 		openCheckoutModal( products, {
 			redirect_to: destination,
