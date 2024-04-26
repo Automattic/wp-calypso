@@ -40,11 +40,17 @@ export const getAccountStatus = (
 				statusType: 'error',
 				status: translate( 'Suspended' ),
 			};
-		case 'BLOCKED_BY_TIPALTI':
 		case 'Blocked':
 			return {
 				statusType: 'error',
 				status: translate( 'Blocked' ),
+				statusReason: translate( 'Your account is blocked' ),
+			};
+		case 'Closed':
+			return {
+				statusType: 'error',
+				status: translate( 'Closed' ),
+				statusReason: translate( 'Your account is closed' ),
 			};
 		default:
 			return null;
