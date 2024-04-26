@@ -88,8 +88,18 @@
 			margin-right: 0;
 		}
 
-		.sites-site-thumbnail {
+		.sites-site-thumbnail,
+		.sites-manage-all-domains-button {
 			display: none;
+		}
+
+		.a4a-layout__viewport {
+			width: 360px;
+			justify-content: space-between;
+		}
+
+		.a4a-layout__viewport > div:first-child {
+			width: 100%;
 		}
 
 		.list-tile__leading {
