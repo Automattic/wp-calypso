@@ -127,7 +127,7 @@ describe( 'UpgradePlan', () => {
 		await waitFor( () => expect( mockOnCtaClick ).toHaveBeenCalled() );
 	} );
 
-	it( 'should correctly trigger a Tracks event without custom event properties', async () => {
+	it( 'should trigger a Tracks event without custom event properties', async () => {
 		nock.cleanAll();
 		mockApi()
 			.persist()
@@ -146,7 +146,7 @@ describe( 'UpgradePlan', () => {
 		} );
 	} );
 
-	it( 'should correctly trigger a Tracks event with custom event properties', async () => {
+	it( 'should trigger a Tracks event with custom event properties', async () => {
 		nock.cleanAll();
 		mockApi()
 			.persist()
@@ -169,7 +169,7 @@ describe( 'UpgradePlan', () => {
 		} );
 	} );
 
-	it( 'should correctly trigger a Tracks event that flags the trial as hidden', async () => {
+	it( 'should trigger a Tracks event that flags the trial as hidden', async () => {
 		nock.cleanAll();
 		mockApi()
 			.persist()
