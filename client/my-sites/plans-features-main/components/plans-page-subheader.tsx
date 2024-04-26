@@ -93,6 +93,9 @@ const PlanBenefitHeader = () => {
 	);
 };
 
+// TBD
+// It is actually questionable that we implement a subheader here instead of reusing the header mechanism
+// provided by the signup framework. How could we unify them?
 const PlansPageSubheader = ( {
 	siteSlug,
 	isDisplayingPlansNeededForFeature,
