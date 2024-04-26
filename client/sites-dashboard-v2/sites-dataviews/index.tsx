@@ -116,9 +116,7 @@ const DotcomSitesDataViews = ( {
 			{
 				id: 'actions',
 				header: <span>{ __( 'Actions' ) }</span>,
-				render: ( { item }: { item: SiteInfo } ) => (
-					<ActionsField site={ item } openSitePreviewPane={ openSitePreviewPane } />
-				),
+				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
 			},
