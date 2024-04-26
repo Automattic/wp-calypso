@@ -27,8 +27,6 @@
 
 // Styles for actions (search, filters)
 .dataviews-filters__view-actions {
-	align-items: center;
-
 	.components-search-control {
 		@media (min-width: $break-large) {
 			min-width: 390px;
@@ -57,6 +55,12 @@
 			padding-inline-start: 11px;
 			color: var(--studio-gray-30);
 		}
+	}
+
+	// Sort action icon
+	> .components-button {
+		// Since we changed the original height of the search input, we need to adjust the position of this icon.
+		margin-top: 5px;
 	}
 }
 
