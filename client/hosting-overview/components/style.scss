@@ -269,8 +269,10 @@ a.hosting-overview__link-button {
 		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
 		margin-top: 0;
 
-		th:first-child,
-		td:first-child {
+		th:not(.domains-table-checkbox-th):first-child,
+		th.domains-table-checkbox-th + th,
+		td:not(.domains-table-checkbox-td):first-child,
+		td.domains-table-checkbox-td + td {
 			padding-left: 16px;
 		}
 
@@ -310,9 +312,10 @@ a.hosting-overview__link-button {
 		transform: rotate(90deg);
 	}
 
-	.domains-table__bulk-action-container {
+	.domains-table__bulk-action-container,
+	.domains-table-checkbox-td,
+	.domains-table-checkbox-th {
 		display: none;
-
 	}
 
 	.domains-table-mobile-card {
