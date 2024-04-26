@@ -62,6 +62,16 @@
 	}
 }
 
+.wpcom-site .is-group-sites.is-global-sidebar-collapsed {
+	.layout__content {
+		padding: 16px 16px 16px calc(var(--sidebar-width-max));
+	}
+
+	.layout__secondary .global-sidebar {
+		border: none;
+	}
+}
+
 // Styles collapsed site list.
 .wpcom-site {
 	.layout__secondary {
