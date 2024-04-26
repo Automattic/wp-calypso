@@ -46,12 +46,17 @@ const HeaderContainer = styled( Subheader )`
 	font-weight: 500;
 	margin-bottom: 0;
 
+	// TODO:
+	// This value is grabbed directly from https://github.com/Automattic/wp-calypso/blob/trunk/packages/plans-grid-next/src/index.tsx#L109
+	// Ideally there should be a shared constant that can be reused from the CSS side.
 	@media ( max-width: 740px ) {
 		flex-direction: column;
 	}
 `;
 
 const PrefixSection = styled.p`
+	// TODO:
+	// The same as above.
 	@media ( max-width: 740px ) {
 		margin-bottom: 4px;
 	}
