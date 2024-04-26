@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 
 const Subheader = styled.p`
-	margin: -32px 0 0 0;
+	margin: -32px 0 40px 0;
 	color: var( --studio-gray-60 );
 	font-size: 1rem;
 	text-align: center;
@@ -44,6 +44,7 @@ const HeaderContainer = styled( Subheader )`
 	justify-content: center;
 	font-size: 16px;
 	font-weight: 500;
+	margin-bottom: 0;
 
 	@media ( max-width: 740px ) {
 		flex-direction: column;
