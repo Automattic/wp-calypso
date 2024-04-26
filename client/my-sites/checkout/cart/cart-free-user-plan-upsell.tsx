@@ -8,7 +8,6 @@ import { Button } from '@automattic/components';
 import { StoreProductSlug, useProducts } from '@automattic/data-stores/src/products-list';
 import formatCurrency from '@automattic/format-currency';
 import {
-	type ResponseCart,
 	type MinimalRequestCartProduct,
 	type ResponseCartProduct,
 	useShoppingCart,
@@ -38,18 +37,17 @@ const isRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 };
 
 function UpgradeText( {
-	cart,
 	planPrice,
 	planName,
+	firstDomain,
 }: {
-	cart: ResponseCart;
 	planPrice: number;
 	planName: string;
+	firstDomain: ResponseCartProduct;
 } ) {
 	const translate = useTranslate();
-	const firstDomain = cart.products.find( isRegistrationOrTransfer );
 
-	if ( firstDomain && planPrice > firstDomain.item_subtotal_integer ) {
+	if ( planPrice > firstDomain.item_subtotal_integer ) {
 		const extraToPay = planPrice - firstDomain.item_subtotal_integer;
 		return translate(
 			'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its features, plus the first year of your domain for free.',
@@ -68,7 +66,7 @@ function UpgradeText( {
 		);
 	}
 
-	if ( firstDomain && planPrice < firstDomain.item_subtotal_integer ) {
+	if ( planPrice < firstDomain.item_subtotal_integer ) {
 		const savings = firstDomain.item_subtotal_integer - planPrice;
 		return translate(
 			'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan instead — your domain comes free for a year.',
@@ -87,6 +85,7 @@ function UpgradeText( {
 		);
 	}
 
+	// The plan price and domain price are equal.
 	return translate(
 		'Purchase our %(planName)s plan at {{strong}}no extra cost{{/strong}}, and get access to all its features, plus the first year of your domain for free.',
 		{
@@ -125,6 +124,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	const dispatch = useDispatch();
 	const upsellProductSlug = PLAN_PERSONAL;
 	const upsellPlan = getPlan( upsellProductSlug );
+	const firstDomainInCart = responseCart.products.find( isRegistrationOrTransfer );
 
 	const translate = useTranslate();
 
@@ -143,7 +143,7 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 	if ( hasPaidPlan || hasPlanInCart ) {
 		return null;
 	}
-	if ( ! isRegisteringOrTransferringDomain ) {
+	if ( ! isRegisteringOrTransferringDomain || ! firstDomainInCart ) {
 		return null;
 	}
 
@@ -165,9 +165,9 @@ export default function CartFreeUserPlanUpsell( { addItemToCart }: CartFreeUserP
 			<div className="cart__upsell-body">
 				<p>
 					<UpgradeText
-						cart={ responseCart }
 						planPrice={ planPrice }
 						planName={ String( planName ) }
+						firstDomain={ firstDomainInCart }
 					/>
 				</p>
 				<Button onClick={ addPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
