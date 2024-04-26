@@ -14,7 +14,7 @@
 	.a4a-layout__top-wrapper {
 		border-block-end: 0;
 
-		@media (min-width: $break-medium) {
+		@include break-medium {
 			border-block-end: 1px solid var(--studio-gray-0);
 			margin-bottom: 24px;
 		}
@@ -28,7 +28,7 @@
 // Styles for actions (search, filters)
 .dataviews-filters__view-actions {
 	.components-search-control {
-		@media (min-width: $break-large) {
+		@include break-large {
 			min-width: 390px;
 		}
 	}
