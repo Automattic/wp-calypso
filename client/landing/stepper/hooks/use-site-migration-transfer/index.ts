@@ -3,7 +3,7 @@ import { useSiteTransferMutation } from './mutation';
 import { useSiteTransferStatusQuery } from './query';
 
 /**
- * Hook to to initiate a site transfer and monitor its progress
+ * Hook to initiate a site transfer and monitor its progress
  */
 export const useSiteMigrationTransfer = ( siteId?: number ) => {
 	const {
