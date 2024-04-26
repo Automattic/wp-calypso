@@ -265,7 +265,7 @@
 
 			.is-hiding-navigation .dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 253px); /* 253px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
+				max-height: calc(100vh - 277px); /* 277px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
