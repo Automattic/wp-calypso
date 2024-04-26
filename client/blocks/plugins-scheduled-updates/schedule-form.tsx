@@ -161,14 +161,13 @@ export const ScheduleForm = ( props: Props ) => {
 					setFieldTouched( { ...fieldTouched, plugins: touched } );
 				} }
 			/>
-			<>
-				<Text>{ translate( 'Step 3' ) }</Text>
-				<ScheduleFormPaths
-					paths={ healthCheckPaths }
-					borderWrapper={ false }
-					onChange={ setHealthCheckPaths }
-				/>
-			</>
+
+			<Text>{ translate( 'Step 3' ) }</Text>
+			<ScheduleFormPaths
+				paths={ healthCheckPaths }
+				borderWrapper={ false }
+				onChange={ setHealthCheckPaths }
+			/>
 		</form>
 	);
 };
