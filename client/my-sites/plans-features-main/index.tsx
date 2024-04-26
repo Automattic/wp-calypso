@@ -786,7 +786,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onClickFreePlanCTA={ () => handleUpgradeClick() }
-					showPlanBenefits={ trailMapExperiment.result }
+					showPlanBenefits={ isInSignup && trailMapExperiment.result }
 				/>
 
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
