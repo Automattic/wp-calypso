@@ -386,6 +386,10 @@
 		color: var(--color-accent-80);
 	}
 
+	tr.dataviews-view-table__row th[data-field-id="favorite"] svg {
+		vertical-align: middle;
+	}
+
 	tr.dataviews-view-table__row {
 		&:hover {
 			.site-set-favorite__favorite-icon {
