@@ -130,7 +130,6 @@ describe( 'UpgradePlan', () => {
 	it( 'should trigger a Tracks event without custom event properties', async () => {
 		nock.cleanAll();
 		mockApi()
-			.persist()
 			.get(
 				`/wpcom/v2/sites/${ DEFAULT_SITE_ID }/hosting/trial/check-eligibility/${ PLAN_MIGRATION_TRIAL_MONTHLY }`
 			)
@@ -149,7 +148,6 @@ describe( 'UpgradePlan', () => {
 	it( 'should trigger a Tracks event with custom event properties', async () => {
 		nock.cleanAll();
 		mockApi()
-			.persist()
 			.get(
 				`/wpcom/v2/sites/${ DEFAULT_SITE_ID }/hosting/trial/check-eligibility/${ PLAN_MIGRATION_TRIAL_MONTHLY }`
 			)
@@ -172,7 +170,6 @@ describe( 'UpgradePlan', () => {
 	it( 'should trigger a Tracks event that flags the trial as hidden', async () => {
 		nock.cleanAll();
 		mockApi()
-			.persist()
 			.get(
 				`/wpcom/v2/sites/${ DEFAULT_SITE_ID }/hosting/trial/check-eligibility/${ PLAN_MIGRATION_TRIAL_MONTHLY }`
 			)
