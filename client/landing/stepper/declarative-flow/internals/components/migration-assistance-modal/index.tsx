@@ -24,7 +24,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 			confirmText={ translate( 'Take the deal' ) }
 			cancelText={ translate( 'No, thanks' ) }
 			onClose={ props.navigateBack }
-			onConfirm={ () => acceptMigrationAssistance() }
+			onConfirm={ acceptMigrationAssistance }
 		>
 			<p>
 				{ translate(
