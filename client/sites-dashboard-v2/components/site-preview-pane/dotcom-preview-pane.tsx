@@ -25,13 +25,18 @@ import './style.scss';
 type Props = {
 	site: SiteExcerptData;
 	closeSitePreviewPane: () => void;
+	selectedFeature?: string;
 };
 
-const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
+const DotcomPreviewPane = ( {
+	site,
+	closeSitePreviewPane,
+	selectedFeature = DOTCOM_OVERVIEW,
+}: Props ) => {
 	const { __ } = useI18n();
 
 	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState< string | undefined >(
-		'dotcom-overview'
+		selectedFeature
 	);
 
 	useEffect( () => {

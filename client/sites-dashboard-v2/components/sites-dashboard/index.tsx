@@ -34,10 +34,10 @@ import {
 import { useDispatch } from 'calypso/state';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
+import DotcomPreviewPane from '../site-preview-pane/dotcom-preview-pane';
+import DotcomSitesDataViews, { siteStatusGroups } from '../sites-dataviews';
+import { getSitesPagination } from '../sites-dataviews/utils';
 import SitesDashboardHeader from './sites-dashboard-header';
-import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
-import { getSitesPagination } from './sites-dataviews/utils';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -48,6 +48,7 @@ import './dotcom-style.scss';
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 	updateQueryParams?: ( params: SitesDashboardQueryParams ) => void;
+	selectedFeature?: string;
 }
 
 const siteSortingKeys = [
@@ -70,6 +71,7 @@ const SitesDashboardV2 = ( {
 		status = DEFAULT_STATUS_GROUP,
 	},
 	updateQueryParams = handleQueryParamChange,
+	selectedFeature,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -253,6 +255,7 @@ const SitesDashboardV2 = ( {
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
 						closeSitePreviewPane={ closeSitePreviewPane }
+						selectedFeature={ selectedFeature }
 					/>
 				</LayoutColumn>
 			) }

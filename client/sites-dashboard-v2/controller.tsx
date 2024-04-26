@@ -10,7 +10,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import { SitesDashboard } from './components/sites-dashboard';
+import SitesDashboardV2 from './components/sites-dashboard';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
@@ -99,12 +99,14 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 		newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
 	};
 
+	const selectedFeature = context.params.feature;
+
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboard queryParams={ queryParams } />
+			<SitesDashboardV2 queryParams={ queryParams } selectedFeature={ selectedFeature } />
 		</>
 	);
 
