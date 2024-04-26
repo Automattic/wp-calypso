@@ -34,8 +34,6 @@ async function handleWPCOMRedirect( payload: AgencyDetailsPayload, userLocale: s
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: returnUri.toString(),
 			scope: 'global',
-			blog_id: '0',
-			'from-calypso': '1',
 		} ).toString();
 
 		let wpcomRedirectUrl = undefined;
