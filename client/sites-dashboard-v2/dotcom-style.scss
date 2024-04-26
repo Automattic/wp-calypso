@@ -4,6 +4,10 @@
 @import "@wordpress/base-styles/mixins";
 
 // Add new Dotcom specific styles to this file.
+.wpcom-site .layout__primary .main {
+	padding-bottom: 0;
+}
+
 .wpcom-site .a4a-layout-with-columns__container {
 	background: var(--color-sidebar-background);
 }
