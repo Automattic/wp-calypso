@@ -1,9 +1,21 @@
 import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
-import { Children, cloneElement, createRef, forwardRef, useLayoutEffect, useRef } from 'react';
+import {
+	Children,
+	cloneElement,
+	createRef,
+	forwardRef,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+} from 'react';
 import { LocalizedLink } from 'calypso/my-sites/patterns/components/localized-link';
 
 import './style.scss';
+
+// We do this to silence a noisy React warning about `useLayoutEffect` not playing well with SSR.
+// See https://reactjs.org/link/uselayouteffect-ssr
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 type PatternLibraryToggleOptionProps = Omit< JSX.IntrinsicElements[ 'a' ], 'onClick' > & {
 	onClick?( value: string ): void;
@@ -45,42 +57,44 @@ export function PatternLibraryToggle( {
 	selected,
 	...props
 }: PatternLibraryToggleProps ) {
-	const ref = useRef< HTMLDivElement >( null );
+	const wrapperRef = useRef< HTMLDivElement >( null );
 	const prevSelectionRef = useRef< string >( selected );
 
 	const options = Children.map( children, ( child ) => child.props.value );
-	const refs = Children.map( children, () => createRef< HTMLAnchorElement >() );
+	const optionRefs = Children.map( children, () => createRef< HTMLAnchorElement >() );
 
 	// Animate the backdrop element to move from the previously selected option to the new one using
 	// the FLIP principle
-	useLayoutEffect( () => {
+	useIsomorphicLayoutEffect( () => {
 		const activeOptionIndex = options.indexOf( selected );
-		const activeOptionRef = refs[ activeOptionIndex ];
+		const activeOptionRef = optionRefs[ activeOptionIndex ];
 
 		const prevOptionIndex = options.indexOf( prevSelectionRef.current );
-		const prevOptionRef = refs[ prevOptionIndex ];
+		const prevOptionRef = optionRefs[ prevOptionIndex ];
 
 		prevSelectionRef.current = selected;
 
 		if ( activeOptionRef?.current && prevOptionRef?.current ) {
-			const backdrop = ref.current?.querySelector< HTMLDivElement >(
+			const backdrop = wrapperRef.current?.querySelector< HTMLDivElement >(
 				'.pattern-library__toggle-backdrop'
 			);
 			const activeCoords = activeOptionRef.current.getBoundingClientRect();
 			const lastSelectionCoords = prevOptionRef.current.getBoundingClientRect();
 			const offset = lastSelectionCoords.left - activeCoords.left;
 
-			if ( backdrop ) {
-				backdrop.animate( [ { transform: `translateX(${ offset }px)` }, { transform: `none` } ], {
-					easing: 'ease',
-					duration: 200,
-				} );
-			}
+			backdrop?.animate( [ { transform: `translateX(${ offset }px)` }, { transform: `none` } ], {
+				easing: 'ease',
+				duration: 200,
+			} );
 		}
 	}, [ selected ] );
 
 	return (
-		<div { ...props } className={ classNames( 'pattern-library__toggle', className ) } ref={ ref }>
+		<div
+			{ ...props }
+			className={ classNames( 'pattern-library__toggle', className ) }
+			ref={ wrapperRef }
+		>
 			{ Children.map( children, ( child, index ) =>
 				cloneElement< PatternLibraryToggleOptionProps >( child, {
 					children: (
@@ -99,7 +113,7 @@ export function PatternLibraryToggle( {
 							onChange?.( value );
 						}
 					},
-					ref: refs[ index ],
+					ref: optionRefs[ index ],
 				} )
 			) }
 		</div>
