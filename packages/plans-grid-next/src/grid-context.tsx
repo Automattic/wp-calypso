@@ -1,6 +1,6 @@
 import { createContext, useContext } from '@wordpress/element';
 import type { UseActionCallback, GridContextProps, GridPlan, PlansIntent } from './types';
-import type { FeatureList } from '@automattic/calypso-products';
+import type { FeatureList, FeatureGroupMap } from '@automattic/calypso-products';
 import type { Plans } from '@automattic/data-stores';
 
 interface PlansGridContext {
@@ -16,7 +16,16 @@ interface PlansGridContext {
 	};
 	coupon?: string;
 	enableFeatureTooltips?: boolean;
+	/**
+	 * `renderCategorisedFeatures` relevant to Features Grid (and omitted from Comparison Grid)
+	 * for rendering features with categories based on available/associated feature group map.
+	 */
 	renderCategorisedFeatures?: boolean;
+	/**
+	 * `featureGroupMap` is relevant for rendering features with categories.
+	 * This is necessary for Comparison Grid and optional for Features Grid (i.e. applicable when `renderCategorisedFeatures` is set).
+	 */
+	featureGroupMap: Partial< FeatureGroupMap >;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -33,6 +42,7 @@ const PlansGridContextProvider = ( {
 	coupon,
 	enableFeatureTooltips,
 	renderCategorisedFeatures,
+	featureGroupMap,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -54,6 +64,7 @@ const PlansGridContextProvider = ( {
 				coupon,
 				enableFeatureTooltips,
 				renderCategorisedFeatures,
+				featureGroupMap,
 			} }
 		>
 			{ children }

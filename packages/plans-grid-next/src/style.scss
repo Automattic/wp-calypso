@@ -131,10 +131,6 @@ $mobile-card-max-width: 440px;
 	}
 }
 
-.plans-grid-next-features-grid__feature-group-title {
-	font-weight: 600;
-}
-
 .plan-features-2023-grid__mobile-view {
 	display: flex;
 	flex-direction: column;
@@ -353,6 +349,10 @@ $mobile-card-max-width: 440px;
 			width: 200px;
 		}
 	}
+}
+
+.plans-grid-next-features-grid__feature-group-title {
+	font-weight: 600;
 }
 
 .plan-features-2023-grid__item-info {

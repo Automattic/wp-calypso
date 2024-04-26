@@ -2,8 +2,6 @@ import {
 	getPlanClass,
 	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
-	getPlanFeaturesGrouped,
-	getWooExpressFeaturesGrouped,
 	FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	getPlans,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -992,23 +990,8 @@ const ComparisonGrid = ( {
 	planUpgradeCreditsApplicable,
 	gridSize,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
-
-	// Check to see if we have at least one Woo Express plan we're comparing.
-	const hasWooExpressFeatures = useMemo( () => {
-		const wooExpressPlans = gridPlans.filter(
-			( { planSlug, isVisible } ) => isVisible && isWooExpressPlan( planSlug )
-		);
-
-		return wooExpressPlans.length > 0;
-	}, [ gridPlans ] );
-
-	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
-	const featureGroupMap = hasWooExpressFeatures
-		? getWooExpressFeaturesGrouped()
-		: getPlanFeaturesGrouped();
-
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {

@@ -3,12 +3,16 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	WPComStorageAddOnSlug,
+	FeatureGroupSlug,
 } from '@automattic/calypso-products';
 import { FoldableCard } from '@automattic/components';
+import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import BillingTimeframes from './billing-timeframes';
 import MobileFreeDomain from './mobile-free-domain';
+import PartnerLogos from './partner-logos';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
@@ -39,6 +43,20 @@ type MobileViewProps = {
 	showUpgradeableStorage: boolean;
 };
 
+const CardContainer = (
+	props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
+) => {
+	const { children, planSlug, ...otherProps } = props;
+
+	return isWpcomEnterpriseGridPlan( planSlug ) ? (
+		<div { ...otherProps }>{ children }</div>
+	) : (
+		<FoldableCard { ...otherProps } compact clickableHeader>
+			{ children }
+		</FoldableCard>
+	);
+};
+
 const MobileView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -56,19 +74,13 @@ const MobileView = ( {
 	selectedFeature,
 	showUpgradeableStorage,
 }: MobileViewProps ) => {
-	const CardContainer = (
-		props: React.ComponentProps< typeof FoldableCard > & { planSlug: string }
-	) => {
-		const { children, planSlug, ...otherProps } = props;
-		return isWpcomEnterpriseGridPlan( planSlug ) ? (
-			<div { ...otherProps }>{ children }</div>
-		) : (
-			<FoldableCard { ...otherProps } compact clickableHeader>
-				{ children }
-			</FoldableCard>
-		);
-	};
 	const translate = useTranslate();
+	const { renderCategorisedFeatures, featureGroupMap } = usePlansGridContext();
+	const featureGroups = useMemo(
+		() =>
+			renderCategorisedFeatures ? ( Object.keys( featureGroupMap ) as FeatureGroupSlug[] ) : [],
+		[ renderCategorisedFeatures, featureGroupMap ]
+	);
 
 	return renderedGridPlans
 		.reduce( ( acc, gridPlan ) => {
@@ -125,15 +137,33 @@ const MobileView = ( {
 							)
 						}
 					>
-						<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
-						<PlanFeaturesList
-							renderedGridPlans={ [ gridPlan ] }
-							selectedFeature={ selectedFeature }
-							paidDomainName={ paidDomainName }
-							hideUnavailableFeatures={ hideUnavailableFeatures }
-							generatedWPComSubdomain={ generatedWPComSubdomain }
-							isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
-						/>
+						<PartnerLogos renderedGridPlans={ [ gridPlan ] } />
+						{ renderCategorisedFeatures ? (
+							featureGroups.map( ( featureGroupSlug ) => (
+								<PlanFeaturesList
+									key={ featureGroupSlug }
+									renderedGridPlans={ [ gridPlan ] }
+									selectedFeature={ selectedFeature }
+									paidDomainName={ paidDomainName }
+									hideUnavailableFeatures={ hideUnavailableFeatures }
+									generatedWPComSubdomain={ generatedWPComSubdomain }
+									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+									featureGroupSlug={ featureGroupSlug }
+								/>
+							) )
+						) : (
+							<>
+								<PreviousFeaturesIncludedTitle renderedGridPlans={ [ gridPlan ] } />
+								<PlanFeaturesList
+									renderedGridPlans={ [ gridPlan ] }
+									selectedFeature={ selectedFeature }
+									paidDomainName={ paidDomainName }
+									hideUnavailableFeatures={ hideUnavailableFeatures }
+									generatedWPComSubdomain={ generatedWPComSubdomain }
+									isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+								/>
+							</>
+						) }
 					</CardContainer>
 				</div>
 			);
