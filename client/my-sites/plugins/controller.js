@@ -180,17 +180,28 @@ export function scheduledUpdates( context, next ) {
 }
 
 export function scheduledUpdatesMultisite( context, next ) {
+	const goToScheduledUpdatesList = () => page.show( `/plugins/scheduled-updates/` );
 	switch ( context.params.action ) {
 		case 'create':
-			context.primary = createElement( PluginsScheduledUpdatesMultisite );
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+				context: 'create',
+			} );
 			break;
 
 		case 'edit':
-			context.primary = `Edit multisite scheduled updates ${ context.params.schedule_id }`;
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+				scheduleId: context.params.scheduleId,
+				context: 'edit',
+			} );
 			break;
 
 		default:
-			context.primary = 'List of multisite scheduled updates';
+			context.primary = createElement( PluginsScheduledUpdatesMultisite, {
+				onNavBack: goToScheduledUpdatesList,
+				context: 'list',
+			} );
 			break;
 	}
 

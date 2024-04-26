@@ -72,6 +72,7 @@ html,
 
 .a4a-layout__top-wrapper {
 	padding-block-start: 48px;
+	border-bottom: #f1f1f1 1px solid;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
@@ -114,7 +115,7 @@ html,
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin: auto;
+	margin: 0 auto 24px auto;
 	height: 100%;
 
 	> * + * {
@@ -123,16 +124,11 @@ html,
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		flex-wrap: wrap;
+		row-gap: 16px;
 
 		> * + * {
 			margin-inline-start: 0;
 		}
-	}
-}
-
-.a4a-layout__header.has-actions > .a4a-layout__header-main {
-	@include breakpoint-deprecated( "<1280px" ) {
-		margin-block-end: 16px;
 	}
 }
 
@@ -222,8 +218,11 @@ html,
 }
 
 .a4a-layout__header-title {
-	font-size: 2.25rem;
-	font-weight: 600;
+	color: var(--studio-gray-80, #2c3338);
+	font-family: "SF Pro Display", sans-serif;
+	font-size: rem(24px);
+	font-style: normal;
+	font-weight: 500;
 	line-height: 1.2;
 
 	@include breakpoint-deprecated( "<660px" ) {

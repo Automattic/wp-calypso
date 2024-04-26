@@ -14,7 +14,7 @@ import SegmentationSurveyProvider from './provider';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SURVEY_KEY = 'survey-1';
+const SURVEY_KEY = 'entrepreneur-trial';
 
 const SegmentationSurveyDocumentHead = () => {
 	const { currentQuestion } = useSurveyContext();
@@ -29,7 +29,7 @@ const SegmentationSurveyDocumentHead = () => {
 const SegmentationSurveyStep: Step = ( { navigation } ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey: SURVEY_KEY } );
 	const { mutate } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
-	const { answers, setAnswers } = useCachedAnswers( SURVEY_KEY );
+	const { answers, setAnswers, clearAnswers } = useCachedAnswers( SURVEY_KEY );
 
 	const onChangeAnswer = useCallback(
 		( questionKey: string, value: string[] ) => {
@@ -45,8 +45,12 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 				questionKey: currentQuestion.key,
 				answerKeys: answers[ currentQuestion.key ] || [],
 			} );
+
+			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+				clearAnswers();
+			}
 		},
-		[ answers, mutate ]
+		[ answers, clearAnswers, mutate, questions ]
 	);
 
 	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {
@@ -58,15 +62,13 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 			<SegmentationSurveyProvider
 				navigation={ navigation }
 				onSubmitQuestion={ onSubmitQuestion }
+				surveyKey={ SURVEY_KEY }
 				questions={ questions }
+				answers={ answers }
 			>
 				<SegmentationSurveyDocumentHead />
 
-				<SurveyContainer
-					answers={ answers }
-					onChange={ onChangeAnswer }
-					recordTracksEvent={ () => undefined }
-				/>
+				<SurveyContainer answers={ answers } onChange={ onChangeAnswer } />
 			</SegmentationSurveyProvider>
 		</Main>
 	);

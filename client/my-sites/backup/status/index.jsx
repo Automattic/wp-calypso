@@ -3,7 +3,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import BackupGettingStarted from 'calypso/components/jetpack/backup-getting-started';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
-import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
+import DailyBackupStatus from 'calypso/components/jetpack/daily-backup-status';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isRewindBackupsInitialized from 'calypso/state/rewind/selectors/is-rewind-backups-initialized';
@@ -25,7 +25,7 @@ export const DailyStatus = ( { selectedDate } ) => {
 	}
 
 	return (
-		<MostRecentStatus
+		<DailyBackupStatus
 			{ ...{
 				selectedDate,
 				lastBackupDate,
@@ -49,6 +49,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
+		refetch,
 	} = useRealtimeBackupStatus( siteId, selectedDate );
 
 	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
@@ -66,13 +67,14 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 
 	return (
 		<>
-			<MostRecentStatus
+			<DailyBackupStatus
 				{ ...{
 					selectedDate,
 					lastBackupDate,
 					backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
 					lastBackupAttempt,
 					lastBackupAttemptOnDate,
+					refetch,
 				} }
 			/>
 

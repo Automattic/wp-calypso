@@ -74,6 +74,7 @@ const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
+	paddingTop: '32px',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
@@ -370,7 +371,10 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
+export function useShowSiteCreationNotice(
+	allSites: SiteExcerptData[],
+	newSiteID: number | undefined
+) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
@@ -407,7 +411,7 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 	}, [ __, allSites, dispatch, newSiteID ] );
 }
 
-function useShowSiteTransferredNotice() {
+export function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	useEffect( () => {

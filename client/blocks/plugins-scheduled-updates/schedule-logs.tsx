@@ -129,7 +129,7 @@ export const ScheduleLogs = ( props: Props ) => {
 									? `${ dateFormat } ${ timeFormat }`
 									: timeFormat
 							}
-							detail={ getLogDetails( log, plugins ) }
+							detail={ getLogDetails( log, plugins, siteSlug ) }
 							icon={ getLogIcon( log ) }
 							iconBackground={ getLogIconStatus( log ) }
 							className={ shouldIndentTimelineEvent( log ) ? 'indent' : '' }

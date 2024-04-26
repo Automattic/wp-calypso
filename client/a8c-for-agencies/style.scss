@@ -12,7 +12,7 @@
 	--color-text-gray: "#333";
 	--color-text-white: var(--studio-white);
 	--color-text-black: var(--studio-black);
-	--color-sidebar-text-alternative: #bbe0fa;
+	--wp-components-color-accent: var(--studio-automattic-blue-50);
 
 	// FIXME: Need to move this colors to a color scheme file
 	--color-scary-0: var(--studio-red-0);
@@ -145,6 +145,9 @@
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4px 0;
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 4px;
+		}
 	}
 
 	.button.split-button__main {
@@ -221,6 +224,14 @@
 	.button.is-borderless.is-primary:focus,
 	.button.is-borderless.is-primary:hover {
 		color: var(--color-primary-60);
+	}
+
+	.search {
+		&,
+		& > *,
+		input[type="search"] {
+			border-radius: 4px;
+		}
 	}
 
 	// Masterbar
@@ -348,4 +359,58 @@ html {
 
 .site-selector .site-selector__actions {
 	padding: 16px;
+}
+
+.popover {
+	font-size: rem(14px);
+	font-weight: 400;
+	border-radius: 4px;
+
+	.popover__arrow {
+		display: none;
+	}
+
+
+	.popover__inner {
+		border-radius: 4px;
+	}
+
+	.popover__menu {
+		padding: 8px;
+	}
+
+	.popover__menu-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border: none;
+		outline: none;
+		margin-block: 0;
+		min-height: 40px;
+		box-sizing: border-box;
+		border-radius: 4px;
+		gap: 8px;
+	}
+
+	.popover__menu-item .gridicon {
+		margin: 0;
+	}
+
+	button.popover__menu-item:hover,
+	button.popover__menu-item:focus {
+		background: var(--wp-components-color-accent);
+		color: var(--color-text-inverted);
+
+		.gridicon {
+			fill: var(--color-text-inverted);
+		}
+	}
+
+	.popover__menu-item.is-destructive {
+		color: var(--color-scary-50);
+
+		.gridicon {
+			fill: var(--color-error-50);
+		}
+	}
 }

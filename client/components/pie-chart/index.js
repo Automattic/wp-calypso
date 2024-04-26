@@ -10,10 +10,13 @@ import './style.scss';
 
 const SVG_SIZE = 300;
 const NUM_COLOR_SECTIONS = 3;
+
+// Bottom left position relative to the cursor for the tooltip,
+// which is the tooltip width offset the distance from the right edge to the arrow.
 const TOOLTIP_OFFSET_X = -207;
 const TOOLTIP_OFFSET_Y = 0;
 
-function transformData( data, { donut = false, startAngle = -Math.PI } ) {
+function transformData( data, { donut = false, startAngle = -Math.PI, svgSize = SVG_SIZE } ) {
 	const sortedData = sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
@@ -26,8 +29,8 @@ function transformData( data, { donut = false, startAngle = -Math.PI } ) {
 		.value( ( datum ) => datum.value )( sortedData );
 
 	const arcGen = d3Arc()
-		.innerRadius( donut ? SVG_SIZE / 4 : 0 )
-		.outerRadius( SVG_SIZE / 2 );
+		.innerRadius( donut ? svgSize / 4 : 0 )
+		.outerRadius( svgSize / 2 );
 
 	const paths = arcs.map( ( arc ) => arcGen( arc ) );
 
@@ -45,6 +48,7 @@ class PieChart extends Component {
 		translate: PropTypes.func.isRequired,
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 		hasTooltip: PropTypes.bool,
+		svgSize: PropTypes.number,
 	};
 
 	state = {
@@ -55,7 +59,7 @@ class PieChart extends Component {
 	chartRef = createRef();
 
 	// Listen to mousemove and mouseleave events on the chart to operate the tooltip.
-	bindEvents = ( svg, data ) => {
+	bindEvents = ( svg, data, svgSize ) => {
 		const dataTotal = this.state.dataTotal;
 		const tooltip = d3Select( '.pie-chart__tooltip' );
 
@@ -64,8 +68,8 @@ class PieChart extends Component {
 				const percent =
 					dataTotal > 0 ? Math.round( ( current.value / dataTotal ) * 100 ).toString() : '0';
 
-				tooltip.style( 'left', coordinates[ 0 ] + SVG_SIZE / 2 + TOOLTIP_OFFSET_X + 'px' );
-				tooltip.style( 'top', coordinates[ 1 ] + SVG_SIZE / 2 + TOOLTIP_OFFSET_Y + 'px' );
+				tooltip.style( 'left', coordinates[ 0 ] + svgSize / 2 + TOOLTIP_OFFSET_X + 'px' );
+				tooltip.style( 'top', coordinates[ 1 ] + svgSize / 2 + TOOLTIP_OFFSET_Y + 'px' );
 				tooltip.style( 'visibility', 'visible' );
 				tooltip.html(
 					`${ current.icon }<div class="pie-chart__tooltip-content"><div>${ current.name }</div><div>${ percent }%</div></div>`
@@ -100,6 +104,7 @@ class PieChart extends Component {
 				transformedData: transformData( nextProps.data, {
 					donut: nextProps.donut,
 					startAngle: nextProps.startAngle,
+					svgSize: nextProps.svgSize,
 				} ),
 			};
 		}
@@ -122,20 +127,20 @@ class PieChart extends Component {
 		} );
 	}
 
-	renderEmptyChart() {
+	renderEmptyChart( svgSize ) {
 		return (
-			<circle cx={ 0 } cy={ 0 } r={ SVG_SIZE / 2 } className="pie-chart__chart-drawing-empty" />
+			<circle cx={ 0 } cy={ 0 } r={ svgSize / 2 } className="pie-chart__chart-drawing-empty" />
 		);
 	}
 
 	componentDidMount() {
 		if ( this.props.hasTooltip ) {
-			this.bindEvents( d3Select( this.chartRef.current ), this.state.data );
+			this.bindEvents( d3Select( this.chartRef.current ), this.state.data, this.props.svgSize );
 		}
 	}
 
 	render() {
-		const { title, translate, hasTooltip } = this.props;
+		const { title, translate, hasTooltip, svgSize } = this.props;
 		const { dataTotal } = this.state;
 
 		return (
@@ -147,22 +152,24 @@ class PieChart extends Component {
 						<svg
 							ref={ this.chartRef }
 							className="pie-chart__chart-drawing"
-							viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
+							width={ svgSize }
+							height={ svgSize }
+							viewBox={ `0 0 ${ svgSize } ${ svgSize }` }
 							preserveAspectRatio="xMidYMid meet"
 						>
-							<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
-								{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
+							<g transform={ `translate(${ svgSize / 2 }, ${ svgSize / 2 })` }>
+								{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart( svgSize ) }
 							</g>
 						</svg>
 					</div>
 				) : (
 					<svg
 						className="pie-chart__chart-drawing"
-						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
+						viewBox={ `0 0 ${ svgSize } ${ svgSize }` }
 						preserveAspectRatio="xMidYMid meet"
 					>
-						<g transform={ `translate(${ SVG_SIZE / 2 }, ${ SVG_SIZE / 2 })` }>
-							{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart() }
+						<g transform={ `translate(${ svgSize / 2 }, ${ svgSize / 2 })` }>
+							{ dataTotal > 0 ? this.renderPieChart() : this.renderEmptyChart( svgSize ) }
 						</g>
 					</svg>
 				) }
@@ -176,5 +183,12 @@ class PieChart extends Component {
 		);
 	}
 }
+
+PieChart.defaultProps = {
+	donut: false,
+	startAngle: -Math.PI,
+	hasTooltip: false,
+	svgSize: SVG_SIZE,
+};
 
 export default localize( PieChart );

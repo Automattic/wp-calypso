@@ -18,6 +18,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	// allFeaturesList temporary until feature definitions are ported to calypso-products package
 	allFeaturesList,
+	hasRedeemedDomainCredit,
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
@@ -25,6 +26,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
+	hasRedeemedDomainCredit?: boolean;
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
@@ -39,6 +41,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	gridPlans,
 	allFeaturesList,
+	hasRedeemedDomainCredit,
 	intent,
 	selectedFeature,
 	showLegacyStorageFeature,
@@ -175,6 +178,9 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 							const isHighlightedFeature =
 								highlightedFeatures && highlightedFeatures.includes( feature.getSlug() );
 							if ( feature === topFeature || isHighlightedFeature ) {
+								return;
+							}
+							if ( hasRedeemedDomainCredit && feature.getSlug() === FEATURE_CUSTOM_DOMAIN ) {
 								return;
 							}
 

@@ -87,6 +87,10 @@ const withAIAssemblerFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
 		);
+		const siteId = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSite(),
+			[]
+		);
 
 		const { setPendingAction, setSelectedSite } = useDispatch( ONBOARD_STORE );
 
@@ -285,10 +289,7 @@ const withAIAssemblerFlow: Flow = {
 			}
 		};
 
-		const goNext = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const selectedSiteSlug = providedDependencies?.siteSlug as string;
-			const selectedSiteId = providedDependencies?.siteId as string;
-
+		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'site-prompt': {
 					return navigate( 'pattern-assembler' );
@@ -297,8 +298,8 @@ const withAIAssemblerFlow: Flow = {
 				case 'launchpad':
 					skipLaunchpad( {
 						checklistSlug: AI_ASSEMBLER_FLOW,
-						siteId: selectedSiteId,
-						siteSlug: selectedSiteSlug,
+						siteId: siteId || null,
+						siteSlug: null,
 					} );
 					return;
 			}

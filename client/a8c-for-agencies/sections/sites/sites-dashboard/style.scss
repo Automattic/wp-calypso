@@ -33,6 +33,13 @@
 
 	.a4a-layout__top-wrapper:not(.preview-hidden) {
 		padding-block-start: 24px;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-block-start: 0;
+		}
+	}
+
+	.components-input-base {
+		border-radius: 4px;
 	}
 
 	@media (min-width: $break-large) {
@@ -96,7 +103,6 @@
 				}
 
 				.current-section button {
-					margin-top: 12px;
 					padding: 14px 8px;
 				}
 
@@ -181,7 +187,7 @@
 			padding-inline-end: 8px;
 		}
 
-		.site-preview__content {
+		.item-preview__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -515,7 +521,7 @@
 			font-size: rem(24px);
 		}
 
-		.site-preview__pane {
+		.item-preview__pane {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -535,7 +541,7 @@
 				transition: flex-grow 0.2s;
 			}
 
-			.site-preview__pane {
+			.item-preview__pane {
 				max-width: 0;
 				padding: 0;
 			}
