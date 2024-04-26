@@ -1,3 +1,10 @@
 .item-preview__content {
 	padding: 32px;
+
+	.hosting-overview,
+	.site-monitoring-overview {
+		overflow-y: unset;
+		max-height: none;
+	}
 }
+
