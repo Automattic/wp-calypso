@@ -173,12 +173,6 @@ const siteMigration: Flow = {
 						action: SiteMigrationIdentifyAction;
 					};
 
-					if ( siteSlug ) {
-						await saveSiteSettings( siteSlug, {
-							migration_source_site_domain: from,
-						} );
-					}
-
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
 						return exitFlow(
 							addQueryArgs(
