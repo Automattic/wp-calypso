@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { __experimentalText as Text } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -162,17 +161,14 @@ export const ScheduleForm = ( props: Props ) => {
 					setFieldTouched( { ...fieldTouched, plugins: touched } );
 				} }
 			/>
-
-			{ isEnabled( 'plugins/multisite-scheduled-updates' ) && (
-				<>
-					<Text>{ translate( 'Step 3' ) }</Text>
-					<ScheduleFormPaths
-						paths={ healthCheckPaths }
-						borderWrapper={ false }
-						onChange={ setHealthCheckPaths }
-					/>
-				</>
-			) }
+			<>
+				<Text>{ translate( 'Step 3' ) }</Text>
+				<ScheduleFormPaths
+					paths={ healthCheckPaths }
+					borderWrapper={ false }
+					onChange={ setHealthCheckPaths }
+				/>
+			</>
 		</form>
 	);
 };
