@@ -248,7 +248,7 @@ const siteMigration: Flow = {
 						if ( siteSlug ) {
 							// Remove the in_site_migration_flow option at the end of the flow.
 							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: false,
+								in_site_migration_flow: '',
 							} );
 						}
 
