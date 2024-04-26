@@ -18,6 +18,8 @@ const SORT_DIRECTION_DESC = 'desc';
 // Mapping the columns to the site data keys
 const SITE_COLUMN_KEY_MAP: { [ key: string ]: string } = {
 	site: 'url',
+	'last-publish': 'last-publish',
+	name: 'site',
 };
 
 export default function SiteSort( {
@@ -25,13 +27,21 @@ export default function SiteSort( {
 	isLargeScreen,
 	children,
 	isSortable,
+	viewStateByProp,
+	setViewStateByProp,
 }: {
 	columnKey: string;
 	isLargeScreen?: boolean;
 	children?: React.ReactNode;
 	isSortable?: boolean;
+	viewStateByProp?: object;
+	setViewStateByProp?: Function;
 } ) {
-	const { dataViewsState, setDataViewsState } = useContext( SitesDashboardContext );
+	const { dataViewsState: dataViewStateByContext, setDataViewsState: setDataViewStateByContext } =
+		useContext( SitesDashboardContext );
+
+	const dataViewsState = viewStateByProp || dataViewStateByContext;
+	const setDataViewsState = setViewStateByProp || setDataViewStateByContext;
 
 	const { field, direction } = dataViewsState.sort;
 

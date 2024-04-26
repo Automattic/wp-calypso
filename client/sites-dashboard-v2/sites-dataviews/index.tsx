@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import SiteSort from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/site-sort';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -66,13 +67,24 @@ const DotcomSitesDataViews = ( {
 		() => [
 			{
 				id: 'site',
-				header: <span>{ __( 'Site' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="name"
+						viewStateByProp={ dataViewsState }
+						setViewStateByProp={ setDataViewsState }
+					>
+						<span className="sites-dataview__site-header sites-dataview__site-header--sort">
+							{ __( 'Site' ) }
+						</span>
+					</SiteSort>
+				),
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'plan',
@@ -95,11 +107,23 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				header: <span>{ __( 'Last Publish' ) }</span>,
+				// header: <span>{ __( 'Last Publish' ) }</span>,
+				header: (
+					<SiteSort
+						isSortable={ true }
+						columnKey="last-publish"
+						viewStateByProp={ dataViewsState }
+						setViewStateByProp={ setDataViewsState }
+					>
+						<span className="sites-dataview__site-header sites-dataview__site-header--sort">
+							{ __( 'Last Publish' ) }
+						</span>
+					</SiteSort>
+				),
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'stats',
@@ -128,7 +152,7 @@ const DotcomSitesDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ __, openSitePreviewPane, userId ]
+		[ __, openSitePreviewPane, userId, dataViewsState, setDataViewsState ]
 	);
 
 	// Create the itemData packet state
