@@ -16,7 +16,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateAgencyMutation from '../../agency-details-form/hooks/use-create-agency-mutation';
 import { getSignupDataFromLocalStorage } from '../../lib/signup-data-to-local-storage';
-import { verifySignupData } from './utils';
 import './style.scss';
 
 export default function AgencySignupFinish() {
@@ -32,33 +31,30 @@ export default function AgencySignupFinish() {
 			dispatch( fetchAgencies() );
 		},
 		onError: ( error: APIError ) => {
+			page( A4A_SIGNUP_LINK );
 			dispatch( errorNotice( error?.message, { id: notificationId } ) );
 		},
 	} );
 
 	useEffect( () => {
-		if ( ! userLoggedIn || ! verifySignupData( signupData ) ) {
-			// Redirect to the signup page if user is not logged in or data from local storage is malformed.
-			//console.log( 'User not logged in' );
-			page.redirect( A4A_SIGNUP_LINK );
-			return;
-		}
 		if ( agency ) {
 			// Redirect to the sites page if the user already has an agency record.
-			//console.log( 'User already has an agency' );
 			page.redirect( A4A_OVERVIEW_LINK );
 		}
+	}, [ agency ] );
+
+	useEffect( () => {
 		async function createAgencyHandler() {
 			// Added to prevent typescript errors and for additional safety
-			if ( ! signupData || ! verifySignupData( signupData ) ) {
+			if ( ! userLoggedIn || ! signupData ) {
 				page.redirect( A4A_SIGNUP_LINK );
 				return;
 			}
 			await loadScript( '//js.hs-scripts.com/45522507.js' );
-			createAgency.mutate( signupData );
 
+			createAgency.mutate( signupData );
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_create_agency_submit', {
+				recordTracksEvent( 'calypso_a4a_create_agency_finish_submit', {
 					first_name: signupData.firstName,
 					last_name: signupData.lastName,
 					name: signupData.agencyName,
@@ -77,7 +73,8 @@ export default function AgencySignupFinish() {
 			);
 		}
 		createAgencyHandler();
-	}, [ userLoggedIn, signupData, agency, dispatch, createAgency ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
 		<div className="agency-signup-finish__wrapper">

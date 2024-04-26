@@ -19,7 +19,7 @@ export function useHandleWPCOMRedirect() {
 				} );
 
 				const isNewUser = userValidationResponse && userValidationResponse.success;
-				const returnUri = new URL( '/signup/finish', window.location.origin );
+				const returnUri = new URL( '/signup/oauth/token', window.location.origin );
 				const authUrl = new URL( config( 'wpcom_authorize_endpoint' ) );
 				authUrl.search = new URLSearchParams( {
 					response_type: 'token',
