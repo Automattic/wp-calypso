@@ -401,6 +401,7 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__body {
 			padding-top: 0;
+			overflow-y: hidden;
 		}
 	}
 }
