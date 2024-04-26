@@ -98,7 +98,10 @@ export function useStepNavigator(
 		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
 	}
 
-	function getCheckoutUrl( importOption: WPImportOption, extraArgs = {} ) {
+	function getCheckoutUrl(
+		importOption: WPImportOption,
+		extraArgs: { plan?: string; slug?: string } = {}
+	) {
 		const plan = extraArgs.plan ?? selectedPlan;
 		const slug = extraArgs.slug ?? siteSlug;
 		const path = buildCheckoutUrl( slug, plan );

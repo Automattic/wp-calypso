@@ -18,7 +18,7 @@ interface Props {
 	ctaText: string;
 	subTitleText?: string;
 	hideTitleAndSubTitle?: boolean;
-	onFreeTrialClick: () => void;
+	onFreeTrialClick?: () => void;
 	navigateToVerifyEmailStep: () => void;
 	onCtaClick: () => void;
 	onContentOnlyClick?: () => void;
