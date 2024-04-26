@@ -235,6 +235,12 @@
 		}
 	}
 
+	@media (max-width: 600px) {
+		.dataviews-view-table-wrapper {
+			max-height: calc(100vh - 323px); /* 323px is the size of all the height above and below the dataviews-view-table-wrapper */
+		}
+	}
+
 	@media (max-width: $break-wide) {
 		&.sites-dashboard__layout:not(.preview-hidden) {
 			flex-direction: column;
