@@ -238,7 +238,7 @@ export interface FeatureFootnotes {
 export type FeatureGroup = {
 	slug: FeatureGroupSlug;
 	getTitle: () => string;
-	get2023PricingGridSignupWpcomFeatures: () => Feature[];
+	getFeatures: () => Feature[];
 	/**
 	 * This optionally returns an object containing footnotes and the features that should display the footnote.
 	 *

@@ -123,10 +123,11 @@ import {
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
+	/* START: Plans 2023 Feature Group (To be deleted after pau2Xa-5Ol-P2 if trail map wins) */
 	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
 		slug: FEATURE_GROUP_ESSENTIAL_FEATURES,
 		getTitle: () => i18n.translate( 'Essential features' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_PAGES,
 			FEATURE_USERS,
 			FEATURE_POST_EDITS_HISTORY,
@@ -146,7 +147,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_PERFORMANCE_BOOSTERS ]: {
 		slug: FEATURE_GROUP_PERFORMANCE_BOOSTERS,
 		getTitle: () => i18n.translate( 'Performance boosters' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_FAST_DNS,
 			FEATURE_BURST,
 			FEATURE_CPUS,
@@ -157,7 +158,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_HIGH_AVAILABILITY ]: {
 		slug: FEATURE_GROUP_HIGH_AVAILABILITY,
 		getTitle: () => i18n.translate( 'High Availability' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_DATACENTRE_FAILOVER,
 			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_REALTIME_BACKUPS_JP,
@@ -167,7 +168,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_DEVELOPER_TOOLS ]: {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
 		getTitle: () => i18n.translate( 'Developer tools' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_DEV_TOOLS,
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_MULTI_SITE,
@@ -177,7 +178,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_SECURITY_AND_SAFETY ]: {
 		slug: FEATURE_GROUP_SECURITY_AND_SAFETY,
 		getTitle: () => i18n.translate( 'Security and safety' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_SECURITY_BRUTE_FORCE,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_SPAM_JP,
@@ -190,7 +191,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ]: {
 		slug: FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Design customization' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PREMIUM_THEMES,
@@ -200,7 +201,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS ]: {
 		slug: FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
 		getTitle: () => i18n.translate( 'Commerce solutions' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_PREMIUM_STORE_THEMES,
 			FEATURE_STORE_DESIGN,
 			FEATURE_UNLIMITED_PRODUCTS,
@@ -222,7 +223,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ]: {
 		slug: FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
 		getTitle: () => i18n.translate( 'Growth and monetization tools' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_NEWSLETTERS_RSS,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
@@ -239,13 +240,10 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_PAYPAL_JP,
 		],
 	},
-};
-
-export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_YOUR_STORE ]: {
 		slug: FEATURE_GROUP_YOUR_STORE,
 		getTitle: () => i18n.translate( 'Your store' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_WOOCOMMERCE_STORE,
 			FEATURE_WOOCOMMERCE_MOBILE_APP,
 			FEATURE_WORDPRESS_CMS,
@@ -262,10 +260,13 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_GOOGLE_ANALYTICS_V3,
 		],
 	},
+	/* END: Plans 2023 Feature Group (To be deleted after pau2Xa-5Ol-P2 if trail map wins) */
+
+	/* START: WooExpress Feature Groups */
 	[ FEATURE_GROUP_PRODUCTS ]: {
 		slug: FEATURE_GROUP_PRODUCTS,
 		getTitle: () => i18n.translate( 'Products' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_LIST_UNLIMITED_PRODUCTS,
 			FEATURE_GIFT_CARDS,
 			FEATURE_MIN_MAX_ORDER_QUANTITY,
@@ -279,7 +280,7 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_PAYMENTS ]: {
 		slug: FEATURE_GROUP_PAYMENTS,
 		getTitle: () => i18n.translate( 'Payments' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_INTEGRATED_PAYMENTS,
 			FEATURE_INTERNATIONAL_PAYMENTS,
 			FEATURE_AUTOMATED_SALES_TAXES,
@@ -299,7 +300,7 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_MARKETING_EMAIL ]: {
 		slug: FEATURE_GROUP_MARKETING_EMAIL,
 		getTitle: () => i18n.translate( 'Marketing & Email' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_PROMOTE_ON_TIKTOK,
 			FEATURE_SYNC_WITH_PINTEREST,
 			FEATURE_CONNECT_WITH_FACEBOOK,
@@ -317,7 +318,7 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_SHIPPING ]: {
 		slug: FEATURE_GROUP_SHIPPING,
 		getTitle: () => i18n.translate( 'Shipping' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
+		getFeatures: () => [
 			FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 			FEATURE_LIVE_SHIPPING_RATES,
 			FEATURE_DISCOUNTED_SHIPPING,
@@ -329,4 +330,5 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 			) ]: [ FEATURE_DISCOUNTED_SHIPPING, FEATURE_PRINT_SHIPPING_LABELS ],
 		} ),
 	},
+	/* START: WooExpress Feature Groups */
 };
