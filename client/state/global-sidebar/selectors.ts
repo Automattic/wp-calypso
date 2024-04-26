@@ -48,6 +48,18 @@ export const getShouldShowGlobalSidebar = (
 	);
 };
 
+export const getShouldShowCollapsedGlobalSidebar = (
+	state: AppState,
+	siteId: number,
+	sectionGroup: string,
+	sectionName: string
+) => {
+	const siteSelected = sectionGroup === 'sites-dashboard' && !! siteId;
+	const siteLoaded = getShouldShowGlobalSiteSidebar( state, siteId, sectionGroup, sectionName );
+
+	return isEnabled( 'layout/dotcom-nav-redesign-v2' ) && ( siteSelected || siteLoaded );
+};
+
 export const getShouldShowUnifiedSiteSidebar = (
 	state: AppState,
 	siteId: number,

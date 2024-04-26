@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
+import SiteFavicon from 'calypso/a8c-for-agencies/components/items-dashboard/site-favicon';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SiteFavicon from '../site-favicon';
 import { Site } from '../types';
+
 interface SiteDataFieldProps {
 	isLoading: boolean;
 	site: Site;
@@ -15,7 +16,7 @@ const SiteDataField = ( { isLoading, site, onSiteTitleClick }: SiteDataFieldProp
 
 	return (
 		<Button className="sites-dataviews__site" onClick={ () => onSiteTitleClick( site ) } borderless>
-			<SiteFavicon site={ site } />
+			<SiteFavicon blogId={ site.blog_id } isDotcomSite={ site.is_atomic } />
 			<div className="sites-dataviews__site-name">
 				{ site.blogname }
 				<div className="sites-dataviews__site-url">{ site.url }</div>

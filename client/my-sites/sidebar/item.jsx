@@ -66,7 +66,7 @@ export const MySitesSidebarUnifiedItem = ( {
 MySitesSidebarUnifiedItem.propTypes = {
 	badge: PropTypes.string,
 	count: PropTypes.number,
-	icon: PropTypes.string,
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,

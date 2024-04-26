@@ -1,4 +1,4 @@
-import { pages, plugins, payment, percent } from '@wordpress/icons';
+import { plugins, payment, percent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
@@ -14,6 +14,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../common/step-section';
 import StepSectionItem from '../../common/step-section-item';
+import tipaltiLogo from '../../lib/tipalti-logo';
 
 import './style.scss';
 
@@ -33,7 +34,12 @@ export default function ReferralsOverview() {
 	const status = 'Pending'; // FIXME: Replace with actual check
 
 	return (
-		<Layout title={ title } wide sidebarNavigation={ <MobileSidebarNavigation /> }>
+		<Layout
+			className="referrals-layout"
+			title={ title }
+			wide
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
 			<PageViewTracker title="Referrals" path="/referrals" />
 
 			<LayoutTop>
@@ -44,23 +50,24 @@ export default function ReferralsOverview() {
 
 			<LayoutBody>
 				<div className="referrals-overview__section-heading">
-					{ translate( 'Earn a 30% commission for every purchase made by a client' ) }
+					{ translate( 'Receive up to 30% revenue share on Automattic product referrals.' ) }
 				</div>
 				<div className="referrals-overview__section-container">
-					<StepSection heading={ translate( 'Get set up' ) } stepCount={ 1 }>
+					<StepSection heading={ translate( 'Set up your commission payments' ) } stepCount={ 1 }>
 						<StepSectionItem
-							icon={ pages }
-							heading={ translate( 'Add your bank details and upload tax forms' ) }
+							icon={ tipaltiLogo }
+							heading={ translate( 'Set up payment details in Tipalti' ) }
 							description={ translate(
-								'Once confirmed, we’ll be able to send you a commission payment at the end of each month.'
+								'Get paid seamlessly by adding your bank details and tax forms to Tipalti, our trusted and secure platform for commission payments.'
 							) }
 							buttonProps={ {
 								children: hasPayeeAccount
-									? translate( 'Edit bank details' )
-									: translate( 'Add bank details' ),
+									? translate( 'Edit my bank details' )
+									: translate( 'Get started with secure payments' ),
 								href: A4A_REFERRALS_BANK_DETAILS_LINK,
 								onClick: onAddBankDetailsClick,
-								primary: true,
+								primary: ! hasPayeeAccount,
+								compact: true,
 							} }
 							statusProps={
 								showStatus
@@ -73,26 +80,32 @@ export default function ReferralsOverview() {
 						/>
 						<StepSectionItem
 							icon={ plugins }
-							heading={ translate( 'Install the A4A plugin on your clients’ sites' ) }
+							heading={ translate( 'Install the A4A plugin to verify your referrals' ) }
 							description={ translate(
-								'Our plugin can confirm that your agency is connected to the Automattic products your clients buy.'
+								'Install the A4A plugin on your clients’ sites to verify your referrals accurately and ensure easy tracking of Automattic product purchases.'
 							) }
-							buttonProps={ { children: translate( 'Download plugin' ) } }
+							buttonProps={ {
+								children: translate( 'Download plugin to verify my referrals' ),
+								compact: true,
+							} }
 						/>
 					</StepSection>
-					<StepSection heading={ translate( 'Get paid' ) } stepCount={ 2 }>
+					<StepSection
+						heading={ translate( 'Earn commissions from your referrals' ) }
+						stepCount={ 2 }
+					>
 						<StepSectionItem
 							icon={ payment }
-							heading={ translate( 'Have your client purchase Automattic Products' ) }
+							heading={ translate( 'Encourage your clients to purchase Automattic products' ) }
 							description={ translate(
 								'We offer commissions for each purchase of Automattic products by your clients, including Woo, Jetpack, and hosting from either Pressable or WordPress.com.'
 							) }
 						/>
 						<StepSectionItem
 							icon={ percent }
-							heading={ translate( 'Get paid a commission on your referrals' ) }
+							heading={ translate( 'Receive commissions on client purchases' ) }
 							description={ translate(
-								'At the end of each month, we will review your clients’ purchases and pay you a commission based on them.'
+								'Every 60 days, we will review your clients’ purchases and pay you a commission based on them.'
 							) }
 						/>
 					</StepSection>

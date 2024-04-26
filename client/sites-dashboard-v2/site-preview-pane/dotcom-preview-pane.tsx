@@ -6,13 +6,19 @@ import ItemPreviewPane, {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
 import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
+import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
+import Hosting from 'calypso/my-sites/hosting/main';
+import SiteMonitoringPhpLogs from 'calypso/site-monitoring/components/php-logs';
+import SiteMonitoringServerLogs from 'calypso/site-monitoring/components/server-logs';
+import SiteMonitoringOverview from 'calypso/site-monitoring/components/site-monitoring-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_PHP_LOGS,
+	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
-import PreviewPaneSample from './preview-pane-sample';
 
 import './style.scss';
 
@@ -49,12 +55,36 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				<HostingOverview />
 			),
 			createFeaturePreview(
+				DOTCOM_HOSTING_CONFIG,
+				__( 'Hosting Config' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<Hosting />
+			),
+			createFeaturePreview(
 				DOTCOM_MONITORING,
 				__( 'Monitoring' ),
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Monitoring" />
+				<SiteMonitoringOverview />
+			),
+			createFeaturePreview(
+				DOTCOM_PHP_LOGS,
+				__( 'PHP Logs' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteMonitoringPhpLogs />
+			),
+			createFeaturePreview(
+				DOTCOM_SERVER_LOGS,
+				__( 'Server Logs' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				<SiteMonitoringServerLogs />
 			),
 			createFeaturePreview(
 				DOTCOM_GITHUB_DEPLOYMENTS,
@@ -62,15 +92,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="GitHub Deployments" />
-			),
-			createFeaturePreview(
-				DOTCOM_HOSTING_CONFIG,
-				__( 'Hosting Config' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Hosting Config" />
+				<GitHubDeployments />
 			),
 		],
 		[ selectedSiteFeature, setSelectedSiteFeature, site ]
@@ -79,7 +101,9 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 	const itemData: ItemData = {
 		title: site.title,
 		subtitle: site.slug,
-		icon: site.icon?.img,
+		url: site.URL,
+		blogId: site.ID,
+		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
 	};
 
 	return (

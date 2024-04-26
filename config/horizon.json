@@ -86,6 +86,7 @@
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
+		"migration_assistance_modal": false,
 		"migration-flow/remove-processing-step": false,
 		"my-sites/add-ons": true,
 		"network-connection": true,

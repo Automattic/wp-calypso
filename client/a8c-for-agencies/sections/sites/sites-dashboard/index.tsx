@@ -44,6 +44,7 @@ import { getSelectedFilters } from './get-selected-filters';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
+import './sites-dataviews-style.scss';
 
 export default function SitesDashboard() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );

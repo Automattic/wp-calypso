@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { MAX_SELECTABLE_PATHS } from './config';
 import { useSiteSlug } from './hooks/use-site-slug';
-import { validatePath } from './schedule-form.helper';
+import { prepareRelativePath, validatePath } from './schedule-form.helper';
 
 interface Props {
 	paths?: string[];
@@ -34,7 +34,7 @@ export function ScheduleFormPaths( props: Props ) {
 	);
 
 	const onNewPathSubmit = useCallback( () => {
-		const pathError = validatePath( newPath );
+		const pathError = validatePath( newPath, paths );
 		setNewPathError( pathError );
 
 		if ( pathError ) {
@@ -50,9 +50,15 @@ export function ScheduleFormPaths( props: Props ) {
 			<label htmlFor="paths">{ translate( 'Test URL paths' ) }</label>
 
 			<Text className="info-msg">
-				{ translate(
-					'Your schedule will test your front page for errors. Do you want to add additional paths?'
-				) }
+				{
+					/* translators: maxPaths is a number, e.g. 5  */
+					translate(
+						'Your schedule will test your front page for errors. Add up to %(maxPaths)s additional paths to test:',
+						{
+							args: { maxPaths: MAX_SELECTABLE_PATHS },
+						}
+					)
+				}
 			</Text>
 			<div className={ classnames( { 'form-control-container': borderWrapper } ) }>
 				<Text className="info-msg">Website URL paths</Text>
@@ -98,6 +104,14 @@ export function ScheduleFormPaths( props: Props ) {
 											onNewPathSubmit();
 										}
 									} }
+									onPaste={ ( e ) => {
+										if ( ! newPath ) {
+											e.preventDefault();
+
+											const value = e.clipboardData.getData( 'text' );
+											setNewPath( prepareRelativePath( value ) );
+										}
+									} }
 								/>
 							</FlexItem>
 							<FlexItem>
@@ -113,6 +127,11 @@ export function ScheduleFormPaths( props: Props ) {
 				) }
 			</div>
 			{ newPathError && <Text className="validation-msg">{ newPathError }</Text> }
+			{ MAX_SELECTABLE_PATHS === paths.length && (
+				<Text className="info-msg">
+					{ translate( 'You reached the maximum number of paths.' ) }
+				</Text>
+			) }
 		</div>
 	);
 }
