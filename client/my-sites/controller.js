@@ -948,7 +948,7 @@ export function globalSiteLayout( feature ) {
 				/>
 			);
 			context.secondary = <NavigationComponent path={ context.path } />;
-			next();
 		}
+		next();
 	};
 }
