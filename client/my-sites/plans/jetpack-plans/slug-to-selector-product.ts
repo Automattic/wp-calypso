@@ -33,6 +33,7 @@ import {
 	getJetpackPlanAlsoIncludedFeatures,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
+import { getProductPartsFromAlias } from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import {
 	getHelpLink,
 	getSupportLink,
@@ -128,7 +129,8 @@ function getLightboxPlanDescription( item: Plan ) {
  * @returns SelectorProduct
  */
 function itemToSelectorProduct(
-	item: Plan | Product | SelectorProduct | Record< string, unknown >
+	item: Plan | Product | SelectorProduct | Record< string, unknown >,
+	quantity?: number | null
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
@@ -169,7 +171,7 @@ function itemToSelectorProduct(
 			shortDescription: getJetpackProductShortDescription( item ),
 			featuredDescription: getFeaturedProductDescription( item ),
 			lightboxDescription: getLightboxProductDescription( item ),
-			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			whatIsIncluded: getJetpackProductWhatIsIncluded( item, quantity ),
 			whatIsIncludedComingSoon: getJetpackProductWhatIsIncludedComingSoon( item ),
 			benefits: getJetpackProductBenefits( item ),
 			benefitsComingSoon: getJetpackProductBenefitsComingSoon( item ),
@@ -185,6 +187,7 @@ function itemToSelectorProduct(
 				items: features,
 			},
 			disclaimer: getJetpackProductDisclaimer( item.product_slug, features, getDisclaimerLink() ),
+			quantity,
 		};
 	}
 
@@ -240,10 +243,12 @@ function itemToSelectorProduct(
  * @returns SelectorProduct | null
  */
 export default function slugToSelectorProduct( slug: string ): SelectorProduct | null {
-	const item = slugToItem( slug );
+	const { slug: productSlug, quantity } = getProductPartsFromAlias( slug );
+
+	const item = slugToItem( productSlug );
 	if ( ! item ) {
 		return null;
 	}
 
-	return itemToSelectorProduct( item );
+	return itemToSelectorProduct( item, quantity );
 }

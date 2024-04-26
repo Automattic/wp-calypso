@@ -1,7 +1,13 @@
-import { isJetpackPlanSlug, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import {
+	isJetpackPlanSlug,
+	JETPACK_RELATED_PRODUCTS_MAP,
+	isJetpackAISlug,
+} from '@automattic/calypso-products';
+import { Button, SelectDropdown } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useCallback, useEffect, useMemo } from 'react';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 import JetpackLightbox, {
 	JetpackLightboxAside,
 	JetpackLightboxMain,
@@ -9,6 +15,7 @@ import JetpackLightbox, {
 import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/use-mobile-sidebar';
 import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
+import { getProductPartsFromAlias } from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
@@ -16,9 +23,9 @@ import { PricingBreakdown } from '../product-store/pricing-breakdown';
 import { ProductStoreBaseProps } from '../product-store/types';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { Duration, SelectorProduct } from '../types';
-import { PRODUCT_OPTIONS, PRODUCT_OPTIONS_HEADER } from './constants';
+import useItemPrice from '../use-item-price';
+import { PRODUCT_OPTIONS, PRODUCT_OPTIONS_HEADER, PRODUCT_TIER_OPTIONS } from './constants';
 import PaymentPlan from './payment-plan';
-
 import './style.scss';
 
 type Props = ProductStoreBaseProps & {
@@ -37,6 +44,7 @@ const ProductLightbox: React.FC< Props > = ( {
 	onChangeProduct,
 	siteId,
 } ) => {
+	const listPrices = useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const dispatch = useDispatch();
 
@@ -49,6 +57,22 @@ const ProductLightbox: React.FC< Props > = ( {
 				recordTracksEvent( 'calypso_product_lightbox_variant_select', {
 					site_id: siteId,
 					product_slug: productSlug,
+				} )
+			);
+		},
+		[ onChangeProduct, dispatch, siteId ]
+	);
+
+	const onDropdownTierSelect = useCallback(
+		( { value: slug }: { value: string } ) => {
+			onChangeProduct( slugToSelectorProduct( slug ) );
+			const { slug: productSlug, quantity } = getProductPartsFromAlias( slug );
+
+			dispatch(
+				recordTracksEvent( 'calypso_product_lightbox_dropdown_tier_select', {
+					site_id: siteId,
+					product_slug: productSlug,
+					quantity,
 				} )
 			);
 		},
@@ -85,6 +109,22 @@ const ProductLightbox: React.FC< Props > = ( {
 		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
+	const tierOptions = useMemo( () => {
+		if ( ! isJetpackAISlug( product.productSlug ) ) {
+			return [];
+		}
+
+		const tiers = listPrices.priceTierList || [];
+		return tiers.map( ( tier ) => {
+			const id = `${ product.productSlug }:-q-${ tier.maximum_units }`;
+
+			return {
+				value: id,
+				label: PRODUCT_TIER_OPTIONS[ id ].toString(),
+			};
+		} );
+	}, [ listPrices.priceTierList ] );
+
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
 		return variants.map( ( itemSlug ) => ( {
@@ -96,6 +136,9 @@ const ProductLightbox: React.FC< Props > = ( {
 	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
 
 	const shouldShowOptions = variantOptions.length > 1;
+
+	const shouldShowDropdown =
+		isJetpackAISlug( product.productSlug ) && tierOptions.length > 1 && ! shouldShowOptions;
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
@@ -143,11 +186,25 @@ const ProductLightbox: React.FC< Props > = ( {
 								</div>
 							</div>
 						) }
+						{ shouldShowDropdown && (
+							<div className="product-lightbox__variants-dropdown">
+								<FormFieldset>
+									<FormLegend>{ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }</FormLegend>
+									<SelectDropdown
+										className="product-lightbox__tiers-dropdown"
+										options={ tierOptions }
+										onSelect={ onDropdownTierSelect }
+										initialSelected={ tierOptions[ 0 ].value }
+									/>
+								</FormFieldset>
+							</div>
+						) }
 						{ ! isOwned && (
 							<PaymentPlan
 								isMultiSiteIncompatible={ isMultiSiteIncompatible }
 								siteId={ siteId }
 								product={ product }
+								quantity={ product.quantity }
 							/>
 						) }
 						<Button

@@ -159,6 +159,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	forceNoYearlyUpgrade?: boolean;
 	moreAboutUrl?: string;
 	indirectCheckoutUrl?: string;
+	quantity?: number | null;
 }
 
 export interface PartnerSelectorProduct {

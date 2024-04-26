@@ -1,7 +1,8 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.product-lightbox__variants-options {
+.product-lightbox__variants-options,
+.product-lightbox__variants-dropdown {
 	.form-legend {
 		font-weight: 600;
 		font-size: $font-body;
@@ -68,6 +69,24 @@
 	p {
 		font-weight: 600;
 		font-size: $font-body;
+	}
+}
+
+.product-lightbox__tiers-dropdown {
+	margin-bottom: 1rem;
+
+	.select-dropdown__container {
+		width: 100%;
+	}
+	.select-dropdown__header {
+		border: 1px solid var(--studio-gray-10);
+		border-radius: 4px;
+	}
+
+	.select-dropdown__header-text,
+	.select-dropdown__item {
+		font-size: 1rem;
+		font-weight: normal;
 	}
 }
 

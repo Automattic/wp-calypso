@@ -1114,7 +1114,6 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'UTM tracking' ),
 	];
 	const aiAssistantIncludesInfo = [
-		translate( '100 monthly requests (upgradeable)' ),
 		translate( 'Prompt-based content generation' ),
 		translate( 'Text, table, and list generation' ),
 		translate( 'Adaptive tone adjustment' ),
@@ -1218,9 +1217,78 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 
 	return {
-		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantIncludesInfo,
-		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantIncludesInfo,
-		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: aiAssistantIncludesInfo,
+		[ PRODUCT_JETPACK_AI_MONTHLY ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_MONTHLY }:-q-100` ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_MONTHLY }:-q-200` ]: [
+			translate( '200 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_MONTHLY }:-q-500` ]: [
+			translate( '500 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_MONTHLY }:-q-750` ]: [
+			translate( '750 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_MONTHLY }:-q-1000` ]: [
+			translate( '1000 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_YEARLY ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_YEARLY }:-q-100` ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_YEARLY }:-q-200` ]: [
+			translate( '200 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_YEARLY }:-q-500` ]: [
+			translate( '500 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_YEARLY }:-q-750` ]: [
+			translate( '750 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_YEARLY }:-q-1000` ]: [
+			translate( '1000 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ PRODUCT_JETPACK_AI_BI_YEARLY ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_BI_YEARLY }:-q-100` ]: [
+			translate( '100 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_BI_YEARLY }:-q-200` ]: [
+			translate( '200 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_BI_YEARLY }:-q-500` ]: [
+			translate( '500 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_BI_YEARLY }:-q-750` ]: [
+			translate( '750 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
+		[ `${ PRODUCT_JETPACK_AI_BI_YEARLY }:-q-1000` ]: [
+			translate( '1000 monthly requests (upgradeable)' ),
+			...aiAssistantIncludesInfo,
+		],
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backupIncludesInfoT0,
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
