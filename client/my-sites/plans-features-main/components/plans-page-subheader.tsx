@@ -40,31 +40,49 @@ const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) 
 };
 
 const PlanBenefitHeader = () => {
-	const Container = styled.div`
+	const HeaderContainer = styled.div`
+		display: flex;
+		justify-content: center;
 		margin: -32px 0 40px 0;
 		text-align: center;
+		color: var( --studio-gray-60 );
+		font-size: 16px;
+		line-height: 20px;
+		font-weight: 500;
 
 		@media ( max-width: 960px ) {
 			margin-top: -16px;
 		}
 	`;
 
+	const PrefixSection = styled.p``;
+
+	const FeatureSection = styled.p`
+		.gridicons-checkmark {
+			color: var( --studio-green-50 );
+			vertical-align: middle;
+			margin-left: 12px;
+			margin-right: 4px;
+			padding-bottom: 4px;
+		}
+	`;
+
 	const translate = useTranslate();
 
 	return (
-		<Container>
-			<p>{ translate( 'All plans includes:' ) }</p>
-			<p>
+		<HeaderContainer>
+			<PrefixSection>{ translate( 'All plans includes:' ) }</PrefixSection>
+			<FeatureSection>
 				{ translate(
-					'{{Checkmark}}{{/Checkmark}}Website Building {{Checkmark}}{{/Checkmark}}Hosting {{Checkmark}}{{/Checkmark}}eCommerce',
+					'{{Checkmark}}{{/Checkmark}}Website Building{{Checkmark}}{{/Checkmark}}Hosting{{Checkmark}}{{/Checkmark}}eCommerce',
 					{
 						components: {
-							Checkmark: <Gridicon icon="checkmark" size={ 24 } />,
+							Checkmark: <Gridicon icon="checkmark" size={ 18 } />,
 						},
 					}
 				) }
-			</p>
-		</Container>
+			</FeatureSection>
+		</HeaderContainer>
 	);
 };
 
