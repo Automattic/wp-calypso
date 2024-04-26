@@ -2,7 +2,7 @@ type CalypsoifyGutenberg = {
 	closeUrl: string;
 	manageReusableBlocksUrl: string;
 	createNewPostUrl: string;
-	isGutenboarding: boolean;
+	isGutenboarding?: boolean;
 };
 
 declare global {
