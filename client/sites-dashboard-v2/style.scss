@@ -92,6 +92,10 @@
 			.sites-overview {
 				overflow: hidden;
 
+				.a4a-layout__viewport {
+					padding-inline: 16px;
+				}
+
 				.sites-overview__page-title-container {
 					display: flex;
 				}
@@ -204,7 +208,13 @@
 
 		.dataviews-view-table-wrapper {
 			overflow-y: auto;
-			max-height: calc(100vh - 326px); /* 326px is the size of all the height above and below the dataview, from the edges of the screen, plus 10px offset from the padding. Currently below 9px + 309 above */
+			// Without masterbar
+			max-height: calc(100vh - 261px); /* 261px is the size of all the height above and below the dataviews-view-table-wrapper */
+
+			div.is-group-sites-dashboard:not(.has-no-masterbar) & {
+				// With masterbar
+				max-height: calc(100vh - 321px); /* 321px is the size of all the height above and below the dataviews-view-table-wrapper */
+			}
 
 			table {
 				width: 100%;
@@ -255,7 +265,7 @@
 
 			.is-hiding-navigation .dataviews-view-table-wrapper {
 				overflow-y: auto;
-				max-height: calc(100vh - 260px); /* 260px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
+				max-height: calc(100vh - 253px); /* 253px is the size of all content above the dataview in table style, which includes our CTA elements, the pagination bottom bar, and an additional 10px margin. */
 			}
 		}
 
