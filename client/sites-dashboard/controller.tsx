@@ -55,7 +55,6 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 				// Add border around everything
 				overflow: hidden;
 				min-height: 100vh;
-				height: 100vh;
 				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
 			}
 
