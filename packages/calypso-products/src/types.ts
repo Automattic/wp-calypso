@@ -54,7 +54,7 @@ export type FeatureObject = {
 	getFeatureGroup?: () => string;
 	getQuantity?: () => number; // storage add-ons are a quantity based product. this determines checkout price
 	getUnitProductSlug?: () => string; // used for storage add-ons to determine the checkout item
-	getSubFeatures?: () => Record< string, FeatureObject >;
+	getSubFeatureSlugs?: () => Array< string >;
 };
 
 export type FeatureList = {
