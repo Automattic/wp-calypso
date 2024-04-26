@@ -58,7 +58,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 		if ( migrationTrialEligibility?.error_code === 'email-unverified' ) {
 			navigateToVerifyEmailStep();
 		} else {
-			handleFreeTrialClick();
+			handleFreeTrialClick?.();
 		}
 	};
 
