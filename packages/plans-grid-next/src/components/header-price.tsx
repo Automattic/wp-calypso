@@ -47,7 +47,7 @@ const HeaderPriceContainer = styled.div`
 	padding: 0 20px;
 	margin: 0 0 4px 0;
 
-	.plan-comparison-grid & {
+	.plans-grid-next-comparison-grid & {
 		padding: 0;
 		display: flex;
 		flex-direction: column;

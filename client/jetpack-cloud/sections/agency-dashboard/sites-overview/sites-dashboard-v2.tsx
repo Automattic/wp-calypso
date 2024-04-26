@@ -9,7 +9,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Notice from 'calypso/components/notice';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
+import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import { AgencyDashboardFilterMap } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { sitesPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -99,14 +99,14 @@ export default function SitesDashboardV2() {
 		selectedSite: undefined,
 	} );
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded,
-		search,
-		sitesViewState.page,
+		searchQuery: search,
+		currentPage: sitesViewState.page,
 		filter,
 		sort,
-		sitesViewState.perPage
-	);
+		perPage: sitesViewState.perPage,
+	} );
 
 	const onSitesViewChange = useCallback(
 		( sitesViewData: SitesViewState ) => {
@@ -269,7 +269,7 @@ export default function SitesDashboardV2() {
 		data: verifiedContacts,
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
-	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+	} = useFetchMonitorVerifiedContacts( isPartnerOAuthTokenLoaded );
 
 	const { data: provisioningBlogIds, isLoading: isLoadingProvisioningBlogIds } =
 		useQueryProvisioningBlogIds();

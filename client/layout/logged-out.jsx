@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
@@ -30,7 +29,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import { addQueryArgs } from 'calypso/lib/route';
+import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -47,6 +46,7 @@ import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -200,6 +200,9 @@ const LayoutLoggedOut = ( {
 				isLoggedIn={ isLoggedIn }
 				sectionName={ sectionName }
 				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
+				{ ...( sectionName === 'patterns' && {
+					startUrl: getPatternLibraryOnboardingUrl( locale, isLoggedIn ),
+				} ) }
 			/>
 		);
 	} else if ( isWooCoreProfilerFlow ) {
@@ -350,22 +353,9 @@ export default withCurrentRoute(
 			const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
 			const wooPasswordless = getWooPasswordless( state );
 			const isWooPasswordless =
-				( config.isEnabled( 'woo/passwordless' ) || !! wooPasswordless ) &&
+				!! wooPasswordless &&
 				// Enable woo-passwordless feature for WCCOM only.
 				isWCCOM;
-
-			if (
-				// Wait until the currentRoute is not changed.
-				getCurrentRoute( state ) === currentRoute &&
-				// window.location.pathname === currentRoute &&
-				isWCCOM &&
-				! wooPasswordless &&
-				config.isEnabled( 'woo/passwordless' )
-			) {
-				// Update the URL to include the woo-passwordless query parameter when woo passwordless feature flag is enabled for Woo.
-				const queryParams = { ...currentQuery, 'woo-passwordless': 'yes' };
-				page.replace( addQueryArgs( queryParams, currentRoute ) );
-			}
 
 			return {
 				isJetpackLogin,

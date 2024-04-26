@@ -76,9 +76,12 @@ const wooexpress: Flow = {
 		}
 
 		const getLoginUrl = () => {
-			const redirectTo = addQueryArgs( '/setup/wooexpress', {
-				...Object.fromEntries( queryParams ),
-			} );
+			const redirectTo = addQueryArgs(
+				`${ window.location.protocol }//${ window.location.host }/setup/wooexpress`,
+				{
+					...Object.fromEntries( queryParams ),
+				}
+			);
 
 			let logInUrl = login( {
 				locale,

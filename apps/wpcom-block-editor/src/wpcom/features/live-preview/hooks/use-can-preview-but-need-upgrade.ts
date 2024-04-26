@@ -136,13 +136,28 @@ export const useCanPreviewButNeedUpgrade = (
 	const [ checkoutTab, setCheckoutTab ] = useState< Window | null >();
 	const [ checkoutStatus, setCheckoutStatus ] = useState< CheckoutStatus >( '' );
 
+	const getRequiredPlanSlug = (): string => {
+		// TODO: This doesn't work on sites with longer length plans, the plan should be the
+		// biannual plan if the site is on a biannual plan.
+		switch ( previewingTheme.type ) {
+			case WOOCOMMERCE_THEME:
+				return PLAN_BUSINESS;
+			case PREMIUM_THEME:
+				return PLAN_PREMIUM;
+			case PERSONAL_THEME:
+				return PLAN_PERSONAL;
+			default:
+				return '';
+		}
+	};
+
+	const requiredPlanSlug = getRequiredPlanSlug();
+
 	const handleCanPreviewButNeedUpgrade = useCallback(
 		( previewingTheme: ReturnType< typeof usePreviewingTheme > ) => {
+			// Currently, Live Preview only supports upgrades for these themes
 			const livePreviewUpgradeTypes = [ WOOCOMMERCE_THEME, PREMIUM_THEME, PERSONAL_THEME ];
 
-			/**
-			 * Currently, Live Preview only supports upgrades for WooCommerce and Premium themes.
-			 */
 			if ( ! previewingTheme?.type || ! livePreviewUpgradeTypes.includes( previewingTheme.type ) ) {
 				setCanPreviewButNeedUpgrade( false );
 				return;
@@ -188,51 +203,19 @@ export const useCanPreviewButNeedUpgrade = (
 		} );
 
 		const generateCheckoutUrl = ( plan: string ) => {
-			const locationHref = window.location.href;
-			let url = locationHref;
-			try {
-				/**
-				 * If the site has a custom domain, change the hostname to a custom domain.
-				 * This allows the checkout to redirect back to the custom domain.
-				 * @see `client/my-sites/checkout/src/hooks/use-valid-checkout-back-url.ts`
-				 */
-				if ( siteSlug ) {
-					const parsedUrl = new URL( locationHref );
-					parsedUrl.hostname = siteSlug;
-					url = parsedUrl.toString();
-				}
-			} catch ( error ) {
-				// Do nothing.
-			}
-			return `${ getCalypsoUrl() }/checkout/${
-				window._currentSiteId
-			}/${ plan }?checkoutBackUrl=${ encodeURIComponent( url ) }`;
+			return `${ getCalypsoUrl() }/plans/${
+				siteSlug ?? window._currentSiteId
+			}?plan=${ plan }&feature=style-customization`;
 		};
 
-		let link = '';
-		switch ( previewingTheme.type ) {
-			/**
-			 * For a WooCommerce theme, the users should have the Business plan or higher,
-			 * AND the WooCommerce plugin has to be installed.
-			 */
-			case WOOCOMMERCE_THEME:
-				link = generateCheckoutUrl( PLAN_BUSINESS );
-				break;
-			// For a Premium theme, the users should have the Premium plan or higher.
-			case PREMIUM_THEME:
-				link = generateCheckoutUrl( PLAN_PREMIUM );
-				break;
-			case PERSONAL_THEME:
-				link = generateCheckoutUrl( PLAN_PERSONAL );
-				break;
-		}
+		const link = generateCheckoutUrl( requiredPlanSlug );
 		// Open the checkout in a new tab.
 		if ( checkoutTab && ! checkoutTab.closed ) {
 			checkoutTab.focus();
 		} else {
 			setCheckoutTab( window.open( link, 'wpcom-live-preview-upgrade-plan-window' ) );
 		}
-	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug ] );
+	}, [ checkoutTab, previewingTheme.id, previewingTheme.type, siteSlug, requiredPlanSlug ] );
 
 	useDisplayCheckoutNotice( checkoutStatus );
 

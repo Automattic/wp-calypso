@@ -14,6 +14,14 @@ html.has-blank-canvas {
 		overflow: hidden;
 	}
 }
+
+// Lower the z-index to match WordPress core.
+// This is a fix for simple sites due to #wpadminbar being modified to have a really higher z-index.
+// We only want to override the CSS for the promote post widget to not break anything else.
+.is-section-promote-post-i2 #wpadminbar {
+	z-index: 99999 !important;
+}
+
 .blazepress-widget {
 	z-index: 99999;
 

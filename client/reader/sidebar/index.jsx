@@ -296,6 +296,7 @@ export class ReaderSidebar extends Component {
 			onClick: this.handleClick,
 			requireBackLink: true,
 			backLinkText: i18n.translate( 'All sites' ),
+			backLinkHref: '/sites',
 		};
 		return (
 			<GlobalSidebar { ...props }>
@@ -333,8 +334,14 @@ export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
 			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
 			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar(
+				state,
+				siteId,
+				sectionGroup,
+				sectionName
+			);
 			return {
 				isListsOpen: isListsOpen( state ),
 				isTagsOpen: isTagsOpen( state ),

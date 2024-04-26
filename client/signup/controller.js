@@ -6,10 +6,17 @@ import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients.js';
 import { login } from 'calypso/lib/paths';
-import { sectionify } from 'calypso/lib/route';
+import { sectionify, addQueryArgs } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors.js';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route.js';
+import getPreviousQuery from 'calypso/state/selectors/get-previous-query';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
+import getWooPasswordless from 'calypso/state/selectors/get-woo-passwordless';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -422,5 +429,50 @@ export default {
 					next();
 				} );
 		}
+	},
+
+	async redirectWooPasswordless( context, next ) {
+		if ( ! config.isEnabled( 'woo/passwordless' ) ) {
+			next();
+			return;
+		}
+
+		const state = context.store.getState();
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const wccomFrom = getWccomFrom( state );
+		const isWCCOM = isWooOAuth2Client( oauth2Client ) && wccomFrom !== null;
+		const wooPasswordless = getWooPasswordless( state );
+
+		if ( ! isWCCOM ) {
+			// Only enable Woo passwordless for WooCommerce.com users
+			next();
+			return;
+		}
+
+		if ( wooPasswordless ) {
+			// Woo passwordless is already enabled via query parameter
+			next();
+			return;
+		}
+
+		const previousQuery = getPreviousQuery( state );
+
+		if ( ! previousQuery || ! previousQuery[ 'woo-passwordless' ] ) {
+			// If the previous page did not have the woo-passwordless query parameter, fetch the experiment assignment. Otherwise, skip the experiment assignment.
+
+			const experimentAssignment = await loadExperimentAssignment(
+				'calypso_wooexpress_signup_passwordless_registration_202404_v1'
+			);
+			if ( experimentAssignment.variationName !== 'treatment' ) {
+				next();
+				return;
+			}
+		}
+
+		// Add the woo-passwordless query parameter to the URL.
+		const currentRoute = getCurrentRoute( state );
+		const currentQuery = getCurrentQueryArguments( state );
+		const queryParams = { ...currentQuery, 'woo-passwordless': 'yes' };
+		return page.replace( addQueryArgs( queryParams, currentRoute ) );
 	},
 };

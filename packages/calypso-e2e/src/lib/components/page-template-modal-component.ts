@@ -49,7 +49,9 @@ export class EditorTemplateModalComponent {
 	async selectTemplate( label: string, timeout: number ): Promise< void > {
 		const editorParent = await this.editor.parent();
 		await editorParent
+			.getByRole( 'listbox', { name: 'Block patterns' } )
 			.getByRole( 'option', { name: label, exact: true } )
+			.first()
 			.click( { timeout: timeout } );
 	}
 

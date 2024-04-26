@@ -13,9 +13,10 @@ import FeatureIncludedCard from '../feature-included-card';
 interface Props {
 	translate: typeof translate;
 	displayAll: boolean;
+	isWooExpressTrial?: boolean;
 }
 const ECommerceTrialIncluded: FunctionComponent< Props > = ( props ) => {
-	const { translate, displayAll = true } = props;
+	const { translate, displayAll = true, isWooExpressTrial } = props;
 
 	// TODO: translate when final copy is available
 	const allIncludedFeatures = [
@@ -92,11 +93,12 @@ const ECommerceTrialIncluded: FunctionComponent< Props > = ( props ) => {
 			{ whatsIncluded.map( ( feature ) => (
 				<FeatureIncludedCard
 					key={ feature.title }
-					illustration={ feature.illustration }
+					illustration={ isWooExpressTrial ? feature.illustration : undefined }
 					title={ feature.title }
 					text={ feature.text }
 					showButton={ false }
 					buttonText={ feature.buttonText }
+					reducedPadding={ ! isWooExpressTrial }
 				></FeatureIncludedCard>
 			) ) }
 		</>

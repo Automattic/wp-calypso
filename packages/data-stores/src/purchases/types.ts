@@ -35,11 +35,13 @@ export interface Purchase {
 	isRefundable: boolean;
 	isRenewable: boolean;
 	isRenewal: boolean;
+	isWooExpressTrial: boolean;
 	meta?: string;
 	mostRecentRenewDate?: string;
 	ownershipId?: number;
 	partnerName: string | undefined;
 	partnerSlug: string | undefined;
+	partnerType: string | undefined;
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
 	pendingTransfer: boolean;
 	priceText: string;
@@ -207,10 +209,12 @@ export interface RawPurchase {
 	is_refundable: boolean;
 	is_renewable: boolean;
 	is_renewal: boolean;
+	is_woo_express_trial: boolean;
 	meta: string | undefined;
 	ownership_id: number | undefined;
 	partner_name: string | undefined;
 	partner_slug: string | undefined;
+	partner_type: string | undefined;
 	partner_key_id: number | undefined;
 	payment_name: string;
 	payment_type:

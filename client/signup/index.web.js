@@ -17,6 +17,7 @@ export default function () {
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
+		controller.redirectWooPasswordless,
 		controller.setSelectedSiteForSignup,
 		controller.start,
 		makeLayout,

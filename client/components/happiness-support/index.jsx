@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from '@automattic/urls';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +9,6 @@ import { connect } from 'react-redux';
 import supportImage from 'calypso/assets/images/illustrations/dotcom-support.svg';
 import SupportButton from 'calypso/components/support-button';
 import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';

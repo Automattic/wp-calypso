@@ -8,20 +8,22 @@ import creditCardPlaceholderImage from 'calypso/assets/images/upgrades/cc-placeh
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
+import razorpayImage from 'calypso/assets/images/upgrades/upi.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PARTNER_RAZORPAY = 'razorpay';
-export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
+export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS, PARTNER_RAZORPAY ];
 export const UPI_PARTNERS = [ PARTNER_RAZORPAY ];
 
 /**
- * A saved payment method (card or PayPal agreement).
+ * A saved payment method (card, PayPal agreement, or Razorpay emandate).
  *
  * Used by the `/me/payment-methods` endpoint after version 1.1.
  */
 export type StoredPaymentMethod =
 	| StoredPaymentMethodBase
 	| StoredPaymentMethodPayPal
+	| StoredPaymentMethodRazorpay
 	| StoredPaymentMethodCard
 	| StoredPaymentMethodEbanx
 	| StoredPaymentMethodStripeSource;
@@ -53,6 +55,10 @@ export interface StoredPaymentMethodPayPal extends StoredPaymentMethodBase {
 	payment_partner: 'paypal_express';
 }
 
+export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
+	payment_partner: 'razorpay';
+}
+
 export interface StoredPaymentMethodCard extends StoredPaymentMethodBase {
 	card_type: string;
 	card_iin: string;
@@ -79,6 +85,7 @@ export interface StoredPaymentMethodStripeSource extends StoredPaymentMethodBase
 
 export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
 	payment_partner: 'razorpay';
+	razorpay_vpa: string;
 }
 
 export interface StoredPaymentMethodTaxLocation {
@@ -117,6 +124,7 @@ const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	visa: creditCardVisaImage,
 	paypal_express: payPalImage,
 	paypal: payPalImage,
+	razorpay: razorpayImage,
 };
 
 const CREDIT_CARD_DEFAULT_PATH = creditCardPlaceholderImage;
@@ -139,6 +147,9 @@ export const PaymentMethodSummary = ( {
 	const translate = useTranslate();
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
 		return <>{ email || '' }</>;
+	}
+	if ( type === PARTNER_RAZORPAY ) {
+		return <>{ translate( 'Unified Payments Interface (UPI)' ) }</>;
 	}
 	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {

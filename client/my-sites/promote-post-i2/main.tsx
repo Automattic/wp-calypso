@@ -23,7 +23,6 @@ import useCreditBalanceQuery from 'calypso/data/promote-post/use-promote-post-cr
 import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
@@ -39,6 +38,7 @@ import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
 import WooBanner from './components/woo-banner';
+import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
 export const TAB_OPTIONS = [ 'posts', 'campaigns', 'credits' ] as const;
@@ -79,9 +79,9 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 };
 
 export default function PromotedPosts( { tab }: Props ) {
-	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const selectedTab = tab && TAB_OPTIONS.includes( tab ) ? tab : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
+	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const selectedSiteId = selectedSite?.ID || 0;
 	const translate = useTranslate();
 	const onClickPromote = useOpenPromoteWidget( {
@@ -202,9 +202,6 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 
-	// Add Hotjar script to the page.
-	addHotJarScript();
-
 	const headerSubtitle = ( isMobile: boolean ) => {
 		if ( ! isMobile && showBanner ) {
 			// Do not show subtitle for desktops where banner should be shown
@@ -252,7 +249,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						supportContext="advertising"
 						className="button posts-list-banner__learn-more"
 						showIcon={ false }
-						showSupportModal={ ! isRunningInJetpack }
+						showSupportModal={ ! isRunningInWpAdmin }
 					/>
 					<Button
 						variant="primary"

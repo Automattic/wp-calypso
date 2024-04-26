@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { ReactNode } from 'react';
+import { GuidedTourContextProvider } from 'calypso/a8c-for-agencies/data/guided-tours/guided-tour-context';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import LayoutColumn from './column';
@@ -33,18 +34,20 @@ export default function Layout( {
 		: 'a4a-layout__container';
 
 	return (
-		<Main
-			className={ classNames( 'a4a-layout', className, {
-				'is-with-border': withBorder,
-				'is-compact': compact,
-			} ) }
-			fullWidthLayout={ wide }
-			wideLayout={ ! wide } // When we set to full width, we want to set this to false.
-		>
-			<DocumentHead title={ title } />
-			{ sidebarNavigation }
+		<GuidedTourContextProvider>
+			<Main
+				className={ classNames( 'a4a-layout', className, {
+					'is-with-border': withBorder,
+					'is-compact': compact,
+				} ) }
+				fullWidthLayout={ wide }
+				wideLayout={ ! wide } // When we set to full width, we want to set this to false.
+			>
+				<DocumentHead title={ title } />
+				{ sidebarNavigation }
 
-			<div className={ layoutContainerClassname }>{ children }</div>
-		</Main>
+				<div className={ layoutContainerClassname }>{ children }</div>
+			</Main>
+		</GuidedTourContextProvider>
 	);
 }

@@ -59,6 +59,7 @@ const useGetLicenseIssuedMessage = () => {
 };
 
 type UseIssueAndAssignLicensesOptions = {
+	onSuccess?: () => void;
 	onIssueError?: ( ( error: APIError ) => void ) | ( () => void );
 	onAssignError?: ( ( error: Error ) => void ) | ( () => void );
 };
@@ -67,6 +68,9 @@ function useIssueAndAssignLicenses(
 	options: UseIssueAndAssignLicensesOptions = {}
 ) {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	const products = useProductsQuery();
 
 	const { isReady: isIssueReady, issueLicenses } = useIssueLicenses( {
 		onError: options.onIssueError ?? NO_OP,
@@ -103,6 +107,9 @@ function useIssueAndAssignLicenses(
 				} )
 			);
 
+			// We have issued the licenses successfully so we can now call onSuccess callback regardless if it was able to assign it.
+			options.onSuccess?.();
+
 			const issuedKeys = issuedLicenses.map( ( { license_key } ) => license_key );
 
 			// TODO: Move dispatch events and redirects outside this function
@@ -125,11 +132,29 @@ function useIssueAndAssignLicenses(
 			// TODO: Move dispatch events and redirects outside this function
 			dispatch( resetSite() );
 			dispatch( setPurchasedLicense( assignLicensesStatus ) );
-
 			// If we know this person came from the dashboard,
 			// let's politely send them back there
-			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+			const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'sitesdashboard';
 			if ( fromDashboard ) {
+				const licenseItem =
+					products?.data?.find?.( ( p ) => p.slug === issuedLicenses[ 0 ].slug )?.name ?? '';
+				const message =
+					selectedSite?.domain && licenseItem
+						? translate(
+								'{{strong}}%(licenseItem)s{{/strong}} was successfully assigned to ' +
+									'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
+									'for your features to activate.',
+								{
+									args: { selectedSite: selectedSite.domain, licenseItem },
+									components: {
+										strong: <strong />,
+										em: <em />,
+									},
+								}
+						  )
+						: translate( 'Your license has been successfully issued and assigned to your site.' );
+				dispatch( successNotice( message, { displayOnNextPage: true } ) );
+
 				page.redirect( A4A_SITES_LINK );
 				return;
 			}
@@ -146,7 +171,11 @@ function useIssueAndAssignLicenses(
 		isAssignReady,
 		isIssueReady,
 		issueLicenses,
+		options,
 		selectedSite?.ID,
+		selectedSite?.domain,
+		products?.data,
+		translate,
 	] );
 }
 

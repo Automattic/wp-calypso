@@ -64,6 +64,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
+		isWooExpressTrial: Boolean( purchase.is_woo_express_trial ),
 		meta: purchase.meta,
 		ownershipId: Number( purchase.ownership_id ),
 		priceText: purchase.price_text,
@@ -79,6 +80,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		),
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,
+		partnerType: purchase.partner_type,
 		partnerKeyId: purchase.partner_key_id,
 		payment: {
 			name: purchase.payment_name,

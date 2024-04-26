@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isAssemblerDesign, isAssemblerSupported } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -128,6 +128,8 @@ const siteSetupFlow: Flow = {
 
 		const origin = urlQueryParams.get( 'origin' );
 		const from = urlQueryParams.get( 'from' );
+		const backToStep = urlQueryParams.get( 'backToStep' );
+		const backToFlow = urlQueryParams.get( 'backToFlow' );
 
 		const adminUrl = useSelect(
 			( select ) =>
@@ -146,6 +148,14 @@ const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
+
+		const goToFlow = ( fullStepPath: string ) => {
+			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
+
+			return window.location.assign(
+				addQueryArgs( { siteSlug, from, origin: `site-setup/${ currentStep }` }, path )
+			);
+		};
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
@@ -325,7 +335,7 @@ const siteSetupFlow: Flow = {
 
 					switch ( intent ) {
 						case SiteIntent.Import:
-							if ( config.isEnabled( 'onboarding/new-migration-flow' ) ) {
+							if ( isEnabled( 'onboarding/new-migration-flow' ) ) {
 								return exitFlow(
 									`/setup/site-migration?siteSlug=${ siteSlug }&flags=onboarding/new-migration-flow`
 								);
@@ -338,7 +348,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Sell:
 							return navigate( 'options' );
 						default: {
-							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'designSetup' );
@@ -481,7 +491,7 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Write:
 							return navigate( 'bloggerStartingPoint' );
 						default: {
-							if ( config.isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
+							if ( isEnabled( 'onboarding/design-choices' ) && isAssemblerSupported() ) {
 								return navigate( 'design-choices' );
 							}
 							return navigate( 'goals' );
@@ -501,11 +511,12 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importList':
-					// eslint-disable-next-line no-case-declarations
-					const backToStep = urlQueryParams.get( 'backToStep' );
-
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
+					}
+
+					if ( backToFlow ) {
+						return goToFlow( backToFlow );
 					}
 
 					return navigate( `import?siteSlug=${ siteSlug }` );
@@ -519,7 +530,18 @@ const siteSetupFlow: Flow = {
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
-					return navigate( `import?siteSlug=${ siteSlug }` );
+
+					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
+						// remove the siteSlug in case they want to change the destination site
+						urlQueryParams.delete( 'siteSlug' );
+						urlQueryParams.delete( 'showModal' );
+						return navigate( `import?siteSlug=${ siteSlug }` );
+					}
+
+					if ( isEnabled( 'migration_assistance_modal' ) ) {
+						urlQueryParams.set( 'showModal', 'true' );
+					}
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'importerWix':
 				case 'importReady':

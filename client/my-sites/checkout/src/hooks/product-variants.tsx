@@ -15,14 +15,13 @@ import {
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
 } from '@automattic/calypso-products';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { hasCheckoutVersion, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { convertErrorToString } from '../lib/analytics';
-import { useCheckoutV2 } from './use-checkout-v2';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
@@ -44,6 +43,7 @@ export interface SitePlanData {
 	formattedPrice: string;
 	freeTrial?: boolean;
 	hasDomainCredit?: boolean;
+	hasRedeemedDomainCredit?: boolean;
 	id: number;
 	interval: number;
 	introductoryOfferFormattedPrice?: string;
@@ -90,7 +90,7 @@ export function useGetProductVariants(
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 	const variants = product?.product_variants ?? fallbackVariants;
 	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );

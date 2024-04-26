@@ -1,5 +1,5 @@
 import { Plans, AddOns } from '@automattic/data-stores';
-import { UpgradeClickHandler } from './hooks/use-upgrade-click-handler';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -8,7 +8,6 @@ import type {
 	FeatureObject,
 	StorageOption,
 } from '@automattic/calypso-products';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 /******************
@@ -76,11 +75,9 @@ export interface PlanActionOverrides {
 	loggedInFreePlan?: {
 		text?: TranslateResult;
 		status?: 'blocked' | 'enabled';
-		callback?: () => void;
 	};
 	currentPlan?: {
 		text?: TranslateResult;
-		callback?: () => void;
 	};
 	trialAlreadyUsed?: {
 		postButtonText?: TranslateResult;
@@ -99,7 +96,7 @@ export interface CommonGridProps {
 	/**
 	 * Site id may not be used in ComparisonGrid, but need to be investigated further
 	 */
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
 	isLaunchPage?: boolean | null;
@@ -117,7 +114,6 @@ export interface CommonGridProps {
 	showRefundPeriod?: boolean;
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
-	onUpgradeClick?: UpgradeClickHandler;
 	planUpgradeCreditsApplicable?: number | null;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
 	gridSize?: string;
@@ -138,35 +134,35 @@ export interface ComparisonGridProps extends CommonGridProps {
 	selectedPlan?: string;
 }
 
+export type UseActionCallbackParams = {
+	planSlug: PlanSlug;
+	cartItemForPlan?: MinimalRequestCartProduct | null;
+	selectedStorageAddOn?: AddOns.AddOnMeta | null;
+};
+
+export type UseActionCallback = ( {
+	planSlug,
+	cartItemForPlan,
+	selectedStorageAddOn,
+}: UseActionCallbackParams ) => () => void;
+
 export type GridContextProps = {
 	gridPlans: GridPlan[];
 	allFeaturesList: FeatureList;
 	intent?: PlansIntent;
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	useActionCallback: UseActionCallback;
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit< ComparisonGridProps, 'onUpgradeClick' | 'gridContainerRef' | 'gridSize' > & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	ComparisonGridProps & { className?: string };
 
 export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
-	Omit<
-		FeaturesGridProps,
-		'onUpgradeClick' | 'isLargeCurrency' | 'translate' | 'gridContainerRef' | 'gridSize'
-	> & {
-		onUpgradeClick?: (
-			cartItems?: MinimalRequestCartProduct[] | null,
-			clickedPlanSlug?: PlanSlug
-		) => void;
-	};
+	Omit< FeaturesGridProps, 'isLargeCurrency' | 'translate' > & { className?: string };
 
 /************************
  * PlanTypeSelector Types:
@@ -174,7 +170,7 @@ export type FeaturesGridExternalProps = Omit< GridContextProps, 'children' > &
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval';
-	selectedSiteId?: number | null;
+	siteId?: number | null;
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
@@ -211,7 +207,7 @@ export type PlanTypeSelectorProps = {
 export type IntervalTypeProps = Pick<
 	PlanTypeSelectorProps,
 	| 'intervalType'
-	| 'selectedSiteId'
+	| 'siteId'
 	| 'displayedIntervals'
 	| 'plans'
 	| 'isInSignup'
@@ -233,3 +229,12 @@ export type SupportedUrlFriendlyTermType = Extract<
 	UrlFriendlyTermType,
 	'yearly' | '2yearly' | '3yearly' | 'monthly'
 >;
+
+export type HiddenPlans = {
+	hideFreePlan?: boolean;
+	hidePersonalPlan?: boolean;
+	hidePremiumPlan?: boolean;
+	hideBusinessPlan?: boolean;
+	hideEcommercePlan?: boolean;
+	hideEnterprisePlan?: boolean;
+};

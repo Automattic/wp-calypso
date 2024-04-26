@@ -5,22 +5,39 @@
 	"client_slug": "browser",
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
+	"logout_url": "https://automattic.com/for/agencies",
 	"site_name": "Automattic For Agencies",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:description",
+			"content": "Welcome to a new era of partnership with Automattic"
+		},
+		{
+			"property": "og:image",
+			"content": "https://agencies.automattic.com/calypso/images/a8c-for-agencies/a8c-logo.jpeg"
+		}
+	],
 	"features": {
 		"a8c-for-agencies": true,
 		"oauth": false,
-		"a4a/mock-api-data": false
+		"a4a/site-details-pane": true
 	},
 	"enable_all_sections": false,
 	"sections": {
 		"a8c-for-agencies": true,
 		"a8c-for-agencies-auth": true,
+		"a8c-for-agencies-landing": true,
 		"a8c-for-agencies-overview": true,
 		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,
 		"a8c-for-agencies-purchases": true,
-		"a8c-for-agencies-signup": true
+		"a8c-for-agencies-signup": true,
+		"a8c-for-agencies-referrals": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

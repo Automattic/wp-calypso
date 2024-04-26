@@ -65,7 +65,7 @@ export default function CampaignsTable( props: Props ) {
 			},
 			{
 				key: 'budget',
-				title: translate( 'Budget left' ),
+				title: translate( 'Budget' ),
 			},
 			{
 				key: 'impressions',

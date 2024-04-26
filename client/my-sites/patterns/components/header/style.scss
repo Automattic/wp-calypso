@@ -31,23 +31,24 @@
 			letter-spacing: 0.4px;
 			line-height: 1.4;
 			padding-bottom: 32px;
-			text-wrap: pretty;
 			width: 450px;
 		}
 
 		.patterns-header__search-input {
-			border-radius: 4px;
-			width: 450px;
-			height: 56px;
-			overflow: hidden;
-			margin-bottom: 0;
+			.search {
+				border-radius: 4px;
+				width: 450px;
+				height: 56px;
+				overflow: hidden;
+				margin-bottom: 0;
 
-			input[type="search"] {
-				font-family: $font-sf-pro-text;
-				letter-spacing: -0.32px;
+				input[type="search"] {
+					font-family: $font-sf-pro-text;
+					letter-spacing: -0.32px;
 
-				&::placeholder {
-					color: #01283d;
+					&::placeholder {
+						color: #01283d;
+					}
 				}
 			}
 		}
@@ -55,7 +56,8 @@
 
 	@media ( max-width: $break-wide ) {
 		.patterns-header__inner {
-			padding: 90px 24px 24px;
+			padding-top: 90px;
+			padding-bottom: 24px;
 			background: none;
 
 			h1 {
@@ -70,8 +72,10 @@
 			}
 
 			.patterns-header__search-input {
-				width: auto;
-				height: 52px;
+				.search {
+					width: auto;
+					height: 52px;
+				}
 			}
 		}
 	}

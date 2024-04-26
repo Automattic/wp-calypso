@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import { useInfiniteScroll } from 'calypso/data/promote-post/use-infinite-scroll';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { DSPMessage } from 'calypso/my-sites/promote-post-i2/main';
 import './style.scss';
 import PostsTable from '../posts-table';

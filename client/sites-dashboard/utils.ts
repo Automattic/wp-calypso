@@ -50,6 +50,10 @@ export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
 };
 
+export const isSimpleSite = ( site: SiteExcerptNetworkData ) => {
+	return ! site?.jetpack && ! site?.is_wpcom_atomic;
+};
+
 export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 	return site.options?.is_wpforteams_site;
 };
@@ -103,7 +107,7 @@ export const generateSiteInterfaceLink = (
 };
 
 export const getSiteWpAdminUrl = ( site: SiteExcerptNetworkData ) => {
-	return site?.options?.admin_url;
+	return site?.options?.admin_url ?? '';
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

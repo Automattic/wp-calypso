@@ -1,12 +1,10 @@
 import { createContext } from 'react';
+import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import type { SitesDashboardContextInterface } from './types';
 
 const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	selectedCategory: undefined,
 	setSelectedCategory: () => {},
-
-	selectedSiteUrl: undefined,
-	setSelectedSiteUrl: () => {},
 
 	selectedSiteFeature: undefined,
 	setSelectedSiteFeature: () => {},
@@ -14,38 +12,32 @@ const SitesDashboardContext = createContext< SitesDashboardContextInterface >( {
 	hideListing: undefined,
 	setHideListing: () => {},
 
+	showOnlyFavorites: undefined,
+	setShowOnlyFavorites: () => {},
+
+	dataViewsState: initialDataViewsState,
+	setDataViewsState: () => {},
+
+	initialSelectedSiteUrl: '',
 	currentPage: 1,
 	path: '',
-	search: '',
-	filter: { issueTypes: [], showOnlyFavorites: false },
+	featurePreview: null,
+
 	isBulkManagementActive: false,
-	showSitesDashboardV2: false,
-	setIsBulkManagementActive: () => {
-		return undefined;
-	},
+	setIsBulkManagementActive: () => {},
+
 	selectedSites: [],
-	setSelectedSites: () => {
-		return undefined;
-	},
+	setSelectedSites: () => {},
+
 	currentLicenseInfo: null,
-	showLicenseInfo: () => {
-		return undefined;
-	},
-	hideLicenseInfo: () => {
-		return undefined;
-	},
+	showLicenseInfo: () => {},
+	hideLicenseInfo: () => {},
+
 	mostRecentConnectedSite: null,
-	setMostRecentConnectedSite: () => {
-		return undefined;
-	},
+	setMostRecentConnectedSite: () => {},
+
 	isPopoverOpen: false,
-	setIsPopoverOpen: () => {
-		return undefined;
-	},
-	sort: {
-		field: 'url',
-		direction: 'asc',
-	},
+	setIsPopoverOpen: () => {},
 } );
 
 export default SitesDashboardContext;

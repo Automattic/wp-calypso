@@ -1,6 +1,7 @@
 /**
  * This is a Odyssey implementation of 'calypso/components/data/query-site-purchases'.
  */
+import { APIError } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { isError } from 'lodash';
 import { useEffect } from 'react';
@@ -12,6 +13,7 @@ import {
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_SITE_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import { getApiNamespace, getApiPath } from '../lib/get-api';
 
 async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 	if ( ! siteId ) {
@@ -19,9 +21,12 @@ async function queryOdysseyQuerySitePurchases( siteId: number | null ) {
 	}
 
 	return wpcom.req
-		.get( { path: '/site/purchases', apiNamespace: 'jetpack/v4' } )
+		.get( {
+			path: getApiPath( '/site/purchases', { siteId } ),
+			apiNamespace: getApiNamespace(),
+		} )
 		.then( ( res: { data: string } ) => JSON.parse( res.data ) )
-		.catch( ( error: Error ) => error );
+		.catch( ( error: APIError ) => error );
 }
 /**
  * Update site products in the Redux store by fetching purchases via API for Odyssey Stats.
@@ -58,11 +63,26 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 		}
 
 		if ( isError( purchases ) || hasOtherErrors ) {
-			// Dispatch to the Purchases reducer for error status
-			reduxDispatch( {
-				type: PURCHASES_SITE_FETCH_FAILED,
-				error: 'purchase_fetch_failed',
-			} );
+			if ( ( purchases as APIError ).status !== 403 ) {
+				// Dispatch to the Purchases reducer for error status
+				reduxDispatch( {
+					type: PURCHASES_SITE_FETCH_FAILED,
+					error: 'purchase_fetch_failed',
+				} );
+			} else {
+				// TODO: Remove this after fixing the API permission issue from Jetpack.
+				reduxDispatch( {
+					type: PURCHASES_SITE_FETCH_COMPLETED,
+					siteId,
+					purchases: [
+						{
+							expiry_status: 'active',
+							product_slug: 'jetpack_stats_pwyw_yearly',
+							blog_id: siteId,
+						},
+					],
+				} );
+			}
 		} else {
 			// Dispatch to the Purchases reducer for consistent requesting status
 			reduxDispatch( {

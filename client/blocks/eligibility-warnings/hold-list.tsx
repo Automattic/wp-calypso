@@ -107,6 +107,13 @@ function getHoldMessages(
 			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
+		IS_STAGING_SITE: {
+			title: translate( 'Create a new staging site' ),
+			description: translate(
+				'Hosting features cannot be activated for a staging site. Create a new staging site to continue.'
+			),
+			supportUrl: null,
+		},
 	};
 }
 

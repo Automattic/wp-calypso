@@ -1,9 +1,9 @@
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import { verifyIcannEmail } from 'calypso/state/domains/management/actions';
 
 class IcannVerification extends Component {

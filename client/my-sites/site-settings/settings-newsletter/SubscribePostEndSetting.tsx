@@ -25,7 +25,8 @@ export const SubscribePostEndSetting = ( {
 
 	const siteEditorUrl = useSelector( ( state: object ) => getSiteEditorUrl( state, siteId ) );
 	const { data: activeThemeData } = useActiveThemeQuery( siteId, true );
-	const showEditLink = !! activeThemeData?.[ 0 ]?.is_block_theme;
+	// TODO use the commented out conditon when the wp core 6.5 is released
+	const showEditLink = false; // !! activeThemeData?.[ 0 ]?.is_block_theme;
 
 	const getEditUrl = () => {
 		const themeSlug = activeThemeData?.[ 0 ]?.stylesheet;

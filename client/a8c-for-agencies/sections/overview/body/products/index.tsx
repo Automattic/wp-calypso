@@ -7,6 +7,7 @@ import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+
 import './style.scss';
 
 const A4A_PRODUCTS_MARKETPLACE_LINK = '/marketplace/products';
@@ -47,7 +48,7 @@ const OverviewBodyProducts = () => {
 		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'jetpack' );
-			page( A4A_PRODUCTS_MARKETPLACE_LINK );
+			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#jetpack-plans` );
 		},
 	};
 
@@ -72,10 +73,10 @@ const OverviewBodyProducts = () => {
 		],
 		// translators: Button navigating to A4A Marketplace
 		buttonTitle: translate( 'View all WooCommerce products' ),
-		expanded: false,
+		expanded: true,
 		actionHandler: () => {
 			actionHandlerCallback( 'products', 'woocommerce' );
-			page( A4A_PRODUCTS_MARKETPLACE_LINK );
+			page( `${ A4A_PRODUCTS_MARKETPLACE_LINK }#woocommerce-extensions` );
 		},
 	};
 
@@ -85,7 +86,7 @@ const OverviewBodyProducts = () => {
 			description={ translate(
 				'Add services to create sites, increase security and performance, and provide excellent shopping experiences for your clients’ sites.'
 			) }
-			items={ [ jetpack, woo ] }
+			items={ [ woo, jetpack ] }
 		/>
 	);
 };

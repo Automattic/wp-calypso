@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -17,11 +17,13 @@ import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/pay
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { PaymentMethodOverviewContext } from '../context';
 import useStoredCards from '../hooks/use-stored-cards';
 import useStoredCardsPagination from '../hooks/use-stored-cards-pagination';
 import EmptyState from './empty-state';
 import LoadingState from './loading-state';
 import StoredCreditCard from './stored-credit-card';
+import type { StoredCardPaging } from '../types';
 
 import './style.scss';
 
@@ -29,20 +31,25 @@ export default function PaymentMethodOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const [ paging, setPaging ] = useState< StoredCardPaging | undefined >( undefined );
+
 	const {
-		allStoredCards,
-		primaryStoredCard,
-		secondaryStoredCards,
+		data: {
+			allStoredCards,
+			primaryStoredCard,
+			secondaryStoredCards,
+			pageSize,
+			hasStoredCards,
+			hasMoreStoredCards,
+		},
 		isFetching,
-		pageSize,
-		hasStoredCards,
-		hasMoreStoredCards,
-	} = useStoredCards();
+	} = useStoredCards( paging );
 
 	const { page, showPagination, onPageClick } = useStoredCardsPagination( {
 		storedCards: allStoredCards,
 		enabled: ! isFetching,
 		hasMoreStoredCards,
+		setPaging,
 	} );
 
 	const onAddNewCardClick = useCallback( () => {
@@ -56,7 +63,7 @@ export default function PaymentMethodOverview() {
 
 		if ( hasStoredCards ) {
 			return (
-				<>
+				<PaymentMethodOverviewContext.Provider value={ { paging, setPaging } }>
 					<div className="payment-method-overview__stored-cards">
 						{ primaryStoredCard && <StoredCreditCard creditCard={ primaryStoredCard } /> }
 						{ secondaryStoredCards.map( ( card: PaymentMethod, index: number ) => (
@@ -80,7 +87,7 @@ export default function PaymentMethodOverview() {
 							perPage={ pageSize }
 						/>
 					) }
-				</>
+				</PaymentMethodOverviewContext.Provider>
 			);
 		}
 
@@ -92,18 +99,14 @@ export default function PaymentMethodOverview() {
 		onPageClick,
 		page,
 		pageSize,
+		paging,
 		primaryStoredCard,
 		secondaryStoredCards,
 		showPagination,
 	] );
 
 	return (
-		<Layout
-			className="payment-method-overview"
-			title={ translate( 'Payment Methods' ) }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="payment-method-overview" title={ translate( 'Payment Methods' ) } wide>
 			<PageViewTracker title="Purchases > Payment Methods" path="/purchases/payment-methods" />
 
 			<LayoutTop>
@@ -112,7 +115,9 @@ export default function PaymentMethodOverview() {
 					<Subtitle>
 						{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
 					</Subtitle>
-					<Actions>
+					<Actions className="a4a-payment-methods__header-actions">
+						<MobileSidebarNavigation />
+
 						{ hasStoredCards && (
 							<Button href={ A4A_PAYMENT_METHODS_ADD_LINK } onClick={ onAddNewCardClick } primary>
 								{ translate( 'Add new card' ) }
@@ -122,7 +127,12 @@ export default function PaymentMethodOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>{ content }</LayoutBody>
+			<LayoutBody>
+				<p className="a4a-payment-methods__mobile-description">
+					{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
+				</p>
+				{ content }
+			</LayoutBody>
 		</Layout>
 	);
 }

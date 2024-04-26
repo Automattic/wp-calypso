@@ -1,0 +1,87 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "../modernized-mixins";
+
+.stats-module-devices {
+	@include segmented-controls;
+
+	// Set layout for chart inside the StatsCard.
+	.stats-card--body__chart {
+		padding: 0 24px;
+	}
+
+	.pie-chart {
+		padding: 32px 0;
+	}
+
+	// Override the default legend styles.
+	.pie-chart__legend {
+		flex-direction: row;
+		align-items: center;
+		padding: 0 20px;
+
+		.legend-item {
+			flex-direction: row;
+
+			&:not(:first-child) {
+				margin-left: 20px;
+				margin-top: 0;
+			}
+		}
+
+		.legend-item__title {
+			&::after {
+				content: ":";
+			}
+
+			& > svg {
+				width: 14px;
+				height: 14px;
+				margin-right: 4px;
+			}
+		}
+
+		.legend-item__detail {
+			margin-left: 4px;
+		}
+	}
+
+	// TODO: Update corresponding colors based on color schemes.
+	.pie-chart__chart-section-donut-desktop,
+	.pie-chart__legend-sample-donut-desktop {
+		fill: var(--studio-jetpack-green-60);
+	}
+	.pie-chart__chart-section-donut-mobile,
+	.pie-chart__legend-sample-donut-mobile {
+		fill: #069e08;
+	}
+	.pie-chart__chart-section-donut-tablet,
+	.pie-chart__legend-sample-donut-tablet {
+		fill: #64ca43;
+	}
+	.pie-chart__chart-section-donut-others,
+	.pie-chart__legend-sample-donut-others {
+		fill: #d0e6b8;
+	}
+}
+
+.stats-module-upgrade-overlay {
+	.stats-card--column-header {
+		filter: blur(10px);
+	}
+
+	.stats-card__content {
+		// Prevent blur elements from being interactable.
+		pointer-events: none;
+		user-select: none;
+	}
+}
+
+.stats-module-devices__tabs {
+	.segmented-control__item {
+		min-width: 80px;
+
+		@media (max-width: $break-small ) {
+			min-width: auto;
+		}
+	}
+}

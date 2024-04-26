@@ -7,6 +7,7 @@ import {
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { hasCheckoutVersion } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
@@ -20,7 +21,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import { useCheckoutV2 } from '../../hooks/use-checkout-v2';
 import { WPCOMProductVariant } from '../item-variation-picker/types';
 import {
 	getItemVariantCompareToPrice,
@@ -144,7 +144,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 
 	const variants = useGetProductVariants( plan );
-	const shouldUseCheckoutV2 = useCheckoutV2() === 'treatment';
+	const shouldUseCheckoutV2 = hasCheckoutVersion( '2' );
 
 	function isBusy() {
 		// If the FormStatus is SUBMITTING and the user has not clicked this button, we want to return false for isBusy

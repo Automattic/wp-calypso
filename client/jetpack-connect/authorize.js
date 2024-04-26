@@ -275,9 +275,11 @@ export class JetpackAuthorize extends Component {
 				JPC_JETPACK_MANAGE_PATH
 			);
 			navigate( urlRedirect );
+			return;
 		} else if ( source === 'a8c-for-agencies' ) {
 			const urlRedirect = addQueryArgs( { site_connected: urlToSlug( homeUrl ) }, JPC_A4A_PATH );
 			navigate( urlRedirect );
+			return;
 		}
 
 		if ( this.isJetpackPartnerCoupon() ) {
@@ -307,7 +309,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromJetpackSearchPlugin() ||
 			this.isFromJetpackVideoPressPlugin() ||
-			( this.isFromJetpackBackupPlugin() && siteHasBackups )
+			( this.isFromJetpackBackupPlugin() && siteHasBackups ) ||
+			this.isFromAutomatticForAgenciesPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -467,6 +470,11 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'wpcom-migration' );
 	}
 
+	isFromAutomatticForAgenciesPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'automattic-for-agencies-client' );
+	}
+
 	shouldRedirectJetpackStart( props = this.props ) {
 		const { partnerSlug, partnerID } = props;
 
@@ -476,6 +484,10 @@ export class JetpackAuthorize extends Component {
 	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'connect-after-checkout' );
+	}
+
+	getCompanyName() {
+		return this.isFromAutomatticForAgenciesPlugin() ? 'Automattic, Inc.' : 'WordPress.com';
 	}
 
 	handleSignIn = async ( e, loginURL ) => {
@@ -1041,7 +1053,10 @@ export class JetpackAuthorize extends Component {
 						<div className="jetpack-connect__logged-in-bottom">
 							{ this.renderStateAction() }
 							<JetpackFeatures col1Features={ col1Features } col2Features={ col2Features } />
-							<Disclaimer siteName={ decodeEntities( authQuery.blogname ) } />
+							<Disclaimer
+								siteName={ decodeEntities( authQuery.blogname ) }
+								companyName={ this.getCompanyName() }
+							/>
 							<div className="jetpack-connect__jetpack-logo-wrapper">
 								<JetpackLogo monochrome size={ 18 } />{ ' ' }
 								<span>{ translate( 'Jetpack powered' ) }</span>
@@ -1195,7 +1210,7 @@ export class JetpackAuthorize extends Component {
 		const { blogname } = this.props.authQuery;
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				<Disclaimer siteName={ decodeEntities( blogname ) } />
+				<Disclaimer siteName={ decodeEntities( blogname ) } companyName={ this.getCompanyName() } />
 				<Button
 					primary
 					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
@@ -1235,6 +1250,7 @@ export class JetpackAuthorize extends Component {
 				isWooOnboarding={ this.isWooOnboarding() }
 				isWooCoreProfiler={ this.isWooCoreProfiler() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
+				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
@@ -1253,6 +1269,7 @@ export class JetpackAuthorize extends Component {
 							isWooOnboarding={ this.isWooOnboarding() }
 							isWooCoreProfiler={ this.isWooCoreProfiler() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
+							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 							wooDnaConfig={ wooDna }
 						/>
 						{ this.renderContent() }

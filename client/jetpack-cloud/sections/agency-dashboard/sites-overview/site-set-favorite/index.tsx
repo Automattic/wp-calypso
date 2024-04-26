@@ -89,7 +89,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 					return {
 						...oldSites,
-						sites: oldSites?.sites.map( ( site: Site ) => {
+						sites: oldSites?.sites?.map( ( site: Site ) => {
 							if ( site.blog_id === siteId ) {
 								return {
 									...site,

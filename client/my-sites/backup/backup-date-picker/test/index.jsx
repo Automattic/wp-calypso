@@ -32,6 +32,10 @@ jest.mock( '../hooks', () => ( {
 } ) );
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
+jest.mock( 'calypso/state/rewind/selectors/site-has-backups', () =>
+	jest.fn().mockImplementation( () => true )
+);
+
 import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

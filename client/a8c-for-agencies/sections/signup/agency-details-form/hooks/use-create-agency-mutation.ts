@@ -8,14 +8,20 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 		apiNamespace: 'wpcom/v2',
 		path: '/agency',
 		body: {
+			first_name: details.firstName,
+			last_name: details.lastName,
 			agency_name: details.agencyName,
 			agency_url: details.agencyUrl,
+			number_sites: details.managedSites,
+			services_offered: details.servicesOffered,
+			products_offered: details.productsOffered,
 			address_line1: details.line1,
 			address_line2: details.line2,
 			address_city: details.city,
 			address_country: details.country,
 			address_state: details.state,
 			address_postal_code: details.postalCode,
+			referral_status: details.referer,
 		},
 	} );
 }

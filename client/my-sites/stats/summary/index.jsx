@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -15,6 +15,7 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import Countries from '../stats-countries';
 import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
@@ -93,10 +94,9 @@ class StatsSummary extends Component {
 				statType = 'statsReferrers';
 
 				summaryView = (
-					<>
+					<Fragment key="referrers-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="referrers-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.referrers }
 							period={ this.props.period }
@@ -105,7 +105,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -115,10 +115,9 @@ class StatsSummary extends Component {
 				statType = 'statsClicks';
 
 				summaryView = (
-					<>
+					<Fragment key="clicks-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="clicks-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.clicks }
 							period={ this.props.period }
@@ -127,7 +126,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -137,10 +136,9 @@ class StatsSummary extends Component {
 				statType = 'statsCountryViews';
 
 				summaryView = (
-					<>
+					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<Countries
-							key="countries-summary"
 							path={ path }
 							period={ this.props.period }
 							query={ moduleQuery }
@@ -162,7 +160,7 @@ class StatsSummary extends Component {
 								showIcon={ true }
 							/>
 						</div>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -172,10 +170,9 @@ class StatsSummary extends Component {
 				statType = 'statsTopPosts';
 
 				summaryView = (
-					<>
+					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="posts-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.posts }
 							period={ this.props.period }
@@ -184,7 +181,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -196,10 +193,9 @@ class StatsSummary extends Component {
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
-					<>
+					<Fragment key="authors-summary">
 						{ this.renderSummaryHeader( path, statType, true, query ) }
 						<StatsModule
-							key="authors-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.authors }
 							period={ this.props.period }
@@ -209,7 +205,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				break;
@@ -220,11 +216,10 @@ class StatsSummary extends Component {
 				statType = 'statsVideoPlays';
 
 				summaryView = (
-					<>
+					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
 								It can't use the shared header as long as the CSV download button stays there. */ }
 						<VideoPressStatsModule
-							key="videopress-stats-module"
 							path={ path }
 							moduleStrings={ StatsStrings.videoplays }
 							period={ this.props.period }
@@ -233,7 +228,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -243,10 +238,9 @@ class StatsSummary extends Component {
 				statType = 'statsFileDownloads';
 
 				summaryView = (
-					<>
+					<Fragment key="filedownloads-summary">
 						{ this.renderSummaryHeader( path, statType, true, query ) }
 						<StatsModule
-							key="filedownloads-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }
@@ -255,7 +249,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 
@@ -306,10 +300,9 @@ class StatsSummary extends Component {
 				statType = 'statsSearchTerms';
 
 				summaryView = (
-					<>
+					<Fragment key="search-terms-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModule
-							key="search-terms-summary"
 							path={ path }
 							moduleStrings={ StatsStrings.search }
 							period={ this.props.period }
@@ -318,7 +311,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-					</>
+					</Fragment>
 				);
 				break;
 			case 'annualstats':
@@ -333,19 +326,16 @@ class StatsSummary extends Component {
 				backLink = `/stats/traffic/`;
 				path = 'utm';
 				statType = 'statsUTM';
-				summaryView = supportsUTMStats ? (
-					<>
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-						<StatsModuleUTM
-							siteId={ siteId }
-							period={ this.props.period }
-							query={ moduleQuery }
-							summary
-						/>
-					</>
-				) : (
-					<div>This path is not available.</div>
-				);
+				summaryView = <></>; // done inline to use context values
+				break;
+			}
+			case 'devices': {
+				// TODO: finish after the Traffic page.
+				title = translate( 'Devices' );
+				path = 'devices';
+				statType = 'statsDevices';
+
+				summaryView = <></>;
 				break;
 			}
 		}
@@ -369,7 +359,29 @@ class StatsSummary extends Component {
 				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-					{ summaryViews }
+					{ this.props.context.params.module === 'utm' ? (
+						<StatsGlobalValuesContext.Consumer>
+							{ ( isInternal ) => (
+								<>
+									{ supportsUTMStats || isInternal ? (
+										<>
+											{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+											<StatsModuleUTM
+												siteId={ siteId }
+												period={ this.props.period }
+												query={ moduleQuery }
+												summary
+											/>
+										</>
+									) : (
+										<div>{ translate( 'This path is not available.' ) }</div>
+									) }
+								</>
+							) }
+						</StatsGlobalValuesContext.Consumer>
+					) : (
+						summaryViews
+					) }
 					<JetpackColophon />
 				</div>
 				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }

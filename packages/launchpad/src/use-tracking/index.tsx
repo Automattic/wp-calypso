@@ -64,7 +64,10 @@ export const useTracking = ( params: Params ) => {
 		} );
 		// Array of tasks requires deep comparison
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( tasks ), shoulSkipTracking ] );
+	}, [
+		JSON.stringify( tasks.map( ( { id, completed, order } ) => ( { id, completed, order } ) ) ),
+		shoulSkipTracking,
+	] );
 
 	const trackTaskClick = ( task: Task ) => {
 		recordTracksEvent( 'calypso_launchpad_task_clicked', {

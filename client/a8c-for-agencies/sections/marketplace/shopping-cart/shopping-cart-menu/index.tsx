@@ -1,5 +1,6 @@
+import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
-import { Button, Popover } from '@wordpress/components';
+import { Popover } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { getTotalInvoiceValue } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/pricing';
@@ -9,6 +10,7 @@ import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
 import './style.scss';
+
 type Props = {
 	onClose: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
@@ -35,7 +37,11 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 				<div className="shopping-cart__menu-header">
 					<h2 className="shopping-cart__menu-header-title">{ translate( 'Your cart' ) }</h2>
 
-					<Button className="shopping-cart__menu-header-close-button" onClick={ onClose }>
+					<Button
+						className="shopping-cart__menu-header-close-button"
+						onClick={ onClose }
+						borderless
+					>
 						<Icon icon={ close } size={ 24 } />
 					</Button>
 				</div>
@@ -64,7 +70,7 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 						className="shopping-cart__menu-checkout-button"
 						onClick={ onCheckout }
 						disabled={ ! items.length }
-						variant="primary"
+						primary
 					>
 						{ translate( 'Checkout' ) }
 					</Button>

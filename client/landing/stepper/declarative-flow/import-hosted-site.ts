@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { IMPORT_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useLayoutEffect } from 'react';
+import localStorageHelper from 'store';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import CreateSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/create-site';
 import MigrationError from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/migration-error';
@@ -206,9 +208,17 @@ const importHostedSiteFlow: Flow = {
 					return window.location.assign( '/sites?hosting-flow=true' );
 
 				case 'importerWordpress':
-					// remove the siteSlug in case they want to change the destination site
-					urlQueryParams.delete( 'siteSlug' );
-					return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+					if ( urlQueryParams.has( 'showModal' ) || ! isEnabled( 'migration_assistance_modal' ) ) {
+						// remove the siteSlug in case they want to change the destination site
+						urlQueryParams.delete( 'siteSlug' );
+						urlQueryParams.delete( 'showModal' );
+						return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+					}
+
+					if ( isEnabled( 'migration_assistance_modal' ) ) {
+						urlQueryParams.set( 'showModal', 'true' );
+					}
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				case 'sitePicker':
 					// remove the from parameter to restart the flow
@@ -250,17 +260,37 @@ const importHostedSiteFlow: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-	useSideEffect() {
+	useSideEffect( currentStep ) {
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
 
+		const urlQueryParams = useQuery();
+		const restoreFlowQueryParam = urlQueryParams.get( 'restore-progress' );
+
 		useLayoutEffect( () => {
 			if ( ! userIsLoggedIn ) {
 				window.location.assign( '/start/hosting' );
 			}
-		}, [ userIsLoggedIn ] );
+
+			if ( restoreFlowQueryParam === null ) {
+				localStorageHelper.set( 'site-migration-url', window.location.href );
+				return;
+			}
+
+			let validURL = false;
+			const storedUrlString = localStorageHelper.get( 'site-migration-url' );
+			try {
+				const storedUrl = new URL( storedUrlString );
+				validURL = storedUrl.searchParams.has( 'from' );
+			} catch ( e ) {}
+
+			if ( validURL ) {
+				window.location.assign( storedUrlString );
+				return;
+			}
+		}, [ userIsLoggedIn, currentStep, restoreFlowQueryParam ] );
 	},
 };
 

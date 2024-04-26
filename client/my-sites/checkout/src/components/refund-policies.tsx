@@ -12,11 +12,11 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { DOMAIN_CANCEL, REFUNDS } from '@automattic/urls';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
-import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
 

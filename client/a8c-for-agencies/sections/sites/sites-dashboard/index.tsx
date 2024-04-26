@@ -2,7 +2,13 @@ import page from '@automattic/calypso-router';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useCallback, useState } from 'react';
+import GuidedTour from 'calypso/a8c-for-agencies/components/guided-tour';
+import {
+	DATAVIEWS_LIST,
+	DATAVIEWS_TABLE,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
 import LayoutHeader, {
@@ -14,156 +20,157 @@ import LayoutNavigation, {
 } from 'calypso/a8c-for-agencies/components/layout/nav';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { OverviewFamily } from 'calypso/a8c-for-agencies/sections/sites/features/overview';
-import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import { type TourId } from 'calypso/a8c-for-agencies/data/guided-tours/use-guided-tours';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
+import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useFetchMonitorVerfiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
-import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
+import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
 import DashboardDataContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/dashboard-data-context';
-import SiteTopHeaderButtons from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-top-header-buttons';
-import SitesDataViews from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews';
-import { SitesViewState } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/sites-dataviews/interfaces';
 import {
-	AgencyDashboardFilterMap,
+	AgencyDashboardFilter,
 	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../constants';
+import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
+import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
+import EmptyState from './empty-state';
+import { getSelectedFilters } from './get-selected-filters';
+import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
 
 import './style.scss';
-
-const filtersMap: AgencyDashboardFilterMap[] = [
-	{ filterType: 'all_issues', ref: 1 },
-	{ filterType: 'backup_failed', ref: 2 },
-	{ filterType: 'backup_warning', ref: 3 },
-	{ filterType: 'threats_found', ref: 4 },
-	{ filterType: 'site_disconnected', ref: 5 },
-	{ filterType: 'site_down', ref: 6 },
-	{ filterType: 'plugin_updates', ref: 7 },
-];
+import './sites-dataviews-style.scss';
 
 export default function SitesDashboard() {
-	useQueryJetpackPartnerPortalPartner();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const dispatch = useDispatch();
 
+	const agencyId = useSelector( getActiveAgencyId );
+
 	const {
-		selectedSiteUrl,
+		dataViewsState,
+		setDataViewsState,
+		initialSelectedSiteUrl,
 		selectedSiteFeature,
-		setSelectedSiteFeature,
 		selectedCategory: category,
 		setSelectedCategory: setCategory,
+		showOnlyFavorites,
+		hideListing,
+		setHideListing,
 	} = useContext( SitesDashboardContext );
 
 	const isLargeScreen = isWithinBreakpoint( '>960px' );
-	const { data: products } = useProductsQuery();
-	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
-	const { search, currentPage, filter, sort } = useContext( SitesOverviewContext );
+	// FIXME: We should switch to a new A4A-specific endpoint when it becomes available, instead of using the public-facing endpoint for A4A
+	const { data: products } = useProductsQuery( true );
+
 	const {
 		data: verifiedContacts,
 		refetch: refetchContacts,
 		isError: fetchContactFailed,
-	} = useFetchMonitorVerfiedContacts( isPartnerOAuthTokenLoaded );
+	} = useFetchMonitorVerifiedContacts( false, agencyId );
 
-	const [ sitesViewState, setSitesViewState ] = useState< SitesViewState >( {
-		type: 'table',
-		perPage: 50,
-		page: currentPage,
-		sort: {
-			field: 'url',
-			direction: 'desc',
-		},
-		search: search,
-		filters:
-			filter?.issueTypes?.map( ( issueType ) => {
-				return {
-					field: 'status',
-					operator: 'in',
-					value: filtersMap.find( ( filterMap ) => filterMap.filterType === issueType )?.ref || 1,
-				};
-			} ) || [],
-		hiddenFields: [ 'status' ],
-		layout: {},
-		selectedSite: undefined,
+	const [ agencyDashboardFilter, setAgencyDashboardFilter ] = useState< AgencyDashboardFilter >( {
+		issueTypes: [],
+		showOnlyFavorites: showOnlyFavorites || false,
 	} );
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
-		isPartnerOAuthTokenLoaded,
-		search,
-		sitesViewState.page,
-		filter,
-		sort,
-		sitesViewState.perPage
-	);
 
 	useEffect( () => {
-		if ( ! isLoading && ! isError && data && selectedSiteUrl ) {
-			const site = data.sites.find( ( site: Site ) => site.url === selectedSiteUrl );
+		const selectedFilters = getSelectedFilters( dataViewsState.filters );
 
-			setSitesViewState( ( prevState ) => ( {
-				...prevState,
-				selectedSite: site,
-				type: 'list',
-			} ) );
-		}
-	}, [ data, isError, isLoading, selectedSiteUrl ] );
+		setAgencyDashboardFilter( {
+			issueTypes: selectedFilters,
+			showOnlyFavorites: showOnlyFavorites || false,
+		} );
+	}, [ dataViewsState.filters, setAgencyDashboardFilter, showOnlyFavorites ] );
 
-	const onSitesViewChange = useCallback(
-		( sitesViewData: SitesViewState ) => {
-			setSitesViewState( sitesViewData );
-		},
-		[ setSitesViewState ]
-	);
-	// Filter selection
-	// Todo: restore this code when the filters are implemented
-	/*useEffect( () => {
-		if ( isLoading || isError ) {
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
+		isPartnerOAuthTokenLoaded: false,
+		searchQuery: dataViewsState.search,
+		currentPage: dataViewsState.page,
+		filter: agencyDashboardFilter,
+		sort: dataViewsState.sort,
+		perPage: dataViewsState.perPage,
+		agencyId,
+	} );
+
+	const noActiveSite = useNoActiveSite();
+
+	useEffect( () => {
+		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
+			setHideListing( false );
 			return;
 		}
-		const filtersSelected =
-			sitesViewState.filters?.map( ( filter ) => {
-				const filterType =
-					filtersMap.find( ( filterMap ) => filterMap.ref === filter.value )?.filterType ||
-					'all_issues';
 
-				return filterType;
-			} ) || [];
+		if (
+			dataViewsState.selectedItem &&
+			dataViewsState.selectedItem.url === initialSelectedSiteUrl
+		) {
+			return;
+		}
 
-	}, [ isLoading, isError, sitesViewState.filters, filtersMap ] );*/
+		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
+			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
+
+			setDataViewsState( ( prevState: DataViewsState ) => ( {
+				...prevState,
+				selectedItem: site,
+				type: DATAVIEWS_LIST,
+			} ) );
+		}
+		// Omitting sitesViewState to prevent infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ data, isError, isLoading, initialSelectedSiteUrl, setDataViewsState, setHideListing ] );
 
 	useEffect( () => {
-		// We need a category in the URL if we have a selected site
-		if ( sitesViewState.selectedSite && ! category ) {
-			setCategory( A4A_SITES_DASHBOARD_DEFAULT_CATEGORY );
-		} else if ( category && sitesViewState.selectedSite && selectedSiteFeature ) {
-			page.replace(
-				`/sites/${ category }/${ sitesViewState.selectedSite.url }/${ selectedSiteFeature }`
-			);
-		} else if ( category && sitesViewState.selectedSite ) {
-			page.replace( `/sites/${ category }/${ sitesViewState.selectedSite.url }` );
-		} else if ( category && category !== A4A_SITES_DASHBOARD_DEFAULT_CATEGORY ) {
-			// If the selected category is the default one, we can leave the url a little cleaner, that's why we are comparing to the default category in the condition above.
-			page.replace( `/sites/${ category }` );
-		} else {
-			page.replace( '/sites' );
+		// If there isn't a selected site and we are showing only the preview pane we should wait for the selected site to load from the endpoint
+		if ( hideListing && ! dataViewsState.selectedItem ) {
+			return;
 		}
 
-		if ( sitesViewState.selectedSite ) {
-			dispatch( setSelectedSiteId( sitesViewState.selectedSite.blog_id ) );
+		if ( dataViewsState.selectedItem ) {
+			dispatch( setSelectedSiteId( dataViewsState.selectedItem.blog_id ) );
 		}
-	}, [ sitesViewState.selectedSite, selectedSiteFeature, category, setCategory, dispatch ] );
+
+		const updatedUrl = updateSitesDashboardUrl( {
+			category: category,
+			setCategory: setCategory,
+			filters: dataViewsState.filters,
+			selectedSite: dataViewsState.selectedItem,
+			selectedSiteFeature: selectedSiteFeature,
+			search: dataViewsState.search,
+			currentPage: dataViewsState.page,
+			sort: dataViewsState.sort,
+			showOnlyFavorites,
+		} );
+		if ( page.current !== updatedUrl && updatedUrl !== undefined ) {
+			page.show( updatedUrl );
+		}
+	}, [
+		dataViewsState.selectedItem,
+		selectedSiteFeature,
+		category,
+		setCategory,
+		dispatch,
+		dataViewsState.filters,
+		dataViewsState.search,
+		dataViewsState.page,
+		showOnlyFavorites,
+		dataViewsState.sort,
+		hideListing,
+	] );
 
 	const closeSitePreviewPane = useCallback( () => {
-		if ( sitesViewState.selectedSite ) {
-			setSitesViewState( { ...sitesViewState, type: 'table', selectedSite: undefined } );
+		if ( dataViewsState.selectedItem ) {
+			setDataViewsState( { ...dataViewsState, type: DATAVIEWS_TABLE, selectedItem: undefined } );
+			setHideListing( false );
 		}
-	}, [ sitesViewState, setSelectedSiteFeature ] );
+	}, [ dataViewsState, setDataViewsState, setHideListing ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -187,65 +194,82 @@ export default function SitesDashboard() {
 		selectedText: selectedItem.label,
 	};
 
+	const urlParams = new URLSearchParams( window.location.search );
+	let tourId = null;
+	if ( urlParams.get( 'tour' ) === 'sites-walkthrough' ) {
+		tourId = 'sitesWalkthrough';
+	} else if ( urlParams.get( 'tour' ) === 'add-new-site' ) {
+		tourId = 'addSiteStep1';
+	}
+
+	if ( noActiveSite ) {
+		return <EmptyState />;
+	}
+
 	return (
 		<Layout
-			title="Sites"
 			className={ classNames(
 				'sites-dashboard',
 				'sites-dashboard__layout',
-				! sitesViewState.selectedSite && 'preview-hidden'
+				! dataViewsState.selectedItem && 'preview-hidden'
 			) }
 			wide
-			withBorder={ ! sitesViewState.selectedSite }
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
-			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop withNavigation>
-					<LayoutHeader>
-						<Title>{ translate( 'Sites' ) }</Title>
-						<Actions>
-							{ /* TODO: This component is from Jetpack Manage and it was not ported yet, just using it here as a placeholder, it looks broken but it is enough for our purposes at the moment. */ }
-							<SiteTopHeaderButtons />
-						</Actions>
-					</LayoutHeader>
-					<LayoutNavigation { ...selectedItemProps }>
-						<NavigationTabs { ...selectedItemProps } items={ navItems } />
-					</LayoutNavigation>
-				</LayoutTop>
+			{ ! hideListing && (
+				<LayoutColumn className="sites-overview" wide>
+					<LayoutTop withNavigation={ navItems.length > 1 }>
+						<LayoutHeader>
+							<Title>{ translate( 'Sites' ) }</Title>
+							<Actions>
+								<MobileSidebarNavigation />
+								<SitesHeaderActions />
+							</Actions>
+						</LayoutHeader>
+						{ navItems.length > 1 && (
+							<LayoutNavigation { ...selectedItemProps }>
+								<NavigationTabs { ...selectedItemProps } items={ navItems } />
+							</LayoutNavigation>
+						) }
+					</LayoutTop>
 
-				<SiteNotifications />
+					<SiteNotifications />
+					{ tourId && <GuidedTour defaultTourId={ tourId as TourId } /> }
 
-				<DashboardDataContext.Provider
-					value={ {
-						verifiedContacts: {
-							emails: verifiedContacts?.emails ?? [],
-							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-							refetchIfFailed: () => {
-								if ( fetchContactFailed ) {
-									refetchContacts();
-								}
-								return;
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
 							},
-						},
-						products: products ?? [],
-						isLargeScreen: isLargeScreen || false,
-					} }
-				>
-					<SitesDataViews
-						className="sites-overview__content"
-						data={ data }
-						isLoading={ isLoading }
-						isLargeScreen={ isLargeScreen || false }
-						onSitesViewChange={ onSitesViewChange }
-						sitesViewState={ sitesViewState }
-					/>
-				</DashboardDataContext.Provider>
-			</LayoutColumn>
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<JetpackSitesDataViews
+							className={ classNames( 'sites-overview__content', {
+								'is-hiding-navigation': navItems.length <= 1,
+							} ) }
+							data={ data }
+							isLoading={ isLoading }
+							isLargeScreen={ isLargeScreen || false }
+							setDataViewsState={ setDataViewsState }
+							dataViewsState={ dataViewsState }
+						/>
+					</DashboardDataContext.Provider>
+				</LayoutColumn>
+			) }
 
-			{ sitesViewState.selectedSite && (
+			{ dataViewsState.selectedItem && (
 				<LayoutColumn className="site-preview-pane" wide>
-					<OverviewFamily
-						site={ sitesViewState.selectedSite }
+					<OverviewPreviewPane
+						site={ dataViewsState.selectedItem }
 						closeSitePreviewPane={ closeSitePreviewPane }
 						isSmallScreen={ ! isLargeScreen }
 						hasError={ isError }

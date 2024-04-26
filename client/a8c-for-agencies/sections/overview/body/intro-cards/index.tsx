@@ -83,7 +83,7 @@ export default function OverviewBodyIntroCards( { onFinish = () => {} } ) {
 	};
 
 	return (
-		<Card>
+		<Card className="a4a-intro-cards__wrapper">
 			<div>
 				<DotPager
 					className="intro-cards"

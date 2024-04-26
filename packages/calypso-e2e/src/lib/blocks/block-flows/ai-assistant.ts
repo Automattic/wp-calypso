@@ -41,8 +41,8 @@ export class AIAssistantFlow implements BlockFlow {
 		this.validationData = validationData;
 	}
 
-	blockSidebarName = 'AI Assistant (Experimental)';
-	blockEditorSelector = 'div[aria-label="Block: AI Assistant (Experimental)"]';
+	blockSidebarName = 'AI Assistant';
+	blockEditorSelector = 'div[aria-label="Block: AI Assistant"]';
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor

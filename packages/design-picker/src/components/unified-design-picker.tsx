@@ -41,16 +41,12 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 
 	if ( design.is_externally_managed && design.screenshot ) {
 		const fit = '479,360';
+		// We're stubbing out the high res version here as part of a size reduction experiment.
+		// See #88786 and TODO for discussion / info.
 		const themeImgSrc = photon( design.screenshot, { fit } ) || design.screenshot;
-		const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
+		// const themeImgSrcDoubleDpi = photon( design.screenshot, { fit, zoom: 2 } ) || design.screenshot;
 
-		return (
-			<img
-				src={ themeImgSrc }
-				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-				alt={ design.description }
-			/>
-		);
+		return <img src={ themeImgSrc } srcSet={ `${ themeImgSrc }` } alt={ design.description } />;
 	}
 
 	return (

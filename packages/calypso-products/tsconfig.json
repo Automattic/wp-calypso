@@ -11,6 +11,7 @@
 		{ "path": "../calypso-config" },
 		{ "path": "../shopping-cart" },
 		{ "path": "../components" },
-		{ "path": "../i18n-utils" }
+		{ "path": "../i18n-utils" },
+		{ "path": "../urls" }
 	]
 }

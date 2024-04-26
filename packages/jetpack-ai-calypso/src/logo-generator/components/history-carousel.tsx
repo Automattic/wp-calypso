@@ -27,6 +27,16 @@ export const HistoryCarousel: React.FC = () => {
 		setSelectedLogoIndex( index );
 	};
 
+	const thumbnailFrom = ( url: string ): string => {
+		const thumbnailURL = new URL( url );
+
+		if ( ! thumbnailURL.searchParams.has( 'resize' ) ) {
+			thumbnailURL.searchParams.append( 'resize', '48,48' );
+		}
+
+		return thumbnailURL.toString();
+	};
+
 	return (
 		<div className="jetpack-ai-logo-generator__carousel">
 			{ logos.map( ( logo, index ) => (
@@ -37,7 +47,7 @@ export const HistoryCarousel: React.FC = () => {
 					} ) }
 					onClick={ () => handleClick( index ) }
 				>
-					<img src={ logo.url } alt={ logo.description } />
+					<img src={ thumbnailFrom( logo.url ) } alt={ logo.description } />
 				</Button>
 			) ) }
 		</div>

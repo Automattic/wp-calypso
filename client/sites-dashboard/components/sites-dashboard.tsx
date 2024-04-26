@@ -74,6 +74,7 @@ const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
+	paddingTop: '32px',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'flex-start',
@@ -176,10 +177,17 @@ export function SitesDashboard( {
 		ref: 'topbar',
 	} );
 	const { __, _n } = useI18n();
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const { data: liveSites = [], isLoading } = useSiteExcerptsQuery(
 		[],
 		( site ) => ! site.options?.is_domain_only
 	);
+
+	const { data: deletedSites = [] } = useSiteExcerptsQuery(
+		[],
+		( site ) => ! site.options?.is_domain_only,
+		'deleted'
+	);
+
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const elementRef = useRef( window );
 
@@ -196,6 +204,8 @@ export function SitesDashboard( {
 	} );
 
 	const isMobile = useMobileBreakpoint();
+
+	const allSites = liveSites.concat( deletedSites );
 
 	useShowSiteCreationNotice( allSites, newSiteID );
 	useShowSiteTransferredNotice();
@@ -268,6 +278,7 @@ export function SitesDashboard( {
 										sitesSorting={ sitesSorting }
 										onSitesSortingChange={ onSitesSortingChange }
 										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+										showDeletedStatus
 									/>
 								) }
 								{ hasSitesSortingPreferenceLoaded && (
@@ -279,6 +290,25 @@ export function SitesDashboard( {
 													sites={ paginatedSites }
 													className={ sitesMarginTable }
 												/>
+												{ selectedStatus.name === 'deleted' && (
+													<div
+														style={ {
+															display: 'flex',
+															alignItems: 'center',
+															gap: '8px',
+														} }
+													>
+														<Gridicon icon="info" size={ 18 } />
+														<span>
+															{ createInterpolateElement(
+																__(
+																	'These sites will be permanently removed after <strong>30 days.</strong>'
+																),
+																{ strong: <strong /> }
+															) }
+														</span>
+													</div>
+												) }
 												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
 													<PageBodyBottomContainer>
 														<Pagination
@@ -341,7 +371,10 @@ export function SitesDashboard( {
 	);
 }
 
-function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: number | undefined ) {
+export function useShowSiteCreationNotice(
+	allSites: SiteExcerptData[],
+	newSiteID: number | undefined
+) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const shownSiteCreationNotice = useRef( false );
@@ -378,7 +411,7 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteID: numb
 	}, [ __, allSites, dispatch, newSiteID ] );
 }
 
-function useShowSiteTransferredNotice() {
+export function useShowSiteTransferredNotice() {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	useEffect( () => {

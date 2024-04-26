@@ -12,6 +12,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
+import HostingList from './hosting-list';
 
 export default function Hosting() {
 	const translate = useTranslate();
@@ -24,13 +25,13 @@ export default function Hosting() {
 			title={ translate( 'Hosting Marketplace' ) }
 			wide
 			withBorder
-			sidebarNavigation={ <MobileSidebarNavigation /> }
 		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ translate( 'Marketplace' ) }</Title>
 
 					<Actions>
+						<MobileSidebarNavigation />
 						<ShoppingCart
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
@@ -42,7 +43,9 @@ export default function Hosting() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>Hosting here</LayoutBody>
+			<LayoutBody>
+				<HostingList />
+			</LayoutBody>
 		</Layout>
 	);
 }

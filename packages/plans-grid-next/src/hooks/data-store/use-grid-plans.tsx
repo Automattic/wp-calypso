@@ -10,24 +10,26 @@ import {
 	TYPE_WOOEXPRESS_SMALL,
 	getPlan,
 	isBloggerPlan,
-	TERMS_LIST,
 	applyTestFiltersToPlansList,
 	isMonthly,
 	isWpcomEnterpriseGridPlan,
 	TERM_MONTHLY,
 	isWpComFreePlan,
-	type FeatureList,
 	type PlanSlug,
 	type PlanType,
 	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_P2_PLUS,
+	isPremiumPlan,
+	isFreePlan,
+	isPersonalPlan,
 } from '@automattic/calypso-products';
-import { Plans, type AddOnMeta } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
+import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
-import type { GridPlan, PlansIntent } from '../../types';
+import type { HiddenPlans, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export type UseFreeTrialPlanSlugs = ( {
@@ -35,45 +37,71 @@ export type UseFreeTrialPlanSlugs = ( {
 	eligibleForFreeHostingTrial,
 }: {
 	intent: PlansIntent;
-	eligibleForFreeHostingTrial: boolean;
+	eligibleForFreeHostingTrial?: boolean;
 } ) => {
 	[ Type in PlanType ]?: PlanSlug;
 };
 
-interface Props {
-	// allFeaturesList temporary until feature definitions are ported to calypso-products package
-	allFeaturesList: FeatureList;
-	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
-	useFreeTrialPlanSlugs: UseFreeTrialPlanSlugs;
-	eligibleForFreeHostingTrial: boolean;
-	storageAddOns: ( AddOnMeta | null )[] | null;
-	selectedFeature?: string | null;
-	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
-	intent?: PlansIntent;
+const isGridPlanVisible = ( {
+	hiddenPlans: {
+		hideFreePlan,
+		hidePersonalPlan,
+		hidePremiumPlan,
+		hideBusinessPlan,
+		hideEcommercePlan,
+	} = {},
+	isDisplayingPlansNeededForFeature,
+	planSlug,
+	planSlugsForIntent,
+	selectedPlan,
+}: {
+	hiddenPlans?: HiddenPlans;
+	isDisplayingPlansNeededForFeature?: boolean;
+	planSlug: PlanSlug;
+	planSlugsForIntent: PlanSlug[];
 	selectedPlan?: PlanSlug;
-	sitePlanSlug?: PlanSlug | null;
-	hideEnterprisePlan?: boolean;
-	isInSignup?: boolean;
-	showLegacyStorageFeature?: boolean;
+} ): boolean => {
+	let isVisible = planSlugsForIntent.includes( planSlug );
 
-	/**
-	 * If the subdomain generation is unsuccessful we do not show the free plan
-	 */
-	isSubdomainNotGenerated?: boolean;
-	coupon?: string;
-	selectedSiteId?: number | null;
-}
+	if ( isDisplayingPlansNeededForFeature && selectedPlan ) {
+		if ( isEcommercePlan( selectedPlan ) ) {
+			isVisible = isEcommercePlan( planSlug );
+		}
+
+		if ( isBusinessPlan( selectedPlan ) ) {
+			isVisible = isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
+		}
+
+		if ( isPremiumPlan( selectedPlan ) ) {
+			isVisible =
+				isPremiumPlan( planSlug ) || isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
+		}
+	}
+
+	if (
+		( hideFreePlan && isFreePlan( planSlug ) ) ||
+		( hidePersonalPlan && isPersonalPlan( planSlug ) ) ||
+		( hidePremiumPlan && isPremiumPlan( planSlug ) ) ||
+		( hideBusinessPlan && isBusinessPlan( planSlug ) ) ||
+		( hideEcommercePlan && isEcommercePlan( planSlug ) )
+	) {
+		isVisible = false;
+	}
+
+	return isVisible;
+};
 
 const usePlanTypesWithIntent = ( {
 	intent,
 	selectedPlan,
-	sitePlanSlug,
-	hideEnterprisePlan,
+	siteId,
+	hiddenPlans: { hideEnterprisePlan } = {},
 	isSubdomainNotGenerated = false,
 }: Pick<
-	Props,
-	'intent' | 'selectedPlan' | 'sitePlanSlug' | 'hideEnterprisePlan' | 'isSubdomainNotGenerated'
+	UseGridPlansParams,
+	'intent' | 'selectedPlan' | 'siteId' | 'hiddenPlans' | 'isSubdomainNotGenerated'
 > ): string[] => {
+	const { planSlug: sitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
 	const isEnterpriseAvailable = ! hideEnterprisePlan;
 	const isBloggerAvailable =
 		( selectedPlan && isBloggerPlan( selectedPlan ) ) ||
@@ -128,11 +156,15 @@ const usePlanTypesWithIntent = ( {
 		case 'plans-jetpack-app-site-creation':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
-		case 'plans-paid-media':
-			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
-			break;
 		case 'plans-p2':
-			planTypes = [ TYPE_FREE, TYPE_P2_PLUS ];
+			planTypes = [ TYPE_FREE ];
+
+			// 2024-04-02 Disable upgrade to P2+
+			// only include P2+ if it is the current plan
+			if ( TYPE_P2_PLUS === currentSitePlanType ) {
+				planTypes.push( TYPE_P2_PLUS );
+			}
+
 			break;
 		case 'plans-default-wpcom':
 			planTypes = [
@@ -166,22 +198,22 @@ const usePlanTypesWithIntent = ( {
 };
 
 // TODO clk: move to plans data store
-const useGridPlans = ( {
+const useGridPlans: UseGridPlansType = ( {
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	term = TERM_MONTHLY,
 	intent,
 	selectedPlan,
-	sitePlanSlug,
-	hideEnterprisePlan,
+	hiddenPlans,
 	isInSignup,
 	eligibleForFreeHostingTrial,
 	isSubdomainNotGenerated,
 	storageAddOns,
 	coupon,
-	selectedSiteId,
-}: Props ): Omit< GridPlan, 'features' >[] | null => {
-	const freeTrialPlanSlugs = useFreeTrialPlanSlugs( {
+	siteId,
+	isDisplayingPlansNeededForFeature,
+} ) => {
+	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
 	} );
@@ -189,8 +221,8 @@ const useGridPlans = ( {
 		planTypes: usePlanTypesWithIntent( {
 			intent: 'default',
 			selectedPlan,
-			sitePlanSlug,
-			hideEnterprisePlan,
+			siteId,
+			hiddenPlans,
 			isSubdomainNotGenerated,
 		} ),
 		term,
@@ -200,8 +232,8 @@ const useGridPlans = ( {
 		planTypes: usePlanTypesWithIntent( {
 			intent,
 			selectedPlan,
-			sitePlanSlug,
-			hideEnterprisePlan,
+			siteId,
+			hiddenPlans,
 			isSubdomainNotGenerated,
 		} ),
 		term,
@@ -212,6 +244,7 @@ const useGridPlans = ( {
 	} );
 
 	// only fetch highlights for the plans that are available for the intent
+	const { planSlug: sitePlanSlug } = Plans.useCurrentPlan( { siteId } ) || {};
 	const highlightLabels = useHighlightLabels( {
 		intent,
 		planSlugs: planSlugsForIntent,
@@ -226,7 +259,7 @@ const useGridPlans = ( {
 		planSlugs: availablePlanSlugs,
 		storageAddOns,
 		coupon,
-		selectedSiteId,
+		siteId,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
@@ -274,10 +307,19 @@ const useGridPlans = ( {
 		const storageAddOnsForPlan =
 			isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) ? storageAddOns : null;
 
+		const isVisible = isGridPlanVisible( {
+			planSlug,
+			planSlugsForIntent,
+			selectedPlan,
+			hiddenPlans,
+			isDisplayingPlansNeededForFeature,
+		} );
+		const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
+
 		return {
 			planSlug,
-			freeTrialPlanSlug: freeTrialPlanSlugs?.[ planConstantObj.type ],
-			isVisible: planSlugsForIntent.includes( planSlug ),
+			freeTrialPlanSlug,
+			isVisible,
 			tagline,
 			availableForPurchase,
 			productNameShort,

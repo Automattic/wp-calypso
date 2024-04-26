@@ -1,9 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
-import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type {
 	AgencyDashboardFilter,
 	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+
+const client = isEnabled( 'a8c-for-agencies' ) ? wpcom : wpcomJpl;
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
 	return {
@@ -25,31 +28,56 @@ const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
 	};
 };
 
-const useFetchDashboardSites = (
-	isPartnerOAuthTokenLoaded: boolean,
-	searchQuery: string,
-	currentPage: number,
-	filter: AgencyDashboardFilter,
-	sort: DashboardSortInterface,
-	per_page?: number
-) => {
-	let query_key = [
+interface FetchDashboardSitesArgsInterface {
+	isPartnerOAuthTokenLoaded: boolean;
+	searchQuery: string;
+	currentPage: number;
+	filter: AgencyDashboardFilter;
+	sort: DashboardSortInterface;
+	perPage?: number;
+	agencyId?: number;
+}
+
+const useFetchDashboardSites = ( {
+	isPartnerOAuthTokenLoaded,
+	searchQuery,
+	currentPage,
+	filter,
+	sort,
+	perPage,
+	agencyId,
+}: FetchDashboardSitesArgsInterface ) => {
+	let queryKey = [
 		'jetpack-agency-dashboard-sites',
 		searchQuery,
 		currentPage,
 		filter,
 		sort,
-		per_page,
+		perPage,
+		...( agencyId ? [ agencyId ] : [] ),
 	];
-	// If per_page is not provided, we want to remove per_page from the query_key as existing tests don't pass otherwise.
-	if ( ! per_page ) {
-		query_key = [ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ];
+
+	// If perPage is not provided, we want to remove perPage from the query_key as existing tests don't pass otherwise.
+	if ( ! perPage ) {
+		queryKey = [
+			'jetpack-agency-dashboard-sites',
+			searchQuery,
+			currentPage,
+			filter,
+			sort,
+			...( agencyId ? [ agencyId ] : [] ),
+		];
 	}
 
+	const isAgencyOrPartnerAuthEnabled =
+		isPartnerOAuthTokenLoaded || ( agencyId !== undefined && agencyId !== null );
+
 	return useQuery( {
-		queryKey: query_key,
+		// Disable eslint rule since TS isn't grasping that agencyId is being optionally added to the array
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps
+		queryKey,
 		queryFn: () =>
-			wpcomJpl.req.get(
+			client.req.get(
 				{
 					path: '/jetpack-agency/sites',
 					apiNamespace: 'wpcom/v2',
@@ -59,7 +87,8 @@ const useFetchDashboardSites = (
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
 					...agencyDashboardSortToQueryObject( sort ),
-					per_page: per_page ?? 20,
+					per_page: perPage,
+					...( agencyId && { agency_id: agencyId } ),
 				}
 			),
 		select: ( data ) => {
@@ -70,7 +99,7 @@ const useFetchDashboardSites = (
 				totalFavorites: data.total_favorites,
 			};
 		},
-		enabled: isPartnerOAuthTokenLoaded,
+		enabled: isAgencyOrPartnerAuthEnabled,
 	} );
 };
 
