@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_BUSINESS, PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -11,7 +12,6 @@ import useAddHostingTrialMutation, {
 } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import useCheckEligibilityMigrationTrialPlan from 'calypso/data/plans/use-check-eligibility-migration-trial-plan';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import UpgradePlanDetails from './upgrade-plan-details';
 
@@ -91,7 +91,7 @@ export const UpgradePlan: React.FunctionComponent< Props > = ( props: Props ) =>
 			migration_trial_hidden: hideFreeMigrationTrial ? 'true' : 'false',
 		};
 
-		dispatch( recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', allEventProps ) );
+		recordTracksEvent( 'calypso_site_migration_upgrade_plan_screen', allEventProps );
 	}, [ migrationTrialEligibility, hideFreeMigrationTrial ] );
 
 	const renderCTAs = () => {

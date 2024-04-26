@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React, { type ComponentPropsWithoutRef } from 'react';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { UpgradePlan } from '../index';
 
@@ -17,19 +17,7 @@ jest.mock( '../upgrade-plan-details', () => ( {
 	default: ( { children } ) => <div>{ children }</div>,
 } ) );
 
-// This is effectively a custom passthrough as jest.spyOn() doesn't seem to work well
-// with the recordTracksEvent import.
-jest.mock( 'calypso/state/analytics/actions', () => {
-	const originalActions = jest.requireActual( 'calypso/state/analytics/actions' );
-
-	return {
-		__esModule: true,
-		...originalActions,
-		recordTracksEvent: jest
-			.fn()
-			.mockImplementation( ( ...args ) => originalActions.recordTracksEvent( ...args ) ),
-	};
-} );
+jest.mock( '@automattic/calypso-analytics' );
 
 function renderUpgradePlanComponent( props: ComponentPropsWithoutRef< typeof UpgradePlan > ) {
 	const queryClient = new QueryClient();
