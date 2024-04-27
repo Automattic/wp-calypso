@@ -337,7 +337,7 @@ import {
 	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
 	FEATURE_WEB_SERVER_SETTINGS,
 } from './constants';
-import { getTrailMapExperiment, isTrialMapVariant } from './experiments';
+import { getTrailMapExperiment, isTrailMapVariant } from './experiments';
 import {
 	isPersonalPlan,
 	isPremiumPlan,
@@ -375,7 +375,7 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 			);
 
 		default:
-			return isTrialMapVariant()
+			return isTrailMapVariant()
 				? i18n.translate( 'Accept payments (%(commission)d%% fee) (+ standard processing fee)', {
 						args: { commission },
 				  } )
@@ -647,14 +647,14 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'All free themes' )
 				: i18n.translate( 'Free WordPress Themes' ),
 	},
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
 		getTitle: () =>
-			isTrialMapVariant() ? i18n.translate( 'SEO tools' ) : i18n.translate( 'SEO tools' ),
+			isTrailMapVariant() ? i18n.translate( 'SEO tools' ) : i18n.translate( 'SEO tools' ),
 		getDescription: () =>
 			i18n.translate(
 				'Edit your page titles and meta descriptions, and preview how your content will appear on social media.'
@@ -872,7 +872,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_INSTALL_PLUGINS ]: {
 		getSlug: () => FEATURE_INSTALL_PLUGINS,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( '50,000+ plugins and themes' )
 				: i18n.translate(
 						'Access to more than 50,000 WordPress plugins to extend functionality for your site'
@@ -968,7 +968,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Help center support' )
 				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
@@ -977,7 +977,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Email support' )
 				: i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
@@ -1695,7 +1695,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_UNLIMITED_USERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_USERS,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Unlimited collaborators' )
 				: i18n.translate( 'Unlimited users' ),
 	},
@@ -1859,7 +1859,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate(
 						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce)(+ standard processing fee)',
 						{
@@ -1875,7 +1875,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Accept payments (%(commission)d% fee)(+ standard processing fee)', {
 						args: { commission: 0 },
 				  } )
@@ -1914,7 +1914,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Unlimited traffic' )
 				: i18n.translate( 'No limitations on site visitors' ),
 		getDescription: () =>
@@ -1972,7 +1972,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Version history and restore' )
 				: i18n.translate( 'Time machine for post edits' ),
 		getDescription: () =>
@@ -2049,7 +2049,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Unmetered bandwidth' )
 				: i18n.translate( 'Unrestricted bandwidth' ),
 		getDescription: () =>
@@ -2066,7 +2066,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Web application firewall' )
 				: i18n.translate( 'Web application firewall (WAF)' ),
 		getDescription: () =>
@@ -2075,7 +2075,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Global CDN with 28+ locations' )
 				: i18n.translate( 'Global CDN with 28+ locations' ),
 		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
@@ -2128,7 +2128,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'DDoS protection' )
 				: i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
@@ -2152,7 +2152,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Staging site' )
 				: i18n.translate( 'Free staging site' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
@@ -2291,7 +2291,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Min/max order quantities' )
 				: i18n.translate( 'Min/max order quantity' ),
 		getDescription: () =>
@@ -2582,7 +2582,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STOCK_NOTIFS ]: {
 		getSlug: () => FEATURE_STOCK_NOTIFS,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Stock notifications' )
 				: i18n.translate( 'Back-in-stock notifications' ),
 
@@ -2627,7 +2627,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BULK_DISCOUNTS ]: {
 		getSlug: () => FEATURE_BULK_DISCOUNTS,
 		getTitle: () =>
-			isTrialMapVariant()
+			isTrailMapVariant()
 				? i18n.translate( 'Bulk discounts' )
 				: i18n.translate( 'Offer bulk discounts' ),
 
@@ -2700,7 +2700,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
 		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
 		getTitle: () =>
-			isTrialMapVariant() ? i18n.translate( 'Free SSL' ) : i18n.translate( 'Free SSL certificate' ),
+			isTrailMapVariant() ? i18n.translate( 'Free SSL' ) : i18n.translate( 'Free SSL certificate' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {

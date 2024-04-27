@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { setPlansListExperiment, setTrailMapExperiment } from '@automattic/calypso-products';
+import { setTrailMapExperiment } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
 	getLanguage,
@@ -16,7 +16,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { useExperiment } from 'calypso/lib/explat/index.js';
+import { useExperiment } from 'calypso/lib/explat';
 import { login, createAccountUrl } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
