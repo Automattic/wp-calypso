@@ -337,6 +337,7 @@ import {
 	FEATURE_PRE_INSTALLED_SECURITY_PERF_PLUGINS,
 	FEATURE_WEB_SERVER_SETTINGS,
 } from './constants';
+import { getTrailMapExperiment, isTrialMapVariant } from './experiments';
 import {
 	isPersonalPlan,
 	isPremiumPlan,
@@ -374,12 +375,16 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 			);
 
 		default:
-			return i18n.translate(
-				'%(commission)d%% transaction fee for payments (+ standard processing fee)',
-				{
-					args: { commission },
-				}
-			);
+			return isTrialMapVariant()
+				? i18n.translate( 'Accept payments (%(commission)d%% fee) (+ standard processing fee)', {
+						args: { commission },
+				  } )
+				: i18n.translate(
+						'%(commission)d%% transaction fee for payments (+ standard processing fee)',
+						{
+							args: { commission },
+						}
+				  );
 	}
 };
 
@@ -641,11 +646,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
-		getTitle: () => i18n.translate( 'Free WordPress Themes' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'All free themes' )
+				: i18n.translate( 'Free WordPress Themes' ),
 	},
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
-		getTitle: () => i18n.translate( 'SEO tools' ),
+		getTitle: () =>
+			isTrialMapVariant() ? i18n.translate( 'SEO tools' ) : i18n.translate( 'SEO tools' ),
 		getDescription: () =>
 			i18n.translate(
 				'Edit your page titles and meta descriptions, and preview how your content will appear on social media.'
@@ -760,7 +769,10 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () => i18n.translate( 'VideoPress support' ),
+		getTitle: () =>
+			getTrailMapExperiment()
+				? i18n.translate( 'Upload 4K video with VideoPress' )
+				: i18n.translate( 'VideoPress support' ),
 		getDescription: () =>
 			i18n.translate(
 				'The easiest way to upload videos to your website and display them ' +
@@ -860,9 +872,11 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_INSTALL_PLUGINS ]: {
 		getSlug: () => FEATURE_INSTALL_PLUGINS,
 		getTitle: () =>
-			i18n.translate(
-				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
-			),
+			isTrialMapVariant()
+				? i18n.translate( '50,000+ plugins and themes' )
+				: i18n.translate(
+						'Access to more than 50,000 WordPress plugins to extend functionality for your site'
+				  ),
 	},
 
 	[ FEATURE_UPLOAD_THEMES ]: {
@@ -953,13 +967,19 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
 		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
-		getTitle: () => i18n.translate( 'Community support' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Help center support' )
+				: i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
 	},
 
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Email support' )
+				: i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -1674,7 +1694,10 @@ const FEATURES_LIST: FeatureList = {
 	/* START - New features Flexible and Pro plans introduced. */
 	[ FEATURE_UNLIMITED_USERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_USERS,
-		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Unlimited collaborators' )
+				: i18n.translate( 'Unlimited users' ),
 	},
 	[ FEATURE_UNLIMITED_POSTS_PAGES ]: {
 		getSlug: () => FEATURE_UNLIMITED_POSTS_PAGES,
@@ -1836,18 +1859,29 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 2 },
-			} ),
+			isTrialMapVariant()
+				? i18n.translate(
+						'Accept payments (%(commission)d%% fee, %(wooCommerceCommission)d%% for WooCommerce)(+ standard processing fee)',
+						{
+							args: { commission: 2, wooCommerceCommission: 0 },
+						}
+				  )
+				: i18n.translate( '%(commission)d%% transaction fee for payments', {
+						args: { commission: 2 },
+				  } ),
 		getAlternativeTitle: () => '2%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_0 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_0,
 		getTitle: () =>
-			i18n.translate( '%(commission)d%% transaction fee for payments', {
-				args: { commission: 0 },
-			} ),
+			isTrialMapVariant()
+				? i18n.translate( 'Accept payments (%(commission)d% fee)(+ standard processing fee)', {
+						args: { commission: 0 },
+				  } )
+				: i18n.translate( '%(commission)d%% transaction fee for payments', {
+						args: { commission: 0 },
+				  } ),
 		getAlternativeTitle: () => '0%',
 		getFeatureGroup: () => FEATURE_GROUP_PAYMENT_TRANSACTION_FEES,
 	},
@@ -1879,7 +1913,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
-		getTitle: () => i18n.translate( 'No limitations on site visitors' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Unlimited traffic' )
+				: i18n.translate( 'No limitations on site visitors' ),
 		getDescription: () =>
 			i18n.translate( 'Grow your site traffic without worrying about limitations.' ),
 	},
@@ -1934,7 +1971,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
-		getTitle: () => i18n.translate( 'Time machine for post edits' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Version history and restore' )
+				: i18n.translate( 'Time machine for post edits' ),
 		getDescription: () =>
 			i18n.translate( 'Roll back your posts to an earlier edit with a built-in revision history.' ),
 	},
@@ -2008,7 +2048,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
-		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Unmetered bandwidth' )
+				: i18n.translate( 'Unrestricted bandwidth' ),
 		getDescription: () =>
 			i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
 	},
@@ -2022,13 +2065,19 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
-		getTitle: () => i18n.translate( 'Web application firewall (WAF)' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Web application firewall' )
+				: i18n.translate( 'Web application firewall (WAF)' ),
 		getDescription: () =>
 			i18n.translate( 'Block out malicious activity like SQL injection and XSS attacks.' ),
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
-		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Global CDN with 28+ locations' )
+				: i18n.translate( 'Global CDN with 28+ locations' ),
 		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
 		getCompareTitle: () =>
 			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
@@ -2078,7 +2127,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
-		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'DDoS protection' )
+				: i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real time monitoring and mitigation.' ),
 	},
@@ -2099,7 +2151,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
-		getTitle: () => i18n.translate( 'Free staging site' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Staging site' )
+				: i18n.translate( 'Free staging site' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in a staging site.' ),
 	},
 
@@ -2235,7 +2290,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
-		getTitle: () => i18n.translate( 'Min/max order quantity' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Min/max order quantities' )
+				: i18n.translate( 'Min/max order quantity' ),
 		getDescription: () =>
 			i18n.translate(
 				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'
@@ -2523,7 +2581,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_STOCK_NOTIFS ]: {
 		getSlug: () => FEATURE_STOCK_NOTIFS,
-		getTitle: () => i18n.translate( 'Back-in-stock notifications' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Stock notifications' )
+				: i18n.translate( 'Back-in-stock notifications' ),
 
 		getDescription: () =>
 			i18n.translate( 'Automatically notify customers when your products are restocked.' ),
@@ -2565,7 +2626,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BULK_DISCOUNTS ]: {
 		getSlug: () => FEATURE_BULK_DISCOUNTS,
-		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+		getTitle: () =>
+			isTrialMapVariant()
+				? i18n.translate( 'Bulk discounts' )
+				: i18n.translate( 'Offer bulk discounts' ),
 
 		getDescription: () => i18n.translate( 'Offer personalized packages and bulk discounts.' ),
 		getConditionalTitle: () => i18n.translate( 'Available with paid plugins' ),
@@ -2635,7 +2699,8 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
 		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
-		getTitle: () => i18n.translate( 'Free SSL certificate' ),
+		getTitle: () =>
+			isTrialMapVariant() ? i18n.translate( 'Free SSL' ) : i18n.translate( 'Free SSL certificate' ),
 		getDescription: () => '',
 	},
 	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {

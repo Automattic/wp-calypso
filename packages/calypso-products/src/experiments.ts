@@ -1,5 +1,3 @@
-import i18n, { TranslateResult } from 'i18n-calypso';
-
 type Experiment = { [ key: string ]: string };
 type Experiments = { [ key: string ]: Experiment };
 
@@ -32,3 +30,5 @@ export const getTrailMapExperiment = (): 'control' | 'variant' => {
 	return ( getExperiment( PLANS_LIST_NAMESPACE, 'wpcom_trail_map_feature_structure_experiment' ) ??
 		'control' ) as 'control' | 'variant';
 };
+
+export const isTrialMapVariant = (): boolean => getTrailMapExperiment() === 'variant';
