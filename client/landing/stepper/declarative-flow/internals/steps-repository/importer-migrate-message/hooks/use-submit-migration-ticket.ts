@@ -3,14 +3,6 @@ import { UseMutationOptions } from '@tanstack/react-query/build/modern';
 import { useCallback } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 
-type Ticket = {
-	subject: string;
-	message: string;
-	locale: string;
-	source?: string;
-	blog_url: string;
-};
-
 interface migrationTicketAPIResponse {
 	success: boolean;
 }
@@ -26,24 +18,27 @@ export const useSubmitMigrationTicket = <
 	TError = APIError,
 	TContext = unknown,
 >(
-	options: UseMutationOptions< TData, TError, { ticket: Ticket }, TContext > = {}
+	options: UseMutationOptions< TData, TError, { locale: string; blog_url: string }, TContext > = {}
 ) => {
 	const { mutate, ...rest } = useMutation( {
-		mutationFn: ( { ticket } ) =>
+		mutationFn: ( { locale, blog_url } ) =>
 			wpcomRequest( {
-				path: 'help/ticket/new',
+				path: 'help/migration-ticket/new',
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 				method: 'POST',
 				body: {
-					...ticket,
-					source: [ 'wpcom_moveto', 'wpcom_presales', 'ai_skip', 'wpcom_moveto_view' ],
+					locale,
+					blog_url,
 				},
 			} ),
 		...options,
 	} );
 
-	const sendTicket = useCallback( ( ticket: Ticket ) => mutate( { ticket } ), [ mutate ] );
+	const sendTicket = useCallback(
+		( { locale, blog_url } ) => mutate( { locale, blog_url } ),
+		[ mutate ]
+	);
 
 	return {
 		sendTicket,
