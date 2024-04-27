@@ -62,7 +62,8 @@
 	}
 }
 
-.wpcom-site .is-group-sites.is-global-sidebar-collapsed {
+.wpcom-site .is-group-sites.is-global-sidebar-collapsed,
+.wpcom-site .is-group-sites.is-global-sidebar-visible {
 	.layout__content {
 		padding: 16px 16px 16px calc(var(--sidebar-width-max));
 	}
