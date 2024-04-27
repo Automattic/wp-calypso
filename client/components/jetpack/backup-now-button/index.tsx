@@ -11,6 +11,7 @@ import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
+import isJetpackSiteConnected from 'calypso/state/selectors/is-jetpack-site-connected';
 
 interface Props {
 	children?: React.ReactNode;
@@ -49,6 +50,8 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		getInProgressBackupForSite( state, siteId )
 	);
 
+	const isSiteConnected = useSelector( ( state ) => isJetpackSiteConnected( state, siteId ) );
+
 	const refreshBackupProgress = useCallback(
 		() => dispatch( requestRewindBackups( siteId ) ),
 		[ dispatch, siteId ]
@@ -81,6 +84,9 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 		}
 	}, [ areBackupsStopped, backupCurrentlyInProgress, tooltipText, translate, enqueued, children ] );
 
+	const isDisabled =
+		backupCurrentlyInProgress || areBackupsStopped || disabled || ! isSiteConnected;
+
 	// TODO: If we want to re-enable the backup button we can set enqueue to false once we detect a backup in progress
 
 	const button = (
@@ -90,7 +96,7 @@ const BackupNowButton: FunctionComponent< Props > = ( {
 				primary={ variant === 'primary' }
 				plain={ variant === 'tertiary' }
 				onClick={ enqueueBackup }
-				disabled={ backupCurrentlyInProgress || areBackupsStopped || disabled }
+				disabled={ isDisabled }
 			>
 				{ buttonContent }
 			</Button>
