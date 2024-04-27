@@ -46,7 +46,7 @@ export const useSiteExcerptsQuery = (
 
 			if ( site_visibility === 'deleted' ) {
 				sites.forEach( ( site ) => {
-					site.is_deleted = true;
+					site.is_deleted = site.site_owner === undefined;
 				} );
 			}
 
