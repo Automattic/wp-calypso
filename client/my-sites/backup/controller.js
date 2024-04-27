@@ -1,5 +1,6 @@
 import { isJetpackBackupSlug } from '@automattic/calypso-products';
 import Debug from 'debug';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
@@ -107,6 +108,22 @@ export function showUnavailableForMultisites( context, next ) {
 
 	context.primary = (
 		<MultisiteNoBackupPlanSwitch trueComponent={ message } falseComponent={ context.primary } />
+	);
+
+	next();
+}
+
+export function queryJetpackConnection( context, next ) {
+	debug( 'controller: queryJetpackConnection', context.params );
+
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = (
+		<>
+			<QueryJetpackConnection siteId={ siteId } />
+			{ context.primary }
+		</>
 	);
 
 	next();
