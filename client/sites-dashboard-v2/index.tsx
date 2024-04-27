@@ -30,7 +30,9 @@ import {
 	useShowSiteCreationNotice,
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
+import { useDispatch } from 'calypso/state';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { DOTCOM_OVERVIEW } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
@@ -110,6 +112,7 @@ const SitesDashboardV2 = ( {
 	initialSiteSubfeature = initialSiteFeature,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 	const initialSortApplied = useRef( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -208,6 +211,15 @@ const SitesDashboardV2 = ( {
 		dataViewsState.page * dataViewsState.perPage
 	);
 
+	// Update selected site globally as soon as it is clicked from the table.
+	useEffect( () => {
+		if ( dataViewsState.selectedItem ) {
+			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
+		} else {
+			dispatch( setSelectedSiteId( null ) );
+		}
+	}, [ dataViewsState.selectedItem ] );
+
 	// Reset selected feature when the component is re-mounted with different initial path.
 	useEffect( () => {
 		setSelectedSiteFeature( initialSiteFeature );
@@ -229,18 +241,25 @@ const SitesDashboardV2 = ( {
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
+		// Whether the left sidebar should animate (grow or collapse)
+		const shouldAnimate = Boolean( selectedSite ) !== Boolean( dataViewsState.selectedItem?.slug );
+
 		// There is a chance that the URL is not up to date when it mounts, so bump the
 		// syncURL call to the back of the stack to avoid it getting the incorrect URL and
 		// then redirecting back to the previous path.
-		window.setTimeout( () =>
-			syncURL(
-				dataViewsState.selectedItem?.slug,
-				selectedSiteParams,
-				selectedSiteSubfeature,
-				queryParams
-			)
+		window.setTimeout(
+			() =>
+				syncURL(
+					dataViewsState.selectedItem?.slug,
+					selectedSiteParams,
+					selectedSiteSubfeature,
+					queryParams
+				),
+			// Delay the update while the left sidebar is animating
+			shouldAnimate ? 500 : 0
 		);
 	}, [
+		selectedSite,
 		dataViewsState.selectedItem?.slug,
 		selectedSiteSubfeature,
 		dataViewsState.search,
