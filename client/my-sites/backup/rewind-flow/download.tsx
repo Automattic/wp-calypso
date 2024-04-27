@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
-import downloadReadyImage from 'calypso/assets/images/illustrations/jetpack-cloud-download-ready.svg';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -89,7 +88,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const renderConfirm = () => (
 		<>
 			<div className="rewind-flow__header">
-				<img src={ downloadReadyImage } alt="jetpack cloud download ready" />
+				<img
+					src="/calypso/images/illustrations/jetpack-cloud-download-ready.svg"
+					alt="jetpack cloud download ready"
+				/>
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Create downloadable backup' ) }</h3>
 			<p className="rewind-flow__info">
@@ -135,7 +137,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const renderInProgress = ( percent: number ) => (
 		<>
 			<div className="rewind-flow__header">
-				<img src={ downloadReadyImage } alt="jetpack cloud download ready" />
+				<img
+					src="/calypso/images/illustrations/jetpack-cloud-download-ready.svg"
+					alt="jetpack cloud download ready"
+				/>
 			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
@@ -193,7 +198,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	const renderReady = () => (
 		<>
 			<div className="rewind-flow__header">
-				<img src={ downloadReadyImage } alt="jetpack cloud download success" />
+				<img
+					src="/calypso/images/illustrations/jetpack-cloud-download-success.svg"
+					alt="jetpack cloud download success"
+				/>
 			</div>
 			<h3 className="rewind-flow__title">
 				{ translate( 'Your backup is now available for download.' ) }
