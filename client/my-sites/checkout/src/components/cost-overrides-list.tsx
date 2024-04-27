@@ -368,6 +368,11 @@ const ProductsAndCostOverridesListWrapper = styled.div`
 	gap: 1em;
 `;
 
+const SingleProductAndCostOverridesListWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+`;
+
 const ProductTitleAreaForCostOverridesList = styled.div`
 	word-break: break-word;
 	font-size: 14px;
@@ -376,7 +381,7 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	gap: 0.5em;
 `;
 
-function ProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
+function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
 	const label = getLabel( product );
@@ -389,22 +394,22 @@ function ProductAndCostOverridesList( { product }: { product: ResponseCartProduc
 		}
 	);
 	return (
-		<ProductsAndCostOverridesListWrapper>
+		<SingleProductAndCostOverridesListWrapper>
 			<ProductTitleAreaForCostOverridesList>
 				<span>{ label }</span>
 				<LineItemPrice actualAmount={ actualAmountDisplay } />
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
-		</ProductsAndCostOverridesListWrapper>
+		</SingleProductAndCostOverridesListWrapper>
 	);
 }
 
 export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
 	return (
-		<div>
+		<ProductsAndCostOverridesListWrapper>
 			{ responseCart.products.map( ( product ) => (
-				<ProductAndCostOverridesList product={ product } key={ product.uuid } />
+				<SingleProductAndCostOverridesList product={ product } key={ product.uuid } />
 			) ) }
-		</div>
+		</ProductsAndCostOverridesListWrapper>
 	);
 }
