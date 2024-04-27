@@ -371,6 +371,25 @@ const ProductsAndCostOverridesListWrapper = styled.div`
 const SingleProductAndCostOverridesListWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	justify-content: space-between;
+	font-size: 12px;
+	font-weight: 400;
+
+	& .cost-overrides-list-item {
+		display: grid;
+		justify-content: space-between;
+		grid-template-columns: auto auto;
+		margin-top: 4px;
+		gap: 0 16px;
+	}
+
+	& .cost-overrides-list-item__reason--is-discount {
+		color: #008a20;
+	}
+
+	& .cost-overrides-list-item__discount {
+		white-space: nowrap;
+	}
 `;
 
 const ProductTitleAreaForCostOverridesList = styled.div`
@@ -404,12 +423,38 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	);
 }
 
+function CouponCostOverride( { responseCart }: { responseCart: ResponseCart } ) {
+	const translate = useTranslate();
+	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
+		return null;
+	}
+	// translators: The label of the coupon line item in checkout, including the coupon code
+	const label = translate( 'Coupon: %(couponCode)s', {
+		args: { couponCode: responseCart.coupon },
+	} );
+	return (
+		<SingleProductAndCostOverridesListWrapper>
+			<div className="cost-overrides-list-item">
+				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
+					{ label }
+				</span>
+				<span className="cost-overrides-list-item__discount">
+					{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
+						isSmallestUnit: true,
+					} ) }
+				</span>
+			</div>
+		</SingleProductAndCostOverridesListWrapper>
+	);
+}
+
 export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
 	return (
 		<ProductsAndCostOverridesListWrapper>
 			{ responseCart.products.map( ( product ) => (
 				<SingleProductAndCostOverridesList product={ product } key={ product.uuid } />
 			) ) }
+			<CouponCostOverride responseCart={ responseCart } />
 		</ProductsAndCostOverridesListWrapper>
 	);
 }
