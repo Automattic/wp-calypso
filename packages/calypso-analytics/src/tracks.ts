@@ -36,6 +36,8 @@ const EVENT_NAME_EXCEPTIONS = [
 	'calypso_checkout_composite_p24_submit_clicked',
 	// Launch Bar
 	'wpcom_launchbar_button_click',
+	// Request for free migration
+	'wpcom_support_free_migration_request_click',
 ];
 
 let _superProps: any; // Added to all Tracks events.

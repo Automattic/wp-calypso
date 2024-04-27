@@ -12,30 +12,24 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { useMigrationSupportActivity, useSubmitMigrationTicket } from './hooks';
+import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
 
 const ImporterMigrateMessage: Step = () => {
+	const locale = useLocale();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const siteSlugParam = useSiteSlugParam();
 	const siteSlug = siteSlugParam ?? '';
-
-	const { data: supportActivity, isLoading: isLoadingTickets } =
-		useMigrationSupportActivity( siteSlug );
 	const { isPending, sendTicket } = useSubmitMigrationTicket();
-	const showLoading = isLoadingTickets || isPending;
-
-	const locale = useLocale();
 
 	useEffect( () => {
-		if ( supportActivity?.length === 0 ) {
-			sendTicket( {
-				subject: `Migration request ${ siteSlug }`,
-				message: `Site I need help migrating: ${ siteSlug }\\n\\n`,
-				locale,
-				blog_url: siteSlug,
-			} );
-		}
-	}, [ sendTicket, supportActivity?.length ] );
+		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
+			path: window.location.pathname,
+		} );
+		sendTicket( {
+			locale,
+			blog_url: siteSlug,
+		} );
+	}, [] );
 
 	return (
 		<StepContainer
@@ -45,8 +39,8 @@ const ImporterMigrateMessage: Step = () => {
 			isHorizontalLayout={ false }
 			stepContent={
 				<>
-					{ showLoading && <LoadingEllipsis /> }
-					{ ! showLoading && (
+					{ isPending && <LoadingEllipsis /> }
+					{ ! isPending && (
 						<div className="message">
 							{ sprintf(
 								// translators: %(email)s is the customer's email and %(webSite)s his site.
