@@ -36,7 +36,7 @@ const QuickActionsCard: FC = () => {
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
 			<div className="hosting-overview__card-header">
-				<h3 className="hosting-overview__card-title">{ translate( 'Quick actions' ) }</h3>
+				<h3 className="hosting-overview__card-title">{ translate( 'WP Admin links' ) }</h3>
 			</div>
 
 			<ul className="hosting-overview__actions-list">
