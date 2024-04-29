@@ -51,10 +51,8 @@ export default function HostingCard( { plan, pressableOwnership }: Props ) {
 						} ) }
 					</b>
 					<div className="hosting-card__price-interval">
-						{ plan.price_interval === 'day' &&
-							translate( 'USD per plan per day, billed annually' ) }
-						{ plan.price_interval === 'month' &&
-							translate( 'USD per plan per month, billed annually' ) }
+						{ plan.price_interval === 'day' && translate( 'USD per plan per day' ) }
+						{ plan.price_interval === 'month' && translate( 'USD per plan per month' ) }
 					</div>
 				</div>
 
