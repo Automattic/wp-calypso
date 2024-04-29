@@ -30,6 +30,7 @@ export function createRazorpayMethod( {
 			/>
 		),
 		inactiveContent: <RazorpaySummary />,
+		// translators: UPI stands for Unified Payments Interface and may not need to be transalted.
 		getAriaLabel: ( __ ) => __( 'UPI' ),
 	};
 }
