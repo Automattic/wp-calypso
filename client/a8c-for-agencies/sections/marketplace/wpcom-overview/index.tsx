@@ -96,6 +96,11 @@ export default function WpcomOverview() {
 					quantity={ selectedCount.value }
 					discount={ selectedCount.discount }
 				/>
+
+				<HostingOverview
+					title={ translate( 'Powerful development & platform tools' ) }
+					subtitle={ translate( 'Build for developers, by developers' ) }
+				/>
 			</LayoutBody>
 		</Layout>
 	);
