@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
@@ -36,6 +37,7 @@ import {
 	getPluginOnSite,
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
@@ -51,7 +53,11 @@ import {
 	isGlobalSiteViewEnabled as getIsGlobalSiteViewEnabled,
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedPurchase,
+} from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
@@ -102,6 +108,9 @@ const Home = ( {
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
 
+	const isRequestingSitePurchases = useSelector( isFetchingSitePurchases );
+	const purchase = useSelector( getSelectedPurchase );
+
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
 			setCelebrateLaunchModalIsOpen( true );
@@ -142,7 +151,10 @@ const Home = ( {
 	if (
 		isSiteWooExpressEcommerceTrial &&
 		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
-		( fetchingJetpackModules || ssoModuleActive )
+		( fetchingJetpackModules || ssoModuleActive ) &&
+		( config.isEnabled( 'entrepreneur-my-home' )
+			? isRequestingSitePurchases || purchase?.isWooExpressTrial
+			: true )
 	) {
 		return <WooCommerceHomePlaceholder />;
 	}
