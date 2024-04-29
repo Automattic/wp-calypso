@@ -6,9 +6,29 @@ import {
 } from 'calypso/my-sites/patterns/components/toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
-import { PatternView } from 'calypso/my-sites/patterns/types';
+import { PatternTypeFilter, PatternView } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+
+// On the client, the URL query string may contain a search term. If so, we want to preserve that
+function getViewToggleUrlPath(
+	category: string,
+	patternTypeFilter: PatternTypeFilter,
+	isGridView: boolean
+): string {
+	if ( typeof window !== 'undefined' ) {
+		const url = new URL( window.location.href );
+		url.searchParams.delete( 'grid' );
+
+		if ( isGridView ) {
+			url.searchParams.set( 'grid', '1' );
+		}
+
+		return url.toString();
+	}
+
+	return getCategoryUrlPath( category, patternTypeFilter, false, isGridView );
+}
 
 type ViewToggleProps = {
 	onChange?( value: PatternView ): void;
@@ -37,7 +57,7 @@ export function ViewToggle( { onChange }: ViewToggleProps ) {
 		>
 			<PatternLibraryToggleOption
 				aria-label={ listViewLabel }
-				href={ getCategoryUrlPath( category, patternTypeFilter, false, false ) }
+				href={ getViewToggleUrlPath( category, patternTypeFilter, false ) }
 				tooltipText={ listViewLabel }
 				value="list"
 			>
@@ -46,7 +66,7 @@ export function ViewToggle( { onChange }: ViewToggleProps ) {
 
 			<PatternLibraryToggleOption
 				aria-label={ gridViewLabel }
-				href={ getCategoryUrlPath( category, patternTypeFilter, false, true ) }
+				href={ getViewToggleUrlPath( category, patternTypeFilter, true ) }
 				tooltipText={ gridViewLabel }
 				value="grid"
 			>
