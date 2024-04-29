@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	siteLaunchStatusGroupValues,
@@ -8,9 +7,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MySitesNavigation from 'calypso/my-sites/navigation';
-import SitesDashboardV2 from 'calypso/sites-dashboard-v2';
 import { removeNotice } from 'calypso/state/notices/actions';
-import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
@@ -49,25 +46,42 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
-			background: #ffffff;
+			background: var( --studio-gray-0 );
 
 			.layout__content {
-				// The page header background extends all the way to the edge of the screen
-				@media only screen and ( min-width: 782px ) {
-					padding-inline: 0;
-				}
+				// Add border around everything
+				overflow: hidden;
+				min-height: 100vh;
+				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
+			}
 
-				// Prevents the status dropdown from being clipped when the page content
-				// isn't tall enough
-				overflow: inherit;
+			.layout__secondary .global-sidebar {
+				border: none;
+			}
+		}
+
+		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+			height: calc( 100vh - 32px );
+			padding-bottom: 0;
+			box-shadow: none;
+		}
+
+		div.is-group-sites-dashboard:not( .has-no-masterbar ) {
+			.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
+				// Fix for scrollbars when global-sidebar is not visible because masterbar is visible
+				height: calc( 100vh - 95px );
 			}
 		}
 
 		// Update body margin to account for the sidebar width
 		@media only screen and ( min-width: 782px ) {
 			div.layout.is-global-sidebar-visible {
-				.layout__primary {
-					margin-inline-start: var( --sidebar-width-max );
+				.layout__primary > main {
+					background: var( --color-surface );
+					border-radius: 8px;
+					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
+					height: calc( 100vh - 32px );
+					overflow: auto;
 				}
 			}
 		}
@@ -95,19 +109,10 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			{ isEnabled( 'layout/dotcom-nav-redesign-v2' ) ? (
-				// Sites Dashboard V2 - Dotcom Nav Redesign V2
-				<SitesDashboardV2 queryParams={ queryParams } />
-			) : (
-				<SitesDashboard queryParams={ queryParams } />
-			) }
+			<SitesDashboard queryParams={ queryParams } />
 		</>
 	);
 
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		// By definition, Sites Management does not select any one specific site
-		context.store.dispatch( setAllSitesSelected() );
-	}
 	next();
 }
 

@@ -6,6 +6,8 @@
 		clip-path: inset(0 -1px -1px -1px);
 		box-shadow: 0 0 0 1px var(--color-accent-0), 0 1px 2px var(--color-neutral-0);
 		margin: 0;
+		position: relative;
+		z-index: 1;
 
 		.section-nav-tab__link {
 			color: #000;
@@ -17,8 +19,7 @@
 		}
 
 		.section-nav-tabs__list {
-			padding: 0 0 0 32px;
-			width: unset;
+			padding: 0 32px;
 		}
 
 		.section-nav-tab__text {
@@ -55,16 +56,12 @@
 
 		@media (min-width: 481px) {
 			.section-nav-group {
-				overflow-x: auto;
 
 				.is-dropdown {
 					width: 100%;
 				}
 			}
 
-			.section-nav-tabs {
-				width: unset;
-			}
 		}
 
 		@media (max-width: 480px) {

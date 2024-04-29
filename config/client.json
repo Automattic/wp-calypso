@@ -17,6 +17,7 @@
 	"login_url",
 	"logout_url",
 	"mc_analytics_enabled",
+	"migration_assistance_modal",
 	"oauth_client_id",
 	"oauth_response_type",
 	"oauth_url",

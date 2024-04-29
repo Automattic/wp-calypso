@@ -85,6 +85,7 @@ export interface StoredPaymentMethodStripeSource extends StoredPaymentMethodBase
 
 export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
 	payment_partner: 'razorpay';
+	razorpay_vpa: string;
 }
 
 export interface StoredPaymentMethodTaxLocation {

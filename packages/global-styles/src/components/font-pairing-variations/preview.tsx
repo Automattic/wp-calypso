@@ -23,8 +23,12 @@ const DEFAULT_LARGE_FONT_STYLES: React.CSSProperties = {
 };
 
 const FontPairingVariationPreview = () => {
-	const [ fontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as [ FontFamily[] ];
-
+	const [ defaultFontFamilies ] = useGlobalSetting( 'typography.fontFamilies.default' ) as [
+		FontFamily[],
+	];
+	const [ themeFontFamilies ] = useGlobalSetting( 'typography.fontFamilies.theme' ) as [
+		FontFamily[],
+	];
 	const [ textFontFamily = 'serif' ] = useGlobalStyle( 'typography.fontFamily' );
 	const [ textFontStyle = 'normal' ] = useGlobalStyle( 'typography.fontStyle' );
 	const [ textLetterSpacing = '-0.15px' ] = useGlobalStyle( 'typography.letterSpacing' );
@@ -62,6 +66,10 @@ const FontPairingVariationPreview = () => {
 	const defaultHeight = isDesktop ? FONT_PREVIEW_LARGE_HEIGHT : FONT_PREVIEW_HEIGHT;
 	const ratio = width ? width / defaultWidth : 1;
 	const normalizedHeight = Math.ceil( defaultHeight * ratio );
+	const fontFamilies = useMemo(
+		() => [ ...defaultFontFamilies, ...themeFontFamilies ],
+		[ defaultFontFamilies, themeFontFamilies ]
+	);
 
 	const getFontFamilyName = ( targetFontFamily: string ) => {
 		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );

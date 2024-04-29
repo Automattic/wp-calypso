@@ -1,11 +1,8 @@
+import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import {
-	DataViewsColumn,
-	DataViewsState,
-	ItemsDataViewsType,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
@@ -16,17 +13,40 @@ import SiteField from './dataviews-fields/site-field';
 import { SiteInfo } from './interfaces';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import { getSitesPagination } from './utils';
 import type { SiteExcerptData } from '@automattic/sites';
+import type {
+	DataViewsColumn,
+	DataViewsPaginationInfo,
+	DataViewsState,
+	ItemsDataViewsType,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+
+import './style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];
 	isLoading: boolean;
+	paginationInfo: DataViewsPaginationInfo;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 };
 
-const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsState }: Props ) => {
+export const siteStatusGroups = [
+	{ value: 1, label: __( 'All sites' ), slug: 'all' },
+	{ value: 2, label: __( 'Public' ), slug: 'public' },
+	{ value: 3, label: __( 'Private' ), slug: 'private' },
+	{ value: 4, label: __( 'Coming soon' ), slug: 'coming-soon' },
+	{ value: 5, label: __( 'Redirect' ), slug: 'redirect' },
+	{ value: 6, label: __( 'Deleted' ), slug: 'deleted' },
+];
+
+const DotcomSitesDataViews = ( {
+	sites,
+	isLoading,
+	paginationInfo,
+	dataViewsState,
+	setDataViewsState,
+}: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
 
@@ -46,17 +66,17 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 		() => [
 			{
 				id: 'site',
-				header: __( 'Site' ),
+				header: <span>{ __( 'Site' ) }</span>,
 				getValue: ( { item }: { item: SiteInfo } ) => item.URL,
 				render: ( { item }: { item: SiteInfo } ) => {
 					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
 				},
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'plan',
-				header: __( 'Plan' ),
+				header: <span>{ __( 'Plan' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) => <SitePlan site={ item } userId={ userId } />,
 				enableHiding: false,
 				enableSorting: false,
@@ -66,14 +86,7 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 				header: __( 'Status' ),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStatus site={ item } />,
 				type: 'enumeration',
-				elements: [
-					{ value: 1, label: __( 'All sites' ) },
-					{ value: 2, label: __( 'Public' ) },
-					{ value: 3, label: __( 'Private' ) },
-					{ value: 4, label: __( 'Coming soon' ) },
-					{ value: 5, label: __( 'Redirect' ) },
-					{ value: 6, label: __( 'Deleted' ) },
-				],
+				elements: siteStatusGroups,
 				filterBy: {
 					operators: [ 'in' ],
 				},
@@ -82,17 +95,18 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 			},
 			{
 				id: 'last-publish',
-				header: __( 'Last Publish' ),
+				header: <span>{ __( 'Last Publish' ) }</span>,
 				render: ( { item }: { item: SiteInfo } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
-				enableSorting: false,
+				enableSorting: true,
 			},
 			{
 				id: 'stats',
 				header: (
 					<>
-						<JetpackLogo size={ 16 } /> { __( 'Stats' ) }
+						<JetpackLogo size={ 16 } />
+						<span>{ __( 'Stats' ) }</span>
 					</>
 				),
 				render: ( { item }: { item: SiteInfo } ) => <SiteStats site={ item } />,
@@ -101,12 +115,17 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 			},
 			{
 				id: 'actions',
-				header: __( 'Actions' ),
-				render: ( { item }: { item: SiteInfo } ) => (
-					<ActionsField site={ item } openSitePreviewPane={ openSitePreviewPane } />
-				),
+				header: <span>{ __( 'Actions' ) }</span>,
+				render: ( { item }: { item: SiteInfo } ) => <ActionsField site={ item } />,
 				enableHiding: false,
 				enableSorting: false,
+			},
+			{
+				id: 'magic',
+				header: __( 'Magic' ),
+				render: () => <></>,
+				enableHiding: false,
+				enableSorting: true,
 			},
 		],
 		[ __, openSitePreviewPane, userId ]
@@ -115,13 +134,13 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 	// Create the itemData packet state
 	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteExcerptData > >( {
 		items: sites,
-		pagination: getSitesPagination( sites, dataViewsState.perPage ),
 		itemFieldId: 'ID',
-		searchLabel: __( 'Search for sites' ),
+		searchLabel: __( 'Search by name or domain…' ),
 		fields,
 		actions: [],
 		setDataViewsState: setDataViewsState,
 		dataViewsState: dataViewsState,
+		pagination: paginationInfo,
 	} );
 
 	// Update the itemData packet
@@ -130,15 +149,21 @@ const DotcomSitesDataViews = ( { sites, isLoading, dataViewsState, setDataViewsS
 			...prevState,
 			items: sites,
 			fields,
-			//actions: actions,
-			pagination: getSitesPagination( sites, dataViewsState.perPage ),
+			// actions: actions,
 			setDataViewsState,
 			dataViewsState,
 			selectedItem: dataViewsState.selectedItem,
+			pagination: paginationInfo,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, sites ] ); // add actions when implemented
+	}, [ fields, dataViewsState, paginationInfo, setDataViewsState, sites ] ); // add actions when implemented
 
-	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } />;
+	return (
+		<ItemsDataViews
+			data={ itemsData }
+			isLoading={ isLoading }
+			className={ classnames( 'sites-overview__content', 'is-hiding-navigation' ) }
+		/>
+	);
 };
 
 export default DotcomSitesDataViews;

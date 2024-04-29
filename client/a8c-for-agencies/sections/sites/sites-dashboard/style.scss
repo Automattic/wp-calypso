@@ -187,7 +187,7 @@
 			padding-inline-end: 8px;
 		}
 
-		.site-preview__content {
+		.item-preview__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -386,8 +386,8 @@
 		color: var(--color-accent-80);
 	}
 
-	tr.dataviews-view-table__row th[data-field-id="favorite"] {
-		vertical-align: top;
+	tr.dataviews-view-table__row th[data-field-id="favorite"] svg {
+		vertical-align: middle;
 	}
 
 	tr.dataviews-view-table__row {
@@ -521,7 +521,7 @@
 			font-size: rem(24px);
 		}
 
-		.site-preview__pane {
+		.item-preview__pane {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -541,7 +541,7 @@
 				transition: flex-grow 0.2s;
 			}
 
-			.site-preview__pane {
+			.item-preview__pane {
 				max-width: 0;
 				padding: 0;
 			}

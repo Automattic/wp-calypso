@@ -28,7 +28,7 @@ const SegmentationSurveyDocumentHead = () => {
 
 const SegmentationSurveyStep: Step = ( { navigation } ) => {
 	const { data: questions } = useSurveyStructureQuery( { surveyKey: SURVEY_KEY } );
-	const { mutate } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
+	const { mutate, isPending } = useSaveAnswersMutation( { surveyKey: SURVEY_KEY } );
 	const { answers, setAnswers, clearAnswers } = useCachedAnswers( SURVEY_KEY );
 
 	const onChangeAnswer = useCallback(
@@ -41,16 +41,25 @@ const SegmentationSurveyStep: Step = ( { navigation } ) => {
 
 	const onSubmitQuestion = useCallback(
 		( currentQuestion: Question ) => {
-			mutate( {
-				questionKey: currentQuestion.key,
-				answerKeys: answers[ currentQuestion.key ] || [],
-			} );
-
-			if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
-				clearAnswers();
+			if ( isPending ) {
+				return;
 			}
+
+			mutate(
+				{
+					questionKey: currentQuestion.key,
+					answerKeys: answers[ currentQuestion.key ] || [],
+				},
+				{
+					onSuccess: () => {
+						if ( questions?.[ questions.length - 1 ].key === currentQuestion.key ) {
+							clearAnswers();
+						}
+					},
+				}
+			);
 		},
-		[ answers, clearAnswers, mutate, questions ]
+		[ answers, clearAnswers, isPending, mutate, questions ]
 	);
 
 	if ( ! config.isEnabled( 'ecommerce-segmentation-survey' ) ) {

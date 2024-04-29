@@ -1,6 +1,12 @@
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
 .hosting-overview {
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	max-height: calc(100vh - 300px);
+
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: auto auto;
@@ -48,28 +54,73 @@
 }
 
 .hosting-overview__plan-card-header,
-.hosting-overview__plan-price,
+.hosting-overview .hosting-overview__plan-price-wrapper,
 .hosting-overview__plan-price-loading-placeholder {
 	display: flex;
 	margin-bottom: 8px;
 }
 
-.hosting-overview__plan-card-title,
-.hosting-overview__plan-price {
-	color: var(--studio-gray-100);
+.hosting-overview .hosting-overview__plan-price {
+	display: flex;
+	align-items: center;
+}
+
+.hosting-overview__plan-price-wrapper {
+	align-items: center;
+}
+
+@media ( max-width: $break-xlarge ) {
+	.hosting-overview__plan-card-header {
+		margin-bottom: 4px;
+	}
+}
+
+.hosting-overview__plan-card-title {
 	flex: 1;
-	font-feature-settings: "clig" off, "liga" off;
+}
+
+.hosting-overview__plan-card-title,
+.hosting-overview__plan-price,
+.hosting-overview__plan-price .plan-price__currency-symbol,
+.hosting-overview__plan-price .plan-price__integer,
+.hosting-overview__plan-price .plan-price__fraction,
+.hosting-overview__plan-price-term {
+	color: var(--studio-gray-100);
 	font-family: "SF Pro", $sans;
 	font-size: rem(28px); //typography-exception
-	font-style: normal;
 	line-height: 32px;
+}
+
+.hosting-overview__plan-price .plan-price__integer {
+	margin-right: 0;
+}
+
+.hosting-overview__plan-price .plan-price__fraction {
+	font-weight: 400;
+}
+
+@media ( max-width: $break-xlarge ) {
+	.hosting-overview__plan-card-title {
+		font-size: $font-size-header-small;
+		font-weight: 500;
+		line-height: 26px;
+	}
+
+	.hosting-overview__plan-price,
+	.hosting-overview__plan-price .plan-price__currency-symbol,
+	.hosting-overview__plan-price .plan-price__integer,
+	.hosting-overview__plan-price .plan-price__fraction,
+	.hosting-overview__plan-price-term {
+		font-size: rem(18px); //typography-exception
+		line-height: 26px;
+	}
+
 }
 
 a.hosting-overview__link-button {
 	color: var(--Primary-Blue, #007cba);
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-extra-small;
-	font-style: normal;
 	line-height: 16px;
 	text-decoration-line: underline;
 }
@@ -92,18 +143,15 @@ a.hosting-overview__link-button {
 	font-feature-settings: "clig" off, "liga" off;
 	font-family: "SF Pro Display", $sans;
 	font-size: $font-title-small;
-	font-style: normal;
 	font-weight: 500;
 	line-height: 26px;
 	letter-spacing: 0.38px;
 }
 
-
 .hosting-overview__plan-info {
 	color: var(--studio-gray-80);
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-extra-small;
-	font-style: normal;
 	line-height: 16px;
 	margin-bottom: 4px;
 }
@@ -123,7 +171,6 @@ a.hosting-overview__link-button {
 	color: var(--studio-gray-80, #2c3338);
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-extra-small;
-	font-style: normal;
 	line-height: 16px;
 	margin-top: 30px;
 }
@@ -144,7 +191,7 @@ a.hosting-overview__link-button {
 }
 
 @media ( max-width: $break-xlarge ) {
-	.hosting-overview__plan-price,
+	.hosting-overview .hosting-overview__plan-price-wrapper,
 	.hosting-overview__plan-price-loading-placeholder {
 		margin-bottom: 4px;
 	}
@@ -192,7 +239,6 @@ a.hosting-overview__link-button {
 	color: var(--studio-gray-100);
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-small;
-	font-style: normal;
 	line-height: 20px;
 	letter-spacing: -0.15px;
 
@@ -215,3 +261,77 @@ a.hosting-overview__link-button {
 	}
 }
 
+.domains-table.hosting-overview__domains-table {
+	font-family: "SF Pro Text", $sans;
+	padding: 0;
+
+	table {
+		border-top: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+		margin-top: 0;
+
+		th:not(.domains-table-checkbox-th):first-child,
+		th.domains-table-checkbox-th + th,
+		td:not(.domains-table-checkbox-td):first-child,
+		td.domains-table-checkbox-td + td {
+			padding-left: 16px;
+		}
+
+		th:last-child,
+		td:last-child {
+			padding-right: 16px;
+		}
+	}
+
+	button {
+		font-family: "SF Pro Text", $sans;
+		font-weight: 400;
+	}
+
+	.domains-table__primary-domain-label {
+		background-color: inherit;
+		color: var(--studio-green-40, #00a32a);
+		font-family: "SF Pro", $sans;
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+		line-height: 20px;
+		margin: 0;
+		padding: 0;
+
+		svg {
+			display: none;
+		}
+	}
+
+	.domains-table__domain-name {
+		font-size: $font-body-small;
+		font-style: normal;
+		line-height: 20px;
+	}
+
+	.components-dropdown-menu__toggle {
+		transform: rotate(90deg);
+	}
+
+	.domains-table__bulk-action-container,
+	.domains-table-checkbox-td,
+	.domains-table-checkbox-th {
+		display: none;
+	}
+
+	.domains-table-mobile-card {
+		padding: 12px 16px;
+
+		.components-checkbox-control,
+		> div:not(:first-child) {
+			display: none;
+		}
+
+		&:last-child {
+			border: 0;
+		}
+	}
+}
+
+.domains-table-row__actions-group {
+	font-family: "SF Pro Text", $sans;
+}
