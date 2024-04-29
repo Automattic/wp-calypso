@@ -20,13 +20,13 @@ export default function useHostingDescription( slug: string ): {
 			case 'pressable-hosting':
 				name = translate( 'Pressable' );
 				description = translate(
-					'9 custom plans built for agencies that include an intuitive control panel, easy site migration, staging environments, performance tools, and flexible upgrades & downgrades. '
+					'Best for developers and agencies who need advanced hosting controls and management tools.'
 				);
 				break;
 			case 'wpcom-hosting':
 				name = translate( 'WordPress.com' );
 				description = translate(
-					'Unbeatable uptime, unmetered bandwidth, and everything you need to streamline your development process, baked in. Perfect uptime. Fastest WP Bench score. A+ SSL grade.'
+					'Best for those who want optimized, hassle-free WordPress hosting.'
 				);
 				break;
 		}
