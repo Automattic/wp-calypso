@@ -3,9 +3,7 @@ import type { Product } from './types';
 /**
  * Get Jetpack product "Includes" info based on the product purchase object.
  */
-export function getJetpackProductWhatIsIncluded( product: Product, quantity?: number | null ) {
-	const slug = quantity ? `${ product.product_slug }:-q-${ quantity }` : product.product_slug;
-
+export function getJetpackProductWhatIsIncluded( product: Product ) {
 	const jetpackProductsIncludesInfo = getJetpackProductsWhatIsIncluded();
-	return jetpackProductsIncludesInfo[ slug ];
+	return jetpackProductsIncludesInfo[ product.product_alias ?? product.product_slug ];
 }

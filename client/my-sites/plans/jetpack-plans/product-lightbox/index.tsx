@@ -123,7 +123,7 @@ const ProductLightbox: React.FC< Props > = ( {
 				label: PRODUCT_TIER_OPTIONS[ id ].toString(),
 			};
 		} );
-	}, [ listPrices.priceTierList ] );
+	}, [ listPrices.priceTierList, product.productSlug ] );
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];

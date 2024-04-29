@@ -129,8 +129,7 @@ function getLightboxPlanDescription( item: Plan ) {
  * @returns SelectorProduct
  */
 function itemToSelectorProduct(
-	item: Plan | Product | SelectorProduct | Record< string, unknown >,
-	quantity?: number | null
+	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
@@ -156,11 +155,16 @@ function itemToSelectorProduct(
 			return null;
 		}
 
-		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
+		const { slug: productSlug, quantity } = getProductPartsFromAlias(
+			item.product_alias || item.product_slug
+		);
+
+		const iconSlug = `${ yearlyProductSlug || productSlug }_v2_dark`;
 		const features = buildCardFeaturesFromItem( item );
 
 		return {
-			productSlug: item.product_slug,
+			productSlug,
+			productAlias: item.product_alias,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug,
 			displayName: getJetpackProductDisplayName( item ) ?? '',
@@ -171,7 +175,7 @@ function itemToSelectorProduct(
 			shortDescription: getJetpackProductShortDescription( item ),
 			featuredDescription: getFeaturedProductDescription( item ),
 			lightboxDescription: getLightboxProductDescription( item ),
-			whatIsIncluded: getJetpackProductWhatIsIncluded( item, quantity ),
+			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
 			whatIsIncludedComingSoon: getJetpackProductWhatIsIncludedComingSoon( item ),
 			benefits: getJetpackProductBenefits( item ),
 			benefitsComingSoon: getJetpackProductBenefitsComingSoon( item ),
@@ -205,6 +209,7 @@ function itemToSelectorProduct(
 		const features = buildCardFeaturesFromItem( item );
 		return {
 			productSlug,
+			productAlias: productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: getForCurrentCROIteration( item.getTitle ) ?? '',
@@ -243,12 +248,10 @@ function itemToSelectorProduct(
  * @returns SelectorProduct | null
  */
 export default function slugToSelectorProduct( slug: string ): SelectorProduct | null {
-	const { slug: productSlug, quantity } = getProductPartsFromAlias( slug );
-
-	const item = slugToItem( productSlug );
+	const item = slugToItem( slug );
 	if ( ! item ) {
 		return null;
 	}
 
-	return itemToSelectorProduct( item, quantity );
+	return itemToSelectorProduct( item );
 }
