@@ -1,4 +1,3 @@
-import pageRouter from '@automattic/calypso-router';
 import {
 	SitesSortKey,
 	useSitesListFiltering,
@@ -9,7 +8,7 @@ import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-lis
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -25,19 +24,23 @@ import LayoutHeader, {
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { SitesDashboardQueryParams } from 'calypso/sites-dashboard/components/sites-content-controls';
+import {
+	SitesDashboardQueryParams,
+	handleQueryParamChange,
+} from 'calypso/sites-dashboard/components/sites-content-controls';
 import {
 	useShowSiteCreationNotice,
 	useShowSiteTransferredNotice,
 } from 'calypso/sites-dashboard/components/sites-dashboard';
-import { useDispatch } from 'calypso/state';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { useSyncSelectedSite } from './hooks/use-sync-selected-site';
+import { useSyncSelectedSiteFeature } from './hooks/use-sync-selected-site-feature';
 import { DOTCOM_OVERVIEW } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { siteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
+import type { SiteDetails } from '@automattic/data-stores';
 
 // todo: we are using A4A styles until we extract them as common styles in the ItemsDashboard component
 import './style.scss';
@@ -47,10 +50,9 @@ import './dotcom-style.scss';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
+	selectedSite?: SiteDetails | null;
 	initialSiteFeature?: string;
-	initialSiteSubfeature?: string;
-	selectedSite?: any;
-	selectedSiteParams?: any;
+	selectedSiteFeaturePreview?: React.ReactNode;
 }
 
 const siteSortingKeys = [
@@ -61,40 +63,6 @@ const siteSortingKeys = [
 
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_STATUS_GROUP = 'all';
-
-function syncURL(
-	siteSlug: string | null,
-	siteParams: any,
-	feature: string,
-	queryParams: SitesDashboardQueryParams
-) {
-	let url: string;
-	if ( siteSlug ) {
-		url = '/' + feature.replace( ':site', siteSlug );
-		Object.keys( siteParams ).forEach( ( key ) => {
-			const value = siteParams[ key ];
-			url = url.replace( ':' + key, value );
-		} );
-	} else {
-		url = '/sites';
-	}
-
-	const searchParams = new URLSearchParams();
-	Object.keys( queryParams ).forEach( ( key ) => {
-		const value = queryParams[ key as keyof SitesDashboardQueryParams ];
-		if ( value ) {
-			searchParams.set( key, value.toString() );
-		}
-	} );
-
-	if ( searchParams.size > 0 ) {
-		url += '?' + searchParams.toString();
-	}
-
-	if ( pageRouter.current !== url ) {
-		pageRouter.show( url );
-	}
-}
 
 const SitesDashboardV2 = ( {
 	// Note - control params (eg. search, page, perPage, status...) are currently meant for
@@ -107,12 +75,10 @@ const SitesDashboardV2 = ( {
 		status = DEFAULT_STATUS_GROUP,
 	},
 	selectedSite,
-	selectedSiteParams = {},
 	initialSiteFeature = DOTCOM_OVERVIEW,
-	initialSiteSubfeature = initialSiteFeature,
+	selectedSiteFeaturePreview = undefined,
 }: SitesDashboardProps ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
 	const initialSortApplied = useRef( false );
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
@@ -155,8 +121,14 @@ const SitesDashboardV2 = ( {
 	} as DataViewsState;
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( defaultDataViewsState );
 
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState( initialSiteFeature );
-	const [ selectedSiteSubfeature, setSelectedSiteSubfeature ] = useState( initialSiteSubfeature );
+	useSyncSelectedSite( dataViewsState );
+
+	const { selectedSiteFeature, setSelectedSiteFeature } = useSyncSelectedSiteFeature( {
+		selectedSite,
+		initialSiteFeature,
+		dataViewsState,
+		queryParamKeys: [ 'page', 'per-page', 'status' ],
+	} );
 
 	// Ensure site sort preference is applied when it loads in. This isn't always available on
 	// initial mount.
@@ -211,28 +183,6 @@ const SitesDashboardV2 = ( {
 		dataViewsState.page * dataViewsState.perPage
 	);
 
-	// Update selected site globally as soon as it is clicked from the table.
-	useEffect( () => {
-		if ( dataViewsState.selectedItem ) {
-			dispatch( setSelectedSiteId( dataViewsState.selectedItem.ID ) );
-		} else {
-			dispatch( setSelectedSiteId( null ) );
-		}
-	}, [ dataViewsState.selectedItem ] );
-
-	// Reset selected feature when the component is re-mounted with different initial path.
-	useEffect( () => {
-		setSelectedSiteFeature( initialSiteFeature );
-		setSelectedSiteSubfeature( initialSiteSubfeature );
-	}, [ initialSiteFeature, initialSiteSubfeature ] );
-
-	// Reset selected subfeature when feature changes.
-	useEffect( () => {
-		if ( selectedSiteFeature !== initialSiteFeature ) {
-			setSelectedSiteSubfeature( selectedSiteFeature );
-		}
-	}, [ initialSiteFeature, selectedSiteFeature ] );
-
 	// Update URL with view control params on change.
 	useEffect( () => {
 		const queryParams = {
@@ -241,31 +191,8 @@ const SitesDashboardV2 = ( {
 			'per-page': dataViewsState.perPage === DEFAULT_PER_PAGE ? undefined : dataViewsState.perPage,
 		};
 
-		// Whether the left sidebar should animate (grow or collapse)
-		const shouldAnimate = Boolean( selectedSite ) !== Boolean( dataViewsState.selectedItem?.slug );
-
-		// There is a chance that the URL is not up to date when it mounts, so bump the
-		// syncURL call to the back of the stack to avoid it getting the incorrect URL and
-		// then redirecting back to the previous path.
-		window.setTimeout(
-			() =>
-				syncURL(
-					dataViewsState.selectedItem?.slug,
-					selectedSiteParams,
-					selectedSiteSubfeature,
-					queryParams
-				),
-			// Delay the update while the left sidebar is animating
-			shouldAnimate ? 500 : 0
-		);
-	}, [
-		selectedSite,
-		dataViewsState.selectedItem?.slug,
-		selectedSiteSubfeature,
-		dataViewsState.search,
-		dataViewsState.perPage,
-		statusSlug,
-	] );
+		window.setTimeout( () => handleQueryParamChange( queryParams ) );
+	}, [ dataViewsState.search, dataViewsState.perPage, statusSlug ] );
 
 	// Update site sorting preference on change
 	useEffect( () => {
@@ -328,9 +255,8 @@ const SitesDashboardV2 = ( {
 				<LayoutColumn className="site-preview-pane" wide>
 					<DotcomPreviewPane
 						site={ dataViewsState.selectedItem }
-						selectedSiteParams={ selectedSiteParams }
 						selectedSiteFeature={ selectedSiteFeature }
-						selectedSiteSubfeature={ selectedSiteSubfeature }
+						selectedSiteFeaturePreview={ selectedSiteFeaturePreview }
 						setSelectedSiteFeature={ setSelectedSiteFeature }
 						closeSitePreviewPane={ closeSitePreviewPane }
 					/>
