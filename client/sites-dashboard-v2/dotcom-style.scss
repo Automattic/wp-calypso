@@ -32,6 +32,13 @@
 	.a4a-layout__header {
 		flex-wrap: nowrap;
 	}
+
+	table.dataviews-view-table thead .dataviews-view-table__row th {
+		span,
+		.dataviews-view-table-header-button {
+			color: inherit;
+		}
+	}
 }
 
 // Styles for actions (search, filters).
