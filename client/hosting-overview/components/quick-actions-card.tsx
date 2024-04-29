@@ -8,6 +8,9 @@ import { useSelector } from 'react-redux';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
+import getStatsUrl from 'calypso/state/selectors/get-stats-url';
+import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
@@ -32,7 +35,12 @@ const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 const QuickActionsCard: FC = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
-	const editorUrl = useSelector( ( state ) => ( site?.ID ? getEditorUrl( state, site.ID ) : '#' ) );
+	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl } = useSelector( ( state ) => ( {
+		editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
+		themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
+		pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
+		statsUrl: getStatsUrl( state, site?.ID ) ?? '',
+	} ) );
 	const translate = useTranslate();
 
 	return (
@@ -51,17 +59,17 @@ const QuickActionsCard: FC = () => {
 					icon={
 						<SidebarCustomIcon icon="dashicons-admin-appearance hosting-overview__dashicon" />
 					}
-					href={ `/themes/${ site?.slug }` }
+					href={ themeInstallUrl }
 					text={ translate( 'Change theme' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
-					href={ `/plugins/${ site?.slug }` }
+					href={ pluginInstallUrl }
 					text={ translate( 'Install plugins' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
-					href={ `/stats/${ site?.slug }` }
+					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
 				/>
 			</ul>
