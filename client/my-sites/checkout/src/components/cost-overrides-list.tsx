@@ -284,7 +284,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	return (
 		<SingleProductAndCostOverridesListWrapper>
 			<ProductTitleAreaForCostOverridesList>
-				<span>{ label }</span>
+				<span className="cost-overrides-list-product__title">{ label }</span>
 				<LineItemPrice actualAmount={ actualAmountDisplay } />
 			</ProductTitleAreaForCostOverridesList>
 			<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
