@@ -175,12 +175,6 @@ const siteMigration: Flow = {
 						action: SiteMigrationIdentifyAction;
 					};
 
-					if ( siteSlug ) {
-						await saveSiteSettings( siteSlug, {
-							migration_source_site_domain: from,
-						} );
-					}
-
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
 						return exitFlow(
 							addQueryArgs(
@@ -256,7 +250,7 @@ const siteMigration: Flow = {
 						if ( siteSlug ) {
 							// Remove the in_site_migration_flow option at the end of the flow.
 							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: false,
+								in_site_migration_flow: '',
 							} );
 						}
 
@@ -287,7 +281,7 @@ const siteMigration: Flow = {
 						if ( siteSlug ) {
 							// Set the in_site_migration_flow option if the user needs to be verified.
 							await saveSiteSettings( siteSlug, {
-								in_site_migration_flow: true,
+								in_site_migration_flow: flowName,
 							} );
 						}
 						return navigate( STEPS.VERIFY_EMAIL.slug );

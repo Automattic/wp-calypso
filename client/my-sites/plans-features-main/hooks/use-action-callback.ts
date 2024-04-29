@@ -150,10 +150,11 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			/* 2. Send user to either manage add-ons or manage plan in case of current plan selection */
+			/* 2. In the logged-in plans dashboard, send user to either manage add-ons or manage plan in case of current plan selection */
 			if (
 				sitePlanSlug &&
 				currentPlan?.productSlug === planSlug &&
+				! flowName &&
 				intent !== 'plans-p2' &&
 				intent !== 'plans-blog-onboarding'
 			) {

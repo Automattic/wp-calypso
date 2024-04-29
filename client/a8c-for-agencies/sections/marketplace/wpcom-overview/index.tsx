@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import Layout from 'calypso/a8c-for-agencies/components/layout';
 import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
 import LayoutHeader, {
@@ -13,13 +14,20 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import HostingOverview from '../common/hosting-overview';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
+import WPCOMBulkSelector from './bulk-selection';
+import wpcomBulkOptions from './lib/wpcom-bulk-options';
+
+import './style.scss';
 
 export default function WpcomOverview() {
 	const translate = useTranslate();
 
 	const { selectedCartItems, onRemoveCartItem } = useShoppingCart();
+
+	const [ selectedCount, setSelectedCount ] = useState( wpcomBulkOptions[ 0 ] );
 
 	return (
 		<Layout
@@ -60,7 +68,16 @@ export default function WpcomOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>WordPress.com hosting here</LayoutBody>
+			<LayoutBody>
+				<HostingOverview
+					slug="wpcom-hosting"
+					title={ translate( 'Powerful WordPress Hosting' ) }
+					subtitle={ translate(
+						'When you build and host your sites with WordPress.com, everything’s integrated, secure, and scalable.'
+					) }
+				/>
+				<WPCOMBulkSelector selectedCount={ selectedCount } onSelectCount={ setSelectedCount } />
+			</LayoutBody>
 		</Layout>
 	);
 }

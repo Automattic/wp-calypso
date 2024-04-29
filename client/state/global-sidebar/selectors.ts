@@ -26,11 +26,7 @@ export const getShouldShowGlobalSiteSidebar = (
 	sectionGroup: string,
 	sectionName: string
 ) => {
-	return (
-		isGlobalSiteViewEnabled( state, siteId ) &&
-		sectionGroup === 'sites' &&
-		shouldShowGlobalSiteViewSection( siteId, sectionName )
-	);
+	return sectionGroup === 'sites' && shouldShowGlobalSiteViewSection( siteId, sectionName );
 };
 
 export const getShouldShowGlobalSidebar = (

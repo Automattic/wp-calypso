@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { saveSignupDataToLocalStorage } from '../lib/signup-data-to-local-storage';
+import { useHandleWPCOMRedirect } from './hooks/use-handle-wpcom-redirect';
 import type { AgencyDetailsPayload } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/types';
 import type { APIError } from 'calypso/state/a8c-for-agencies/types';
 
@@ -28,6 +29,7 @@ export default function SignupForm() {
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const isA4ALoggedOutSignup = isEnabled( 'a4a-logged-out-signup' );
 	const shouldRedirectToWPCOM = ! userLoggedIn && isA4ALoggedOutSignup;
+	const handleWPCOMRedirect = useHandleWPCOMRedirect();
 
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
@@ -39,12 +41,12 @@ export default function SignupForm() {
 	} );
 
 	const onSubmit = useCallback(
-		( payload: AgencyDetailsPayload ) => {
+		async ( payload: AgencyDetailsPayload ) => {
 			dispatch( removeNotice( notificationId ) );
 
 			if ( shouldRedirectToWPCOM ) {
 				saveSignupDataToLocalStorage( payload );
-				//TODO: add logic and redirect to wpcom
+				await handleWPCOMRedirect( payload );
 				return;
 			}
 
@@ -69,7 +71,7 @@ export default function SignupForm() {
 				} )
 			);
 		},
-		[ notificationId, createAgency, dispatch, shouldRedirectToWPCOM ]
+		[ dispatch, shouldRedirectToWPCOM, createAgency, handleWPCOMRedirect ]
 	);
 
 	useEffect( () => {

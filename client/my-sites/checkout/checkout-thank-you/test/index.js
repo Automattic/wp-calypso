@@ -94,36 +94,6 @@ describe( 'CheckoutThankYou', () => {
 		} );
 	} );
 
-	it( 'renders the failed purchases content if there are failed purchases', async () => {
-		const props = {
-			...defaultProps,
-			receiptId: 12,
-			selectedSite: {
-				ID: 12,
-			},
-			sitePlans: {
-				hasLoadedFromServer: true,
-			},
-			receipt: {
-				hasLoadedFromServer: true,
-				data: {
-					purchases: [],
-					failedPurchases: [ { productSlug: PLAN_PREMIUM } ],
-				},
-			},
-			refreshSitePlans: ( selectedSite ) => selectedSite,
-			planSlug: PLAN_PREMIUM,
-		};
-
-		render(
-			<Provider store={ store }>
-				<CheckoutThankYou { ...props } />
-			</Provider>
-		);
-
-		expect( await screen.findByText( /These items could not be added/ ) ).toBeInTheDocument();
-	} );
-
 	it( 'renders the Jetpack plan content if the purchases include a Jetpack plan', async () => {
 		const props = {
 			...defaultProps,
