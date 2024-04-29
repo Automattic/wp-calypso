@@ -27,6 +27,15 @@ type SelectOptionType = {
 	value: string;
 };
 
+interface StatsDevicesChartData {
+	id: string;
+	value: number;
+	icon: string;
+	name: string;
+	descrtipion?: string;
+	className?: string;
+}
+
 interface StatsModuleDevicesProps {
 	path: string;
 	className?: string;
@@ -37,7 +46,9 @@ interface StatsModuleDevicesProps {
 	isLoading?: boolean;
 }
 
-const prepareChartData = ( data: Array< StatsDevicesData > | undefined ) => {
+const prepareChartData = (
+	data: Array< StatsDevicesData > | undefined
+): Array< StatsDevicesChartData > => {
 	if ( ! data ) {
 		return [];
 	}

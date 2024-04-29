@@ -69,6 +69,7 @@ import useGenerateActionCallback from './hooks/use-action-callback';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useCurrentPlanManageHref from './hooks/use-current-plan-manage-href';
 import useDeemphasizeFreePlan from './hooks/use-deemphasize-free-plan';
+import useExperimentForTrailMap from './hooks/use-experiment-for-trail-map';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -736,6 +737,8 @@ const PlansFeaturesMain = ( {
 
 	const onFreePlanCTAClick = useActionCallback( { planSlug: PLAN_FREE } );
 
+	const trailMapExperiment = useExperimentForTrailMap( { flowName } );
+
 	return (
 		<>
 			<div
@@ -845,7 +848,7 @@ const PlansFeaturesMain = ( {
 										isInSignup={ isInSignup }
 										isLaunchPage={ isLaunchPage }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ paidDomainName }
+										paidDomainName={ trailMapExperiment.result ? undefined : paidDomainName }
 										planActionOverrides={ planActionOverrides }
 										planUpgradeCreditsApplicable={ planUpgradeCreditsApplicable }
 										recordTracksEvent={ recordTracksEvent }

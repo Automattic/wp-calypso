@@ -8,6 +8,9 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"logout_url": "https://automattic.com/for/agencies",
+	"wpcom_signup_url": "https://wordpress.com/start",
+	"wpcom_login_url": "https://wordpress.com/log-in",
+	"wpcom_authorize_endpoint": "https://public-api.wordpress.com/oauth2/authorize",
 	"site_name": "Automattic For Agencies",
 	"meta": [
 		{

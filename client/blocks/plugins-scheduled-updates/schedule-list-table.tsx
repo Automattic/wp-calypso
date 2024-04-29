@@ -2,11 +2,11 @@ import { Button, DropdownMenu, Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useUpdateScheduleQuery } from 'calypso/data/plugins/use-update-schedules-query';
-import { Badge } from './badge';
+import { Badge } from '../plugin-scheduled-updates-common/badge';
+import { useDateTimeFormat } from '../plugin-scheduled-updates-common/hooks/use-date-time-format';
+import { usePreparePluginsTooltipInfo } from '../plugin-scheduled-updates-common/hooks/use-prepare-plugins-tooltip-info';
+import { usePrepareScheduleName } from '../plugin-scheduled-updates-common/hooks/use-prepare-schedule-name';
 import { useIsEligibleForFeature } from './hooks/use-is-eligible-for-feature';
-import { usePreparePluginsTooltipInfo } from './hooks/use-prepare-plugins-tooltip-info';
-import { usePrepareScheduleName } from './hooks/use-prepare-schedule-name';
-import { useSiteDateTimeFormat } from './hooks/use-site-date-time-format';
 import { useSiteSlug } from './hooks/use-site-slug';
 import { ellipsis } from './icons';
 
@@ -22,9 +22,10 @@ export const ScheduleListTable = ( props: Props ) => {
 
 	const { onEditClick, onRemoveClick, onShowLogs } = props;
 	const { data: schedules = [] } = useUpdateScheduleQuery( siteSlug, isEligibleForFeature );
-	const { preparePluginsTooltipInfo } = usePreparePluginsTooltipInfo( siteSlug );
+	const { countInstalledPlugins, preparePluginsTooltipInfo } =
+		usePreparePluginsTooltipInfo( siteSlug );
 	const { prepareScheduleName } = usePrepareScheduleName();
-	const { prepareDateTime } = useSiteDateTimeFormat( siteSlug );
+	const { prepareDateTime } = useDateTimeFormat( siteSlug );
 
 	/**
 	 * NOTE: If you update the table structure,
@@ -86,7 +87,7 @@ export const ScheduleListTable = ( props: Props ) => {
 							}
 						</td>
 						<td>
-							{ schedule?.args?.length }
+							{ countInstalledPlugins( schedule.args ) }
 							{ schedule?.args && (
 								<Tooltip
 									text={ preparePluginsTooltipInfo( schedule.args ) as unknown as string }

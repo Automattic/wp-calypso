@@ -123,10 +123,11 @@ const SitesDashboardHeader = () => {
 	return (
 		<PageHeader>
 			<HeaderControls>
-				<ManageAllDomainsButton href="/domains/manage">
+				<ManageAllDomainsButton className="sites-manage-all-domains-button" href="/domains/manage">
 					{ __( 'Manage all domains' ) }
 				</ManageAllDomainsButton>
 				<AddNewSiteSplitButton
+					className="sites-add-new-site-split-button"
 					primary
 					whiteSeparator
 					label={ isMobile ? undefined : __( 'Add new site' ) }

@@ -1,15 +1,15 @@
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
 import { localize } from 'i18n-calypso';
-import { throttle, sortBy } from 'lodash';
+import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import DataType from './data-type';
+import { sortData } from './legend';
 
 import './style.scss';
 
 const SVG_SIZE = 300;
-const NUM_COLOR_SECTIONS = 3;
 
 // Bottom left position relative to the cursor for the tooltip,
 // which is the tooltip width offset the distance from the right edge to the arrow.
@@ -17,12 +17,7 @@ const TOOLTIP_OFFSET_X = -207;
 const TOOLTIP_OFFSET_Y = 0;
 
 function transformData( data, { donut = false, startAngle = -Math.PI, svgSize = SVG_SIZE } ) {
-	const sortedData = sortBy( data, ( datum ) => datum.value )
-		.reverse()
-		.map( ( datum, index ) => ( {
-			...datum,
-			sectionNum: index % NUM_COLOR_SECTIONS,
-		} ) );
+	const sortedData = sortData( data );
 
 	const arcs = d3Pie()
 		.startAngle( startAngle )
