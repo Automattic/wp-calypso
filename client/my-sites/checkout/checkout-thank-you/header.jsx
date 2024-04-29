@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { withI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -21,7 +20,6 @@ class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
 		displayMode: PropTypes.string,
 		isAtomic: PropTypes.bool,
-		isDataLoaded: PropTypes.bool.isRequired,
 		primaryCta: PropTypes.func,
 		purchases: PropTypes.array,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -33,22 +31,6 @@ class CheckoutThankYouHeader extends PureComponent {
 		currency: PropTypes.string,
 	};
 
-	getText() {
-		const { translate, isDataLoaded, displayMode } = this.props;
-
-		if ( ! isDataLoaded ) {
-			if ( 'concierge' === displayMode ) {
-				return translate(
-					'You will receive an email confirmation shortly,' +
-						' along with detailed instructions to schedule your call with us.'
-				);
-			}
-
-			return translate( 'You will receive an email confirmation shortly.' );
-		}
-
-		return null;
-	}
 	visitMyHome = ( event ) => {
 		event.preventDefault();
 
@@ -126,19 +108,9 @@ class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getButtons() {
-		const { isDataLoaded, translate, selectedSite, displayMode, isAtomic } = this.props;
+		const { selectedSite, displayMode, isAtomic } = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
-
-		if ( isDataLoaded && ( ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) ) ) {
-			return (
-				<div className="checkout-thank-you__header-button">
-					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
-						{ translate( 'Go to My Home' ) }
-					</Button>
-				</div>
-			);
-		}
 
 		if ( ! isConciergePurchase && ( ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) ) ) {
 			return null;
@@ -160,31 +132,19 @@ class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
-	getHeaderText() {
-		const { isDataLoaded, translate } = this.props;
-
-		if ( ! isDataLoaded ) {
-			return translate( 'Loading…' );
-		}
-
-		return translate( 'Congratulations on your purchase!' );
-	}
-
 	render() {
-		const { isDataLoaded } = this.props;
-		const classes = { 'is-placeholder': ! isDataLoaded };
+		const { translate } = this.props;
 
 		return (
-			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
+			<div className="checkout-thank-you__header">
 				<div className="checkout-thank-you__header-icon">
 					<img src="/calypso/images/upgrades/thank-you.svg" alt="" />
 				</div>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
 						<h1 className="checkout-thank-you__header-heading">
-							{ preventWidows( this.getHeaderText() ) }
+							{ preventWidows( translate( 'Congratulations on your purchase!' ) ) }
 						</h1>
-						<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						{ this.props.children }
 						{ this.getButtons() }
 					</div>
