@@ -428,9 +428,8 @@ $brand-text: "SF Pro Text", $sans;
 				background-position: left;
 				width: 24px;
 				margin-left: 6px;
-			}
-			.rtl & {
-				span.dotcom {
+
+				.rtl & {
 					background-position: right;
 					margin-right: 6px;
 				}
