@@ -7,15 +7,23 @@ import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import MySitesNavigation from 'calypso/my-sites/navigation';
-import { removeNotice } from 'calypso/state/notices/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import { SitesDashboard } from './components/sites-dashboard';
-import type { Context as PageJSContext } from '@automattic/calypso-router';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import SitesDashboardV2 from './components/sites-dashboard';
+import type { Context, Context as PageJSContext } from '@automattic/calypso-router';
 
 const getStatusFilterValue = ( status?: string ) => {
 	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
 };
+
+function getQueryParams( context: Context ) {
+	return {
+		page: context.query.page ? parseInt( context.query.page ) : undefined,
+		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
+		search: context.query.search,
+		status: context.query.status,
+	};
+}
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
 	/**
@@ -45,7 +53,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	next();
 }
 
-export function sitesDashboard( context: PageJSContext, next: () => void ) {
+export function sitesDashboard( context: Context, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
 			background: var( --studio-gray-0 );
@@ -89,37 +97,39 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			}
 		}
 	`;
-	context.secondary = <MySitesNavigation path={ context.path } />;
-
-	const queryParams = {
-		page: context.query.page ? parseInt( context.query.page ) : undefined,
-		perPage: context.query[ 'per-page' ] ? parseInt( context.query[ 'per-page' ] ) : undefined,
-		search: context.query.search,
-		status: context.query.status,
-		newSiteID: parseInt( context.query[ 'new-site' ] ) || undefined,
-	};
 
 	context.primary = (
 		<>
 			<Global styles={ sitesDashboardGlobalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			<SitesDashboard queryParams={ queryParams } />
+			<SitesDashboardV2 queryParams={ getQueryParams( context ) } />
 		</>
 	);
 
-	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
-		// By definition, Sites Management does not select any one specific site
-		context.store.dispatch( setAllSitesSelected() );
-	}
+	// By definition, Sites Dashboard does not select any one specific site
+	context.store.dispatch( setAllSitesSelected() );
+
 	next();
 }
 
-export function maybeRemoveCheckoutSuccessNotice( context: PageJSContext, next: () => void ) {
-	if ( context.query[ 'new-site' ] ) {
-		// `?new-site` shows a site creation notice and we don't want to show a double notice,
-		// so hide the checkout success notice if it's there.
-		context.store.dispatch( removeNotice( 'checkout-thank-you-success' ) );
-	}
-	next();
+export function siteDashboard( feature: string ) {
+	return ( context: Context, next: () => void ) => {
+		if ( ! isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+			next();
+			return;
+		}
+
+		const state = context.store.getState();
+
+		context.primary = (
+			<SitesDashboardV2
+				selectedSite={ getSelectedSite( state ) }
+				initialSiteFeature={ feature }
+				selectedSiteFeaturePreview={ context.primary }
+				queryParams={ getQueryParams( context ) }
+			/>
+		);
+		next();
+	};
 }
