@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
-import { Spinner } from '@automattic/components';
 import { APIError } from '@automattic/data-stores';
 import { loadScript } from '@automattic/load-script';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from 'calypso/a8c-for-agencies/components/a4a-logo';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_SIGNUP_LINK,
@@ -82,10 +82,16 @@ export default function AgencySignupFinish() {
 
 	return (
 		<div className="agency-signup-finish__wrapper">
+			<A4ALogo
+				className="agency-signup-finish__logo"
+				colors={ { secondary: LOGO_COLOR_SECONDARY_ALT } }
+				size={ 48 }
+			/>
 			<h1 className="agency-signup-finish__text">
-				{ translate( 'Agency is being created. Please wait a few moments.' ) }
+				{ translate(
+					`We're setting up your agency account! This usually takes about 10-30 seconds. Soon you'll manage all your sites from one spot.`
+				) }
 			</h1>
-			<Spinner size={ 64 } />
 		</div>
 	);
 }
