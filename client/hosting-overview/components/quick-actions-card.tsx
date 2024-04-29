@@ -8,6 +8,9 @@ import { useSelector } from 'react-redux';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
+import getStatsUrl from 'calypso/state/selectors/get-stats-url';
+import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 interface ActionProps {
@@ -51,17 +54,17 @@ const QuickActionsCard: FC = () => {
 					icon={
 						<SidebarCustomIcon icon="dashicons-admin-appearance hosting-overview__dashicon" />
 					}
-					href={ `/themes/${ site?.slug }` }
+					href={ getThemeInstallUrl( state, site?.ID ) }
 					text={ translate( 'Change theme' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
-					href={ `/plugins/${ site?.slug }` }
+					href={ getPluginInstallUrl( state, site?.ID ) }
 					text={ translate( 'Install plugins' ) }
 				/>
 				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
-					href={ `/stats/${ site?.slug }` }
+					href={ getStatsUrl( state, site?.ID ) }
 					text={ translate( 'See Jetpack Stats' ) }
 				/>
 			</ul>
