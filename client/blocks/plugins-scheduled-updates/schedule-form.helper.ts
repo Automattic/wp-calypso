@@ -60,6 +60,25 @@ export const convertHourTo12 = ( hour: string ): string => {
 	return _hour > 12 ? ( _hour - 12 ).toString() : _hour.toString();
 };
 
+/**
+ * Prepare relative path
+ * based on URL or relative path
+ */
+export const prepareRelativePath = ( url: string ): string => {
+	const value = url.trim();
+
+	// Check if the value is a URL without a protocol
+	const urlRegex = /^(?!https?:\/\/)[\w.]+(?:\.[\w]+)+[\w\-._~:/?#[\]@!$&'()*+,;=%]*$/i;
+	const withoutProtocol = urlRegex.test( value );
+
+	try {
+		const _url = new URL( withoutProtocol ? `http://${ value }` : value );
+		return `${ _url.pathname }${ _url.search }${ _url.hash }`;
+	} catch ( e ) {
+		return value.startsWith( '/' ) ? value : `/${ value }`;
+	}
+};
+
 type TimeSlot = {
 	frequency: string;
 	timestamp: number;
@@ -138,14 +157,17 @@ export const validateSites = ( sites: number[] ): string => {
  * Validate path
  * check if path passes URL_PATH_REGEX
  */
-export const validatePath = ( path: string ): string => {
+export const validatePath = ( path: string, paths: string[] ): string => {
 	const URL_PATH_REGEX = /^\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*$/;
 	let error = '';
 
-	if ( path.length === 0 ) {
+	// leading slash is required
+	if ( path.length <= 1 ) {
 		error = translate( 'Please enter a path.' );
 	} else if ( ! URL_PATH_REGEX.test( path ) ) {
 		error = translate( 'Please enter a valid path.' );
+	} else if ( paths.includes( path ) ) {
+		error = translate( 'This path is already added.' );
 	}
 
 	return error;

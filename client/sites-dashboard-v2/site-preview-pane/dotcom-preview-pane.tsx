@@ -1,41 +1,39 @@
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import ItemPreviewPane, {
 	createFeaturePreview,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane';
 import { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
-import HostingOverview from 'calypso/hosting-overview/components/hosting-overview';
 import {
 	DOTCOM_HOSTING_CONFIG,
 	DOTCOM_OVERVIEW,
 	DOTCOM_MONITORING,
+	DOTCOM_PHP_LOGS,
+	DOTCOM_SERVER_LOGS,
 	DOTCOM_GITHUB_DEPLOYMENTS,
 } from './constants';
-import PreviewPaneSample from './preview-pane-sample';
 
 import './style.scss';
 
 type Props = {
 	site: SiteExcerptData;
+	selectedSiteFeature: string;
+	setSelectedSiteFeature: ( feature: string ) => void;
+	selectedSiteFeaturePreview: React.ReactNode;
 	closeSitePreviewPane: () => void;
 };
 
-const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
+const DotcomPreviewPane = ( {
+	site,
+	selectedSiteFeature,
+	setSelectedSiteFeature,
+	selectedSiteFeaturePreview,
+	closeSitePreviewPane,
+}: Props ) => {
 	const { __ } = useI18n();
 
-	const [ selectedSiteFeature, setSelectedSiteFeature ] = useState< string | undefined >(
-		'dotcom-overview'
-	);
-
-	useEffect( () => {
-		if ( selectedSiteFeature === undefined ) {
-			setSelectedSiteFeature( DOTCOM_OVERVIEW );
-		}
-		return () => {
-			setSelectedSiteFeature( undefined );
-		};
-	}, [] );
+	const isDotcomSite = !! site.is_wpcom_atomic || !! site.is_wpcom_staging_site;
 
 	// Dotcom tabs: Overview, Monitoring, GitHub Deployments, Hosting Config
 	const features = useMemo(
@@ -46,23 +44,7 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<HostingOverview />
-			),
-			createFeaturePreview(
-				DOTCOM_MONITORING,
-				__( 'Monitoring' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Monitoring" />
-			),
-			createFeaturePreview(
-				DOTCOM_GITHUB_DEPLOYMENTS,
-				__( 'GitHub Deployments' ),
-				true,
-				selectedSiteFeature,
-				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="GitHub Deployments" />
+				selectedSiteFeaturePreview
 			),
 			createFeaturePreview(
 				DOTCOM_HOSTING_CONFIG,
@@ -70,16 +52,51 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 				true,
 				selectedSiteFeature,
 				setSelectedSiteFeature,
-				<PreviewPaneSample site={ site } tabName="Hosting Config" />
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_MONITORING,
+				__( 'Monitoring' ),
+				isDotcomSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_PHP_LOGS,
+				__( 'PHP Logs' ),
+				isDotcomSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_SERVER_LOGS,
+				__( 'Server Logs' ),
+				isDotcomSite,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
+			),
+			createFeaturePreview(
+				DOTCOM_GITHUB_DEPLOYMENTS,
+				__( 'GitHub Deployments' ),
+				true,
+				selectedSiteFeature,
+				setSelectedSiteFeature,
+				selectedSiteFeaturePreview
 			),
 		],
-		[ selectedSiteFeature, setSelectedSiteFeature, site ]
+		[ selectedSiteFeature, setSelectedSiteFeature, selectedSiteFeaturePreview, site ]
 	);
 
 	const itemData: ItemData = {
 		title: site.title,
 		subtitle: site.slug,
-		icon: site.icon?.img,
+		url: site.URL,
+		blogId: site.ID,
+		isDotcomSite: site.is_wpcom_atomic || site.is_wpcom_staging_site,
+		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 	};
 
 	return (
@@ -87,6 +104,9 @@ const DotcomPreviewPane = ( { site, closeSitePreviewPane }: Props ) => {
 			itemData={ itemData }
 			closeItemPreviewPane={ closeSitePreviewPane }
 			features={ features }
+			itemPreviewPaneHeaderExtraProps={ {
+				externalIconSize: 16,
+			} }
 		/>
 	);
 };

@@ -146,7 +146,7 @@ export function EntrepreneurPlan() {
 						<h3 className="entrepreneur-trial-plan__plan-title">{ translate( 'Entrepreneur' ) }</h3>
 						<p className="card-text">
 							{ translate(
-								"Continue enjoying the full benefits of Entrepreneur plan, simply add your payment method and maximize your store's potential."
+								"Secure the full benefits of the Entrepreneur plan. Purchase today and maximize your store's potential!"
 							) }
 						</p>
 					</div>

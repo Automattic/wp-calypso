@@ -4,12 +4,10 @@ import { GitHubDeploymentManagement } from 'calypso/my-sites/github-deployments/
 import { DeploymentRunsLogs } from 'calypso/my-sites/github-deployments/deployment-run-logs';
 import { GitHubDeployments } from 'calypso/my-sites/github-deployments/deployments';
 import { indexPage } from 'calypso/my-sites/github-deployments/routes';
-import MySitesNavigation from 'calypso/my-sites/navigation';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {
-	context.secondary = <MySitesNavigation path={ context.path } />;
 	context.primary = (
 		<div className="deployment-list">
 			<PageViewTracker path="/github-deployments/:site" title="GitHub Deployments" delay={ 500 } />
@@ -20,7 +18,6 @@ export const deploymentsList: Callback = ( context, next ) => {
 };
 
 export const deploymentCreation: Callback = ( context, next ) => {
-	context.secondary = <MySitesNavigation path={ context.path } />;
 	context.primary = (
 		<div className="deployment-creation">
 			<PageViewTracker
@@ -43,7 +40,6 @@ export const deploymentManagement: Callback = ( context, next ) => {
 		return context.page.replace( indexPage( siteSlug! ) );
 	}
 
-	context.secondary = <MySitesNavigation path={ context.path } />;
 	context.primary = (
 		<div className="deployment-management">
 			<PageViewTracker
@@ -66,7 +62,6 @@ export const deploymentRunLogs: Callback = ( context, next ) => {
 		return context.page.replace( indexPage( siteSlug! ) );
 	}
 
-	context.secondary = <MySitesNavigation path={ context.path } />;
 	context.primary = (
 		<div className="deployment-run-logs">
 			<PageViewTracker

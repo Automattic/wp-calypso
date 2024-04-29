@@ -13,8 +13,11 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import HostingOverview from '../common/hosting-overview';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import ShoppingCart from '../shopping-cart';
+
+import './style.scss';
 
 export default function WpcomOverview() {
 	const translate = useTranslate();
@@ -60,7 +63,15 @@ export default function WpcomOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>WordPress.com hosting here</LayoutBody>
+			<LayoutBody>
+				<HostingOverview
+					slug="wpcom-hosting"
+					title={ translate( 'Powerful WordPress Hosting' ) }
+					subtitle={ translate(
+						'When you build and host your sites with WordPress.com, everything’s integrated, secure, and scalable.'
+					) }
+				/>
+			</LayoutBody>
 		</Layout>
 	);
 }

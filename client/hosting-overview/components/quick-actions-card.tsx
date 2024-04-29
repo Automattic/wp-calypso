@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { chevronRightSmall, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -29,6 +30,7 @@ const Action: FC< ActionProps > = ( { icon, href, text } ) => {
 };
 
 const QuickActionsCard: FC = () => {
+	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
 	const editorUrl = useSelector( ( state ) => ( site?.ID ? getEditorUrl( state, site.ID ) : '#' ) );
 	const translate = useTranslate();
@@ -36,7 +38,11 @@ const QuickActionsCard: FC = () => {
 	return (
 		<Card className={ classNames( 'hosting-overview__card', 'hosting-overview__quick-actions' ) }>
 			<div className="hosting-overview__card-header">
-				<h3 className="hosting-overview__card-title">{ translate( 'Quick actions' ) }</h3>
+				<h3 className="hosting-overview__card-title">
+					{ hasEnTranslation( 'WP Admin links' )
+						? translate( 'WP Admin links' )
+						: translate( 'Quick actions' ) }
+				</h3>
 			</div>
 
 			<ul className="hosting-overview__actions-list">

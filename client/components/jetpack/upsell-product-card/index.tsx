@@ -6,6 +6,7 @@ import {
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo, useState } from 'react';
@@ -95,20 +96,23 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 
 	if ( hasJetpackPartnerAccess ) {
 		const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
-		const productPurchaseLink = isA4AEnabled
-			? `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
-			: '#';
 		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
 			aboveButtonText = null;
 			billingTerm = TERM_MONTHLY;
-			ctaButtonURL = productPurchaseLink;
+			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
 			originalPrice = parseFloat( manageProduct.amount );
 			onCtaButtonClickInternal = () => {
-				setShowLightbox( true );
 				onCtaButtonClick();
+				if ( isA4AEnabled ) {
+					page.redirect(
+						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
+					);
+					return;
+				}
+				setShowLightbox( true );
 			};
 		}
 	} else {

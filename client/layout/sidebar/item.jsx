@@ -83,6 +83,7 @@ export default function SidebarItem( props ) {
 				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
 					<Gridicon icon="external" size={ 24 } />
 				) }
+				{ props.forceChevronIcon && <Gridicon icon="chevron-right" size={ 18 } /> }
 				{ props.children }
 			</a>
 		</li>

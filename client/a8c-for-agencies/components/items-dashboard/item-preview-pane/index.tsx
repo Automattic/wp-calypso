@@ -4,6 +4,7 @@ import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import ItemPreviewPaneContent from './item-preview-pane-content';
 import ItemPreviewPaneHeader from './item-preview-pane-header';
 import { FeaturePreviewInterface, PreviewPaneProps } from './types';
 
@@ -35,6 +36,8 @@ export default function ItemPreviewPane( {
 	closeItemPreviewPane,
 	className,
 	itemData,
+	addTourDetails,
+	itemPreviewPaneHeaderExtraProps,
 }: PreviewPaneProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -77,7 +80,11 @@ export default function ItemPreviewPane( {
 
 	return (
 		<div className={ classNames( 'item-preview__pane', className ) }>
-			<ItemPreviewPaneHeader closeItemPreviewPane={ closeItemPreviewPane } itemData={ itemData } />
+			<ItemPreviewPaneHeader
+				closeItemPreviewPane={ closeItemPreviewPane }
+				itemData={ itemData }
+				extraProps={ itemPreviewPaneHeaderExtraProps }
+			/>
 			<div ref={ setNavRef }>
 				<SectionNav className="preview-pane__navigation" selectedText={ selectedFeature.tab.label }>
 					{ navItems && navItems.length > 0 ? (
@@ -85,12 +92,14 @@ export default function ItemPreviewPane( {
 					) : null }
 				</SectionNav>
 			</div>
-			<GuidedTourStep
-				id="sites-walkthrough-site-preview-tabs"
-				tourId="sitesWalkthrough"
-				context={ navRef }
-			/>
-			<div className="preview-pane__content">{ selectedFeature.preview }</div>
+			{ addTourDetails && (
+				<GuidedTourStep
+					id={ addTourDetails.id }
+					tourId={ addTourDetails.tourId }
+					context={ navRef }
+				/>
+			) }
+			<ItemPreviewPaneContent>{ selectedFeature.preview }</ItemPreviewPaneContent>
 		</div>
 	);
 }

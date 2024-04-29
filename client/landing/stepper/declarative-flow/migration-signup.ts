@@ -1,4 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { getLocaleFromQueryParam, getLocaleFromPathname } from 'calypso/boot/locale';
@@ -16,7 +17,7 @@ import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const FLOW_NAME = 'migration-signup';
+const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 
 const migrationSignup: Flow = {
 	name: FLOW_NAME,
@@ -220,8 +221,14 @@ const migrationSignup: Flow = {
 				}
 
 				case STEPS.PROCESSING.slug: {
-					// If we just created the site, go to the upgrade plan step.
+					// If we just created the site, either go to the upgrade plan step, or the site identification step.
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
+						if ( ! fromQueryParam ) {
+							return navigate(
+								addQueryArgs( { siteId, siteSlug }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
+							);
+						}
+
 						return navigate(
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },

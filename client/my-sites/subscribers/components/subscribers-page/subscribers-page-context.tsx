@@ -174,7 +174,7 @@ export const SubscribersPageProvider = ( {
 				dispatch(
 					successNotice(
 						translate(
-							'Your follower migration has been queued. You will receive an email to indicate when it starts and finishes.'
+							'Your subscriber migration has been queued. You will receive an email to indicate when it starts and finishes.'
 						),
 						{
 							duration: 8000,

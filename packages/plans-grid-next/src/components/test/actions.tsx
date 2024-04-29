@@ -99,6 +99,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						},
 					},
 				},
+				helpers: { useActionCallback: () => {} },
 			} ) );
 
 			render(
@@ -133,6 +134,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 						},
 					},
 				},
+				helpers: { useActionCallback: () => {} },
 			} ) );
 
 			render(
@@ -167,6 +169,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -192,6 +195,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				usePlansGridContext.mockImplementation( () => ( {
 					gridPlansIndex: {
@@ -203,6 +207,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 
 				render(
@@ -236,6 +241,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -261,6 +267,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
@@ -289,6 +296,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 							},
 						},
 					},
+					helpers: { useActionCallback: () => {} },
 				} ) );
 				render(
 					<PlanFeatures2023GridActions
