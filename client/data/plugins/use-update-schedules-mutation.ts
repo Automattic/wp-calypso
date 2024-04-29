@@ -108,7 +108,6 @@ export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 
 				queryClient.setQueryData( [ 'schedule-updates', siteSlug ], newSchedules );
 			} );
-
 			return { prevSchedulesMap };
 		},
 		onError: ( err, params, context ) => {
@@ -117,9 +116,13 @@ export function useBatchCreateUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 			} );
 		},
 		onSettled: () => {
+			// TODO optimistic update for 'multisite-schedules-update'
+			// in onSettled we know which sites were successful and which failed
+
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
 			} );
+			queryClient.invalidateQueries( { queryKey: [ 'multisite-schedules-update' ] } );
 		},
 		...queryOptions,
 	} );
@@ -249,6 +252,7 @@ export function useBatchEditUpdateScheduleMutation( siteSlugs: SiteSlug[], query
 
 				queryClient.setQueryData( [ 'schedule-updates', siteSlug ], newSchedules );
 			} );
+			// TODO optimistic update for 'multisite-schedules-update'
 
 			return { prevSchedulesMap };
 		},
@@ -258,9 +262,13 @@ export function useBatchEditUpdateScheduleMutation( siteSlugs: SiteSlug[], query
 			} );
 		},
 		onSettled: () => {
+			// TODO optimistic update for 'multisite-schedules-update'
+			// in onSettled we know which sites were successful and which failed
+
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
 			} );
+			queryClient.invalidateQueries( { queryKey: [ 'multisite-schedules-update' ] } );
 		},
 		...queryOptions,
 	} );
@@ -347,6 +355,10 @@ export function useBatchDeleteUpdateScheduleMutation( siteSlugs: SiteSlug[], que
 			} );
 		},
 		onSettled: () => {
+			// TODO optimistic update for 'multisite-schedules-update'
+			// in onSettled we know which sites were successful and which failed
+
+			queryClient.invalidateQueries( { queryKey: [ 'multisite-schedules-update' ] } );
 			siteSlugs.forEach( ( siteSlug ) => {
 				queryClient.invalidateQueries( { queryKey: [ 'schedule-updates', siteSlug ] } );
 			} );

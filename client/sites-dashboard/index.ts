@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import sitesDashboardV2 from 'calypso/sites-dashboard-v2/routes';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import {
 	maybeRemoveCheckoutSuccessNotice,
@@ -16,6 +18,11 @@ export default function () {
 		const siteId = site?.ID;
 		page.redirect( getSiteHomeUrl( state, siteId ) );
 	} );
+
+	if ( isEnabled( 'layout/dotcom-nav-redesign-v2' ) ) {
+		sitesDashboardV2();
+		return;
+	}
 
 	page(
 		'/sites',

@@ -13,21 +13,9 @@ import { useSitesDashboardImportSiteUrl } from 'calypso/sites-dashboard/hooks/us
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
 const MAX_PAGE_WIDTH = '1224px';
-const pagePadding = {
-	[ MEDIA_QUERIES.mediumOrSmaller ]: {
-		paddingInlineStart: '16px',
-		paddingInlineEnd: '16px',
-	},
-};
 
 const PageHeader = styled.div( {
-	...pagePadding,
-
 	backgroundColor: 'var( --studio-white )',
-
-	[ MEDIA_QUERIES.mediumOrSmaller ]: {
-		padding: '16px',
-	},
 } );
 
 const HeaderControls = styled.div( {
@@ -123,10 +111,11 @@ const SitesDashboardHeader = () => {
 	return (
 		<PageHeader>
 			<HeaderControls>
-				<ManageAllDomainsButton href="/domains/manage">
+				<ManageAllDomainsButton className="sites-manage-all-domains-button" href="/domains/manage">
 					{ __( 'Manage all domains' ) }
 				</ManageAllDomainsButton>
 				<AddNewSiteSplitButton
+					className="sites-add-new-site-split-button"
 					primary
 					whiteSeparator
 					label={ isMobile ? undefined : __( 'Add new site' ) }

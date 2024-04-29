@@ -6,6 +6,9 @@
 	"hostname": "agencies.automattic.com",
 	"i18n_default_locale_slug": "en",
 	"logout_url": "https://automattic.com/for/agencies",
+	"wpcom_signup_url": "https://wordpress.com/start",
+	"wpcom_login_url": "https://wordpress.com/log-in",
+	"wpcom_authorize_endpoint": "https://public-api.wordpress.com/oauth2/authorize",
 	"site_name": "Automattic For Agencies",
 	"meta": [
 		{
@@ -23,6 +26,7 @@
 	],
 	"features": {
 		"a8c-for-agencies": true,
+		"a8c-for-agencies/wpcom-creator-plan-purchase-flow": false,
 		"oauth": false,
 		"a4a/site-details-pane": true
 	},

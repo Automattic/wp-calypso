@@ -386,8 +386,8 @@
 		color: var(--color-accent-80);
 	}
 
-	tr.dataviews-view-table__row th[data-field-id="favorite"] {
-		vertical-align: top;
+	tr.dataviews-view-table__row th[data-field-id="favorite"] svg {
+		vertical-align: middle;
 	}
 
 	tr.dataviews-view-table__row {

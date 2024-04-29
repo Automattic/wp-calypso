@@ -29,11 +29,11 @@ function renderPatterns( context: RouterContext, next: RouterNext ) {
 	context.primary = (
 		<PatternsContext.Provider
 			value={ {
-				searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
 				category: context.params.category ?? '',
 				isGridView: !! context.query.grid,
 				patternTypeFilter:
 					context.params.type === 'layouts' ? PatternTypeFilter.PAGES : PatternTypeFilter.REGULAR,
+				searchTerm: context.query[ QUERY_PARAM_SEARCH ] ?? '',
 			} }
 		>
 			<PatternsWrapper>

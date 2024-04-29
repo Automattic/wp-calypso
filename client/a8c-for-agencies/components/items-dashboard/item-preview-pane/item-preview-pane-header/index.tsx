@@ -5,7 +5,7 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import SiteFavicon from '../../site-favicon';
-import { ItemData } from '../types';
+import { ItemData, ItemPreviewPaneHeaderExtraProps } from '../types';
 
 import './style.scss';
 
@@ -15,12 +15,14 @@ interface Props {
 	closeItemPreviewPane?: () => void;
 	itemData: ItemData;
 	className?: string;
+	extraProps?: ItemPreviewPaneHeaderExtraProps;
 }
 
 export default function ItemPreviewPaneHeader( {
 	itemData,
 	closeItemPreviewPane,
 	className,
+	extraProps,
 }: Props ) {
 	const isLargerThan960px = useMediaQuery( '(min-width: 960px)' );
 	const size = isLargerThan960px ? 64 : 50;
@@ -45,8 +47,22 @@ export default function ItemPreviewPaneHeader( {
 							target="_blank"
 						>
 							<span>{ itemData.subtitle }</span>
-							<Icon className="sidebar-v2__external-icon" icon={ external } size={ ICON_SIZE } />
+							<Icon
+								className="sidebar-v2__external-icon"
+								icon={ external }
+								size={ extraProps?.externalIconSize || ICON_SIZE }
+							/>
 						</Button>
+						{ itemData.adminUrl && (
+							<Button
+								variant="link"
+								className="item-preview__header-summary-link"
+								href={ `${ itemData.adminUrl }` }
+								target="_blank"
+							>
+								<span>{ translate( 'WP Admin' ) }</span>
+							</Button>
+						) }
 					</div>
 				</div>
 				<Button

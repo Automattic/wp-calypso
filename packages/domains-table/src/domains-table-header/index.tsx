@@ -97,7 +97,7 @@ export const DomainsTableHeader = ( {
 		<thead className={ listHeaderClasses }>
 			<tr>
 				{ canSelectAnyDomains && (
-					<th>
+					<th className="domains-table-checkbox-th">
 						<CheckboxControl
 							data-testid="domains-select-all-checkbox"
 							__nextHasNoMarginBottom

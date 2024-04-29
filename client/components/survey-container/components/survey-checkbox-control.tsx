@@ -11,7 +11,7 @@ const SurveyCheckboxControl = ( { onChange, question, value }: QuestionSelection
 					question={ question }
 					onChange={ onChange }
 					value={ value }
-				></SurveyCheckboxOption>
+				/>
 			) ) }
 		</div>
 	);
