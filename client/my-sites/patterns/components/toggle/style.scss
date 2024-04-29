@@ -26,16 +26,20 @@
 	white-space: nowrap;
 	width: 100%;
 
+	@media ( max-width: $break-medium ) {
+		height: 36px;
+	}
+
+	&:hover {
+		color: inherit;
+	}
+
 	&.is-active {
 		color: #fff;
 	}
 
 	path {
 		fill: currentColor;
-	}
-
-	@media ( max-width: $break-medium ) {
-		height: 36px;
 	}
 }
 

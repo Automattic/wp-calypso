@@ -5,10 +5,31 @@ import {
 	PatternLibraryToggleOption,
 } from 'calypso/my-sites/patterns/components/toggle';
 import { usePatternsContext } from 'calypso/my-sites/patterns/context';
+import { QUERY_PARAM_SEARCH } from 'calypso/my-sites/patterns/lib/filter-patterns-by-term';
 import { getCategoryUrlPath } from 'calypso/my-sites/patterns/paths';
-import { PatternView } from 'calypso/my-sites/patterns/types';
+import { PatternTypeFilter, PatternView } from 'calypso/my-sites/patterns/types';
 
 import './style.scss';
+
+function getViewToggleUrlPath(
+	category: string,
+	patternTypeFilter: PatternTypeFilter,
+	isGridView: boolean,
+	searchTerm: string
+): string {
+	const path = getCategoryUrlPath( category, patternTypeFilter, false );
+	const params = new URLSearchParams();
+
+	if ( isGridView ) {
+		params.set( 'grid', '1' );
+	}
+
+	if ( searchTerm ) {
+		params.set( QUERY_PARAM_SEARCH, searchTerm );
+	}
+
+	return params.size ? `${ path }?${ params }` : path;
+}
 
 type ViewToggleProps = {
 	onChange?( value: PatternView ): void;
@@ -16,7 +37,7 @@ type ViewToggleProps = {
 
 export function ViewToggle( { onChange }: ViewToggleProps ) {
 	const translate = useTranslate();
-	const { category, isGridView, patternTypeFilter } = usePatternsContext();
+	const { category, isGridView, patternTypeFilter, searchTerm } = usePatternsContext();
 	const currentView = isGridView ? 'grid' : 'list';
 
 	const listViewLabel = translate( 'List view', {
@@ -37,7 +58,7 @@ export function ViewToggle( { onChange }: ViewToggleProps ) {
 		>
 			<PatternLibraryToggleOption
 				aria-label={ listViewLabel }
-				href={ getCategoryUrlPath( category, patternTypeFilter, false, false ) }
+				href={ getViewToggleUrlPath( category, patternTypeFilter, false, searchTerm ) }
 				tooltipText={ listViewLabel }
 				value="list"
 			>
@@ -46,7 +67,7 @@ export function ViewToggle( { onChange }: ViewToggleProps ) {
 
 			<PatternLibraryToggleOption
 				aria-label={ gridViewLabel }
-				href={ getCategoryUrlPath( category, patternTypeFilter, false, true ) }
+				href={ getViewToggleUrlPath( category, patternTypeFilter, true, searchTerm ) }
 				tooltipText={ gridViewLabel }
 				value="grid"
 			>
