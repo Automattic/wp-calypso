@@ -32,50 +32,59 @@ export default function HostingCard( { plan, pressableOwnership }: Props ) {
 
 	return (
 		<div className="hosting-card">
-			<div className="hosting-card__header">
-				{ getHostingLogo( plan.family_slug ) }
-				{ pressableOwnership && <Badge type="success">{ translate( 'You own this' ) }</Badge> }
-			</div>
-
-			<div className="hosting-card__price">
-				<b className="hosting-card__price-value">
-					{ translate( 'Starting at %(price)s', {
-						args: { price: formatCurrency( Number( plan.amount ), plan.currency ) },
-					} ) }
-				</b>
-				<div className="hosting-card__price-interval">
-					{ plan.price_interval === 'day' && translate( 'USD per plan per day' ) }
-					{ plan.price_interval === 'month' && translate( 'USD per plan per month' ) }
+			<div className="hosting-card__section">
+				<div className="hosting-card__header">
+					{ getHostingLogo( plan.family_slug ) }
+					{ pressableOwnership && <Badge type="success">{ translate( 'You own this' ) }</Badge> }
 				</div>
+
+				<div className="hosting-card__price">
+					<b className="hosting-card__price-value">
+						{ translate( 'Starting at %(price)s', {
+							args: { price: formatCurrency( Number( plan.amount ), plan.currency ) },
+						} ) }
+					</b>
+					<div className="hosting-card__price-interval">
+						{ plan.price_interval === 'day' && translate( 'USD per plan per day' ) }
+						{ plan.price_interval === 'month' && translate( 'USD per plan per month' ) }
+					</div>
+				</div>
+
+				<p className="hosting-card__description">{ description }</p>
+
+				{ ! pressableOwnership ? (
+					<Button
+						className="hosting-card__explore-button"
+						href={ getHostingPageUrl( plan.family_slug ) }
+						onClick={ onExploreClick }
+						primary
+					>
+						{ translate( 'Explore %(hosting)s plans', {
+							args: {
+								hosting: name,
+							},
+							comment: '%(hosting)s is the name of the hosting provider.',
+						} ) }
+					</Button>
+				) : (
+					<Button
+						className="hosting-card__pressable-dashboard-button"
+						target="_blank"
+						rel="norefferer nooppener"
+						href={ pressableUrl }
+					>
+						{ translate( 'Go to Pressable Dashboard' ) }
+						<Icon icon={ external } size={ 18 } />
+					</Button>
+				) }
 			</div>
 
-			<p className="hosting-card__description">{ description }</p>
-
-			{ ! pressableOwnership ? (
-				<Button
-					className="hosting-card__explore-button"
-					href={ getHostingPageUrl( plan.family_slug ) }
-					onClick={ onExploreClick }
-					primary
-				>
-					{ translate( 'Explore %(hosting)s plans', {
-						args: {
-							hosting: name,
-						},
-						comment: '%(hosting)s is the name of the hosting provider.',
-					} ) }
-				</Button>
-			) : (
-				<Button
-					className="hosting-card__pressable-dashboard-button"
-					target="_blank"
-					rel="norefferer nooppener"
-					href={ pressableUrl }
-				>
-					{ translate( 'Go to Pressable Dashboard' ) }
-					<Icon icon={ external } size={ 18 } />
-				</Button>
-			) }
+			<div className="hosting-card__section">
+				<ul className="hosting-card__features">
+					<li>test</li>
+					<li>test</li>
+				</ul>
+			</div>
 		</div>
 	);
 }
