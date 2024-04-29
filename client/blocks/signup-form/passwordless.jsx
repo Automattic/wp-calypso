@@ -111,6 +111,7 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				is_dev_account: ref === 'developer-lp',
+				has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
 			} );
 
 			this.createAccountCallback( response );
