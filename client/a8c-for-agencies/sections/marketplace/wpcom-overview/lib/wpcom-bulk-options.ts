@@ -1,3 +1,4 @@
+// FIXME we should fetch the discount bracket from a proper source when ready.
 const wpcomBulkOptions = [
 	{
 		value: 1,

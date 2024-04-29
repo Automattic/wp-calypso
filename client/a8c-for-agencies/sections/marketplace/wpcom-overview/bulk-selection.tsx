@@ -38,15 +38,13 @@ export default function WPCOMBulkSelector( { selectedCount, onSelectCount }: Pro
 
 	return (
 		<div className="bulk-selection">
-			<div>
-				<A4ASlider
-					label={ translate( 'Total sites' ) }
-					sub={ translate( 'Total discount' ) }
-					value={ selectedOption }
-					onChange={ onSelectOption }
-					options={ wpcomBulkOptions }
-				/>
-			</div>
+			<A4ASlider
+				label={ translate( 'Total sites' ) }
+				sub={ translate( 'Total discount' ) }
+				value={ selectedOption }
+				onChange={ onSelectOption }
+				options={ wpcomBulkOptions }
+			/>
 		</div>
 	);
 }
