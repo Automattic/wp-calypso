@@ -156,6 +156,7 @@ type TabletViewProps = {
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
+	showRefundPeriod?: boolean;
 	showUpgradeableStorage: boolean;
 	stickyRowOffset: number;
 };
@@ -164,7 +165,6 @@ const TabletView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
-	renderedGridPlans,
 	hideUnavailableFeatures,
 	intervalType,
 	isCustomDomainAllowedOnFreePlan,
@@ -174,7 +174,9 @@ const TabletView = ( {
 	paidDomainName,
 	planActionOverrides,
 	planUpgradeCreditsApplicable,
+	renderedGridPlans,
 	selectedFeature,
+	showRefundPeriod,
 	showUpgradeableStorage,
 	stickyRowOffset,
 }: TabletViewProps ) => {
@@ -198,6 +200,7 @@ const TabletView = ( {
 		planActionOverrides,
 		planUpgradeCreditsApplicable,
 		selectedFeature,
+		showRefundPeriod,
 		showUpgradeableStorage,
 		stickyRowOffset,
 	};
@@ -217,23 +220,24 @@ const TabletView = ( {
 };
 
 const FeaturesGrid = ( {
-	gridPlans,
-	gridPlanForSpotlight,
-	stickyRowOffset,
-	isInSignup,
-	planUpgradeCreditsApplicable,
 	currentSitePlanSlug,
-	isLaunchPage,
-	planActionOverrides,
-	intervalType,
-	onStorageAddOnClick,
-	showUpgradeableStorage,
-	paidDomainName,
-	hideUnavailableFeatures,
-	selectedFeature,
 	generatedWPComSubdomain,
-	isCustomDomainAllowedOnFreePlan,
+	gridPlanForSpotlight,
+	gridPlans,
 	gridSize,
+	hideUnavailableFeatures,
+	intervalType,
+	isCustomDomainAllowedOnFreePlan,
+	isInSignup,
+	isLaunchPage,
+	onStorageAddOnClick,
+	paidDomainName,
+	planActionOverrides,
+	planUpgradeCreditsApplicable,
+	selectedFeature,
+	showRefundPeriod,
+	showUpgradeableStorage,
+	stickyRowOffset,
 }: FeaturesGridProps ) => {
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
@@ -251,10 +255,11 @@ const FeaturesGrid = ( {
 	const planFeaturesProps = {
 		...spotlightPlanProps,
 		generatedWPComSubdomain,
-		renderedGridPlans: gridPlans,
 		hideUnavailableFeatures,
 		isCustomDomainAllowedOnFreePlan,
 		paidDomainName,
+		renderedGridPlans: gridPlans,
+		showRefundPeriod,
 	};
 
 	return (

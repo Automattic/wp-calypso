@@ -28,6 +28,7 @@ type TableProps = {
 	planUpgradeCreditsApplicable?: number | null;
 	renderedGridPlans: GridPlan[];
 	selectedFeature?: string;
+	showRefundPeriod?: boolean;
 	showUpgradeableStorage: boolean;
 	stickyRowOffset: number;
 	options?: {
@@ -50,6 +51,7 @@ const Table = ( {
 	planUpgradeCreditsApplicable,
 	renderedGridPlans,
 	selectedFeature,
+	showRefundPeriod,
 	showUpgradeableStorage,
 	stickyRowOffset,
 }: TableProps ) => {
@@ -109,6 +111,7 @@ const Table = ( {
 				<tr>
 					<BillingTimeframes
 						renderedGridPlans={ gridPlansWithoutSpotlight }
+						showRefundPeriod={ showRefundPeriod }
 						options={ { isTableCell: true } }
 					/>
 				</tr>
