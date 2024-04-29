@@ -2877,7 +2877,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DATABASE_ACCESS ]: {
 		getSlug: () => FEATURE_DATABASE_ACCESS,
-		getTitle: () => i18n.translate( 'Database Access' ),
+		getTitle: () => i18n.translate( 'Database access' ),
 	},
 	[ FEATURE_DEVELOPER_TOOLS ]: {
 		getSlug: () => FEATURE_DEVELOPER_TOOLS,

@@ -54,9 +54,10 @@ export const ProviderWrappedLayout = ( {
 	);
 
 	useEffect( () => {
-		if ( ! isLoading ) {
-			// setTrailMapExperiment( experimentAssignment?.variationName );
+		if ( config.isEnabled( 'onboarding/trail-map-feature-grid' ) ) {
 			setTrailMapExperiment( 'treatment' );
+		} else if ( ! isLoading ) {
+			setTrailMapExperiment( experimentAssignment?.variationName );
 		}
 	}, [ experimentAssignment?.variationName, isLoading ] );
 
