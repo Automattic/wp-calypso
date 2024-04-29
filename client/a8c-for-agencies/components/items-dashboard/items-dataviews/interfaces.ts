@@ -55,7 +55,7 @@ export interface DataViewsSort {
 export interface DataViewsFilter {
 	field: string;
 	operator: string;
-	value: number;
+	value: number | number[];
 }
 
 export interface DataViewsState {
