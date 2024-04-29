@@ -7,6 +7,15 @@
 	gap: 64px;
 	margin-block-start: 48px;
 	margin-block-end: 64px;
+
+	.bulk-selection {
+		width: 100%;
+
+		@include break-large {
+			width: 800px;
+			margin-inline: auto;
+		}
+	}
 }
 
 .a4a-layout__header-breadcrumb {
