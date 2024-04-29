@@ -143,7 +143,7 @@ export const getPurchaseURLCallback =
 		showUpsellPage?: boolean
 	): PurchaseURLCallback =>
 	( product: SelectorProduct, isUpgradeableToYearly?, purchase?: Purchase ) => {
-		let slug = product.productSlug;
+		const slug = product.productAlias || product.productSlug;
 
 		if ( locale ) {
 			urlQueryArgs.lang = locale;
@@ -163,10 +163,6 @@ export const getPurchaseURLCallback =
 		// Visit the indirect checkout URL to determine the purchasable product on another page.
 		if ( INDIRECT_CHECKOUT_PRODUCTS_LIST.includes( slug ) ) {
 			return product.indirectCheckoutUrl?.replace( '{siteSlug}', siteSlug ) || '';
-		}
-
-		if ( product.quantity ) {
-			slug = `${ slug }:-q-${ product.quantity }`;
 		}
 
 		let url;

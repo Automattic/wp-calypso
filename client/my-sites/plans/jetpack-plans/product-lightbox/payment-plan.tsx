@@ -36,7 +36,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 		useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 
 	const currentTier = quantity && priceTierList.find( ( tier ) => tier.maximum_units === quantity );
-	const currentTierPrice = currentTier && currentTier.maximum_price / 100 / 12;
+	const currentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
