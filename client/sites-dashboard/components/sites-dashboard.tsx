@@ -184,7 +184,7 @@ export function SitesDashboard( {
 
 	const { data: deletedSites = [] } = useSiteExcerptsQuery(
 		[],
-		( site ) => ! site.options?.is_domain_only && !! site?.is_deleted,
+		( site ) => ! site.options?.is_domain_only,
 		'deleted'
 	);
 
