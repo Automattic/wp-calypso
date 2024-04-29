@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useMemo, useState } from 'react';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -124,6 +125,9 @@ const ECommerceTrialExpired = (): JSX.Element => {
 					/>
 				) }
 				{ isEntrepreneurTrial && <EntrepreneurPlan hideTrialIncluded /> }
+				{ ! isWooExpressTrial && ! isEntrepreneurTrial && (
+					<Spinner className="ecommerce-trial-expired__spinner" />
+				) }
 
 				<div className="ecommerce-trial-expired__footer">
 					<Button href={ exportUrl }>

@@ -29,7 +29,7 @@ interface PlanPriceType {
 	slug: string;
 	price?: number;
 	montlyPrice?: number;
-	subText: ReactNode;
+	subText?: ReactNode;
 	discount?: number;
 	discountText?: ReactNode;
 }
@@ -47,19 +47,19 @@ const useEntrepreneurPlanPrices = () => {
 	const baseMontlyPrice =
 		getPlanRawPrice( state, rawPlans[ PLAN_ECOMMERCE_MONTHLY ].getProductId(), false ) || 0;
 
-	const planPrices = {
+	const planPrices: Record< PlanKeys, PlanPriceType > = {
 		PLAN_ECOMMERCE: {
 			term: translate( 'Pay yearly' ),
 			slug: PLAN_ECOMMERCE,
-		} as PlanPriceType,
+		},
 		PLAN_ECOMMERCE_2_YEARS: {
 			term: translate( 'Pay every 2 years' ),
 			slug: PLAN_ECOMMERCE_2_YEARS,
-		} as PlanPriceType,
+		},
 		PLAN_ECOMMERCE_3_YEARS: {
 			term: translate( 'Pay every 3 years' ),
 			slug: PLAN_ECOMMERCE_3_YEARS,
-		} as PlanPriceType,
+		},
 		PLAN_ECOMMERCE_MONTHLY: {
 			term: translate( 'Pay monthly' ),
 			slug: PLAN_ECOMMERCE_MONTHLY,
@@ -69,7 +69,7 @@ const useEntrepreneurPlanPrices = () => {
 				args: { rawPrice: baseMontlyPrice },
 				comment: 'Excl. Taxes is short for excluding taxes',
 			} ),
-		} as PlanPriceType,
+		},
 	};
 	const keys = Object.keys( planPrices ) as PlanKeys[];
 	keys.forEach( ( key ) => {
