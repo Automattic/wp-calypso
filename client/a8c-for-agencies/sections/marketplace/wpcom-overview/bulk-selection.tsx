@@ -10,7 +10,7 @@ type Props = {
 		value: number;
 		label: string;
 	};
-	onSelectCount: ( count: { value: number; label: string } ) => void;
+	onSelectCount: ( value: number ) => void;
 };
 
 export default function WPCOMBulkSelector( { selectedCount, onSelectCount }: Props ) {
@@ -24,10 +24,7 @@ export default function WPCOMBulkSelector( { selectedCount, onSelectCount }: Pro
 					count: option.value,
 				} )
 			);
-			onSelectCount( {
-				value: option.value as number,
-				label: option.label,
-			} );
+			onSelectCount( option.value as number );
 		},
 		[ dispatch, onSelectCount ]
 	);
