@@ -15,7 +15,7 @@ interface PlansGridContext {
 		recordTracksEvent?: GridContextProps[ 'recordTracksEvent' ];
 	};
 	coupon?: string;
-	renderFeatureTooltips?: boolean;
+	enableFeatureTooltips?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -30,7 +30,7 @@ const PlansGridContextProvider = ( {
 	siteId,
 	children,
 	coupon,
-	renderFeatureTooltips,
+	enableFeatureTooltips,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -50,7 +50,7 @@ const PlansGridContextProvider = ( {
 				allFeaturesList,
 				helpers: { useCheckPlanAvailabilityForPurchase, useActionCallback, recordTracksEvent },
 				coupon,
-				renderFeatureTooltips,
+				enableFeatureTooltips,
 			} }
 		>
 			{ children }

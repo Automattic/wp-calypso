@@ -579,7 +579,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	setActiveTooltipId,
 	onStorageAddOnClick,
 } ) => {
-	const { gridPlansIndex, renderFeatureTooltips } = usePlansGridContext();
+	const { gridPlansIndex, enableFeatureTooltips } = usePlansGridContext();
 	const gridPlan = gridPlansIndex[ planSlug ];
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
@@ -658,7 +658,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ planPaymentTransactionFees ? (
 								<>
 									<Plans2023Tooltip
-										text={ renderFeatureTooltips ? feature?.getDescription?.() : undefined }
+										text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 										setActiveTooltipId={ setActiveTooltipId }
 										activeTooltipId={ activeTooltipId }
 										id={ `${ planSlug }-${ featureSlug }` }
@@ -684,7 +684,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								</span>
 							) }
 							<Plans2023Tooltip
-								text={ renderFeatureTooltips ? feature?.getDescription?.() : undefined }
+								text={ enableFeatureTooltips ? feature?.getDescription?.() : undefined }
 								setActiveTooltipId={ setActiveTooltipId }
 								activeTooltipId={ activeTooltipId }
 								id={ `${ planSlug }-${ featureSlug }` }
@@ -759,7 +759,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const hasWooExpressPlans = visibleGridPlans.some( ( { planSlug } ) =>
 		isWooExpressPlan( planSlug )
 	);
-	const { renderFeatureTooltips } = usePlansGridContext();
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<Row
@@ -775,7 +775,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
 						text={
-							renderFeatureTooltips
+							enableFeatureTooltips
 								? translate( 'Space to store your photos, media, and more.' )
 								: undefined
 						}
@@ -791,7 +791,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 							<>
 								<Plans2023Tooltip
 									text={
-										renderFeatureTooltips
+										enableFeatureTooltips
 											? feature.getDescription?.( {
 													planSlug: hasWooExpressPlans ? PLAN_WOOEXPRESS_MEDIUM_MONTHLY : undefined,
 											  } )

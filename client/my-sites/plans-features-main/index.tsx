@@ -860,7 +860,7 @@ const PlansFeaturesMain = ( {
 										stickyRowOffset={ masterbarHeight }
 										useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 										useActionCallback={ useActionCallback }
-										renderFeatureTooltips={ ! trailMapExperiment.result }
+										enableFeatureTooltips={ ! trailMapExperiment.result }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && (
@@ -936,7 +936,7 @@ const PlansFeaturesMain = ( {
 													useCheckPlanAvailabilityForPurchase={
 														useCheckPlanAvailabilityForPurchase
 													}
-													renderFeatureTooltips={ ! trailMapExperiment.result }
+													enableFeatureTooltips={ ! trailMapExperiment.result }
 												/>
 											) }
 											<ComparisonGridToggle

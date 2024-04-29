@@ -72,7 +72,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { renderFeatureTooltips } = usePlansGridContext();
+	const { enableFeatureTooltips } = usePlansGridContext();
 
 	return (
 		<>
@@ -116,7 +116,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
 											text={
-												renderFeatureTooltips
+												enableFeatureTooltips
 													? translate( '%s is not included', {
 															args: [ paidDomainName as string ],
 															comment: '%s is a domain name.',
@@ -137,7 +137,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 									) : (
 										<Plans2023Tooltip
 											text={
-												renderFeatureTooltips
+												enableFeatureTooltips
 													? currentFeature.getDescription?.( { planSlug } )
 													: undefined
 											}

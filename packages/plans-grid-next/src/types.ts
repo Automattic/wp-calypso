@@ -156,7 +156,7 @@ export type GridContextProps = {
 	recordTracksEvent?: ( eventName: string, eventProperties: Record< string, unknown > ) => void;
 	children: React.ReactNode;
 	coupon?: string;
-	renderFeatureTooltips?: boolean;
+	enableFeatureTooltips?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit< GridContextProps, 'children' > &
