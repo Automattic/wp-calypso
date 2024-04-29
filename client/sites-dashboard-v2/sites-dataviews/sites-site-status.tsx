@@ -30,6 +30,7 @@ const DeletedStatus = styled.div`
 	flex-direction: column;
 	align-items: center;
 	padding-left: 8px;
+
 	span {
 		color: var( --color-error );
 	}
