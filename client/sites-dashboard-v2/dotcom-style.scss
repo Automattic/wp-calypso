@@ -89,11 +89,12 @@
 	.is-global-sidebar-collapsed {
 		.global-sidebar {
 			.sidebar__body {
-				.sidebar__menu-link-text {
-					transition: all 0.1s ease-in-out;
-					transition-delay: 0.2s;
-					opacity: 0;
-					display: block !important;
+				.sidebar__menu-link {
+					width: fit-content;
+
+					> :first-child {
+						margin-right: 0;
+					}
 				}
 			}
 		}

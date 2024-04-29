@@ -28,9 +28,9 @@ export default function globalSidebarMenu() {
 				<svg
 					className="sidebar__menu-icon sidebar_svg-reader"
 					fill="none"
-					height="20"
+					height="24"
 					viewBox="4 4 24 24"
-					width="20"
+					width="24"
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<clipPath id="readerIconSidebarFooter">
