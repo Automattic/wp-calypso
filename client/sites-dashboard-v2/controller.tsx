@@ -64,6 +64,7 @@ export function sitesDashboard( context: Context, next: () => void ) {
 				min-height: 100vh;
 				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
 			}
+
 			.layout__secondary .global-sidebar {
 				border: none;
 			}
