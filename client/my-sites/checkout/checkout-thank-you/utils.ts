@@ -16,7 +16,6 @@ import JetpackSearchPluginImage from 'calypso/assets/images/jetpack/jetpack-plug
 import JetpackSocialPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-social.svg';
 import JetpackVideopressPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-videopress.svg';
 import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
@@ -88,13 +87,6 @@ export function getJetpackPluginImage( productSlug: string ): string {
 		JETPACK_PLUGIN_IMAGE_MAP[ productSlug ]
 		? JETPACK_PLUGIN_IMAGE_MAP[ productSlug ]
 		: JetpackPluginImage;
-}
-
-export function getDomainManagementUrl(
-	{ slug }: { slug: string },
-	domain: string | undefined
-): string {
-	return domain ? domainManagementEdit( slug, domain ) : domainManagementList( slug );
 }
 
 export function isBulkDomainTransfer( purchases: ReceiptPurchase[] ): boolean {
