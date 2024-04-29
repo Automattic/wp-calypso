@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Badge, Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
@@ -5,9 +6,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import SimpleList from '../../common/simple-list';
 import { getHostingLogo, getHostingPageUrl } from '../../lib/hosting';
 import useHostingDescription from '../hooks/use-hosting-description';
+
 import './style.scss';
+
 type Props = {
 	plan: APIProductFamilyProduct;
 	pressableOwnership?: boolean;
@@ -20,7 +24,7 @@ export default function HostingCard( { plan, pressableOwnership }: Props ) {
 	//on how the UX should look in the end
 	const pressableUrl = 'https://my.pressable.com/agency/auth';
 
-	const { name, description } = useHostingDescription( plan.family_slug );
+	const { name, description, features } = useHostingDescription( plan.family_slug );
 
 	const onExploreClick = () => {
 		dispatch(
@@ -79,12 +83,11 @@ export default function HostingCard( { plan, pressableOwnership }: Props ) {
 				) }
 			</div>
 
-			<div className="hosting-card__section">
-				<ul className="hosting-card__features">
-					<li>test</li>
-					<li>test</li>
-				</ul>
-			</div>
+			{ isEnabled( 'a8c-for-agencies/wpcom-creator-plan-purchase-flow' ) && (
+				<div className="hosting-card__section">
+					<SimpleList items={ features } />
+				</div>
+			) }
 		</div>
 	);
 }
