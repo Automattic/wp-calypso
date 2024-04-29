@@ -67,7 +67,7 @@ export default function usePrepareProductsForCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	isGiftPurchase?: boolean;
-	hostingIntent?: 'migrate';
+	hostingIntent?: string | undefined;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -464,7 +464,7 @@ function useAddProductFromSlug( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
-	hostingIntent?: 'migrate';
+	hostingIntent?: string | undefined;
 } ) {
 	const translate = useTranslate();
 
@@ -661,7 +661,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
-	hostingIntent?: 'migrate';
+	hostingIntent?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.

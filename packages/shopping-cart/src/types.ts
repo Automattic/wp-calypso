@@ -662,12 +662,17 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	/**
-	 * On the new site-migration flow, we use Migration Guru which requires us to
-	 * create databases in UTF-8. This extra is included on the plan bundle to signal
-	 * this to the backend. The name isn't great, but it will be removed once all of
-	 * our hosting migration flows are migrated to Migration Guru from Jetpack.
+	 * A way to signal intent to the back end when included as an extra with
+	 * certain products.
+	 *
+	 * The only current usage is on Creator plan products that are bought
+	 * on flow `/setup/site-migration`. If value `'migrate` is passed the
+	 * Atomic DB will be created with UTF-8 encoding, which is a requirement
+	 * for Migration Guru, our new tool for handling migrations. This extra
+	 * can be removed once all migration flows are using Migration Guru.
+	 *
 	 */
-	hosting_intent?: 'migrate';
+	hosting_intent?: string;
 }
 
 export interface GSuiteProductUser {

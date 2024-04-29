@@ -102,7 +102,7 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
-	hostingIntent?: 'migrate';
+	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
