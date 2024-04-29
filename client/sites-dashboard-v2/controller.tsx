@@ -64,10 +64,13 @@ export function sitesDashboard( context: Context, next: () => void ) {
 				min-height: 100vh;
 				padding: 16px 16px 16px calc( var( --sidebar-width-max ) );
 			}
-
 			.layout__secondary .global-sidebar {
 				border: none;
 			}
+		}
+
+		body.is-group-sites-dashboard.rtl .layout__content {
+			padding: 16px calc( var( --sidebar-width-max ) ) 16px 16px;
 		}
 
 		.main.sites-dashboard.sites-dashboard__layout:has( .dataviews-pagination ) {
