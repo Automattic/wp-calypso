@@ -1,4 +1,5 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import { useSelector } from 'calypso/state';
@@ -40,7 +41,15 @@ const ExcessiveDiskSpace = ( { translate }: { translate: LocalizeProps[ 'transla
 						{
 							components: {
 								a: <a href={ `/add-ons/${ siteSlug }` } />,
-								b: <a href={ `/media/${ siteSlug }` } />,
+								b: (
+									<a
+										target="_blank"
+										href={ localizeUrl(
+											'https://wordpress.com/support/media/#delete-files-from-media'
+										) }
+										rel="noreferrer"
+									/>
+								),
 							},
 						}
 					) }
