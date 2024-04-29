@@ -1,4 +1,6 @@
 import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { englishLocales, useLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import PlanStorage from 'calypso/blocks/plan-storage';
 import { useSelector } from 'calypso/state';
@@ -17,10 +19,21 @@ const ExcessiveDiskSpace = ( { translate }: { translate: LocalizeProps[ 'transla
 
 	const planHasTopStorageSpace = isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
+	const errorMessage =
+		englishLocales.includes( locale ) ||
+		hasTranslation(
+			'Your site does not have enough storage space. To complete this operation, you need to use less than 95% of the space.'
+		)
+			? translate(
+					'Your site does not have enough storage space. To complete this operation, you need to use less than 95% of the space.'
+			  )
+			: translate( 'Your site does not have enough available storage space.' );
 
 	return (
 		<div>
-			{ translate( 'Your site does not have enough available storage space.' ) }
+			{ errorMessage }
 			<div className="eligibility-warnings__plan-storage-wrapper">
 				<PlanStorage siteId={ selectedSiteId }>{ null }</PlanStorage>
 			</div>
